@@ -1,8 +1,13 @@
 package vandyke.sia.fragments;
 
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.SpannableStringBuilder;
 import android.text.method.ScrollingMovementMethod;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,26 +35,31 @@ public class TerminalFragment extends Fragment {
         input.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 try {
-                    System.out.println("Enter pressed");
-                    ArrayList<String> command = new ArrayList<>(Arrays.asList(v.getText().toString().split(" ")));
-                    command.add(0, siacFile.getAbsolutePath());
-                    ProcessBuilder pb = new ProcessBuilder(command);
+                    String enteredCommand = "-a 192.168.1.133:9980";//v.getText().toString();
+//                    v.setText("");
+                    ArrayList<String> fullCommand = new ArrayList<>(Arrays.asList(enteredCommand.split(" ")));
+                    fullCommand.add(0, siacFile.getAbsolutePath());
+                    ProcessBuilder pb = new ProcessBuilder(fullCommand);
                     pb.redirectErrorStream(true);
                     Process siac = pb.start();
+//                    Process siac = Runtime.getRuntime().exec(siacFile.getAbsolutePath() + " " + enteredCommand);
+
+                    SpannableStringBuilder stdOut = new SpannableStringBuilder();
+                    stdOut.append("\n" + enteredCommand + "\n");
+                    stdOut.setSpan(new ForegroundColorSpan(Color.BLACK), 0, stdOut.length(), 0);
+                    stdOut.setSpan(new StyleSpan(Typeface.BOLD), 0, stdOut.length(), 0);
 
                     BufferedReader inputReader = new BufferedReader(new InputStreamReader(siac.getInputStream()));
                     int read;
                     char[] buffer = new char[1024];
-                    StringBuilder stdOut = new StringBuilder();
                     while ((read = inputReader.read(buffer)) > 0) {
-                        stdOut.append(buffer, 0, read);
+                        stdOut.append(new String(buffer), 0, read);
                     }
                     inputReader.close();
+//                    stdOut.append("\n");
 
-//                    siac.waitFor();
-
-                    System.out.println(stdOut.toString());
-                    output.append(stdOut.toString());
+                    stdOut.setSpan(new ForegroundColorSpan(Color.GRAY), enteredCommand.length() + 2, stdOut.length(), 0);
+                    output.append(stdOut);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
