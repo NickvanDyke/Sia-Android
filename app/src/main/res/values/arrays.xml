@@ -5,9 +5,10 @@
         <item>Wallet</item>
         <item>Terminal</item>
     </string-array>
-    <string-array name="drawer_entry_values">
+    <string-array name="drawer_item_values">
         <item>files</item>
         <item>wallet</item>
         <item>terminal</item>
+        <item>settings</item>
     </string-array>
 </resources>

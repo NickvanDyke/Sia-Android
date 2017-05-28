@@ -17,7 +17,6 @@ import android.widget.TextView;
 import vandyke.sia.R;
 
 import java.io.*;
-import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.Arrays;
 

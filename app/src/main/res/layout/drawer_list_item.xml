@@ -12,23 +12,28 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textColor="#000000"
-            android:id="@+id/text"
-            app:layout_constraintLeft_toRightOf="@+id/image"
+            android:id="@+id/listview_item_text"
+            app:layout_constraintLeft_toRightOf="@+id/listview_item_image"
             android:layout_marginEnd="16dp"
             app:layout_constraintRight_toRightOf="parent"
             android:layout_marginRight="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginLeft="24dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent"
+            android:textSize="24sp"
+            android:textStyle="normal|bold"/>
 
     <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/image"
+            android:layout_width="50dp"
+            android:id="@+id/listview_item_image"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintVertical_bias="0.0"
             app:layout_constraintLeft_toLeftOf="parent"
-            />
+            android:layout_height="50dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"/>
 </android.support.constraint.ConstraintLayout>

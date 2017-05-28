@@ -1,4 +1,4 @@
-package vandyke.sia;
+package vandyke.sia.Drawer;
 
 import android.app.Activity;
 import android.content.Context;
@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import vandyke.sia.R;
 
 import java.util.ArrayList;
 
@@ -32,8 +33,8 @@ public class DrawerAdapter extends ArrayAdapter {
             row = inflater.inflate(layoutResourceId, parent, false);
 
             holder = new DrawerItemHolder();
-            holder.image = (ImageView)row.findViewById(R.id.image);
-            holder.text = (TextView)row.findViewById(R.id.text);
+            holder.image = (ImageView)row.findViewById(R.id.listview_item_image);
+            holder.text = (TextView)row.findViewById(R.id.listview_item_text);
 
             row.setTag(holder);
         } else {

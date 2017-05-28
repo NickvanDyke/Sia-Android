@@ -8,9 +8,14 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import vandyke.sia.Drawer.DrawerAdapter;
+import vandyke.sia.Drawer.DrawerItem;
+import vandyke.sia.fragments.FilesFragment;
 import vandyke.sia.fragments.TerminalFragment;
+import vandyke.sia.fragments.WalletFragment;
 
 import java.util.ArrayList;
 
@@ -36,12 +41,37 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         // load the items in the array that the drawer's adapter will use
         ArrayList<DrawerItem> drawerItems = new ArrayList<>();
-        drawerItems.add(new DrawerItem("Files", getResources().getDrawable(android.R.drawable.btn_star)));
-        drawerItems.add(new DrawerItem("Wallet", getResources().getDrawable(android.R.drawable.btn_star)));
-        drawerItems.add(new DrawerItem("Terminal", getResources().getDrawable(android.R.drawable.btn_star)));
+        drawerItems.add(new DrawerItem("Files", getResources().getDrawable(R.drawable.cloud_icon)));
+        drawerItems.add(new DrawerItem("Wallet", getResources().getDrawable(R.drawable.wallet_icon)));
+        drawerItems.add(new DrawerItem("Terminal", getResources().getDrawable(R.drawable.terminal_icon)));
+        drawerItems.add(new DrawerItem("Settings", getResources().getDrawable(R.drawable.settings_icon)));
         // create the drawer's adapter and set it
         drawerList = (ListView)findViewById(R.id.left_drawer_list);
         drawerList.setAdapter(new DrawerAdapter(this, R.layout.drawer_list_item, drawerItems));
+        // set action stuff for when drawer items are selected
+        drawerList.setOnItemClickListener(new ListView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                switch (position) {
+                    case 0:
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, new FilesFragment()).commit();
+                        getSupportActionBar().setTitle("Files");
+                        break;
+                    case 1:
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, new WalletFragment()).commit();
+                        getSupportActionBar().setTitle("Wallet");
+                        break;
+                    case 2:
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, new TerminalFragment()).commit();
+                        getSupportActionBar().setTitle("Terminal");
+                        break;
+                    case 3:
+                        // settings fragment
+                        break;
+                }
+                drawerList.setItemChecked(position, true);
+//                drawerLayout.closeDrawer(drawerList);
+            }
+        });
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
