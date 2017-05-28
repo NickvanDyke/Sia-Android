@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="drawer_entries">
+        <item>Files</item>
+        <item>Wallet</item>
+        <item>Terminal</item>
+    </string-array>
+    <string-array name="drawer_entry_values">
+        <item>files</item>
+        <item>wallet</item>
+        <item>terminal</item>
+    </string-array>
+</resources>

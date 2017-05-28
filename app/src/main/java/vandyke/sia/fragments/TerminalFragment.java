@@ -17,6 +17,7 @@ import android.widget.TextView;
 import vandyke.sia.R;
 
 import java.io.*;
+import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -28,14 +29,31 @@ public class TerminalFragment extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_terminal, container, false);
-
         copyBinary();
+
+//        Thread socket = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    ServerSocket socket = new ServerSocket(9980);
+//                    while (true) {
+//                        System.out.println("waiting for connection");
+//                        socket.accept();
+//                        System.out.println("something connected to socket");
+//                    }
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
+//        socket.start();
+
 
         input = (EditText)v.findViewById(R.id.input);
         input.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 try {
-                    String enteredCommand = "-a 192.168.1.133:9980";//v.getText().toString();
+                    String enteredCommand = v.getText().toString();
 //                    v.setText("");
                     ArrayList<String> fullCommand = new ArrayList<>(Arrays.asList(enteredCommand.split(" ")));
                     fullCommand.add(0, siacFile.getAbsolutePath());
