@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group
+            android:id="@+id/main_items"
+            android:checkableBehavior="all">
+        <item
+                android:id="@+id/drawer_item_files"
+                android:icon="@drawable/cloud_icon"
+                android:title="Files"/>
+        <item
+                android:id="@+id/drawer_item_wallet"
+                android:icon="@drawable/wallet_icon"
+                android:title="Wallet"/>
+        <item
+                android:id="@+id/drawer_item_terminal"
+                android:icon="@drawable/terminal_icon"
+                android:title="Terminal"/>
+    </group>
+    <group
+            android:id="@+id/extra_items"
+            android:checkableBehavior="all">
+    <item
+                android:id="@+id/drawer_item_settings"
+                android:icon="@drawable/settings_icon"
+                android:title="Settings"/>
+    </group>
+</menu>

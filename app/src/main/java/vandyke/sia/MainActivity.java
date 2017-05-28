@@ -1,6 +1,8 @@
 package vandyke.sia;
 
 import android.content.res.Configuration;
+import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -8,22 +10,17 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
-import vandyke.sia.Drawer.DrawerAdapter;
-import vandyke.sia.Drawer.DrawerItem;
 import vandyke.sia.fragments.FilesFragment;
 import vandyke.sia.fragments.TerminalFragment;
 import vandyke.sia.fragments.WalletFragment;
-
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
-    private ListView drawerList;
+    private NavigationView navigationView;
+
+    private MenuItem activeMenuItem;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,37 +36,34 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout.addDrawerListener(drawerToggle);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
-        // load the items in the array that the drawer's adapter will use
-        ArrayList<DrawerItem> drawerItems = new ArrayList<>();
-        drawerItems.add(new DrawerItem("Files", getResources().getDrawable(R.drawable.cloud_icon)));
-        drawerItems.add(new DrawerItem("Wallet", getResources().getDrawable(R.drawable.wallet_icon)));
-        drawerItems.add(new DrawerItem("Terminal", getResources().getDrawable(R.drawable.terminal_icon)));
-        drawerItems.add(new DrawerItem("Settings", getResources().getDrawable(R.drawable.settings_icon)));
-        // create the drawer's adapter and set it
-        drawerList = (ListView)findViewById(R.id.left_drawer_list);
-        drawerList.setAdapter(new DrawerAdapter(this, R.layout.drawer_list_item, drawerItems));
         // set action stuff for when drawer items are selected
-        drawerList.setOnItemClickListener(new ListView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                switch (position) {
-                    case 0:
+        navigationView = (NavigationView)findViewById(R.id.drawer_navigation_view);
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                if (activeMenuItem != null)
+                    activeMenuItem.setChecked(false);
+                item.setChecked(true);
+                activeMenuItem = item;
+                drawerLayout.closeDrawers();
+
+                switch (item.getItemId()) {
+                    case R.id.drawer_item_files:
                         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, new FilesFragment()).commit();
                         getSupportActionBar().setTitle("Files");
                         break;
-                    case 1:
+                    case R.id.drawer_item_wallet:
                         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, new WalletFragment()).commit();
                         getSupportActionBar().setTitle("Wallet");
                         break;
-                    case 2:
+                    case R.id.drawer_item_terminal:
                         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, new TerminalFragment()).commit();
                         getSupportActionBar().setTitle("Terminal");
                         break;
-                    case 3:
+                    case R.id.drawer_item_settings:
                         // settings fragment
                         break;
                 }
-                drawerList.setItemChecked(position, true);
-//                drawerLayout.closeDrawer(drawerList);
+                return false;
             }
         });
     }
@@ -97,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.terminal_toolbar, menu);
+        getMenuInflater().inflate(R.menu.main_toolbar, menu);
         return true;
     }
 }
