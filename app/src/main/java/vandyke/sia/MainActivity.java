@@ -40,8 +40,10 @@ public class MainActivity extends AppCompatActivity {
         navigationView = (NavigationView)findViewById(R.id.drawer_navigation_view);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                if (item == activeMenuItem)
+                if (item == activeMenuItem) {
+                    drawerLayout.closeDrawers();
                     return true;
+                }
 
                 if (activeMenuItem != null)
                     activeMenuItem.setChecked(false);
