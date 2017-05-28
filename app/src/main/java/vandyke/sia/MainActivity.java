@@ -40,6 +40,9 @@ public class MainActivity extends AppCompatActivity {
         navigationView = (NavigationView)findViewById(R.id.drawer_navigation_view);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                if (item == activeMenuItem)
+                    return true;
+
                 if (activeMenuItem != null)
                     activeMenuItem.setChecked(false);
                 item.setChecked(true);
@@ -50,18 +53,18 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.drawer_item_files:
                         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, new FilesFragment()).commit();
                         getSupportActionBar().setTitle("Files");
-                        break;
+                        return true;
                     case R.id.drawer_item_wallet:
                         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, new WalletFragment()).commit();
                         getSupportActionBar().setTitle("Wallet");
-                        break;
+                        return true;
                     case R.id.drawer_item_terminal:
                         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, new TerminalFragment()).commit();
                         getSupportActionBar().setTitle("Terminal");
-                        break;
+                        return true;
                     case R.id.drawer_item_settings:
                         // settings fragment
-                        break;
+                        return true;
                 }
                 return false;
             }

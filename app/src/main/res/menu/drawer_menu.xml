@@ -5,15 +5,15 @@
             android:checkableBehavior="all">
         <item
                 android:id="@+id/drawer_item_files"
-                android:icon="@drawable/cloud_icon"
+                android:icon="@drawable/icon_cloud"
                 android:title="Files"/>
         <item
                 android:id="@+id/drawer_item_wallet"
-                android:icon="@drawable/wallet_icon"
+                android:icon="@drawable/icon_wallet"
                 android:title="Wallet"/>
         <item
                 android:id="@+id/drawer_item_terminal"
-                android:icon="@drawable/terminal_icon"
+                android:icon="@drawable/icon_terminal"
                 android:title="Terminal"/>
     </group>
     <group
@@ -21,7 +21,7 @@
             android:checkableBehavior="all">
     <item
                 android:id="@+id/drawer_item_settings"
-                android:icon="@drawable/settings_icon"
+                android:icon="@drawable/icon_settings"
                 android:title="Settings"/>
     </group>
 </menu>
