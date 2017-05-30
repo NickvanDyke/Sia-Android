@@ -8,6 +8,10 @@
                 android:icon="@drawable/icon_cloud"
                 android:title="Files"/>
         <item
+                android:id="@+id/drawer_item_hosting"
+                android:icon="@drawable/icon_hosting"
+                android:title="Hosting"/>
+        <item
                 android:id="@+id/drawer_item_wallet"
                 android:icon="@drawable/icon_wallet"
                 android:title="Wallet"/>

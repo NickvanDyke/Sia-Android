@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import vandyke.sia.fragments.FilesFragment;
+import vandyke.sia.fragments.HostingFragment;
 import vandyke.sia.fragments.TerminalFragment;
 import vandyke.sia.fragments.WalletFragment;
 
@@ -59,6 +60,10 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.drawer_item_wallet:
                         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, new WalletFragment()).commit();
                         getSupportActionBar().setTitle("Wallet");
+                        return true;
+                    case R.id.drawer_item_hosting:
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, new HostingFragment()).commit();
+                        getSupportActionBar().setTitle("Hosting");
                         return true;
                     case R.id.drawer_item_terminal:
                         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, new TerminalFragment()).commit();
