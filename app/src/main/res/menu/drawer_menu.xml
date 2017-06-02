@@ -27,5 +27,9 @@
                 android:id="@+id/drawer_item_settings"
                 android:icon="@drawable/icon_settings"
                 android:title="Settings"/>
+        <item
+                android:id="@+id/drawer_item_about"
+                android:icon="@drawable/icon_about"
+                android:title="About"/>
     </group>
 </menu>

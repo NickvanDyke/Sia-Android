@@ -1,6 +1,8 @@
 package vandyke.sia;
 
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
@@ -10,12 +12,15 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import vandyke.sia.fragments.FilesFragment;
-import vandyke.sia.fragments.HostingFragment;
-import vandyke.sia.fragments.TerminalFragment;
-import vandyke.sia.fragments.WalletFragment;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
+import vandyke.sia.fragments.*;
 
 public class MainActivity extends AppCompatActivity {
+
+    public static SharedPreferences prefs;
+    public static RequestQueue requestQueue;
+
 
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
@@ -26,10 +31,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.drawer_layout);
-        // set toolbar as actionbar
+
+        // load static stuff stuff
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        requestQueue = Volley.newRequestQueue(this);
+
         setSupportActionBar((Toolbar)findViewById(R.id.toolbar));
-        // set new TerminalFragment in the frame meant for displaying fragments
-        getSupportFragmentManager().beginTransaction().add(R.id.fragment_frame, new TerminalFragment()).commit();
 
         drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
         // set up drawer button on action bar
@@ -70,7 +77,11 @@ public class MainActivity extends AppCompatActivity {
                         getSupportActionBar().setTitle("Terminal");
                         return true;
                     case R.id.drawer_item_settings:
-                        // settings fragment
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, new SettingsFragment()).commit();
+                        getSupportActionBar().setTitle("Settings");
+                        return true;
+                    case R.id.drawer_item_about:
+                        // about stuff
                         return true;
                 }
                 return false;

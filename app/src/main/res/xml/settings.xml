@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <EditTextPreference
+            android:key="address"
+            android:title="Address"
+            android:summary="The IP address and port number of your Sia daemon"
+            android:dialogTitle="IP:port"/>
+    <EditTextPreference
+            android:key="apiPass"
+            android:title="API Password"
+            android:dialogTitle="API Password"/>
+</PreferenceScreen>
