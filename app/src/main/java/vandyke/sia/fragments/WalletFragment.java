@@ -1,47 +1,61 @@
 package vandyke.sia.fragments;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import vandyke.sia.MainActivity;
+import org.json.JSONException;
+import org.json.JSONObject;
 import vandyke.sia.R;
-
-import java.util.HashMap;
-import java.util.Map;
+import vandyke.sia.SiaRequest;
 
 public class WalletFragment extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_wallet, container, false);
 
-        StringRequest request = new StringRequest(Request.Method.GET, "http://" + MainActivity.prefs.getString("address", "10.0.0.2:9980") + "/wallet",
-                new Response.Listener<String>() {
-                    public void onResponse(String response) {
-                        System.out.println(response);
-                    }
-                }, new Response.ErrorListener() {
-            public void onErrorResponse(VolleyError error) {
-                System.out.println(error.toString());
+        new SiaRequest(Request.Method.GET, "/wallet", new SiaRequest.VolleyCallback() {
+            public void onResponse(String response) {
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    System.out.println(jsonObject);
+                    if (jsonObject.getString("unlocked").equals("false"))
+                        unlockWallet();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
-        }) {
-            @Override
-            public Map<String, String> getHeaders(){
-                Map<String, String> headers = new HashMap<>();
-                headers.put("User-agent", "Sia-Agent");
-                headers.put("Authorization", "Basic " + Base64.encodeToString(MainActivity.prefs.getString("apiPass", "").getBytes(), 0));
-                return headers;
-            }
-        };
-
-        MainActivity.requestQueue.add(request);
+        });
 
         return v;
+    }
+
+    public void unlockWallet() {
+        final EditText editText = new EditText(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Wallet Password");
+        builder.setView(editText);
+        builder.setPositiveButton("Unlock", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                SiaRequest request = new SiaRequest(Request.Method.POST, "/wallet/unlock", new SiaRequest.VolleyCallback() {
+                    public void onResponse(String jsonObject) {
+                        System.out.println(jsonObject);
+                    }
+                });
+                request.addParam("encryptionpassword", editText.getText().toString());
+                request.send();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
     }
 }
