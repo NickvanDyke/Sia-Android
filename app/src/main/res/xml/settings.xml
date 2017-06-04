@@ -4,9 +4,14 @@
             android:key="address"
             android:title="Address"
             android:summary="The IP address and port number of your Sia daemon"
+            android:gravity="center_horizontal"
             android:dialogTitle="IP:port"/>
+    <!--TODO: make this use password dots. Not sure why this isn't working-->
     <EditTextPreference
             android:key="apiPass"
             android:title="API Password"
-            android:dialogTitle="API Password"/>
+            android:dialogTitle="API Password"
+            android:gravity="center_horizontal"
+            android:inputType="textPassword"
+            android:password="true"/>
 </PreferenceScreen>
