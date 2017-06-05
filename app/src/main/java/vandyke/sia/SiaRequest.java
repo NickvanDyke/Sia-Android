@@ -10,12 +10,12 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 
 public class SiaRequest extends StringRequest {
 
+    private HashMap<String, String> headers;
     private HashMap<String, String> params;
 
     public SiaRequest(int method, String command, final VolleyCallback callback) {
@@ -31,7 +31,6 @@ public class SiaRequest extends StringRequest {
             public void onErrorResponse(VolleyError error) {
                 try {
                     if (error.networkResponse != null) {
-//                        JSONObject json = new JSONObject(new String(error.networkResponse.data, "utf-8"));
                         System.out.println(new String(error.networkResponse.data, "utf-8"));
 //                        if (json.getString("message").contains("wallet must be unlocked before it can be used"))
                     }
@@ -40,14 +39,14 @@ public class SiaRequest extends StringRequest {
                 }
             }
         });
+        headers = new HashMap<>();
+        headers.put("User-agent", "Sia-Agent");
+        headers.put("Authorization", "Basic " + Base64.encodeToString((":" + MainActivity.prefs.getString("apiPass", "")).getBytes(), 0));
         params = new HashMap<>();
     }
 
     @Override
     public Map<String, String> getHeaders() {
-        Map<String, String> headers = new HashMap<>();
-        headers.put("User-agent", "Sia-Agent");
-        headers.put("Authorization", "Basic " + Base64.encodeToString((":" + MainActivity.prefs.getString("apiPass", "")).getBytes(), 0));
         return headers;
     }
 
@@ -58,6 +57,10 @@ public class SiaRequest extends StringRequest {
 
     public void addParam(String key, String value) {
         params.put(key, value);
+    }
+
+    public void addHeader(String key, String value) {
+        headers.put(key, value);
     }
 
     public void send() {
@@ -90,10 +93,16 @@ public class SiaRequest extends StringRequest {
         new SiaRequest(Request.Method.GET, "/wallet/address", callback).send();
     }
 
-    public static void sendSiacoins(String recipient, String amount, VolleyCallback callback) {
+    public static void sendSiacoins(String recipient, String amount, VolleyCallback callback) { // TODO: actual value sent isn't what's entered?
         SiaRequest request = new SiaRequest(Method.POST, "/wallet/siacoins", callback);
         request.addParam("amount", amount);
         request.addParam("destination", recipient);
+        request.send();
+    }
+
+    public static void transactions(VolleyCallback callback) {
+        // TODO: maybe use actual value instead of really big literal lol
+        SiaRequest request = new SiaRequest(Method.GET, String.format("/wallet/transactions?startheight=%s&endheight=%s", "0", "1000000000"), callback);
         request.send();
     }
 

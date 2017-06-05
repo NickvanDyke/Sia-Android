@@ -14,20 +14,22 @@ import vandyke.sia.SiaRequest;
 import vandyke.sia.dialogs.ReceiveDialog;
 import vandyke.sia.dialogs.SendDialog;
 import vandyke.sia.dialogs.UnlockWalletDialog;
+import vandyke.sia.transaction.Transaction;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 
 public class WalletFragment extends Fragment {
 
     private BigDecimal balanceHastings;
 
     private TextView balance;
+    private ArrayList<Transaction> transactions;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_wallet, container, false);
         setHasOptionsMenu(true);
         balance = (TextView)v.findViewById(R.id.balanceText);
-        refreshBalance();
 
         SiaRequest.wallet(new SiaRequest.VolleyCallback() {
             public void onSuccess(JSONObject response) {
@@ -40,6 +42,8 @@ public class WalletFragment extends Fragment {
                 }
             }
         });
+
+        refresh();
 
         final Button receiveButton = (Button)v.findViewById(R.id.receiveButton);
         receiveButton.setOnClickListener(new View.OnClickListener() {
@@ -77,23 +81,31 @@ public class WalletFragment extends Fragment {
         // true, then it has handled the app icon touch event
         switch (item.getItemId()) {
             case R.id.actionRefresh:
-                refreshBalance();
+                refresh();
         }
         // Handle your other action bar items...
 
         return super.onOptionsItemSelected(item);
     }
 
-    public void refreshBalance() {
+    public void refresh() {
+        // refresh balance
         SiaRequest.wallet(new SiaRequest.VolleyCallback() {
             public void onSuccess(JSONObject response) {
                 try {
                     balanceHastings = new BigDecimal(response.getString("confirmedsiacoinbalance"));
-                    balance.setText(SiaRequest.hastingsToSC(balanceHastings)
-                                    .setScale(2, BigDecimal.ROUND_FLOOR).toPlainString());
+                    balance.setText(SiaRequest.hastingsToSC(balanceHastings).setScale(2, BigDecimal.ROUND_FLOOR).toPlainString());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+            }
+        });
+        // refresh transactions
+        SiaRequest.transactions(new SiaRequest.VolleyCallback() {
+            public void onSuccess(JSONObject response) {
+                transactions = Transaction.populateTransactions(response);
+                for (Transaction tx : transactions)
+                    System.out.println(tx);
             }
         });
     }
