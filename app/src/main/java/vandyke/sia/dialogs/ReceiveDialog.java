@@ -21,7 +21,7 @@ public class ReceiveDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_receive_address, null);
-        SiaRequest.getNewAddress(new SiaRequest.VolleyCallback() {
+        SiaRequest.walletAddress(new SiaRequest.VolleyCallback() {
             public void onSuccess(JSONObject response) {
                 try {
                     ((TextView)view.findViewById(R.id.receiveAddress)).setText(response.getString("address"));

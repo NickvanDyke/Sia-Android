@@ -72,13 +72,21 @@ public class SiaRequest extends StringRequest {
 
     /** API Methods for convenience */
 
-    public static void unlockWallet(String password, VolleyCallback callback) {
+    public static void wallet(VolleyCallback callback) {
+        new SiaRequest(Request.Method.GET, "/wallet", callback).send();
+    }
+
+    public static void walletUnlock(String password, VolleyCallback callback) {
         SiaRequest request = new SiaRequest(Method.POST, "/wallet/unlock", callback);
         request.addParam("encryptionpassword", password);
         request.send();
     }
 
-    public static void getNewAddress(VolleyCallback callback) {
+    public static void walletLock(VolleyCallback callback) {
+        new SiaRequest(Method.POST, "/wallet/lock", callback).send();
+    }
+
+    public static void walletAddress(VolleyCallback callback) {
         new SiaRequest(Request.Method.GET, "/wallet/address", callback).send();
     }
 
@@ -89,8 +97,16 @@ public class SiaRequest extends StringRequest {
         request.send();
     }
 
+    public static BigDecimal hastingsToSC(String hastings) {
+        return new BigDecimal(hastings).divide(new BigDecimal("1000000000000000000000000"));
+    }
+
     public static BigDecimal hastingsToSC(BigDecimal hastings) {
         return hastings.divide(new BigDecimal("1000000000000000000000000"));
+    }
+
+    public static BigDecimal scToHastings(String sc) {
+        return new BigDecimal(sc).multiply(new BigDecimal("1000000000000000000000000"));
     }
 
     public static BigDecimal scToHastings(BigDecimal sc) {

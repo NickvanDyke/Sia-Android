@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+      xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+            android:title="Refresh"
+            app:showAsAction="always"
+            android:icon="@drawable/icon_refresh"
+            android:id="@+id/actionRefresh"/>
+    <item
+            android:title="Lock"
+            android:id="@+id/actionLock"
+            app:showAsAction="always"/>
+</menu>

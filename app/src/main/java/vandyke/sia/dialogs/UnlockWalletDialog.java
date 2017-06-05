@@ -21,7 +21,7 @@ public class UnlockWalletDialog extends DialogFragment {
                 .setView(view)
                 .setPositiveButton("Unlock", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        SiaRequest.unlockWallet(((EditText)view.findViewById(R.id.walletPassword)).getText().toString(), new SiaRequest.VolleyCallback() {
+                        SiaRequest.walletUnlock(((EditText)view.findViewById(R.id.walletPassword)).getText().toString(), new SiaRequest.VolleyCallback() {
                             public void onSuccess(JSONObject response) {
                                 System.out.println(response);
                             }

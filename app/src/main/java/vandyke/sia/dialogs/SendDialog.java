@@ -12,22 +12,25 @@ import org.json.JSONObject;
 import vandyke.sia.R;
 import vandyke.sia.SiaRequest;
 
+import java.math.BigDecimal;
+
 public class SendDialog extends DialogFragment {
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_send, null);
-        builder.setTitle("Receive Address")
+        builder.setTitle("Send Siacoins")
                 .setView(view)
                 .setPositiveButton("Send", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        SiaRequest.sendSiacoins(((EditText) view.findViewById(R.id.sendRecipient)).getText().toString(),
-                                ((EditText) view.findViewById(R.id.sendAmount)).getText().toString(),
-                                new SiaRequest.VolleyCallback() {
-                                    public void onSuccess(JSONObject response) {
-                                        System.out.println(response);
-                                    }
-                                });
+//                        SiaRequest.sendSiacoins(((EditText)view.findViewById(R.id.sendRecipient)).getText().toString(),
+//                                SiaRequest.scToHastings(((EditText)view.findViewById(R.id.sendAmount)).getText().toString()).toString(),
+//                                new SiaRequest.VolleyCallback() {
+//                                    public void onSuccess(JSONObject response) {
+//                                        System.out.println(response);
+//                                    }
+//                                });
+                        System.out.println(SiaRequest.scToHastings(((EditText)view.findViewById(R.id.sendAmount)).getText().toString()).toString());
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
