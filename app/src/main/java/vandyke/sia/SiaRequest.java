@@ -90,7 +90,11 @@ public class SiaRequest extends StringRequest {
     }
 
     public static void walletAddress(VolleyCallback callback) {
-        new SiaRequest(Request.Method.GET, "/wallet/address", callback).send();
+        new SiaRequest(Method.GET, "/wallet/address", callback).send();
+    }
+
+    public static void walletAddresses(VolleyCallback callback) {
+        new SiaRequest(Method.GET, "/wallet/addresses", callback).send();
     }
 
     public static void sendSiacoins(String recipient, String amount, VolleyCallback callback) { // TODO: actual value sent isn't what's entered?
