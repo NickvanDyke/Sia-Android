@@ -37,8 +37,31 @@ public class Wallet {
     public static void init(String password, boolean force, SiaRequest.VolleyCallback callback) {
         new SiaRequest(POST, "/wallet/init", callback)
                 .addParam("encryptionpassword", password)
-                .addParam("force", force ? "true" : "false");
+                .addParam("force", force ? "true" : "false")
+                .send();
     }
+
+    public static void initSeed(String password, boolean force, String seed, SiaRequest.VolleyCallback callback) {
+        new SiaRequest(POST, "/wallet/init", callback)
+                .addParam("encryptionpassword", password)
+                .addParam("force", force ? "true" : "false")
+                .addParam("seed", seed)
+                .send();
+    }
+
+    public static void seed(String password, String dictionary, String seed, SiaRequest.VolleyCallback callback) {
+        new SiaRequest(POST, "/wallet/seed", callback)
+                .addParam("encryptionpassword", password)
+                .addParam("dictionary", dictionary)
+                .addParam("seed", seed)
+                .send();
+    }
+
+    public static void seeds(String dictionary, SiaRequest.VolleyCallback callback) {
+        new SiaRequest(GET, String.format("/wallet/seeds?dictionary=%s", dictionary), callback)
+                .send();
+    }
+
 
     public static void changePassword(String currentPassword, String newPassword, SiaRequest.VolleyCallback callback) {
         new SiaRequest(POST, "/wallet/changepassword", callback)
@@ -47,10 +70,24 @@ public class Wallet {
                 .send();
     }
 
-    public static void sendSiacoins(String recipient, String amount, SiaRequest.VolleyCallback callback) { // TODO: actual value sent isn't what's entered?
+    public static void sendSiacoins(String amount, String recipient, SiaRequest.VolleyCallback callback) {
         new SiaRequest(POST, "/wallet/siacoins", callback)
                 .addParam("amount", amount)
                 .addParam("destination", recipient)
+                .send();
+    }
+
+    public static void sendSiafunds(String amount, String recipient, SiaRequest.VolleyCallback callback) {
+        new SiaRequest(POST, "/wallet/siafunds", callback)
+                .addParam("amount", amount)
+                .addParam("destination", recipient)
+                .send();
+    }
+
+    public static void sweepSeed(String dictionary, String seed, SiaRequest.VolleyCallback callback) {
+        new SiaRequest(POST, "/wallet/sweep/seed", callback)
+                .addParam("dictionary", dictionary)
+                .addParam("seed", seed)
                 .send();
     }
 

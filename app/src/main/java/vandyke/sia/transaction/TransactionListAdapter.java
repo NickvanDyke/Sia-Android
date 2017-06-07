@@ -2,6 +2,7 @@ package vandyke.sia.transaction;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,13 +54,18 @@ public class TransactionListAdapter extends ArrayAdapter {
         String timeString;
         if (transaction.getConfirmationDate() == null) {
             timeString = "Unconfirmed";
+            holder.transactionStatus.setTextColor(Color.RED);
         } else {
             timeString = df.format(transaction.getConfirmationDate());
         }
         holder.transactionStatus.setText(timeString);
         String valueText = Wallet.hastingsToSC(transaction.getNetValue()).setScale(2, BigDecimal.ROUND_FLOOR).toPlainString();
-        if (!valueText.contains("-"))
+        if (valueText.contains("-")) {
+            holder.transactionValue.setTextColor(Color.RED);
+        } else {
             valueText = "+" + valueText;
+            holder.transactionValue.setTextColor(Color.GREEN);
+        }
         holder.transactionValue.setText(valueText);
 
         return row;

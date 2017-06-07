@@ -1,12 +1,15 @@
 package vandyke.sia;
 
+import android.content.Context;
 import android.util.Base64;
+import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
+import vandyke.sia.dialogs.UnlockWalletDialog;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
@@ -31,10 +34,13 @@ public class SiaRequest extends StringRequest {
             public void onErrorResponse(VolleyError error) {
                 try {
                     if (error.networkResponse != null) {
-                        System.out.println(new String(error.networkResponse.data, "utf-8"));
-//                        if (json.getString("message").contains("wallet must be unlocked before it can be used"))
+                        String response = new String(error.networkResponse.data, "utf-8");
+                        System.out.println(response);
+                        callback.onError(new JSONObject(response));
                     }
                 } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
@@ -71,6 +77,27 @@ public class SiaRequest extends StringRequest {
 
     public interface VolleyCallback {
         void onSuccess(JSONObject response);
-//        void onError(JSONObject error);
+        void onError(JSONObject error);
+    }
+
+
+    /** methods for checking for specific error messages from Volley error responses and taking appropriate action */
+
+    public static void checkIfWalletLocked(Context context, JSONObject json) {
+        try { // TODO: get proper message string
+            if (json.getString("message").contains("wallet must be unlocked"))
+                Toast.makeText(context, "Wallet locked", Toast.LENGTH_SHORT).show();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void checkIfIncorrectWalletPassword(Context context, JSONObject json) {
+        try { // TODO: get proper message string
+            if (json.getString("message").contains("wrong password"))
+                Toast.makeText(context, "Incorrect wallet password", Toast.LENGTH_SHORT).show();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }

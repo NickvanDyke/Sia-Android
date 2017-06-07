@@ -83,6 +83,9 @@ public class WalletFragment extends Fragment {
                     e.printStackTrace();
                 }
             }
+            public void onError(JSONObject error) {
+                SiaRequest.checkIfWalletLocked(getContext(), error);
+            }
         });
 
         return v;
@@ -97,6 +100,9 @@ public class WalletFragment extends Fragment {
                 Wallet.lock(new SiaRequest.VolleyCallback() {
                     public void onSuccess(JSONObject response) {
                         Toast.makeText(getContext(), "Wallet Locked", Toast.LENGTH_SHORT).show();
+                    }
+                    public void onError(JSONObject error) {
+                        SiaRequest.checkIfWalletLocked(getContext(), error);
                     }
                 });
         }
@@ -115,6 +121,9 @@ public class WalletFragment extends Fragment {
                     e.printStackTrace();
                 }
             }
+            public void onError(JSONObject error) {
+                SiaRequest.checkIfWalletLocked(getContext(), error);
+            }
         });
         // refresh transactions
         Wallet.transactions(new SiaRequest.VolleyCallback() {
@@ -122,6 +131,9 @@ public class WalletFragment extends Fragment {
                 transactions.clear();
                 transactions.addAll(Transaction.populateTransactions(response));
                 adapter.notifyDataSetChanged();
+            }
+            public void onError(JSONObject error) {
+                SiaRequest.checkIfWalletLocked(getContext(), error);
             }
         });
     }
