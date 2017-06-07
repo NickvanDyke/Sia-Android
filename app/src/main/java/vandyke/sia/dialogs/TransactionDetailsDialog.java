@@ -14,7 +14,7 @@ public class TransactionDetailsDialog extends DialogFragment {
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_receive_address, null);
+        final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_wallet_receive, null);
         builder.setTitle("Transaction Details")
                 .setView(view)
                 .setNegativeButton("Close", new DialogInterface.OnClickListener() {

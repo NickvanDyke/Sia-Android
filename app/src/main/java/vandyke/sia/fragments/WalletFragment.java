@@ -14,6 +14,7 @@ import org.json.JSONObject;
 import vandyke.sia.R;
 import vandyke.sia.SiaRequest;
 import vandyke.sia.api.Wallet;
+import vandyke.sia.dialogs.ChangeWalletPasswordDialog;
 import vandyke.sia.dialogs.ReceiveDialog;
 import vandyke.sia.dialogs.SendDialog;
 import vandyke.sia.dialogs.UnlockWalletDialog;
@@ -96,6 +97,9 @@ public class WalletFragment extends Fragment {
             case R.id.actionRefresh:
                 refresh();
                 break;
+            case R.id.actionUnlock:
+                UnlockWalletDialog.createAndShow(getFragmentManager());
+                break;
             case R.id.actionLock:
                 Wallet.lock(new SiaRequest.VolleyCallback() {
                     public void onSuccess(JSONObject response) {
@@ -105,6 +109,10 @@ public class WalletFragment extends Fragment {
                         SiaRequest.checkIfWalletLocked(getContext(), error);
                     }
                 });
+                break;
+            case R.id.actionChangePassword:
+                ChangeWalletPasswordDialog.createAndShow(getFragmentManager());
+                break;
         }
 
         return super.onOptionsItemSelected(item);

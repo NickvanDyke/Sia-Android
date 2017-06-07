@@ -19,7 +19,7 @@ public class UnlockWalletDialog extends DialogFragment {
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_unlock_wallet, null);
+        final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_wallet_unlock, null);
         builder.setTitle("Unlock Wallet")
                 .setView(view)
                 .setPositiveButton("Unlock", new DialogInterface.OnClickListener() {
@@ -43,7 +43,7 @@ public class UnlockWalletDialog extends DialogFragment {
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.dialog_unlock_wallet, null);
+        return inflater.inflate(R.layout.dialog_wallet_unlock, null);
     }
 
     public static void createAndShow(FragmentManager fragmentManager) {

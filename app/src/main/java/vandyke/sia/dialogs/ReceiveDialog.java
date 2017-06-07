@@ -23,7 +23,7 @@ public class ReceiveDialog extends DialogFragment {
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_receive_address, null);
+        final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_wallet_receive, null);
         Wallet.newAddress(new SiaRequest.VolleyCallback() {
             public void onSuccess(JSONObject response) {
                 try {
@@ -54,7 +54,7 @@ public class ReceiveDialog extends DialogFragment {
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.dialog_receive_address, null);
+        return inflater.inflate(R.layout.dialog_wallet_receive, null);
     }
 
     public static void createAndShow(FragmentManager fragmentManager) {

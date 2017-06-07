@@ -100,4 +100,8 @@ public class SiaRequest extends StringRequest {
             e.printStackTrace();
         }
     }
+
+    public static void genericSuccessToast(Context context) {
+        Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show();
+    }
 }

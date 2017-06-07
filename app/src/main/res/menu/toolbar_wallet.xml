@@ -8,7 +8,15 @@
             android:icon="@drawable/icon_refresh"
             android:id="@+id/actionRefresh"/>
     <item
-            android:title="Lock"
+            android:title="Unlock Wallet"
+            android:id="@+id/actionUnlock"
+            app:showAsAction="never"/>
+    <item
+            android:title="Lock Wallet"
             android:id="@+id/actionLock"
-            app:showAsAction="always"/>
+            app:showAsAction="never"/>
+    <item
+            android:title="Change Password"
+            android:id="@+id/actionChangePassword"
+            app:showAsAction="never"/>
 </menu>
