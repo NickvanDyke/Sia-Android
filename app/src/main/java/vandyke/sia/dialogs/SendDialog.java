@@ -8,11 +8,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.EditText;
-import org.json.JSONObject;
 import vandyke.sia.R;
-import vandyke.sia.SiaRequest;
-
-import java.math.BigDecimal;
+import vandyke.sia.api.Wallet;
 
 public class SendDialog extends DialogFragment {
 
@@ -30,7 +27,7 @@ public class SendDialog extends DialogFragment {
 //                                        System.out.println(response);
 //                                    }
 //                                });
-                        System.out.println(SiaRequest.scToHastings(((EditText)view.findViewById(R.id.sendAmount)).getText().toString()).toString());
+                        System.out.println(Wallet.scToHastings(((EditText)view.findViewById(R.id.sendAmount)).getText().toString()).toString());
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

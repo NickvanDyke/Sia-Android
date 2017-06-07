@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import vandyke.sia.R;
-import vandyke.sia.SiaRequest;
+import vandyke.sia.api.Wallet;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -57,7 +57,7 @@ public class TransactionListAdapter extends ArrayAdapter {
             timeString = df.format(transaction.getConfirmationDate());
         }
         holder.transactionStatus.setText(timeString);
-        String valueText = SiaRequest.hastingsToSC(transaction.getNetValue()).setScale(2, BigDecimal.ROUND_FLOOR).toPlainString();
+        String valueText = Wallet.hastingsToSC(transaction.getNetValue()).setScale(2, BigDecimal.ROUND_FLOOR).toPlainString();
         if (!valueText.contains("-"))
             valueText = "+" + valueText;
         holder.transactionValue.setText(valueText);

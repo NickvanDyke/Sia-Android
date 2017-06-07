@@ -15,13 +15,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import vandyke.sia.R;
 import vandyke.sia.SiaRequest;
+import vandyke.sia.api.Wallet;
 
 public class ReceiveDialog extends DialogFragment {
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_receive_address, null);
-        SiaRequest.walletAddress(new SiaRequest.VolleyCallback() {
+        Wallet.newAddress(new SiaRequest.VolleyCallback() {
             public void onSuccess(JSONObject response) {
                 try {
                     ((TextView)view.findViewById(R.id.receiveAddress)).setText(response.getString("address"));

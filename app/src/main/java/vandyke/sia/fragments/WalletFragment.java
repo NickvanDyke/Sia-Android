@@ -8,10 +8,12 @@ import android.view.*;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 import vandyke.sia.R;
 import vandyke.sia.SiaRequest;
+import vandyke.sia.api.Wallet;
 import vandyke.sia.dialogs.ReceiveDialog;
 import vandyke.sia.dialogs.SendDialog;
 import vandyke.sia.dialogs.UnlockWalletDialog;
@@ -57,7 +59,7 @@ public class WalletFragment extends Fragment {
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                 builder.setTitle("Exact Balance");
-                builder.setMessage(SiaRequest.hastingsToSC(balanceHastings).toPlainString() + " Siacoins");
+                builder.setMessage(Wallet.hastingsToSC(balanceHastings).toPlainString() + " Siacoins");
                 builder.setPositiveButton("Close", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
 
@@ -71,7 +73,7 @@ public class WalletFragment extends Fragment {
         adapter = new TransactionListAdapter(getContext(), R.layout.transaction_list_item, transactions);
         transactionList.setAdapter(adapter);
 
-        SiaRequest.wallet(new SiaRequest.VolleyCallback() {
+        Wallet.wallet(new SiaRequest.VolleyCallback() {
             public void onSuccess(JSONObject response) {
                 try {
                     System.out.println(response);
@@ -87,31 +89,35 @@ public class WalletFragment extends Fragment {
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Pass the event to ActionBarDrawerToggle, if it returns
-        // true, then it has handled the app icon touch event
         switch (item.getItemId()) {
             case R.id.actionRefresh:
                 refresh();
+                break;
+            case R.id.actionLock:
+                Wallet.lock(new SiaRequest.VolleyCallback() {
+                    public void onSuccess(JSONObject response) {
+                        Toast.makeText(getContext(), "Wallet Locked", Toast.LENGTH_SHORT).show();
+                    }
+                });
         }
-        // Handle your other action bar items...
 
         return super.onOptionsItemSelected(item);
     }
 
     public void refresh() {
         // refresh balance
-        SiaRequest.wallet(new SiaRequest.VolleyCallback() {
+        Wallet.wallet(new SiaRequest.VolleyCallback() {
             public void onSuccess(JSONObject response) {
                 try {
                     balanceHastings = new BigDecimal(response.getString("confirmedsiacoinbalance"));
-                    balance.setText(SiaRequest.hastingsToSC(balanceHastings).setScale(2, BigDecimal.ROUND_FLOOR).toPlainString());
+                    balance.setText(Wallet.hastingsToSC(balanceHastings).setScale(2, BigDecimal.ROUND_FLOOR).toPlainString());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
         });
         // refresh transactions
-        SiaRequest.transactions(new SiaRequest.VolleyCallback() {
+        Wallet.transactions(new SiaRequest.VolleyCallback() {
             public void onSuccess(JSONObject response) {
                 transactions.clear();
                 transactions.addAll(Transaction.populateTransactions(response));

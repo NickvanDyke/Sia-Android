@@ -55,12 +55,14 @@ public class SiaRequest extends StringRequest {
         return params;
     }
 
-    public void addParam(String key, String value) {
+    public SiaRequest addParam(String key, String value) {
         params.put(key, value);
+        return this;
     }
 
-    public void addHeader(String key, String value) {
+    public SiaRequest addHeader(String key, String value) {
         headers.put(key, value);
+        return this;
     }
 
     public void send() {
@@ -70,59 +72,5 @@ public class SiaRequest extends StringRequest {
     public interface VolleyCallback {
         void onSuccess(JSONObject response);
 //        void onError(JSONObject error);
-    }
-
-
-    /** API Methods for convenience */
-
-    public static void wallet(VolleyCallback callback) {
-        new SiaRequest(Request.Method.GET, "/wallet", callback).send();
-    }
-
-    public static void walletUnlock(String password, VolleyCallback callback) {
-        SiaRequest request = new SiaRequest(Method.POST, "/wallet/unlock", callback);
-        request.addParam("encryptionpassword", password);
-        request.send();
-    }
-
-    public static void walletLock(VolleyCallback callback) {
-        new SiaRequest(Method.POST, "/wallet/lock", callback).send();
-    }
-
-    public static void walletAddress(VolleyCallback callback) {
-        new SiaRequest(Method.GET, "/wallet/address", callback).send();
-    }
-
-    public static void walletAddresses(VolleyCallback callback) {
-        new SiaRequest(Method.GET, "/wallet/addresses", callback).send();
-    }
-
-    public static void sendSiacoins(String recipient, String amount, VolleyCallback callback) { // TODO: actual value sent isn't what's entered?
-        SiaRequest request = new SiaRequest(Method.POST, "/wallet/siacoins", callback);
-        request.addParam("amount", amount);
-        request.addParam("destination", recipient);
-        request.send();
-    }
-
-    public static void transactions(VolleyCallback callback) {
-        // TODO: maybe use actual value instead of really big literal lol
-        SiaRequest request = new SiaRequest(Method.GET, String.format("/wallet/transactions?startheight=%s&endheight=%s", "0", "1000000000"), callback);
-        request.send();
-    }
-
-    public static BigDecimal hastingsToSC(String hastings) {
-        return new BigDecimal(hastings).divide(new BigDecimal("1000000000000000000000000"));
-    }
-
-    public static BigDecimal hastingsToSC(BigDecimal hastings) {
-        return hastings.divide(new BigDecimal("1000000000000000000000000"));
-    }
-
-    public static BigDecimal scToHastings(String sc) {
-        return new BigDecimal(sc).multiply(new BigDecimal("1000000000000000000000000"));
-    }
-
-    public static BigDecimal scToHastings(BigDecimal sc) {
-        return sc.multiply(new BigDecimal("1000000000000000000000000"));
     }
 }

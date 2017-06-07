@@ -11,6 +11,7 @@ import android.widget.EditText;
 import org.json.JSONObject;
 import vandyke.sia.R;
 import vandyke.sia.SiaRequest;
+import vandyke.sia.api.Wallet;
 
 public class UnlockWalletDialog extends DialogFragment {
 
@@ -21,7 +22,7 @@ public class UnlockWalletDialog extends DialogFragment {
                 .setView(view)
                 .setPositiveButton("Unlock", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        SiaRequest.walletUnlock(((EditText)view.findViewById(R.id.walletPassword)).getText().toString(), new SiaRequest.VolleyCallback() {
+                        Wallet.unlock(((EditText)view.findViewById(R.id.walletPassword)).getText().toString(), new SiaRequest.VolleyCallback() {
                             public void onSuccess(JSONObject response) {
                                 System.out.println(response);
                             }
