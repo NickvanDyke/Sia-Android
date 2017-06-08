@@ -10,6 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -78,11 +79,15 @@ public class SiaRequest extends StringRequest {
     }
 
     public static class Error {
-        enum Reason {
+        private static EnumMap<Reason, String> msgs;
+
+        public enum Reason {
             TIMEOUT,
             WALLET_PASSWORD_INCORRECT,
             WALLET_LOCKED,
-            UNACCOUNTED_FOR_ERROR
+            WALLET_ALREADY_UNLOCKED,
+            UNACCOUNTED_FOR_ERROR,
+            NO_NETWORK_RESPONSE
         }
 
         private Reason reason;
@@ -91,6 +96,15 @@ public class SiaRequest extends StringRequest {
          * also determines what caused the error
          */
         public Error(VolleyError error) {
+            if (msgs == null) {
+                msgs = new EnumMap<>(Reason.class);
+                msgs.put(Reason.TIMEOUT, "Request timed out");
+                msgs.put(Reason.WALLET_PASSWORD_INCORRECT, "Wallet password incorrect");
+                msgs.put(Reason.WALLET_LOCKED, "Wallet is locked");
+                msgs.put(Reason.WALLET_ALREADY_UNLOCKED, "Wallet already unlocked");
+                msgs.put(Reason.NO_NETWORK_RESPONSE, "No network response");
+                msgs.put(Reason.UNACCOUNTED_FOR_ERROR, "Unexpected error");
+            }
             if (error instanceof TimeoutError)
                 reason = Reason.TIMEOUT;
             else if (error.networkResponse != null) {
@@ -102,6 +116,8 @@ public class SiaRequest extends StringRequest {
                         reason = Reason.WALLET_LOCKED;
                     else if (errorMessage.contains("provided encryption key is incorrect"))
                         reason = Reason.WALLET_PASSWORD_INCORRECT;
+                    else if (errorMessage.contains("wallet has already been unlocked"))
+                        reason = Reason.WALLET_ALREADY_UNLOCKED;
                     else {
                         reason = Reason.UNACCOUNTED_FOR_ERROR;
                         System.out.println("ERROR WITH UNCAUGHT REASON: " + errorMessage);
@@ -112,8 +128,8 @@ public class SiaRequest extends StringRequest {
                     e.printStackTrace();
                 }
             } else {
-                reason = Reason.UNACCOUNTED_FOR_ERROR;
-                System.out.println("ERROR WITH NO NETWORKRESPONSE AND UNCAUGHT REASON");
+                reason = Reason.NO_NETWORK_RESPONSE;
+                System.out.println("ERROR WITH NO ACCOMPANYING NETWORKRESPONSE; I don't know what causes this versus timeout");
             }
             System.out.println("ERROR: " + reason);
         }
@@ -123,22 +139,7 @@ public class SiaRequest extends StringRequest {
         }
 
         public void toast() {
-            String msg = "";
-            switch (reason) {
-                case TIMEOUT:
-                    msg = "Request timed out";
-                    break;
-                case WALLET_PASSWORD_INCORRECT:
-                    msg = "Wallet password incorrect";
-                    break;
-                case WALLET_LOCKED:
-                    msg = "Wallet is locked";
-                    break;
-                case UNACCOUNTED_FOR_ERROR:
-                    msg = "Unexpected error";
-                    break;
-            }
-            Toast.makeText(MainActivity.instance, msg, Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.instance, msgs.get(reason), Toast.LENGTH_SHORT).show();
         }
     }
 

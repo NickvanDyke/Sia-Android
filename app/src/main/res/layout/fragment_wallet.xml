@@ -4,7 +4,7 @@
                                              android:orientation="vertical"
                                              android:layout_width="match_parent"
                                              android:layout_height="match_parent">
-
+<!--TODO: some indicator of whether the wallet is locked/unlock, and only show the appropriate button-->
     <Button
             android:text="Send"
             android:layout_width="0dp"
@@ -76,9 +76,9 @@
             xmlns:custom="http://schemas.android.com/apk/res-auto"
             android:id="@+id/syncBar"
             style="@style/NumberProgressBar_Grace_Yellow"
-            custom:progress_unreached_color="#cecece"
+            custom:progress_unreached_color="#d6d6d6"
             custom:progress_reached_color="@color/colorAccent"
-            custom:progress_text_color="#000000"
+            custom:progress_text_color="#6d6d6d"
             custom:progress_unreached_bar_height="3dp"
             custom:progress_reached_bar_height="3dp"
             custom:progress_text_size="14sp"
