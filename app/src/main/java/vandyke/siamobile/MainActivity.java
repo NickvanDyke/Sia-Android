@@ -25,8 +25,9 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private NavigationView navigationView;
-
     private MenuItem activeMenuItem;
+
+    private SharedPreferences.OnSharedPreferenceChangeListener prefsListener;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,12 +84,36 @@ public class MainActivity extends AppCompatActivity {
                         getSupportActionBar().setTitle("Settings");
                         return true;
                     case R.id.drawer_item_about:
-                        // about stuff
+                        // TODO: about stuff
                         return true;
                 }
                 return false;
             }
         });
+
+        prefsListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+                SharedPreferences.Editor editor = prefs.edit();
+                switch (key) {
+                    case "useRemote":
+                        if (prefs.getBoolean("useRemote", false)) {
+                            editor.putString("address", prefs.getString("remoteAddress", "192.168.1.11:9980"));
+                        } else {
+                            editor.putString("address", "localhost:9980");
+                        }
+                        editor.apply();
+                        break;
+                    case "remoteAddress":
+                        if (prefs.getBoolean("useRemote", false)) {
+                            editor.putString("address", prefs.getString("remoteAddress", "192.168.1.11:9980"));
+                            editor.apply();
+                        }
+                        break;
+                }
+            }
+        };
+        prefs.registerOnSharedPreferenceChangeListener(prefsListener);
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {

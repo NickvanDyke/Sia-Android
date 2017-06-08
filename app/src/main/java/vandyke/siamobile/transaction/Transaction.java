@@ -3,7 +3,6 @@ package vandyke.siamobile.transaction;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import vandyke.siamobile.api.Wallet;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -40,12 +39,12 @@ public class Transaction {
         for (TransactionInput transactionInput : inputs) {
             if (transactionInput.isWalletAddress())
                 netValue = netValue.subtract(transactionInput.getValue());
-            System.out.println("input: " + Wallet.hastingsToSC(transactionInput.getValue()) + "  walletAddr: " + transactionInput.isWalletAddress());
+//            System.out.println("input: " + Wallet.hastingsToSC(transactionInput.getValue()) + "  walletAddr: " + transactionInput.isWalletAddress());
         }
         for (TransactionOutput transactionOutput : outputs) {
             if (transactionOutput.isWalletAddress())
                 netValue = netValue.add(transactionOutput.getValue());
-            System.out.println("output: " + Wallet.hastingsToSC(transactionOutput.getValue()) + "  walletAddr: " + transactionOutput.isWalletAddress());
+//            System.out.println("output: " + Wallet.hastingsToSC(transactionOutput.getValue()) + "  walletAddr: " + transactionOutput.isWalletAddress());
         }
     }
 

@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
                                              xmlns:app="http://schemas.android.com/apk/res-auto"
-                                             xmlns:tools="http://schemas.android.com/tools"
                                              android:orientation="vertical"
                                              android:layout_width="match_parent"
                                              android:layout_height="match_parent">
 
     <TextView
-            android:text="TextView"
+            android:text="Apr 20\n4:20 PM"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/transactionStatus"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:textAlignment="center"
-            app:layout_constraintRight_toLeftOf="@+id/transactionValue"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"/>
+            android:textAlignment="viewStart"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            />
 
     <TextView
             android:text="TextView"
@@ -24,7 +25,13 @@
             android:layout_height="wrap_content"
             android:id="@+id/transactionValue"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintLeft_toRightOf="@+id/transactionStatus"
-            android:textAlignment="center"/>
+            app:layout_constraintTop_toTopOf="@+id/transactionStatus"
+            android:textAlignment="textEnd"
+            android:gravity="end"
+            app:layout_constraintBottom_toBottomOf="@+id/transactionStatus"
+            android:paddingEnd="16dp"
+            android:paddingRight="16dp"
+            android:paddingLeft="16dp"
+            android:paddingStart="16dp"
+            android:textSize="18sp"/>
 </android.support.constraint.ConstraintLayout>

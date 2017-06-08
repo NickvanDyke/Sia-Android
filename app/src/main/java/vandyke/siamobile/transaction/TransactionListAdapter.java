@@ -25,12 +25,17 @@ public class TransactionListAdapter extends ArrayAdapter {
 
     private DateFormat df;
 
+    private int red;
+    private int green;
+
     public TransactionListAdapter(Context context, int layoutResourceId, ArrayList<Transaction> data) {
         super(context, layoutResourceId, data);
         this.context = context;
         this.layoutResourceId = layoutResourceId;
         this.data = data;
         df = new SimpleDateFormat("MMM dd\nh:mm a", Locale.getDefault());
+        red = Color.rgb(186, 63, 63); // TODO: choose better colors maybe
+        green = Color.rgb(0, 114, 11);
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -61,10 +66,12 @@ public class TransactionListAdapter extends ArrayAdapter {
         holder.transactionStatus.setText(timeString);
         String valueText = Wallet.hastingsToSC(transaction.getNetValue()).setScale(2, BigDecimal.ROUND_FLOOR).toPlainString();
         if (valueText.contains("-")) {
-            holder.transactionValue.setTextColor(Color.RED);
-        } else {
+            holder.transactionValue.setTextColor(red);
+        } else if (!valueText.equals("0.00")) {
             valueText = "+" + valueText;
-            holder.transactionValue.setTextColor(Color.GREEN);
+            holder.transactionValue.setTextColor(green);
+        } else {
+            holder.transactionValue.setTextColor(Color.GRAY);
         }
         holder.transactionValue.setText(valueText);
 

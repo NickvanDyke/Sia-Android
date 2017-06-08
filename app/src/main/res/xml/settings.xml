@@ -1,17 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <EditTextPreference
-            android:key="address"
-            android:title="Address"
-            android:summary="The IP address and port number of your Sia daemon"
-            android:gravity="center_horizontal"
-            android:dialogTitle="IP:port"/>
-    <!--TODO: make this use password dots. Not sure why this isn't working-->
-    <EditTextPreference
-            android:key="apiPass"
-            android:title="API Password"
-            android:dialogTitle="API Password"
-            android:gravity="center_horizontal"
-            android:inputType="textPassword"
-            android:password="true"/>
+    <PreferenceCategory
+            android:title="Remote node">
+        <CheckBoxPreference
+                android:key="useRemote"
+                android:title="Use remote node"
+                android:summary="Make API requests to a remote node, instead of the node running on this device"
+                android:defaultValue="false"/>
+        <EditTextPreference
+                android:dependency="useRemote"
+                android:key="remoteAddress"
+                android:title="Address"
+                android:summary="The IP address and port number of the remote node. If you are not on the same network as it, you will have to port forward it"
+                android:dialogTitle="IP:port"/>
+        <!--TODO: make this use password dots. Not sure why this isn't working-->
+        <EditTextPreference
+                android:dependency="useRemote"
+                android:key="apiPass"
+                android:title="API password"
+                android:summary="The API password set on the remote node"
+                android:dialogTitle="API Password"
+                android:gravity="center_horizontal"
+                android:inputType="textPassword"
+                android:password="true"/>
+    </PreferenceCategory>
 </PreferenceScreen>

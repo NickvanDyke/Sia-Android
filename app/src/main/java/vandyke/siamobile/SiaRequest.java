@@ -22,7 +22,12 @@ public class SiaRequest extends StringRequest {
         super(method, "http://" + MainActivity.prefs.getString("address", "10.0.0.2:9980") + command, new Response.Listener<String>() {
             public void onResponse(String response) {
                 try {
-                    callback.onSuccess(new JSONObject(response));
+                    JSONObject responseJson;
+                    if (response.length() == 0)
+                        responseJson = new JSONObject();
+                    else
+                        responseJson = new JSONObject(response);
+                    callback.onSuccess(responseJson);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -32,6 +37,7 @@ public class SiaRequest extends StringRequest {
                 callback.onError(new Error(error));
             }
         });
+        System.out.println(MainActivity.prefs.getString("address", "10.0.0.2:9980"));
         headers = new HashMap<>();
         headers.put("User-agent", "Sia-Agent");
         headers.put("Authorization", "Basic " + Base64.encodeToString((":" + MainActivity.prefs.getString("apiPass", "")).getBytes(), 0));
@@ -66,6 +72,7 @@ public class SiaRequest extends StringRequest {
         public void onSuccess(JSONObject response) {
             genericSuccessToast();
         }
+
         public void onError(Error error) {
             error.toast();
         }
@@ -78,8 +85,12 @@ public class SiaRequest extends StringRequest {
             WALLET_LOCKED,
             UNACCOUNTED_FOR_ERROR
         }
+
         private Reason reason;
-        /** also determines what caused the error */
+
+        /**
+         * also determines what caused the error
+         */
         public Error(VolleyError error) {
             if (error instanceof TimeoutError)
                 reason = Reason.TIMEOUT;
@@ -101,6 +112,9 @@ public class SiaRequest extends StringRequest {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+            } else {
+                reason = Reason.UNACCOUNTED_FOR_ERROR;
+                System.out.println("ERROR WITH NO NETWORKRESPONSE AND UNCAUGHT REASON");
             }
             System.out.println("ERROR: " + reason);
         }
