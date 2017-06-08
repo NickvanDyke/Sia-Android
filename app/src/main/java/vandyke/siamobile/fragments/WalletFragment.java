@@ -1,25 +1,24 @@
-package vandyke.sia.fragments;
+package vandyke.siamobile.fragments;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.*;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
-import vandyke.sia.R;
-import vandyke.sia.SiaRequest;
-import vandyke.sia.api.Wallet;
-import vandyke.sia.dialogs.ChangeWalletPasswordDialog;
-import vandyke.sia.dialogs.ReceiveDialog;
-import vandyke.sia.dialogs.SendDialog;
-import vandyke.sia.dialogs.UnlockWalletDialog;
-import vandyke.sia.transaction.Transaction;
-import vandyke.sia.transaction.TransactionListAdapter;
+import vandyke.siamobile.R;
+import vandyke.siamobile.SiaRequest;
+import vandyke.siamobile.api.Wallet;
+import vandyke.siamobile.dialogs.WalletChangePasswordDialog;
+import vandyke.siamobile.dialogs.WalletReceiveDialog;
+import vandyke.siamobile.dialogs.WalletSendDialog;
+import vandyke.siamobile.dialogs.WalletUnlockDialog;
+import vandyke.siamobile.transaction.Transaction;
+import vandyke.siamobile.transaction.TransactionListAdapter;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -39,20 +38,19 @@ public class WalletFragment extends Fragment {
         balance = (TextView)v.findViewById(R.id.balanceText);
         transactions = new ArrayList<>();
 
-
         refresh();
 
         final Button receiveButton = (Button)v.findViewById(R.id.receiveButton);
         receiveButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                ReceiveDialog.createAndShow(getFragmentManager());
+                WalletReceiveDialog.createAndShow(getFragmentManager());
             }
         });
 
         final Button sendButton = (Button)v.findViewById(R.id.sendButton);
         sendButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                SendDialog.createAndShow(getFragmentManager());
+                WalletSendDialog.createAndShow(getFragmentManager());
             }
         });
 
@@ -74,20 +72,20 @@ public class WalletFragment extends Fragment {
         adapter = new TransactionListAdapter(getContext(), R.layout.transaction_list_item, transactions);
         transactionList.setAdapter(adapter);
 
-        Wallet.wallet(new SiaRequest.VolleyCallback() {
-            public void onSuccess(JSONObject response) {
-                try {
-                    System.out.println(response);
-                    if (response.getString("unlocked").equals("false"))
-                        UnlockWalletDialog.createAndShow(getFragmentManager());
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-            public void onError(JSONObject error) {
-                SiaRequest.checkIfWalletLocked(getContext(), error);
-            }
-        });
+//        Wallet.wallet(new SiaRequest.VolleyCallback() {
+//            public void onSuccess(JSONObject response) {
+//                try {
+//                    System.out.println(response);
+//                    if (response.getString("unlocked").equals("false"))
+//                        WalletUnlockDialog.createAndShow(getFragmentManager());
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//            public void onError(SiaRequest.Error error) {
+//                error.toast();
+//            }
+//        });
 
         return v;
     }
@@ -98,20 +96,13 @@ public class WalletFragment extends Fragment {
                 refresh();
                 break;
             case R.id.actionUnlock:
-                UnlockWalletDialog.createAndShow(getFragmentManager());
+                WalletUnlockDialog.createAndShow(getFragmentManager());
                 break;
             case R.id.actionLock:
-                Wallet.lock(new SiaRequest.VolleyCallback() {
-                    public void onSuccess(JSONObject response) {
-                        Toast.makeText(getContext(), "Wallet Locked", Toast.LENGTH_SHORT).show();
-                    }
-                    public void onError(JSONObject error) {
-                        SiaRequest.checkIfWalletLocked(getContext(), error);
-                    }
-                });
+                Wallet.lock(new SiaRequest.VolleyCallback());
                 break;
             case R.id.actionChangePassword:
-                ChangeWalletPasswordDialog.createAndShow(getFragmentManager());
+                WalletChangePasswordDialog.createAndShow(getFragmentManager());
                 break;
         }
 
@@ -129,9 +120,6 @@ public class WalletFragment extends Fragment {
                     e.printStackTrace();
                 }
             }
-            public void onError(JSONObject error) {
-                SiaRequest.checkIfWalletLocked(getContext(), error);
-            }
         });
         // refresh transactions
         Wallet.transactions(new SiaRequest.VolleyCallback() {
@@ -140,10 +128,8 @@ public class WalletFragment extends Fragment {
                 transactions.addAll(Transaction.populateTransactions(response));
                 adapter.notifyDataSetChanged();
             }
-            public void onError(JSONObject error) {
-                SiaRequest.checkIfWalletLocked(getContext(), error);
-            }
         });
+        //TODO: figure out a GOOD way to Toast "Refreshed" if both requests complete successfully
     }
 
     @Override

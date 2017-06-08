@@ -1,26 +1,26 @@
-package vandyke.sia;
+package vandyke.siamobile;
 
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
-import vandyke.sia.fragments.*;
+import vandyke.siamobile.fragments.*;
 
 public class MainActivity extends AppCompatActivity {
 
     public static SharedPreferences prefs;
     public static RequestQueue requestQueue;
-
+    public static MainActivity instance;
 
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
@@ -31,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.drawer_layout);
+
+        instance = this;
 
         // load static stuff stuff
         prefs = PreferenceManager.getDefaultSharedPreferences(this);

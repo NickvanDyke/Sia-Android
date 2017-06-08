@@ -1,9 +1,9 @@
-package vandyke.sia.transaction;
+package vandyke.siamobile.transaction;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import vandyke.sia.api.Wallet;
+import vandyke.siamobile.api.Wallet;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

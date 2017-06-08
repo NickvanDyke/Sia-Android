@@ -1,4 +1,4 @@
-package vandyke.sia.fragments;
+package vandyke.siamobile.fragments;
 
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -14,7 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
-import vandyke.sia.R;
+import vandyke.siamobile.R;
 
 import java.io.*;
 import java.util.ArrayList;

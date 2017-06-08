@@ -1,4 +1,4 @@
-package vandyke.sia.dialogs;
+package vandyke.siamobile.dialogs;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -11,12 +11,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
-import org.json.JSONObject;
-import vandyke.sia.R;
-import vandyke.sia.SiaRequest;
-import vandyke.sia.api.Wallet;
+import vandyke.siamobile.R;
+import vandyke.siamobile.SiaRequest;
+import vandyke.siamobile.api.Wallet;
 
-public class ChangeWalletPasswordDialog extends DialogFragment {
+public class WalletChangePasswordDialog extends DialogFragment {
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -31,15 +30,7 @@ public class ChangeWalletPasswordDialog extends DialogFragment {
                             return; // TODO: make dialog not disappear in this case
                         }
                         Wallet.changePassword(((EditText) view.findViewById(R.id.currentPassword)).getText().toString(),
-                                newPassword, new SiaRequest.VolleyCallback() {
-                                    public void onSuccess(JSONObject response) {
-                                        SiaRequest.genericSuccessToast(getContext());
-                                    }
-                                    public void onError(JSONObject error) {
-                                        SiaRequest.checkIfIncorrectWalletPassword(getContext(), error);
-                                        SiaRequest.checkIfWalletLocked(getContext(), error);
-                                    }
-                                });
+                                newPassword, new SiaRequest.VolleyCallback());
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -55,6 +46,6 @@ public class ChangeWalletPasswordDialog extends DialogFragment {
     }
 
     public static void createAndShow(FragmentManager fragmentManager) {
-        new SendDialog().show(fragmentManager, "change password dialog");
+        new WalletSendDialog().show(fragmentManager, "change password dialog");
     }
 }

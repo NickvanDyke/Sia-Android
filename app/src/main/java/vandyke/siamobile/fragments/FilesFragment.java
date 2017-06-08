@@ -1,11 +1,11 @@
-package vandyke.sia.fragments;
+package vandyke.siamobile.fragments;
 
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import vandyke.sia.R;
+import vandyke.siamobile.R;
 
 public class FilesFragment extends Fragment {
 

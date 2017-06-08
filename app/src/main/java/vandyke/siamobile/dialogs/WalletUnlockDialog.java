@@ -1,4 +1,4 @@
-package vandyke.sia.dialogs;
+package vandyke.siamobile.dialogs;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -10,12 +10,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import org.json.JSONObject;
-import vandyke.sia.R;
-import vandyke.sia.SiaRequest;
-import vandyke.sia.api.Wallet;
+import vandyke.siamobile.R;
+import vandyke.siamobile.SiaRequest;
+import vandyke.siamobile.api.Wallet;
 
-public class UnlockWalletDialog extends DialogFragment {
+public class WalletUnlockDialog extends DialogFragment {
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -24,14 +23,7 @@ public class UnlockWalletDialog extends DialogFragment {
                 .setView(view)
                 .setPositiveButton("Unlock", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        Wallet.unlock(((EditText)view.findViewById(R.id.walletPassword)).getText().toString(), new SiaRequest.VolleyCallback() {
-                            public void onSuccess(JSONObject response) {
-                                System.out.println(response);
-                            }
-                            public void onError(JSONObject error) {
-                                SiaRequest.checkIfIncorrectWalletPassword(getContext(), error);
-                            }
-                        });
+                        Wallet.unlock(((EditText)view.findViewById(R.id.walletPassword)).getText().toString(), new SiaRequest.VolleyCallback());
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -47,6 +39,6 @@ public class UnlockWalletDialog extends DialogFragment {
     }
 
     public static void createAndShow(FragmentManager fragmentManager) {
-        new UnlockWalletDialog().show(fragmentManager, "unlock wallet dialog");
+        new WalletUnlockDialog().show(fragmentManager, "unlock wallet dialog");
     }
 }

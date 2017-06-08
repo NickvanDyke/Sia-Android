@@ -1,4 +1,4 @@
-package vandyke.sia.dialogs;
+package vandyke.siamobile.dialogs;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -10,12 +10,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import org.json.JSONObject;
-import vandyke.sia.R;
-import vandyke.sia.SiaRequest;
-import vandyke.sia.api.Wallet;
+import vandyke.siamobile.R;
+import vandyke.siamobile.SiaRequest;
+import vandyke.siamobile.api.Wallet;
 
-public class SendDialog extends DialogFragment {
+public class WalletSendDialog extends DialogFragment {
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -26,14 +25,7 @@ public class SendDialog extends DialogFragment {
                     public void onClick(DialogInterface dialog, int id) {
                         Wallet.sendSiacoins(((EditText)view.findViewById(R.id.sendRecipient)).getText().toString(),
                                 Wallet.scToHastings(((EditText)view.findViewById(R.id.sendAmount)).getText().toString()).toString(),
-                                new SiaRequest.VolleyCallback() {
-                                    public void onSuccess(JSONObject response) {
-                                        System.out.println(response);
-                                    }
-                                    public void onError(JSONObject error) {
-                                        SiaRequest.checkIfWalletLocked(getContext(), error);
-                                    }
-                                });
+                                new SiaRequest.VolleyCallback());
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -49,6 +41,6 @@ public class SendDialog extends DialogFragment {
     }
 
     public static void createAndShow(FragmentManager fragmentManager) {
-        new SendDialog().show(fragmentManager, "receive dialog");
+        new WalletSendDialog().show(fragmentManager, "receive dialog");
     }
 }

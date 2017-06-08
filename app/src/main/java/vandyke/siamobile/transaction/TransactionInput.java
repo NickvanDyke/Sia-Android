@@ -1,4 +1,4 @@
-package vandyke.sia.transaction;
+package vandyke.siamobile.transaction;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -7,7 +7,7 @@ public class TransactionInput extends TransactionIOBase {
 
     private String parentId;
 
-    public TransactionInput(JSONObject json) {
+    TransactionInput(JSONObject json) {
         super(json);
         try {
             parentId = json.getString("parentid");

@@ -1,4 +1,4 @@
-package vandyke.sia.transaction;
+package vandyke.siamobile.transaction;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -8,7 +8,7 @@ public class TransactionOutput extends TransactionIOBase {
     private String id;
     private int maturityHeight;
 
-    public TransactionOutput(JSONObject json) {
+    TransactionOutput(JSONObject json) {
         super(json);
         try {
             id = json.getString("id");

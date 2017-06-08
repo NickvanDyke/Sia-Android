@@ -1,4 +1,4 @@
-package vandyke.sia.transaction;
+package vandyke.siamobile.transaction;
 
 import android.app.Activity;
 import android.content.Context;
@@ -8,8 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-import vandyke.sia.R;
-import vandyke.sia.api.Wallet;
+import vandyke.siamobile.R;
+import vandyke.siamobile.api.Wallet;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;

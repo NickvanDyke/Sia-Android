@@ -1,6 +1,6 @@
-package vandyke.sia.api;
+package vandyke.siamobile.api;
 
-import vandyke.sia.SiaRequest;
+import vandyke.siamobile.SiaRequest;
 
 import java.math.BigDecimal;
 

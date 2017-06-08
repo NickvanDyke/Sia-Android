@@ -1,4 +1,4 @@
-package vandyke.sia.transaction;
+package vandyke.siamobile.transaction;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -12,7 +12,7 @@ public class TransactionIOBase {
     private String relatedAddress;
     private BigDecimal value;
 
-    public TransactionIOBase(JSONObject json) {
+    TransactionIOBase(JSONObject json) {
         try {
             fundType = json.getString("fundtype");
             walletAddress = json.getBoolean("walletaddress");

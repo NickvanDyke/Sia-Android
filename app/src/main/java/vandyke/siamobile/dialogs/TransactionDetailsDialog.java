@@ -1,4 +1,4 @@
-package vandyke.sia.dialogs;
+package vandyke.siamobile.dialogs;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -8,7 +8,7 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import vandyke.sia.R;
+import vandyke.siamobile.R;
 
 public class TransactionDetailsDialog extends DialogFragment {
 

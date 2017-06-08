@@ -1,12 +1,12 @@
-package vandyke.sia.dialogs;
+package vandyke.siamobile.dialogs;
 
 import android.app.Dialog;
-import android.support.v4.app.DialogFragment;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
@@ -15,11 +15,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import org.json.JSONException;
 import org.json.JSONObject;
-import vandyke.sia.R;
-import vandyke.sia.SiaRequest;
-import vandyke.sia.api.Wallet;
+import vandyke.siamobile.R;
+import vandyke.siamobile.SiaRequest;
+import vandyke.siamobile.api.Wallet;
 
-public class ReceiveDialog extends DialogFragment {
+public class WalletReceiveDialog extends DialogFragment {
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -31,9 +31,6 @@ public class ReceiveDialog extends DialogFragment {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-            }
-            public void onError(JSONObject error) {
-                SiaRequest.checkIfWalletLocked(getContext(), error);
             }
         });
         builder.setTitle("Receive Address")
@@ -58,6 +55,6 @@ public class ReceiveDialog extends DialogFragment {
     }
 
     public static void createAndShow(FragmentManager fragmentManager) {
-        new ReceiveDialog().show(fragmentManager, "receive dialog");
+        new WalletReceiveDialog().show(fragmentManager, "receive dialog");
     }
 }
