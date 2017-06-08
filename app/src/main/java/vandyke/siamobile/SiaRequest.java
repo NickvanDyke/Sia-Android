@@ -10,7 +10,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -79,15 +78,23 @@ public class SiaRequest extends StringRequest {
     }
 
     public static class Error {
-        private static EnumMap<Reason, String> msgs;
 
         public enum Reason {
-            TIMEOUT,
-            WALLET_PASSWORD_INCORRECT,
-            WALLET_LOCKED,
-            WALLET_ALREADY_UNLOCKED,
-            UNACCOUNTED_FOR_ERROR,
-            NO_NETWORK_RESPONSE
+            TIMEOUT("Request timed out"),
+            WALLET_PASSWORD_INCORRECT("Wallet password incorrect"),
+            WALLET_LOCKED("Wallet is locked"),
+            WALLET_ALREADY_UNLOCKED("Wallet already unlocked"),
+            NO_NETWORK_RESPONSE("No network response"),
+            UNACCOUNTED_FOR_ERROR("Unexpected error");
+
+            private String msg;
+            Reason(String msg) {
+                this.msg = msg;
+            }
+
+            public String getMsg() {
+                return msg;
+            }
         }
 
         private Reason reason;
@@ -96,15 +103,6 @@ public class SiaRequest extends StringRequest {
          * also determines what caused the error
          */
         public Error(VolleyError error) {
-            if (msgs == null) {
-                msgs = new EnumMap<>(Reason.class);
-                msgs.put(Reason.TIMEOUT, "Request timed out");
-                msgs.put(Reason.WALLET_PASSWORD_INCORRECT, "Wallet password incorrect");
-                msgs.put(Reason.WALLET_LOCKED, "Wallet is locked");
-                msgs.put(Reason.WALLET_ALREADY_UNLOCKED, "Wallet already unlocked");
-                msgs.put(Reason.NO_NETWORK_RESPONSE, "No network response");
-                msgs.put(Reason.UNACCOUNTED_FOR_ERROR, "Unexpected error");
-            }
             if (error instanceof TimeoutError)
                 reason = Reason.TIMEOUT;
             else if (error.networkResponse != null) {
@@ -139,7 +137,7 @@ public class SiaRequest extends StringRequest {
         }
 
         public void toast() {
-            Toast.makeText(MainActivity.instance, msgs.get(reason), Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.instance, reason.getMsg(), Toast.LENGTH_SHORT).show();
         }
     }
 
