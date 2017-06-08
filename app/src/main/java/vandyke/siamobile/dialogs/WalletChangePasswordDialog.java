@@ -9,6 +9,7 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.Toast;
 import vandyke.siamobile.R;
@@ -45,7 +46,12 @@ public class WalletChangePasswordDialog extends DialogFragment {
         return inflater.inflate(R.layout.dialog_wallet_change_password, null);
     }
 
+    public void onActivityCreated(Bundle bundle) {
+        super.onActivityCreated(bundle);
+        getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+    }
+
     public static void createAndShow(FragmentManager fragmentManager) {
-        new WalletSendDialog().show(fragmentManager, "change password dialog");
+        new WalletChangePasswordDialog().show(fragmentManager, "change password dialog");
     }
 }

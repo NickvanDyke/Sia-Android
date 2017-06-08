@@ -8,6 +8,7 @@ import android.view.*;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import com.daimajia.numberprogressbar.NumberProgressBar;
 import org.json.JSONException;
 import org.json.JSONObject;
 import vandyke.siamobile.R;
@@ -26,18 +27,29 @@ import java.util.ArrayList;
 public class WalletFragment extends Fragment {
 
     private BigDecimal balanceHastings;
-
     private TextView balance;
-    private ArrayList<Transaction> transactions;
 
+    private ArrayList<Transaction> transactions;
     private TransactionListAdapter adapter;
+
+    private NumberProgressBar syncBar;
+    private TextView syncText;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_wallet, container, false);
         setHasOptionsMenu(true);
+
         balance = (TextView)v.findViewById(R.id.balanceText);
         transactions = new ArrayList<>();
 
+        syncBar = (NumberProgressBar)v.findViewById(R.id.syncBar);
+        syncText = (TextView)v.findViewById(R.id.syncText);
+
+        ListView transactionList = (ListView)v.findViewById(R.id.transactionList);
+        adapter = new TransactionListAdapter(getContext(), R.layout.transaction_list_item, transactions);
+        transactionList.setAdapter(adapter);
+
+        checkSync();
         refresh();
 
         final Button receiveButton = (Button)v.findViewById(R.id.receiveButton);
@@ -68,10 +80,6 @@ public class WalletFragment extends Fragment {
             }
         });
 
-        ListView transactionList = (ListView)v.findViewById(R.id.transactionList);
-        adapter = new TransactionListAdapter(getContext(), R.layout.transaction_list_item, transactions);
-        transactionList.setAdapter(adapter);
-
 //        Wallet.wallet(new SiaRequest.VolleyCallback() {
 //            public void onSuccess(JSONObject response) {
 //                try {
@@ -93,6 +101,7 @@ public class WalletFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.actionRefresh:
+                checkSync();
                 refresh();
                 break;
             case R.id.actionUnlock:
@@ -121,15 +130,20 @@ public class WalletFragment extends Fragment {
                 }
             }
         });
+
         // refresh transactions
         Wallet.transactions(new SiaRequest.VolleyCallback() {
             public void onSuccess(JSONObject response) {
                 transactions.clear();
                 transactions.addAll(Transaction.populateTransactions(response));
-                adapter.notifyDataSetChanged();
+                adapter.setData(transactions);
             }
         });
         //TODO: figure out a GOOD way to Toast "Refreshed" if both requests complete successfully
+    }
+
+    public void checkSync() {
+
     }
 
     @Override

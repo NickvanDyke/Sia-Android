@@ -37,7 +37,6 @@ public class SiaRequest extends StringRequest {
                 callback.onError(new Error(error));
             }
         });
-        System.out.println(MainActivity.prefs.getString("address", "10.0.0.2:9980"));
         headers = new HashMap<>();
         headers.put("User-agent", "Sia-Agent");
         headers.put("Authorization", "Basic " + Base64.encodeToString((":" + MainActivity.prefs.getString("apiPass", "")).getBytes(), 0));

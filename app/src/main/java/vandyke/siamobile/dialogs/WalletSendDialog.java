@@ -9,6 +9,7 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.EditText;
 import vandyke.siamobile.R;
 import vandyke.siamobile.SiaRequest;
@@ -38,6 +39,11 @@ public class WalletSendDialog extends DialogFragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.dialog_wallet_send, null);
+    }
+
+    public void onActivityCreated(Bundle bundle) {
+        super.onActivityCreated(bundle);
+        getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
     }
 
     public static void createAndShow(FragmentManager fragmentManager) {

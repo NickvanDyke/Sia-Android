@@ -16,6 +16,7 @@ public class Transaction {
     private ArrayList<TransactionInput> inputs;
     private ArrayList<TransactionOutput> outputs;
     private BigDecimal netValue; // this is relevant to the wallet
+    private String netValueString;
 
     public Transaction(JSONObject json) {
         try {
@@ -46,6 +47,7 @@ public class Transaction {
                 netValue = netValue.add(transactionOutput.getValue());
 //            System.out.println("output: " + Wallet.hastingsToSC(transactionOutput.getValue()) + "  walletAddr: " + transactionOutput.isWalletAddress());
         }
+        netValueString = netValue.setScale(2, BigDecimal.ROUND_FLOOR).toPlainString();
     }
 
     public Transaction(String jsonString) throws JSONException {
@@ -96,5 +98,9 @@ public class Transaction {
 
     public BigDecimal getNetValue() {
         return netValue;
+    }
+
+    public String getNetValueString() {
+        return netValueString;
     }
 }

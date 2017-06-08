@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
 import vandyke.siamobile.api.Wallet;
 
@@ -28,6 +29,8 @@ public class TransactionListAdapter extends ArrayAdapter {
     private int red;
     private int green;
 
+    private boolean hideZero = true;
+
     public TransactionListAdapter(Context context, int layoutResourceId, ArrayList<Transaction> data) {
         super(context, layoutResourceId, data);
         this.context = context;
@@ -43,19 +46,20 @@ public class TransactionListAdapter extends ArrayAdapter {
         View row = convertView;
 
         if (row == null) {
-            LayoutInflater inflater = ((Activity)context).getLayoutInflater();
+            LayoutInflater inflater = ((Activity) context).getLayoutInflater();
             row = inflater.inflate(layoutResourceId, parent, false);
 
             holder = new TransactionHolder();
-            holder.transactionStatus = (TextView)row.findViewById(R.id.transactionStatus);
-            holder.transactionValue = (TextView)row.findViewById(R.id.transactionValue);
+            holder.transactionStatus = (TextView) row.findViewById(R.id.transactionStatus);
+            holder.transactionValue = (TextView) row.findViewById(R.id.transactionValue);
 
             row.setTag(holder);
         } else {
-            holder = (TransactionHolder)row.getTag();
+            holder = (TransactionHolder) row.getTag();
         }
 
         Transaction transaction = data.get(position);
+
         String timeString;
         if (transaction.getConfirmationDate() == null) {
             timeString = "Unconfirmed";
@@ -64,18 +68,45 @@ public class TransactionListAdapter extends ArrayAdapter {
             timeString = df.format(transaction.getConfirmationDate());
         }
         holder.transactionStatus.setText(timeString);
+
         String valueText = Wallet.hastingsToSC(transaction.getNetValue()).setScale(2, BigDecimal.ROUND_FLOOR).toPlainString();
-        if (valueText.contains("-")) {
+        if (valueText.equals("0.00")) {
+            holder.transactionValue.setTextColor(Color.GRAY);
+        } else if (valueText.contains("-")) {
             holder.transactionValue.setTextColor(red);
-        } else if (!valueText.equals("0.00")) {
+        } else {
             valueText = "+" + valueText;
             holder.transactionValue.setTextColor(green);
-        } else {
-            holder.transactionValue.setTextColor(Color.GRAY);
         }
         holder.transactionValue.setText(valueText);
 
         return row;
+    }
+
+    public void setData(ArrayList<Transaction> data) {
+        this.data = new ArrayList<>(data);
+        if (MainActivity.prefs.getBoolean("hideZero", false)) {
+            if (!removeZeroTransactions())
+                notifyDataSetChanged();
+        } else
+            notifyDataSetChanged();
+    }
+
+    public boolean removeZeroTransactions() {
+        boolean changed = false;
+        for (int i = 0; i < data.size(); i++)
+            if (data.get(i).getNetValueString().equals("0.00")) {
+                data.remove(i);
+                changed = true;
+                i--;
+            }
+        if (changed)
+            notifyDataSetChanged();
+        return changed;
+    }
+
+    public int getCount() {
+        return data.size();
     }
 
     static class TransactionHolder {
