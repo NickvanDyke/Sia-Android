@@ -81,13 +81,16 @@ public class SiaRequest extends StringRequest {
 
         public enum Reason {
             TIMEOUT("Request timed out"),
+            NO_NETWORK_RESPONSE("No network response"),
             WALLET_PASSWORD_INCORRECT("Wallet password incorrect"),
             WALLET_LOCKED("Wallet is locked"),
             WALLET_ALREADY_UNLOCKED("Wallet already unlocked"),
-            NO_NETWORK_RESPONSE("No network response"),
+            INVALID_ADDRESS_OR_AMOUNT("Invalid address or amount"),
+            NO_NEW_PASSWORD("Must provide new password"),
             UNACCOUNTED_FOR_ERROR("Unexpected error");
 
             private String msg;
+
             Reason(String msg) {
                 this.msg = msg;
             }
@@ -100,7 +103,7 @@ public class SiaRequest extends StringRequest {
         private Reason reason;
 
         /**
-         * also determines what caused the error
+         * also attempts to determines what caused the error
          */
         public Error(VolleyError error) {
             if (error instanceof TimeoutError)
@@ -116,10 +119,15 @@ public class SiaRequest extends StringRequest {
                         reason = Reason.WALLET_PASSWORD_INCORRECT;
                     else if (errorMessage.contains("wallet has already been unlocked"))
                         reason = Reason.WALLET_ALREADY_UNLOCKED;
+                    else if (errorMessage.contains("could not read 'amount'"))
+                        reason = Reason.INVALID_ADDRESS_OR_AMOUNT;
+                    else if (errorMessage.contains("a password must be provided to newpassword"))
+                        reason = Reason.NO_NEW_PASSWORD;
                     else {
                         reason = Reason.UNACCOUNTED_FOR_ERROR;
-                        System.out.println("ERROR WITH UNCAUGHT REASON: " + errorMessage);
+                        System.out.println("ERROR WITH UNCAUGHT REASON");
                     }
+                    System.out.println(errorMessage);
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 } catch (JSONException e) {

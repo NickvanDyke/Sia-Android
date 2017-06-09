@@ -24,8 +24,13 @@ public class WalletSendDialog extends DialogFragment {
                 .setView(view)
                 .setPositiveButton("Send", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+                        String sendAmount = ((EditText)view.findViewById(R.id.sendAmount)).getText().toString();
+                        if (sendAmount.length() == 0)
+                            sendAmount = "0";
+                        else
+                            sendAmount = Wallet.scToHastings(sendAmount).toPlainString();
                         Wallet.sendSiacoins(((EditText)view.findViewById(R.id.sendRecipient)).getText().toString(),
-                                Wallet.scToHastings(((EditText)view.findViewById(R.id.sendAmount)).getText().toString()).toString(),
+                                sendAmount,
                                 new SiaRequest.VolleyCallback());
                     }
                 })
