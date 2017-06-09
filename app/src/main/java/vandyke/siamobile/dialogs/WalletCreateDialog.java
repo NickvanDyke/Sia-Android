@@ -1,0 +1,87 @@
+package vandyke.siamobile.dialogs;
+
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.CheckedTextView;
+import android.widget.EditText;
+import android.widget.TextView;
+import org.json.JSONObject;
+import vandyke.siamobile.R;
+import vandyke.siamobile.SiaRequest;
+import vandyke.siamobile.api.Wallet;
+
+public class WalletCreateDialog extends DialogFragment {
+
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_wallet_create, null);
+
+        final CheckedTextView createFromSeed = (CheckedTextView) view.findViewById(R.id.walletCreateFromSeed);
+        final EditText seedField = (EditText) view.findViewById(R.id.walletCreateSeed);
+        seedField.setVisibility(View.GONE);
+        createFromSeed.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                if (createFromSeed.isChecked())
+                    seedField.setVisibility(View.VISIBLE);
+                else
+                    seedField.setVisibility(View.GONE);
+            }
+        });
+
+        final CheckedTextView forceCheck = (CheckedTextView)view.findViewById(R.id.walletCreateForce);
+        final TextView forceWarning = (TextView)view.findViewById(R.id.walletCreateForceWarning);
+        forceWarning.setVisibility(View.GONE);
+        forceCheck.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                if (forceCheck.isChecked())
+                    forceWarning.setVisibility(View.VISIBLE);
+                else
+                    forceWarning.setVisibility(View.GONE);
+            }
+        });
+
+        builder.setTitle("Create Wallet")
+                .setView(view)
+                .setPositiveButton("Create", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        String password = seedField.getText().toString();
+                        boolean force = forceCheck.isChecked();
+                        if (createFromSeed.isChecked())
+                            Wallet.init(password, force, new SiaRequest.VolleyCallback() {
+                                public void onSuccess(JSONObject response) {
+                                    super.onSuccess(response);
+                                    WalletSeedsDialog.createAndShow(getFragmentManager());
+                                }
+                            });
+                        else
+                            Wallet.initSeed(password, force, seedField.getText().toString(), new SiaRequest.VolleyCallback() {
+                                public void onSuccess(JSONObject response) {
+                                    super.onSuccess(response);
+                                    WalletSeedsDialog.createAndShow(getFragmentManager());
+                                }
+                            });
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                    }
+                });
+        return builder.create();
+    }
+
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.dialog_wallet_create, null);
+    }
+
+    public static void createAndShow(FragmentManager fragmentManager) {
+        new WalletCreateDialog().show(fragmentManager, "wallet init dialog");
+    }
+}

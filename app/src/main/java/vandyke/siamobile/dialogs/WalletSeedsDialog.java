@@ -19,14 +19,14 @@ import vandyke.siamobile.api.Wallet;
 
 import java.util.ArrayList;
 
-public class DisplaySeedsDialog extends DialogFragment {
+public class WalletSeedsDialog extends DialogFragment {
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_wallet_seeds, null);
         ListView seedsList = (ListView) view.findViewById(R.id.seedsList);
         final ArrayList<String> seeds = new ArrayList<>();
-        final DisplaySeedsListAdapter adapter = new DisplaySeedsListAdapter(getContext(), R.layout.seed_list_item, seeds);
+        final WalletSeedsListAdapter adapter = new WalletSeedsListAdapter(getContext(), R.layout.seed_list_item, seeds);
         seedsList.setAdapter(adapter);
         Wallet.seeds("english", new SiaRequest.VolleyCallback() {
             public void onSuccess(JSONObject response) {
@@ -56,6 +56,6 @@ public class DisplaySeedsDialog extends DialogFragment {
     }
 
     public static void createAndShow(FragmentManager fragmentManager) {
-        new DisplaySeedsDialog().show(fragmentManager, "view seeds dialog");
+        new WalletSeedsDialog().show(fragmentManager, "view seeds dialog");
     }
 }

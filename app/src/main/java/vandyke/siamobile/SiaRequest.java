@@ -43,12 +43,10 @@ public class SiaRequest extends StringRequest {
         params = new HashMap<>();
     }
 
-    @Override
     public Map<String, String> getHeaders() {
         return headers;
     }
 
-    @Override
     protected Map<String, String> getParams() {
         return params;
     }

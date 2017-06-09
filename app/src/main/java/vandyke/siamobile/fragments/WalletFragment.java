@@ -81,21 +81,6 @@ public class WalletFragment extends Fragment {
             }
         });
 
-//        Wallet.wallet(new SiaRequest.VolleyCallback() {
-//            public void onSuccess(JSONObject response) {
-//                try {
-//                    System.out.println(response);
-//                    if (response.getString("unlocked").equals("false"))
-//                        WalletUnlockDialog.createAndShow(getFragmentManager());
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//            public void onError(SiaRequest.Error error) {
-//                error.toast();
-//            }
-//        });
-
         return v;
     }
 
@@ -115,7 +100,10 @@ public class WalletFragment extends Fragment {
                 WalletChangePasswordDialog.createAndShow(getFragmentManager());
                 break;
             case R.id.actionViewSeeds:
-                DisplaySeedsDialog.createAndShow(getFragmentManager());
+                WalletSeedsDialog.createAndShow(getFragmentManager());
+                break;
+            case R.id.actionCreateWallet:
+                WalletCreateDialog.createAndShow(getFragmentManager());
                 break;
         }
 

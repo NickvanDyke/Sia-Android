@@ -16,6 +16,10 @@
             android:id="@+id/actionLock"
             app:showAsAction="never"/>
     <item
+            android:title="Create Wallet"
+            android:id="@+id/actionCreateWallet"
+            app:showAsAction="never"/>
+    <item
             android:title="View Seeds"
             android:id="@+id/actionViewSeeds"
             app:showAsAction="never"/>

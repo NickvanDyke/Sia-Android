@@ -15,18 +15,18 @@ import vandyke.siamobile.R;
 
 import java.util.ArrayList;
 
-public class DisplaySeedsListAdapter extends ArrayAdapter {
+public class WalletSeedsListAdapter extends ArrayAdapter {
 
     private final int layoutResourceId;
     private final Context context;
     private static ArrayList<String> seeds;
 
-    public DisplaySeedsListAdapter(Context context, int layoutResourceId, ArrayList<String> data) {
+    public WalletSeedsListAdapter(Context context, int layoutResourceId, ArrayList<String> data) {
         super(context, layoutResourceId);
         this.context = context;
         this.layoutResourceId = layoutResourceId;
         seeds = data;
-        final DisplaySeedsListAdapter dis = this;
+        final WalletSeedsListAdapter dis = this;
     }
 
     // TODO: this isn't being called
