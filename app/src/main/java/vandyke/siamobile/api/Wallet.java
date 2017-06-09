@@ -31,20 +31,19 @@ public class Wallet {
         new SiaRequest(GET, "/wallet/addresses", callback).send();
     }
 
-    /**
-     * note that currently does not let you choose a dictionary, so the server will use english by default
-     */
-    public static void init(String password, boolean force, SiaRequest.VolleyCallback callback) {
+    public static void init(String password, boolean force, String dictionary, SiaRequest.VolleyCallback callback) {
         new SiaRequest(POST, "/wallet/init", callback)
                 .addParam("encryptionpassword", password)
                 .addParam("force", force ? "true" : "false")
+                .addParam("dictionary", dictionary)
                 .send();
     }
 
-    public static void initSeed(String password, boolean force, String seed, SiaRequest.VolleyCallback callback) {
+    public static void initSeed(String password, boolean force, String dictionary, String seed, SiaRequest.VolleyCallback callback) {
         new SiaRequest(POST, "/wallet/init", callback)
                 .addParam("encryptionpassword", password)
                 .addParam("force", force ? "true" : "false")
+                .addParam("dictionary", dictionary)
                 .addParam("seed", seed)
                 .send();
     }

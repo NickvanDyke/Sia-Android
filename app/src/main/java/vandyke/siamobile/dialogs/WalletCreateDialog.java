@@ -53,15 +53,16 @@ public class WalletCreateDialog extends DialogFragment {
                     public void onClick(DialogInterface dialog, int id) {
                         String password = seedField.getText().toString();
                         boolean force = forceCheck.isChecked();
+                        String dictionary = "english";
                         if (createFromSeed.isChecked())
-                            Wallet.init(password, force, new SiaRequest.VolleyCallback() {
+                            Wallet.init(password, force, dictionary, new SiaRequest.VolleyCallback() {
                                 public void onSuccess(JSONObject response) {
                                     super.onSuccess(response);
                                     WalletSeedsDialog.createAndShow(getFragmentManager());
                                 }
                             });
                         else
-                            Wallet.initSeed(password, force, seedField.getText().toString(), new SiaRequest.VolleyCallback() {
+                            Wallet.initSeed(password, force, dictionary, seedField.getText().toString(), new SiaRequest.VolleyCallback() {
                                 public void onSuccess(JSONObject response) {
                                     super.onSuccess(response);
                                     WalletSeedsDialog.createAndShow(getFragmentManager());

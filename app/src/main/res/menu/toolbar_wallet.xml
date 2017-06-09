@@ -20,11 +20,15 @@
             android:id="@+id/actionCreateWallet"
             app:showAsAction="never"/>
     <item
+            android:title="Change Password"
+            android:id="@+id/actionChangePassword"
+            app:showAsAction="never"/>
+    <item
             android:title="View Seeds"
             android:id="@+id/actionViewSeeds"
             app:showAsAction="never"/>
     <item
-            android:title="Change Password"
-            android:id="@+id/actionChangePassword"
+            android:title="Sweep Seed"
+            android:id="@+id/actionSweepSeed"
             app:showAsAction="never"/>
 </menu>

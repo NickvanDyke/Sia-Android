@@ -87,7 +87,6 @@ public class WalletFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.actionRefresh:
-                refreshSyncProgress();
                 refresh();
                 break;
             case R.id.actionUnlock:
@@ -104,6 +103,9 @@ public class WalletFragment extends Fragment {
                 break;
             case R.id.actionCreateWallet:
                 WalletCreateDialog.createAndShow(getFragmentManager());
+                break;
+            case R.id.actionSweepSeed:
+                WalletSweepSeedDialog.createAndShow(getFragmentManager());
                 break;
         }
 
