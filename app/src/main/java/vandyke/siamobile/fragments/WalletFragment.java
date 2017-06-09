@@ -15,10 +15,7 @@ import vandyke.siamobile.R;
 import vandyke.siamobile.SiaRequest;
 import vandyke.siamobile.api.Consensus;
 import vandyke.siamobile.api.Wallet;
-import vandyke.siamobile.dialogs.WalletChangePasswordDialog;
-import vandyke.siamobile.dialogs.WalletReceiveDialog;
-import vandyke.siamobile.dialogs.WalletSendDialog;
-import vandyke.siamobile.dialogs.WalletUnlockDialog;
+import vandyke.siamobile.dialogs.*;
 import vandyke.siamobile.transaction.Transaction;
 import vandyke.siamobile.transaction.TransactionListAdapter;
 
@@ -117,6 +114,9 @@ public class WalletFragment extends Fragment {
             case R.id.actionChangePassword:
                 WalletChangePasswordDialog.createAndShow(getFragmentManager());
                 break;
+            case R.id.actionViewSeeds:
+                DisplaySeedsDialog.createAndShow(getFragmentManager());
+                break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -127,6 +127,7 @@ public class WalletFragment extends Fragment {
         refreshTransactions();
         refreshSyncProgress();
         //TODO: figure out a GOOD way to Toast "Refreshed" if all requests complete successfully
+        //TODO: auto refresh every x seconds. Eventually add option to refresh in background, with notifications?
     }
 
     public void refreshBalanceAndStatus() {
@@ -151,8 +152,7 @@ public class WalletFragment extends Fragment {
     public void refreshTransactions() {
         Wallet.transactions(new SiaRequest.VolleyCallback() {
             public void onSuccess(JSONObject response) {
-                transactions.clear();
-                transactions.addAll(Transaction.populateTransactions(response));
+                transactions = Transaction.populateTransactions(response);
                 adapter.setData(transactions);
             }
         });

@@ -50,12 +50,12 @@ public class TransactionListAdapter extends ArrayAdapter {
             row = inflater.inflate(layoutResourceId, parent, false);
 
             holder = new TransactionHolder();
-            holder.transactionStatus = (TextView) row.findViewById(R.id.transactionStatus);
-            holder.transactionValue = (TextView) row.findViewById(R.id.transactionValue);
+            holder.transactionStatus = (TextView)row.findViewById(R.id.transactionStatus);
+            holder.transactionValue = (TextView)row.findViewById(R.id.transactionValue);
 
             row.setTag(holder);
         } else {
-            holder = (TransactionHolder) row.getTag();
+            holder = (TransactionHolder)row.getTag();
         }
 
         Transaction transaction = data.get(position);
