@@ -14,6 +14,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import vandyke.siamobile.dialogs.RemoveAdsDialog;
 import vandyke.siamobile.fragments.*;
 
 public class MainActivity extends AppCompatActivity {
@@ -31,13 +35,16 @@ public class MainActivity extends AppCompatActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.drawer_layout);
+        setContentView(R.layout.activity_main_layout);
 
-        instance = this;
-
-        // load static stuff stuff
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
         requestQueue = Volley.newRequestQueue(this);
+        instance = this;
+
+        if (prefs.getBoolean("adsEnabled", true)) {
+            MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713");
+            ((AdView)findViewById(R.id.adView)).loadAd(new AdRequest.Builder().build());
+        }
 
         setSupportActionBar((Toolbar)findViewById(R.id.toolbar));
 
@@ -56,9 +63,11 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 }
 
-                if (activeMenuItem != null)
-                    activeMenuItem.setChecked(false);
-                item.setChecked(true);
+                if (item.getGroupId() != R.id.money_stuff) {
+                    if (activeMenuItem != null)
+                        activeMenuItem.setChecked(false);
+                    item.setChecked(true);
+                }
                 activeMenuItem = item;
                 drawerLayout.closeDrawers();
 
@@ -86,6 +95,11 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.drawer_item_about:
                         // TODO: about stuff
                         return true;
+                    case R.id.drawer_item_remove_ads:
+                        RemoveAdsDialog.createAndShow(getSupportFragmentManager());
+                        break;
+                    case R.id.drawer_item_donate:
+                        // TODO: donate stuff
                 }
                 return false;
             }

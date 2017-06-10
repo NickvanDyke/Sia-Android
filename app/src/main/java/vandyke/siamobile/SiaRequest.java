@@ -89,6 +89,7 @@ public class SiaRequest extends StringRequest {
             AMOUNT_ZERO("Amount cannot be zero"),
             INSUFFICIENT_FUNDS("Insufficient funds"),
             EXISTING_WALLET("A wallet already exists. Use force option to overwrite"),
+            INCORRECT_API_PASSWORD("Incorrect API password"),
             UNACCOUNTED_FOR_ERROR("Unexpected error");
 
             private String msg;
@@ -133,6 +134,8 @@ public class SiaRequest extends StringRequest {
                         reason = Reason.INSUFFICIENT_FUNDS;
                     else if (errorMessage.contains("wallet is already encrypted, cannot encrypt again"))
                         reason = reason.EXISTING_WALLET;
+                    else if (errorMessage.contains("API authentication failed"))
+                        reason = Reason.INCORRECT_API_PASSWORD;
                     else {
                         reason = Reason.UNACCOUNTED_FOR_ERROR;
                         System.out.println("ERROR WITH UNCAUGHT REASON");

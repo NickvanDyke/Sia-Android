@@ -29,8 +29,6 @@ public class WalletSendDialog extends DialogFragment {
                             sendAmount = "0";
                         else
                             sendAmount = Wallet.scToHastings(sendAmount).toPlainString();
-                        System.out.println(sendAmount);
-                        System.out.println(sendAmount);
                         Wallet.sendSiacoins(sendAmount,
                                 ((EditText)view.findViewById(R.id.sendRecipient)).getText().toString(),
                                 new SiaRequest.VolleyCallback());

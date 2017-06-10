@@ -37,7 +37,7 @@
             app:layout_constraintTop_toTopOf="@+id/sendButton"/>
 
     <TextView
-            android:text="Balance"
+            android:text="Loading..."
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/balanceText"
@@ -87,7 +87,8 @@
             custom:layout_constraintRight_toRightOf="@+id/receiveButton"
             custom:layout_constraintBottom_toTopOf="@+id/receiveButton"
             android:layout_marginBottom="8dp"
-            custom:layout_constraintLeft_toLeftOf="@+id/receiveButton"/>
+            custom:layout_constraintLeft_toLeftOf="@+id/receiveButton"
+            custom:progress_current="0"/>
 
     <TextView
             android:text="Not Synced"
@@ -101,7 +102,7 @@
             />
 
     <TextView
-            android:text="Wallet Status:\nNo Wallet"
+            android:text="Wallet Status:\nLoading..."
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/walletStatusText"

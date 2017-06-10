@@ -10,34 +10,25 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.EditText;
 import vandyke.siamobile.R;
-import vandyke.siamobile.SiaRequest;
-import vandyke.siamobile.api.Wallet;
 
-public class WalletSweepSeedDialog extends DialogFragment {
+public class RemoveAdsDialog extends DialogFragment {
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_wallet_sweep, null);
-        builder.setTitle("Sweep Seed")
+        final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_remove_ads_fees, null);
+        builder.setTitle("Remove Ads")
                 .setView(view)
-                .setPositiveButton("Sweep", new DialogInterface.OnClickListener() {
+                .setPositiveButton("Close", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        Wallet.sweepSeed("english", ((EditText)view.findViewById(R.id.walletSweepSeed)).getText().toString(),
-                                new SiaRequest.VolleyCallback());
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-
+                        
                     }
                 });
         return builder.create();
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.dialog_wallet_sweep, null);
+        return inflater.inflate(R.layout.dialog_remove_ads_fees, null);
     }
 
     public void onActivityCreated(Bundle bundle) {
@@ -46,6 +37,6 @@ public class WalletSweepSeedDialog extends DialogFragment {
     }
 
     public static void createAndShow(FragmentManager fragmentManager) {
-        new WalletSweepSeedDialog().show(fragmentManager, "wallet init dialog");
+        new RemoveAdsDialog().show(fragmentManager, "remove ads/fees dialog");
     }
 }

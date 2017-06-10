@@ -136,6 +136,11 @@ public class WalletFragment extends Fragment {
                     e.printStackTrace();
                 }
             }
+            public void onError(SiaRequest.Error error) {
+                super.onError(error);
+                balance.setText("Loading...");
+                walletStatusText.setText("Wallet Status:\nLoading...");
+            }
         });
     }
 
@@ -168,6 +173,7 @@ public class WalletFragment extends Fragment {
             public void onError(SiaRequest.Error error) {
                 super.onError(error);
                 syncText.setText("Not Synced");
+                syncBar.setProgress(0);
             }
         });
     }

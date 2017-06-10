@@ -29,7 +29,6 @@ public class WalletSeedsListAdapter extends ArrayAdapter {
         final WalletSeedsListAdapter dis = this;
     }
 
-    // TODO: this isn't being called
     public View getView(int position, View convertView, ViewGroup parent) {
         SeedHolder holder;
         View row = convertView;

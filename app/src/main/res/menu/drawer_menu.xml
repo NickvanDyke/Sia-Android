@@ -23,7 +23,7 @@
     <group
             android:id="@+id/extra_items"
             android:checkableBehavior="all">
-    <item
+        <item
                 android:id="@+id/drawer_item_settings"
                 android:icon="@drawable/icon_settings"
                 android:title="Settings"/>
@@ -31,5 +31,15 @@
                 android:id="@+id/drawer_item_about"
                 android:icon="@drawable/icon_about"
                 android:title="About"/>
+    </group>
+    <group
+        android:id="@+id/money_stuff"
+        android:checkableBehavior="none">
+        <item
+                android:id="@+id/drawer_item_remove_ads_fees"
+                android:title="Remove Ads/Fees"/>
+        <item
+                android:id="@+id/drawer_item_donate"
+                android:title="Donate"/>
     </group>
 </menu>
