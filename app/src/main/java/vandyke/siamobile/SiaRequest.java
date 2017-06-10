@@ -83,8 +83,12 @@ public class SiaRequest extends StringRequest {
             WALLET_PASSWORD_INCORRECT("Wallet password incorrect"),
             WALLET_LOCKED("Wallet is locked"),
             WALLET_ALREADY_UNLOCKED("Wallet already unlocked"),
-            INVALID_ADDRESS_OR_AMOUNT("Invalid address or amount"),
+            INVALID_AMOUNT("Invalid amount"),
             NO_NEW_PASSWORD("Must provide new password"),
+            WRONG_LENGTH_ADDRESS("Address of invalid length"),
+            AMOUNT_ZERO("Amount cannot be zero"),
+            INSUFFICIENT_FUNDS("Insufficient funds"),
+            EXISTING_WALLET("A wallet already exists. Use force option to overwrite"),
             UNACCOUNTED_FOR_ERROR("Unexpected error");
 
             private String msg;
@@ -101,7 +105,7 @@ public class SiaRequest extends StringRequest {
         private Reason reason;
 
         /**
-         * also attempts to determines what caused the error
+         * also attempts to determine what caused the error
          */
         public Error(VolleyError error) {
             if (error instanceof TimeoutError)
@@ -118,9 +122,17 @@ public class SiaRequest extends StringRequest {
                     else if (errorMessage.contains("wallet has already been unlocked"))
                         reason = Reason.WALLET_ALREADY_UNLOCKED;
                     else if (errorMessage.contains("could not read 'amount'"))
-                        reason = Reason.INVALID_ADDRESS_OR_AMOUNT;
+                        reason = Reason.INVALID_AMOUNT;
                     else if (errorMessage.contains("a password must be provided to newpassword"))
                         reason = Reason.NO_NEW_PASSWORD;
+                    else if (errorMessage.contains("marshalled unlock hash is the wrong length"))
+                        reason = Reason.WRONG_LENGTH_ADDRESS;
+                    else if (errorMessage.contains("transaction cannot have an output or payout that has zero value"))
+                        reason = Reason.AMOUNT_ZERO;
+                    else if (errorMessage.contains("unable to fund transaction"))
+                        reason = Reason.INSUFFICIENT_FUNDS;
+                    else if (errorMessage.contains("wallet is already encrypted, cannot encrypt again"))
+                        reason = reason.EXISTING_WALLET;
                     else {
                         reason = Reason.UNACCOUNTED_FOR_ERROR;
                         System.out.println("ERROR WITH UNCAUGHT REASON");
@@ -143,7 +155,7 @@ public class SiaRequest extends StringRequest {
         }
 
         public void toast() {
-            Toast.makeText(MainActivity.instance, reason.getMsg(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.instance, reason.getMsg(), Toast.LENGTH_LONG).show();
         }
     }
 

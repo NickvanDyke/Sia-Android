@@ -34,7 +34,6 @@
             android:layout_marginRight="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginLeft="16dp"
-            android:onClick="showReceiveAddress"
             app:layout_constraintTop_toTopOf="@+id/sendButton"/>
 
     <TextView
@@ -83,11 +82,12 @@
             custom:progress_reached_bar_height="3dp"
             custom:progress_text_size="14sp"
             custom:progress_text_offset="0dp"
-            android:layout_width="160dp"
+            android:layout_width="0dp"
             android:layout_height="12dp"
             custom:layout_constraintRight_toRightOf="@+id/receiveButton"
             custom:layout_constraintBottom_toTopOf="@+id/receiveButton"
-            android:layout_marginBottom="8dp"/>
+            android:layout_marginBottom="8dp"
+            custom:layout_constraintLeft_toLeftOf="@+id/receiveButton"/>
 
     <TextView
             android:text="Not Synced"

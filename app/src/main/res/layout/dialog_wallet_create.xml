@@ -31,32 +31,33 @@
             app:layout_constraintLeft_toLeftOf="@+id/newPasswordCreate"
             app:layout_constraintRight_toRightOf="@+id/newPasswordCreate" android:layout_marginTop="16dp"
             app:layout_constraintTop_toBottomOf="@+id/newPasswordCreate"/>
-    <CheckedTextView
+    <CheckBox
             android:text="Force"
             android:layout_width="0dp"
-            android:layout_height="wrap_content" android:id="@+id/walletCreateForce"
+            android:layout_height="48dp" android:id="@+id/walletCreateForce"
             tools:layout_constraintTop_creator="1"
-            android:layout_marginTop="16dp"
             app:layout_constraintTop_toBottomOf="@+id/confirmNewPasswordCreate"
             app:layout_constraintLeft_toLeftOf="@+id/confirmNewPasswordCreate"/>
-    <CheckedTextView
+    <CheckBox
             android:text="Create from existing seed"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/walletCreateFromSeed" android:layout_marginTop="16dp"
-            app:layout_constraintTop_toBottomOf="@+id/walletCreateForce" app:layout_constraintLeft_toLeftOf="@+id/walletCreateForce"/>
+            android:layout_height="48dp"
+            android:id="@+id/walletCreateFromSeed"
+            app:layout_constraintTop_toBottomOf="@+id/walletCreateForce"
+            app:layout_constraintLeft_toLeftOf="@+id/walletCreateForce"/>
     <EditText
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:inputType="textPersonName"
             android:ems="10"
             android:hint="Seed"
-            android:id="@+id/walletCreateSeed" android:layout_marginTop="16dp"
+            android:id="@+id/walletCreateSeed"
             app:layout_constraintTop_toBottomOf="@+id/walletCreateFromSeed"
             app:layout_constraintLeft_toLeftOf="@+id/confirmNewPasswordCreate"
-            app:layout_constraintRight_toRightOf="@+id/confirmNewPasswordCreate"/>
+            app:layout_constraintRight_toRightOf="@+id/confirmNewPasswordCreate"
+            android:textAlignment="center"/>
     <TextView
-            android:text="TextView"
+            android:text="Warning: this will overwrite\nany existing wallet"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/walletCreateForceWarning" android:layout_marginStart="16dp"

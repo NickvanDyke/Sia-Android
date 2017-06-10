@@ -9,9 +9,10 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckedTextView;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 import org.json.JSONObject;
 import vandyke.siamobile.R;
 import vandyke.siamobile.SiaRequest;
@@ -23,7 +24,7 @@ public class WalletCreateDialog extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_wallet_create, null);
 
-        final CheckedTextView createFromSeed = (CheckedTextView) view.findViewById(R.id.walletCreateFromSeed);
+        final CheckBox createFromSeed = (CheckBox)view.findViewById(R.id.walletCreateFromSeed);
         final EditText seedField = (EditText) view.findViewById(R.id.walletCreateSeed);
         seedField.setVisibility(View.GONE);
         createFromSeed.setOnClickListener(new View.OnClickListener() {
@@ -35,7 +36,7 @@ public class WalletCreateDialog extends DialogFragment {
             }
         });
 
-        final CheckedTextView forceCheck = (CheckedTextView)view.findViewById(R.id.walletCreateForce);
+        final CheckBox forceCheck = (CheckBox)view.findViewById(R.id.walletCreateForce);
         final TextView forceWarning = (TextView)view.findViewById(R.id.walletCreateForceWarning);
         forceWarning.setVisibility(View.GONE);
         forceCheck.setOnClickListener(new View.OnClickListener() {
@@ -51,7 +52,11 @@ public class WalletCreateDialog extends DialogFragment {
                 .setView(view)
                 .setPositiveButton("Create", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        String password = seedField.getText().toString();
+                        String password = ((EditText)view.findViewById(R.id.newPasswordCreate)).getText().toString();
+                        if (!password.equals(((EditText)view.findViewById(R.id.confirmNewPasswordCreate)).getText().toString())) {
+                            Toast.makeText(getContext(), "New passwords don't match", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
                         boolean force = forceCheck.isChecked();
                         String dictionary = "english";
                         if (createFromSeed.isChecked())

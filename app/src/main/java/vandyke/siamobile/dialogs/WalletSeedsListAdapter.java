@@ -67,6 +67,10 @@ public class WalletSeedsListAdapter extends ArrayAdapter {
         return seeds.size();
     }
 
+    public ArrayList<String> getSeeds() {
+        return seeds;
+    }
+
     static class SeedHolder {
         TextView seed;
         Button copyButton;
