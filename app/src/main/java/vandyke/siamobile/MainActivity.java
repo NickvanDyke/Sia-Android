@@ -12,8 +12,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.ads.AdView;
 import vandyke.siamobile.dialogs.RemoveAdsDialog;
 import vandyke.siamobile.fragments.*;
 
@@ -43,17 +45,18 @@ public class MainActivity extends AppCompatActivity {
 //            MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713");
 //            ((AdView)findViewById(R.id.adView)).loadAd(new AdRequest.Builder().build());
 //        }
+        ((AdView)findViewById(R.id.adView)).setVisibility(View.GONE);
 
-        setSupportActionBar((Toolbar)findViewById(R.id.toolbar));
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
 
-        drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         // set up drawer button on action bar
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close);
         drawerLayout.addDrawerListener(drawerToggle);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         // set action stuff for when drawer items are selected
-        navigationView = (NavigationView)findViewById(R.id.drawer_navigation_view);
+        navigationView = (NavigationView) findViewById(R.id.drawer_navigation_view);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 if (item == activeMenuItem) {

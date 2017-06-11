@@ -107,6 +107,9 @@ public class WalletFragment extends Fragment {
             case R.id.actionSweepSeed:
                 WalletSweepSeedDialog.createAndShow(getFragmentManager());
                 break;
+            case R.id.actionViewAddresses:
+                WalletAddressesDialog.createAndShow(getFragmentManager());
+                break;
         }
 
         return super.onOptionsItemSelected(item);

@@ -9,7 +9,7 @@
             android:title="Mode">
         <ListPreference
                 android:title="Operation Mode"
-                android:summary="Either interface with your own remote full node, or retrieve data from a server and build transactions locally and upload them to the server"
+                android:summary="1. Interface with your own remote full node\n2. Retrieve data from a server and build transactions locally and upload them to the server. Some features will be unavailable using this"
                 android:key="operationMode"
                 android:entries="@array/operation_modes_entries"
                 android:entryValues="@array/operation_modes_values"
@@ -17,7 +17,7 @@
         <EditTextPreference
                 android:key="remoteAddress"
                 android:title="Address"
-                android:summary="The IP address and port number of your remote full node. If you are not on the same network as it, you will have to port forward it"
+                android:summary="The IP address and port number of your remote full node. If you are not on the same network as it, you will have to port forward"
                 android:dialogTitle="IP:port"/>
         <!--TODO: make this use password dots. Not sure why this isn't working-->
         <EditTextPreference

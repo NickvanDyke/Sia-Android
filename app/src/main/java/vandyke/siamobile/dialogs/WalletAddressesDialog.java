@@ -19,21 +19,21 @@ import vandyke.siamobile.api.Wallet;
 
 import java.util.ArrayList;
 
-public class WalletSeedsDialog extends DialogFragment {
+public class WalletAddressesDialog extends DialogFragment {
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_wallet_seeds, null);
-        ListView seedsList = (ListView) view.findViewById(R.id.seedsList);
-        final ArrayList<String> seeds = new ArrayList<>();
-        final TextAndCopyListAdapter adapter = new TextAndCopyListAdapter(getContext(), R.layout.text_and_copy_list_item, seeds);
+        final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_wallet_addresses, null);
+        ListView seedsList = (ListView)view.findViewById(R.id.addressesList);
+        final ArrayList<String> addresses = new ArrayList<>();
+        final TextAndCopyListAdapter adapter = new TextAndCopyListAdapter(getContext(), R.layout.text_and_copy_list_item, addresses);
         seedsList.setAdapter(adapter);
-        Wallet.seeds("english", new SiaRequest.VolleyCallback() {
+        Wallet.addresses(new SiaRequest.VolleyCallback() {
             public void onSuccess(JSONObject response) {
                 try {
-                    JSONArray seedsJson = response.getJSONArray("allseeds");
-                    for (int i = 0;i < seedsJson.length(); i++)
-                        seeds.add(seedsJson.getString(i));
+                    JSONArray addressesJson = response.getJSONArray("addresses");
+                    for (int i = 0; i < addressesJson.length(); i++)
+                        addresses.add(addressesJson.getString(i));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -41,7 +41,7 @@ public class WalletSeedsDialog extends DialogFragment {
             }
         });
 
-        builder.setTitle("Wallet Seeds")
+        builder.setTitle("Wallet Addresses")
                 .setView(view)
                 .setPositiveButton("Close", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -52,10 +52,10 @@ public class WalletSeedsDialog extends DialogFragment {
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.dialog_wallet_seeds, null);
+        return inflater.inflate(R.layout.dialog_wallet_addresses, null);
     }
 
     public static void createAndShow(FragmentManager fragmentManager) {
-        new WalletSeedsDialog().show(fragmentManager, "view seeds dialog");
+        new WalletAddressesDialog().show(fragmentManager, "view addresses dialog");
     }
 }

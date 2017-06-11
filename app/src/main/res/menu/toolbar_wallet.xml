@@ -28,6 +28,10 @@
             android:id="@+id/actionViewSeeds"
             app:showAsAction="never"/>
     <item
+            android:title="View Addresses"
+            android:id="@+id/actionViewAddresses"
+            app:showAsAction="never"/>
+    <item
             android:title="Sweep Seed"
             android:id="@+id/actionSweepSeed"
             app:showAsAction="never"/>

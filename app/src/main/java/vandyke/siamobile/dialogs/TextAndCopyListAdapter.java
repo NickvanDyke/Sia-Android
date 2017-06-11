@@ -15,18 +15,18 @@ import vandyke.siamobile.R;
 
 import java.util.ArrayList;
 
-public class WalletSeedsListAdapter extends ArrayAdapter {
+public class TextAndCopyListAdapter extends ArrayAdapter {
 
     private final int layoutResourceId;
     private final Context context;
-    private static ArrayList<String> seeds;
+    private ArrayList<String> data;
 
-    public WalletSeedsListAdapter(Context context, int layoutResourceId, ArrayList<String> data) {
+    public TextAndCopyListAdapter(Context context, int layoutResourceId, ArrayList<String> data) {
         super(context, layoutResourceId);
         this.context = context;
         this.layoutResourceId = layoutResourceId;
-        seeds = data;
-        final WalletSeedsListAdapter dis = this;
+        this.data = data;
+        final TextAndCopyListAdapter dis = this;
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -38,17 +38,15 @@ public class WalletSeedsListAdapter extends ArrayAdapter {
             row = inflater.inflate(layoutResourceId, parent, false);
 
             holder = new SeedHolder();
-            holder.seed = (TextView)row.findViewById(R.id.seedText);
-            holder.copyButton = (Button)row.findViewById(R.id.copySeed);
+            holder.seed = (TextView)row.findViewById(R.id.listTextView);
+            holder.copyButton = (Button)row.findViewById(R.id.listCopyTextButton);
 
             row.setTag(holder);
         } else {
             holder = (SeedHolder)row.getTag();
         }
 
-        System.out.println("hi");
-
-        String seed = seeds.get(position);
+        String seed = data.get(position);
         holder.seed.setText(seed);
         final TextView tempSeedTextView = holder.seed;
         holder.copyButton.setOnClickListener(new View.OnClickListener() {
@@ -63,11 +61,11 @@ public class WalletSeedsListAdapter extends ArrayAdapter {
     }
 
     public int getCount() {
-        return seeds.size();
+        return data.size();
     }
 
     public ArrayList<String> getSeeds() {
-        return seeds;
+        return data;
     }
 
     static class SeedHolder {
