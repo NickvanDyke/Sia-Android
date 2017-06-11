@@ -162,7 +162,10 @@ public class WalletFragment extends Fragment {
                         syncBar.setProgress(100);
                     } else {
                         syncText.setText("Syncing");
-                        syncBar.setProgress(response.getInt("height") / estimatedBlockHeightAt(System.currentTimeMillis() / 1000));
+                        System.out.println("HEIGHT: " + response.getInt("height"));
+                        System.out.println("ESTIMATED: " + estimatedBlockHeightAt(System.currentTimeMillis() / 1000));
+                        System.out.println("PROGRESS SET TO: " + (response.getInt("height") / estimatedBlockHeightAt(System.currentTimeMillis() / 1000)) * 100);
+                        syncBar.setProgress((int)(((double)response.getInt("height") / estimatedBlockHeightAt(System.currentTimeMillis() / 1000)) * 100));
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

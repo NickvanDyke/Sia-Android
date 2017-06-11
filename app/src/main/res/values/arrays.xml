@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="drawer_entries">
-        <item>Files</item>
-        <item>Wallet</item>
-        <item>Terminal</item>
+    <string-array name="operation_modes_entries">
+        <item>Use your own remote full node</item>
+        <item>Use local wallet, and app server for transactions</item>
     </string-array>
-    <string-array name="drawer_item_values">
-        <item>files</item>
-        <item>wallet</item>
-        <item>terminal</item>
-        <item>settings</item>
+    <string-array name="operation_modes_values">
+        <item>remote_full_node</item>
+        <item>local_wallet_and_server</item>
     </string-array>
 </resources>

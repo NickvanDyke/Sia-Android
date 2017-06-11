@@ -14,9 +14,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
 import vandyke.siamobile.dialogs.RemoveAdsDialog;
 import vandyke.siamobile.fragments.*;
 
@@ -41,10 +38,11 @@ public class MainActivity extends AppCompatActivity {
         requestQueue = Volley.newRequestQueue(this);
         instance = this;
 
-        if (prefs.getBoolean("adsEnabled", true)) {
-            MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713");
-            ((AdView)findViewById(R.id.adView)).loadAd(new AdRequest.Builder().build());
-        }
+        // disabled for now because it's annoying. TODO: fully implement ads and disabled them
+//        if (prefs.getBoolean("adsEnabled", true)) {
+//            MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713");
+//            ((AdView)findViewById(R.id.adView)).loadAd(new AdRequest.Builder().build());
+//        }
 
         setSupportActionBar((Toolbar)findViewById(R.id.toolbar));
 
@@ -95,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.drawer_item_about:
                         // TODO: about stuff
                         return true;
-                    case R.id.drawer_item_remove_ads:
+                    case R.id.drawer_item_remove_ads_fees:
                         RemoveAdsDialog.createAndShow(getSupportFragmentManager());
                         break;
                     case R.id.drawer_item_donate:
@@ -106,20 +104,19 @@ public class MainActivity extends AppCompatActivity {
         });
 
         prefsListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-            @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
                 SharedPreferences.Editor editor = prefs.edit();
                 switch (key) {
-                    case "useRemote":
-                        if (prefs.getBoolean("useRemote", false)) {
+                    case "operationMode":
+                        if (prefs.getString("operationMode", "remote_full_node").equals("remote_full_node")) {
                             editor.putString("address", prefs.getString("remoteAddress", "192.168.1.11:9980"));
-                        } else {
+                        } else if (prefs.getString("operationMode", "remote_full_node").equals("local_wallet_and_server")) {
                             editor.putString("address", "localhost:9980");
                         }
                         editor.apply();
                         break;
                     case "remoteAddress":
-                        if (prefs.getBoolean("useRemote", false)) {
+                        if (prefs.getString("operationMode", "remote_full_node").equals("remote_full_node")) {
                             editor.putString("address", prefs.getString("remoteAddress", "192.168.1.11:9980"));
                             editor.apply();
                         }
