@@ -108,6 +108,7 @@
             android:id="@+id/walletStatusText"
             app:layout_constraintRight_toRightOf="@+id/receiveButton"
             android:textAlignment="textEnd"
+            android:gravity="end"
             android:layout_marginTop="8dp"
             app:layout_constraintTop_toTopOf="parent"/>
 </android.support.constraint.ConstraintLayout>

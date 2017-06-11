@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -74,24 +76,24 @@ public class MainActivity extends AppCompatActivity {
 
                 switch (item.getItemId()) {
                     case R.id.drawer_item_files:
-                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, new FilesFragment()).commit();
-                        getSupportActionBar().setTitle("Files");
+//                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, new FilesFragment()).commit();
+                        loadFragment(FilesFragment.class);
                         return true;
                     case R.id.drawer_item_wallet:
-                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, new WalletFragment()).commit();
-                        getSupportActionBar().setTitle("Wallet");
+//                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, new WalletFragment(), "wallet").commit();
+                        loadFragment(WalletFragment.class);
                         return true;
                     case R.id.drawer_item_hosting:
-                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, new HostingFragment()).commit();
-                        getSupportActionBar().setTitle("Hosting");
+//                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, new HostingFragment()).commit();
+                        loadFragment(HostingFragment.class);
                         return true;
                     case R.id.drawer_item_terminal:
-                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, new TerminalFragment()).commit();
-                        getSupportActionBar().setTitle("Terminal");
+//                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, new TerminalFragment()).commit();
+                        loadFragment(TerminalFragment.class);
                         return true;
                     case R.id.drawer_item_settings:
-                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, new SettingsFragment()).commit();
-                        getSupportActionBar().setTitle("Settings");
+//                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, new SettingsFragment(), "settings").commit();
+                        loadFragment(SettingsFragment.class);
                         return true;
                     case R.id.drawer_item_about:
                         // TODO: about stuff
@@ -128,6 +130,29 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         prefs.registerOnSharedPreferenceChangeListener(prefsListener);
+    }
+
+    public void loadFragment(Class clazz) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+
+        Fragment currentFrag = fragmentManager.findFragmentById(R.id.fragment_frame);
+        if (currentFrag != null)
+            fragmentManager.beginTransaction().hide(currentFrag).commit();
+
+        Fragment fragment = fragmentManager.findFragmentByTag(clazz.getSimpleName());
+        if (fragment == null) {
+            try {
+                fragmentManager.beginTransaction().add(R.id.fragment_frame, (Fragment)clazz.newInstance(), clazz.getSimpleName()).commit();
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        } else {
+            fragmentManager.beginTransaction().show(fragment).commit();
+        }
+
+        getSupportActionBar().setTitle(clazz.getSimpleName().replace("Fragment", ""));
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
