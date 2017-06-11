@@ -4,7 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Sia-Mobile.iml" filepath="$PROJECT_DIR$/Sia-Mobile.iml" />
       <module fileurl="file://C:\Users\Nick\Documents\IntelliJ\Sia-Mobile\.idea\modules\Sia-Mobile.iml" filepath="C:\Users\Nick\Documents\IntelliJ\Sia-Mobile\.idea\modules\Sia-Mobile.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Sia-Mobile.iml" filepath="$PROJECT_DIR$/Sia-Mobile.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

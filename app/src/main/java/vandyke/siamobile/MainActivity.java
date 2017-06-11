@@ -133,26 +133,35 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void loadFragment(Class clazz) {
+        String className = clazz.getSimpleName();
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         Fragment currentFrag = fragmentManager.findFragmentById(R.id.fragment_frame);
         if (currentFrag != null)
             fragmentManager.beginTransaction().hide(currentFrag).commit();
 
-        Fragment fragment = fragmentManager.findFragmentByTag(clazz.getSimpleName());
+        Fragment fragment = fragmentManager.findFragmentByTag(className);
         if (fragment == null) {
             try {
-                fragmentManager.beginTransaction().add(R.id.fragment_frame, (Fragment)clazz.newInstance(), clazz.getSimpleName()).commit();
+                if (currentFrag != null)
+                    fragmentManager.beginTransaction().hide(currentFrag)
+                            .add(R.id.fragment_frame, (Fragment)clazz.newInstance(), className)
+                            .addToBackStack(null).commit();
+                else
+                    fragmentManager.beginTransaction().add(R.id.fragment_frame, (Fragment)clazz.newInstance(), className).commit();
             } catch (InstantiationException e) {
                 e.printStackTrace();
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
         } else {
-            fragmentManager.beginTransaction().show(fragment).commit();
+            if (currentFrag != null)
+                fragmentManager.beginTransaction().hide(currentFrag).show(fragment).addToBackStack(null).commit();
+            else
+                fragmentManager.beginTransaction().show(fragment).commit();
         }
 
-        getSupportActionBar().setTitle(clazz.getSimpleName().replace("Fragment", ""));
+        getSupportActionBar().setTitle(className.replace("Fragment", ""));
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
