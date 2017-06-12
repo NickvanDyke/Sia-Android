@@ -1,7 +1,5 @@
 package vandyke.siamobile.api;
 
-import vandyke.siamobile.SiaRequest;
-
 import java.math.BigDecimal;
 
 import static com.android.volley.Request.Method.GET;
@@ -69,6 +67,7 @@ public class Wallet {
                 .send();
     }
 
+    /** amount should be in hastings */
     public static void sendSiacoins(String amount, String recipient, SiaRequest.VolleyCallback callback) {
         new SiaRequest(POST, "/wallet/siacoins", callback)
                 .addParam("amount", amount)

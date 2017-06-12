@@ -1,4 +1,4 @@
-package vandyke.siamobile;
+package vandyke.siamobile.api;
 
 import android.util.Base64;
 import android.widget.Toast;
@@ -8,6 +8,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
+import vandyke.siamobile.MainActivity;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
@@ -155,6 +156,10 @@ public class SiaRequest extends StringRequest {
 
         public Reason getReason() {
             return reason;
+        }
+
+        public String getMsg() {
+            return reason.getMsg();
         }
 
         public void toast() {

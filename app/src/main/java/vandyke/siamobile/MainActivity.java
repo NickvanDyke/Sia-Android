@@ -18,7 +18,7 @@ import android.view.View;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.ads.AdView;
-import vandyke.siamobile.dialogs.RemoveAdsDialog;
+import vandyke.siamobile.dialogs.RemoveAdsFeesDialog;
 import vandyke.siamobile.fragments.*;
 
 public class MainActivity extends AppCompatActivity {
@@ -42,11 +42,11 @@ public class MainActivity extends AppCompatActivity {
         requestQueue = Volley.newRequestQueue(this);
         instance = this;
 
-        // disabled for now because it's annoying. TODO: fully implement ads and disabled them
+        // disabled for now because it's annoying. TODO: uncomment before release
 //        if (prefs.getBoolean("adsEnabled", true)) {
 //            MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713");
 //            ((AdView)findViewById(R.id.adView)).loadAd(new AdRequest.Builder().build());
-//        }
+//        } else
         ((AdView)findViewById(R.id.adView)).setVisibility(View.GONE);
 
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
                         // TODO: about stuff
                         return true;
                     case R.id.drawer_item_remove_ads_fees:
-                        RemoveAdsDialog.createAndShow(getSupportFragmentManager());
+                        RemoveAdsFeesDialog.createAndShow(getSupportFragmentManager());
                         break;
                     case R.id.drawer_item_donate:
                         // TODO: donate stuff
@@ -137,11 +137,9 @@ public class MainActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         Fragment currentFrag = fragmentManager.findFragmentById(R.id.fragment_frame);
-        if (currentFrag != null)
-            fragmentManager.beginTransaction().hide(currentFrag).commit();
 
-        Fragment fragment = fragmentManager.findFragmentByTag(className);
-        if (fragment == null) {
+        Fragment newFragment = fragmentManager.findFragmentByTag(className);
+        if (newFragment == null) {
             try {
                 if (currentFrag != null)
                     fragmentManager.beginTransaction().hide(currentFrag)
@@ -156,9 +154,9 @@ public class MainActivity extends AppCompatActivity {
             }
         } else {
             if (currentFrag != null)
-                fragmentManager.beginTransaction().hide(currentFrag).show(fragment).addToBackStack(null).commit();
+                fragmentManager.beginTransaction().hide(currentFrag).show(newFragment).addToBackStack(null).commit();
             else
-                fragmentManager.beginTransaction().show(fragment).commit();
+                fragmentManager.beginTransaction().show(newFragment).commit();
         }
 
         getSupportActionBar().setTitle(className.replace("Fragment", ""));

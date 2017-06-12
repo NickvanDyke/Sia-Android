@@ -16,7 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import org.json.JSONObject;
 import vandyke.siamobile.R;
-import vandyke.siamobile.SiaRequest;
+import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
 
 public class WalletCreateDialog extends DialogFragment {

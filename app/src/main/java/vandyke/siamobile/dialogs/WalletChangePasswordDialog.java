@@ -13,7 +13,7 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.Toast;
 import vandyke.siamobile.R;
-import vandyke.siamobile.SiaRequest;
+import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
 
 public class WalletChangePasswordDialog extends DialogFragment {

@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.EditText;
 import vandyke.siamobile.R;
-import vandyke.siamobile.SiaRequest;
+import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
 
 public class WalletSendDialog extends DialogFragment {

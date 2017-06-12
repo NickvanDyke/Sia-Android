@@ -14,7 +14,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import vandyke.siamobile.R;
-import vandyke.siamobile.SiaRequest;
+import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
 
 import java.util.ArrayList;
