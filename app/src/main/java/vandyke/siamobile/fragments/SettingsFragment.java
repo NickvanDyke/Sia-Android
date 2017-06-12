@@ -28,6 +28,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     case "operationMode":
                         setRemoteSettingsVisibility(remoteAddress, apiPass);
                         break;
+                    case "darkModeEnabled":
+                        break;
                 }
             }
         };

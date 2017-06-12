@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <CheckBoxPreference
+    <android.support.v7.preference.SwitchPreferenceCompat
+            android:key="darkModeEnabled"
+            android:title="Dark Mode"
+            android:defaultValue="off">
+    </android.support.v7.preference.SwitchPreferenceCompat>
+    <android.support.v7.preference.SwitchPreferenceCompat
             android:key="hideZero"
             android:title="Hide net-zero transactions"
             android:summary="For each regular transaction, Sia also makes a transaction that has a net effect on your wallet of zero, to confirm the value. Check this to hide transactions that do not affect your balance">
-    </CheckBoxPreference>
+    </android.support.v7.preference.SwitchPreferenceCompat>
     <PreferenceCategory
             android:title="Mode">
         <ListPreference

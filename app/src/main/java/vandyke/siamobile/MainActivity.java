@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -76,24 +77,19 @@ public class MainActivity extends AppCompatActivity {
 
                 switch (item.getItemId()) {
                     case R.id.drawer_item_files:
-//                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, new FilesFragment()).commit();
-                        loadFragment(FilesFragment.class);
+                        loadDrawerFragment(FilesFragment.class);
                         return true;
                     case R.id.drawer_item_wallet:
-//                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, new WalletFragment(), "wallet").commit();
-                        loadFragment(WalletFragment.class);
+                        loadDrawerFragment(WalletFragment.class);
                         return true;
                     case R.id.drawer_item_hosting:
-//                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, new HostingFragment()).commit();
-                        loadFragment(HostingFragment.class);
+                        loadDrawerFragment(HostingFragment.class);
                         return true;
                     case R.id.drawer_item_terminal:
-//                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, new TerminalFragment()).commit();
-                        loadFragment(TerminalFragment.class);
+                        loadDrawerFragment(TerminalFragment.class);
                         return true;
                     case R.id.drawer_item_settings:
-//                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, new SettingsFragment(), "settings").commit();
-                        loadFragment(SettingsFragment.class);
+                        loadDrawerFragment(SettingsFragment.class);
                         return true;
                     case R.id.drawer_item_about:
                         // TODO: about stuff
@@ -132,7 +128,8 @@ public class MainActivity extends AppCompatActivity {
         prefs.registerOnSharedPreferenceChangeListener(prefsListener);
     }
 
-    public void loadFragment(Class clazz) {
+    public void loadDrawerFragment(Class clazz) {
+        // TODO: might be able to use replace here instead of showing and hiding. might be better way to do this. also maybe limit size of backstack
         String className = clazz.getSimpleName();
         FragmentManager fragmentManager = getSupportFragmentManager();
 
@@ -171,6 +168,13 @@ public class MainActivity extends AppCompatActivity {
         // Handle your other action bar items...
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onBackPressed() {
+        if (drawerLayout.isDrawerVisible(GravityCompat.START))
+            drawerLayout.closeDrawer(GravityCompat.START);
+        else
+            super.onBackPressed();
     }
 
     protected void onPostCreate(Bundle savedInstanceState) {

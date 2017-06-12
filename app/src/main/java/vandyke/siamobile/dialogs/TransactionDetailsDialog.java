@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import vandyke.siamobile.R;
 
 public class TransactionDetailsDialog extends DialogFragment {
-
+    // TODO
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_transaction_details, null);

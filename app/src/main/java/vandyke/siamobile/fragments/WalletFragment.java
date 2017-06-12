@@ -47,7 +47,7 @@ public class WalletFragment extends Fragment {
         walletStatusText = (TextView)v.findViewById(R.id.walletStatusText);
 
         ListView transactionList = (ListView)v.findViewById(R.id.transactionList);
-        adapter = new TransactionListAdapter(getContext(), R.layout.transaction_list_item, transactions);
+        adapter = new TransactionListAdapter(getContext(), R.layout.transaction_list_item_header, transactions);
         transactionList.setAdapter(adapter);
 
         refreshSyncProgress();
@@ -174,8 +174,6 @@ public class WalletFragment extends Fragment {
                     e.printStackTrace();
                 }
             }
-
-            @Override
             public void onError(SiaRequest.Error error) {
                 super.onError(error);
                 syncText.setText("Not Synced");

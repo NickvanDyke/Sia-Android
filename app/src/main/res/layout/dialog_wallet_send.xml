@@ -8,7 +8,7 @@
     <EditText
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:inputType="textPersonName"
+            android:inputType="textNoSuggestions"
             android:ems="10"
             android:id="@+id/sendRecipient"
             app:layout_constraintRight_toRightOf="parent"
