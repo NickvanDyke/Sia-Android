@@ -11,8 +11,9 @@ import java.util.Date;
 public class Transaction {
 
     private String transactionId;
+    private boolean confirmed;
     private int confirmationHeight;
-    private Date confirmationDate; // max value of unsigned 64-bit integer if unconfirmed
+    private Date confirmationDate; // null if unconfirmed
     private ArrayList<TransactionInput> inputs;
     private ArrayList<TransactionOutput> outputs;
     private BigDecimal netValue; // this is relevant to the wallet
@@ -23,7 +24,8 @@ public class Transaction {
             transactionId = json.getString("transactionid");
             confirmationHeight = json.getInt("confirmationheight");
             long confirmationTimestamp = json.getLong("confirmationtimestamp");
-            confirmationDate = confirmationTimestamp == 18446744073709551616D ? null : new Date(confirmationTimestamp * 1000);
+            confirmed = (confirmationTimestamp == 18446744073709551616D);
+            confirmationDate = confirmed ? new Date(confirmationTimestamp * 1000) : null;
             inputs = new ArrayList<>();
             outputs = new ArrayList<>();
             JSONArray inputsJsonArray = json.getJSONArray("inputs");
@@ -86,6 +88,10 @@ public class Transaction {
 
     public Date getConfirmationDate() {
         return confirmationDate;
+    }
+
+    public boolean isConfirmed() {
+        return confirmed;
     }
 
     public ArrayList<TransactionInput> getInputs() {

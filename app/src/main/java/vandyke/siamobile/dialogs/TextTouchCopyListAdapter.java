@@ -1,20 +1,17 @@
 package vandyke.siamobile.dialogs;
 
 import android.app.Activity;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
-import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
 
 import java.util.ArrayList;
 
+// TODO: this class might not be needed. remove if that's the case
 public class TextTouchCopyListAdapter extends ArrayAdapter {
 
     private final int layoutResourceId;
@@ -46,15 +43,6 @@ public class TextTouchCopyListAdapter extends ArrayAdapter {
 
         String text = data.get(position);
         holder.textView.setText(text);
-        final TextView tempTextView = holder.textView;
-        holder.textView.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                ClipboardManager clipboard = (ClipboardManager)MainActivity.instance.getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData clip = ClipData.newPlainText("Sia text touch copy", tempTextView.getText());
-                clipboard.setPrimaryClip(clip);
-                Toast.makeText(context, "Copied selection to clipboard", Toast.LENGTH_SHORT).show();
-            }
-        });
 
         return row;
     }

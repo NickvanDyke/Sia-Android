@@ -45,9 +45,9 @@ public class WalletFragment extends Fragment {
         syncBar = (NumberProgressBar)v.findViewById(R.id.syncBar);
         syncText = (TextView)v.findViewById(R.id.syncText);
         walletStatusText = (TextView)v.findViewById(R.id.walletStatusText);
-
         ExpandableListView transactionList = (ExpandableListView)v.findViewById(R.id.transactionList);
-        adapter = new TransactionListAdapter(getContext(), R.layout.transaction_list_item_header, transactions);
+        adapter = new TransactionListAdapter(getContext(), R.layout.transaction_list_item_header,
+                R.layout.transaction_list_item_details, transactions);
         transactionList.setAdapter(adapter);
 
         refreshSyncProgress();

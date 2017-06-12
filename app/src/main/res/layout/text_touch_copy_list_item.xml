@@ -12,6 +12,7 @@
             app:layout_constraintTop_toTopOf="parent"
             android:gravity="center_horizontal|center_vertical"
             android:layout_width="0dp" app:layout_constraintRight_toRightOf="parent"
+            android:onClick="copyTextView"
     />
 
 </android.support.constraint.ConstraintLayout>

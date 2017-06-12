@@ -1,5 +1,8 @@
 package vandyke.siamobile;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -16,6 +19,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.ads.AdView;
@@ -175,6 +180,13 @@ public class MainActivity extends AppCompatActivity {
             drawerLayout.closeDrawer(GravityCompat.START);
         else
             super.onBackPressed();
+    }
+
+    public void copyTextView(View view) {
+        ClipboardManager clipboard = (ClipboardManager)MainActivity.instance.getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText("Sia text touch copy", ((TextView)view).getText());
+        clipboard.setPrimaryClip(clip);
+        Toast.makeText(this, "Copied selection to clipboard", Toast.LENGTH_SHORT).show();
     }
 
     protected void onPostCreate(Bundle savedInstanceState) {

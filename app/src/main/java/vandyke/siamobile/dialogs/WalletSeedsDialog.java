@@ -9,6 +9,7 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,7 +27,7 @@ public class WalletSeedsDialog extends DialogFragment {
         final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_wallet_seeds, null);
         ListView seedsList = (ListView) view.findViewById(R.id.seedsList);
         final ArrayList<String> seeds = new ArrayList<>();
-        final TextTouchCopyListAdapter adapter = new TextTouchCopyListAdapter(getContext(), R.layout.text_touch_copy_list_item, seeds);
+        final ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.text_touch_copy_list_item, seeds);
         seedsList.setAdapter(adapter);
         Wallet.seeds("english", new SiaRequest.VolleyCallback() {
             public void onSuccess(JSONObject response) {

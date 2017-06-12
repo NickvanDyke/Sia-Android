@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
@@ -21,7 +22,8 @@ import java.util.Locale;
 public class TransactionListAdapter extends BaseExpandableListAdapter {
 
     private Context context;
-    private int layoutResourceId;
+    private int groupLayoutResourceId;
+    private int childLayoutResourceId;
     private ArrayList<Transaction> data;
 
     private DateFormat df;
@@ -31,9 +33,10 @@ public class TransactionListAdapter extends BaseExpandableListAdapter {
 
     private boolean hideZero = true;
 
-    public TransactionListAdapter(Context context, int layoutResourceId, ArrayList<Transaction> data) {
+    public TransactionListAdapter(Context context, int groupLayoutResourceId, int childLayoutResourceId, ArrayList<Transaction> data) {
         this.context = context;
-        this.layoutResourceId = layoutResourceId;
+        this.groupLayoutResourceId = groupLayoutResourceId;
+        this.childLayoutResourceId = childLayoutResourceId;
         this.data = data;
         df = new SimpleDateFormat("MMM dd\nh:mm a", Locale.getDefault());
         red = Color.rgb(186, 63, 63); // TODO: choose better colors maybe
@@ -46,7 +49,7 @@ public class TransactionListAdapter extends BaseExpandableListAdapter {
 
         if (view == null) {
             LayoutInflater inflater = ((Activity)context).getLayoutInflater();
-            view = inflater.inflate(layoutResourceId, viewGroup, false);
+            view = inflater.inflate(groupLayoutResourceId, viewGroup, false);
 
             holder = new TransactionHeaderHolder();
             holder.transactionStatus = (TextView)view.findViewById(R.id.transactionStatus);
@@ -84,7 +87,33 @@ public class TransactionListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean b, View view, ViewGroup viewGroup) {
-        return null;
+        TransactionDetailsHolder holder;
+        if (view == null) {
+            LayoutInflater inflater = ((Activity)context).getLayoutInflater();
+            view = inflater.inflate(childLayoutResourceId, viewGroup, false);
+
+            holder = new TransactionDetailsHolder();
+            holder.id = (TextView)view.findViewById(R.id.transactionDetailsId);
+            holder.confirmationHeight = (TextView)view.findViewById(R.id.transactionDetailsConfirmHeight);
+
+            view.setTag(holder);
+        } else {
+            holder = (TransactionDetailsHolder)view.getTag();
+        }
+
+        Transaction transaction = data.get(groupPosition);
+
+        holder.id.setText("ID: " + transaction.getTransactionId());
+
+        if (transaction.isConfirmed()) {
+            holder.confirmationHeight.setText("Confirmed in block " + transaction.getConfirmationHeight());
+            holder.confirmationHeight.setVisibility(View.VISIBLE);
+        } else
+            holder.confirmationHeight.setVisibility(View.GONE);
+
+
+
+        return view;
     }
 
     public void setData(ArrayList<Transaction> data) {
@@ -155,6 +184,9 @@ public class TransactionListAdapter extends BaseExpandableListAdapter {
     }
 
     static class TransactionDetailsHolder {
-
+        TextView id;
+        TextView confirmationHeight;
+        ListView inputs;
+        ListView outputs;
     }
 }
