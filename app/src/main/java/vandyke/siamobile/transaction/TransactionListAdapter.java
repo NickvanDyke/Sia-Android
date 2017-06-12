@@ -6,7 +6,7 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
@@ -18,7 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class TransactionListAdapter extends ArrayAdapter {
+public class TransactionListAdapter extends BaseExpandableListAdapter {
 
     private Context context;
     private int layoutResourceId;
@@ -32,7 +32,6 @@ public class TransactionListAdapter extends ArrayAdapter {
     private boolean hideZero = true;
 
     public TransactionListAdapter(Context context, int layoutResourceId, ArrayList<Transaction> data) {
-        super(context, layoutResourceId, data);
         this.context = context;
         this.layoutResourceId = layoutResourceId;
         this.data = data;
@@ -41,21 +40,21 @@ public class TransactionListAdapter extends ArrayAdapter {
         green = Color.rgb(0, 114, 11);
     }
 
-    public View getView(int position, View convertView, ViewGroup parent) {
-        TransactionHolder holder;
-        View row = convertView;
+    @Override
+    public View getGroupView(int position, boolean b, View view, ViewGroup viewGroup) {
+        TransactionHeaderHolder holder;
 
-        if (row == null) {
-            LayoutInflater inflater = ((Activity) context).getLayoutInflater();
-            row = inflater.inflate(layoutResourceId, parent, false);
+        if (view == null) {
+            LayoutInflater inflater = ((Activity)context).getLayoutInflater();
+            view = inflater.inflate(layoutResourceId, viewGroup, false);
 
-            holder = new TransactionHolder();
-            holder.transactionStatus = (TextView)row.findViewById(R.id.transactionStatus);
-            holder.transactionValue = (TextView)row.findViewById(R.id.transactionValue);
+            holder = new TransactionHeaderHolder();
+            holder.transactionStatus = (TextView)view.findViewById(R.id.transactionStatus);
+            holder.transactionValue = (TextView)view.findViewById(R.id.transactionValue);
 
-            row.setTag(holder);
+            view.setTag(holder);
         } else {
-            holder = (TransactionHolder)row.getTag();
+            holder = (TransactionHeaderHolder)view.getTag();
         }
 
         Transaction transaction = data.get(position);
@@ -80,7 +79,12 @@ public class TransactionListAdapter extends ArrayAdapter {
         }
         holder.transactionValue.setText(valueText);
 
-        return row;
+        return view;
+    }
+
+    @Override
+    public View getChildView(int groupPosition, int childPosition, boolean b, View view, ViewGroup viewGroup) {
+        return null;
     }
 
     public void setData(ArrayList<Transaction> data) {
@@ -105,12 +109,52 @@ public class TransactionListAdapter extends ArrayAdapter {
         return changed;
     }
 
-    public int getCount() {
+    @Override
+    public int getGroupCount() {
         return data.size();
     }
 
-    static class TransactionHolder {
+    @Override
+    public int getChildrenCount(int groupPosition) {
+        return 1;
+    }
+
+    @Override
+    public Object getGroup(int position) {
+        return data.get(position);
+    }
+
+    @Override
+    public Object getChild(int groupPosition, int childPosition) {
+        return data.get(groupPosition);
+    }
+
+    @Override
+    public long getGroupId(int position) {
+        return position;
+    }
+
+    @Override
+    public long getChildId(int groupPosition, int childPosition) {
+        return childPosition;
+    }
+
+    @Override
+    public boolean hasStableIds() {
+        return false;
+    }
+
+    @Override
+    public boolean isChildSelectable(int groupPosition, int childPosition) {
+        return false;
+    }
+
+    static class TransactionHeaderHolder {
         TextView transactionStatus;
         TextView transactionValue;
+    }
+
+    static class TransactionDetailsHolder {
+
     }
 }

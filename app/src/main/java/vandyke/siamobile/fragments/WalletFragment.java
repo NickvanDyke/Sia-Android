@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.*;
 import android.widget.Button;
-import android.widget.ListView;
+import android.widget.ExpandableListView;
 import android.widget.TextView;
 import com.daimajia.numberprogressbar.NumberProgressBar;
 import org.json.JSONException;
@@ -46,7 +46,7 @@ public class WalletFragment extends Fragment {
         syncText = (TextView)v.findViewById(R.id.syncText);
         walletStatusText = (TextView)v.findViewById(R.id.walletStatusText);
 
-        ListView transactionList = (ListView)v.findViewById(R.id.transactionList);
+        ExpandableListView transactionList = (ExpandableListView)v.findViewById(R.id.transactionList);
         adapter = new TransactionListAdapter(getContext(), R.layout.transaction_list_item_header, transactions);
         transactionList.setAdapter(adapter);
 

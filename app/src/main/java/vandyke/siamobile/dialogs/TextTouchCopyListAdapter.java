@@ -8,52 +8,51 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
 
 import java.util.ArrayList;
 
-public class TextAndCopyListAdapter extends ArrayAdapter {
+public class TextTouchCopyListAdapter extends ArrayAdapter {
 
     private final int layoutResourceId;
     private final Context context;
     private ArrayList<String> data;
 
-    public TextAndCopyListAdapter(Context context, int layoutResourceId, ArrayList<String> data) {
+    public TextTouchCopyListAdapter(Context context, int layoutResourceId, ArrayList<String> data) {
         super(context, layoutResourceId);
         this.context = context;
         this.layoutResourceId = layoutResourceId;
         this.data = data;
-        final TextAndCopyListAdapter dis = this;
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
-        SeedHolder holder;
+        Holder holder;
         View row = convertView;
 
         if (row == null) {
             LayoutInflater inflater = ((Activity) context).getLayoutInflater();
             row = inflater.inflate(layoutResourceId, parent, false);
 
-            holder = new SeedHolder();
-            holder.seed = (TextView)row.findViewById(R.id.listTextView);
-            holder.copyButton = (Button)row.findViewById(R.id.listCopyTextButton);
+            holder = new Holder();
+            holder.textView = (TextView)row.findViewById(R.id.listTextView);
 
             row.setTag(holder);
         } else {
-            holder = (SeedHolder)row.getTag();
+            holder = (Holder)row.getTag();
         }
 
-        String seed = data.get(position);
-        holder.seed.setText(seed);
-        final TextView tempSeedTextView = holder.seed;
-        holder.copyButton.setOnClickListener(new View.OnClickListener() {
+        String text = data.get(position);
+        holder.textView.setText(text);
+        final TextView tempTextView = holder.textView;
+        holder.textView.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                ClipboardManager clipboard = (ClipboardManager) MainActivity.instance.getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData clip = ClipData.newPlainText("wallet seed", tempSeedTextView.getText());
+                ClipboardManager clipboard = (ClipboardManager)MainActivity.instance.getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("Sia text touch copy", tempTextView.getText());
                 clipboard.setPrimaryClip(clip);
+                Toast.makeText(context, "Copied selection to clipboard", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -64,12 +63,11 @@ public class TextAndCopyListAdapter extends ArrayAdapter {
         return data.size();
     }
 
-    public ArrayList<String> getSeeds() {
+    public ArrayList<String> getData() {
         return data;
     }
 
-    static class SeedHolder {
-        TextView seed;
-        Button copyButton;
+    static class Holder {
+        TextView textView;
     }
 }

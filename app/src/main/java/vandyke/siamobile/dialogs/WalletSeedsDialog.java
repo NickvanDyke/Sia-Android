@@ -26,7 +26,7 @@ public class WalletSeedsDialog extends DialogFragment {
         final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_wallet_seeds, null);
         ListView seedsList = (ListView) view.findViewById(R.id.seedsList);
         final ArrayList<String> seeds = new ArrayList<>();
-        final TextAndCopyListAdapter adapter = new TextAndCopyListAdapter(getContext(), R.layout.text_and_copy_list_item, seeds);
+        final TextTouchCopyListAdapter adapter = new TextTouchCopyListAdapter(getContext(), R.layout.text_touch_copy_list_item, seeds);
         seedsList.setAdapter(adapter);
         Wallet.seeds("english", new SiaRequest.VolleyCallback() {
             public void onSuccess(JSONObject response) {

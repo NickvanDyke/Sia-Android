@@ -26,7 +26,7 @@ public class WalletAddressesDialog extends DialogFragment {
         final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_wallet_addresses, null);
         ListView seedsList = (ListView)view.findViewById(R.id.addressesList);
         final ArrayList<String> addresses = new ArrayList<>();
-        final TextAndCopyListAdapter adapter = new TextAndCopyListAdapter(getContext(), R.layout.text_and_copy_list_item, addresses);
+        final TextTouchCopyListAdapter adapter = new TextTouchCopyListAdapter(getContext(), R.layout.text_touch_copy_list_item, addresses);
         seedsList.setAdapter(adapter);
         Wallet.addresses(new SiaRequest.VolleyCallback() {
             public void onSuccess(JSONObject response) {
