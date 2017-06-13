@@ -90,8 +90,7 @@ public class Wallet {
     }
 
     public static void transaction(String id, SiaRequest.VolleyCallback callback) {
-        new SiaRequest(GET, "/wallet/transaction", callback)
-                .addParam(":id", id)
+        new SiaRequest(GET, String.format("/wallet/transaction/%s", id), callback)
                 .send();
     }
 
