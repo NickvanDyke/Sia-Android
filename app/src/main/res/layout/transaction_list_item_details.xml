@@ -15,4 +15,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" android:id="@+id/transactionDetailsConfirmHeight"
             android:textAlignment="center"/>
+    <TextView
+            android:text="Inputs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:id="@+id/transactionInputsLabel" android:textAlignment="center"/>
+    <ListView
+            android:layout_width="match_parent"
+            android:layout_height="117dp" android:id="@+id/transactionInputsList"/>
+    <TextView
+            android:text="Outputs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:id="@+id/transactionOutputsLabel" android:textAlignment="center"/>
 </LinearLayout>

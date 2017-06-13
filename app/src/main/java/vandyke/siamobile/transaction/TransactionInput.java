@@ -19,4 +19,9 @@ public class TransactionInput extends TransactionIOBase {
     public String getParentId() {
         return parentId;
     }
+
+    public String toString() {
+        return "Parent ID: " + parentId +
+                "\n" + super.toString();
+    }
 }

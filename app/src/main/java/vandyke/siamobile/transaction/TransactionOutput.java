@@ -25,4 +25,10 @@ public class TransactionOutput extends TransactionIOBase {
     public int getMaturityHeight() {
         return maturityHeight;
     }
+
+    public String toString() {
+        return "ID: " + id +
+                "Maturity height: " + maturityHeight +
+                "\n" + super.toString();
+    }
 }

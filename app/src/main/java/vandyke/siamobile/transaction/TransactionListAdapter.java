@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -30,8 +32,6 @@ public class TransactionListAdapter extends BaseExpandableListAdapter {
 
     private int red;
     private int green;
-
-    private boolean hideZero = true;
 
     public TransactionListAdapter(Context context, int groupLayoutResourceId, int childLayoutResourceId, ArrayList<Transaction> data) {
         this.context = context;
@@ -95,7 +95,21 @@ public class TransactionListAdapter extends BaseExpandableListAdapter {
             holder = new TransactionDetailsHolder();
             holder.id = (TextView)view.findViewById(R.id.transactionDetailsId);
             holder.confirmationHeight = (TextView)view.findViewById(R.id.transactionDetailsConfirmHeight);
-
+            holder.inputs = (ListView)view.findViewById(R.id.transactionInputsList);
+            holder.inputs.setOnTouchListener(new View.OnTouchListener() {
+                public boolean onTouch(View v, MotionEvent event) {
+                    // disallow the onTouch for your scrollable parent view
+                    v.getParent().requestDisallowInterceptTouchEvent(true);
+                    return false;
+                }
+            });
+            holder.outputs = (ListView)view.findViewById(R.id.transactionInputsList);
+            holder.outputs.setOnTouchListener(new View.OnTouchListener() {
+                public boolean onTouch(View v, MotionEvent event) {
+                    v.getParent().requestDisallowInterceptTouchEvent(true);
+                    return false;
+                }
+            });
             view.setTag(holder);
         } else {
             holder = (TransactionDetailsHolder)view.getTag();
@@ -111,7 +125,15 @@ public class TransactionListAdapter extends BaseExpandableListAdapter {
         } else
             holder.confirmationHeight.setVisibility(View.GONE);
 
+        ArrayList<String> inputs = new ArrayList<>();
+        for (TransactionInput transactionInput : transaction.getInputs())
+            inputs.add(transactionInput.toString());
+        holder.inputs.setAdapter(new ArrayAdapter<>(viewGroup.getContext(), R.layout.text_touch_copy_list_item, inputs));
 
+        ArrayList<String> outputs = new ArrayList<>();
+        for (TransactionOutput transactionOutput : transaction.getOutputs())
+            outputs.add(transactionOutput.toString());
+        holder.outputs.setAdapter(new ArrayAdapter<>(viewGroup.getContext(), R.layout.text_touch_copy_list_item, outputs));
 
         return view;
     }

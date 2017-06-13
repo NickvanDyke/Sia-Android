@@ -2,15 +2,16 @@ package vandyke.siamobile.transaction;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import vandyke.siamobile.api.Wallet;
 
 import java.math.BigDecimal;
 
 public class TransactionIOBase {
 
-    private String fundType;
-    private boolean walletAddress;
-    private String relatedAddress;
-    private BigDecimal value;
+    protected String fundType;
+    protected boolean walletAddress;
+    protected String relatedAddress;
+    protected BigDecimal value;
 
     TransactionIOBase(JSONObject json) {
         try {
@@ -40,6 +41,9 @@ public class TransactionIOBase {
     }
 
     public String toString() {
-        return fundType + walletAddress + relatedAddress + value;
+        return "Address: " + relatedAddress +
+                "\nAddress from wallet: " + (walletAddress ? "yes" : "no") +
+                "\nType: " + (fundType.contains("siacoin") ? "Siacoin" : "Siafund") +
+                "Amount: " + Wallet.hastingsToSC(value).toPlainString();
     }
 }
