@@ -43,7 +43,7 @@ public class TransactionIOBase {
     public String toString() {
         return "Address: " + relatedAddress +
                 "\nAddress from wallet: " + (walletAddress ? "yes" : "no") +
-                "\nType: " + (fundType.contains("siacoin") ? "Siacoin" : "Siafund") +
-                "Amount: " + Wallet.hastingsToSC(value).toPlainString();
+                "\nType: " + fundType +
+                "\nAmount: " + Wallet.hastingsToSC(value).toPlainString();
     }
 }

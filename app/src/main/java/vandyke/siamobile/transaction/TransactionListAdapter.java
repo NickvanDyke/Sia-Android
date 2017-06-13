@@ -63,7 +63,7 @@ public class TransactionListAdapter extends BaseExpandableListAdapter {
         Transaction transaction = data.get(position);
 
         String timeString;
-        if (transaction.getConfirmationDate() == null) {
+        if (!transaction.isConfirmed()) {
             timeString = "Unconfirmed";
             holder.transactionStatus.setTextColor(Color.RED);
         } else {
@@ -103,7 +103,7 @@ public class TransactionListAdapter extends BaseExpandableListAdapter {
                     return false;
                 }
             });
-            holder.outputs = (ListView)view.findViewById(R.id.transactionInputsList);
+            holder.outputs = (ListView)view.findViewById(R.id.transactionOutputsList);
             holder.outputs.setOnTouchListener(new View.OnTouchListener() {
                 public boolean onTouch(View v, MotionEvent event) {
                     v.getParent().requestDisallowInterceptTouchEvent(true);
@@ -117,7 +117,7 @@ public class TransactionListAdapter extends BaseExpandableListAdapter {
 
         Transaction transaction = data.get(groupPosition);
 
-        holder.id.setText("ID: " + transaction.getTransactionId());
+        holder.id.setText(transaction.getTransactionId());
 
         if (transaction.isConfirmed()) {
             holder.confirmationHeight.setText("Confirmed in block " + transaction.getConfirmationHeight());
@@ -128,12 +128,12 @@ public class TransactionListAdapter extends BaseExpandableListAdapter {
         ArrayList<String> inputs = new ArrayList<>();
         for (TransactionInput transactionInput : transaction.getInputs())
             inputs.add(transactionInput.toString());
-        holder.inputs.setAdapter(new ArrayAdapter<>(viewGroup.getContext(), R.layout.text_touch_copy_list_item, inputs));
+        holder.inputs.setAdapter(new ArrayAdapter<>(viewGroup.getContext(), android.R.layout.simple_list_item_1, inputs));
 
         ArrayList<String> outputs = new ArrayList<>();
         for (TransactionOutput transactionOutput : transaction.getOutputs())
             outputs.add(transactionOutput.toString());
-        holder.outputs.setAdapter(new ArrayAdapter<>(viewGroup.getContext(), R.layout.text_touch_copy_list_item, outputs));
+        holder.outputs.setAdapter(new ArrayAdapter<>(viewGroup.getContext(), android.R.layout.simple_list_item_1, outputs));
 
         return view;
     }

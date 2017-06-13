@@ -5,6 +5,13 @@
               android:layout_height="match_parent">
 
     <TextView
+            android:text="Transaction ID:"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/transactionDetailsIDHeader"
+            android:textAlignment="center"/>
+
+    <TextView
             android:text="Loading id..."
             android:onClick="copyTextView"
             android:layout_width="match_parent"
@@ -21,9 +28,15 @@
             android:layout_height="wrap_content" android:id="@+id/transactionInputsLabel" android:textAlignment="center"/>
     <ListView
             android:layout_width="match_parent"
-            android:layout_height="117dp" android:id="@+id/transactionInputsList"/>
+            android:id="@+id/transactionInputsList"
+            android:layout_height="100dp"/>
     <TextView
             android:text="Outputs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" android:id="@+id/transactionOutputsLabel" android:textAlignment="center"/>
+
+    <ListView
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:id="@+id/transactionOutputsList"/>
 </LinearLayout>

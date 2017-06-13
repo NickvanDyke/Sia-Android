@@ -11,6 +11,7 @@ import org.json.JSONObject;
 import vandyke.siamobile.MainActivity;
 
 import java.io.UnsupportedEncodingException;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,14 +21,10 @@ public class SiaRequest extends StringRequest {
     private HashMap<String, String> params;
 
     public SiaRequest(int method, String command, final VolleyCallback callback) {
-        super(method, "http://" + MainActivity.prefs.getString("address", "10.0.0.2:9980") + command, new Response.Listener<String>() {
+        super(method, "http://" + MainActivity.prefs.getString("address", "localhost:9980") + command, new Response.Listener<String>() {
             public void onResponse(String response) {
                 try {
-                    JSONObject responseJson;
-                    if (response.length() == 0)
-                        responseJson = new JSONObject();
-                    else
-                        responseJson = new JSONObject(response);
+                    JSONObject responseJson = response.length() == 0 ? new JSONObject() : new JSONObject(response);
                     callback.onSuccess(responseJson);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -117,31 +114,8 @@ public class SiaRequest extends StringRequest {
                     String response = new String(error.networkResponse.data, "utf-8");
                     JSONObject responseJson = new JSONObject(response);
                     String errorMessage = responseJson.getString("message");
-                    if (errorMessage.contains("wallet must be unlocked before it can be used"))
-                        reason = Reason.WALLET_LOCKED;
-                    else if (errorMessage.contains("provided encryption key is incorrect"))
-                        reason = Reason.WALLET_PASSWORD_INCORRECT;
-                    else if (errorMessage.contains("wallet has already been unlocked"))
-                        reason = Reason.WALLET_ALREADY_UNLOCKED;
-                    else if (errorMessage.contains("could not read 'amount'"))
-                        reason = Reason.INVALID_AMOUNT;
-                    else if (errorMessage.contains("a password must be provided to newpassword"))
-                        reason = Reason.NO_NEW_PASSWORD;
-                    else if (errorMessage.contains("marshalled unlock hash is the wrong length"))
-                        reason = Reason.WRONG_LENGTH_ADDRESS;
-                    else if (errorMessage.contains("transaction cannot have an output or payout that has zero value"))
-                        reason = Reason.AMOUNT_ZERO;
-                    else if (errorMessage.contains("unable to fund transaction"))
-                        reason = Reason.INSUFFICIENT_FUNDS;
-                    else if (errorMessage.contains("wallet is already encrypted, cannot encrypt again"))
-                        reason = reason.EXISTING_WALLET;
-                    else if (errorMessage.contains("API authentication failed"))
-                        reason = Reason.INCORRECT_API_PASSWORD;
-                    else {
-                        reason = Reason.UNACCOUNTED_FOR_ERROR;
-                        System.out.println("ERROR WITH UNCAUGHT REASON");
-                    }
-                    System.out.println(errorMessage);
+                    reason = determineReason(errorMessage);
+                    System.out.println("ERROR: " + reason + "\nMessage: " + errorMessage);
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 } catch (JSONException e) {
@@ -151,7 +125,31 @@ public class SiaRequest extends StringRequest {
                 reason = Reason.NO_NETWORK_RESPONSE;
                 System.out.println("ERROR WITH NO ACCOMPANYING NETWORKRESPONSE; I don't know what causes this versus timeout");
             }
-            System.out.println("ERROR: " + reason);
+        }
+
+        public Reason determineReason(String errorMessage) {
+            if (errorMessage.contains("wallet must be unlocked before it can be used"))
+                return Reason.WALLET_LOCKED;
+            else if (errorMessage.contains("provided encryption key is incorrect"))
+                return Reason.WALLET_PASSWORD_INCORRECT;
+            else if (errorMessage.contains("wallet has already been unlocked"))
+                return Reason.WALLET_ALREADY_UNLOCKED;
+            else if (errorMessage.contains("could not read 'amount'"))
+                return Reason.INVALID_AMOUNT;
+            else if (errorMessage.contains("a password must be provided to newpassword"))
+                return Reason.NO_NEW_PASSWORD;
+            else if (errorMessage.contains("marshalled unlock hash is the wrong length"))
+                return Reason.WRONG_LENGTH_ADDRESS;
+            else if (errorMessage.contains("transaction cannot have an output or payout that has zero value"))
+                return Reason.AMOUNT_ZERO;
+            else if (errorMessage.contains("unable to fund transaction"))
+                return Reason.INSUFFICIENT_FUNDS;
+            else if (errorMessage.contains("wallet is already encrypted, cannot encrypt again"))
+                return reason.EXISTING_WALLET;
+            else if (errorMessage.contains("API authentication failed"))
+                return Reason.INCORRECT_API_PASSWORD;
+            else
+                return Reason.UNACCOUNTED_FOR_ERROR;
         }
 
         public Reason getReason() {

@@ -5,6 +5,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.*;
+import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -12,7 +13,9 @@ public class LocalWallet {
 
     private String seed;
     private HashSet<String> addresses;
-    
+
+    Thread socketThread;
+
     private File binary;
 
     public LocalWallet() {
@@ -21,8 +24,30 @@ public class LocalWallet {
         copyBinary();
     }
 
-    public void startListening(String ipPort) {
-
+    public void startListening(final int port) {
+        if (socketThread != null || socketThread.isAlive()) {
+            System.out.println("localwallet is already listening");
+            return;
+        }
+        try {
+            final ServerSocket socket = new ServerSocket(port);
+            socketThread = new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        while (true) {
+                            System.out.println("waiting for connection");
+                            socket.accept();
+                            System.out.println("something connected to socket");
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            socketThread.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     
     public void newWallet() {
