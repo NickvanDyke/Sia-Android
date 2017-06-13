@@ -138,29 +138,35 @@ public class MainActivity extends AppCompatActivity {
         String className = clazz.getSimpleName();
         FragmentManager fragmentManager = getSupportFragmentManager();
 
-        Fragment currentFrag = fragmentManager.findFragmentById(R.id.fragment_frame);
-
-        Fragment newFragment = fragmentManager.findFragmentByTag(className);
-        if (newFragment == null) {
-            try {
-                if (currentFrag != null)
-                    fragmentManager.beginTransaction().hide(currentFrag)
-                            .add(R.id.fragment_frame, (Fragment)clazz.newInstance(), className)
-                            .addToBackStack(null).commit();
-                else
-                    fragmentManager.beginTransaction().add(R.id.fragment_frame, (Fragment)clazz.newInstance(), className).commit();
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        } else {
-            if (currentFrag != null)
-                fragmentManager.beginTransaction().hide(currentFrag).show(newFragment).addToBackStack(null).commit();
-            else
-                fragmentManager.beginTransaction().show(newFragment).commit();
+//        Fragment currentFrag = fragmentManager.findFragmentById(R.id.fragment_frame);
+//
+//        Fragment newFragment = fragmentManager.findFragmentByTag(className);
+//        if (newFragment == null) {
+//            try {
+//                if (currentFrag != null)
+//                    fragmentManager.beginTransaction().hide(currentFrag)
+//                            .add(R.id.fragment_frame, (Fragment)clazz.newInstance(), className)
+//                            .addToBackStack(null).commit();
+//                else
+//                    fragmentManager.beginTransaction().add(R.id.fragment_frame, (Fragment)clazz.newInstance(), className).commit();
+//            } catch (InstantiationException e) {
+//                e.printStackTrace();
+//            } catch (IllegalAccessException e) {
+//                e.printStackTrace();
+//            }
+//        } else {
+//            if (currentFrag != null)
+//                fragmentManager.beginTransaction().hide(currentFrag).show(newFragment).addToBackStack(null).commit();
+//            else
+//                fragmentManager.beginTransaction().show(newFragment).addToBackStack(null).commit();
+//        }
+        try {
+            fragmentManager.beginTransaction().replace(R.id.fragment_frame, (Fragment)clazz.newInstance(), className).commit();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
         }
-
         getSupportActionBar().setTitle(className.replace("Fragment", ""));
     }
 

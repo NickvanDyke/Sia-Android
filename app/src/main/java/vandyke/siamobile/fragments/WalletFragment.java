@@ -4,20 +4,23 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.*;
 import android.widget.Button;
-import android.widget.ExpandableListView;
 import android.widget.TextView;
 import com.daimajia.numberprogressbar.NumberProgressBar;
 import org.json.JSONException;
 import org.json.JSONObject;
+import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
 import vandyke.siamobile.api.Consensus;
 import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
 import vandyke.siamobile.dialogs.*;
 import vandyke.siamobile.transaction.Transaction;
-import vandyke.siamobile.transaction.TransactionListAdapter;
+import vandyke.siamobile.transactionslist.TransactionExpandableGroup;
+import vandyke.siamobile.transactionslist.TransactionListAdapter;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -28,12 +31,15 @@ public class WalletFragment extends Fragment {
     private TextView balance;
 
     private ArrayList<Transaction> transactions;
-    private TransactionListAdapter adapter;
 
     private NumberProgressBar syncBar;
     private TextView syncText;
 
     private TextView walletStatusText;
+
+    private final ArrayList<TransactionExpandableGroup> transactionExpandableGroups = new ArrayList<>();
+
+    private RecyclerView transactionList;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_wallet, container, false);
@@ -45,12 +51,11 @@ public class WalletFragment extends Fragment {
         syncBar = (NumberProgressBar)v.findViewById(R.id.syncBar);
         syncText = (TextView)v.findViewById(R.id.syncText);
         walletStatusText = (TextView)v.findViewById(R.id.walletStatusText);
-        ExpandableListView transactionList = (ExpandableListView)v.findViewById(R.id.transactionList);
-        adapter = new TransactionListAdapter(getContext(), R.layout.transaction_list_item_header,
-                R.layout.transaction_list_item_details, transactions);
-        transactionList.setAdapter(adapter);
 
-        refreshSyncProgress();
+        transactionList = (RecyclerView)v.findViewById(R.id.transactionList);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        transactionList.setLayoutManager(layoutManager);
+
         refresh();
 
         final Button receiveButton = (Button)v.findViewById(R.id.receiveButton);
@@ -82,6 +87,12 @@ public class WalletFragment extends Fragment {
         });
 
         return v;
+    }
+
+    private TransactionExpandableGroup transactionToGroupWithChild(Transaction tx) {
+        ArrayList<Transaction> child = new ArrayList<>();
+        child.add(tx);
+        return new TransactionExpandableGroup(tx.getNetValueStringRounded(), tx.getConfirmationDate(), child);
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -149,11 +160,18 @@ public class WalletFragment extends Fragment {
 
     public void refreshTransactions() {
         Wallet.transactions(new SiaRequest.VolleyCallback() {
-            public void onSuccess(JSONObject response) {
-                transactions = Transaction.populateTransactions(response);
-                adapter.setData(transactions);
+        public void onSuccess(JSONObject response) {
+            boolean hideZero = MainActivity.prefs.getBoolean("hideZero", false);
+            transactions = Transaction.populateTransactions(response);
+            transactionExpandableGroups.clear();
+            for (Transaction tx : transactions) {
+                if (hideZero && tx.isNetZero())
+                    continue;
+                transactionExpandableGroups.add(transactionToGroupWithChild(tx));
             }
-        });
+            transactionList.setAdapter(new TransactionListAdapter(transactionExpandableGroups));
+        }
+    });
     }
 
     public void refreshSyncProgress() {
@@ -165,9 +183,6 @@ public class WalletFragment extends Fragment {
                         syncBar.setProgress(100);
                     } else {
                         syncText.setText("Syncing");
-                        System.out.println("HEIGHT: " + response.getInt("height"));
-                        System.out.println("ESTIMATED: " + estimatedBlockHeightAt(System.currentTimeMillis() / 1000));
-                        System.out.println("PROGRESS SET TO: " + (response.getInt("height") / estimatedBlockHeightAt(System.currentTimeMillis() / 1000)) * 100);
                         syncBar.setProgress((int)(((double)response.getInt("height") / estimatedBlockHeightAt(System.currentTimeMillis() / 1000)) * 100));
                     }
                 } catch (JSONException e) {

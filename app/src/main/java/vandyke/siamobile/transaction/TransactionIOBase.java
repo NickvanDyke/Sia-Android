@@ -41,9 +41,12 @@ public class TransactionIOBase {
     }
 
     public String toString() {
-        return "Address: " + relatedAddress +
-                "\nAddress from wallet: " + (walletAddress ? "yes" : "no") +
-                "\nType: " + fundType +
+        String result = "";
+        if (!fundType.contains("miner"))
+            result += "Address: " + relatedAddress +
+                    "\nWallet address: " + (walletAddress ? "yes" : "no") + "\n";
+        result += "Type: " + fundType +
                 "\nAmount: " + Wallet.hastingsToSC(value).toPlainString();
+        return result;
     }
 }

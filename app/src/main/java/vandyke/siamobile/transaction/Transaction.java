@@ -3,6 +3,7 @@ package vandyke.siamobile.transaction;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import vandyke.siamobile.api.Wallet;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -17,7 +18,9 @@ public class Transaction {
     private ArrayList<TransactionInput> inputs;
     private ArrayList<TransactionOutput> outputs;
     private BigDecimal netValue; // this is relevant to the wallet
-    private String netValueString;
+    private String netValueStringExact;
+    private String netValueStringRounded;
+    private boolean netZero;
 
     public Transaction(JSONObject json) {
         try {
@@ -49,7 +52,10 @@ public class Transaction {
                 netValue = netValue.add(transactionOutput.getValue());
 //            System.out.println("output: " + Wallet.hastingsToSC(transactionOutput.getValue()) + "  walletAddr: " + transactionOutput.isWalletAddress());
         }
-        netValueString = netValue.setScale(2, BigDecimal.ROUND_FLOOR).toPlainString();
+        netValueStringExact = netValue.toPlainString();
+        netValueStringRounded = Wallet.hastingsToSC(netValue).setScale(2, BigDecimal.ROUND_FLOOR).toPlainString();
+        netZero = (netValueStringRounded.equals("0.00"));
+        System.out.println(netValueStringRounded);
     }
 
     public Transaction(String jsonString) throws JSONException {
@@ -106,7 +112,15 @@ public class Transaction {
         return netValue;
     }
 
-    public String getNetValueString() {
-        return netValueString;
+    public String getNetValueStringExact() {
+        return netValueStringExact;
+    }
+
+    public String getNetValueStringRounded() {
+        return netValueStringRounded;
+    }
+
+    public boolean isNetZero() {
+        return netZero;
     }
 }

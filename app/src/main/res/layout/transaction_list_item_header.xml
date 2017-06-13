@@ -3,7 +3,7 @@
                                              xmlns:app="http://schemas.android.com/apk/res-auto"
                                              android:orientation="vertical"
                                              android:layout_width="match_parent"
-                                             android:layout_height="match_parent">
+                                             android:layout_height="wrap_content">
 
     <TextView
             android:text="Apr 20\n4:20 PM"
@@ -13,6 +13,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:textAlignment="viewStart"
+            android:gravity="start"
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
             android:paddingLeft="16dp"
@@ -20,7 +21,7 @@
             />
 
     <TextView
-            android:text="TextView"
+            android:text="+69"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/transactionValue"
