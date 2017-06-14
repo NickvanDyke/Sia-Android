@@ -4,7 +4,9 @@
                                              xmlns:tools="http://schemas.android.com/tools"
                                              android:orientation="vertical"
                                              android:layout_width="match_parent"
-                                             android:layout_height="wrap_content">
+                                             android:layout_height="wrap_content"
+                                             android:paddingBottom="7dp"
+        android:background="@color/txDetailsBackground">
 
     <TextView
             android:text="Transaction ID:"
@@ -25,6 +27,8 @@
 
     <TextView
             android:text="Loading id..."
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
             android:onClick="copyTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -63,6 +67,7 @@
             app:layout_constraintLeft_toLeftOf="@+id/transactionDetailsConfirmHeight"/>
 
     <ListView
+            android:background="@drawable/listview_border"
             android:layout_width="0dp"
             android:id="@+id/transactionInputsList"
             android:layout_height="100dp"
@@ -88,6 +93,7 @@
 
     <ListView
             android:layout_width="0dp"
+            android:background="@drawable/listview_border"
             android:layout_height="100dp"
             android:id="@+id/transactionOutputsList"
             tools:layout_constraintTop_creator="1"

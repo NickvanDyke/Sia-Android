@@ -55,7 +55,6 @@ public class Transaction {
         netValueStringExact = netValue.toPlainString();
         netValueStringRounded = Wallet.hastingsToSC(netValue).setScale(2, BigDecimal.ROUND_FLOOR).toPlainString();
         netZero = (netValueStringRounded.equals("0.00"));
-        System.out.println(netValueStringRounded);
     }
 
     public Transaction(String jsonString) throws JSONException {

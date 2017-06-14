@@ -29,6 +29,7 @@ public class WalletFragment extends Fragment {
 
     private BigDecimal balanceHastings;
     private TextView balance;
+    private TextView balanceUnconfirmed;
 
     private ArrayList<Transaction> transactions;
 
@@ -46,6 +47,7 @@ public class WalletFragment extends Fragment {
         setHasOptionsMenu(true);
 
         balance = (TextView)v.findViewById(R.id.balanceText);
+        balanceUnconfirmed = (TextView)v.findViewById(R.id.balanceUnconfirmed);
         transactions = new ArrayList<>();
 
         syncBar = (NumberProgressBar)v.findViewById(R.id.syncBar);
@@ -146,6 +148,7 @@ public class WalletFragment extends Fragment {
                         walletStatusText.setText("Wallet Status:\nUnlocked");
                     balanceHastings = new BigDecimal(response.getString("confirmedsiacoinbalance"));
                     balance.setText(Wallet.hastingsToSC(balanceHastings).setScale(2, BigDecimal.ROUND_FLOOR).toPlainString());
+                    balanceUnconfirmed.setText(Wallet.hastingsToSC(response.getString("unconfirmedsiacoinbalance")).setScale(2, BigDecimal.ROUND_FLOOR).toPlainString());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
