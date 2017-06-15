@@ -27,11 +27,11 @@ public class TransactionOutput extends TransactionIOBase {
     }
 
     public String toString() {
-        if (!fundType.contains("miner"))
-            return "ID: " + id +
+//        if (!fundType.contains("miner"))
+        return "ID: " + id +
                 "\nMaturity height: " + maturityHeight +
                 "\n" + super.toString();
-        else
-            return super.toString();
+//        else
+//            return super.toString();
     }
 }

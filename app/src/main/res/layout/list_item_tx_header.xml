@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
                                              xmlns:app="http://schemas.android.com/apk/res-auto"
+                                             xmlns:tools="http://schemas.android.com/tools"
                                              android:orientation="vertical"
                                              android:layout_width="match_parent"
                                              android:layout_height="wrap_content"
                                              android:background="?android:attr/selectableItemBackground">
 
     <TextView
-            android:text="Apr 20\n4:20 PM"
+            android:text="Loading date..."
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/transactionStatus"
@@ -22,7 +23,7 @@
             />
 
     <TextView
-            android:text="+69"
+            android:text="Loading value..."
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/transactionValue"
@@ -36,4 +37,20 @@
             android:paddingLeft="16dp"
             android:paddingStart="16dp"
             android:textSize="18sp"/>
+
+    <TextView
+            android:text="Loading id..."
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/transactionHeaderId"
+            app:layout_constraintRight_toLeftOf="@+id/transactionValue"
+            app:layout_constraintLeft_toRightOf="@+id/transactionStatus"
+            app:layout_constraintTop_toTopOf="@+id/transactionStatus"
+            app:layout_constraintBottom_toBottomOf="@+id/transactionStatus"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:textSize="9sp"
+            android:textAlignment="center"/>
 </android.support.constraint.ConstraintLayout>

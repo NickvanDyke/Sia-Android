@@ -6,41 +6,8 @@
                                              android:layout_width="match_parent"
                                              android:layout_height="wrap_content"
                                              android:paddingTop="5dp"
-                                             android:paddingBottom="10dp"
+                                             android:paddingBottom="12dp"
         android:background="@drawable/inverted_shadow">
-
-    <TextView
-            android:text="Transaction ID:"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/transactionDetailsIDHeader"
-            android:textAlignment="center"
-            tools:layout_constraintTop_creator="1"
-            tools:layout_constraintRight_creator="1"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            app:layout_constraintRight_toRightOf="parent"
-            tools:layout_constraintLeft_creator="1"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"/>
-
-    <TextView
-            android:text="Loading id..."
-            android:background="?android:attr/selectableItemBackground"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp"
-            android:onClick="copyTextView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/transactionDetailsId"
-            android:textAlignment="center"
-            tools:layout_constraintTop_creator="1"
-            android:layout_marginTop="16dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintRight_toRightOf="@+id/transactionDetailsIDHeader"
-            app:layout_constraintLeft_toLeftOf="@+id/transactionDetailsIDHeader"/>
 
     <TextView
             android:text="Loading confirmation block..."
@@ -48,12 +15,13 @@
             android:layout_height="wrap_content"
             android:id="@+id/transactionDetailsConfirmHeight"
             android:textAlignment="center"
-            tools:layout_constraintTop_creator="1"
-            tools:layout_constraintRight_creator="1"
-            app:layout_constraintRight_toRightOf="@+id/transactionDetailsId"
-            app:layout_constraintTop_toBottomOf="@+id/transactionDetailsId"
-            tools:layout_constraintLeft_creator="1"
-            app:layout_constraintLeft_toLeftOf="@+id/transactionDetailsId"/>
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"/>
 
     <TextView
             android:text="Inputs"
@@ -66,19 +34,20 @@
             app:layout_constraintRight_toRightOf="@+id/transactionDetailsConfirmHeight"
             app:layout_constraintTop_toBottomOf="@+id/transactionDetailsConfirmHeight"
             tools:layout_constraintLeft_creator="1"
-            app:layout_constraintLeft_toLeftOf="@+id/transactionDetailsConfirmHeight"/>
+            app:layout_constraintLeft_toLeftOf="@+id/transactionDetailsConfirmHeight"
+            android:layout_marginTop="8dp"/>
 
     <ListView
             android:background="@drawable/listview_border"
             android:layout_width="0dp"
             android:id="@+id/transactionInputsList"
-            android:layout_height="100dp"
             tools:layout_constraintTop_creator="1"
             tools:layout_constraintRight_creator="1"
             app:layout_constraintRight_toRightOf="@+id/transactionInputsLabel"
             app:layout_constraintTop_toBottomOf="@+id/transactionInputsLabel"
             tools:layout_constraintLeft_creator="1"
-            app:layout_constraintLeft_toLeftOf="@+id/transactionInputsLabel"/>
+            app:layout_constraintLeft_toLeftOf="@+id/transactionInputsLabel"
+            android:layout_height="100dp"/>
 
     <TextView
             android:text="Outputs"
@@ -91,17 +60,18 @@
             app:layout_constraintRight_toRightOf="@+id/transactionInputsList"
             app:layout_constraintTop_toBottomOf="@+id/transactionInputsList"
             tools:layout_constraintLeft_creator="1"
-            app:layout_constraintLeft_toLeftOf="@+id/transactionInputsList"/>
+            app:layout_constraintLeft_toLeftOf="@+id/transactionInputsList"
+            android:layout_marginTop="8dp"/>
 
     <ListView
             android:layout_width="0dp"
             android:background="@drawable/listview_border"
-            android:layout_height="100dp"
             android:id="@+id/transactionOutputsList"
             tools:layout_constraintTop_creator="1"
             tools:layout_constraintRight_creator="1"
             app:layout_constraintRight_toRightOf="@+id/transactionOutputsLabel"
             app:layout_constraintTop_toBottomOf="@+id/transactionOutputsLabel"
             tools:layout_constraintLeft_creator="1"
-            app:layout_constraintLeft_toLeftOf="@+id/transactionOutputsLabel"/>
+            app:layout_constraintLeft_toLeftOf="@+id/transactionOutputsLabel"
+            android:layout_height="100dp"/>
 </android.support.constraint.ConstraintLayout>
