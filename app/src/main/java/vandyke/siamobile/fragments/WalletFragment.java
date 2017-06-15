@@ -150,7 +150,8 @@ public class WalletFragment extends Fragment {
                     balance.setText(Wallet.round(Wallet.hastingsToSC(balanceHastings)));
                     BigDecimal netUnconfirmed = new BigDecimal(response.getString("unconfirmedincomingsiacoins"))
                             .subtract(new BigDecimal(response.getString("unconfirmedoutgoingsiacoins")));
-                    balanceUnconfirmed.setText(Wallet.round(Wallet.hastingsToSC(netUnconfirmed)) + " unconfirmed");
+                    balanceUnconfirmed.setText(netUnconfirmed.compareTo(BigDecimal.ZERO) > 0 ? "+" : "" +
+                            Wallet.round(Wallet.hastingsToSC(netUnconfirmed)) + " unconfirmed");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

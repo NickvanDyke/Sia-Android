@@ -21,7 +21,7 @@
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
             />
-
+<!--TODO: when date is unconfirmed, id is off center compared to confirmed transactions-->
     <TextView
             android:text="Loading value..."
             android:layout_width="wrap_content"
@@ -43,14 +43,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/transactionHeaderId"
-            app:layout_constraintRight_toLeftOf="@+id/transactionValue"
-            app:layout_constraintLeft_toRightOf="@+id/transactionStatus"
             app:layout_constraintTop_toTopOf="@+id/transactionStatus"
             app:layout_constraintBottom_toBottomOf="@+id/transactionStatus"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
             android:textSize="9sp"
-            android:textAlignment="center"/>
+            android:textAlignment="center"
+            app:layout_constraintRight_toLeftOf="@+id/transactionValue"
+            app:layout_constraintLeft_toRightOf="@+id/transactionStatus"/>
 </android.support.constraint.ConstraintLayout>

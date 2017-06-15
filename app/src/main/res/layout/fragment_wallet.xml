@@ -117,11 +117,11 @@
 
     <TextView
             android:text="Loading..."
-            android:paddingLeft="4dp"
+            android:paddingLeft="2dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/balanceUnconfirmed"
-            app:layout_constraintTop_toBottomOf="@+id/balanceText"
+            app:layout_constraintTop_toBottomOf="@+id/scNote"
             app:layout_constraintLeft_toLeftOf="@+id/balanceText"
             android:textColor="@color/colorPrimary"
             />
