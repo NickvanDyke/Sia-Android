@@ -3,7 +3,8 @@
                                              xmlns:app="http://schemas.android.com/apk/res-auto"
                                              android:orientation="vertical"
                                              android:layout_width="match_parent"
-                                             android:layout_height="wrap_content">
+                                             android:layout_height="wrap_content"
+                                             android:background="?android:attr/selectableItemBackground">
 
     <TextView
             android:text="Apr 20\n4:20 PM"

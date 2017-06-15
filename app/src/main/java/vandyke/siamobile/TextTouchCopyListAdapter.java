@@ -1,4 +1,4 @@
-package vandyke.siamobile.dialogs;
+package vandyke.siamobile;
 
 import android.app.Activity;
 import android.content.Context;

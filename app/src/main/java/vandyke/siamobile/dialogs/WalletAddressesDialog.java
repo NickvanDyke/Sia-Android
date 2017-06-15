@@ -3,18 +3,19 @@ package vandyke.siamobile.dialogs;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
+import android.app.DialogFragment;
+import android.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
+import vandyke.siamobile.TextTouchCopyListAdapter;
 import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
 
@@ -27,7 +28,7 @@ public class WalletAddressesDialog extends DialogFragment {
         final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_wallet_addresses, null);
         ListView seedsList = (ListView)view.findViewById(R.id.addressesList);
         final ArrayList<String> addresses = new ArrayList<>();
-        final TextTouchCopyListAdapter adapter = new TextTouchCopyListAdapter(getContext(), R.layout.text_touch_copy_list_item, addresses);
+        final TextTouchCopyListAdapter adapter = new TextTouchCopyListAdapter(MainActivity.instance, R.layout.text_touch_copy_list_item, addresses);
         seedsList.setAdapter(adapter);
         Wallet.addresses(new SiaRequest.VolleyCallback() {
             public void onSuccess(JSONObject response) {

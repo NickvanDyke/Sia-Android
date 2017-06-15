@@ -3,8 +3,8 @@ package vandyke.siamobile.dialogs;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
+import android.app.DialogFragment;
+import android.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import org.json.JSONObject;
+import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
 import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
@@ -55,7 +56,7 @@ public class WalletCreateDialog extends DialogFragment {
                     public void onClick(DialogInterface dialog, int id) {
                         String password = ((EditText)view.findViewById(R.id.newPasswordCreate)).getText().toString();
                         if (!password.equals(((EditText)view.findViewById(R.id.confirmNewPasswordCreate)).getText().toString())) {
-                            Toast.makeText(getContext(), "New passwords don't match", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.instance, "New passwords don't match", Toast.LENGTH_SHORT).show();
                             return;
                         }
                         boolean force = forceCheck.isChecked();

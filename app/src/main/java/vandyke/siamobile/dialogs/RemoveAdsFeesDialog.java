@@ -1,11 +1,11 @@
 package vandyke.siamobile.dialogs;
 
 import android.app.Dialog;
+import android.app.DialogFragment;
+import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,8 +22,8 @@ import vandyke.siamobile.api.Wallet;
 public class RemoveAdsFeesDialog extends DialogFragment {
 
     private String paymentRecipient = "20c9ed0d1c70ab0d6f694b7795bae2190db6b31d97bc2fba8067a336ffef37aacbc0c826e5d3";
-    private String removeAdsCost = "1"; // in SC TODO: actual amounts
-    private String removeFeesCost = "1"; //in SC
+    private String removeAdsCost = "2"; // in SC TODO: actual amounts
+    private String removeFeesCost = "2"; //in SC
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -34,7 +34,7 @@ public class RemoveAdsFeesDialog extends DialogFragment {
             public void onClick(View view) {
                 AlertDialog.Builder confirmBuilder = new AlertDialog.Builder(getActivity());
                 confirmBuilder.setTitle("Confirm")
-                        .setMessage("Spend " + removeAdsCost + "Siacoins to remove ads?")
+                        .setMessage("Spend " + removeAdsCost + " Siacoins to remove ads?")
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 Wallet.sendSiacoins(Wallet.scToHastings(removeAdsCost).toPlainString(),
@@ -66,7 +66,7 @@ public class RemoveAdsFeesDialog extends DialogFragment {
             public void onClick(View view) {
                 AlertDialog.Builder confirmBuilder = new AlertDialog.Builder(getActivity());
                 confirmBuilder.setTitle("Confirm")
-                        .setMessage("Spend " + removeFeesCost + "Siacoins to remove app fees? Note that this has no effect on Sia's 0.75 SC miner fee.")
+                        .setMessage("Spend " + removeFeesCost + " Siacoins to remove app fees? Note that this has no effect on Sia's 0.75 SC miner fee.")
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 Wallet.sendSiacoins(Wallet.scToHastings(removeFeesCost).toPlainString(),

@@ -1,19 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <android.support.v7.preference.SwitchPreferenceCompat
+    <SwitchPreference
             android:key="darkModeEnabled"
             android:title="Dark Mode"
             android:defaultValue="off">
-    </android.support.v7.preference.SwitchPreferenceCompat>
-    <android.support.v7.preference.SwitchPreferenceCompat
+    </SwitchPreference>
+    <SwitchPreference
             android:key="hideZero"
             android:title="Hide net-zero transactions"
+            android:defaultValue="off"
             android:summary="For each regular transaction, Sia also makes a transaction that has a net effect on your wallet of zero, to confirm the value. Check this to hide transactions that do not affect your balance">
-    </android.support.v7.preference.SwitchPreferenceCompat>
+    </SwitchPreference>
+    <EditTextPreference
+            android:key="displayedDecimalPrecision"
+            android:title="Displayed decimal precision"
+            android:summary="The number of decimal places displayed on numbers. This does not affect actual precision of values in memory, which is exact"
+            android:inputType="number"
+            android:gravity="center"
+            android:defaultValue="2">
+    </EditTextPreference>
     <PreferenceCategory
             android:title="Mode">
         <ListPreference
-                android:title="Operation Mode"
+                android:title="Operation mode"
                 android:summary="1. Interface with your own remote full node\n2. Retrieve data from a server and build transactions locally and upload them to the server. Some features will be unavailable using this"
                 android:key="operationMode"
                 android:entries="@array/operation_modes_entries"
@@ -21,16 +30,17 @@
                 android:defaultValue="remote_full_node"/>
         <EditTextPreference
                 android:key="remoteAddress"
-                android:title="Address"
+                android:title="Remote node address"
                 android:summary="The IP address and port number of your remote full node. If you are not on the same network as it, you will have to port forward"
-                android:dialogTitle="IP:port"/>
-        <!--TODO: make this use password dots. Not sure why this isn't working-->
+                android:dialogTitle="IP:port"
+                android:gravity="center"
+                android:hint="ip:port"/>
         <EditTextPreference
                 android:key="apiPass"
                 android:title="API password"
                 android:summary="The API password set on your remote full node"
                 android:dialogTitle="API Password"
-                android:gravity="center_horizontal"
+                android:gravity="center"
                 android:inputType="textPassword"
                 android:password="true"/>
     </PreferenceCategory>

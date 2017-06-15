@@ -9,8 +9,8 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -100,8 +100,8 @@ public class MainActivity extends AppCompatActivity {
                         // TODO: about stuff
                         return true;
                     case R.id.drawer_item_remove_ads_fees:
-                        RemoveAdsFeesDialog.createAndShow(getSupportFragmentManager());
-                        break;
+                        RemoveAdsFeesDialog.createAndShow(getFragmentManager());
+                        return true;
                     case R.id.drawer_item_donate:
                         // TODO: donate stuff
                 }
@@ -136,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
     public void loadDrawerFragment(Class clazz) {
         // TODO: might be able to use replace here instead of showing and hiding. might be better way to do this. also maybe limit size of backstack
         String className = clazz.getSimpleName();
-        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentManager fragmentManager = getFragmentManager();
 
 //        Fragment currentFrag = fragmentManager.findFragmentById(R.id.fragment_frame);
 //

@@ -1,5 +1,7 @@
 package vandyke.siamobile.api;
 
+import vandyke.siamobile.MainActivity;
+
 import java.math.BigDecimal;
 
 import static com.android.volley.Request.Method.GET;
@@ -114,5 +116,9 @@ public class Wallet {
 
     public static BigDecimal scToHastings(BigDecimal sc) {
         return sc.multiply(new BigDecimal("1000000000000000000000000"));
+    }
+
+    public static String round(BigDecimal num) {
+        return num.setScale(Integer.parseInt(MainActivity.prefs.getString("displayedDecimalPrecision", "2")), BigDecimal.ROUND_FLOOR).toPlainString();
     }
 }

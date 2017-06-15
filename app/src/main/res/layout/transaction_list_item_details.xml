@@ -5,8 +5,9 @@
                                              android:orientation="vertical"
                                              android:layout_width="match_parent"
                                              android:layout_height="wrap_content"
-                                             android:paddingBottom="7dp"
-        android:background="@color/txDetailsBackground">
+                                             android:paddingTop="5dp"
+                                             android:paddingBottom="10dp"
+        android:background="@drawable/inverted_shadow">
 
     <TextView
             android:text="Transaction ID:"
@@ -27,6 +28,7 @@
 
     <TextView
             android:text="Loading id..."
+            android:background="?android:attr/selectableItemBackground"
             android:paddingLeft="12dp"
             android:paddingRight="12dp"
             android:onClick="copyTextView"

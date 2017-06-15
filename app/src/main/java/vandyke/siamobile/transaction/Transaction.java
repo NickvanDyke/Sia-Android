@@ -3,6 +3,7 @@ package vandyke.siamobile.transaction;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.api.Wallet;
 
 import java.math.BigDecimal;
@@ -53,8 +54,8 @@ public class Transaction {
 //            System.out.println("output: " + Wallet.hastingsToSC(transactionOutput.getValue()) + "  walletAddr: " + transactionOutput.isWalletAddress());
         }
         netValueStringExact = netValue.toPlainString();
-        netValueStringRounded = Wallet.hastingsToSC(netValue).setScale(2, BigDecimal.ROUND_FLOOR).toPlainString();
-        netZero = (netValueStringRounded.equals("0.00"));
+        netValueStringRounded = Wallet.round(Wallet.hastingsToSC(netValue));
+        netZero = (netValue.compareTo(new BigDecimal(0)) == 0);
     }
 
     public Transaction(String jsonString) throws JSONException {

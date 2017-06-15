@@ -1,9 +1,9 @@
 package vandyke.siamobile.fragments;
 
 import android.app.AlertDialog;
+import android.app.Fragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.*;
@@ -55,7 +55,7 @@ public class WalletFragment extends Fragment {
         walletStatusText = (TextView)v.findViewById(R.id.walletStatusText);
 
         transactionList = (RecyclerView)v.findViewById(R.id.transactionList);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        LinearLayoutManager layoutManager = new LinearLayoutManager(MainActivity.instance);
         transactionList.setLayoutManager(layoutManager);
 
         refresh();
@@ -76,7 +76,7 @@ public class WalletFragment extends Fragment {
 
         balance.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.instance);
                 builder.setTitle("Exact Balance");
                 builder.setMessage(Wallet.hastingsToSC(balanceHastings).toPlainString() + " Siacoins");
                 builder.setPositiveButton("Close", new DialogInterface.OnClickListener() {
@@ -147,8 +147,10 @@ public class WalletFragment extends Fragment {
                     else
                         walletStatusText.setText("Wallet Status:\nUnlocked");
                     balanceHastings = new BigDecimal(response.getString("confirmedsiacoinbalance"));
-                    balance.setText(Wallet.hastingsToSC(balanceHastings).setScale(2, BigDecimal.ROUND_FLOOR).toPlainString());
-                    balanceUnconfirmed.setText(Wallet.hastingsToSC(response.getString("unconfirmedsiacoinbalance")).setScale(2, BigDecimal.ROUND_FLOOR).toPlainString());
+                    balance.setText(Wallet.round(Wallet.hastingsToSC(balanceHastings)));
+                    BigDecimal netUnconfirmed = new BigDecimal(response.getString("unconfirmedincomingsiacoins"))
+                            .subtract(new BigDecimal(response.getString("unconfirmedoutgoingsiacoins")));
+                    balanceUnconfirmed.setText(Wallet.round(Wallet.hastingsToSC(netUnconfirmed)) + " unconfirmed");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
