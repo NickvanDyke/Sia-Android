@@ -6,6 +6,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.view.*;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.thoughtbot.expandablerecyclerview.ExpandableRecyclerViewAdapter;
@@ -25,8 +26,6 @@ import java.util.Locale;
 
 public class TransactionListAdapter extends ExpandableRecyclerViewAdapter<TransactionHeaderHolder, TransactionDetailsHolder> {
 
-    private ArrayList<Transaction> data;
-
     private DateFormat df;
 
     private int red;
@@ -42,8 +41,8 @@ public class TransactionListAdapter extends ExpandableRecyclerViewAdapter<Transa
     @Override
     public TransactionHeaderHolder onCreateGroupViewHolder(final ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_tx_header, parent, false);
-        final TextView idText = (TextView)view.findViewById(R.id.transactionHeaderId);
         // TODO: find how to make the view not expand if it's long pressed... spent a long time and still couldn't get it, idk if possible in this situation
+        final TextView idText = (TextView)view.findViewById(R.id.transactionHeaderId);
         idText.setOnLongClickListener(new View.OnLongClickListener() {
             public boolean onLongClick(View v) {
                 ClipData clip = ClipData.newPlainText("Sia transaction id", ((TextView)v).getText());
@@ -90,18 +89,26 @@ public class TransactionListAdapter extends ExpandableRecyclerViewAdapter<Transa
     @Override
     public TransactionDetailsHolder onCreateChildViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_tx_details, parent, false);
-        view.findViewById(R.id.transactionInputsList).setOnTouchListener(new View.OnTouchListener() {
+        if (MainActivity.darkMode) {
+            view.findViewById(R.id.top_shadow).setBackgroundResource(R.drawable.top_shadow_dark);
+            view.findViewById(R.id.bot_shadow).setBackgroundResource(R.drawable.bot_shadow_dark);
+        }
+        ListView inputsList = (ListView)view.findViewById(R.id.transactionInputsList);
+        ListView outputsList = (ListView)view.findViewById(R.id.transactionOutputsList);
+        inputsList.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent event) {
                 v.getParent().requestDisallowInterceptTouchEvent(true);
                 return false;
             }
         });
-        view.findViewById(R.id.transactionOutputsList).setOnTouchListener(new View.OnTouchListener() {
+        inputsList.setBackgroundColor(MainActivity.backgroundColor);
+        outputsList.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent event) {
                 v.getParent().requestDisallowInterceptTouchEvent(true);
                 return false;
             }
         });
+        outputsList.setBackgroundColor(MainActivity.backgroundColor);
         return new TransactionDetailsHolder(view);
     }
 
@@ -134,7 +141,7 @@ public class TransactionListAdapter extends ExpandableRecyclerViewAdapter<Transa
             holder.transactionStatus.setTextColor(Color.RED);
         } else {
             timeString = df.format(((TransactionExpandableGroup) group).getConfirmationDate());
-            holder.transactionStatus.setTextColor(Color.GRAY);
+            holder.transactionStatus.setTextColor(MainActivity.defaultTextColor);
         }
         holder.transactionStatus.setText(timeString);
 
@@ -144,7 +151,7 @@ public class TransactionListAdapter extends ExpandableRecyclerViewAdapter<Transa
 
         String valueText = transaction.getNetValueStringRounded();
         if (transaction.isNetZero()) {
-            holder.transactionValue.setTextColor(Color.GRAY);
+            holder.transactionValue.setTextColor(MainActivity.defaultTextColor);
         } else if (valueText.contains("-")) {
             holder.transactionValue.setTextColor(red);
         } else {
@@ -154,25 +161,25 @@ public class TransactionListAdapter extends ExpandableRecyclerViewAdapter<Transa
         holder.transactionValue.setText(valueText);
     }
 
-    public void setData(ArrayList<Transaction> data) {
-        this.data = new ArrayList<>(data);
-        if (MainActivity.prefs.getBoolean("hideZero", false)) {
-            if (!removeZeroTransactions())
-                notifyDataSetChanged();
-        } else
-            notifyDataSetChanged();
-    }
-
-    public boolean removeZeroTransactions() {
-        boolean changed = false;
-        for (int i = 0; i < data.size(); i++)
-            if (data.get(i).getNetValueStringRounded().equals("0.00")) {
-                data.remove(i);
-                changed = true;
-                i--;
-            }
-        if (changed)
-            notifyDataSetChanged();
-        return changed;
-    }
+//    public void setData(ArrayList<Transaction> data) {
+//        this.data = new ArrayList<>(data);
+//        if (MainActivity.prefs.getBoolean("hideZero", false)) {
+//            if (!removeZeroTransactions())
+//                notifyDataSetChanged();
+//        } else
+//            notifyDataSetChanged();
+//    }
+//
+//    public boolean removeZeroTransactions() {
+//        boolean changed = false;
+//        for (int i = 0; i < data.size(); i++)
+//            if (data.get(i).getNetValueStringRounded().equals("0.00")) {
+//                data.remove(i);
+//                changed = true;
+//                i--;
+//            }
+//        if (changed)
+//            notifyDataSetChanged();
+//        return changed;
+//    }
 }

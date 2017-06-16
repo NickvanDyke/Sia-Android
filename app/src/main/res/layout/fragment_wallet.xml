@@ -68,11 +68,11 @@
             style="@style/NumberProgressBar_Grace_Yellow"
             custom:progress_unreached_color="#d6d6d6"
             custom:progress_reached_color="@color/colorAccent"
-            custom:progress_text_color="#6d6d6d"
+            custom:progress_text_color="@android:color/darker_gray"
             custom:progress_unreached_bar_height="3dp"
             custom:progress_reached_bar_height="3dp"
             custom:progress_text_size="14sp"
-            custom:progress_text_offset="0dp"
+            custom:progress_text_offset="1dp"
             android:layout_width="0dp"
             android:layout_height="12dp"
             custom:layout_constraintRight_toRightOf="@+id/receiveButton"
@@ -121,7 +121,7 @@
             app:layout_constraintTop_toTopOf="@+id/transactionList"
             app:layout_constraintRight_toRightOf="@+id/transactionList"
             app:layout_constraintLeft_toLeftOf="@+id/transactionList"
-            android:alpha="0.5"
+            android:alpha="1"
             android:layout_height="4dp"/>
 
     <android.support.v7.widget.RecyclerView

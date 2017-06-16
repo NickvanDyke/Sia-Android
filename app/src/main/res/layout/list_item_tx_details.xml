@@ -37,7 +37,6 @@
             android:layout_marginTop="4dp"/>
 
     <ListView
-            android:background="@drawable/listview_border"
             android:layout_width="0dp"
             android:id="@+id/transactionInputsList"
             tools:layout_constraintTop_creator="1"
@@ -64,7 +63,6 @@
 
     <ListView
             android:layout_width="0dp"
-            android:background="@drawable/listview_border"
             android:id="@+id/transactionOutputsList"
             tools:layout_constraintTop_creator="1"
             tools:layout_constraintRight_creator="1"
@@ -79,7 +77,7 @@
             android:id="@+id/top_shadow"
             android:background="@drawable/top_shadow"
             android:layout_width="0dp"
-            android:alpha="0.5"
+            android:alpha="0.7"
             android:layout_height="4dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -89,7 +87,7 @@
             android:id="@+id/bot_shadow"
             android:background="@drawable/bot_shadow"
             android:layout_width="0dp"
-            android:alpha="0.5"
+            android:alpha="0.7"
             android:layout_height="4dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"

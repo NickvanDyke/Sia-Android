@@ -20,7 +20,11 @@ import vandyke.siamobile.api.Wallet;
 public class WalletChangePasswordDialog extends DialogFragment {
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder;
+        if (MainActivity.darkMode)
+            builder = new AlertDialog.Builder(getActivity(), R.style.DarkDialogTheme);
+        else
+            builder = new AlertDialog.Builder(getActivity());
         final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_wallet_change_password, null);
         builder.setTitle("Change Wallet Password")
                 .setView(view)

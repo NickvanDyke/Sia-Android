@@ -1,9 +1,6 @@
 package vandyke.siamobile;
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
-import android.content.SharedPreferences;
+import android.content.*;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -16,6 +13,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,6 +30,9 @@ public class MainActivity extends AppCompatActivity {
     public static SharedPreferences prefs;
     public static RequestQueue requestQueue;
     public static MainActivity instance;
+    public static int defaultTextColor;
+    public static int backgroundColor;
+    public static boolean darkMode;
 
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
@@ -41,13 +42,23 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences.OnSharedPreferenceChangeListener prefsListener;
 
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(R.style.AppTheme);
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if (prefs.getBoolean("darkModeEnabled", false)) {
+            setTheme(R.style.AppThemeDark);
+            darkMode = true;
+        } else {
+            setTheme(R.style.AppTheme);
+            darkMode = false;
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_layout);
 
-        prefs = PreferenceManager.getDefaultSharedPreferences(this);
         requestQueue = Volley.newRequestQueue(this);
         instance = this;
+        defaultTextColor = new TextView(this).getTextColors().getDefaultColor();
+        TypedValue a = new TypedValue();
+        getTheme().resolveAttribute(android.R.attr.windowBackground, a, true);
+        backgroundColor = a.data;
 
         // disabled for now because it's annoying. TODO: uncomment before release
 //        if (prefs.getBoolean("adsEnabled", true)) {
@@ -56,7 +67,8 @@ public class MainActivity extends AppCompatActivity {
 //        } else
         ((AdView)findViewById(R.id.adView)).setVisibility(View.GONE);
 
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         // set up drawer button on action bar
@@ -127,6 +139,21 @@ public class MainActivity extends AppCompatActivity {
                             editor.putString("address", prefs.getString("remoteAddress", "192.168.1.11:9980"));
                             editor.apply();
                         }
+                        break;
+                    case "darkModeEnabled":
+                        if (prefs.getBoolean("darkModeEnabled", false)) {
+                            setTheme(R.style.AppThemeDark);
+                            System.out.println("on");
+                        } else {
+                            setTheme(R.style.AppTheme);
+                            System.out.println("off");
+                        }
+                        // restart to apply the theme
+                        finish();
+                        Intent intent = new Intent(MainActivity.instance, MainActivity.class)
+                            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
                         break;
                 }
             }

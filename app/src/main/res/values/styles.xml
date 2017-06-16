@@ -10,12 +10,18 @@
     </style>
 
     <!--Dark Mode theme-->
+    <!--TODO: black action bar text/icons-->
     <style name="AppThemeDark" parent="AppTheme">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
         <item name="android:windowBackground">@color/backgroundDark</item>
+        <item name="android:alertDialogTheme">@style/DarkDialogTheme</item>
+    </style>
+
+    <style name="DarkDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:background">@color/backgroundDark</item>
     </style>
 
     <!--startup splash screen theme-->

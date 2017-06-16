@@ -48,12 +48,16 @@ public class WalletFragment extends Fragment {
         MainActivity.instance.getSupportActionBar().setTitle("Wallet");
         setHasOptionsMenu(true);
 
+        if (MainActivity.darkMode)
+            v.findViewById(R.id.top_shadow).setBackgroundResource(R.drawable.top_shadow_dark);
+
         balance = (TextView)v.findViewById(R.id.balanceText);
         balanceUnconfirmed = (TextView)v.findViewById(R.id.balanceUnconfirmed);
         transactions = new ArrayList<>();
 
         syncBar = (NumberProgressBar)v.findViewById(R.id.syncBar);
         syncText = (TextView)v.findViewById(R.id.syncText);
+        syncBar.setProgressTextColor(MainActivity.defaultTextColor);
         walletStatusText = (TextView)v.findViewById(R.id.walletStatusText);
 
         transactionList = (RecyclerView)v.findViewById(R.id.transactionList);

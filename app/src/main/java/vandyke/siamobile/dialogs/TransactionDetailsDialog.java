@@ -8,12 +8,17 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
 
 public class TransactionDetailsDialog extends DialogFragment {
     // TODO
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder;
+        if (MainActivity.darkMode)
+            builder = new AlertDialog.Builder(getActivity(), R.style.DarkDialogTheme);
+        else
+            builder = new AlertDialog.Builder(getActivity());
         final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_transaction_details, null);
         builder.setTitle("Transaction Details")
                 .setView(view)

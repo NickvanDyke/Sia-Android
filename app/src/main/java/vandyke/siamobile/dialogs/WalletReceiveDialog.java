@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import org.json.JSONException;
 import org.json.JSONObject;
+import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
 import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
@@ -22,7 +23,11 @@ import vandyke.siamobile.api.Wallet;
 public class WalletReceiveDialog extends DialogFragment {
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder;
+        if (MainActivity.darkMode)
+            builder = new AlertDialog.Builder(getActivity(), R.style.DarkDialogTheme);
+        else
+            builder = new AlertDialog.Builder(getActivity());
         final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_wallet_receive, null);
         Wallet.newAddress(new SiaRequest.VolleyCallback() {
             public void onSuccess(JSONObject response) {

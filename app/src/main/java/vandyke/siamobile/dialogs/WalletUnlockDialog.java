@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.EditText;
+import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
 import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
@@ -18,7 +19,11 @@ import vandyke.siamobile.api.Wallet;
 public class WalletUnlockDialog extends DialogFragment {
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder;
+        if (MainActivity.darkMode)
+            builder = new AlertDialog.Builder(getActivity(), R.style.DarkDialogTheme);
+        else
+            builder = new AlertDialog.Builder(getActivity());
         final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_wallet_unlock, null);
         builder.setTitle("Unlock Wallet")
                 .setView(view)

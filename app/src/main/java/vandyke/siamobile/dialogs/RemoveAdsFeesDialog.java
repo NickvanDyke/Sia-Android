@@ -26,7 +26,11 @@ public class RemoveAdsFeesDialog extends DialogFragment {
     private String removeFeesCost = "2"; //in SC
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder;
+        if (MainActivity.darkMode)
+            builder = new AlertDialog.Builder(getActivity(), R.style.DarkDialogTheme);
+        else
+            builder = new AlertDialog.Builder(getActivity());
         final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_remove_ads_fees, null);
 
         final Button removeAdsButton = (Button)view.findViewById(R.id.removeAdsButton);
