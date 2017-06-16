@@ -14,7 +14,8 @@
             app:layout_constraintTop_toTopOf="parent"
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
-            android:layout_marginTop="4dp"/>
+            android:layout_marginTop="4dp"
+            android:textSize="12sp"/>
 
     <TextView
             android:text="Loading id..."
@@ -27,16 +28,17 @@
             android:layout_marginStart="8dp"
             app:layout_constraintLeft_toRightOf="@+id/txParentIdLabel"
             android:layout_marginLeft="8dp"
-            app:layout_constraintTop_toTopOf="@+id/txParentIdLabel"/>
+            app:layout_constraintTop_toTopOf="@+id/txParentIdLabel"
+            android:textSize="12sp"/>
 
     <TextView
             android:text="Address:"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/txDetailsAddressLabel"
-            app:layout_constraintLeft_toLeftOf="@+id/txParentIdLabel"
-            android:layout_marginTop="4dp"
-            app:layout_constraintTop_toBottomOf="@+id/txDetailsId"/>
+            android:textSize="12sp"
+            app:layout_constraintTop_toBottomOf="@+id/txDetailsId"
+            app:layout_constraintLeft_toLeftOf="@+id/txParentIdLabel"/>
 
     <TextView
             android:text="Loading address..."
@@ -47,16 +49,17 @@
             android:layout_marginStart="8dp"
             app:layout_constraintLeft_toRightOf="@+id/txDetailsAddressLabel"
             android:layout_marginLeft="8dp"
-            app:layout_constraintTop_toTopOf="@+id/txDetailsAddressLabel"/>
+            app:layout_constraintTop_toTopOf="@+id/txDetailsAddressLabel"
+            android:textSize="12sp"/>
 
     <TextView
             android:text="Wallet address:"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/txDetailsWalletLabel"
-            app:layout_constraintLeft_toLeftOf="@+id/txDetailsAddressLabel"
+            android:textSize="12sp"
             app:layout_constraintTop_toBottomOf="@+id/txDetailsAddress"
-            android:layout_marginTop="4dp"/>
+            app:layout_constraintLeft_toLeftOf="@+id/txDetailsAddressLabel"/>
 
     <TextView
             android:text="Loading..."
@@ -68,16 +71,16 @@
             app:layout_constraintLeft_toRightOf="@+id/txDetailsWalletLabel"
             android:layout_marginLeft="8dp"
             app:layout_constraintRight_toRightOf="@+id/txDetailsAddress"
-            />
+            android:textSize="12sp"/>
 
     <TextView
             android:text="Type:"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/txDetailsTypeLabel"
-            android:layout_marginTop="4dp"
             app:layout_constraintTop_toBottomOf="@+id/txDetailsWallet"
-            app:layout_constraintLeft_toLeftOf="@+id/txDetailsWalletLabel"/>
+            app:layout_constraintLeft_toLeftOf="@+id/txDetailsWalletLabel"
+            android:textSize="12sp"/>
 
     <TextView
             android:text="Loading type..."
@@ -89,7 +92,7 @@
             app:layout_constraintLeft_toRightOf="@+id/txDetailsTypeLabel"
             android:layout_marginLeft="8dp"
             app:layout_constraintRight_toRightOf="@+id/txDetailsWallet"
-            />
+            android:textSize="12sp"/>
 
     <TextView
             android:text="Amount:"
@@ -98,7 +101,7 @@
             android:id="@+id/txDetailsAmountLabel"
             app:layout_constraintTop_toBottomOf="@+id/txDetailsType"
             app:layout_constraintLeft_toLeftOf="@+id/txDetailsTypeLabel"
-            android:layout_marginTop="4dp"/>
+            android:textSize="12sp"/>
 
     <TextView
             android:text="Loading amount..."
@@ -110,17 +113,16 @@
             app:layout_constraintLeft_toRightOf="@+id/txDetailsAmountLabel"
             android:layout_marginLeft="8dp"
             app:layout_constraintRight_toRightOf="@+id/txDetailsType"
-            android:paddingBottom="4dp"/>
+            android:textSize="12sp"/>
 
     <TextView
             android:text="Maturity height:"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/txDetailsMaturityLabel"
-            android:layout_marginTop="8dp"
             app:layout_constraintTop_toBottomOf="@+id/txDetailsAmount"
             app:layout_constraintLeft_toLeftOf="@+id/txDetailsAmountLabel"
-            android:paddingBottom="4dp"/>
+            android:textSize="12sp"/>
 
     <TextView
             android:text="Loading..."
@@ -131,5 +133,6 @@
             android:layout_marginStart="8dp"
             app:layout_constraintLeft_toRightOf="@+id/txDetailsMaturityLabel"
             android:layout_marginLeft="8dp"
-            app:layout_constraintRight_toRightOf="@+id/txDetailsAmount"/>
+            app:layout_constraintRight_toRightOf="@+id/txDetailsAmount"
+            android:textSize="12sp"/>
 </android.support.constraint.ConstraintLayout>

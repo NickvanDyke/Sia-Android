@@ -58,7 +58,6 @@ public class TransactionIOAdapter extends ArrayAdapter {
             holder.idLabel.setText("Parent ID:");
             holder.maturityHeight.setVisibility(View.GONE);
             holder.maturityHeightLabel.setVisibility(View.GONE);
-            holder.amount.setPadding(0, 0, 0, 4);
         } else {
             TransactionOutput tx = (TransactionOutput)txBase;
             holder.id.setText(tx.getId());
@@ -66,7 +65,6 @@ public class TransactionIOAdapter extends ArrayAdapter {
             holder.maturityHeight.setText(Integer.toString(tx.getMaturityHeight()));
             holder.maturityHeight.setVisibility(View.VISIBLE);
             holder.maturityHeightLabel.setVisibility(View.VISIBLE);
-            holder.amount.setPadding(0, 0, 0, 0);
         }
 
         holder.address.setText(txBase.getRelatedAddress());

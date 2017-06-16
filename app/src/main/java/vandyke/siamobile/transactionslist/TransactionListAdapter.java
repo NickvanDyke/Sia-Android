@@ -116,13 +116,11 @@ public class TransactionListAdapter extends ExpandableRecyclerViewAdapter<Transa
             holder.confirmationHeight.setVisibility(View.GONE);
 
         ArrayList<TransactionIOBase> inputs = new ArrayList<>();
-        for (TransactionInput transactionInput : transaction.getInputs())
-            inputs.add(transactionInput);
+        inputs.addAll(transaction.getInputs());
         holder.inputs.setAdapter(new TransactionIOAdapter(MainActivity.instance, R.layout.list_item_tx_io, inputs));
 
         ArrayList<TransactionIOBase> outputs = new ArrayList<>();
-        for (TransactionOutput transactionOutput : transaction.getOutputs())
-            outputs.add(transactionOutput);
+        outputs.addAll(transaction.getOutputs());
         holder.outputs.setAdapter(new TransactionIOAdapter(MainActivity.instance, R.layout.list_item_tx_io, outputs));
     }
 

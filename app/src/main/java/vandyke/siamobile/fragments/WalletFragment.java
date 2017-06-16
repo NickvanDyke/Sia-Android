@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.*;
@@ -57,6 +58,7 @@ public class WalletFragment extends Fragment {
         transactionList = (RecyclerView)v.findViewById(R.id.transactionList);
         LinearLayoutManager layoutManager = new LinearLayoutManager(MainActivity.instance);
         transactionList.setLayoutManager(layoutManager);
+        transactionList.addItemDecoration(new DividerItemDecoration(transactionList.getContext(), layoutManager.getOrientation()));
 
         refresh();
 
