@@ -34,7 +34,8 @@
     <!--startup splash screen theme-->
     <style name="splashScreenTheme" parent="@android:style/Theme.DeviceDefault.Light.NoActionBar">
         <item name="android:windowBackground">@drawable/splash_screen</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/backgroundDark</item>
-        <!--idk if setting primarydark color is working. also currently its not displaying correct image-->
+        <!--TODO: idk if setting primarydark color is working-->
     </style>
 </resources>

@@ -21,7 +21,6 @@ import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
 
 public class WalletCreateDialog extends DialogFragment {
-    // TODO: Seeds EditText doesn't fit in dialog; too big
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder;
         if (MainActivity.darkMode)

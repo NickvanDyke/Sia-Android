@@ -7,16 +7,20 @@
 
     <Button
             android:text="Remove Ads"
-            android:layout_width="wrap_content"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:textColor="#FFFFFF"
             android:id="@+id/removeAdsButton" android:layout_marginTop="16dp"
             app:layout_constraintTop_toTopOf="parent" android:layout_marginEnd="16dp"
             app:layout_constraintRight_toRightOf="parent" android:layout_marginRight="16dp"/>
     <Button
             android:text="Remove App Fees"
-            android:layout_width="wrap_content"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:id="@+id/removeFeesButton"
+            android:background="@color/colorPrimary"
+            android:textColor="#FFFFFF"
             android:layout_marginEnd="16dp"
             app:layout_constraintRight_toRightOf="parent"
             android:layout_marginRight="16dp"

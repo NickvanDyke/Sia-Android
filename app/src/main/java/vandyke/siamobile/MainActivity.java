@@ -1,5 +1,6 @@
 package vandyke.siamobile;
 
+import android.app.FragmentTransaction;
 import android.content.*;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -72,12 +73,43 @@ public class MainActivity extends AppCompatActivity {
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         // set up drawer button on action bar
-        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close);
+        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close) {
+            public void onDrawerClosed(View drawerView) {
+                // TODO: maybe make it so it waits until drawer close if fragment doesn't already exist, but loads immediately if it does?
+                super.onDrawerClosed(drawerView);
+                switch (activeMenuItem.getItemId()) {
+                    case R.id.drawer_item_files:
+                        loadDrawerFragment(FilesFragment.class);
+                        break;
+                    case R.id.drawer_item_wallet:
+                        loadDrawerFragment(WalletFragment.class);
+                        break;
+                    case R.id.drawer_item_hosting:
+                        loadDrawerFragment(HostingFragment.class);
+                        break;
+                    case R.id.drawer_item_terminal:
+                        loadDrawerFragment(TerminalFragment.class);
+                        break;
+                    case R.id.drawer_item_settings:
+                        loadDrawerFragment(SettingsFragment.class);
+                        break;
+                    case R.id.drawer_item_about:
+                        // TODO: about stuff
+                        break;
+                    case R.id.drawer_item_remove_ads_fees:
+                        RemoveAdsFeesDialog.createAndShow(getFragmentManager());
+                        break;
+                    case R.id.drawer_item_donate:
+                        // TODO: donate stuff
+                        break;
+                }
+            }
+        };
         drawerLayout.addDrawerListener(drawerToggle);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         // set action stuff for when drawer items are selected
-        navigationView = (NavigationView) findViewById(R.id.drawer_navigation_view);
+        navigationView = (NavigationView)findViewById(R.id.drawer_navigation_view);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 if (item == activeMenuItem) {
@@ -92,33 +124,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 activeMenuItem = item;
                 drawerLayout.closeDrawers();
-
-                switch (item.getItemId()) {
-                    case R.id.drawer_item_files:
-                        loadDrawerFragment(FilesFragment.class);
-                        return true;
-                    case R.id.drawer_item_wallet:
-                        loadDrawerFragment(WalletFragment.class);
-                        return true;
-                    case R.id.drawer_item_hosting:
-                        loadDrawerFragment(HostingFragment.class);
-                        return true;
-                    case R.id.drawer_item_terminal:
-                        loadDrawerFragment(TerminalFragment.class);
-                        return true;
-                    case R.id.drawer_item_settings:
-                        loadDrawerFragment(SettingsFragment.class);
-                        return true;
-                    case R.id.drawer_item_about:
-                        // TODO: about stuff
-                        return true;
-                    case R.id.drawer_item_remove_ads_fees:
-                        RemoveAdsFeesDialog.createAndShow(getFragmentManager());
-                        return true;
-                    case R.id.drawer_item_donate:
-                        // TODO: donate stuff
-                }
-                return false;
+                return true;
             }
         });
 
@@ -191,7 +197,8 @@ public class MainActivity extends AppCompatActivity {
 //                fragmentManager.beginTransaction().show(newFragment).addToBackStack(null).commit();
 //        }
         try {
-            fragmentManager.beginTransaction().replace(R.id.fragment_frame, (Fragment)clazz.newInstance(), className).commit();
+            fragmentManager.beginTransaction().setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                    .replace(R.id.fragment_frame, (Fragment)clazz.newInstance(), className).commit();
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {

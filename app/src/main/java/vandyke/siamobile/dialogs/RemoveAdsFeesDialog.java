@@ -31,12 +31,17 @@ public class RemoveAdsFeesDialog extends DialogFragment {
             builder = new AlertDialog.Builder(getActivity(), R.style.DarkDialogTheme);
         else
             builder = new AlertDialog.Builder(getActivity());
+
         final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_remove_ads_fees, null);
 
         final Button removeAdsButton = (Button)view.findViewById(R.id.removeAdsButton);
         removeAdsButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                AlertDialog.Builder confirmBuilder = new AlertDialog.Builder(getActivity());
+                AlertDialog.Builder confirmBuilder;
+                if (MainActivity.darkMode)
+                    confirmBuilder = new AlertDialog.Builder(getActivity(), R.style.DarkDialogTheme);
+                else
+                    confirmBuilder = new AlertDialog.Builder(getActivity());
                 confirmBuilder.setTitle("Confirm")
                         .setMessage("Spend " + removeAdsCost + " Siacoins to remove ads?")
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -68,7 +73,11 @@ public class RemoveAdsFeesDialog extends DialogFragment {
         final Button removeFeesButton = (Button)view.findViewById(R.id.removeFeesButton);
         removeFeesButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                AlertDialog.Builder confirmBuilder = new AlertDialog.Builder(getActivity());
+                AlertDialog.Builder confirmBuilder;
+                if (MainActivity.darkMode)
+                    confirmBuilder = new AlertDialog.Builder(getActivity(), R.style.DarkDialogTheme);
+                else
+                    confirmBuilder = new AlertDialog.Builder(getActivity());
                 confirmBuilder.setTitle("Confirm")
                         .setMessage("Spend " + removeFeesCost + " Siacoins to remove app fees? Note that this has no effect on Sia's 0.75 SC miner fee.")
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
