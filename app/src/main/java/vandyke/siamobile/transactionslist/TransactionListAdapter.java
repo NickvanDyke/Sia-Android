@@ -107,7 +107,8 @@ public class TransactionListAdapter extends ExpandableRecyclerViewAdapter<Transa
 
     @Override
     public void onBindChildViewHolder(TransactionDetailsHolder holder, int flatPosition, ExpandableGroup group, int childIndex) {
-        Transaction transaction = (Transaction) group.getItems().get(childIndex);
+        Transaction transaction = (Transaction)group.getItems().get(childIndex);
+        System.out.println(transaction.getTransactionId());
 
         if (transaction.isConfirmed()) {
             holder.confirmationHeight.setText("Confirmation block: " + transaction.getConfirmationHeight());
@@ -126,13 +127,14 @@ public class TransactionListAdapter extends ExpandableRecyclerViewAdapter<Transa
 
     @Override
     public void onBindGroupViewHolder(TransactionHeaderHolder holder, int flatPosition, ExpandableGroup group) {
-        Transaction transaction = (Transaction) group.getItems().get(0);
+        Transaction transaction = (Transaction)group.getItems().get(0);
         String timeString;
         if (!transaction.isConfirmed()) {
             timeString = "Unconfirmed";
             holder.transactionStatus.setTextColor(Color.RED);
         } else {
             timeString = df.format(((TransactionExpandableGroup) group).getConfirmationDate());
+            holder.transactionStatus.setTextColor(Color.GRAY);
         }
         holder.transactionStatus.setText(timeString);
 

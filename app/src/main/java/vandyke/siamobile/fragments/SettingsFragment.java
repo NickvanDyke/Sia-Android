@@ -15,6 +15,7 @@ public class SettingsFragment extends PreferenceFragment {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MainActivity.instance.getSupportActionBar().setTitle("Settings");
         addPreferencesFromResource(R.xml.settings);
         final ListPreference operationMode = (ListPreference)findPreference("operationMode");
         final EditTextPreference remoteAddress = (EditTextPreference)findPreference("remoteAddress");

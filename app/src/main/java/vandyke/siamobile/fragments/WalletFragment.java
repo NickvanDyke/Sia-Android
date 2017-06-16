@@ -45,6 +45,7 @@ public class WalletFragment extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_wallet, container, false);
+        MainActivity.instance.getSupportActionBar().setTitle("Wallet");
         setHasOptionsMenu(true);
 
         balance = (TextView)v.findViewById(R.id.balanceText);

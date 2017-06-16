@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences.OnSharedPreferenceChangeListener prefsListener;
 
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_layout);
 
@@ -167,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-        getSupportActionBar().setTitle(className.replace("Fragment", ""));
+//        getSupportActionBar().setTitle(className.replace("Fragment", ""));
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {

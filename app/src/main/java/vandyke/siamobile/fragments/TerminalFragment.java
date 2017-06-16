@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
+import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
 
 import java.io.*;
@@ -28,6 +29,7 @@ public class TerminalFragment extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_terminal, container, false);
+        MainActivity.instance.getSupportActionBar().setTitle("Terminal");
         copyBinary();
 
 //        Thread socket = new Thread(new Runnable() {

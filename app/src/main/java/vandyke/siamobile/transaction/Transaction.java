@@ -28,8 +28,8 @@ public class Transaction {
             transactionId = json.getString("transactionid");
             confirmationHeight = json.getInt("confirmationheight");
             long confirmationTimestamp = json.getLong("confirmationtimestamp");
-            confirmed = (confirmationTimestamp != 9223372036854775807D); // TODO: not sure if this is actually working...
-            confirmationDate = confirmed ? new Date(confirmationTimestamp * 1000) : null;
+            confirmed = (confirmationTimestamp != 9223372036854775807D);
+            confirmationDate = confirmed ? new Date(confirmationTimestamp * 1000) : new Date();
             inputs = new ArrayList<>();
             outputs = new ArrayList<>();
             JSONArray inputsJsonArray = json.getJSONArray("inputs");
