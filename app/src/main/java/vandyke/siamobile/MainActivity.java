@@ -77,6 +77,8 @@ public class MainActivity extends AppCompatActivity {
             public void onDrawerClosed(View drawerView) {
                 // TODO: maybe make it so it waits until drawer close if fragment doesn't already exist, but loads immediately if it does?
                 super.onDrawerClosed(drawerView);
+                if (activeMenuItem == null)
+                    return;
                 switch (activeMenuItem.getItemId()) {
                     case R.id.drawer_item_files:
                         loadDrawerFragment(FilesFragment.class);
