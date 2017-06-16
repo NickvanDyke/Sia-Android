@@ -10,7 +10,7 @@
     </style>
 
     <!--Dark Mode theme-->
-    <!--TODO: black action bar text/icons-->
+    <!--TODO: black action bar text/icons, and black button text-->
     <style name="AppThemeDark" parent="AppTheme">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -18,16 +18,23 @@
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
         <item name="android:windowBackground">@color/backgroundDark</item>
         <item name="android:alertDialogTheme">@style/DarkDialogTheme</item>
+        <!--<item name="android:textAppearanceButton">@style/DarkButton</item>-->
     </style>
 
+    <!--Dialog theme for dark mode-->
     <style name="DarkDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="android:background">@color/backgroundDark</item>
+    </style>
+
+    <!--TODO: Button theme for dark mode. it makes text super small for some reason-->
+    <style name="DarkButton" parent="@android:style/Widget.Button">
+        <item name="android:textColor">@color/backgroundDark</item>
     </style>
 
     <!--startup splash screen theme-->
     <style name="splashScreenTheme" parent="@android:style/Theme.DeviceDefault.Light.NoActionBar">
         <item name="android:windowBackground">@drawable/splash_screen</item>
-        <item name="colorPrimaryDark">@android:color/background_light</item>
+        <item name="colorPrimaryDark">@color/backgroundDark</item>
         <!--idk if setting primarydark color is working. also currently its not displaying correct image-->
     </style>
 </resources>

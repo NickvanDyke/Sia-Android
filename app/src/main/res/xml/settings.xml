@@ -3,7 +3,6 @@
     <SwitchPreference
             android:key="darkModeEnabled"
             android:title="Dark Mode"
-            android:summary="Dark app theme. Toggling this will restart the app"
             android:defaultValue="off">
     </SwitchPreference>
     <SwitchPreference

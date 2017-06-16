@@ -143,22 +143,24 @@ public class MainActivity extends AppCompatActivity {
                     case "darkModeEnabled":
                         if (prefs.getBoolean("darkModeEnabled", false)) {
                             setTheme(R.style.AppThemeDark);
-                            System.out.println("on");
                         } else {
                             setTheme(R.style.AppTheme);
-                            System.out.println("off");
                         }
-                        // restart to apply the theme
+                        // restart to apply the theme; don't need to change darkMode boolean since app is restarting
                         finish();
                         Intent intent = new Intent(MainActivity.instance, MainActivity.class)
                             .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                .addCategory("darkModeRestart");
                         startActivity(intent);
                         break;
                 }
             }
         };
         prefs.registerOnSharedPreferenceChangeListener(prefsListener);
+
+        if (getIntent().hasCategory("darkModeRestart"))
+            loadDrawerFragment(SettingsFragment.class);
     }
 
     public void loadDrawerFragment(Class clazz) {
