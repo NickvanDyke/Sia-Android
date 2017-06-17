@@ -19,11 +19,13 @@ import vandyke.siamobile.R;
 import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
 
+import java.math.BigDecimal;
+
 public class RemoveAdsFeesDialog extends DialogFragment {
 
-    private String paymentRecipient = "20c9ed0d1c70ab0d6f694b7795bae2190db6b31d97bc2fba8067a336ffef37aacbc0c826e5d3";
-    private String removeAdsCost = "2"; // in SC TODO: actual amounts
-    private String removeFeesCost = "2"; //in SC
+    private String paymentRecipient = MainActivity.devAddresses[(int)(Math.random() * MainActivity.devAddresses.length)];
+    private BigDecimal removeAdsCost = new BigDecimal("2"); // in SC TODO: actual amounts
+    private BigDecimal removeFeesCost = new BigDecimal("2"); //in SC
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = MainActivity.getDialogBuilder();
@@ -38,7 +40,7 @@ public class RemoveAdsFeesDialog extends DialogFragment {
                         .setMessage("Spend " + removeAdsCost + " Siacoins to remove ads?")
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                Wallet.sendSiacoins(Wallet.scToHastings(removeAdsCost).toPlainString(),
+                                Wallet.sendSiacoins(Wallet.scToHastings(removeAdsCost),
                                         paymentRecipient, new SiaRequest.VolleyCallback() {
                                             public void onSuccess(JSONObject response) {
                                                 SharedPreferences.Editor editor = MainActivity.prefs.edit();
@@ -67,17 +69,15 @@ public class RemoveAdsFeesDialog extends DialogFragment {
             public void onClick(View view) {
                 AlertDialog.Builder confirmBuilder = MainActivity.getDialogBuilder();
                 confirmBuilder.setTitle("Confirm")
-                        .setMessage("Spend " + removeFeesCost + " Siacoins to remove app fees? Note that this has no effect on Sia's 0.75 SC miner fee.")
+                        .setMessage("Spend " + removeFeesCost + " Siacoins to remove app fees? Note that this has no effect on the Sia network's miner fees.")
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                Wallet.sendSiacoins(Wallet.scToHastings(removeFeesCost).toPlainString(),
+                                Wallet.sendSiacoins(Wallet.scToHastings(removeFeesCost),
                                         paymentRecipient, new SiaRequest.VolleyCallback() {
                                             public void onSuccess(JSONObject response) {
-                                                // TODO: disable fees aside from setting prefs, if necessary
                                                 SharedPreferences.Editor editor = MainActivity.prefs.edit();
                                                 editor.putBoolean("feesEnabled", false);
                                                 editor.apply();
-                                                MainActivity.instance.findViewById(R.id.adView).setVisibility(View.GONE);
                                                 Toast.makeText(MainActivity.instance, "Success. App fees removed", Toast.LENGTH_SHORT).show();
                                             }
                                             public void onError(SiaRequest.Error error) {

@@ -1,8 +1,12 @@
 package vandyke.siamobile.api;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import vandyke.siamobile.MainActivity;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import static com.android.volley.Request.Method.GET;
 import static com.android.volley.Request.Method.POST;
@@ -70,10 +74,35 @@ public class Wallet {
     }
 
     /** amount should be in hastings */
-    public static void sendSiacoins(String amount, String recipient, SiaRequest.VolleyCallback callback) {
+    public static void sendSiacoins(BigDecimal amount, String recipient, SiaRequest.VolleyCallback callback) {
         new SiaRequest(POST, "/wallet/siacoins", callback)
-                .addParam("amount", amount)
+                .addParam("amount", amount.setScale(0, 0).toPlainString())
                 .addParam("destination", recipient)
+                .send();
+    }
+
+    public static void sendSiacoinsWithDevFee(BigDecimal amount, String recipient, SiaRequest.VolleyCallback callback) {
+        JSONArray outputs = new JSONArray();
+        JSONObject regOutput = new JSONObject();
+        JSONObject feeOutput = new JSONObject();
+        try {
+            outputs.put(regOutput);
+            outputs.put(feeOutput);
+            feeOutput.put("unlockhash", MainActivity.devAddresses[(int)(Math.random() * MainActivity.devAddresses.length)]);
+            String devAmount = calculateDevFee(amount);
+            feeOutput.put("value", devAmount);
+            System.out.println(devAmount);
+            regOutput.put("unlockhash", recipient);
+            regOutput.put("value", amount.setScale(0, 0).toPlainString());
+            System.out.println(amount);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        System.out.println(outputs.toString());
+        new SiaRequest(POST, "/wallet/siacoins", callback)
+                .addParam("outputs", outputs.toString())
+//                .addParam("amount", "")
+//                .addParam("destination", "")
                 .send();
     }
 
@@ -120,5 +149,14 @@ public class Wallet {
 
     public static String round(BigDecimal num) {
         return num.setScale(Integer.parseInt(MainActivity.prefs.getString("displayedDecimalPrecision", "2")), BigDecimal.ROUND_FLOOR).toPlainString();
+    }
+
+    /** will return value in the same units they were passed in, without decimal */
+    public static String calculateDevFee(BigDecimal amount) {
+        return amount.multiply(MainActivity.devFee).setScale(0, RoundingMode.FLOOR).toPlainString();
+    }
+
+    public static String calculateDevFee(String amount) {
+        return new BigDecimal(amount).multiply(MainActivity.devFee).setScale(0, RoundingMode.FLOOR).toPlainString();
     }
 }

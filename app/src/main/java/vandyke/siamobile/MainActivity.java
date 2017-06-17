@@ -36,7 +36,7 @@ import vandyke.siamobile.dialogs.RemoveAdsFeesDialog;
 import vandyke.siamobile.fragments.*;
 
 import java.io.*;
-import java.net.URI;
+import java.math.BigDecimal;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -45,7 +45,10 @@ public class MainActivity extends AppCompatActivity {
     public static MainActivity instance;
     public static int defaultTextColor;
     public static int backgroundColor;
-    public static boolean customBgSet;
+    public static final String[] devAddresses = { "986082d52bf8a25009e7ce97508385687f3241d1e027969edbf9f63e4240cecf77bad58f40a5",
+    "8a9d8e6c8d043300b967443eaaa01874efa36e69a95b03c6b970bfe5b82a7f0345424a7919af",
+    "65cc0ab13a1ccb7788cf36554daf980f162c5bf2fec9a3664192916b26c568af4eda38f666d0" };
+    public static final BigDecimal devFee = new BigDecimal("0.005"); // 0.5%
 
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
@@ -64,7 +67,6 @@ public class MainActivity extends AppCompatActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        customBgSet = prefs.getBoolean("customBg", false);
         switch (prefs.getString("theme", "light")) {
             default:
             case "light":
@@ -112,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
 //            MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713");
 //            ((AdView)findViewById(R.id.adView)).loadAd(new AdRequest.Builder().build());
 //        } else
-        ((AdView) findViewById(R.id.adView)).setVisibility(View.GONE);
+        ((AdView)findViewById(R.id.adView)).setVisibility(View.GONE);
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         // set up drawer button on action bar
@@ -202,7 +204,6 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case "transparentBars":
                         restartAndLaunch("settings");
-                        //toolbar.setBackgroundColor(R.color.colorPrimary); // TODO: it always does gray for some reason. so instead I just restart lol which resets it
                         break;
                 }
             }
