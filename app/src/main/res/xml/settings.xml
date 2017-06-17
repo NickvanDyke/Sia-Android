@@ -1,22 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
                   xmlns:app="http://schemas.android.com/apk/res-auto">
-    <ListPreference
-            android:key="theme"
-            android:title="Theme"
-            android:entries="@array/theme_entries"
-            android:entryValues="@array/theme_values">
-    </ListPreference>
-    <SwitchPreference
-            android:key="transparentBars"
-            android:title="Transparent bars"
-            android:defaultValue="off">
-    </SwitchPreference>
     <SwitchPreference
             android:key="hideZero"
             android:title="Hide net-zero transactions"
             android:defaultValue="off"
-            android:summary="For each regular transaction, Sia also makes a transaction that has a net effect on your wallet of zero, to confirm the value. Check this to hide transactions that do not affect your balance">
+            android:summary="For each regular transaction, Sia also makes a setup transaction that does not affect your wallet balance. Check this to hide transactions that have zero net effect on your wallet">
     </SwitchPreference>
     <EditTextPreference
             android:key="displayedDecimalPrecision"
@@ -26,6 +15,25 @@
             android:gravity="center"
             android:defaultValue="2">
     </EditTextPreference>
+    <PreferenceCategory
+            android:title="Appearance">
+        <ListPreference
+                android:key="theme"
+                android:title="Theme"
+                android:entries="@array/theme_entries"
+                android:entryValues="@array/theme_values">
+        </ListPreference>
+        <SwitchPreference
+                android:key="transparentBars"
+                android:title="Transparent bars"
+                android:defaultValue="off">
+        </SwitchPreference>
+        <SwitchPreference
+                android:key="customBg"
+                android:title="Custom background image"
+                android:defaultValue="off">
+        </SwitchPreference>
+    </PreferenceCategory>
     <PreferenceCategory
             android:title="Mode">
         <ListPreference

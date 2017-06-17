@@ -12,12 +12,10 @@
         <item>Light</item>
         <item>Dark</item>
         <item>Amoled</item>
-        <item>Custom</item>
     </string-array>
     <string-array name="theme_values">
         <item>light</item>
         <item>dark</item>
         <item>amoled</item>
-        <item>custom</item>
     </string-array>
 </resources>

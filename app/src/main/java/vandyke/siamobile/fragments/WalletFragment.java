@@ -32,16 +32,11 @@ public class WalletFragment extends Fragment {
     private BigDecimal balanceHastings;
     private TextView balance;
     private TextView balanceUnconfirmed;
-
     private ArrayList<Transaction> transactions;
-
     private NumberProgressBar syncBar;
     private TextView syncText;
-
     private TextView walletStatusText;
-
     private final ArrayList<TransactionExpandableGroup> transactionExpandableGroups = new ArrayList<>();
-
     private RecyclerView transactionList;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -52,16 +47,14 @@ public class WalletFragment extends Fragment {
         final Button receiveButton = (Button)v.findViewById(R.id.receiveButton);
         final Button sendButton = (Button)v.findViewById(R.id.sendButton);
 
-        switch (MainActivity.theme) {
-            case DARK:
-                v.findViewById(R.id.top_shadow).setBackgroundResource(R.drawable.top_shadow_dark);
-                break;
-            case AMOLED:
-            case CUSTOM:
-                v.findViewById(R.id.top_shadow).setVisibility(View.GONE);
-                receiveButton.setBackgroundColor(android.R.color.transparent);
-                sendButton.setBackgroundColor(android.R.color.transparent);
-                break;
+        if (MainActivity.theme == MainActivity.Theme.AMOLED || MainActivity.customBgSet) {
+            v.findViewById(R.id.top_shadow).setVisibility(View.GONE);
+        } else if (MainActivity.theme == MainActivity.Theme.DARK) {
+            v.findViewById(R.id.top_shadow).setBackgroundResource(R.drawable.top_shadow_dark);
+        }
+        if (MainActivity.theme == MainActivity.Theme.AMOLED) {
+            receiveButton.setBackgroundColor(android.R.color.transparent);
+            sendButton.setBackgroundColor(android.R.color.transparent);
         }
 
         balance = (TextView)v.findViewById(R.id.balanceText);

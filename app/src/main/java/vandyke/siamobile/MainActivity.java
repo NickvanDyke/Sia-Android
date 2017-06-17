@@ -1,5 +1,11 @@
 package vandyke.siamobile;
 
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
 import android.app.FragmentTransaction;
 import android.content.*;
@@ -15,6 +21,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,6 +35,9 @@ import com.google.android.gms.ads.AdView;
 import vandyke.siamobile.dialogs.RemoveAdsFeesDialog;
 import vandyke.siamobile.fragments.*;
 
+import java.io.*;
+import java.net.URI;
+
 public class MainActivity extends AppCompatActivity {
 
     public static SharedPreferences prefs;
@@ -35,25 +45,33 @@ public class MainActivity extends AppCompatActivity {
     public static MainActivity instance;
     public static int defaultTextColor;
     public static int backgroundColor;
+    public static boolean customBgSet;
 
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private NavigationView navigationView;
     private MenuItem activeMenuItem;
 
+    private static final int SELECT_PICTURE = 1;
+
     private SharedPreferences.OnSharedPreferenceChangeListener prefsListener;
 
     public enum Theme {
-        LIGHT, DARK, AMOLED, CUSTOM
+        LIGHT, DARK, AMOLED
     }
 
     public static Theme theme;
 
     protected void onCreate(Bundle savedInstanceState) {
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        customBgSet = prefs.getBoolean("customBg", false);
         switch (prefs.getString("theme", "light")) {
+            default:
             case "light":
-                setTheme(R.style.AppTheme_Light);
+                if (customBgSet)
+                    setTheme(R.style.AppTheme_Light_DarkText);
+                else
+                    setTheme(R.style.AppTheme_Light);
                 theme = Theme.LIGHT;
                 break;
             case "dark":
@@ -63,10 +81,6 @@ public class MainActivity extends AppCompatActivity {
             case "amoled":
                 setTheme(R.style.AppTheme_Amoled);
                 theme = Theme.AMOLED;
-                break;
-            case "custom":
-                setTheme(R.style.AppTheme_Custom);
-                theme = Theme.CUSTOM;
                 break;
         }
         super.onCreate(savedInstanceState);
@@ -79,13 +93,19 @@ public class MainActivity extends AppCompatActivity {
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
             toolbar.setPadding(0, getStatusBarHeight(), 0, 0);
         }
-        requestQueue = Volley.newRequestQueue(this);
-        instance = this;
+        if (customBgSet) {
+            byte[] b = Base64.decode(prefs.getString("customBgBase64", "null"), Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(b, 0, b.length);
+            findViewById(R.id.activity_main).setBackground(new BitmapDrawable(bitmap));
+        }
+
         defaultTextColor = new TextView(this).getTextColors().getDefaultColor();
         TypedValue a = new TypedValue();
         getTheme().resolveAttribute(android.R.attr.windowBackground, a, true);
         backgroundColor = a.data;
 
+        requestQueue = Volley.newRequestQueue(this);
+        instance = this;
         // disabled for now because it's annoying. TODO: uncomment before release
 //        if (prefs.getBoolean("adsEnabled", true)) {
 //            MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713");
@@ -171,12 +191,22 @@ public class MainActivity extends AppCompatActivity {
                         }
                         break;
                     case "theme":// restart to apply the theme; don't need to change theme variable since app is restarting and it'll load it
-                        restartandLaunch("settings");
+                        restartAndLaunch("settings");
                         break;
                     case "transparentBars":
-                        restartandLaunch("settings");
+                        restartAndLaunch("settings");
                         //toolbar.setBackgroundColor(R.color.colorPrimary); // TODO: it always does gray for some reason. so instead I just restart lol which resets it
                         break;
+                    case "customBg":
+                        if (prefs.getBoolean("customBg", false)) {
+                            customBgSet = true;
+                            Intent intent = new Intent();
+                            intent.setType("image/*");
+                            intent.setAction(Intent.ACTION_GET_CONTENT);
+                            startActivityForResult(Intent.createChooser(intent, "Select Picture"), SELECT_PICTURE);
+                        } else {
+                            findViewById(R.id.activity_main).setBackgroundColor(backgroundColor);
+                        }
                 }
             }
         };
@@ -186,7 +216,31 @@ public class MainActivity extends AppCompatActivity {
             loadDrawerFragment(SettingsFragment.class);
     }
 
-    public void restartandLaunch(String category) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            if (requestCode == SELECT_PICTURE) {
+                Uri selectedImageURI = data.getData();
+                InputStream input = null;
+                try {
+                    input = getContentResolver().openInputStream(selectedImageURI);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+                Bitmap bitmap = BitmapFactory.decodeStream(input, null, null);
+                findViewById(R.id.activity_main).setBackground(new BitmapDrawable(bitmap));
+
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                byte[] b = baos.toByteArray();
+                SharedPreferences.Editor prefsEditor = prefs.edit();
+                prefsEditor.putString("customBgBase64", Base64.encodeToString(b, Base64.DEFAULT));
+                prefsEditor.apply();
+            }
+        }
+    }
+
+    public void restartAndLaunch(String category) {
         finish();
         Intent intent = new Intent(MainActivity.instance, MainActivity.class)
                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -258,7 +312,6 @@ public class MainActivity extends AppCompatActivity {
             case AMOLED:
                 return new AlertDialog.Builder(instance, R.style.DialogTheme_Amoled);
             case LIGHT:
-            case CUSTOM:
                 return new AlertDialog.Builder(instance);
             default:
                 return new AlertDialog.Builder(instance);

@@ -89,17 +89,14 @@ public class TransactionListAdapter extends ExpandableRecyclerViewAdapter<Transa
     @Override
     public TransactionDetailsHolder onCreateChildViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_tx_details, parent, false);
-        switch (MainActivity.theme) {
-            case DARK:
-                view.findViewById(R.id.top_shadow).setBackgroundResource(R.drawable.top_shadow_dark);
-                view.findViewById(R.id.bot_shadow).setBackgroundResource(R.drawable.bot_shadow_dark);
-                break;
-            case AMOLED:
-            case CUSTOM:
-                view.findViewById(R.id.top_shadow).setVisibility(View.GONE);
-                view.findViewById(R.id.bot_shadow).setVisibility(View.GONE);
-                break;
+        if (MainActivity.theme == MainActivity.Theme.AMOLED || MainActivity.customBgSet) {
+            view.findViewById(R.id.top_shadow).setVisibility(View.GONE);
+            view.findViewById(R.id.bot_shadow).setVisibility(View.GONE);
+        } else if (MainActivity.theme == MainActivity.Theme.DARK) {
+            view.findViewById(R.id.top_shadow).setBackgroundResource(R.drawable.top_shadow_dark);
+            view.findViewById(R.id.bot_shadow).setBackgroundResource(R.drawable.bot_shadow_dark);
         }
+
         ListView inputsList = (ListView)view.findViewById(R.id.transactionInputsList);
         ListView outputsList = (ListView)view.findViewById(R.id.transactionOutputsList);
         inputsList.setOnTouchListener(new View.OnTouchListener() {
@@ -108,14 +105,19 @@ public class TransactionListAdapter extends ExpandableRecyclerViewAdapter<Transa
                 return false;
             }
         });
-        inputsList.setBackgroundColor(MainActivity.backgroundColor);
         outputsList.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent event) {
                 v.getParent().requestDisallowInterceptTouchEvent(true);
                 return false;
             }
         });
-        outputsList.setBackgroundColor(MainActivity.backgroundColor);
+        if (MainActivity.customBgSet) {
+            inputsList.setBackgroundColor(android.R.color.transparent);
+            outputsList.setBackgroundColor(android.R.color.transparent);
+        } else {
+            inputsList.setBackgroundColor(MainActivity.backgroundColor);
+            outputsList.setBackgroundColor(MainActivity.backgroundColor);
+        }
         return new TransactionDetailsHolder(view);
     }
 
