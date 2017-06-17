@@ -19,11 +19,7 @@ import vandyke.siamobile.api.Wallet;
 public class WalletUnlockDialog extends DialogFragment {
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder;
-        if (MainActivity.darkMode)
-            builder = new AlertDialog.Builder(getActivity(), R.style.DarkDialogTheme);
-        else
-            builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = MainActivity.getDialogBuilder();
         final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_wallet_unlock, null);
         builder.setTitle("Unlock Wallet")
                 .setView(view)

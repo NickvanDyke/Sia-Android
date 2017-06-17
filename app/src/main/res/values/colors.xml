@@ -5,19 +5,14 @@
     <color name="colorPrimaryDark">#00a882</color>
     <color name="colorAccent">#00CB9E</color>
     <color name="shadowStart">#c5c5c5</color>
-    <color name="shadowCenter">#dddddd</color>
     <color name="shadowEnd">@android:color/background_light</color>
 
 
-
     <!--dark mode stuff-->
-
     <color name="backgroundDark">#3D4C5F</color>
-    <color name="shadowStartDark">#3D4C5F</color>
-    <color name="shadowCenterDark">#3D4C5F</color>
+    <color name="shadowStartDark">#222222</color>
     <color name="shadowEndDark">#3D4C5F</color>
 
-    <!--Stuff for both themes-->
-    <color name="grey">@android:color/darker_gray</color>
-    <color name="listViewBorder">#7a7a7a</color>
+    <!--amoled stuff-->
+    <color name="grey">#ffffff</color>
 </resources>

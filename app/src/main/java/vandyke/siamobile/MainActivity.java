@@ -1,5 +1,6 @@
 package vandyke.siamobile;
 
+import android.support.v7.app.AlertDialog;
 import android.app.FragmentTransaction;
 import android.content.*;
 import android.content.res.Configuration;
@@ -18,6 +19,7 @@ import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.android.volley.RequestQueue;
@@ -33,7 +35,6 @@ public class MainActivity extends AppCompatActivity {
     public static MainActivity instance;
     public static int defaultTextColor;
     public static int backgroundColor;
-    public static boolean darkMode;
 
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
@@ -42,18 +43,42 @@ public class MainActivity extends AppCompatActivity {
 
     private SharedPreferences.OnSharedPreferenceChangeListener prefsListener;
 
+    public enum Theme {
+        LIGHT, DARK, AMOLED, CUSTOM
+    }
+
+    public static Theme theme;
+
     protected void onCreate(Bundle savedInstanceState) {
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        if (prefs.getBoolean("darkModeEnabled", false)) {
-            setTheme(R.style.AppThemeDark);
-            darkMode = true;
-        } else {
-            setTheme(R.style.AppTheme);
-            darkMode = false;
+        switch (prefs.getString("theme", "light")) {
+            case "light":
+                setTheme(R.style.AppTheme_Light);
+                theme = Theme.LIGHT;
+                break;
+            case "dark":
+                setTheme(R.style.AppTheme_Dark);
+                theme = Theme.DARK;
+                break;
+            case "amoled":
+                setTheme(R.style.AppTheme_Amoled);
+                theme = Theme.AMOLED;
+                break;
+            case "custom":
+                setTheme(R.style.AppTheme_Custom);
+                theme = Theme.CUSTOM;
+                break;
         }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_layout);
 
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        if (prefs.getBoolean("transparentBars", false)) {
+            toolbar.setBackgroundColor(android.R.color.transparent);
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+            toolbar.setPadding(0, getStatusBarHeight(), 0, 0);
+        }
         requestQueue = Volley.newRequestQueue(this);
         instance = this;
         defaultTextColor = new TextView(this).getTextColors().getDefaultColor();
@@ -66,10 +91,7 @@ public class MainActivity extends AppCompatActivity {
 //            MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713");
 //            ((AdView)findViewById(R.id.adView)).loadAd(new AdRequest.Builder().build());
 //        } else
-        ((AdView)findViewById(R.id.adView)).setVisibility(View.GONE);
-
-        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        ((AdView) findViewById(R.id.adView)).setVisibility(View.GONE);
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         // set up drawer button on action bar
@@ -111,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         // set action stuff for when drawer items are selected
-        navigationView = (NavigationView)findViewById(R.id.drawer_navigation_view);
+        navigationView = (NavigationView) findViewById(R.id.drawer_navigation_view);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 if (item == activeMenuItem) {
@@ -148,27 +170,29 @@ public class MainActivity extends AppCompatActivity {
                             editor.apply();
                         }
                         break;
-                    case "darkModeEnabled":
-                        if (prefs.getBoolean("darkModeEnabled", false)) {
-                            setTheme(R.style.AppThemeDark);
-                        } else {
-                            setTheme(R.style.AppTheme);
-                        }
-                        // restart to apply the theme; don't need to change darkMode boolean since app is restarting
-                        finish();
-                        Intent intent = new Intent(MainActivity.instance, MainActivity.class)
-                            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                .addCategory("darkModeRestart");
-                        startActivity(intent);
+                    case "theme":// restart to apply the theme; don't need to change theme variable since app is restarting and it'll load it
+                        restartandLaunch("settings");
+                        break;
+                    case "transparentBars":
+                        restartandLaunch("settings");
+                        //toolbar.setBackgroundColor(R.color.colorPrimary); // TODO: it always does gray for some reason. so instead I just restart lol which resets it
                         break;
                 }
             }
         };
         prefs.registerOnSharedPreferenceChangeListener(prefsListener);
 
-        if (getIntent().hasCategory("darkModeRestart"))
+        if (getIntent().hasCategory("settings"))
             loadDrawerFragment(SettingsFragment.class);
+    }
+
+    public void restartandLaunch(String category) {
+        finish();
+        Intent intent = new Intent(MainActivity.instance, MainActivity.class)
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                .addCategory(category);
+        startActivity(intent);
     }
 
     public void loadDrawerFragment(Class clazz) {
@@ -200,7 +224,7 @@ public class MainActivity extends AppCompatActivity {
 //        }
         try {
             fragmentManager.beginTransaction().setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                    .replace(R.id.fragment_frame, (Fragment)clazz.newInstance(), className).commit();
+                    .replace(R.id.fragment_frame, (Fragment) clazz.newInstance(), className).commit();
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
@@ -227,9 +251,23 @@ public class MainActivity extends AppCompatActivity {
             super.onBackPressed();
     }
 
+    public static AlertDialog.Builder getDialogBuilder() {
+        switch (MainActivity.theme) {
+            case DARK:
+                return new AlertDialog.Builder(instance, R.style.DialogTheme_Dark);
+            case AMOLED:
+                return new AlertDialog.Builder(instance, R.style.DialogTheme_Amoled);
+            case LIGHT:
+            case CUSTOM:
+                return new AlertDialog.Builder(instance);
+            default:
+                return new AlertDialog.Builder(instance);
+        }
+    }
+
     public void copyTextView(View view) {
-        ClipboardManager clipboard = (ClipboardManager)MainActivity.instance.getSystemService(Context.CLIPBOARD_SERVICE);
-        ClipData clip = ClipData.newPlainText("Sia text touch copy", ((TextView)view).getText());
+        ClipboardManager clipboard = (ClipboardManager) MainActivity.instance.getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText("Sia text touch copy", ((TextView) view).getText());
         clipboard.setPrimaryClip(clip);
         Toast.makeText(this, "Copied selection to clipboard", Toast.LENGTH_SHORT).show();
     }
@@ -248,5 +286,14 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar_main, menu);
         return true;
+    }
+
+    public int getStatusBarHeight() {
+        int result = 0;
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
     }
 }

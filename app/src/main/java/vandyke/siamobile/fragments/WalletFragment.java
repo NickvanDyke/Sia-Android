@@ -3,6 +3,7 @@ package vandyke.siamobile.fragments;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -48,8 +49,20 @@ public class WalletFragment extends Fragment {
         MainActivity.instance.getSupportActionBar().setTitle("Wallet");
         setHasOptionsMenu(true);
 
-        if (MainActivity.darkMode)
-            v.findViewById(R.id.top_shadow).setBackgroundResource(R.drawable.top_shadow_dark);
+        final Button receiveButton = (Button)v.findViewById(R.id.receiveButton);
+        final Button sendButton = (Button)v.findViewById(R.id.sendButton);
+
+        switch (MainActivity.theme) {
+            case DARK:
+                v.findViewById(R.id.top_shadow).setBackgroundResource(R.drawable.top_shadow_dark);
+                break;
+            case AMOLED:
+            case CUSTOM:
+                v.findViewById(R.id.top_shadow).setVisibility(View.GONE);
+                receiveButton.setBackgroundColor(android.R.color.transparent);
+                sendButton.setBackgroundColor(android.R.color.transparent);
+                break;
+        }
 
         balance = (TextView)v.findViewById(R.id.balanceText);
         balanceUnconfirmed = (TextView)v.findViewById(R.id.balanceUnconfirmed);
@@ -67,14 +80,12 @@ public class WalletFragment extends Fragment {
 
         refresh();
 
-        final Button receiveButton = (Button)v.findViewById(R.id.receiveButton);
         receiveButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 WalletReceiveDialog.createAndShow(getFragmentManager());
             }
         });
 
-        final Button sendButton = (Button)v.findViewById(R.id.sendButton);
         sendButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 WalletSendDialog.createAndShow(getFragmentManager());

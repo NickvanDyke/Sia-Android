@@ -24,11 +24,7 @@ import java.util.ArrayList;
 public class WalletSeedsDialog extends DialogFragment {
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder;
-        if (MainActivity.darkMode)
-            builder = new AlertDialog.Builder(getActivity(), R.style.DarkDialogTheme);
-        else
-            builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = MainActivity.getDialogBuilder();
         final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_wallet_seeds, null);
         ListView seedsList = (ListView) view.findViewById(R.id.seedsList);
         final ArrayList<String> seeds = new ArrayList<>();

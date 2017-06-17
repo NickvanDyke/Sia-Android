@@ -89,9 +89,16 @@ public class TransactionListAdapter extends ExpandableRecyclerViewAdapter<Transa
     @Override
     public TransactionDetailsHolder onCreateChildViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_tx_details, parent, false);
-        if (MainActivity.darkMode) {
-            view.findViewById(R.id.top_shadow).setBackgroundResource(R.drawable.top_shadow_dark);
-            view.findViewById(R.id.bot_shadow).setBackgroundResource(R.drawable.bot_shadow_dark);
+        switch (MainActivity.theme) {
+            case DARK:
+                view.findViewById(R.id.top_shadow).setBackgroundResource(R.drawable.top_shadow_dark);
+                view.findViewById(R.id.bot_shadow).setBackgroundResource(R.drawable.bot_shadow_dark);
+                break;
+            case AMOLED:
+            case CUSTOM:
+                view.findViewById(R.id.top_shadow).setVisibility(View.GONE);
+                view.findViewById(R.id.bot_shadow).setVisibility(View.GONE);
+                break;
         }
         ListView inputsList = (ListView)view.findViewById(R.id.transactionInputsList);
         ListView outputsList = (ListView)view.findViewById(R.id.transactionOutputsList);
