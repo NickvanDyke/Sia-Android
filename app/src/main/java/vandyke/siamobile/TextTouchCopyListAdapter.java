@@ -2,6 +2,7 @@ package vandyke.siamobile;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +36,8 @@ public class TextTouchCopyListAdapter extends ArrayAdapter {
 
             holder = new Holder();
             holder.textView = (TextView)row.findViewById(R.id.listTextView);
+            if (MainActivity.theme == MainActivity.Theme.CUSTOM)
+                holder.textView.setTextColor(Color.GRAY);
 
             row.setTag(holder);
         } else {

@@ -47,7 +47,7 @@ public class WalletFragment extends Fragment {
         final Button receiveButton = (Button)v.findViewById(R.id.receiveButton);
         final Button sendButton = (Button)v.findViewById(R.id.sendButton);
 
-        if (MainActivity.theme == MainActivity.Theme.AMOLED || MainActivity.customBgSet) {
+        if (MainActivity.theme == MainActivity.Theme.AMOLED || MainActivity.theme == MainActivity.Theme.CUSTOM) {
             v.findViewById(R.id.top_shadow).setVisibility(View.GONE);
         } else if (MainActivity.theme == MainActivity.Theme.DARK) {
             v.findViewById(R.id.top_shadow).setBackgroundResource(R.drawable.top_shadow_dark);

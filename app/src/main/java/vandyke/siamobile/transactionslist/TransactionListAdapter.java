@@ -89,7 +89,7 @@ public class TransactionListAdapter extends ExpandableRecyclerViewAdapter<Transa
     @Override
     public TransactionDetailsHolder onCreateChildViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_tx_details, parent, false);
-        if (MainActivity.theme == MainActivity.Theme.AMOLED || MainActivity.customBgSet) {
+        if (MainActivity.theme == MainActivity.Theme.AMOLED || MainActivity.theme == MainActivity.Theme.CUSTOM) {
             view.findViewById(R.id.top_shadow).setVisibility(View.GONE);
             view.findViewById(R.id.bot_shadow).setVisibility(View.GONE);
         } else if (MainActivity.theme == MainActivity.Theme.DARK) {
@@ -111,7 +111,7 @@ public class TransactionListAdapter extends ExpandableRecyclerViewAdapter<Transa
                 return false;
             }
         });
-        if (MainActivity.customBgSet) {
+        if (MainActivity.theme == MainActivity.Theme.CUSTOM) {
             inputsList.setBackgroundColor(android.R.color.transparent);
             outputsList.setBackgroundColor(android.R.color.transparent);
         } else {

@@ -5,6 +5,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
@@ -25,6 +26,8 @@ public class WalletReceiveDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = MainActivity.getDialogBuilder();
         final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_wallet_receive, null);
+        if (MainActivity.theme == MainActivity.Theme.CUSTOM)
+            ((TextView)view.findViewById(R.id.receiveAddress)).setTextColor(Color.GRAY);
         Wallet.newAddress(new SiaRequest.VolleyCallback() {
             public void onSuccess(JSONObject response) {
                 try {

@@ -21,16 +21,12 @@
                 android:key="theme"
                 android:title="Theme"
                 android:entries="@array/theme_entries"
-                android:entryValues="@array/theme_values">
+                android:entryValues="@array/theme_values"
+                android:defaultValue="light">
         </ListPreference>
         <SwitchPreference
                 android:key="transparentBars"
                 android:title="Transparent bars"
-                android:defaultValue="off">
-        </SwitchPreference>
-        <SwitchPreference
-                android:key="customBg"
-                android:title="Custom background image"
                 android:defaultValue="off">
         </SwitchPreference>
     </PreferenceCategory>

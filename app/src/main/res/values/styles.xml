@@ -7,10 +7,6 @@
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
     </style>
 
-    <style name="AppTheme.Light.DarkText" parent="AppTheme.Light">
-        <item name="android:textColor">@android:color/black</item>
-    </style>
-
     <!--Dark Mode theme-->
     <!--TODO: black action bar text/icons, and black button text-->
     <style name="AppTheme.Dark" parent="AppTheme.Light">
@@ -37,9 +33,13 @@
     </style>
 
     <style name="AppTheme.Custom" parent="AppTheme.Light">
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
-        <item name="android:windowBackground">@color/backgroundDark</item>
-        <!--<item name="android:textAppearanceButton">@style/DarkButton</item>-->
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:itemTextAppearance">@style/TextAppearance</item>
+        <item name="android:alertDialogTheme">@style/DialogTheme.Custom</item>
+    </style>
+
+    <style name="TextAppearance">
+        <item name="android:textColor">@android:color/black</item>
     </style>
 
     <!--Dialog theme for dark mode-->
@@ -50,6 +50,16 @@
     <style name="DialogTheme.Amoled" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="android:background">@android:color/black</item>
         <item name="android:textColorAlertDialogListItem">@android:color/white</item>
+    </style>
+
+    <style name="DialogTheme.Custom" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textColorSecondary">@android:color/black</item>
+        <item name="android:textColorPrimary">@android:color/black</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <!--TODO: figure out how to make buttons at bottom green. Also some dialog text colors are handled manually rn...-->
     </style>
 
     <!--TODO: Button theme for dark mode. it makes text super small for some reason-->

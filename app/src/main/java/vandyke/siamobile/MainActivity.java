@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences.OnSharedPreferenceChangeListener prefsListener;
 
     public enum Theme {
-        LIGHT, DARK, AMOLED
+        LIGHT, DARK, AMOLED, CUSTOM
     }
 
     public static Theme theme;
@@ -68,10 +68,7 @@ public class MainActivity extends AppCompatActivity {
         switch (prefs.getString("theme", "light")) {
             default:
             case "light":
-                if (customBgSet)
-                    setTheme(R.style.AppTheme_Light_DarkText);
-                else
-                    setTheme(R.style.AppTheme_Light);
+                setTheme(R.style.AppTheme_Light);
                 theme = Theme.LIGHT;
                 break;
             case "dark":
@@ -82,9 +79,18 @@ public class MainActivity extends AppCompatActivity {
                 setTheme(R.style.AppTheme_Amoled);
                 theme = Theme.AMOLED;
                 break;
+            case "custom":
+                setTheme(R.style.AppTheme_Custom);
+                theme = Theme.CUSTOM;
+                break;
         }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_layout);
+        if (theme == Theme.CUSTOM) {
+            byte[] b = Base64.decode(prefs.getString("customBgBase64", "null"), Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(b, 0, b.length);
+            getWindow().setBackgroundDrawable(new BitmapDrawable(bitmap));
+        }
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -92,11 +98,6 @@ public class MainActivity extends AppCompatActivity {
             toolbar.setBackgroundColor(android.R.color.transparent);
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
             toolbar.setPadding(0, getStatusBarHeight(), 0, 0);
-        }
-        if (customBgSet) {
-            byte[] b = Base64.decode(prefs.getString("customBgBase64", "null"), Base64.DEFAULT);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(b, 0, b.length);
-            findViewById(R.id.activity_main).setBackground(new BitmapDrawable(bitmap));
         }
 
         defaultTextColor = new TextView(this).getTextColors().getDefaultColor();
@@ -191,22 +192,18 @@ public class MainActivity extends AppCompatActivity {
                         }
                         break;
                     case "theme":// restart to apply the theme; don't need to change theme variable since app is restarting and it'll load it
-                        restartAndLaunch("settings");
+                        if (prefs.getString("theme", "light").equals("custom")) {
+                            Intent intent = new Intent();
+                            intent.setType("image/*");
+                            intent.setAction(Intent.ACTION_GET_CONTENT);
+                            startActivityForResult(Intent.createChooser(intent, "Select Picture"), SELECT_PICTURE);
+                        } else
+                            restartAndLaunch("settings");
                         break;
                     case "transparentBars":
                         restartAndLaunch("settings");
                         //toolbar.setBackgroundColor(R.color.colorPrimary); // TODO: it always does gray for some reason. so instead I just restart lol which resets it
                         break;
-                    case "customBg":
-                        if (prefs.getBoolean("customBg", false)) {
-                            customBgSet = true;
-                            Intent intent = new Intent();
-                            intent.setType("image/*");
-                            intent.setAction(Intent.ACTION_GET_CONTENT);
-                            startActivityForResult(Intent.createChooser(intent, "Select Picture"), SELECT_PICTURE);
-                        } else {
-                            findViewById(R.id.activity_main).setBackgroundColor(backgroundColor);
-                        }
                 }
             }
         };
@@ -228,14 +225,13 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 Bitmap bitmap = BitmapFactory.decodeStream(input, null, null);
-                findViewById(R.id.activity_main).setBackground(new BitmapDrawable(bitmap));
-
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
                 byte[] b = baos.toByteArray();
                 SharedPreferences.Editor prefsEditor = prefs.edit();
                 prefsEditor.putString("customBgBase64", Base64.encodeToString(b, Base64.DEFAULT));
                 prefsEditor.apply();
+                restartAndLaunch("settings");
             }
         }
     }
@@ -284,16 +280,12 @@ public class MainActivity extends AppCompatActivity {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-//        getSupportActionBar().setTitle(className.replace("Fragment", ""));
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Pass the event to ActionBarDrawerToggle, if it returns
-        // true, then it has handled the app icon touch event
         if (drawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
-        // Handle your other action bar items...
 
         return super.onOptionsItemSelected(item);
     }
@@ -307,12 +299,14 @@ public class MainActivity extends AppCompatActivity {
 
     public static AlertDialog.Builder getDialogBuilder() {
         switch (MainActivity.theme) {
+            case LIGHT:
+                return new AlertDialog.Builder(instance);
             case DARK:
                 return new AlertDialog.Builder(instance, R.style.DialogTheme_Dark);
             case AMOLED:
                 return new AlertDialog.Builder(instance, R.style.DialogTheme_Amoled);
-            case LIGHT:
-                return new AlertDialog.Builder(instance);
+            case CUSTOM:
+                return new AlertDialog.Builder(instance, R.style.DialogTheme_Custom);
             default:
                 return new AlertDialog.Builder(instance);
         }
