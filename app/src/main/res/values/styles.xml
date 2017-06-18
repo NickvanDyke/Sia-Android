@@ -35,6 +35,7 @@
     <style name="AppTheme.Custom" parent="AppTheme.Light">
         <item name="android:textColor">@android:color/white</item>
         <item name="android:itemTextAppearance">@style/TextAppearance</item>
+        <item name="android:textColorHint">@android:color/white</item>
         <item name="android:alertDialogTheme">@style/DialogTheme.Custom</item>
     </style>
 

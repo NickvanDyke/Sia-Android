@@ -141,6 +141,9 @@ public class Wallet {
     }
 
     public static BigDecimal scToHastings(String sc) {
+        if (sc.equals(""))
+            return new BigDecimal("0").multiply(new BigDecimal("1000000000000000000000000"));
+            else
         return new BigDecimal(sc).multiply(new BigDecimal("1000000000000000000000000"));
     }
 

@@ -3,13 +3,13 @@ package vandyke.siamobile.fragments;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.*;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import com.daimajia.numberprogressbar.NumberProgressBar;
 import org.json.JSONException;
@@ -38,6 +38,8 @@ public class WalletFragment extends Fragment {
     private TextView walletStatusText;
     private final ArrayList<TransactionExpandableGroup> transactionExpandableGroups = new ArrayList<>();
     private RecyclerView transactionList;
+    private FrameLayout sendFrame;
+    private FrameLayout receiveFrame;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_wallet, container, false);
@@ -71,17 +73,31 @@ public class WalletFragment extends Fragment {
         transactionList.setLayoutManager(layoutManager);
         transactionList.addItemDecoration(new DividerItemDecoration(transactionList.getContext(), layoutManager.getOrientation()));
 
-        refresh();
+        sendFrame = (FrameLayout)v.findViewById(R.id.sendFrame);
+        receiveFrame = (FrameLayout)v.findViewById(R.id.receiveFrame);
 
-        receiveButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                WalletReceiveDialog.createAndShow(getFragmentManager());
-            }
-        });
+        refresh();
 
         sendButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                WalletSendDialog.createAndShow(getFragmentManager());
+                if (sendFrame.getVisibility() == View.GONE) {
+                    sendFrame.setVisibility(View.VISIBLE);
+//                    receiveFrame.setVisibility(View.GONE);
+                    getFragmentManager().beginTransaction().replace(R.id.sendFrame, new WalletSendFragment()).commit();
+                } else {
+                    sendFrame.setVisibility(View.GONE);
+                }
+            }
+        });
+        receiveButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if (receiveFrame.getVisibility() == View.GONE) {
+                    receiveFrame.setVisibility(View.VISIBLE);
+//                    sendFrame.setVisibility(View.GONE);
+                    getFragmentManager().beginTransaction().replace(R.id.receiveFrame, new WalletReceiveFragment()).commit();
+                } else {
+                    receiveFrame.setVisibility(View.GONE);
+                }
             }
         });
 
