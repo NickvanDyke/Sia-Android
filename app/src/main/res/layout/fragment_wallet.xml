@@ -121,7 +121,7 @@
             app:layout_constraintTop_toTopOf="@+id/transactionList"
             app:layout_constraintRight_toRightOf="@+id/transactionList"
             app:layout_constraintLeft_toLeftOf="@+id/transactionList"
-            android:alpha="1"
+            android:alpha="0.8"
             android:layout_height="4dp"/>
 
     <android.support.v7.widget.RecyclerView
@@ -134,7 +134,6 @@
             android:id="@+id/transactionList"
             android:scrollbars="vertical"
             android:layout_height="0dp"/>
-
 
 
 </android.support.constraint.ConstraintLayout>

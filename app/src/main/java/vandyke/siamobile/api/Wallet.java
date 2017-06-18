@@ -99,6 +99,7 @@ public class Wallet {
             e.printStackTrace();
         }
         System.out.println(outputs.toString());
+        // TODO: request isn't formatted properly? responds that it couldn't read amount
         new SiaRequest(POST, "/wallet/siacoins", callback)
                 .addParam("outputs", outputs.toString())
 //                .addParam("amount", "")

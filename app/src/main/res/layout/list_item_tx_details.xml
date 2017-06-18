@@ -19,8 +19,7 @@
             android:layout_marginLeft="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
-            app:layout_constraintHorizontal_bias="0.18"
-            android:layout_marginTop="4dp"/>
+            android:layout_marginTop="2dp"/>
 
     <TextView
             android:text="Inputs"
@@ -34,7 +33,7 @@
             app:layout_constraintTop_toBottomOf="@+id/transactionDetailsConfirmHeight"
             tools:layout_constraintLeft_creator="1"
             app:layout_constraintLeft_toLeftOf="@+id/transactionDetailsConfirmHeight"
-            android:layout_marginTop="4dp"/>
+            android:layout_marginTop="2dp"/>
 
     <TextView
             android:text="Outputs"
@@ -49,7 +48,7 @@
             tools:layout_constraintLeft_creator="1"
             app:layout_constraintLeft_toLeftOf="@+id/transactionInputsList"
             app:layout_constraintHorizontal_bias="0.0"
-            android:layout_marginTop="4dp"/>
+            android:layout_marginTop="2dp"/>
 
     <ListView
             android:layout_width="0dp"
@@ -60,8 +59,8 @@
             app:layout_constraintTop_toBottomOf="@+id/transactionOutputsLabel"
             tools:layout_constraintLeft_creator="1"
             app:layout_constraintLeft_toLeftOf="@+id/transactionOutputsLabel"
-            android:layout_height="100dp"
-            app:layout_constraintHorizontal_bias="1.0"/>
+            app:layout_constraintHorizontal_bias="1.0"
+            android:layout_height="125dp"/>
 
     <View
             android:id="@+id/top_shadow"

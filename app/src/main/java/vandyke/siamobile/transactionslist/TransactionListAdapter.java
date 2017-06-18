@@ -42,11 +42,11 @@ public class TransactionListAdapter extends ExpandableRecyclerViewAdapter<Transa
     public TransactionHeaderHolder onCreateGroupViewHolder(final ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_tx_header, parent, false);
         // TODO: find how to make the view not expand if it's long pressed... spent a long time and still couldn't get it, idk if possible in this situation
-        final TextView idText = (TextView)view.findViewById(R.id.transactionHeaderId);
+        final TextView idText = (TextView) view.findViewById(R.id.transactionHeaderId);
         idText.setOnLongClickListener(new View.OnLongClickListener() {
             public boolean onLongClick(View v) {
-                ClipData clip = ClipData.newPlainText("Sia transaction id", ((TextView)v).getText());
-                ((ClipboardManager)MainActivity.instance.getSystemService(Context.CLIPBOARD_SERVICE)).setPrimaryClip(clip);
+                ClipData clip = ClipData.newPlainText("Sia transaction id", ((TextView) v).getText());
+                ((ClipboardManager) MainActivity.instance.getSystemService(Context.CLIPBOARD_SERVICE)).setPrimaryClip(clip);
                 Toast.makeText(MainActivity.instance, "Copied transaction ID", Toast.LENGTH_SHORT).show();
                 return true;
             }
@@ -77,8 +77,8 @@ public class TransactionListAdapter extends ExpandableRecyclerViewAdapter<Transa
 //                    handler.postDelayed(copyText, 1000);
 //                } else if (action == MotionEvent.ACTION_MOVE || action == MotionEvent.ACTION_UP) {
 //                    handler.removeCallbacks(copyText);
-                    event.addBatch(System.nanoTime(), event.getX() + v.getLeft(), event.getY() + v.getTop(), 1, 1, MotionEvent.ACTION_DOWN);
-                    ((View) v.getParent()).onTouchEvent(event);
+                event.addBatch(System.nanoTime(), event.getX() + v.getLeft(), event.getY() + v.getTop(), 1, 1, MotionEvent.ACTION_DOWN);
+                ((View) v.getParent()).onTouchEvent(event);
 //                }
                 return false;
             }
@@ -97,20 +97,9 @@ public class TransactionListAdapter extends ExpandableRecyclerViewAdapter<Transa
             view.findViewById(R.id.bot_shadow).setBackgroundResource(R.drawable.bot_shadow_dark);
         }
 
-        ListView inputsList = (ListView)view.findViewById(R.id.transactionInputsList);
-        ListView outputsList = (ListView)view.findViewById(R.id.transactionOutputsList);
-        inputsList.setOnTouchListener(new View.OnTouchListener() {
-            public boolean onTouch(View v, MotionEvent event) {
-                v.getParent().requestDisallowInterceptTouchEvent(true);
-                return false;
-            }
-        });
-        outputsList.setOnTouchListener(new View.OnTouchListener() {
-            public boolean onTouch(View v, MotionEvent event) {
-                v.getParent().requestDisallowInterceptTouchEvent(true);
-                return false;
-            }
-        });
+        ListView inputsList = (ListView) view.findViewById(R.id.transactionInputsList);
+        ListView outputsList = (ListView) view.findViewById(R.id.transactionOutputsList);
+
         if (MainActivity.theme == MainActivity.Theme.CUSTOM) {
             inputsList.setBackgroundColor(android.R.color.transparent);
             outputsList.setBackgroundColor(android.R.color.transparent);
@@ -123,14 +112,13 @@ public class TransactionListAdapter extends ExpandableRecyclerViewAdapter<Transa
 
     @Override
     public void onBindChildViewHolder(TransactionDetailsHolder holder, int flatPosition, ExpandableGroup group, int childIndex) {
-        Transaction transaction = (Transaction)group.getItems().get(childIndex);
+        Transaction transaction = (Transaction) group.getItems().get(childIndex);
         System.out.println(transaction.getTransactionId());
 
         if (transaction.isConfirmed()) {
             holder.confirmationHeight.setText("Confirmation block: " + transaction.getConfirmationHeight());
-            holder.confirmationHeight.setVisibility(View.VISIBLE);
         } else
-            holder.confirmationHeight.setVisibility(View.GONE);
+            holder.confirmationHeight.setText("Unconfirmed");
 
         ArrayList<TransactionIOBase> inputs = new ArrayList<>();
         inputs.addAll(transaction.getInputs());
@@ -139,11 +127,31 @@ public class TransactionListAdapter extends ExpandableRecyclerViewAdapter<Transa
         ArrayList<TransactionIOBase> outputs = new ArrayList<>();
         outputs.addAll(transaction.getOutputs());
         holder.outputs.setAdapter(new TransactionIOAdapter(MainActivity.instance, R.layout.list_item_tx_io, outputs));
+
+        if (inputs.size() > 1)
+            holder.inputs.setOnTouchListener(new View.OnTouchListener() {
+                public boolean onTouch(View v, MotionEvent event) {
+                    v.getParent().requestDisallowInterceptTouchEvent(true);
+                    return false;
+                }
+            });
+        else
+            holder.inputs.setOnTouchListener(null);
+
+        if (outputs.size() > 1)
+            holder.outputs.setOnTouchListener(new View.OnTouchListener() {
+                public boolean onTouch(View v, MotionEvent event) {
+                    v.getParent().requestDisallowInterceptTouchEvent(true);
+                    return false;
+                }
+            });
+        else
+            holder.outputs.setOnTouchListener(null);
     }
 
     @Override
     public void onBindGroupViewHolder(TransactionHeaderHolder holder, int flatPosition, ExpandableGroup group) {
-        Transaction transaction = (Transaction)group.getItems().get(0);
+        Transaction transaction = (Transaction) group.getItems().get(0);
         String timeString;
         if (!transaction.isConfirmed()) {
             timeString = "Unconfirmed";
