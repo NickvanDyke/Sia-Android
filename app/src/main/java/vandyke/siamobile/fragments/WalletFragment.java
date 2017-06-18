@@ -40,6 +40,7 @@ public class WalletFragment extends Fragment {
     private RecyclerView transactionList;
     private FrameLayout sendFrame;
     private FrameLayout receiveFrame;
+    private FrameLayout unlockFrame;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_wallet, container, false);
@@ -75,6 +76,12 @@ public class WalletFragment extends Fragment {
 
         sendFrame = (FrameLayout)v.findViewById(R.id.sendFrame);
         receiveFrame = (FrameLayout)v.findViewById(R.id.receiveFrame);
+        unlockFrame = (FrameLayout)v.findViewById(R.id.unlockFrame);
+
+        getFragmentManager().beginTransaction().add(R.id.sendFrame, new WalletSendFragment()).commit();
+        final WalletReceiveFragment recvFrag = new WalletReceiveFragment();
+        getFragmentManager().beginTransaction().add(R.id.receiveFrame, recvFrag).commit();
+        getFragmentManager().beginTransaction().replace(R.id.unlockFrame, new WalletUnlockFragment()).commit();
 
         refresh();
 
@@ -82,8 +89,6 @@ public class WalletFragment extends Fragment {
             public void onClick(View v) {
                 if (sendFrame.getVisibility() == View.GONE) {
                     sendFrame.setVisibility(View.VISIBLE);
-//                    receiveFrame.setVisibility(View.GONE);
-                    getFragmentManager().beginTransaction().replace(R.id.sendFrame, new WalletSendFragment()).commit();
                 } else {
                     sendFrame.setVisibility(View.GONE);
                 }
@@ -92,15 +97,13 @@ public class WalletFragment extends Fragment {
         receiveButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (receiveFrame.getVisibility() == View.GONE) {
+                    recvFrag.getNewAddress();
                     receiveFrame.setVisibility(View.VISIBLE);
-//                    sendFrame.setVisibility(View.GONE);
-                    getFragmentManager().beginTransaction().replace(R.id.receiveFrame, new WalletReceiveFragment()).commit();
                 } else {
                     receiveFrame.setVisibility(View.GONE);
                 }
             }
         });
-
         balance.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.instance);
@@ -130,7 +133,8 @@ public class WalletFragment extends Fragment {
                 refresh();
                 break;
             case R.id.actionUnlock:
-                WalletUnlockDialog.createAndShow(getFragmentManager());
+//                WalletUnlockDialog.createAndShow(getFragmentManager());
+                unlockFrame.setVisibility(View.VISIBLE);
                 break;
             case R.id.actionLock:
                 Wallet.lock(new SiaRequest.VolleyCallback());

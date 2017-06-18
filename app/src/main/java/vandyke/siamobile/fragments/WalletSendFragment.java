@@ -57,7 +57,13 @@ public class WalletSendFragment extends Fragment {
                 else
                     Wallet.sendSiacoins(sendAmount,
                             ((EditText) view.findViewById(R.id.sendRecipient)).getText().toString(),
-                            new SiaRequest.VolleyCallback());
+                            new SiaRequest.VolleyCallback() {
+                                public void onSuccess(JSONObject response) {
+                                    super.onSuccess(response);
+                                    container.setVisibility(View.GONE);
+                                    MainActivity.hideSoftKeyboard(getActivity());
+                                }
+                            });
             }
         });
         view.findViewById(R.id.walletSendCancel).setOnClickListener(new View.OnClickListener() {
