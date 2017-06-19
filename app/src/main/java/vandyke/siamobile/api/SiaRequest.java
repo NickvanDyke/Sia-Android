@@ -76,7 +76,7 @@ public class SiaRequest extends StringRequest {
     public static class Error {
 
         public enum Reason {
-            TIMEOUT("Request timed out"),
+            TIMEOUT("Response timed out"),
             NO_NETWORK_RESPONSE("No network response"),
             WALLET_PASSWORD_INCORRECT("Wallet password incorrect"),
             WALLET_LOCKED("Wallet is locked"),

@@ -30,8 +30,8 @@ import java.util.ArrayList;
 public class WalletFragment extends Fragment {
 
     private BigDecimal balanceHastings;
-    private TextView balance;
-    private TextView balanceUnconfirmed;
+    private TextView balanceText;
+    private TextView balanceUnconfirmedText;
     private ArrayList<Transaction> transactions;
     private NumberProgressBar syncBar;
     private TextView syncText;
@@ -61,8 +61,9 @@ public class WalletFragment extends Fragment {
             sendButton.setBackgroundColor(android.R.color.transparent);
         }
 
-        balance = (TextView)v.findViewById(R.id.balanceText);
-        balanceUnconfirmed = (TextView)v.findViewById(R.id.balanceUnconfirmed);
+        balanceHastings = new BigDecimal("0");
+        balanceText = (TextView)v.findViewById(R.id.balanceText);
+        balanceUnconfirmedText = (TextView)v.findViewById(R.id.balanceUnconfirmed);
         transactions = new ArrayList<>();
 
         syncBar = (NumberProgressBar)v.findViewById(R.id.syncBar);
@@ -109,7 +110,7 @@ public class WalletFragment extends Fragment {
                 }
             }
         });
-        balance.setOnClickListener(new View.OnClickListener() {
+        balanceText.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.instance);
                 builder.setTitle("Exact Balance");
@@ -183,10 +184,10 @@ public class WalletFragment extends Fragment {
                     else
                         walletStatusText.setText("Wallet Status:\nUnlocked");
                     balanceHastings = new BigDecimal(response.getString("confirmedsiacoinbalance"));
-                    balance.setText(Wallet.round(Wallet.hastingsToSC(balanceHastings)));
+                    balanceText.setText(Wallet.round(Wallet.hastingsToSC(balanceHastings)));
                     BigDecimal netUnconfirmed = new BigDecimal(response.getString("unconfirmedincomingsiacoins"))
                             .subtract(new BigDecimal(response.getString("unconfirmedoutgoingsiacoins")));
-                    balanceUnconfirmed.setText(netUnconfirmed.compareTo(BigDecimal.ZERO) > 0 ? "+" : "" +
+                    balanceUnconfirmedText.setText(netUnconfirmed.compareTo(BigDecimal.ZERO) > 0 ? "+" : "" +
                             Wallet.round(Wallet.hastingsToSC(netUnconfirmed)) + " unconfirmed");
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -194,7 +195,7 @@ public class WalletFragment extends Fragment {
             }
             public void onError(SiaRequest.Error error) {
                 super.onError(error);
-                balance.setText("Loading...");
+                balanceText.setText("Loading...");
                 walletStatusText.setText("Wallet Status:\nLoading...");
             }
         });

@@ -24,8 +24,8 @@ import java.math.BigDecimal;
 public class RemoveAdsFeesDialog extends DialogFragment {
 
     private String paymentRecipient = MainActivity.devAddresses[(int)(Math.random() * MainActivity.devAddresses.length)];
-    private BigDecimal removeAdsCost = new BigDecimal("2"); // in SC TODO: actual amounts
-    private BigDecimal removeFeesCost = new BigDecimal("2"); //in SC
+    private BigDecimal removeAdsCost = new BigDecimal("100"); // in SC TODO: actual amounts
+    private BigDecimal removeFeesCost = new BigDecimal("100"); //in SC
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = MainActivity.getDialogBuilder();
