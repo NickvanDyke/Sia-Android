@@ -4,16 +4,15 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
     </style>
 
     <!--Dark Mode theme-->
     <!--TODO: black action bar text/icons, and black button text-->
+    <!--TODO: might just be able to use daynight theme as parent or something?-->
     <style name="AppTheme.Dark" parent="AppTheme.Light">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
         <item name="android:windowBackground">@color/backgroundDark</item>
         <item name="android:itemBackground">@color/backgroundDark</item>
         <item name="android:alertDialogTheme">@style/DialogTheme.Dark</item>
