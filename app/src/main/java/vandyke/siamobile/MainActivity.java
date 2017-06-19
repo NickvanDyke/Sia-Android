@@ -1,25 +1,23 @@
 package vandyke.siamobile;
 
 import android.app.Activity;
-import android.database.Cursor;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.content.*;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
-import android.provider.MediaStore;
-import android.support.v7.app.AlertDialog;
-import android.app.FragmentTransaction;
-import android.content.*;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
@@ -37,7 +35,9 @@ import com.google.android.gms.ads.AdView;
 import vandyke.siamobile.dialogs.RemoveAdsFeesDialog;
 import vandyke.siamobile.fragments.*;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 
 public class MainActivity extends AppCompatActivity {
@@ -56,6 +56,8 @@ public class MainActivity extends AppCompatActivity {
     private ActionBarDrawerToggle drawerToggle;
     private NavigationView navigationView;
     private MenuItem activeMenuItem;
+
+    private String currentFragmentTag;
 
     private static final int SELECT_PICTURE = 1;
 
@@ -249,35 +251,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void loadDrawerFragment(Class clazz) {
-        // TODO: might be able to use replace here instead of showing and hiding. might be better way to do this. also maybe limit size of backstack
         String className = clazz.getSimpleName();
         FragmentManager fragmentManager = getFragmentManager();
+        Fragment currentFrag = fragmentManager.findFragmentByTag(currentFragmentTag);
+        Fragment newFragment = fragmentManager.findFragmentByTag(className);
 
-//        Fragment currentFrag = fragmentManager.findFragmentById(R.id.fragment_frame);
-//
-//        Fragment newFragment = fragmentManager.findFragmentByTag(className);
-//        if (newFragment == null) {
-//            try {
-//                if (currentFrag != null)
-//                    fragmentManager.beginTransaction().hide(currentFrag)
-//                            .add(R.id.fragment_frame, (Fragment)clazz.newInstance(), className)
-//                            .addToBackStack(null).commit();
-//                else
-//                    fragmentManager.beginTransaction().add(R.id.fragment_frame, (Fragment)clazz.newInstance(), className).commit();
-//            } catch (InstantiationException e) {
-//                e.printStackTrace();
-//            } catch (IllegalAccessException e) {
-//                e.printStackTrace();
-//            }
-//        } else {
-//            if (currentFrag != null)
-//                fragmentManager.beginTransaction().hide(currentFrag).show(newFragment).addToBackStack(null).commit();
-//            else
-//                fragmentManager.beginTransaction().show(newFragment).addToBackStack(null).commit();
-//        }
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
         try {
-            fragmentManager.beginTransaction().setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                    .replace(R.id.fragment_frame, (Fragment) clazz.newInstance(), className).commit();
+            transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+            if (currentFrag != null)
+                transaction.hide(currentFrag);
+            if (newFragment == null) {
+                transaction.add(R.id.fragment_frame, (Fragment)clazz.newInstance(), className);
+            } else {
+                transaction.show(newFragment);
+            }
+            transaction.commit();
+            currentFragmentTag = className;
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {

@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.EditText;
 import org.json.JSONObject;
 import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
@@ -14,11 +14,14 @@ import vandyke.siamobile.api.Wallet;
 
 public class WalletUnlockFragment extends Fragment {
 
+    private EditText password;
+
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_wallet_unlock, null);
+        password = (EditText)view.findViewById(R.id.walletPassword);
         view.findViewById(R.id.walletUnlockConfirm).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Wallet.unlock(((TextView)view.findViewById(R.id.walletPassword)).getText().toString(), new SiaRequest.VolleyCallback() {
+                Wallet.unlock(password.getText().toString(), new SiaRequest.VolleyCallback() {
                     public void onSuccess(JSONObject response) {
                         super.onSuccess(response);
                         container.setVisibility(View.GONE);
@@ -35,6 +38,10 @@ public class WalletUnlockFragment extends Fragment {
         });
 
         return view;
+    }
+
+    public void clearFields() {
+        password.setText("");
     }
 
 }

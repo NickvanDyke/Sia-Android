@@ -41,6 +41,7 @@ public class WalletFragment extends Fragment {
     private FrameLayout sendFrame;
     private FrameLayout receiveFrame;
     private FrameLayout unlockFrame;
+    private WalletUnlockFragment unlockFrag;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_wallet, container, false);
@@ -78,19 +79,23 @@ public class WalletFragment extends Fragment {
         receiveFrame = (FrameLayout)v.findViewById(R.id.receiveFrame);
         unlockFrame = (FrameLayout)v.findViewById(R.id.unlockFrame);
 
-        getFragmentManager().beginTransaction().add(R.id.sendFrame, new WalletSendFragment()).commit();
+        final WalletSendFragment sendFrag = new WalletSendFragment();
+        getFragmentManager().beginTransaction().add(R.id.sendFrame, sendFrag).commit();
         final WalletReceiveFragment recvFrag = new WalletReceiveFragment();
         getFragmentManager().beginTransaction().add(R.id.receiveFrame, recvFrag).commit();
-        getFragmentManager().beginTransaction().replace(R.id.unlockFrame, new WalletUnlockFragment()).commit();
+        unlockFrag = new WalletUnlockFragment();
+        getFragmentManager().beginTransaction().add(R.id.unlockFrame, unlockFrag).commit();
 
         refresh();
 
         sendButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (sendFrame.getVisibility() == View.GONE) {
+                    sendFrag.clearFields();
                     sendFrame.setVisibility(View.VISIBLE);
                 } else {
                     sendFrame.setVisibility(View.GONE);
+                    MainActivity.hideSoftKeyboard(getActivity());
                 }
             }
         });
@@ -133,7 +138,7 @@ public class WalletFragment extends Fragment {
                 refresh();
                 break;
             case R.id.actionUnlock:
-//                WalletUnlockDialog.createAndShow(getFragmentManager());
+                unlockFrag.clearFields();
                 unlockFrame.setVisibility(View.VISIBLE);
                 break;
             case R.id.actionLock:

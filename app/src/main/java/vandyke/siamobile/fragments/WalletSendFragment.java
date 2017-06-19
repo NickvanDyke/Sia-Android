@@ -21,10 +21,15 @@ import java.math.RoundingMode;
 
 public class WalletSendFragment extends Fragment {
 
+    private EditText recipient;
+    private EditText amount;
+    private TextView feeText;
+
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_wallet_send, null);
-        final EditText amount = (EditText)view.findViewById(R.id.sendAmount);
-        final TextView feeText = (TextView)view.findViewById(R.id.walletSendFee);
+        recipient = (EditText) view.findViewById(R.id.sendRecipient);
+        amount = (EditText)view.findViewById(R.id.sendAmount);
+        feeText = (TextView)view.findViewById(R.id.walletSendFee);
         if (MainActivity.theme == MainActivity.Theme.CUSTOM)
             feeText.setTextColor(Color.GRAY);
         if (!MainActivity.prefs.getBoolean("feesEnabled", true))
@@ -46,7 +51,7 @@ public class WalletSendFragment extends Fragment {
                 BigDecimal sendAmount = Wallet.scToHastings(amount.getText().toString());
                 if (MainActivity.prefs.getBoolean("feesEnabled", true))
                     Wallet.sendSiacoinsWithDevFee(sendAmount,
-                            ((EditText) view.findViewById(R.id.sendRecipient)).getText().toString(),
+                            recipient.getText().toString(),
                             new SiaRequest.VolleyCallback() {
                                 public void onSuccess(JSONObject response) {
                                     super.onSuccess(response);
@@ -74,5 +79,11 @@ public class WalletSendFragment extends Fragment {
         });
 
         return view;
+    }
+
+    public void clearFields() {
+        recipient.setText("");
+        amount.setText("");
+        feeText.setText("0.5% App fee: 0.000");
     }
 }
