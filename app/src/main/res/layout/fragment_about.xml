@@ -60,7 +60,7 @@
                 android:id="@+id/textView7" />
 
             <TextView
-                android:text="5. In the same command prompt, type siad --disable-api-security --authenticate-api -a <ip>:<port>, replacing <ip> with your computer's internal IP address from step 4, and <port> with a port number of your choosing; remember your port number for later."
+                android:text="5. In the same command prompt, type siad --disable-api-security --authenticate-api -a <ip>:<port>, replacing <ip> with your computer's internal IP address from step 4, and <port> with a port number of your choosing; remember your port number for later. This step will launch Sia on your computer in a fashion that allows Sia Mobile to interact with it."
                 android:layout_width="match_parent"
                 android:padding="8dp"
                 android:layout_height="wrap_content"
@@ -74,7 +74,7 @@
                 android:id="@+id/textView9" />
 
             <TextView
-                android:text="7. Open the settings page in Sia Mobile. Tap 'Remote node address', and enter the IP address and port that you used to start siad earlier. Do the same with 'API password'."
+                android:text="7. Open the settings page in Sia Mobile. Tap 'Remote node address', and enter the IP address and port that you used to start Sia on your computer earlier. Do the same with 'API password'."
                 android:layout_width="match_parent"
                 android:padding="8dp"
                 android:layout_height="wrap_content"
