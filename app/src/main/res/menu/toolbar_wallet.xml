@@ -5,7 +5,7 @@
     <item
             android:title="Refresh"
             app:showAsAction="always"
-            android:icon="@drawable/siaLogo"
+            android:icon="@drawable/sia_logo_svg"
             android:id="@+id/actionRefresh"/>
     <item
             android:title="Unlock Wallet"

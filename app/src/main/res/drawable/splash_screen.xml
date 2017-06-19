@@ -5,7 +5,7 @@
     <item android:drawable="@android:color/background_light" />
 
     <item
-        app:srcCompat="@drawable/siaLogo"
+        app:srcCompat="@drawable/sia_logo_svg"
         android:gravity="center" />
 
 </layer-list>
