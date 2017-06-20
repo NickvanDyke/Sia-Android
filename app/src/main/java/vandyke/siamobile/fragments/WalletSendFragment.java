@@ -1,7 +1,6 @@
 package vandyke.siamobile.fragments;
 
 import android.app.Fragment;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -30,8 +29,6 @@ public class WalletSendFragment extends Fragment {
         recipient = (EditText) view.findViewById(R.id.sendRecipient);
         amount = (EditText)view.findViewById(R.id.sendAmount);
         feeText = (TextView)view.findViewById(R.id.walletSendFee);
-        if (MainActivity.theme == MainActivity.Theme.CUSTOM)
-            feeText.setTextColor(Color.GRAY);
         if (!MainActivity.prefs.getBoolean("feesEnabled", true))
             feeText.setVisibility(View.GONE);
         amount.addTextChangedListener(new TextWatcher() {

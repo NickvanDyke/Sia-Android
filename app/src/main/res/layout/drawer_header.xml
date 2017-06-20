@@ -6,4 +6,5 @@
     android:paddingRight="32dp"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    app:srcCompat="@drawable/sia_logo_svg" />
+    app:srcCompat="@drawable/sia_logo_svg"
+        android:paddingTop="16dp"/>

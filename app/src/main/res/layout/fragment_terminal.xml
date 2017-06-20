@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
                                              xmlns:app="http://schemas.android.com/apk/res-auto"
-                                             xmlns:tools="http://schemas.android.com/tools"
                                              android:orientation="vertical"
                                              android:layout_width="match_parent"
                                              android:layout_height="match_parent">
 
     <TextView
-        android:text="This terminal uses siac as its backend. Siac is a command-line utility written by the Sia developers that can interface with all of Sia's API endpoints; you can type --help and press enter for a list of commands. The purpose of this terminal and its use of siac is to make available to you commands that might not yet be part of the mobile graphical interface. While siac is fully functional on a computer, very little testing of it has been done on a mobile device. Functionality is not guaranteed. Use at your own risk."
+        android:text="@string/terminal_warning"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:id="@+id/output"
             android:gravity="bottom"
-            android:textColor="@android:color/black"
             android:textSize="16sp"
             android:layout_marginEnd="16dp"
             app:layout_constraintRight_toRightOf="parent"
@@ -44,7 +42,7 @@
         <EditText
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:inputType="textPersonName"
+                android:inputType="textPersonName|textVisiblePassword"
                 android:background="@drawable/terminal_edittext_background"
                 android:padding="15dp"
                 android:paddingStart="20dp"
