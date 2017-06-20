@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical"
-    android:layout_width="match_parent" android:layout_height="match_parent">
-
-    <ScrollView
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -12,14 +9,14 @@
             android:orientation="vertical" >
 
             <TextView
-                android:text="Interfacing with your\nown remote full Sia node"
-                android:layout_width="match_parent"
-                android:padding="8dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/textView3"
-                android:textColor="@android:color/black"
-                android:textSize="20sp"
-                android:textAlignment="center" />
+                    android:text="Interfacing with your\nown remote full Sia node"
+                    android:layout_width="match_parent"
+                    android:padding="8dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textView3"
+                    android:textSize="20sp"
+                    android:textAlignment="center"
+                    android:textColor="?android:attr/textColorPrimary"/>
 
             <TextView
                 android:text="Detailed below is how to set up Sia on your Windows computer so that you can use Sia Mobile with it. If you're using Linux, it's assumed you are capable of adapting these instructions to Linux. It is possible to use an existing Sia installation; skip to step 3 in this case."
@@ -60,7 +57,7 @@
                 android:id="@+id/textView7" />
 
             <TextView
-                android:text="5. In the same command prompt, type siad --disable-api-security --authenticate-api -a <ip>:<port>, replacing <ip> with your computer's internal IP address from step 4, and <port> with a port number of your choosing; remember your port number for later. This step will launch Sia on your computer in a fashion that allows Sia Mobile to interact with it."
+                    android:text="@string/step_5"
                 android:layout_width="match_parent"
                 android:padding="8dp"
                 android:layout_height="wrap_content"
@@ -86,6 +83,12 @@
                 android:padding="8dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/textView12" />
+
+            <TextView
+                    android:text="@string/step_8"
+                    android:padding="8dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textView"/>
         </LinearLayout>
     </ScrollView>
-</LinearLayout>

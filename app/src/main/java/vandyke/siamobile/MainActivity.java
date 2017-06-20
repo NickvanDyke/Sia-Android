@@ -19,6 +19,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.TypedValue;
@@ -56,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
     private ActionBarDrawerToggle drawerToggle;
     private NavigationView navigationView;
     private MenuItem activeMenuItem;
+    private boolean selectionChanged;
 
     private String currentFragmentTag;
 
@@ -74,11 +76,13 @@ public class MainActivity extends AppCompatActivity {
         switch (prefs.getString("theme", "light")) {
             default:
             case "light":
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
                 setTheme(R.style.AppTheme_Light);
                 theme = Theme.LIGHT;
                 break;
             case "dark":
-                setTheme(R.style.AppTheme_Dark);
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                setTheme(R.style.AppTheme_Light);
                 theme = Theme.DARK;
                 break;
             case "amoled":
@@ -121,12 +125,11 @@ public class MainActivity extends AppCompatActivity {
         ((AdView)findViewById(R.id.adView)).setVisibility(View.GONE);
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        // set up drawer button on action bar
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close) {
             public void onDrawerClosed(View drawerView) {
                 // TODO: maybe make it so it waits until drawer close if fragment doesn't already exist, but loads immediately if it does?
                 super.onDrawerClosed(drawerView);
-                if (activeMenuItem == null)
+                if (activeMenuItem == null || !selectionChanged)
                     return;
                 switch (activeMenuItem.getItemId()) {
                     case R.id.drawer_item_files:
@@ -147,6 +150,9 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.drawer_item_about:
                         // TODO: about stuff
                         break;
+                    case R.id.drawer_item_help:
+                        loadDrawerFragment(HelpFragment.class);
+                        break;
                     case R.id.drawer_item_remove_ads_fees:
                         RemoveAdsFeesDialog.createAndShow(getFragmentManager());
                         break;
@@ -154,6 +160,7 @@ public class MainActivity extends AppCompatActivity {
                         // TODO: donate stuff
                         break;
                 }
+                selectionChanged = false;
             }
         };
         drawerLayout.addDrawerListener(drawerToggle);
@@ -164,15 +171,18 @@ public class MainActivity extends AppCompatActivity {
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 if (item == activeMenuItem) {
+                    selectionChanged = false;
                     drawerLayout.closeDrawers();
                     return true;
                 }
 
-                if (item.getGroupId() != R.id.money_stuff) {
+                if (item.getGroupId() != R.id.dialogs) {
+                    getSupportActionBar().setTitle(item.getTitle());
                     if (activeMenuItem != null)
                         activeMenuItem.setChecked(false);
                     item.setChecked(true);
                 }
+                selectionChanged = true;
                 activeMenuItem = item;
                 drawerLayout.closeDrawers();
                 return true;
@@ -295,7 +305,7 @@ public class MainActivity extends AppCompatActivity {
             case LIGHT:
                 return new AlertDialog.Builder(instance);
             case DARK:
-                return new AlertDialog.Builder(instance, R.style.DialogTheme_Dark);
+                return new AlertDialog.Builder(instance);
             case AMOLED:
                 return new AlertDialog.Builder(instance, R.style.DialogTheme_Amoled);
             case CUSTOM:

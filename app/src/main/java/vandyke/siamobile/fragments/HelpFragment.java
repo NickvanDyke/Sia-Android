@@ -7,10 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import vandyke.siamobile.R;
 
-public class AboutFragment extends Fragment {
+public class HelpFragment extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_about, null);
+        View v = inflater.inflate(R.layout.fragment_help, null);
         return v;
     }
 }
