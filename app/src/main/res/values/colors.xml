@@ -7,11 +7,9 @@
     <color name="shadowStart">#c5c5c5</color>
     <color name="shadowEnd">@android:color/background_light</color>
 
-
     <!--dark mode stuff-->
-    <color name="backgroundDark">#3D4C5F</color>
     <color name="shadowStartDark">#222222</color>
-    <color name="shadowEndDark">#3D4C5F</color>
+    <color name="shadowEndDark">#303030</color>
 
     <!--amoled stuff-->
     <color name="grey">#ffffff</color>

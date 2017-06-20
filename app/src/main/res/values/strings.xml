@@ -1,5 +1,14 @@
 <resources>
-    <string name="app_name">Sia</string>
+    <string name="app_name">Sia Mobile</string>
     <string name="drawer_open">open</string>
     <string name="drawer_close">close</string>
+
+    <!--Strings for explaining install-->
+    <string name="step_5"><![CDATA[5. In the same command prompt, type siad --disable-api-security --authenticate-api
+    -a <ip>:<port>, replacing <ip> with your computer\'s internal IP address from step 4, and <port> with a port number
+    of your choosing; remember your port number for later. This step will launch Sia on your computer in a fashion that
+    allows Sia Mobile to interact with it. You will need to keep this command prompt open and running to use Sia Mobile with it.]]></string>
+    <string name="step_8"><![CDATA[8. (optional) Following the steps above, you will only be able to access your
+computer\'s Sia from your phone when your phone is on the same network as your computer. In order to access it from anywhere, you will have to port forward on your
+router on your chosen port to your computer\'s internal IP address. Many guides exist online detailing how to do this.]]></string>
 </resources>

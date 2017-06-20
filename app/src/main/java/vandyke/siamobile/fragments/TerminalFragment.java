@@ -32,30 +32,12 @@ public class TerminalFragment extends Fragment {
         MainActivity.instance.getSupportActionBar().setTitle("Terminal");
         copyBinary();
 
-//        Thread socket = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                try {
-//                    ServerSocket socket = new ServerSocket(9980);
-//                    while (true) {
-//                        System.out.println("waiting for connection");
-//                        socket.accept();
-//                        System.out.println("something connected to socket");
-//                    }
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
-//        socket.start();
-
-
         input = (EditText)v.findViewById(R.id.input);
         input.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 try {
                     String enteredCommand = v.getText().toString();
-//                    v.setText("");
+                    v.setText("");
                     ArrayList<String> fullCommand = new ArrayList<>(Arrays.asList(enteredCommand.split(" ")));
                     fullCommand.add(0, siacFile.getAbsolutePath());
                     ProcessBuilder pb = new ProcessBuilder(fullCommand);
@@ -94,10 +76,10 @@ public class TerminalFragment extends Fragment {
      */
     private void copyBinary() {
         try {
-            InputStream in = getContext().getAssets().open("siac");
-            siacFile = new File(getContext().getFilesDir().getPath() + "/siac");
+            siacFile = new File(MainActivity.instance.getFilesDir().getPath() + "/siac");
             if (siacFile.exists())
                 return;
+            InputStream in = MainActivity.instance.getAssets().open("siac");
             FileOutputStream out = new FileOutputStream(siacFile);
             byte[] buf = new byte[1024];
             int len;

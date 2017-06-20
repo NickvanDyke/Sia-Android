@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+        >
     <group
             android:id="@+id/main_items"
             android:checkableBehavior="all">
@@ -31,9 +32,13 @@
                 android:id="@+id/drawer_item_about"
                 android:icon="@drawable/icon_about"
                 android:title="About"/>
+        <item
+                android:id="@+id/drawer_item_help"
+                android:icon="@drawable/icon_help"
+                android:title="Help"/>
     </group>
     <group
-        android:id="@+id/money_stuff"
+        android:id="@+id/dialogs"
         android:checkableBehavior="none">
         <item
                 android:id="@+id/drawer_item_remove_ads_fees"
