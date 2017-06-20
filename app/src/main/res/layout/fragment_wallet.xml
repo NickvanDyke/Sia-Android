@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
                                              xmlns:app="http://schemas.android.com/apk/res-auto"
-                                             xmlns:tools="http://schemas.android.com/tools"
                                              android:orientation="vertical"
                                              android:layout_width="match_parent"
                                              android:layout_height="match_parent"
-        android:animateLayoutChanges="true">
+                                             android:animateLayoutChanges="true">
 <!--TODO: some indicator of whether the wallet is locked/unlock, and only show the appropriate button-->
     <Button
             android:text="Send"
@@ -69,7 +68,7 @@
             style="@style/NumberProgressBar_Grace_Yellow"
             custom:progress_unreached_color="#d6d6d6"
             custom:progress_reached_color="@color/colorAccent"
-            custom:progress_text_color="@android:color/darker_gray"
+            custom:progress_text_color="?android:attr/textColorPrimary"
             custom:progress_unreached_bar_height="3dp"
             custom:progress_reached_bar_height="3dp"
             custom:progress_text_size="14sp"

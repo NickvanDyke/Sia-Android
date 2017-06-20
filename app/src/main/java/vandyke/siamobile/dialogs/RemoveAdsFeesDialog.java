@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 import org.json.JSONObject;
 import vandyke.siamobile.MainActivity;
@@ -33,6 +34,22 @@ public class RemoveAdsFeesDialog extends DialogFragment {
         final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_remove_ads_fees, null);
 
         final Button removeAdsButton = (Button)view.findViewById(R.id.removeAdsButton);
+        final Button removeFeesButton = (Button)view.findViewById(R.id.removeFeesButton);
+        final TextView adsCostText = (TextView)view.findViewById(R.id.removeAdsCostText);
+        final TextView feesCostText = (TextView)view.findViewById(R.id.removeFeesCostText);
+
+        if (!MainActivity.prefs.getBoolean("adsEnabled", true)) {
+            removeAdsButton.setVisibility(View.GONE);
+            adsCostText.setVisibility(View.GONE);
+        }
+        if (!MainActivity.prefs.getBoolean("feesEnabled", true)) {
+            removeFeesButton.setVisibility(View.GONE);
+            feesCostText.setVisibility(View.GONE);
+        }
+
+        adsCostText.setText(removeAdsCost.toPlainString() + " SC");
+        feesCostText.setText(removeFeesCost.toPlainString() + " SC");
+
         removeAdsButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 AlertDialog.Builder confirmBuilder = MainActivity.getDialogBuilder();
@@ -48,6 +65,8 @@ public class RemoveAdsFeesDialog extends DialogFragment {
                                                 editor.apply();
                                                 MainActivity.instance.findViewById(R.id.adView).setVisibility(View.GONE);
                                                 Toast.makeText(MainActivity.instance, "Success. Ads removed", Toast.LENGTH_SHORT).show();
+                                                removeAdsButton.setVisibility(View.GONE);
+                                                adsCostText.setVisibility(View.GONE);
                                             }
                                             public void onError(SiaRequest.Error error) {
                                                 Toast.makeText(MainActivity.instance, error.getMsg() + ". No funds deducted", Toast.LENGTH_SHORT).show();
@@ -64,7 +83,6 @@ public class RemoveAdsFeesDialog extends DialogFragment {
             }
         });
 
-        final Button removeFeesButton = (Button)view.findViewById(R.id.removeFeesButton);
         removeFeesButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 AlertDialog.Builder confirmBuilder = MainActivity.getDialogBuilder();
@@ -79,6 +97,8 @@ public class RemoveAdsFeesDialog extends DialogFragment {
                                                 editor.putBoolean("feesEnabled", false);
                                                 editor.apply();
                                                 Toast.makeText(MainActivity.instance, "Success. App fees removed", Toast.LENGTH_SHORT).show();
+                                                removeFeesButton.setVisibility(View.GONE);
+                                                feesCostText.setVisibility(View.GONE);
                                             }
                                             public void onError(SiaRequest.Error error) {
                                                 Toast.makeText(MainActivity.instance, error.getMsg() + ". No funds deducted", Toast.LENGTH_SHORT).show();
