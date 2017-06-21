@@ -54,4 +54,18 @@
             app:layout_constraintBottom_toBottomOf="@+id/removeFeesButton"
             android:textSize="24sp"
             android:textColor="@color/colorPrimary"/>
+
+    <TextView
+            android:text="Warning: uninstalling Sia Mobile will clear all of it's saved data, including whether you've paid to remove ads and/or fees. Removing ads and/or fees will persist through updating Sia Mobile though."
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView20"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@+id/removeFeesButton"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginRight="16dp"
+            android:layout_marginStart="16dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginLeft="16dp"/>
 </android.support.constraint.ConstraintLayout>

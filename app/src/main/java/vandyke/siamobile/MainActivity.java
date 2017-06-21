@@ -90,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
                 theme = Theme.AMOLED;
                 break;
             case "custom":
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
                 setTheme(R.style.AppTheme_Custom);
                 theme = Theme.CUSTOM;
                 break;
@@ -210,16 +211,20 @@ public class MainActivity extends AppCompatActivity {
                     case "theme":// restart to apply the theme; don't need to change theme variable since app is restarting and it'll load it
                         switch (prefs.getString("theme", "light")) {
                             case "custom":
-                                Intent intent = new Intent();
+                                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                                 intent.setType("image/*");
-                                intent.setAction(Intent.ACTION_GET_CONTENT);
-                                startActivityForResult(Intent.createChooser(intent, "Select Picture"), SELECT_PICTURE);
+                                startActivityForResult(Intent.createChooser(intent, "Select Background"), SELECT_PICTURE);
+                                // TODO: suddenly the image picker is launching in the background??
                                 break;
                             case "light":
+                                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
                                 break;
-
+                            case "dark":
+                                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                                break;
                             default:
                                 restartAndLaunch("settings");
+                                break;
                         }
                     case "transparentBars":
                         restartAndLaunch("settings");

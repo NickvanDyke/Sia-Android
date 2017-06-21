@@ -31,9 +31,9 @@
         </SwitchPreference>
     </PreferenceCategory>
     <PreferenceCategory
-            android:title="Mode">
+            android:title="Operation">
         <ListPreference
-                android:title="Operation mode"
+                android:title="Mode"
                 android:summary="1. Interface with your own remote full node\n2. Retrieve data from a server and build transactions locally and upload them to the server. Some features will be unavailable using this."
                 android:key="operationMode"
                 android:entries="@array/operation_modes_entries"
