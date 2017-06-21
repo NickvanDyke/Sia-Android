@@ -70,9 +70,11 @@ public class Transaction {
     public static ArrayList<Transaction> populateTransactions(JSONObject json) {
         ArrayList<Transaction> transactions = new ArrayList<>();
         try {
-            JSONArray confirmedTxs = json.getJSONArray("confirmedtransactions");
-            for (int i = 0; i < confirmedTxs.length(); i++)
-                transactions.add(0, new Transaction(confirmedTxs.getJSONObject(i))); // TODO: more optimal way of making the list most-to-least-recent
+            if (!json.isNull("confirmedtransactions")) {
+                JSONArray confirmedTxs = json.getJSONArray("confirmedtransactions");
+                for (int i = 0; i < confirmedTxs.length(); i++)
+                    transactions.add(0, new Transaction(confirmedTxs.getJSONObject(i))); // TODO: more optimal way of making the list most-to-least-recent
+            }
             if (!json.isNull("unconfirmedtransactions")) {
                 JSONArray unconfirmedTxs = json.getJSONArray("unconfirmedtransactions");
                 for (int i = 0; i < unconfirmedTxs.length(); i++)

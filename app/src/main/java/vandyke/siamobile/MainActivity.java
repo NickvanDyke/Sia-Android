@@ -195,6 +195,7 @@ public class MainActivity extends AppCompatActivity {
                     case "operationMode":
                         if (prefs.getString("operationMode", "remote_full_node").equals("remote_full_node")) {
                             editor.putString("address", prefs.getString("remoteAddress", "192.168.1.11:9980"));
+                            Siad.getInstance().stop();
                         } else if (prefs.getString("operationMode", "remote_full_node").equals("local_full_node")) {
                             editor.putString("address", "localhost:9980");
                             Siad.getInstance().start();
@@ -365,6 +366,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             InputStream in = instance.getAssets().open(filename);
             File result = new File(instance.getFilesDir(), filename);
+            result.delete();
             if (result.exists())
                 return result;
             FileOutputStream out = new FileOutputStream(result);
@@ -372,6 +374,7 @@ public class MainActivity extends AppCompatActivity {
             int len;
             while ((len = in.read(buf)) > 0)
                 out.write(buf, 0, len);
+            result.setExecutable(true);
             in.close();
             out.close();
             return result;

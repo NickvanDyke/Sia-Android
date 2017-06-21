@@ -88,7 +88,8 @@ public class SiaRequest extends StringRequest {
             INSUFFICIENT_FUNDS("Insufficient funds"),
             EXISTING_WALLET("A wallet already exists. Use force option to overwrite"),
             INCORRECT_API_PASSWORD("Incorrect API password"),
-            UNACCOUNTED_FOR_ERROR("Unexpected error");
+            UNACCOUNTED_FOR_ERROR("Unexpected error"),
+            ANOTHER_WALLET_SCAN_UNDERWAY("Wallet scan in progress");
 
             private String msg;
 
@@ -148,6 +149,8 @@ public class SiaRequest extends StringRequest {
                 return reason.EXISTING_WALLET;
             else if (errorMessage.contains("API authentication failed"))
                 return Reason.INCORRECT_API_PASSWORD;
+            else if (errorMessage.contains("another wallet rescan is already underway"))
+                return Reason.ANOTHER_WALLET_SCAN_UNDERWAY;
             else
                 return Reason.UNACCOUNTED_FOR_ERROR;
         }

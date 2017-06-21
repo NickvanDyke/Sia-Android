@@ -11,7 +11,7 @@
 
     <!--Strings for explaining install-->
     <string name="step_5" tools:ignore="TypographyDashes"><![CDATA[5. In the same command prompt, type siad --disable-api-security --authenticate-api
-    -a <ip>:<port>, replacing <ip> with your computer\'s internal IP address from step 4, and <port> with a port number
+    --api-addr <ip>:<port>, replacing <ip> with your computer\'s internal IP address from step 4, and <port> with a port number
     of your choosing; remember your port number for later. This step will launch Sia on your computer in a fashion that
     allows Sia Mobile to interact with it. You will need to keep this command prompt open and running to use Sia Mobile with it.]]></string>
 
