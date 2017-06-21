@@ -4,7 +4,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -21,7 +24,7 @@ public class LocalWallet {
     public LocalWallet() {
         seed = MainActivity.prefs.getString("localWalletSeed", "noseed");
         addresses = (HashSet<String>)MainActivity.prefs.getStringSet("localWalletAddresses", new HashSet<String>());
-        copyBinary();
+        binary = MainActivity.copyBinary("sia-coldstorage");
     }
 
     public void startListening(final int port) {
@@ -79,24 +82,6 @@ public class LocalWallet {
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void copyBinary() {
-        try {
-            InputStream in = MainActivity.instance.getAssets().open("sia-coldstorage");
-            binary = new File(MainActivity.instance.getFilesDir(), "sia-coldstorage");
-            if (binary.exists())
-                return;
-            FileOutputStream out = new FileOutputStream(binary);
-            byte[] buf = new byte[1024];
-            int len;
-            while ((len = in.read(buf)) > 0)
-                out.write(buf, 0, len);
-            in.close();
-            out.close();
-        } catch (IOException e) {
             e.printStackTrace();
         }
     }

@@ -16,7 +16,10 @@ import android.widget.TextView;
 import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -29,7 +32,7 @@ public class TerminalFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_terminal, container, false);
         MainActivity.instance.getSupportActionBar().setTitle("Terminal");
-        copyBinary();
+        siacFile = MainActivity.copyBinary("siac");
 
         input = (EditText)v.findViewById(R.id.input);
         input.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -68,27 +71,5 @@ public class TerminalFragment extends Fragment {
         output = (TextView)v.findViewById(R.id.output);
         output.setMovementMethod(new ScrollingMovementMethod());
         return v;
-    }
-
-    /**
-     * Copies siac from the assets folder of the app to a location on the device that it can be executed from
-     */
-    private void copyBinary() {
-        try {
-            siacFile = new File(MainActivity.instance.getFilesDir().getPath() + "/siac");
-            if (siacFile.exists())
-                return;
-            InputStream in = MainActivity.instance.getAssets().open("siac");
-            FileOutputStream out = new FileOutputStream(siacFile);
-            byte[] buf = new byte[1024];
-            int len;
-            while ((len = in.read(buf)) > 0)
-                out.write(buf, 0, len);
-            in.close();
-            out.close();
-            siacFile.setExecutable(true);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }

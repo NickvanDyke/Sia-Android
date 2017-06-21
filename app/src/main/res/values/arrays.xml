@@ -2,11 +2,11 @@
 <resources>
     <string-array name="operation_modes_entries">
         <item>Use your own remote full node</item>
-        <item>Use local wallet, and app server for transactions</item>
+        <item>Run a full node on this device</item>
     </string-array>
     <string-array name="operation_modes_values">
         <item>remote_full_node</item>
-        <item>local_wallet_and_server</item>
+        <item>local_full_node</item>
     </string-array>
     <string-array name="theme_entries">
         <item>Light</item>

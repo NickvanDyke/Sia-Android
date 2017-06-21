@@ -36,9 +36,7 @@ import com.google.android.gms.ads.AdView;
 import vandyke.siamobile.dialogs.RemoveAdsFeesDialog;
 import vandyke.siamobile.fragments.*;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.*;
 import java.math.BigDecimal;
 
 public class MainActivity extends AppCompatActivity {
@@ -197,8 +195,9 @@ public class MainActivity extends AppCompatActivity {
                     case "operationMode":
                         if (prefs.getString("operationMode", "remote_full_node").equals("remote_full_node")) {
                             editor.putString("address", prefs.getString("remoteAddress", "192.168.1.11:9980"));
-                        } else if (prefs.getString("operationMode", "remote_full_node").equals("local_wallet_and_server")) {
+                        } else if (prefs.getString("operationMode", "remote_full_node").equals("local_full_node")) {
                             editor.putString("address", "localhost:9980");
+                            Siad.getInstance().start();
                         }
                         editor.apply();
                         break;
@@ -360,5 +359,25 @@ public class MainActivity extends AppCompatActivity {
                         Activity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(
                 activity.getCurrentFocus().getWindowToken(), 0);
+    }
+
+    public static File copyBinary(String filename) {
+        try {
+            InputStream in = instance.getAssets().open(filename);
+            File result = new File(instance.getFilesDir(), filename);
+            if (result.exists())
+                return result;
+            FileOutputStream out = new FileOutputStream(result);
+            byte[] buf = new byte[1024];
+            int len;
+            while ((len = in.read(buf)) > 0)
+                out.write(buf, 0, len);
+            in.close();
+            out.close();
+            return result;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
