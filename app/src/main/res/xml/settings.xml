@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-        >
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--TODO: option that allows user to pick with page the app will open to-->
     <SwitchPreference
             android:key="hideZero"
             android:title="Hide net-zero transactions"

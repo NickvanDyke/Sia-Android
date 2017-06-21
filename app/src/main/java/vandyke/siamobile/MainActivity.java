@@ -216,16 +216,11 @@ public class MainActivity extends AppCompatActivity {
                                 startActivityForResult(Intent.createChooser(intent, "Select Background"), SELECT_PICTURE);
                                 // TODO: suddenly the image picker is launching in the background??
                                 break;
-                            case "light":
-                                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                                break;
-                            case "dark":
-                                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                                break;
                             default:
                                 restartAndLaunch("settings");
                                 break;
                         }
+                        break;
                     case "transparentBars":
                         restartAndLaunch("settings");
                         break;

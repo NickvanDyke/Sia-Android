@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+        >
 
     <item android:drawable="@android:color/background_light" />
 
+    <!--TODO: using svg for splash screen isn't working. Think png might be only option-->
     <item
-        app:srcCompat="@drawable/sia_logo_svg"
+        android:drawable="@drawable/sia_logo_svg"
         android:gravity="center" />
 
 </layer-list>
