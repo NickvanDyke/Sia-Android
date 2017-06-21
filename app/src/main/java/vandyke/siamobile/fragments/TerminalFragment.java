@@ -1,9 +1,8 @@
 package vandyke.siamobile.fragments;
 
-import android.graphics.Color;
+import android.app.Fragment;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.text.SpannableStringBuilder;
 import android.text.method.ScrollingMovementMethod;
 import android.text.style.ForegroundColorSpan;
@@ -46,7 +45,7 @@ public class TerminalFragment extends Fragment {
 
                     SpannableStringBuilder stdOut = new SpannableStringBuilder();
                     stdOut.append("\n" + enteredCommand + "\n");
-                    stdOut.setSpan(new ForegroundColorSpan(Color.BLACK), 0, stdOut.length(), 0);
+//                    stdOut.setSpan(new ForegroundColorSpan(Color.BLACK), 0, stdOut.length(), 0);
                     stdOut.setSpan(new StyleSpan(Typeface.BOLD), 0, stdOut.length(), 0);
 
                     BufferedReader inputReader = new BufferedReader(new InputStreamReader(siac.getInputStream()));

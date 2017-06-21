@@ -105,6 +105,7 @@ public class Wallet {
 //                .addParam("amount", "")
 //                .addParam("destination", "")
                 .send();
+        System.out.println(outputs.toString());
     }
 
     public static void sendSiafunds(String amount, String recipient, SiaRequest.VolleyCallback callback) {
@@ -128,7 +129,7 @@ public class Wallet {
 
     public static void transactions(SiaRequest.VolleyCallback callback) {
         // TODO: maybe use actual value instead of really big literal lol
-        new SiaRequest(GET, String.format("/wallet/transactions?startheight=%s&endheight=%s", "0", "1000000000"), callback)
+        new SiaRequest(GET, String.format("/wallet/transactions?startheight=%s&endheight=%s", "0", "10000000000"), callback)
                 .send();
     }
 

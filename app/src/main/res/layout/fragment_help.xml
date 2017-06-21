@@ -19,14 +19,14 @@
                     android:textColor="?android:attr/textColorPrimary"/>
 
             <TextView
-                android:text="Detailed below is how to set up Sia on your Windows computer so that you can use Sia Mobile with it. If you're using Linux, it's assumed you are capable of adapting these instructions to Linux. It is possible to use an existing Sia installation; skip to step 3 in this case."
+                android:text="Estimated setup time: 3-5 minutes.\nDetailed below is how to set up Sia on your Windows computer so that you can use Sia Mobile with it. If you're using Linux, it's assumed you are capable of adapting these instructions to Linux. It is possible to use an existing Sia installation; skip to step 3 in this case."
                 android:layout_width="match_parent"
                 android:padding="8dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/textView11" />
 
             <TextView
-                android:text="1. Download the zip file for the latest Sia release for your platform at https://github.com/NebulousLabs/Sia/releases"
+                android:text="1. Download the zip file for the latest Sia release for your platform at https://github.com/NebulousLabs/Sia/releases. This is the bare minimum for running a full Sia node on your computer to use with Sia Mobile. If you want a graphical interface on your computer for your wallet and files as well, instead download Sia-UI from here: https://github.com/NebulousLabs/Sia-UI/releases."
                 android:padding="8dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -43,7 +43,7 @@
                 android:id="@+id/textView5" />
 
             <TextView
-                android:text="3. Navigate within the Sia folder until you are in the directory that contains siad. Open a command prompt in this directory by pressing Alt+d, typing cmd, and pressing enter."
+                android:text="3. Navigate within the Sia folder until you are in the directory that contains siad. If you downloaded Sia-UI in step 1, siad will be buried in resources > app > Sia. Open a command prompt in this directory by pressing Alt+d, typing cmd, and pressing enter."
                 android:padding="8dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -83,6 +83,13 @@
                 android:padding="8dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/textView12" />
+
+            <TextView
+                    android:text="Note that it might take a significant amount of time for Sia on your computer to sync with the rest of the Sia network. This is normal, and is not the fault of Sia Mobile."
+                    android:padding="8dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textView13"/>
 
             <TextView
                     android:text="@string/step_8"

@@ -131,7 +131,7 @@
             app:layout_constraintTop_toBottomOf="@+id/receiveButton"
             android:id="@+id/unlockFrame"
             android:visibility="gone"
-            android:layout_height="wrap_content">
+            android:layout_height="0dp">
     </FrameLayout>
     <FrameLayout
             android:layout_width="0dp"
@@ -140,7 +140,7 @@
             app:layout_constraintTop_toBottomOf="@+id/unlockFrame"
             android:id="@+id/sendFrame"
             android:visibility="gone"
-            android:layout_height="wrap_content">
+            android:layout_height="0dp">
     </FrameLayout>
     <FrameLayout
             android:layout_width="0dp"
@@ -149,7 +149,7 @@
             app:layout_constraintTop_toBottomOf="@+id/sendFrame"
             android:id="@+id/receiveFrame"
             android:visibility="gone"
-            android:layout_height="wrap_content">
+            android:layout_height="0dp">
     </FrameLayout>
 
     <android.support.v7.widget.RecyclerView

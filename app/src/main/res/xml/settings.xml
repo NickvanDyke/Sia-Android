@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-                  xmlns:app="http://schemas.android.com/apk/res-auto">
+        >
     <SwitchPreference
             android:key="hideZero"
             android:title="Hide net-zero transactions"
             android:defaultValue="off"
-            android:summary="For each regular transaction, Sia also makes a setup transaction that does not affect your wallet balance. Check this to hide transactions that have zero net effect on your wallet">
+            android:summary="For each regular transaction, Sia also makes a setup transaction that does not affect your wallet balance. Check this to hide transactions that have zero net effect on your wallet.">
     </SwitchPreference>
     <EditTextPreference
             android:key="displayedDecimalPrecision"
             android:title="Displayed decimal precision"
-            android:summary="The number of decimal places displayed. This does not affect actual precision of values in memory, which is exact. When displayed, they will be rounded up"
+            android:summary="The number of decimal places displayed. This does not affect actual precision of values in memory, which is exact. When displayed, they will be rounded up."
             android:inputType="number"
             android:gravity="center"
             android:defaultValue="2">
@@ -34,7 +34,7 @@
             android:title="Mode">
         <ListPreference
                 android:title="Operation mode"
-                android:summary="1. Interface with your own remote full node\n2. Retrieve data from a server and build transactions locally and upload them to the server. Some features will be unavailable using this"
+                android:summary="1. Interface with your own remote full node\n2. Retrieve data from a server and build transactions locally and upload them to the server. Some features will be unavailable using this."
                 android:key="operationMode"
                 android:entries="@array/operation_modes_entries"
                 android:entryValues="@array/operation_modes_values"
@@ -42,14 +42,14 @@
         <EditTextPreference
                 android:key="remoteAddress"
                 android:title="Remote node address"
-                android:summary="The IP address and port number of your remote full node. If you are not on the same network as it, you will have to port forward"
+                android:summary="The IP address and port number of your remote full node. If your device is not on the same network as it, you will have to port forward."
                 android:dialogTitle="Remote node address"
                 android:gravity="center"
                 android:hint="ip:port"/>
         <EditTextPreference
                 android:key="apiPass"
                 android:title="API password"
-                android:summary="The API password set on your remote full node"
+                android:summary="The API password set on your remote full node."
                 android:dialogTitle="API password"
                 android:gravity="center"
                 android:inputType="textPassword"

@@ -48,9 +48,9 @@ public class MainActivity extends AppCompatActivity {
     public static MainActivity instance;
     public static int defaultTextColor;
     public static int backgroundColor;
-    public static final String[] devAddresses = { "986082d52bf8a25009e7ce97508385687f3241d1e027969edbf9f63e4240cecf77bad58f40a5",
-    "8a9d8e6c8d043300b967443eaaa01874efa36e69a95b03c6b970bfe5b82a7f0345424a7919af",
-    "65cc0ab13a1ccb7788cf36554daf980f162c5bf2fec9a3664192916b26c568af4eda38f666d0" };
+    public static final String[] devAddresses = {"986082d52bf8a25009e7ce97508385687f3241d1e027969edbf9f63e4240cecf77bad58f40a5",
+            "8a9d8e6c8d043300b967443eaaa01874efa36e69a95b03c6b970bfe5b82a7f0345424a7919af",
+            "65cc0ab13a1ccb7788cf36554daf980f162c5bf2fec9a3664192916b26c568af4eda38f666d0"};
     public static final BigDecimal devFee = new BigDecimal("0.005"); // 0.5%
 
     private DrawerLayout drawerLayout;
@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
 //            MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713");
 //            ((AdView)findViewById(R.id.adView)).loadAd(new AdRequest.Builder().build());
 //        } else
-        ((AdView)findViewById(R.id.adView)).setVisibility(View.GONE);
+        ((AdView) findViewById(R.id.adView)).setVisibility(View.GONE);
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close) {
@@ -148,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
                         loadDrawerFragment(SettingsFragment.class);
                         break;
                     case R.id.drawer_item_about:
-                        // TODO: about stuff
+                        loadDrawerFragment(AboutFragment.class);
                         break;
                     case R.id.drawer_item_help:
                         loadDrawerFragment(HelpFragment.class);
@@ -156,9 +156,9 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.drawer_item_remove_ads_fees:
                         RemoveAdsFeesDialog.createAndShow(getFragmentManager());
                         break;
-                    case R.id.drawer_item_donate:
-                        // TODO: donate stuff
-                        break;
+//                    case R.id.drawer_item_donate:
+//                        // TODO: donate stuff
+//                        break;
                 }
                 selectionChanged = false;
             }
@@ -208,14 +208,19 @@ public class MainActivity extends AppCompatActivity {
                         }
                         break;
                     case "theme":// restart to apply the theme; don't need to change theme variable since app is restarting and it'll load it
-                        if (prefs.getString("theme", "light").equals("custom")) {
-                            Intent intent = new Intent();
-                            intent.setType("image/*");
-                            intent.setAction(Intent.ACTION_GET_CONTENT);
-                            startActivityForResult(Intent.createChooser(intent, "Select Picture"), SELECT_PICTURE);
-                        } else
-                            restartAndLaunch("settings");
-                        break;
+                        switch (prefs.getString("theme", "light")) {
+                            case "custom":
+                                Intent intent = new Intent();
+                                intent.setType("image/*");
+                                intent.setAction(Intent.ACTION_GET_CONTENT);
+                                startActivityForResult(Intent.createChooser(intent, "Select Picture"), SELECT_PICTURE);
+                                break;
+                            case "light":
+                                break;
+
+                            default:
+                                restartAndLaunch("settings");
+                        }
                     case "transparentBars":
                         restartAndLaunch("settings");
                         break;
@@ -226,6 +231,8 @@ public class MainActivity extends AppCompatActivity {
 
         if (getIntent().hasCategory("settings"))
             loadDrawerFragment(SettingsFragment.class);
+        else
+            loadDrawerFragment(WalletFragment.class);
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -272,7 +279,7 @@ public class MainActivity extends AppCompatActivity {
             if (currentFrag != null)
                 transaction.hide(currentFrag);
             if (newFragment == null) {
-                transaction.add(R.id.fragment_frame, (Fragment)clazz.newInstance(), className);
+                transaction.add(R.id.fragment_frame, (Fragment) clazz.newInstance(), className);
             } else {
                 transaction.show(newFragment);
             }

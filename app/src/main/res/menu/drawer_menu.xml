@@ -43,8 +43,8 @@
         <item
                 android:id="@+id/drawer_item_remove_ads_fees"
                 android:title="Remove Ads/Fees"/>
-        <item
-                android:id="@+id/drawer_item_donate"
-                android:title="Donate"/>
+        <!--<item-->
+                <!--android:id="@+id/drawer_item_donate"-->
+                <!--android:title="Donate"/>-->
     </group>
 </menu>

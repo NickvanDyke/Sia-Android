@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/drawer_header_image"
-    android:paddingLeft="32dp"
-    android:paddingRight="32dp"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    app:srcCompat="@drawable/sia_logo_svg"
-        android:paddingTop="16dp"/>
+           xmlns:app="http://schemas.android.com/apk/res-auto"
+           android:id="@+id/drawer_header_image"
+           android:paddingLeft="32dp"
+           android:paddingRight="32dp"
+           android:layout_width="fill_parent"
+           android:layout_height="fill_parent"
+           app:srcCompat="@drawable/sia_logo_svg"
+           android:paddingTop="16dp"
+           android:paddingBottom="16dp"/>
