@@ -129,7 +129,7 @@ public class Wallet {
 
     public static void transactions(SiaRequest.VolleyCallback callback) {
         // TODO: maybe use actual value instead of really big literal lol
-        new SiaRequest(GET, String.format("/wallet/transactions?startheight=%s&endheight=%s", "0", "10000000000"), callback)
+        new SiaRequest(GET, String.format("/wallet/transactions?startheight=%s&endheight=%s", "0", "2000000000"), callback)
                 .send();
     }
 

@@ -187,6 +187,7 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
+        navigationView.setCheckedItem(R.id.drawer_item_wallet);
 
         prefsListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
@@ -214,7 +215,6 @@ public class MainActivity extends AppCompatActivity {
                                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                                 intent.setType("image/*");
                                 startActivityForResult(Intent.createChooser(intent, "Select Background"), SELECT_PICTURE);
-                                // TODO: suddenly the image picker is launching in the background??
                                 break;
                             default:
                                 restartAndLaunch("settings");
@@ -228,6 +228,9 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         prefs.registerOnSharedPreferenceChangeListener(prefsListener);
+
+        if (prefs.getString("operationMode", "remote_full_node").equals("local_full_node"))
+            Siad.getInstance().start();
 
         if (getIntent().hasCategory("settings"))
             loadDrawerFragment(SettingsFragment.class);
@@ -366,7 +369,6 @@ public class MainActivity extends AppCompatActivity {
         try {
             InputStream in = instance.getAssets().open(filename);
             File result = new File(instance.getFilesDir(), filename);
-            result.delete();
             if (result.exists())
                 return result;
             FileOutputStream out = new FileOutputStream(result);

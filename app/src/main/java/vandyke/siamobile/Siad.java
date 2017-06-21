@@ -8,10 +8,10 @@ import java.io.InputStreamReader;
 public class Siad {
 
     private static Siad instance;
-
     private File siad;
-
     private Process siadProcess;
+    private Thread readStdoutThread;
+    final private StringBuilder stdoutBuffer = new StringBuilder();
 
     private Siad() {
         siad = MainActivity.copyBinary("siad");
@@ -29,21 +29,30 @@ public class Siad {
             System.out.println("siad already running");
             return;
         }
-        ProcessBuilder pb = new ProcessBuilder(siad.getAbsolutePath());
+        stdoutBuffer.setLength(0);
+        ProcessBuilder pb = new ProcessBuilder(siad.getAbsolutePath(), "-M", "gctw");
         pb.redirectErrorStream(true);
         pb.directory(MainActivity.instance.getFilesDir());
         try {
             siadProcess = pb.start();
             System.out.println(siadProcess);
-            StringBuilder stdOut = new StringBuilder();
-            BufferedReader inputReader = new BufferedReader(new InputStreamReader(siadProcess.getInputStream()));
-            int read;
-            char[] buffer = new char[1024];
-            while ((read = inputReader.read(buffer)) > 0) {
-//                stdOut.append(new String(buffer), 0, read);
-                System.out.println(new String(buffer));
-            }
-            inputReader.close();
+            readStdoutThread = new Thread() {
+                public void run() {
+                    try {
+                        BufferedReader inputReader = new BufferedReader(new InputStreamReader(siadProcess.getInputStream()));
+                        int read;
+                        char[] buffer = new char[1024];
+                        while ((read = inputReader.read(buffer)) > 0) {
+                            stdoutBuffer.append(new String(buffer), 0, read);
+                            System.out.println(new String(buffer));
+                        }
+                        inputReader.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+            readStdoutThread.start();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -54,5 +63,13 @@ public class Siad {
             siadProcess.destroy();
             siadProcess = null;
         }
+    }
+
+    public String getBufferedStdout() {
+        if (stdoutBuffer == null)
+            return "";
+        String result = stdoutBuffer.toString();
+        stdoutBuffer.setLength(0);
+        return result;
     }
 }

@@ -160,11 +160,12 @@ public class SiaRequest extends StringRequest {
         }
 
         public String getMsg() {
-            return reason.getMsg();
+            return reason != null ? reason.getMsg() : "";
         }
 
         public void toast() {
-            Toast.makeText(MainActivity.instance, reason.getMsg(), Toast.LENGTH_LONG).show();
+            if (reason != null)
+                Toast.makeText(MainActivity.instance, reason.getMsg(), Toast.LENGTH_LONG).show();
         }
     }
 

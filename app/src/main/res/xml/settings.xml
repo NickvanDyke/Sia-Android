@@ -44,7 +44,8 @@
                 android:summary="The IP address and port number of your remote full node. If your device is not on the same network as it, you will have to port forward."
                 android:dialogTitle="Remote node address"
                 android:gravity="center"
-                android:hint="ip:port"/>
+                android:hint="ip:port"
+            android:shouldDisableView="true"/>
         <EditTextPreference
                 android:key="apiPass"
                 android:title="API password"
@@ -53,6 +54,7 @@
                 android:gravity="center"
                 android:inputType="textPassword"
                 android:password="true"
-                android:fontFamily="sans-serif"/>
+                android:fontFamily="sans-serif"
+            android:shouldDisableView="true"/>
     </PreferenceCategory>
 </PreferenceScreen>

@@ -3,11 +3,12 @@
     <string name="drawer_open">open</string>
     <string name="drawer_close">close</string>
 
-    <string name="terminal_warning" tools:ignore="TypographyDashes">This terminal uses siac as its backend. Siac is a command-line utility written by the
+    <string name="terminal_warning" tools:ignore="TypographyDashes">ADVANCED:\nThis terminal uses siac as its backend. Siac is a command-line utility written by the
         Sia developers that can interface with all of Sia\'s API endpoints; you can type --help and press enter for a list
         of commands. The purpose of this terminal and its use of siac is to make available to you commands that might not
         yet be part of the mobile graphical interface. While siac is fully functional on a computer, very little testing of
-        it has been done on a mobile device. Functionality is not guaranteed. Use at your own risk.\n</string>
+        it has been done on a mobile device. Functionality is not guaranteed. Use at your own risk.\n\nIf running a local
+    full node on this device, siad\'s output will also appear in this terminal.\n</string>
 
     <!--Strings for explaining install-->
     <string name="step_5" tools:ignore="TypographyDashes"><![CDATA[5. In the same command prompt, type siad --disable-api-security --authenticate-api

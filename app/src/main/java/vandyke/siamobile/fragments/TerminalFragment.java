@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
+import vandyke.siamobile.Siad;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -38,29 +39,40 @@ public class TerminalFragment extends Fragment {
         input.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 try {
-                    String enteredCommand = v.getText().toString();
+                    final String enteredCommand = v.getText().toString();
                     v.setText("");
                     ArrayList<String> fullCommand = new ArrayList<>(Arrays.asList(enteredCommand.split(" ")));
                     fullCommand.add(0, siacFile.getAbsolutePath());
                     ProcessBuilder pb = new ProcessBuilder(fullCommand);
                     pb.redirectErrorStream(true);
-                    Process siac = pb.start();
+                    final Process siac = pb.start();
 
-                    SpannableStringBuilder stdOut = new SpannableStringBuilder();
-                    stdOut.append("\n" + enteredCommand + "\n");
-//                    stdOut.setSpan(new ForegroundColorSpan(Color.BLACK), 0, stdOut.length(), 0);
-                    stdOut.setSpan(new StyleSpan(Typeface.BOLD), 0, stdOut.length(), 0);
+                    new Thread() {
+                        public void run() {
+                            try {
+                                final SpannableStringBuilder stdOut = new SpannableStringBuilder();
+                                stdOut.append("\n" + enteredCommand + "\n");
+                                stdOut.setSpan(new StyleSpan(Typeface.BOLD), 0, stdOut.length(), 0);
 
-                    BufferedReader inputReader = new BufferedReader(new InputStreamReader(siac.getInputStream()));
-                    int read;
-                    char[] buffer = new char[1024];
-                    while ((read = inputReader.read(buffer)) > 0) {
-                        stdOut.append(new String(buffer), 0, read);
-                    }
-                    inputReader.close();
+                                BufferedReader inputReader = new BufferedReader(new InputStreamReader(siac.getInputStream()));
+                                int read;
+                                char[] buffer = new char[1024];
+                                while ((read = inputReader.read(buffer)) > 0) {
+                                    stdOut.append(new String(buffer), 0, read);
+                                }
+                                inputReader.close();
 
-                    stdOut.setSpan(new ForegroundColorSpan(MainActivity.defaultTextColor), enteredCommand.length() + 2, stdOut.length(), 0);
-                    output.append(stdOut);
+                                stdOut.setSpan(new ForegroundColorSpan(MainActivity.defaultTextColor), enteredCommand.length() + 2, stdOut.length(), 0);
+                                MainActivity.instance.runOnUiThread(new Runnable() {
+                                    public void run() {
+                                        output.append(stdOut);
+                                    }
+                                });
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }.start();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -71,5 +83,17 @@ public class TerminalFragment extends Fragment {
         output = (TextView)v.findViewById(R.id.output);
         output.setMovementMethod(new ScrollingMovementMethod());
         return v;
+    }
+
+    public void onResume() {
+        super.onResume();
+        output.append(Siad.getInstance().getBufferedStdout());
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden)
+            output.append(Siad.getInstance().getBufferedStdout());
     }
 }
