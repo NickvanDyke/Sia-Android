@@ -187,7 +187,6 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
-        navigationView.setCheckedItem(R.id.drawer_item_wallet);
 
         prefsListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
@@ -232,21 +231,26 @@ public class MainActivity extends AppCompatActivity {
         if (prefs.getString("operationMode", "remote_full_node").equals("local_full_node"))
             Siad.getInstance().start();
 
-        if (getIntent().hasCategory("settings"))
+        if (getIntent().hasCategory("settings")) {
             loadDrawerFragment(SettingsFragment.class);
-        else
+            navigationView.setCheckedItem(R.id.drawer_item_settings);
+        } else
             switch (prefs.getString("startupPage", "wallet")) {
                 case "files":
                     loadDrawerFragment(FilesFragment.class);
+                    navigationView.setCheckedItem(R.id.drawer_item_files);
                     break;
                 case "hosting":
                     loadDrawerFragment(HostingFragment.class);
+                    navigationView.setCheckedItem(R.id.drawer_item_hosting);
                     break;
                 case "wallet":
                     loadDrawerFragment(WalletFragment.class);
+                    navigationView.setCheckedItem(R.id.drawer_item_wallet);
                     break;
                 case "terminal":
                     loadDrawerFragment(TerminalFragment.class);
+                    navigationView.setCheckedItem(R.id.drawer_item_terminal);
                     break;
             }
     }
