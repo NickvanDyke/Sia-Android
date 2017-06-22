@@ -29,11 +29,13 @@ public class TerminalFragment extends Fragment {
     private EditText input;
     private TextView output;
     private File siacFile;
+    private String siacPath;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_terminal, container, false);
         MainActivity.instance.getSupportActionBar().setTitle("Terminal");
         siacFile = MainActivity.copyBinary("siac");
+        siacPath = siacFile.getAbsolutePath();
 
         input = (EditText)v.findViewById(R.id.input);
         input.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -58,7 +60,8 @@ public class TerminalFragment extends Fragment {
                                 int read;
                                 char[] buffer = new char[1024];
                                 while ((read = inputReader.read(buffer)) > 0) {
-                                    stdOut.append(new String(buffer), 0, read);
+                                    String toBeAppended = new String(buffer).substring(0, read).replace(siacPath, "siac");
+                                    stdOut.append(toBeAppended, 0, toBeAppended.length());
                                 }
                                 inputReader.close();
 
@@ -82,18 +85,16 @@ public class TerminalFragment extends Fragment {
 
         output = (TextView)v.findViewById(R.id.output);
         output.setMovementMethod(new ScrollingMovementMethod());
+        Siad.getInstance().setTerminalFragment(this);
         return v;
+    }
+
+    public void appendToOutput(String text) {
+        output.append(text);
     }
 
     public void onResume() {
         super.onResume();
         output.append(Siad.getInstance().getBufferedStdout());
-    }
-
-    @Override
-    public void onHiddenChanged(boolean hidden) {
-        super.onHiddenChanged(hidden);
-        if (!hidden)
-            output.append(Siad.getInstance().getBufferedStdout());
     }
 }

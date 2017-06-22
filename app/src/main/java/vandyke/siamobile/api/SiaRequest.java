@@ -89,7 +89,7 @@ public class SiaRequest extends StringRequest {
             EXISTING_WALLET("A wallet already exists. Use force option to overwrite"),
             INCORRECT_API_PASSWORD("Incorrect API password"),
             UNACCOUNTED_FOR_ERROR("Unexpected error"),
-            ANOTHER_WALLET_SCAN_UNDERWAY("Wallet scan in progress");
+            ANOTHER_WALLET_SCAN_UNDERWAY("Wallet scan in progress. Please wait");
 
             private String msg;
 

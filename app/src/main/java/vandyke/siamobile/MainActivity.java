@@ -235,7 +235,20 @@ public class MainActivity extends AppCompatActivity {
         if (getIntent().hasCategory("settings"))
             loadDrawerFragment(SettingsFragment.class);
         else
-            loadDrawerFragment(WalletFragment.class);
+            switch (prefs.getString("startupPage", "wallet")) {
+                case "files":
+                    loadDrawerFragment(FilesFragment.class);
+                    break;
+                case "hosting":
+                    loadDrawerFragment(HostingFragment.class);
+                    break;
+                case "wallet":
+                    loadDrawerFragment(WalletFragment.class);
+                    break;
+                case "terminal":
+                    loadDrawerFragment(TerminalFragment.class);
+                    break;
+            }
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

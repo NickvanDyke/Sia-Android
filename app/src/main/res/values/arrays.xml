@@ -8,6 +8,7 @@
         <item>remote_full_node</item>
         <item>local_full_node</item>
     </string-array>
+
     <string-array name="theme_entries">
         <item>Light</item>
         <item>Dark</item>
@@ -19,5 +20,18 @@
         <item>dark</item>
         <item>amoled</item>
         <item>custom</item>
+    </string-array>
+
+    <string-array name="startup_entries">
+        <item>Files</item>
+        <item>Hosting</item>
+        <item>Wallet</item>
+        <item>Terminal</item>
+    </string-array>
+    <string-array name="startup_values">
+        <item>files</item>
+        <item>hosting</item>
+        <item>wallet</item>
+        <item>terminal</item>
     </string-array>
 </resources>

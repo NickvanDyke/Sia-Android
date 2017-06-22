@@ -1,5 +1,7 @@
 package vandyke.siamobile;
 
+import vandyke.siamobile.fragments.TerminalFragment;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -12,6 +14,7 @@ public class Siad {
     private Process siadProcess;
     private Thread readStdoutThread;
     final private StringBuilder stdoutBuffer = new StringBuilder();
+    private TerminalFragment terminalFragment;
 
     private Siad() {
         siad = MainActivity.copyBinary("siad");
@@ -43,8 +46,16 @@ public class Siad {
                         int read;
                         char[] buffer = new char[1024];
                         while ((read = inputReader.read(buffer)) > 0) {
-                            stdoutBuffer.append(new String(buffer), 0, read);
-                            System.out.println(new String(buffer));
+                            final String text = new String(buffer).substring(0, read);
+                            stdoutBuffer.append(text, 0, read);
+                            System.out.println(text);
+                            if (terminalFragment != null) {
+                                MainActivity.instance.runOnUiThread(new Runnable() {
+                                    public void run() {
+                                        terminalFragment.appendToOutput(text);
+                                    }
+                                });
+                            }
                         }
                         inputReader.close();
                     } catch (IOException e) {
@@ -71,5 +82,9 @@ public class Siad {
         String result = stdoutBuffer.toString();
         stdoutBuffer.setLength(0);
         return result;
+    }
+
+    public void setTerminalFragment(TerminalFragment fragment) {
+        terminalFragment = fragment;
     }
 }
