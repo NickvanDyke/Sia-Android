@@ -63,6 +63,12 @@
             android:inputType="number"
             android:gravity="center"
             android:defaultValue="2"/>
+        <Preference
+            android:key="clearInternal"
+            android:title="Clear internal storage"/>
+        <!--<Preference-->
+            <!--android:key="clearExternal"-->
+            <!--android:title="Clear external storage"/>-->
     </PreferenceCategory>
 
 </PreferenceScreen>

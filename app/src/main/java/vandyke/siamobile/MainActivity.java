@@ -11,6 +11,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -417,5 +418,50 @@ public class MainActivity extends AppCompatActivity {
         } else
             result = instance.getFilesDir();
         return result;
+    }
+
+    public static long getInternalFilesSize() {
+        return instance.getFilesDir().length();
+    }
+
+    public static long getExternalFilesSize() {
+        File externalStorage = instance.getExternalFilesDir(null);
+        if (externalStorage == null)
+            return 0;
+        return externalStorage.length();
+    }
+
+    public static boolean isExternalStorageWritable() {
+        String state = Environment.getExternalStorageState();
+        return Environment.MEDIA_MOUNTED.equals(state);
+    }
+
+    public static String externalStorageStateDescription() {
+        switch (Environment.getExternalStorageState()) {
+            case Environment.MEDIA_BAD_REMOVAL:
+                return "external storage was previously removed before being unmounted";
+            case Environment.MEDIA_CHECKING:
+                return "external storage is present but being disk-checked";
+            case Environment.MEDIA_EJECTING:
+                return "external storage is in the process of ejecting";
+            case Environment.MEDIA_MOUNTED:
+                return "external storage is present and mounted with read/write access";
+            case Environment.MEDIA_MOUNTED_READ_ONLY:
+                return "external storage is present but mounted as read-only";
+            case Environment.MEDIA_NOFS:
+                return "external storage is present but is blank or using an unsupported filesystem";
+            case Environment.MEDIA_REMOVED:
+                return "external storage is not present";
+            case Environment.MEDIA_SHARED:
+                return "external storage is present but being shared via USB";
+            case Environment.MEDIA_UNKNOWN:
+                return "external storage is in an unknown state";
+            case Environment.MEDIA_UNMOUNTABLE:
+                return "external storage is present but cannot be mounted. May be corrupted";
+            case Environment.MEDIA_UNMOUNTED:
+                return "external storage is present but unmounted";
+            default:
+                return "external storage state missed all cases";
+        }
     }
 }
