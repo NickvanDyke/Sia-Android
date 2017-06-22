@@ -28,11 +28,11 @@
                     android:textSize="24sp"
                     android:textAlignment="center"
                     android:padding="8dp"
-                    android:textColor="@color/colorAccent"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textStyle="normal|bold"/>
 
             <TextView
-                    android:text="The Sia network offers completely private, decentralized, and affordable cloud storage. Sia Mobile lets interface with the Sia network from your mobile device. This includes managing your Sia wallet, which stores Siacoins: the cryptocurrency used by the Sia network for renting and hosting storage, and for trading on cryptocurrency exchanges."
+                    android:text="The Sia network offers completely private, decentralized, and affordable cloud storage. Sia Mobile lets you interact with the Sia network from your mobile device. This includes managing your Sia wallet, which stores Siacoins: the cryptocurrency used by the Sia network for renting and hosting storage, and for trading on cryptocurrency exchanges."
                     android:layout_width="match_parent"
                     android:padding="8dp"
                     android:layout_height="wrap_content"
@@ -40,14 +40,14 @@
                     />
 
             <TextView
-                    android:text="Unfortunately, Sia Mobile cannot function independently, because Sia currently lacks the specific features needed to make that possible. This is not the fault of Sia Mobile. Once the Sia network is updated to provide the features necessary for a standalone mobile wallet, Sia Mobile will be updated to support this. Until then, you will have to run Sia on your computer, which Sia Mobile will interface with in order to communicate with the Sia network. Setting this up is quick and easy, and instructions on how to do so can be found in the Help section of the navigation drawer. I know it's not the most convenient, but it's seriously the only option right now. Sorry!"
+                    android:text="Given Sia's current features, you can choose to either connect to a full Sia node running on your computer, or run one on your mobile device. You can read more about these options in the Help section of the navigation drawer - it's highly recommended that you do this before making a choice, especially if you are unfamiliar with Sia or cryptocurrencies and blockchain technology in general. You can change your decision at any point with no permanent repercussions, however."
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="8dp"
                     android:id="@+id/textView16"/>
 
             <TextView
-                    android:text="Sia is still in development. Any problems you experience are not necessarily Sia Mobile's fault, and may be related to that. You can find links to Sia communities in the About page for any Sia-related help you may need."
+                    android:text="Sia is still in development. Any problems you experience are not necessarily Sia Mobile's fault, and may be related to that and the Sia network. You can find links to Sia communities in the About page for any Sia-related help you may need."
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="8dp"

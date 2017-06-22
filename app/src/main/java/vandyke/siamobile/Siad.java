@@ -10,14 +10,14 @@ import java.io.InputStreamReader;
 public class Siad {
 
     private static Siad instance;
-    private File siad;
+    private File siadFile;
     private Process siadProcess;
     private Thread readStdoutThread;
     final private StringBuilder stdoutBuffer = new StringBuilder();
     private TerminalFragment terminalFragment;
 
     private Siad() {
-        siad = MainActivity.copyBinary("siad");
+        siadFile = MainActivity.copyBinary("siad");
         instance = this;
     }
 
@@ -27,16 +27,20 @@ public class Siad {
         return instance;
     }
 
+    public static void destroyInstance() {
+        instance = null;
+    }
+
     public void start() {
         if (siadProcess != null) {
-            System.out.println("siad already running");
+            System.out.println("siadFile already running");
             return;
         }
         stdoutBuffer.setLength(0);
-        terminalAppend("\nStarting siad...\n");
-        ProcessBuilder pb = new ProcessBuilder(siad.getAbsolutePath(), "-M", "gctw");
+        terminalAppend("\nStarting siadFile...\n");
+        ProcessBuilder pb = new ProcessBuilder(siadFile.getAbsolutePath(), "-M", "gctw");
         pb.redirectErrorStream(true);
-        pb.directory(MainActivity.instance.getFilesDir());
+        pb.directory(MainActivity.getWorkingDirectory());
         try {
             siadProcess = pb.start();
             System.out.println(siadProcess);
@@ -48,15 +52,12 @@ public class Siad {
                         char[] buffer = new char[1024];
                         while ((read = inputReader.read(buffer)) > 0) {
                             final String text = new String(buffer).substring(0, read);
-                            stdoutBuffer.append(text, 0, read);
                             System.out.println(text);
-                            if (terminalFragment != null) {
-                                MainActivity.instance.runOnUiThread(new Runnable() {
-                                    public void run() {
-                                        terminalFragment.appendToOutput(text);
-                                    }
-                                });
-                            }
+                            MainActivity.instance.runOnUiThread(new Runnable() {
+                                public void run() {
+                                    terminalAppend(text);
+                                }
+                            });
                         }
                         inputReader.close();
                     } catch (IOException e) {
@@ -75,7 +76,8 @@ public class Siad {
             siadProcess.destroy();
             siadProcess = null;
         }
-        terminalAppend("Stopped siad\n");
+        destroyInstance();
+        terminalAppend("Stopped siadFile\n");
     }
 
     public String getBufferedStdout() {
@@ -93,6 +95,7 @@ public class Siad {
     private void terminalAppend(String text) {
         if (terminalFragment != null)
             terminalFragment.appendToOutput(text);
-        stdoutBuffer.append(text);
+        else
+            stdoutBuffer.append(text);
     }
 }

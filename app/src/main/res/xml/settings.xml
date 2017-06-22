@@ -37,6 +37,11 @@
             android:password="true"
             android:fontFamily="sans-serif"
             android:shouldDisableView="true" />
+        <SwitchPreference
+            android:key="useExternal"
+            android:title="Use external storage"
+            android:summary="By default, Sia Mobile will store any of its files on your device's internal storage. Turn this option on if you want it to instead use external storage, such as an SD card."
+            android:defaultValue="off"/>
     </PreferenceCategory>
     <PreferenceCategory android:title="Misc">
         <ListPreference

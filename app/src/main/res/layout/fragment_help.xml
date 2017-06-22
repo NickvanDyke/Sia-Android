@@ -9,14 +9,15 @@
             android:orientation="vertical" >
 
             <TextView
-                    android:text="Interfacing with your\nown remote full Sia node"
-                    android:layout_width="match_parent"
-                    android:padding="8dp"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/textView3"
-                    android:textSize="20sp"
-                    android:textAlignment="center"
-                    android:textColor="?android:attr/textColorPrimary"/>
+                android:text="Interfacing with your\nown remote full Sia node"
+                android:layout_width="match_parent"
+                android:padding="8dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView3"
+                android:textSize="20sp"
+                android:textAlignment="center"
+                android:textColor="?android:attr/textColorPrimary"
+                />
 
             <TextView
                 android:text="Estimated setup time: 3-5 minutes.\nDetailed below is how to set up Sia on your Windows computer so that you can use Sia Mobile with it. If you're using Linux, it's assumed you are capable of adapting these instructions to Linux. It is possible to use an existing Sia installation; skip to step 3 in this case."

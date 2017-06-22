@@ -388,7 +388,7 @@ public class MainActivity extends AppCompatActivity {
     public static File copyBinary(String filename) {
         try {
             InputStream in = instance.getAssets().open(filename);
-            File result = new File(instance.getFilesDir(), filename);
+            File result = new File(getWorkingDirectory(), filename);
             if (result.exists())
                 return result;
             FileOutputStream out = new FileOutputStream(result);
@@ -404,5 +404,18 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static File getWorkingDirectory() {
+        File result;
+        if (prefs.getBoolean("useExternal", false)) {
+            result = instance.getExternalFilesDir(null);
+            if (result == null) { // external storage not found
+                Toast.makeText(instance, "No external storage found. Using internal", Toast.LENGTH_LONG).show();
+                result = instance.getFilesDir();
+            }
+        } else
+            result = instance.getFilesDir();
+        return result;
     }
 }
