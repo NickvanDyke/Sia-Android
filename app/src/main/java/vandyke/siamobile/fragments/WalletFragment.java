@@ -11,6 +11,9 @@ import android.view.*;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.daimajia.numberprogressbar.NumberProgressBar;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,7 +33,9 @@ import java.util.ArrayList;
 public class WalletFragment extends Fragment {
 
     private BigDecimal balanceHastings;
+    private BigDecimal balanceUsd;
     private TextView balanceText;
+    private TextView balanceUsdText;
     private TextView balanceUnconfirmedText;
     private ArrayList<Transaction> transactions;
     private NumberProgressBar syncBar;
@@ -62,7 +67,9 @@ public class WalletFragment extends Fragment {
         }
 
         balanceHastings = new BigDecimal("0");
+        balanceUsd = new BigDecimal("0");
         balanceText = (TextView)v.findViewById(R.id.balanceText);
+        balanceUsdText = (TextView)v.findViewById(R.id.balanceUsdText);
         balanceUnconfirmedText = (TextView)v.findViewById(R.id.balanceUnconfirmed);
         transactions = new ArrayList<>();
 
@@ -197,6 +204,23 @@ public class WalletFragment extends Fragment {
                 super.onError(error);
                 balanceText.setText("Loading...");
                 walletStatusText.setText("Wallet Status:\nLoading...");
+            }
+        });
+
+        Wallet.coincapSC(new Response.Listener() {
+            public void onResponse(Object response) {
+                try {
+                    JSONObject json = new JSONObject((String) response);
+                    double usdPrice = json.getDouble("usdPrice");
+                    balanceUsd = Wallet.scToUsd(usdPrice, balanceHastings);
+                    balanceUsdText.setText(Wallet.round(balanceUsd));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(MainActivity.instance, "Error retrieving USD value", Toast.LENGTH_SHORT).show();
             }
         });
     }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
                                              xmlns:app="http://schemas.android.com/apk/res-auto"
+                                             xmlns:tools="http://schemas.android.com/tools"
                                              android:orientation="vertical"
                                              android:layout_width="match_parent"
                                              android:layout_height="match_parent"
@@ -104,15 +105,24 @@
             app:layout_constraintTop_toTopOf="parent"/>
 
     <TextView
-            android:text="Loading..."
-            android:paddingLeft="2dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/balanceUnconfirmed"
-            app:layout_constraintTop_toBottomOf="@+id/scNote"
-            app:layout_constraintLeft_toLeftOf="@+id/balanceText"
-            android:textColor="@color/colorPrimary"
-            />
+        android:text="Loading..."
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/balanceUnconfirmed"
+        app:layout_constraintTop_toBottomOf="@+id/scNote"
+        app:layout_constraintLeft_toLeftOf="@+id/balanceText"
+        android:textColor="@color/colorPrimary"
+        android:layout_marginStart="2dp"
+        android:layout_marginLeft="2dp"/>
+    <TextView
+        android:text="Loading..."
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/balanceUsdText"
+        app:layout_constraintTop_toBottomOf="@+id/balanceUnconfirmed"
+        app:layout_constraintLeft_toLeftOf="@+id/balanceText"
+        android:layout_marginStart="2dp"
+        android:layout_marginLeft="2dp"/>
 
     <View
             android:id="@+id/top_shadow"
@@ -162,6 +172,5 @@
             android:scrollbars="vertical"
             android:layout_height="0dp"
             android:layout_marginTop="12dp"/>
-
 
 </android.support.constraint.ConstraintLayout>

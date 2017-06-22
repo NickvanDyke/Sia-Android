@@ -45,7 +45,7 @@ public class RemoveAdsFeesDialog extends DialogFragment {
             removeAdsButton.setVisibility(View.GONE);
             adsCostText.setVisibility(View.GONE);
         } else {
-            Wallet.usdPerSC(new Response.Listener() {
+            Wallet.coincapSC(new Response.Listener() {
                 public void onResponse(Object response) {
                     try {
                         JSONObject json = new JSONObject((String) response);

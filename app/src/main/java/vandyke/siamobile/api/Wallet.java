@@ -136,7 +136,7 @@ public class Wallet {
                 .send();
     }
 
-    public static void usdPerSC(Response.Listener listener, Response.ErrorListener errorListener) {
+    public static void coincapSC(Response.Listener listener, Response.ErrorListener errorListener) {
         StringRequest request = new StringRequest(GET, "http://www.coincap.io/page/SC", listener, errorListener);
         MainActivity.requestQueue.add(request);
     }
@@ -175,5 +175,9 @@ public class Wallet {
 
     public static BigDecimal usdInSC(double usdPrice, String targetUsd) {
         return new BigDecimal(targetUsd).divide(new BigDecimal(usdPrice));
+    }
+
+    public static BigDecimal scToUsd(double usdPrice, BigDecimal numHastings) {
+        return numHastings.multiply(new BigDecimal(usdPrice));
     }
 }
