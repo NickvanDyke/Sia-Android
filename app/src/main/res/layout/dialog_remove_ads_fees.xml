@@ -28,7 +28,7 @@
             app:layout_constraintTop_toBottomOf="@+id/removeAdsButton"/>
 
     <TextView
-            android:text="100 SC"
+            android:text="Loading..."
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/removeAdsCostText"
@@ -44,7 +44,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/removeAdsButton"/>
 
     <TextView
-            android:text="100 SC"
+            android:text="Loading..."
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/removeFeesCostText"

@@ -14,6 +14,9 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import org.json.JSONException;
 import org.json.JSONObject;
 import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
@@ -25,8 +28,8 @@ import java.math.BigDecimal;
 public class RemoveAdsFeesDialog extends DialogFragment {
 
     private String paymentRecipient = MainActivity.devAddresses[(int)(Math.random() * MainActivity.devAddresses.length)];
-    private BigDecimal removeAdsCost = new BigDecimal("100"); // in SC TODO: actual amounts
-    private BigDecimal removeFeesCost = new BigDecimal("100"); //in SC
+    private BigDecimal removeAdsCost; // in hastings TODO: actual amounts
+    private BigDecimal removeFeesCost; //in hastings
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = MainActivity.getDialogBuilder();
@@ -41,6 +44,30 @@ public class RemoveAdsFeesDialog extends DialogFragment {
         if (!MainActivity.prefs.getBoolean("adsEnabled", true)) {
             removeAdsButton.setVisibility(View.GONE);
             adsCostText.setVisibility(View.GONE);
+        } else {
+            Wallet.usdPerSC(new Response.Listener() {
+                public void onResponse(Object response) {
+                    try {
+                        JSONObject json = new JSONObject((String) response);
+                        double usdPrice = json.getDouble("usdPrice");
+                        String cost = Wallet.round(Wallet.usdInSC(usdPrice, "1"));
+                        removeAdsCost = Wallet.scToHastings(cost);
+                        removeFeesCost = Wallet.scToHastings(cost);
+                        adsCostText.setText(cost);
+                        feesCostText.setText(cost);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, new Response.ErrorListener() {
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(MainActivity.instance, "Error retrieving SC/USD. Defaulting to 50 SC", Toast.LENGTH_SHORT).show();
+                    removeAdsCost = Wallet.scToHastings("50");
+                    removeFeesCost = Wallet.scToHastings("50");
+                    adsCostText.setText("50 SC");
+                    feesCostText.setText("50 SC");
+                }
+            });
         }
         if (!MainActivity.prefs.getBoolean("feesEnabled", true)) {
             removeFeesButton.setVisibility(View.GONE);
@@ -52,6 +79,10 @@ public class RemoveAdsFeesDialog extends DialogFragment {
 
         removeAdsButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
+                if (removeAdsCost == null) {
+                    Toast.makeText(MainActivity.instance, "Please wait, retrieving SC/USD", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 AlertDialog.Builder confirmBuilder = MainActivity.getDialogBuilder();
                 confirmBuilder.setTitle("Confirm")
                         .setMessage("Spend " + removeAdsCost + " Siacoins to remove ads?")
@@ -85,6 +116,10 @@ public class RemoveAdsFeesDialog extends DialogFragment {
 
         removeFeesButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
+                if (removeFeesCost == null) {
+                    Toast.makeText(MainActivity.instance, "Please wait, retrieving SC/USD", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 AlertDialog.Builder confirmBuilder = MainActivity.getDialogBuilder();
                 confirmBuilder.setTitle("Confirm")
                         .setMessage("Spend " + removeFeesCost + " Siacoins to remove app fees? Note that this has no effect on the Sia network's miner fees.")

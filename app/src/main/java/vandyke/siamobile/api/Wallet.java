@@ -1,5 +1,8 @@
 package vandyke.siamobile.api;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.toolbox.StringRequest;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -133,6 +136,11 @@ public class Wallet {
                 .send();
     }
 
+    public static void usdPerSC(Response.Listener listener, Response.ErrorListener errorListener) {
+        StringRequest request = new StringRequest(GET, "http://www.coincap.io/page/SC", listener, errorListener);
+        MainActivity.requestQueue.add(request);
+    }
+
     public static BigDecimal hastingsToSC(String hastings) {
         return new BigDecimal(hastings).divide(new BigDecimal("1000000000000000000000000"));
     }
@@ -163,5 +171,9 @@ public class Wallet {
 
     public static String calculateDevFee(String amount) {
         return new BigDecimal(amount).multiply(MainActivity.devFee).setScale(0, RoundingMode.FLOOR).toPlainString();
+    }
+
+    public static BigDecimal usdInSC(double usdPrice, String targetUsd) {
+        return new BigDecimal(targetUsd).divide(new BigDecimal(usdPrice));
     }
 }
