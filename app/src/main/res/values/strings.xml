@@ -8,7 +8,7 @@
         of commands. The purpose of this terminal and its use of siac is to make available to you commands that might not
         yet be part of the mobile graphical interface. While siac is fully functional on a computer, very little testing of
         it has been done on a mobile device. Functionality is not guaranteed. Use at your own risk.\n\nIf running a local
-    full node on this device, siad\'s output will also appear in this terminal.\n\n</string>
+    full node on this device, siad\'s output will also appear in this terminal.\n</string>
 
     <!--Strings for explaining install-->
     <string name="step_5" tools:ignore="TypographyDashes"><![CDATA[5. In the same command prompt, type siad --disable-api-security --authenticate-api

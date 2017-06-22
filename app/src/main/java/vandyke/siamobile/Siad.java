@@ -33,6 +33,7 @@ public class Siad {
             return;
         }
         stdoutBuffer.setLength(0);
+        terminalAppend("\nStarting siad...\n");
         ProcessBuilder pb = new ProcessBuilder(siad.getAbsolutePath(), "-M", "gctw");
         pb.redirectErrorStream(true);
         pb.directory(MainActivity.instance.getFilesDir());
@@ -74,6 +75,7 @@ public class Siad {
             siadProcess.destroy();
             siadProcess = null;
         }
+        terminalAppend("Stopped siad\n");
     }
 
     public String getBufferedStdout() {
@@ -86,5 +88,11 @@ public class Siad {
 
     public void setTerminalFragment(TerminalFragment fragment) {
         terminalFragment = fragment;
+    }
+
+    private void terminalAppend(String text) {
+        if (terminalFragment != null)
+            terminalFragment.appendToOutput(text);
+        stdoutBuffer.append(text);
     }
 }

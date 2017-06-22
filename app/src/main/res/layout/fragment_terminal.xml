@@ -25,13 +25,10 @@
 
     <EditText
             android:layout_width="0dp"
-            android:textColor="@android:color/black"
             android:layout_height="wrap_content"
             android:inputType="textPersonName|textVisiblePassword"
-            android:background="@drawable/terminal_edittext_background"
-            android:padding="15dp"
-            android:paddingStart="20dp"
-            android:paddingLeft="20dp"
+            android:paddingStart="16dp"
+            android:paddingLeft="16dp"
             android:id="@+id/input"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"

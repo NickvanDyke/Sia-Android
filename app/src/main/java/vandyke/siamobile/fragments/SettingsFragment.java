@@ -42,7 +42,7 @@ public class SettingsFragment extends PreferenceFragment {
         if (MainActivity.prefs.getString("operationMode", "remote_full_node").equals("remote_full_node")) {
             p1.setEnabled(true);
             p2.setEnabled(true);
-        } else if (MainActivity.prefs.getString("operationMode", "remote_full_node").equals("local_wallet_and_server")) {
+        } else if (MainActivity.prefs.getString("operationMode", "remote_full_node").equals("local_full_node")) {
             p1.setEnabled(false);
             p2.setEnabled(false);
         }

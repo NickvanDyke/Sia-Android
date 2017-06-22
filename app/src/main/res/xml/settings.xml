@@ -1,68 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <!--TODO: option that allows user to pick with page the app will open to-->
-    <ListPreference
-        android:key="startupPage"
-        android:title="Launch screen"
-        android:summary="The screen to load to when Sia Mobile launches."
-        android:entries="@array/startup_entries"
-        android:entryValues="@array/startup_values"
-        android:defaultValue="wallet">
-    </ListPreference>
-    <SwitchPreference
+    <PreferenceCategory android:title="Appearance">
+        <ListPreference
+            android:key="theme"
+            android:title="Theme"
+            android:entries="@array/theme_entries"
+            android:entryValues="@array/theme_values"
+            android:defaultValue="light"/>
+        <SwitchPreference
+            android:key="transparentBars"
+            android:title="Transparent bars"
+            android:defaultValue="off"/>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="Operation">
+        <ListPreference
+            android:title="Mode"
+            android:key="operationMode"
+            android:entries="@array/operation_modes_entries"
+            android:entryValues="@array/operation_modes_values"
+            android:defaultValue="remote_full_node" />
+        <EditTextPreference
+            android:key="remoteAddress"
+            android:title="Remote node address"
+            android:summary="The IP address and port number of your remote full node. If your device is not on the same network as it, you will have to port forward."
+            android:dialogTitle="Remote node address"
+            android:gravity="center"
+            android:hint="ip:port"
+            android:shouldDisableView="true" />
+        <EditTextPreference
+            android:key="apiPass"
+            android:title="API password"
+            android:summary="The API password set on your remote full node."
+            android:dialogTitle="API password"
+            android:gravity="center"
+            android:inputType="textPassword"
+            android:password="true"
+            android:fontFamily="sans-serif"
+            android:shouldDisableView="true" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="Misc">
+        <ListPreference
+            android:key="startupPage"
+            android:title="Launch screen"
+            android:summary="The screen to load to when Sia Mobile launches."
+            android:entries="@array/startup_entries"
+            android:entryValues="@array/startup_values"
+            android:defaultValue="wallet"/>
+        <SwitchPreference
             android:key="hideZero"
             android:title="Hide net-zero transactions"
             android:defaultValue="off"
-            android:summary="For each regular transaction, Sia also makes a setup transaction that does not affect your wallet balance. Check this to hide transactions that have zero net effect on your wallet.">
-    </SwitchPreference>
-    <EditTextPreference
+            android:summary="For each regular transaction, Sia also makes a setup transaction that does not affect your wallet balance. Check this to hide transactions that have zero net effect on your wallet."/>
+        <EditTextPreference
             android:key="displayedDecimalPrecision"
             android:title="Displayed decimal precision"
             android:summary="The number of decimal places displayed. This does not affect actual precision of values in memory, which is exact. When displayed, they will be rounded up."
             android:inputType="number"
             android:gravity="center"
-            android:defaultValue="2">
-    </EditTextPreference>
-    <PreferenceCategory
-            android:title="Appearance">
-        <ListPreference
-                android:key="theme"
-                android:title="Theme"
-                android:entries="@array/theme_entries"
-                android:entryValues="@array/theme_values"
-                android:defaultValue="light">
-        </ListPreference>
-        <SwitchPreference
-                android:key="transparentBars"
-                android:title="Transparent bars"
-                android:defaultValue="off">
-        </SwitchPreference>
+            android:defaultValue="2"/>
     </PreferenceCategory>
-    <PreferenceCategory
-            android:title="Operation">
-        <ListPreference
-                android:title="Mode"
-                android:key="operationMode"
-                android:entries="@array/operation_modes_entries"
-                android:entryValues="@array/operation_modes_values"
-                android:defaultValue="remote_full_node"/>
-        <EditTextPreference
-                android:key="remoteAddress"
-                android:title="Remote node address"
-                android:summary="The IP address and port number of your remote full node. If your device is not on the same network as it, you will have to port forward."
-                android:dialogTitle="Remote node address"
-                android:gravity="center"
-                android:hint="ip:port"
-            android:shouldDisableView="true"/>
-        <EditTextPreference
-                android:key="apiPass"
-                android:title="API password"
-                android:summary="The API password set on your remote full node."
-                android:dialogTitle="API password"
-                android:gravity="center"
-                android:inputType="textPassword"
-                android:password="true"
-                android:fontFamily="sans-serif"
-            android:shouldDisableView="true"/>
-    </PreferenceCategory>
+
 </PreferenceScreen>
