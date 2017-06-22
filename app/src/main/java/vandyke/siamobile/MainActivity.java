@@ -293,6 +293,9 @@ public class MainActivity extends AppCompatActivity {
         Fragment currentFrag = fragmentManager.findFragmentByTag(currentFragmentTag);
         Fragment newFragment = fragmentManager.findFragmentByTag(className);
 
+        if (currentFrag == newFragment)
+            return;
+
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         try {
             transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
