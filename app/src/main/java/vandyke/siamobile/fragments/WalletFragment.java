@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -34,6 +35,8 @@ import java.util.ArrayList;
 public class WalletFragment extends Fragment {
 
     private int SYNC_NOTIFICATION = 0;
+    private Handler handler;
+    private Runnable refreshTask;
 
     private BigDecimal balanceHastings;
     private BigDecimal balanceUsd;
@@ -68,6 +71,13 @@ public class WalletFragment extends Fragment {
             receiveButton.setBackgroundColor(android.R.color.transparent);
             sendButton.setBackgroundColor(android.R.color.transparent);
         }
+
+        handler = new Handler();
+        refreshTask = new Runnable() {
+            public void run() {
+                refreshSyncProgress();
+            }
+        };
 
         balanceHastings = new BigDecimal("0");
         balanceUsd = new BigDecimal("0");
@@ -251,22 +261,15 @@ public class WalletFragment extends Fragment {
                     if (response.getBoolean("synced")) {
                         syncText.setText("Synced");
                         syncBar.setProgress(100);
-                        NotificationManager notificationManager = (NotificationManager)MainActivity.instance.getSystemService(Context.NOTIFICATION_SERVICE);
-                        notificationManager.cancel(SYNC_NOTIFICATION);
+                        syncNotification("Syncing blockchain...", "Finished", false);
+                        handler.removeCallbacks(refreshTask);
                     } else {
                         syncText.setText("Syncing");
                         int progress = (int)(((double)response.getInt("height") / estimatedBlockHeightAt(System.currentTimeMillis() / 1000)) * 100);
                         syncBar.setProgress(progress);
-                        Notification.Builder builder = new Notification.Builder(MainActivity.instance);
-                        builder.setSmallIcon(R.drawable.ic_sync_white_48dp);
-                        builder.setContentTitle("Syncing blockchain...");
-                        builder.setContentText("Progress: " + Integer.toString(progress) + "%");
-                        builder.setOngoing(true);
-                        Intent intent = new Intent(MainActivity.instance, MainActivity.class);
-                        PendingIntent pendingIntent = PendingIntent.getActivity(MainActivity.instance, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                        builder.setContentIntent(pendingIntent);
-                        NotificationManager notificationManager = (NotificationManager)MainActivity.instance.getSystemService(Context.NOTIFICATION_SERVICE);
-                        notificationManager.notify(SYNC_NOTIFICATION, builder.build());
+                        syncNotification("Syncing blockchain...", "Progress: " + Integer.toString(progress) + "%", true);
+                        handler.removeCallbacks(refreshTask);
+                        handler.postDelayed(refreshTask, 60000);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -276,8 +279,23 @@ public class WalletFragment extends Fragment {
                 super.onError(error);
                 syncText.setText("Not Synced");
                 syncBar.setProgress(0);
+                syncNotification("Syncing blockchain...", "Error during syncing", false);
+                handler.removeCallbacks(refreshTask);
             }
         });
+    }
+
+    public void syncNotification(String title, String text, boolean ongoing) {
+        Notification.Builder builder = new Notification.Builder(MainActivity.instance);
+        builder.setSmallIcon(R.drawable.ic_sync_white_48dp);
+        builder.setContentTitle(title);
+        builder.setContentText(text);
+        builder.setOngoing(ongoing);
+        Intent intent = new Intent(MainActivity.instance, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(MainActivity.instance, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        builder.setContentIntent(pendingIntent);
+        NotificationManager notificationManager = (NotificationManager)MainActivity.instance.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(SYNC_NOTIFICATION, builder.build());
     }
 
     // note time should be in seconds
