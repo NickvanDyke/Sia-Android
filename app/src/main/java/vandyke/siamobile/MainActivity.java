@@ -190,48 +190,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        SharedPreferences.OnSharedPreferenceChangeListener prefsListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                SharedPreferences.Editor editor = prefs.edit();
-                switch (key) {
-                    case "operationMode":
-                        if (prefs.getString("operationMode", "remote_full_node").equals("remote_full_node")) {
-                            editor.putString("address", prefs.getString("remoteAddress", "192.168.1.11:9980"));
-                            Siad.getInstance().stop();
-                        } else if (prefs.getString("operationMode", "remote_full_node").equals("local_full_node")) {
-                            editor.putString("address", "localhost:9980");
-                            Siad.getInstance().start();
-                        }
-                        editor.apply();
-                        break;
-                    case "remoteAddress":
-                        if (prefs.getString("operationMode", "remote_full_node").equals("remote_full_node")) {
-                            editor.putString("address", prefs.getString("remoteAddress", "192.168.1.11:9980"));
-                            editor.apply();
-                        }
-                        break;
-                    case "theme":// restart to apply the theme; don't need to change theme variable since app is restarting and it'll load it
-                        switch (prefs.getString("theme", "light")) {
-                            case "custom":
-                                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                                intent.setType("image/*");
-                                startActivityForResult(Intent.createChooser(intent, "Select Background"), SELECT_PICTURE);
-                                break;
-                            default:
-                                restartAndLaunch("settings");
-                                break;
-                        }
-                        break;
-                    case "transparentBars":
-                        restartAndLaunch("settings");
-                        break;
-                }
-            }
-        };
-        prefs.registerOnSharedPreferenceChangeListener(prefsListener);
-
         arch = System.getProperty("os.arch");
-        System.out.println(arch);
 
         if (prefs.getString("operationMode", "remote_full_node").equals("local_full_node"))
             Siad.getInstance().start();

@@ -9,6 +9,7 @@ import android.widget.Toast;
 import vandyke.siamobile.BuildConfig;
 import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
+import vandyke.siamobile.Siad;
 
 public class SettingsFragment extends PreferenceFragment {
 
@@ -16,6 +17,9 @@ public class SettingsFragment extends PreferenceFragment {
 
     private EditTextPreference remoteAddress;
     private EditTextPreference apiPass;
+
+    private static final int SELECT_PICTURE = 1;
+
 
     public void onCreate(Bundle savedInstanceState) { // TODO: restarts app on first loading
         super.onCreate(savedInstanceState);
@@ -56,9 +60,39 @@ public class SettingsFragment extends PreferenceFragment {
 
         prefsListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+                SharedPreferences.Editor editor = sharedPreferences.edit();
                 switch (key) {
                     case "operationMode":
                         setRemoteSettingsVisibility();
+                        if (sharedPreferences.getString("operationMode", "remote_full_node").equals("remote_full_node")) {
+                            editor.putString("address", sharedPreferences.getString("remoteAddress", "192.168.1.11:9980"));
+                            Siad.getInstance().stop();
+                        } else if (sharedPreferences.getString("operationMode", "remote_full_node").equals("local_full_node")) {
+                            editor.putString("address", "localhost:9980");
+                            Siad.getInstance().start();
+                        }
+                        editor.apply();
+                        break;
+                    case "remoteAddress":
+                        if (sharedPreferences.getString("operationMode", "remote_full_node").equals("remote_full_node")) {
+                            editor.putString("address", sharedPreferences.getString("remoteAddress", "192.168.1.11:9980"));
+                            editor.apply();
+                        }
+                        break;
+                    case "theme":// restart to apply the theme; don't need to change theme variable since app is restarting and it'll load it
+                        switch (sharedPreferences.getString("theme", "light")) {
+                            case "custom":
+                                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                                intent.setType("image/*");
+                                startActivityForResult(Intent.createChooser(intent, "Select Background"), SELECT_PICTURE);
+                                break;
+                            default:
+                                MainActivity.instance.restartAndLaunch("settings");
+                                break;
+                        }
+                        break;
+                    case "transparentBars":
+                        MainActivity.instance.restartAndLaunch("settings");
                         break;
                 }
             }

@@ -19,7 +19,10 @@ public class Siad {
     private TerminalFragment terminalFragment;
 
     private Siad() {
-        siadFile = MainActivity.copyBinary("siad-arm");
+        if (MainActivity.arch.contains("arm"))
+            siadFile = MainActivity.copyBinary("siad-arm32");
+        else
+            siadFile = MainActivity.copyBinary("siad-x86");
         instance = this;
     }
 

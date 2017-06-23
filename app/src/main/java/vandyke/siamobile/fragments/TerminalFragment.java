@@ -34,7 +34,10 @@ public class TerminalFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_terminal, container, false);
         MainActivity.instance.getSupportActionBar().setTitle("Terminal");
-        siacFile = MainActivity.copyBinary("siac-arm");
+        if (MainActivity.arch.contains("arm"))
+            siacFile = MainActivity.copyBinary("siac-arm32");
+        else
+            siacFile = MainActivity.copyBinary("siac-x86");
         siacPath = siacFile.getAbsolutePath();
 
         input = (EditText)v.findViewById(R.id.input);
