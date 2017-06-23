@@ -18,11 +18,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    splits {
-        abi {
-            enable true
-        }
-    }
+//    splits {
+//        abi {
+//            enable true
+//        }
+//    }
 }
 
 dependencies {

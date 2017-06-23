@@ -1,9 +1,9 @@
 package vandyke.siamobile.fragments;
 
-import android.app.AlertDialog;
-import android.app.Fragment;
-import android.app.Notification;
+import android.app.*;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -32,6 +32,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 
 public class WalletFragment extends Fragment {
+
+    private int SYNC_NOTIFICATION = 0;
 
     private BigDecimal balanceHastings;
     private BigDecimal balanceUsd;
@@ -95,8 +97,6 @@ public class WalletFragment extends Fragment {
         unlockFrag = new WalletUnlockFragment();
         getFragmentManager().beginTransaction().add(R.id.unlockFrame, unlockFrag).commit();
 
-        refresh();
-
         sendButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (sendFrame.getVisibility() == View.GONE) {
@@ -131,6 +131,8 @@ public class WalletFragment extends Fragment {
                 builder.show();
             }
         });
+
+        refresh();
 
         return v;
     }
@@ -249,15 +251,22 @@ public class WalletFragment extends Fragment {
                     if (response.getBoolean("synced")) {
                         syncText.setText("Synced");
                         syncBar.setProgress(100);
+                        NotificationManager notificationManager = (NotificationManager)MainActivity.instance.getSystemService(Context.NOTIFICATION_SERVICE);
+                        notificationManager.cancel(SYNC_NOTIFICATION);
                     } else {
                         syncText.setText("Syncing");
                         int progress = (int)(((double)response.getInt("height") / estimatedBlockHeightAt(System.currentTimeMillis() / 1000)) * 100);
                         syncBar.setProgress(progress);
                         Notification.Builder builder = new Notification.Builder(MainActivity.instance);
                         builder.setSmallIcon(R.drawable.ic_sync_white_48dp);
-                        builder.setContentTitle("Syncing Blockchain...");
+                        builder.setContentTitle("Syncing blockchain...");
                         builder.setContentText("Progress: " + Integer.toString(progress) + "%");
-                        builder.build().notify();
+                        builder.setOngoing(true);
+                        Intent intent = new Intent(MainActivity.instance, MainActivity.class);
+                        PendingIntent pendingIntent = PendingIntent.getActivity(MainActivity.instance, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                        builder.setContentIntent(pendingIntent);
+                        NotificationManager notificationManager = (NotificationManager)MainActivity.instance.getSystemService(Context.NOTIFICATION_SERVICE);
+                        notificationManager.notify(SYNC_NOTIFICATION, builder.build());
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
