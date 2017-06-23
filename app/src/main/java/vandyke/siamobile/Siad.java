@@ -19,7 +19,7 @@ public class Siad {
     private TerminalFragment terminalFragment;
 
     private Siad() {
-        siadFile = MainActivity.copyBinary("siad");
+        siadFile = MainActivity.copyBinary("siad-arm");
         instance = this;
     }
 
@@ -35,7 +35,7 @@ public class Siad {
 
     public void start() {
         if (siadProcess != null) {
-            System.out.println("siadFile already running");
+            System.out.println("siad already running");
             return;
         }
         stdoutBuffer.setLength(0);

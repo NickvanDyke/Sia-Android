@@ -2,6 +2,7 @@ package vandyke.siamobile.fragments;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.app.Notification;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
@@ -250,7 +251,13 @@ public class WalletFragment extends Fragment {
                         syncBar.setProgress(100);
                     } else {
                         syncText.setText("Syncing");
-                        syncBar.setProgress((int)(((double)response.getInt("height") / estimatedBlockHeightAt(System.currentTimeMillis() / 1000)) * 100));
+                        int progress = (int)(((double)response.getInt("height") / estimatedBlockHeightAt(System.currentTimeMillis() / 1000)) * 100);
+                        syncBar.setProgress(progress);
+                        Notification.Builder builder = new Notification.Builder(MainActivity.instance);
+                        builder.setSmallIcon(R.drawable.icon_refresh);
+                        builder.setContentTitle("Syncing...");
+                        builder.setContentText(Integer.toString(progress) + "%");
+                        builder.build().notify();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

@@ -24,7 +24,7 @@ public class LocalWallet {
     public LocalWallet() {
         seed = MainActivity.prefs.getString("localWalletSeed", "noseed");
         addresses = (HashSet<String>)MainActivity.prefs.getStringSet("localWalletAddresses", new HashSet<String>());
-        binary = MainActivity.copyBinary("sia-coldstorage");
+        binary = MainActivity.copyBinary("sia-coldstorage-arm");
     }
 
     public void startListening(final int port) {

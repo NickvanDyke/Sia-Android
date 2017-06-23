@@ -17,7 +17,7 @@ public class SettingsFragment extends PreferenceFragment {
     private EditTextPreference remoteAddress;
     private EditTextPreference apiPass;
 
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) { // TODO: restarts app on first loading
         super.onCreate(savedInstanceState);
         MainActivity.instance.getSupportActionBar().setTitle("Settings");
         addPreferencesFromResource(R.xml.settings);

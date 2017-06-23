@@ -42,6 +42,7 @@ import java.math.BigDecimal;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static String arch;
     public static SharedPreferences prefs;
     public static RequestQueue requestQueue;
     public static MainActivity instance;
@@ -59,11 +60,9 @@ public class MainActivity extends AppCompatActivity {
     private MenuItem selectedMenuItem;
     private boolean loadSomethingOnClose;
 
+
     private String currentFragmentTag;
-
     private static final int SELECT_PICTURE = 1;
-
-    private SharedPreferences.OnSharedPreferenceChangeListener prefsListener;
 
     public enum Theme {
         LIGHT, DARK, AMOLED, CUSTOM
@@ -191,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        prefsListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+        SharedPreferences.OnSharedPreferenceChangeListener prefsListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
                 SharedPreferences.Editor editor = prefs.edit();
                 switch (key) {
@@ -230,6 +229,9 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         prefs.registerOnSharedPreferenceChangeListener(prefsListener);
+
+        arch = System.getProperty("os.arch");
+        System.out.println(arch);
 
         if (prefs.getString("operationMode", "remote_full_node").equals("local_full_node"))
             Siad.getInstance().start();

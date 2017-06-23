@@ -1,10 +1,10 @@
 package vandyke.siamobile.dialogs;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
-import android.os.Bundle;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
+import android.content.DialogInterface;
+import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -63,15 +63,13 @@ public class WalletCreateDialog extends DialogFragment {
                         if (createFromSeed.isChecked())
                             Wallet.init(password, force, dictionary, new SiaRequest.VolleyCallback() {
                                 public void onSuccess(JSONObject response) {
-                                    super.onSuccess(response);
-                                    WalletSeedsDialog.createAndShow(getFragmentManager());
+                                    Toast.makeText(MainActivity.instance, "Wallet created. Select View Seeds from the menu and store your seed somewhere safe", Toast.LENGTH_LONG).show();
                                 }
                             });
                         else
                             Wallet.initSeed(password, force, dictionary, seedField.getText().toString(), new SiaRequest.VolleyCallback() {
                                 public void onSuccess(JSONObject response) {
-                                    super.onSuccess(response);
-                                    WalletSeedsDialog.createAndShow(getFragmentManager());
+                                    Toast.makeText(MainActivity.instance, "Wallet created. Select View Seeds from the menu and store your seed somewhere safe", Toast.LENGTH_LONG).show();
                                 }
                             });
                     }
