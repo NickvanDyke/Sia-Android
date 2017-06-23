@@ -1,9 +1,6 @@
 package vandyke.siamobile;
 
-import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
+import android.app.*;
 import android.content.*;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -302,6 +299,12 @@ public class MainActivity extends AppCompatActivity {
             super.onBackPressed();
     }
 
+     public void onDestroy() {
+        super.onDestroy();
+         NotificationManager notificationManager = (NotificationManager)MainActivity.instance.getSystemService(Context.NOTIFICATION_SERVICE);
+         notificationManager.cancel(WalletFragment.SYNC_NOTIFICATION);
+     }
+
     public static AlertDialog.Builder getDialogBuilder() {
         switch (MainActivity.theme) {
             case LIGHT:
@@ -390,17 +393,6 @@ public class MainActivity extends AppCompatActivity {
         } else
             result = instance.getFilesDir();
         return result;
-    }
-
-    public static long getInternalFilesSize() {
-        return instance.getFilesDir().length();
-    }
-
-    public static long getExternalFilesSize() {
-        File externalStorage = instance.getExternalFilesDir(null);
-        if (externalStorage == null)
-            return 0;
-        return externalStorage.length();
     }
 
     public static boolean isExternalStorageWritable() {

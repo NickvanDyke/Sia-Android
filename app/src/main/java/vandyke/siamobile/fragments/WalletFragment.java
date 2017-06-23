@@ -4,6 +4,8 @@ import android.app.*;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.DividerItemDecoration;
@@ -34,7 +36,7 @@ import java.util.ArrayList;
 
 public class WalletFragment extends Fragment {
 
-    private int SYNC_NOTIFICATION = 0;
+    public static int SYNC_NOTIFICATION = 0;
     private Handler handler;
     private Runnable refreshTask;
 
@@ -265,9 +267,9 @@ public class WalletFragment extends Fragment {
                         handler.removeCallbacks(refreshTask);
                     } else {
                         syncText.setText("Syncing");
-                        int progress = (int)(((double)response.getInt("height") / estimatedBlockHeightAt(System.currentTimeMillis() / 1000)) * 100);
-                        syncBar.setProgress(progress);
-                        syncNotification("Syncing blockchain...", "Progress: " + Integer.toString(progress) + "%", true);
+                        double progress = ((double)response.getInt("height") / estimatedBlockHeightAt(System.currentTimeMillis() / 1000)) * 100;
+                        syncBar.setProgress((int)progress);
+                        syncNotification("Syncing blockchain...", String.format("Progress (estimated): %.2f%%", progress), true);
                         handler.removeCallbacks(refreshTask);
                         handler.postDelayed(refreshTask, 60000);
                     }
@@ -288,6 +290,8 @@ public class WalletFragment extends Fragment {
     public void syncNotification(String title, String text, boolean ongoing) {
         Notification.Builder builder = new Notification.Builder(MainActivity.instance);
         builder.setSmallIcon(R.drawable.ic_sync_white_48dp);
+        Bitmap largeIcon = BitmapFactory.decodeResource(MainActivity.instance.getResources(), R.drawable.sia_logo_transparent);
+        builder.setLargeIcon(largeIcon);
         builder.setContentTitle(title);
         builder.setContentText(text);
         builder.setOngoing(ongoing);

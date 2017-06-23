@@ -14,6 +14,7 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme.Light">
         <activity android:name="vandyke.siamobile.MainActivity"
+                  android:launchMode="singleInstance"
                 android:theme="@style/splashScreenTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
