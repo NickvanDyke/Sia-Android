@@ -40,7 +40,7 @@ public class TerminalFragment extends Fragment {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 try {
                     if (siacFile == null) {
-                        output.append("Your device's processor architecture is not supported by siac. Sorry!");
+                        output.append("Your device's CPU architecture is not supported by siac. Sorry! There's nothing Sia Mobile can do about this");
                         return true;
                     }
                     final String enteredCommand = v.getText().toString();
@@ -87,7 +87,8 @@ public class TerminalFragment extends Fragment {
 
         output = (TextView)v.findViewById(R.id.output);
         output.setMovementMethod(new ScrollingMovementMethod());
-        Siad.getInstance().setTerminalFragment(this);
+        if (MainActivity.prefs.getString("operationMode", "remote_full_node").equals("local_full_node"))
+            Siad.getInstance().setTerminalFragment(this);
         return v;
     }
 

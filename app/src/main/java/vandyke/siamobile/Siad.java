@@ -35,7 +35,7 @@ public class Siad {
 
     public void start() {
         if (siadFile == null) {
-            terminalAppend("Your device's processor architecture is not supported by siad. Sorry!");
+            terminalAppend("Your device's processor architecture is not supported by siad. Sorry! There's nothing Sia Mobile can do about this");
             return;
         }
         if (siadProcess != null) {

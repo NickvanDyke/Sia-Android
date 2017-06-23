@@ -186,11 +186,11 @@ public class WalletFragment extends Fragment {
             public void onSuccess(JSONObject response) {
                 try {
                     if (response.getString("encrypted").equals("false"))
-                        walletStatusText.setText("Wallet Status:\nNo Wallet");
+                        walletStatusText.setText("No Wallet");
                     else if (response.getString("unlocked").equals("false"))
-                        walletStatusText.setText("Wallet Status:\nLocked");
+                        walletStatusText.setText("Locked");
                     else
-                        walletStatusText.setText("Wallet Status:\nUnlocked");
+                        walletStatusText.setText("Unlocked");
                     balanceHastings = new BigDecimal(response.getString("confirmedsiacoinbalance"));
                     balanceText.setText(Wallet.round(Wallet.hastingsToSC(balanceHastings)));
                     BigDecimal netUnconfirmed = new BigDecimal(response.getString("unconfirmedincomingsiacoins"))
@@ -204,7 +204,7 @@ public class WalletFragment extends Fragment {
             public void onError(SiaRequest.Error error) {
                 super.onError(error);
                 balanceText.setText("Loading...");
-                walletStatusText.setText("Wallet Status:\nLoading...");
+                walletStatusText.setText("Loading...");
             }
         });
 
@@ -254,9 +254,9 @@ public class WalletFragment extends Fragment {
                         int progress = (int)(((double)response.getInt("height") / estimatedBlockHeightAt(System.currentTimeMillis() / 1000)) * 100);
                         syncBar.setProgress(progress);
                         Notification.Builder builder = new Notification.Builder(MainActivity.instance);
-                        builder.setSmallIcon(R.drawable.icon_refresh);
-                        builder.setContentTitle("Syncing...");
-                        builder.setContentText(Integer.toString(progress) + "%");
+                        builder.setSmallIcon(R.drawable.ic_sync_white_48dp);
+                        builder.setContentTitle("Syncing Blockchain...");
+                        builder.setContentText("Progress: " + Integer.toString(progress) + "%");
                         builder.build().notify();
                     }
                 } catch (JSONException e) {

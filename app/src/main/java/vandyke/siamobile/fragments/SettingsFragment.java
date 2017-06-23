@@ -33,6 +33,16 @@ public class SettingsFragment extends PreferenceFragment {
 
         final EditTextPreference decimal = ((EditTextPreference)findPreference("displayedDecimalPrecision"));
 
+        operationMode.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            public boolean onPreferenceChange(Preference preference, Object o) {
+                if (MainActivity.abi.equals("aarch64") || MainActivity.abi.equals("x86_64"))
+                    return true;
+                else
+                    Toast.makeText(MainActivity.instance, "Sorry, but your device's CPU architecture is not supported by siad. There is nothing Sia Mobile can do about this", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        });
+
         final SwitchPreference useExternal = (SwitchPreference)findPreference("useExternal");
         useExternal.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             public boolean onPreferenceChange(Preference preference, Object o) {
@@ -46,9 +56,6 @@ public class SettingsFragment extends PreferenceFragment {
         });
 
         final Preference openAppSettings = findPreference("openAppSettings");
-//        clearInternal.setSummary("Sia Mobile is using " + MainActivity.getInternalFilesSize() + " bytes of internal storage and " +
-//                MainActivity.getExternalFilesSize() + " bytes of external storage. Tap to open app settings page where you can clear these." +
-//                "WARNING: Have your wallet seed stored somewhere first! Clearing Sia Mobile's data will delete your wallet files!");
         openAppSettings.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
                 Intent appSettings = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + BuildConfig.APPLICATION_ID));

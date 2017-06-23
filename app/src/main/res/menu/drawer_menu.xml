@@ -6,15 +6,15 @@
             android:checkableBehavior="all">
         <item
                 android:id="@+id/drawer_item_files"
-                android:icon="@drawable/icon_cloud"
+                android:icon="@drawable/ic_cloud_white_48dp"
                 android:title="Files"/>
         <item
                 android:id="@+id/drawer_item_hosting"
-                android:icon="@drawable/icon_hosting"
+                android:icon="@drawable/ic_folder_shared_white_48dp"
                 android:title="Hosting"/>
         <item
                 android:id="@+id/drawer_item_wallet"
-                android:icon="@drawable/icon_wallet"
+                android:icon="@drawable/ic_account_balance_wallet_white_48dp"
                 android:title="Wallet"/>
         <item
                 android:id="@+id/drawer_item_terminal"
@@ -26,7 +26,7 @@
             android:checkableBehavior="all">
         <item
                 android:id="@+id/drawer_item_settings"
-                android:icon="@drawable/icon_settings"
+                android:icon="@drawable/ic_settings_white_48dp"
                 android:title="Settings"/>
         <item
                 android:id="@+id/drawer_item_about"
