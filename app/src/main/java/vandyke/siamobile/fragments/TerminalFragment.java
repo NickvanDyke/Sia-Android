@@ -29,21 +29,20 @@ public class TerminalFragment extends Fragment {
     private EditText input;
     private TextView output;
     private File siacFile;
-    private String siacPath;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_terminal, container, false);
         MainActivity.instance.getSupportActionBar().setTitle("Terminal");
-        if (MainActivity.arch.contains("arm"))
-            siacFile = MainActivity.copyBinary("siac-arm32");
-        else
-            siacFile = MainActivity.copyBinary("siac-x86");
-        siacPath = siacFile.getAbsolutePath();
+        siacFile = MainActivity.copyBinary("siac");
 
         input = (EditText)v.findViewById(R.id.input);
         input.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 try {
+                    if (siacFile == null) {
+                        output.append("Your device's processor architecture is not supported by siac. Sorry!");
+                        return true;
+                    }
                     final String enteredCommand = v.getText().toString();
                     v.setText("");
                     ArrayList<String> fullCommand = new ArrayList<>(Arrays.asList(enteredCommand.split(" ")));
@@ -63,7 +62,7 @@ public class TerminalFragment extends Fragment {
                                 int read;
                                 char[] buffer = new char[1024];
                                 while ((read = inputReader.read(buffer)) > 0) {
-                                    String toBeAppended = new String(buffer).substring(0, read).replace(siacPath, "siac");
+                                    String toBeAppended = new String(buffer).substring(0, read).replace(siacFile.getAbsolutePath(), "siac");
                                     stdOut.append(toBeAppended, 0, toBeAppended.length());
                                 }
                                 inputReader.close();

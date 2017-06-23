@@ -19,10 +19,7 @@ public class Siad {
     private TerminalFragment terminalFragment;
 
     private Siad() {
-        if (MainActivity.arch.contains("arm"))
-            siadFile = MainActivity.copyBinary("siad-arm32");
-        else
-            siadFile = MainActivity.copyBinary("siad-x86");
+        siadFile = MainActivity.copyBinary("siad");
         instance = this;
     }
 
@@ -37,6 +34,10 @@ public class Siad {
     }
 
     public void start() {
+        if (siadFile == null) {
+            terminalAppend("Your device's processor architecture is not supported by siad. Sorry!");
+            return;
+        }
         if (siadProcess != null) {
             System.out.println("siad already running");
             return;

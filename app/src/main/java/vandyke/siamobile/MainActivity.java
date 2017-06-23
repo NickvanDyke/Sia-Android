@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
@@ -42,7 +43,7 @@ import java.math.BigDecimal;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static String arch;
+    public static String abi;
     public static SharedPreferences prefs;
     public static RequestQueue requestQueue;
     public static MainActivity instance;
@@ -190,7 +191,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        arch = System.getProperty("os.arch");
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
+            abi = Build.CPU_ABI;
+        else
+            abi = Build.SUPPORTED_ABIS[0];
+        if (abi.equals("arm64-v8a"))
+            abi = "aarch64";
+        // TODO: maybe add mips64 binary
+
 
         if (prefs.getString("operationMode", "remote_full_node").equals("local_full_node"))
             Siad.getInstance().start();
@@ -349,10 +357,11 @@ public class MainActivity extends AppCompatActivity {
                 activity.getCurrentFocus().getWindowToken(), 0);
     }
 
+    // will return null if the abi is an unsupported one and therefore there is not a binary for it
     public static File copyBinary(String filename) {
         try {
-            InputStream in = instance.getAssets().open(filename);
-            File result = new File(instance.getFilesDir(), filename);
+            InputStream in = instance.getAssets().open(filename + "-" + abi);
+            File result = new File(instance.getFilesDir(), filename + "-" + abi);
             if (result.exists())
                 return result;
             FileOutputStream out = new FileOutputStream(result);
