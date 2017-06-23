@@ -213,7 +213,7 @@ public class WalletFragment extends Fragment {
                     JSONObject json = new JSONObject((String) response);
                     double usdPrice = json.getDouble("usdPrice");
                     balanceUsd = Wallet.scToUsd(usdPrice, balanceHastings);
-                    balanceUsdText.setText(Wallet.round(balanceUsd));
+                    balanceUsdText.setText(Wallet.round(balanceUsd) + " USD");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

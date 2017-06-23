@@ -40,7 +40,7 @@
         <SwitchPreference
             android:key="useExternal"
             android:title="Use external storage"
-            android:summary="By default, Sia Mobile will store any of its files on your device's internal storage. Turn this option on if you want it to instead use external storage, such as an SD card."
+            android:summary="If running a full node on this device, Sia Mobile will save the necessary files on internal storage. Turn this option on if you want it to instead use external storage, such as an SD card. Restart Sia Mobile after."
             android:defaultValue="off"/>
     </PreferenceCategory>
     <PreferenceCategory android:title="Misc">
@@ -64,11 +64,9 @@
             android:gravity="center"
             android:defaultValue="2"/>
         <Preference
-            android:key="clearInternal"
-            android:title="Clear internal storage"/>
-        <!--<Preference-->
-            <!--android:key="clearExternal"-->
-            <!--android:title="Clear external storage"/>-->
+            android:key="openAppSettings"
+            android:title="Open Application Info page for Sia Mobile"
+                android:summary="You can clear data from here, such as the files that Sia Mobile creates and keeps when running a full node. WARNING: clearing data will delete your wallet files. Record your seed somewhere before doing so."/>
     </PreferenceCategory>
 
 </PreferenceScreen>

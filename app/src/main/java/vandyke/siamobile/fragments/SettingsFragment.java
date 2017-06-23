@@ -32,6 +32,7 @@ public class SettingsFragment extends PreferenceFragment {
         final SwitchPreference useExternal = (SwitchPreference)findPreference("useExternal");
         useExternal.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             public boolean onPreferenceChange(Preference preference, Object o) {
+                System.out.println( MainActivity.externalStorageStateDescription());
                 if (MainActivity.isExternalStorageWritable())
                     return true;
                 else
@@ -40,15 +41,15 @@ public class SettingsFragment extends PreferenceFragment {
             }
         });
 
-        final Preference clearInternal = findPreference("clearInternal");
-//        final Preference clearExternal = findPreference("clearExternal");
-        clearInternal.setSummary("Sia Mobile is using " + MainActivity.getInternalFilesSize() + " bytes of internal storage and " +
-                MainActivity.getExternalFilesSize() + " bytes of external storage. Tap to open app settings page where you can clear these." +
-                "WARNING: Have your wallet seed stored somewhere first! Clearing Sia Mobile's data will delete your wallet files!");
-//        clearExternal.setSummary("Sia Mobile is using " + MainActivity.getExternalFilesSize() + " bytes of external storage");
-        clearInternal.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        final Preference openAppSettings = findPreference("openAppSettings");
+//        clearInternal.setSummary("Sia Mobile is using " + MainActivity.getInternalFilesSize() + " bytes of internal storage and " +
+//                MainActivity.getExternalFilesSize() + " bytes of external storage. Tap to open app settings page where you can clear these." +
+//                "WARNING: Have your wallet seed stored somewhere first! Clearing Sia Mobile's data will delete your wallet files!");
+        openAppSettings.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
-                startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + BuildConfig.APPLICATION_ID)));
+                Intent appSettings = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + BuildConfig.APPLICATION_ID));
+                appSettings.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(appSettings);
                 return false;
             }
         });

@@ -1,5 +1,7 @@
 package vandyke.siamobile;
 
+import vandyke.siamobile.api.Daemon;
+import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.fragments.TerminalFragment;
 
 import java.io.BufferedReader;
@@ -37,7 +39,7 @@ public class Siad {
             return;
         }
         stdoutBuffer.setLength(0);
-        terminalAppend("\nStarting siadFile...\n");
+        terminalAppend("\nStarting siad...\n");
         ProcessBuilder pb = new ProcessBuilder(siadFile.getAbsolutePath(), "-M", "gctw");
         pb.redirectErrorStream(true);
         pb.directory(MainActivity.getWorkingDirectory());
@@ -72,12 +74,18 @@ public class Siad {
     }
 
     public void stop() {
+        Daemon.stop(new SiaRequest.VolleyCallback());
+        siadProcess = null;
+        terminalAppend("Stopping siad... (may take a while. It's okay to close Sia Mobile during this)\n");
+    }
+
+    public void forceStop() {
         if (siadProcess != null) {
             siadProcess.destroy();
             siadProcess = null;
         }
         destroyInstance();
-        terminalAppend("Stopped siadFile\n");
+        terminalAppend("Force stopped siad\n");
     }
 
     public String getBufferedStdout() {

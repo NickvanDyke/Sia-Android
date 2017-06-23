@@ -1,6 +1,5 @@
 package vandyke.siamobile.api;
 
-import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.toolbox.StringRequest;
 import org.json.JSONArray;
@@ -174,7 +173,7 @@ public class Wallet {
     }
 
     public static BigDecimal usdInSC(double usdPrice, String targetUsd) {
-        return new BigDecimal(targetUsd).divide(new BigDecimal(usdPrice));
+        return new BigDecimal(targetUsd).divide(new BigDecimal(usdPrice), 5, BigDecimal.ROUND_CEILING);
     }
 
     public static BigDecimal scToUsd(double usdPrice, BigDecimal numHastings) {

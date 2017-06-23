@@ -53,8 +53,8 @@ public class RemoveAdsFeesDialog extends DialogFragment {
                         String cost = Wallet.round(Wallet.usdInSC(usdPrice, "1"));
                         removeAdsCost = Wallet.scToHastings(cost);
                         removeFeesCost = Wallet.scToHastings(cost);
-                        adsCostText.setText(cost);
-                        feesCostText.setText(cost);
+                        adsCostText.setText(cost + " SC");
+                        feesCostText.setText(cost + " SC");
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -74,9 +74,6 @@ public class RemoveAdsFeesDialog extends DialogFragment {
             feesCostText.setVisibility(View.GONE);
         }
 
-        adsCostText.setText(removeAdsCost.toPlainString() + " SC");
-        feesCostText.setText(removeFeesCost.toPlainString() + " SC");
-
         removeAdsButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 if (removeAdsCost == null) {
@@ -85,7 +82,7 @@ public class RemoveAdsFeesDialog extends DialogFragment {
                 }
                 AlertDialog.Builder confirmBuilder = MainActivity.getDialogBuilder();
                 confirmBuilder.setTitle("Confirm")
-                        .setMessage("Spend " + removeAdsCost + " Siacoins to remove ads?")
+                        .setMessage("Spend " + Wallet.hastingsToSC(removeAdsCost) + " Siacoins to remove ads?")
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 Wallet.sendSiacoins(Wallet.scToHastings(removeAdsCost),
@@ -122,7 +119,7 @@ public class RemoveAdsFeesDialog extends DialogFragment {
                 }
                 AlertDialog.Builder confirmBuilder = MainActivity.getDialogBuilder();
                 confirmBuilder.setTitle("Confirm")
-                        .setMessage("Spend " + removeFeesCost + " Siacoins to remove app fees? Note that this has no effect on the Sia network's miner fees.")
+                        .setMessage("Spend " + Wallet.hastingsToSC(removeFeesCost) + " Siacoins to remove app fees? Note that this has no effect on the Sia network's miner fees.")
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 Wallet.sendSiacoins(Wallet.scToHastings(removeFeesCost),

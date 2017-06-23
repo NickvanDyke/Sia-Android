@@ -56,7 +56,8 @@ public class MainActivity extends AppCompatActivity {
     private ActionBarDrawerToggle drawerToggle;
     private NavigationView navigationView;
     private MenuItem activeMenuItem;
-    private boolean selectionChanged;
+    private MenuItem selectedMenuItem;
+    private boolean loadSomethingOnClose;
 
     private String currentFragmentTag;
 
@@ -129,9 +130,9 @@ public class MainActivity extends AppCompatActivity {
             public void onDrawerClosed(View drawerView) {
                 // TODO: maybe make it so it waits until drawer close if fragment doesn't already exist, but loads immediately if it does?
                 super.onDrawerClosed(drawerView);
-                if (activeMenuItem == null || !selectionChanged)
+                if (selectedMenuItem == null || !loadSomethingOnClose)
                     return;
-                switch (activeMenuItem.getItemId()) {
+                switch (selectedMenuItem.getItemId()) {
                     case R.id.drawer_item_files:
                         loadDrawerFragment(FilesFragment.class);
                         break;
@@ -160,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
 //                        // TODO: donate stuff
 //                        break;
                 }
-                selectionChanged = false;
+                loadSomethingOnClose = false;
             }
         };
         drawerLayout.addDrawerListener(drawerToggle);
@@ -170,8 +171,9 @@ public class MainActivity extends AppCompatActivity {
         navigationView = (NavigationView) findViewById(R.id.drawer_navigation_view);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                if (item == activeMenuItem) {
-                    selectionChanged = false;
+                selectedMenuItem = item;
+                if (selectedMenuItem == activeMenuItem) {
+                    loadSomethingOnClose = false;
                     drawerLayout.closeDrawers();
                     return true;
                 }
@@ -181,9 +183,9 @@ public class MainActivity extends AppCompatActivity {
                     if (activeMenuItem != null)
                         activeMenuItem.setChecked(false);
                     item.setChecked(true);
+                    activeMenuItem = item;
                 }
-                selectionChanged = true;
-                activeMenuItem = item;
+                loadSomethingOnClose = true;
                 drawerLayout.closeDrawers();
                 return true;
             }
@@ -294,7 +296,7 @@ public class MainActivity extends AppCompatActivity {
         Fragment currentFrag = fragmentManager.findFragmentByTag(currentFragmentTag);
         Fragment newFragment = fragmentManager.findFragmentByTag(className);
 
-        if (currentFrag == newFragment)
+        if (currentFrag != null && currentFrag == newFragment)
             return;
 
         FragmentTransaction transaction = fragmentManager.beginTransaction();
@@ -389,7 +391,7 @@ public class MainActivity extends AppCompatActivity {
     public static File copyBinary(String filename) {
         try {
             InputStream in = instance.getAssets().open(filename);
-            File result = new File(getWorkingDirectory(), filename);
+            File result = new File(instance.getFilesDir(), filename);
             if (result.exists())
                 return result;
             FileOutputStream out = new FileOutputStream(result);
