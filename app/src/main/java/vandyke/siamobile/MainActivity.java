@@ -303,6 +303,7 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
          NotificationManager notificationManager = (NotificationManager)MainActivity.instance.getSystemService(Context.NOTIFICATION_SERVICE);
          notificationManager.cancel(WalletFragment.SYNC_NOTIFICATION);
+         notificationManager.cancel(Siad.SIAD_NOTIFICATION);
      }
 
     public static AlertDialog.Builder getDialogBuilder() {

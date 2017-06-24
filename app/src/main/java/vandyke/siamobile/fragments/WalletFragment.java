@@ -36,6 +36,8 @@ import java.util.ArrayList;
 
 public class WalletFragment extends Fragment {
 
+    public static WalletFragment instance;
+
     public static int SYNC_NOTIFICATION = 0;
     private Handler handler;
     private Runnable refreshTask;
@@ -146,6 +148,7 @@ public class WalletFragment extends Fragment {
 
         refresh();
 
+        instance = this;
         return v;
     }
 
@@ -263,13 +266,13 @@ public class WalletFragment extends Fragment {
                     if (response.getBoolean("synced")) {
                         syncText.setText("Synced");
                         syncBar.setProgress(100);
-                        syncNotification("Syncing blockchain...", "Finished", false);
+                        syncNotification(R.drawable.ic_sync_white_48dp, "Syncing blockchain...", "Finished", false);
                         handler.removeCallbacks(refreshTask);
                     } else {
                         syncText.setText("Syncing");
                         double progress = ((double)response.getInt("height") / estimatedBlockHeightAt(System.currentTimeMillis() / 1000)) * 100;
                         syncBar.setProgress((int)progress);
-                        syncNotification("Syncing blockchain...", String.format("Progress (estimated): %.2f%%", progress), true);
+                        syncNotification(R.drawable.ic_sync_white_48dp, "Syncing blockchain...", String.format("Progress (estimated): %.2f%%", progress), false);
                         handler.removeCallbacks(refreshTask);
                         handler.postDelayed(refreshTask, 60000);
                     }
@@ -281,13 +284,13 @@ public class WalletFragment extends Fragment {
                 super.onError(error);
                 syncText.setText("Not Synced");
                 syncBar.setProgress(0);
-                syncNotification("Syncing blockchain...", "Error during syncing", false);
+                syncNotification(R.drawable.ic_sync_problem_white_48dp, "Syncing blockchain...", "Error during syncing", false);
                 handler.removeCallbacks(refreshTask);
             }
         });
     }
 
-    public void syncNotification(String title, String text, boolean ongoing) {
+    public void syncNotification(int icon, String title, String text, boolean ongoing) {
         Notification.Builder builder = new Notification.Builder(MainActivity.instance);
         builder.setSmallIcon(R.drawable.ic_sync_white_48dp);
         Bitmap largeIcon = BitmapFactory.decodeResource(MainActivity.instance.getResources(), R.drawable.sia_logo_transparent);

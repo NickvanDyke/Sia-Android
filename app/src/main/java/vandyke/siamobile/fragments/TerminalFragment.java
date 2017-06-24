@@ -87,8 +87,7 @@ public class TerminalFragment extends Fragment {
 
         output = (TextView)v.findViewById(R.id.output);
         output.setMovementMethod(new ScrollingMovementMethod());
-        if (MainActivity.prefs.getString("operationMode", "remote_full_node").equals("local_full_node"))
-            Siad.getInstance().setTerminalFragment(this);
+        Siad.setTerminalFragment(this);
         return v;
     }
 
