@@ -36,7 +36,7 @@ import java.util.ArrayList;
 
 public class WalletFragment extends Fragment {
 
-    public static WalletFragment instance;
+    private static WalletFragment instance;
 
     public static int SYNC_NOTIFICATION = 0;
     private Handler handler;
@@ -185,6 +185,9 @@ public class WalletFragment extends Fragment {
             case R.id.actionViewAddresses:
                 WalletAddressesDialog.createAndShow(getFragmentManager());
                 break;
+            case R.id.actionAddSeed:
+                WalletAddSeedDialog.createAndShow(getFragmentManager());
+                break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -230,7 +233,7 @@ public class WalletFragment extends Fragment {
                 try {
                     JSONObject json = new JSONObject((String) response);
                     double usdPrice = json.getDouble("usdPrice");
-                    balanceUsd = Wallet.scToUsd(usdPrice, balanceHastings);
+                    balanceUsd = Wallet.scToUsd(usdPrice, Wallet.hastingsToSC(balanceHastings));
                     balanceUsdText.setText(Wallet.round(balanceUsd) + " USD");
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -264,9 +267,10 @@ public class WalletFragment extends Fragment {
             public void onSuccess(JSONObject response) {
                 try {
                     if (response.getBoolean("synced")) {
+                        if (syncText.getText().equals("Syncing"))
+                            syncNotification(R.drawable.ic_sync_white_48dp, "Syncing blockchain...", "Finished", false);
                         syncText.setText("Synced");
                         syncBar.setProgress(100);
-                        syncNotification(R.drawable.ic_sync_white_48dp, "Syncing blockchain...", "Finished", false);
                         handler.removeCallbacks(refreshTask);
                     } else {
                         syncText.setText("Syncing");
@@ -292,7 +296,7 @@ public class WalletFragment extends Fragment {
 
     public void syncNotification(int icon, String title, String text, boolean ongoing) {
         Notification.Builder builder = new Notification.Builder(MainActivity.instance);
-        builder.setSmallIcon(R.drawable.ic_sync_white_48dp);
+        builder.setSmallIcon(icon);
         Bitmap largeIcon = BitmapFactory.decodeResource(MainActivity.instance.getResources(), R.drawable.sia_logo_transparent);
         builder.setLargeIcon(largeIcon);
         builder.setContentTitle(title);
@@ -303,6 +307,11 @@ public class WalletFragment extends Fragment {
         builder.setContentIntent(pendingIntent);
         NotificationManager notificationManager = (NotificationManager)MainActivity.instance.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(SYNC_NOTIFICATION, builder.build());
+    }
+
+    public static void staticRefresh() {
+        if (instance != null)
+            instance.refresh();
     }
 
     // note time should be in seconds

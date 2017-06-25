@@ -11,7 +11,6 @@ import org.json.JSONObject;
 import vandyke.siamobile.MainActivity;
 
 import java.io.UnsupportedEncodingException;
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -89,7 +88,8 @@ public class SiaRequest extends StringRequest {
             EXISTING_WALLET("A wallet already exists. Use force option to overwrite"),
             INCORRECT_API_PASSWORD("Incorrect API password"),
             UNACCOUNTED_FOR_ERROR("Unexpected error"),
-            ANOTHER_WALLET_SCAN_UNDERWAY("Wallet scan in progress. Please wait");
+            ANOTHER_WALLET_SCAN_UNDERWAY("Wallet scan in progress. Please wait"),
+            WALLET_NOT_ENCRYPTED("Wallet has not been encrypted yet");
 
             private String msg;
 
@@ -151,6 +151,8 @@ public class SiaRequest extends StringRequest {
                 return Reason.INCORRECT_API_PASSWORD;
             else if (errorMessage.contains("another wallet rescan is already underway"))
                 return Reason.ANOTHER_WALLET_SCAN_UNDERWAY;
+            else if (errorMessage.contains("wallet has not been encrypted yet"))
+                return Reason.WALLET_NOT_ENCRYPTED;
             else
                 return Reason.UNACCOUNTED_FOR_ERROR;
         }

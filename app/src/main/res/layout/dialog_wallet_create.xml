@@ -48,7 +48,7 @@
     <EditText
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:inputType="textNoSuggestions"
+            android:inputType="textNoSuggestions|textVisiblePassword"
             android:ems="10"
             android:hint="Seed"
             android:id="@+id/walletCreateSeed"

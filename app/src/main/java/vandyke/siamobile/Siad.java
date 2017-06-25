@@ -70,8 +70,8 @@ public class Siad {
                         char[] buffer = new char[1024];
                         while ((read = inputReader.read(buffer)) > 0) {
                             final String text = new String(buffer).substring(0, read);
-                            if (text.contains("Finished loading"))
-                                WalletFragment.instance.refresh();
+                            if (text.contains("Finished loading") || text.contains("Done!"))
+                                WalletFragment.staticRefresh();
                             siadNotification(text);
                             System.out.println(text);
                             MainActivity.instance.runOnUiThread(new Runnable() {

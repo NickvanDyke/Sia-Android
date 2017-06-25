@@ -46,7 +46,7 @@ public class Wallet {
     }
 
     public static void initSeed(String password, boolean force, String dictionary, String seed, SiaRequest.VolleyCallback callback) {
-        new SiaRequest(POST, "/wallet/init", callback)
+        new SiaRequest(POST, "/wallet/init/seed", callback)
                 .addParam("encryptionpassword", password)
                 .addParam("force", force ? "true" : "false")
                 .addParam("dictionary", dictionary)
