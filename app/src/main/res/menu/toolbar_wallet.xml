@@ -8,35 +8,35 @@
             android:icon="@drawable/ic_refresh_white_48dp"
             android:id="@+id/actionRefresh"/>
     <item
-            android:title="Unlock Wallet"
+            android:title="Unlock wallet"
             android:id="@+id/actionUnlock"
             app:showAsAction="never"/>
     <item
-            android:title="Lock Wallet"
+            android:title="Lock wallet"
             android:id="@+id/actionLock"
             app:showAsAction="never"/>
     <item
-            android:title="Create Wallet"
+            android:title="Create wallet"
             android:id="@+id/actionCreateWallet"
             app:showAsAction="never"/>
     <item
-            android:title="View Addresses"
+            android:title="View addresses"
             android:id="@+id/actionViewAddresses"
             app:showAsAction="never"/>
     <item
-            android:title="View Seeds"
+            android:title="View seeds"
             android:id="@+id/actionViewSeeds"
             app:showAsAction="never"/>
     <item
-            android:title="Add Seed"
+            android:title="Add seed"
             android:id="@+id/actionAddSeed"
             app:showAsAction="never"/>
     <item
-            android:title="Sweep Seed"
+            android:title="Sweep seed"
             android:id="@+id/actionSweepSeed"
             app:showAsAction="never"/>
     <item
-            android:title="Change Password"
+            android:title="Change password"
             android:id="@+id/actionChangePassword"
             app:showAsAction="never"/>
 </menu>

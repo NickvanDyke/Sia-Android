@@ -152,47 +152,6 @@ public class WalletFragment extends Fragment {
         return v;
     }
 
-    private TransactionExpandableGroup transactionToGroupWithChild(Transaction tx) {
-        ArrayList<Transaction> child = new ArrayList<>();
-        child.add(tx);
-        return new TransactionExpandableGroup(tx.getNetValueStringRounded(), tx.getConfirmationDate(), child);
-    }
-
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.actionRefresh:
-                refresh();
-                break;
-            case R.id.actionUnlock:
-                unlockFrag.clearFields();
-                unlockFrame.setVisibility(View.VISIBLE);
-                break;
-            case R.id.actionLock:
-                Wallet.lock(new SiaRequest.VolleyCallback());
-                break;
-            case R.id.actionChangePassword:
-                WalletChangePasswordDialog.createAndShow(getFragmentManager());
-                break;
-            case R.id.actionViewSeeds:
-                WalletSeedsDialog.createAndShow(getFragmentManager());
-                break;
-            case R.id.actionCreateWallet:
-                WalletCreateDialog.createAndShow(getFragmentManager());
-                break;
-            case R.id.actionSweepSeed:
-                WalletSweepSeedDialog.createAndShow(getFragmentManager());
-                break;
-            case R.id.actionViewAddresses:
-                WalletAddressesDialog.createAndShow(getFragmentManager());
-                break;
-            case R.id.actionAddSeed:
-                WalletAddSeedDialog.createAndShow(getFragmentManager());
-                break;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
     public void refresh() {
         refreshBalanceAndStatus();
         refreshTransactions();
@@ -272,6 +231,7 @@ public class WalletFragment extends Fragment {
                         syncText.setText("Synced");
                         syncBar.setProgress(100);
                         handler.removeCallbacks(refreshTask);
+                        refresh();
                     } else {
                         syncText.setText("Syncing");
                         double progress = ((double)response.getInt("height") / estimatedBlockHeightAt(System.currentTimeMillis() / 1000)) * 100;
@@ -325,5 +285,51 @@ public class WalletFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.toolbar_wallet, menu);
+    }
+
+    private TransactionExpandableGroup transactionToGroupWithChild(Transaction tx) {
+        ArrayList<Transaction> child = new ArrayList<>();
+        child.add(tx);
+        return new TransactionExpandableGroup(tx.getNetValueStringRounded(), tx.getConfirmationDate(), child);
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.actionRefresh:
+                refresh();
+                break;
+            case R.id.actionUnlock:
+                unlockFrag.clearFields();
+                unlockFrame.setVisibility(View.VISIBLE);
+                break;
+            case R.id.actionLock:
+                Wallet.lock(new SiaRequest.VolleyCallback() {
+                    public void onSuccess(JSONObject response) {
+                        super.onSuccess(response);
+                        walletStatusText.setText("Locked");
+                    }
+                });
+                break;
+            case R.id.actionChangePassword:
+                WalletChangePasswordDialog.createAndShow(getFragmentManager());
+                break;
+            case R.id.actionViewSeeds:
+                WalletSeedsDialog.createAndShow(getFragmentManager());
+                break;
+            case R.id.actionCreateWallet:
+                WalletCreateDialog.createAndShow(getFragmentManager());
+                break;
+            case R.id.actionSweepSeed:
+                WalletSweepSeedDialog.createAndShow(getFragmentManager());
+                break;
+            case R.id.actionViewAddresses:
+                WalletAddressesDialog.createAndShow(getFragmentManager());
+                break;
+            case R.id.actionAddSeed:
+                WalletAddSeedDialog.createAndShow(getFragmentManager());
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

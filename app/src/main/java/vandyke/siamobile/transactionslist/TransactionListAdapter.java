@@ -51,35 +51,10 @@ public class TransactionListAdapter extends ExpandableRecyclerViewAdapter<Transa
                 return true;
             }
         });
-//        final View parent = (View)idText.getParent();
-//        final GestureDetector gestureDetector = new GestureDetector(MainActivity.instance, new GestureDetector.SimpleOnGestureListener() {
-//            public void onLongPress(MotionEvent e) {
-//                ClipboardManager clipboard = (ClipboardManager) MainActivity.instance.getSystemService(Context.CLIPBOARD_SERVICE);
-//                ClipData clip = ClipData.newPlainText("Sia transaction id", idText.getText());
-//                clipboard.setPrimaryClip(clip);
-//                Toast.makeText(MainActivity.instance, "Copied transaction ID", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//        final Handler handler = new Handler();
-//        final Runnable copyText = new Runnable() {
-//            public void run() {
-//                ClipboardManager clipboard = (ClipboardManager) MainActivity.instance.getSystemService(Context.CLIPBOARD_SERVICE);
-//                ClipData clip = ClipData.newPlainText("Sia transaction id", idText.getText());
-//                clipboard.setPrimaryClip(clip);
-//                Toast.makeText(MainActivity.instance, "Copied transaction ID", Toast.LENGTH_SHORT).show();
-//            }
-//        };
         idText.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent event) {
-//                int action = event.getAction();
-//                System.out.println(action);
-//                if (action == MotionEvent.ACTION_DOWN) {
-//                    handler.postDelayed(copyText, 1000);
-//                } else if (action == MotionEvent.ACTION_MOVE || action == MotionEvent.ACTION_UP) {
-//                    handler.removeCallbacks(copyText);
                 event.addBatch(System.nanoTime(), event.getX() + v.getLeft(), event.getY() + v.getTop(), 1, 1, MotionEvent.ACTION_DOWN);
                 ((View) v.getParent()).onTouchEvent(event);
-//                }
                 return false;
             }
         });
@@ -164,7 +139,6 @@ public class TransactionListAdapter extends ExpandableRecyclerViewAdapter<Transa
 
         String id = transaction.getTransactionId();
         holder.transactionId.setText(id.substring(0, id.length() / 2) + "\n" + id.substring(id.length() / 2));
-//        holder.transactionId.setText(transaction.getTransactionId());
 
         String valueText = transaction.getNetValueStringRounded();
         if (transaction.isNetZero()) {

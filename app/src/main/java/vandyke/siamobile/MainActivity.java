@@ -249,7 +249,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void restartAndLaunch(String category) {
         finish();
-        Intent intent = new Intent(MainActivity.instance, MainActivity.class)
+        Intent intent = new Intent(this, MainActivity.class)
                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 .addCategory(category);
@@ -301,7 +301,7 @@ public class MainActivity extends AppCompatActivity {
 
      public void onDestroy() {
         super.onDestroy();
-         NotificationManager notificationManager = (NotificationManager)MainActivity.instance.getSystemService(Context.NOTIFICATION_SERVICE);
+         NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
          notificationManager.cancel(WalletFragment.SYNC_NOTIFICATION);
          notificationManager.cancel(Siad.SIAD_NOTIFICATION);
      }
@@ -322,7 +322,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void copyTextView(View view) {
-        ClipboardManager clipboard = (ClipboardManager) MainActivity.instance.getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipboardManager clipboard = (ClipboardManager)getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText("Sia text touch copy", ((TextView) view).getText());
         clipboard.setPrimaryClip(clip);
         Toast.makeText(this, "Copied selection to clipboard", Toast.LENGTH_SHORT).show();

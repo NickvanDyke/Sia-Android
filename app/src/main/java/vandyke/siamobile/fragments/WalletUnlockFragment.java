@@ -24,6 +24,7 @@ public class WalletUnlockFragment extends Fragment {
                 Wallet.unlock(password.getText().toString(), new SiaRequest.VolleyCallback() {
                     public void onSuccess(JSONObject response) {
                         super.onSuccess(response);
+                        WalletFragment.staticRefresh();
                         container.setVisibility(View.GONE);
                         MainActivity.hideSoftKeyboard(getActivity());
                     }
