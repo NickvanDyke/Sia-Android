@@ -32,7 +32,7 @@ public class RemoveAdsFeesDialog extends DialogFragment {
     private BigDecimal removeFeesCost; //in hastings
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = MainActivity.getDialogBuilder();
+        AlertDialog.Builder builder = MainActivity.getDialogBuilder(getActivity());
 
         final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_remove_ads_fees, null);
 
@@ -61,7 +61,7 @@ public class RemoveAdsFeesDialog extends DialogFragment {
                 }
             }, new Response.ErrorListener() {
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(MainActivity.instance, "Error retrieving SC/USD. Defaulting to 50 SC", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Error retrieving SC/USD. Defaulting to 50 SC", Toast.LENGTH_SHORT).show();
                     removeAdsCost = Wallet.scToHastings("50");
                     removeFeesCost = Wallet.scToHastings("50");
                     adsCostText.setText("50 SC");
@@ -77,27 +77,27 @@ public class RemoveAdsFeesDialog extends DialogFragment {
         removeAdsButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 if (removeAdsCost == null) {
-                    Toast.makeText(MainActivity.instance, "Please wait, retrieving SC/USD", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Please wait, retrieving SC/USD", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                AlertDialog.Builder confirmBuilder = MainActivity.getDialogBuilder();
+                AlertDialog.Builder confirmBuilder = MainActivity.getDialogBuilder(getActivity());
                 confirmBuilder.setTitle("Confirm")
                         .setMessage("Spend " + Wallet.hastingsToSC(removeAdsCost) + " Siacoins to remove ads?")
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 Wallet.sendSiacoins(Wallet.scToHastings(removeAdsCost),
-                                        paymentRecipient, new SiaRequest.VolleyCallback() {
+                                        paymentRecipient, new SiaRequest.VolleyCallback(getActivity()) {
                                             public void onSuccess(JSONObject response) {
                                                 SharedPreferences.Editor editor = MainActivity.prefs.edit();
                                                 editor.putBoolean("adsEnabled", false);
                                                 editor.apply();
-                                                MainActivity.instance.findViewById(R.id.adView).setVisibility(View.GONE);
-                                                Toast.makeText(MainActivity.instance, "Success. Ads removed", Toast.LENGTH_SHORT).show();
+                                                getActivity().findViewById(R.id.adView).setVisibility(View.GONE);
+                                                Toast.makeText(getActivity(), "Success. Ads removed", Toast.LENGTH_SHORT).show();
                                                 removeAdsButton.setVisibility(View.GONE);
                                                 adsCostText.setVisibility(View.GONE);
                                             }
                                             public void onError(SiaRequest.Error error) {
-                                                Toast.makeText(MainActivity.instance, error.getMsg() + ". No funds deducted", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(getActivity(), error.getMsg() + ". No funds deducted", Toast.LENGTH_SHORT).show();
                                             }
                                         });
                             }
@@ -114,26 +114,26 @@ public class RemoveAdsFeesDialog extends DialogFragment {
         removeFeesButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 if (removeFeesCost == null) {
-                    Toast.makeText(MainActivity.instance, "Please wait, retrieving SC/USD", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Please wait, retrieving SC/USD", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                AlertDialog.Builder confirmBuilder = MainActivity.getDialogBuilder();
+                AlertDialog.Builder confirmBuilder = MainActivity.getDialogBuilder(getActivity());
                 confirmBuilder.setTitle("Confirm")
                         .setMessage("Spend " + Wallet.hastingsToSC(removeFeesCost) + " Siacoins to remove app fees? Note that this has no effect on the Sia network's miner fees.")
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 Wallet.sendSiacoins(Wallet.scToHastings(removeFeesCost),
-                                        paymentRecipient, new SiaRequest.VolleyCallback() {
+                                        paymentRecipient, new SiaRequest.VolleyCallback(getActivity()) {
                                             public void onSuccess(JSONObject response) {
                                                 SharedPreferences.Editor editor = MainActivity.prefs.edit();
                                                 editor.putBoolean("feesEnabled", false);
                                                 editor.apply();
-                                                Toast.makeText(MainActivity.instance, "Success. App fees removed", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(adsCostText.getContext(), "Success. App fees removed", Toast.LENGTH_SHORT).show();
                                                 removeFeesButton.setVisibility(View.GONE);
                                                 feesCostText.setVisibility(View.GONE);
                                             }
                                             public void onError(SiaRequest.Error error) {
-                                                Toast.makeText(MainActivity.instance, error.getMsg() + ". No funds deducted", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(getActivity(), error.getMsg() + ". No funds deducted", Toast.LENGTH_SHORT).show();
                                             }
                                         });
                             }

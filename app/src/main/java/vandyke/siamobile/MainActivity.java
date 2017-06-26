@@ -43,7 +43,6 @@ public class MainActivity extends AppCompatActivity {
     public static String abi;
     public static SharedPreferences prefs;
     public static RequestQueue requestQueue;
-    public static MainActivity instance;
     public static int defaultTextColor;
     public static int backgroundColor;
     public static final String[] devAddresses = {"986082d52bf8a25009e7ce97508385687f3241d1e027969edbf9f63e4240cecf77bad58f40a5",
@@ -114,13 +113,12 @@ public class MainActivity extends AppCompatActivity {
         backgroundColor = a.data;
 
         requestQueue = Volley.newRequestQueue(this);
-        instance = this;
         // disabled for now because it's annoying. TODO: uncomment before release
 //        if (prefs.getBoolean("adsEnabled", true)) {
 //            MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713");
 //            ((AdView)findViewById(R.id.adView)).loadAd(new AdRequest.Builder().build());
 //        } else
-        ((AdView) findViewById(R.id.adView)).setVisibility(View.GONE);
+        findViewById(R.id.adView).setVisibility(View.GONE);
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close) {
@@ -198,30 +196,26 @@ public class MainActivity extends AppCompatActivity {
 
 
         if (prefs.getString("operationMode", "remote_full_node").equals("local_full_node"))
-            Siad.getInstance().start();
+            Siad.getInstance(this).start();
 
-        if (getIntent().hasCategory("settings")) {
-            loadDrawerFragment(SettingsFragment.class);
-            navigationView.setCheckedItem(R.id.drawer_item_settings);
-        } else
-            switch (prefs.getString("startupPage", "wallet")) {
-                case "files":
-                    loadDrawerFragment(FilesFragment.class);
-                    navigationView.setCheckedItem(R.id.drawer_item_files);
-                    break;
-                case "hosting":
-                    loadDrawerFragment(HostingFragment.class);
-                    navigationView.setCheckedItem(R.id.drawer_item_hosting);
-                    break;
-                case "wallet":
-                    loadDrawerFragment(WalletFragment.class);
-                    navigationView.setCheckedItem(R.id.drawer_item_wallet);
-                    break;
-                case "terminal":
-                    loadDrawerFragment(TerminalFragment.class);
-                    navigationView.setCheckedItem(R.id.drawer_item_terminal);
-                    break;
-            }
+        switch (prefs.getString("startupPage", "wallet")) {
+            case "files":
+                loadDrawerFragment(FilesFragment.class);
+                navigationView.setCheckedItem(R.id.drawer_item_files);
+                break;
+            case "hosting":
+                loadDrawerFragment(HostingFragment.class);
+                navigationView.setCheckedItem(R.id.drawer_item_hosting);
+                break;
+            case "wallet":
+                loadDrawerFragment(WalletFragment.class);
+                navigationView.setCheckedItem(R.id.drawer_item_wallet);
+                break;
+            case "terminal":
+                loadDrawerFragment(TerminalFragment.class);
+                navigationView.setCheckedItem(R.id.drawer_item_terminal);
+                break;
+        }
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -242,18 +236,9 @@ public class MainActivity extends AppCompatActivity {
                 SharedPreferences.Editor prefsEditor = prefs.edit();
                 prefsEditor.putString("customBgBase64", Base64.encodeToString(b, Base64.DEFAULT));
                 prefsEditor.apply();
-                restartAndLaunch("settings");
+                recreate();
             }
         }
-    }
-
-    public void restartAndLaunch(String category) {
-        finish();
-        Intent intent = new Intent(this, MainActivity.class)
-                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                .addCategory(category);
-        startActivity(intent);
     }
 
     public void loadDrawerFragment(Class clazz) {
@@ -299,30 +284,30 @@ public class MainActivity extends AppCompatActivity {
             super.onBackPressed();
     }
 
-     public void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
-         NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-         notificationManager.cancel(WalletFragment.SYNC_NOTIFICATION);
-         notificationManager.cancel(Siad.SIAD_NOTIFICATION);
-     }
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancel(WalletFragment.SYNC_NOTIFICATION);
+        notificationManager.cancel(Siad.SIAD_NOTIFICATION);
+    }
 
-    public static AlertDialog.Builder getDialogBuilder() {
+    public static AlertDialog.Builder getDialogBuilder(Context context) {
         switch (MainActivity.theme) {
             case LIGHT:
-                return new AlertDialog.Builder(instance);
+                return new AlertDialog.Builder(context);
             case DARK:
-                return new AlertDialog.Builder(instance);
+                return new AlertDialog.Builder(context);
             case AMOLED:
-                return new AlertDialog.Builder(instance, R.style.DialogTheme_Amoled);
+                return new AlertDialog.Builder(context, R.style.DialogTheme_Amoled);
             case CUSTOM:
-                return new AlertDialog.Builder(instance, R.style.DialogTheme_Custom);
+                return new AlertDialog.Builder(context, R.style.DialogTheme_Custom);
             default:
-                return new AlertDialog.Builder(instance);
+                return new AlertDialog.Builder(context);
         }
     }
 
     public void copyTextView(View view) {
-        ClipboardManager clipboard = (ClipboardManager)getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText("Sia text touch copy", ((TextView) view).getText());
         clipboard.setPrimaryClip(clip);
         Toast.makeText(this, "Copied selection to clipboard", Toast.LENGTH_SHORT).show();
@@ -362,10 +347,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // will return null if the abi is an unsupported one and therefore there is not a binary for it
-    public static File copyBinary(String filename) {
+    public static File copyBinary(String filename, Activity activity) {
         try {
-            InputStream in = instance.getAssets().open(filename + "-" + abi);
-            File result = new File(instance.getFilesDir(), filename + "-" + abi);
+            InputStream in = activity.getAssets().open(filename + "-" + abi);
+            File result = new File(activity.getFilesDir(), filename + "-" + abi);
             if (result.exists())
                 return result;
             FileOutputStream out = new FileOutputStream(result);
@@ -383,16 +368,16 @@ public class MainActivity extends AppCompatActivity {
         return null;
     }
 
-    public static File getWorkingDirectory() {
+    public static File getWorkingDirectory(Activity activity) {
         File result;
         if (prefs.getBoolean("useExternal", false)) {
-            result = instance.getExternalFilesDir(null);
+            result = activity.getExternalFilesDir(null);
             if (result == null) { // external storage not found
-                Toast.makeText(instance, "No external storage found. Using internal", Toast.LENGTH_LONG).show();
-                result = instance.getFilesDir();
+                Toast.makeText(activity, "No external storage found. Using internal", Toast.LENGTH_LONG).show();
+                result = activity.getFilesDir();
             }
         } else
-            result = instance.getFilesDir();
+            result = activity.getFilesDir();
         return result;
     }
 

@@ -1,5 +1,6 @@
 package vandyke.siamobile;
 
+import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -21,23 +22,23 @@ public class Siad {
 
     public static int SIAD_NOTIFICATION = 1;
 
-    private static Siad instance;
+    private Activity activity;
+    private static Siad instance; // TODO
     private File siadFile;
     private Process siadProcess;
     private Thread readStdoutThread;
     final private StringBuilder stdoutBuffer = new StringBuilder();
-    private static TerminalFragment terminalFragment;
-    private boolean finishedLoading;
+    private TerminalFragment terminalFragment;
 
-    private Siad() {
-        siadFile = MainActivity.copyBinary("siad");
+    private Siad(Activity activity) {
+        siadFile = MainActivity.copyBinary("siad", activity);
         instance = this;
-        finishedLoading = false;
+        this.activity = activity;
     }
 
-    public static Siad getInstance() {
+    public static Siad getInstance(Activity activity) {
         if (instance == null)
-            instance = new Siad();
+            instance = new Siad(activity);
         return instance;
     }
 
@@ -58,7 +59,7 @@ public class Siad {
         terminalAppend("\nStarting siad...\n");
         ProcessBuilder pb = new ProcessBuilder(siadFile.getAbsolutePath(), "-M", "gctw");
         pb.redirectErrorStream(true);
-        pb.directory(MainActivity.getWorkingDirectory());
+        pb.directory(MainActivity.getWorkingDirectory(activity));
         try {
             siadProcess = pb.start();
             System.out.println(siadProcess);
@@ -74,7 +75,7 @@ public class Siad {
                                 WalletFragment.staticRefresh();
                             siadNotification(text);
                             System.out.println(text);
-                            MainActivity.instance.runOnUiThread(new Runnable() {
+                            activity.runOnUiThread(new Runnable() {
                                 public void run() {
                                     terminalAppend(text);
                                 }
@@ -93,7 +94,7 @@ public class Siad {
     }
 
     public void stop() {
-        Daemon.stop(new SiaRequest.VolleyCallback());
+        Daemon.stop(new SiaRequest.VolleyCallback(activity));
         siadProcess = null;
         terminalAppend("Stopping siad... (may take a while. It's okay to close Sia Mobile during this)\n");
     }
@@ -115,7 +116,7 @@ public class Siad {
         return result;
     }
 
-    public static void setTerminalFragment(TerminalFragment fragment) {
+    public void setTerminalFragment(TerminalFragment fragment) {
         terminalFragment = fragment;
     }
 
@@ -127,17 +128,17 @@ public class Siad {
     }
 
     private void siadNotification(String text) {
-        Notification.Builder builder = new Notification.Builder(MainActivity.instance);
+        Notification.Builder builder = new Notification.Builder(activity);
         builder.setSmallIcon(R.drawable.ic_sync_white_48dp);
-        Bitmap largeIcon = BitmapFactory.decodeResource(MainActivity.instance.getResources(), R.drawable.sia_logo_transparent);
+        Bitmap largeIcon = BitmapFactory.decodeResource(activity.getResources(), R.drawable.sia_logo_transparent);
         builder.setLargeIcon(largeIcon);
         builder.setContentTitle("Sia Mobile siad");
         builder.setContentText(text);
         builder.setOngoing(false);
-        Intent intent = new Intent(MainActivity.instance, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(MainActivity.instance, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent intent = new Intent(activity, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(activity, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setContentIntent(pendingIntent);
-        NotificationManager notificationManager = (NotificationManager)MainActivity.instance.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager notificationManager = (NotificationManager) activity.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(SIAD_NOTIFICATION, builder.build());
     }
 }

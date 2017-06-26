@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -60,7 +61,7 @@ public class WalletFragment extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_wallet, container, false);
-        MainActivity.instance.getSupportActionBar().setTitle("Wallet");
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Wallet");
         setHasOptionsMenu(true);
 
         final Button receiveButton = (Button)v.findViewById(R.id.receiveButton);
@@ -96,7 +97,7 @@ public class WalletFragment extends Fragment {
         walletStatusText = (TextView)v.findViewById(R.id.walletStatusText);
 
         transactionList = (RecyclerView)v.findViewById(R.id.transactionList);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(MainActivity.instance);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         transactionList.setLayoutManager(layoutManager);
         transactionList.addItemDecoration(new DividerItemDecoration(transactionList.getContext(), layoutManager.getOrientation()));
 
@@ -134,7 +135,7 @@ public class WalletFragment extends Fragment {
         });
         balanceText.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.instance);
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setTitle("Exact Balance");
                 builder.setMessage(Wallet.hastingsToSC(balanceHastings).toPlainString() + " Siacoins");
                 builder.setPositiveButton("Close", new DialogInterface.OnClickListener() {
@@ -161,7 +162,7 @@ public class WalletFragment extends Fragment {
     }
 
     public void refreshBalanceAndStatus() {
-        Wallet.wallet(new SiaRequest.VolleyCallback() {
+        Wallet.wallet(new SiaRequest.VolleyCallback(getActivity()) {
             public void onSuccess(JSONObject response) {
                 try {
                     if (response.getString("encrypted").equals("false"))
@@ -200,13 +201,13 @@ public class WalletFragment extends Fragment {
             }
         }, new Response.ErrorListener() {
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(MainActivity.instance, "Error retrieving USD value", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Error retrieving USD value", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     public void refreshTransactions() {
-        Wallet.transactions(new SiaRequest.VolleyCallback() {
+        Wallet.transactions(new SiaRequest.VolleyCallback(getActivity()) {
         public void onSuccess(JSONObject response) {
             boolean hideZero = MainActivity.prefs.getBoolean("hideZero", false);
             transactions = Transaction.populateTransactions(response);
@@ -222,7 +223,7 @@ public class WalletFragment extends Fragment {
     }
 
     public void refreshSyncProgress() {
-        Consensus.consensus(new SiaRequest.VolleyCallback() {
+        Consensus.consensus(new SiaRequest.VolleyCallback(getActivity()) {
             public void onSuccess(JSONObject response) {
                 try {
                     if (response.getBoolean("synced")) {
@@ -255,17 +256,17 @@ public class WalletFragment extends Fragment {
     }
 
     public void syncNotification(int icon, String title, String text, boolean ongoing) {
-        Notification.Builder builder = new Notification.Builder(MainActivity.instance);
+        Notification.Builder builder = new Notification.Builder(getActivity());
         builder.setSmallIcon(icon);
-        Bitmap largeIcon = BitmapFactory.decodeResource(MainActivity.instance.getResources(), R.drawable.sia_logo_transparent);
+        Bitmap largeIcon = BitmapFactory.decodeResource(getActivity().getResources(), R.drawable.sia_logo_transparent);
         builder.setLargeIcon(largeIcon);
         builder.setContentTitle(title);
         builder.setContentText(text);
         builder.setOngoing(ongoing);
-        Intent intent = new Intent(MainActivity.instance, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(MainActivity.instance, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent intent = new Intent(getActivity(), MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(getActivity(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setContentIntent(pendingIntent);
-        NotificationManager notificationManager = (NotificationManager)MainActivity.instance.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager notificationManager = (NotificationManager)getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(SYNC_NOTIFICATION, builder.build());
     }
 
@@ -303,7 +304,7 @@ public class WalletFragment extends Fragment {
                 unlockFrame.setVisibility(View.VISIBLE);
                 break;
             case R.id.actionLock:
-                Wallet.lock(new SiaRequest.VolleyCallback() {
+                Wallet.lock(new SiaRequest.VolleyCallback(getActivity()) {
                     public void onSuccess(JSONObject response) {
                         super.onSuccess(response);
                         walletStatusText.setText("Locked");

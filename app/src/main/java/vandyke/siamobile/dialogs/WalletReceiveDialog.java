@@ -24,11 +24,11 @@ import vandyke.siamobile.api.Wallet;
 public class WalletReceiveDialog extends DialogFragment {
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = MainActivity.getDialogBuilder();
+        AlertDialog.Builder builder = MainActivity.getDialogBuilder(getActivity());
         final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_wallet_receive, null);
         if (MainActivity.theme == MainActivity.Theme.CUSTOM)
             ((TextView)view.findViewById(R.id.receiveAddress)).setTextColor(Color.GRAY);
-        Wallet.newAddress(new SiaRequest.VolleyCallback() {
+        Wallet.newAddress(new SiaRequest.VolleyCallback(getActivity()) {
             public void onSuccess(JSONObject response) {
                 try {
                     ((TextView)view.findViewById(R.id.receiveAddress)).setText(response.getString("address"));

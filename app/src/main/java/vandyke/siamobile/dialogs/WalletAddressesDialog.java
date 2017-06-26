@@ -24,13 +24,13 @@ import java.util.ArrayList;
 public class WalletAddressesDialog extends DialogFragment {
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = MainActivity.getDialogBuilder();
+        AlertDialog.Builder builder = MainActivity.getDialogBuilder(getActivity());
         final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_wallet_addresses, null);
         ListView seedsList = (ListView)view.findViewById(R.id.addressesList);
         final ArrayList<String> addresses = new ArrayList<>();
-        final TextTouchCopyListAdapter adapter = new TextTouchCopyListAdapter(MainActivity.instance, R.layout.text_touch_copy_list_item, addresses);
+        final TextTouchCopyListAdapter adapter = new TextTouchCopyListAdapter(getActivity(), R.layout.text_touch_copy_list_item, addresses);
         seedsList.setAdapter(adapter);
-        Wallet.addresses(new SiaRequest.VolleyCallback() {
+        Wallet.addresses(new SiaRequest.VolleyCallback(getActivity()) {
             public void onSuccess(JSONObject response) {
                 try {
                     JSONArray addressesJson = response.getJSONArray("addresses");

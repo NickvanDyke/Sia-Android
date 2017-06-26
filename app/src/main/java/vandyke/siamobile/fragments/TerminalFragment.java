@@ -3,6 +3,7 @@ package vandyke.siamobile.fragments;
 import android.app.Fragment;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableStringBuilder;
 import android.text.method.ScrollingMovementMethod;
 import android.text.style.ForegroundColorSpan;
@@ -32,8 +33,8 @@ public class TerminalFragment extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_terminal, container, false);
-        MainActivity.instance.getSupportActionBar().setTitle("Terminal");
-        siacFile = MainActivity.copyBinary("siac");
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Terminal");
+        siacFile = MainActivity.copyBinary("siac", getActivity());
 
         input = (EditText)v.findViewById(R.id.input);
         input.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -68,7 +69,7 @@ public class TerminalFragment extends Fragment {
                                 inputReader.close();
 
                                 stdOut.setSpan(new ForegroundColorSpan(MainActivity.defaultTextColor), enteredCommand.length() + 2, stdOut.length(), 0);
-                                MainActivity.instance.runOnUiThread(new Runnable() {
+                                getActivity().runOnUiThread(new Runnable() {
                                     public void run() {
                                         output.append(stdOut);
                                     }
@@ -87,7 +88,7 @@ public class TerminalFragment extends Fragment {
 
         output = (TextView)v.findViewById(R.id.output);
         output.setMovementMethod(new ScrollingMovementMethod());
-        Siad.setTerminalFragment(this);
+        Siad.getInstance(getActivity()).setTerminalFragment(this);
         return v;
     }
 
@@ -97,6 +98,6 @@ public class TerminalFragment extends Fragment {
 
     public void onResume() {
         super.onResume();
-        output.append(Siad.getInstance().getBufferedStdout());
+        output.append(Siad.getInstance(getActivity()).getBufferedStdout());
     }
 }

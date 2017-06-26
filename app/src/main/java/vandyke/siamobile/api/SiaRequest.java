@@ -1,5 +1,6 @@
 package vandyke.siamobile.api;
 
+import android.content.Context;
 import android.util.Base64;
 import android.widget.Toast;
 import com.android.volley.Response;
@@ -63,12 +64,18 @@ public class SiaRequest extends StringRequest {
     }
 
     public static class VolleyCallback {
+        private Context context;
+
+        public VolleyCallback(Context context) {
+            this.context = context;
+        }
+
         public void onSuccess(JSONObject response) {
-            genericSuccessToast();
+            genericSuccessToast(context);
         }
 
         public void onError(Error error) {
-            error.toast();
+            error.toast(context);
         }
     }
 
@@ -165,13 +172,13 @@ public class SiaRequest extends StringRequest {
             return reason != null ? reason.getMsg() : "";
         }
 
-        public void toast() {
+        public void toast(Context context) {
             if (reason != null)
-                Toast.makeText(MainActivity.instance, reason.getMsg(), Toast.LENGTH_LONG).show();
+                Toast.makeText(context, reason.getMsg(), Toast.LENGTH_SHORT).show();
         }
     }
 
-    public static void genericSuccessToast() {
-        Toast.makeText(MainActivity.instance, "Success", Toast.LENGTH_SHORT).show();
+    public static void genericSuccessToast(Context context) {
+        Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show();
     }
 }

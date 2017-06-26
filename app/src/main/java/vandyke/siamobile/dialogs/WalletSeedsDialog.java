@@ -24,13 +24,13 @@ import java.util.ArrayList;
 public class WalletSeedsDialog extends DialogFragment {
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = MainActivity.getDialogBuilder();
+        AlertDialog.Builder builder = MainActivity.getDialogBuilder(getActivity());
         final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_wallet_seeds, null);
         ListView seedsList = (ListView) view.findViewById(R.id.seedsList);
         final ArrayList<String> seeds = new ArrayList<>();
-        final TextTouchCopyListAdapter adapter = new TextTouchCopyListAdapter(MainActivity.instance, R.layout.text_touch_copy_list_item, seeds);
+        final TextTouchCopyListAdapter adapter = new TextTouchCopyListAdapter(getActivity(), R.layout.text_touch_copy_list_item, seeds);
         seedsList.setAdapter(adapter);
-        Wallet.seeds("english", new SiaRequest.VolleyCallback() {
+        Wallet.seeds("english", new SiaRequest.VolleyCallback(getActivity()) {
             public void onSuccess(JSONObject response) {
                 try {
                     JSONArray seedsJson = response.getJSONArray("allseeds");

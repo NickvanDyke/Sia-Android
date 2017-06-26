@@ -45,9 +45,9 @@ public class TransactionListAdapter extends ExpandableRecyclerViewAdapter<Transa
         final TextView idText = (TextView) view.findViewById(R.id.transactionHeaderId);
         idText.setOnLongClickListener(new View.OnLongClickListener() {
             public boolean onLongClick(View v) {
-                ClipData clip = ClipData.newPlainText("Sia transaction id", ((TextView) v).getText());
-                ((ClipboardManager) MainActivity.instance.getSystemService(Context.CLIPBOARD_SERVICE)).setPrimaryClip(clip);
-                Toast.makeText(MainActivity.instance, "Copied transaction ID", Toast.LENGTH_SHORT).show();
+                ClipData clip = ClipData.newPlainText("Sia transaction id", ((TextView)v).getText());
+                ((ClipboardManager) idText.getContext().getSystemService(Context.CLIPBOARD_SERVICE)).setPrimaryClip(clip);
+                Toast.makeText(idText.getContext(), "Copied transaction ID", Toast.LENGTH_SHORT).show();
                 return true;
             }
         });
@@ -97,11 +97,11 @@ public class TransactionListAdapter extends ExpandableRecyclerViewAdapter<Transa
 
         ArrayList<TransactionIOBase> inputs = new ArrayList<>();
         inputs.addAll(transaction.getInputs());
-        holder.inputs.setAdapter(new TransactionIOAdapter(MainActivity.instance, R.layout.list_item_tx_io, inputs));
+        holder.inputs.setAdapter(new TransactionIOAdapter(holder.inputs.getContext(), R.layout.list_item_tx_io, inputs));
 
         ArrayList<TransactionIOBase> outputs = new ArrayList<>();
         outputs.addAll(transaction.getOutputs());
-        holder.outputs.setAdapter(new TransactionIOAdapter(MainActivity.instance, R.layout.list_item_tx_io, outputs));
+        holder.outputs.setAdapter(new TransactionIOAdapter(holder.outputs.getContext(), R.layout.list_item_tx_io, outputs));
 
         if (inputs.size() > 1)
             holder.inputs.setOnTouchListener(new View.OnTouchListener() {

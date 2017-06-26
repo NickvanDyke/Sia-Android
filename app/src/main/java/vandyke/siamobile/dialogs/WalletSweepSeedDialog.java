@@ -19,14 +19,14 @@ import vandyke.siamobile.api.Wallet;
 public class WalletSweepSeedDialog extends DialogFragment {
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = MainActivity.getDialogBuilder();
+        AlertDialog.Builder builder = MainActivity.getDialogBuilder(getActivity());
         final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_wallet_sweep, null);
         builder.setTitle("Sweep Seed")
                 .setView(view)
                 .setPositiveButton("Sweep", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         Wallet.sweepSeed("english", ((EditText)view.findViewById(R.id.walletSweepSeed)).getText().toString(),
-                                new SiaRequest.VolleyCallback());
+                                new SiaRequest.VolleyCallback(getActivity()));
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

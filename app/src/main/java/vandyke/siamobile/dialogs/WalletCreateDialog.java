@@ -26,7 +26,7 @@ import vandyke.siamobile.api.Wallet;
 
 public class WalletCreateDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = MainActivity.getDialogBuilder();
+        AlertDialog.Builder builder = MainActivity.getDialogBuilder(getActivity());
         final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_wallet_create, null);
 
         final CheckBox createFromSeed = (CheckBox) view.findViewById(R.id.walletCreateFromSeed);
@@ -59,27 +59,27 @@ public class WalletCreateDialog extends DialogFragment {
                     public void onClick(DialogInterface dialog, int id) {
                         String password = ((EditText) view.findViewById(R.id.newPasswordCreate)).getText().toString();
                         if (!password.equals(((EditText) view.findViewById(R.id.confirmNewPasswordCreate)).getText().toString())) {
-                            Toast.makeText(MainActivity.instance, "New passwords don't match", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "New passwords don't match", Toast.LENGTH_SHORT).show();
                             return;
                         }
                         boolean force = forceCheck.isChecked();
                         String dictionary = "english";
                         if (createFromSeed.isChecked())
-                            Wallet.initSeed(password, force, dictionary, seedField.getText().toString(), new SiaRequest.VolleyCallback() {
+                            Wallet.initSeed(password, force, dictionary, seedField.getText().toString(), new SiaRequest.VolleyCallback(getActivity()) {
                                 public void onSuccess(JSONObject response) {
-                                    displaySeed(response);
+                                    displaySeed(response, createFromSeed.getContext());
                                 }
                                 public void onError(SiaRequest.Error error) {
                                     if (error.getReason() == SiaRequest.Error.Reason.WALLET_NOT_ENCRYPTED)
-                                        Toast.makeText(MainActivity.instance, "Success. Scanning blockchain, please wait", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getActivity(), "Success. Scanning blockchain, please wait", Toast.LENGTH_SHORT).show();
                                     else
                                         super.onError(error);
                                 }
                             });
                         else
-                            Wallet.init(password, force, dictionary, new SiaRequest.VolleyCallback() {
+                            Wallet.init(password, force, dictionary, new SiaRequest.VolleyCallback(getActivity()) {
                                 public void onSuccess(JSONObject response) {
-                                    displaySeed(response);
+                                    displaySeed(response, createFromSeed.getContext());
                                 }
                             });
                     }
@@ -105,8 +105,8 @@ public class WalletCreateDialog extends DialogFragment {
         new WalletCreateDialog().show(fragmentManager, "wallet init dialog");
     }
 
-    private void displaySeed(JSONObject response) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.instance);
+    private void displaySeed(JSONObject response, final Context context) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         try {
             final String seed = response.getString("primaryseed");
             builder.setTitle("Wallet Created")
@@ -120,10 +120,10 @@ public class WalletCreateDialog extends DialogFragment {
                     })
                     .setPositiveButton("Copy", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            ClipboardManager clipboard = (ClipboardManager) MainActivity.instance.getSystemService(Context.CLIPBOARD_SERVICE);
+                            ClipboardManager clipboard = (ClipboardManager)getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
                             ClipData clip = ClipData.newPlainText("Sia wallet primary seed", seed);
                             clipboard.setPrimaryClip(clip);
-                            Toast.makeText(MainActivity.instance, "Copied seed to clipboard", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "Copied seed to clipboard", Toast.LENGTH_SHORT).show();
                         }
                     });
         } catch (JSONException e) {

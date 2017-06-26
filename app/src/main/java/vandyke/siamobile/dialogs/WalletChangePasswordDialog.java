@@ -20,7 +20,7 @@ import vandyke.siamobile.api.Wallet;
 public class WalletChangePasswordDialog extends DialogFragment {
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = MainActivity.getDialogBuilder();
+        AlertDialog.Builder builder = MainActivity.getDialogBuilder(getActivity());
         final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_wallet_change_password, null);
         builder.setTitle("Change Wallet Password")
                 .setView(view)
@@ -28,11 +28,11 @@ public class WalletChangePasswordDialog extends DialogFragment {
                     public void onClick(DialogInterface dialog, int id) {
                         String newPassword = ((EditText)view.findViewById(R.id.newPassword)).getText().toString();
                         if (!newPassword.equals(((EditText)view.findViewById(R.id.confirmNewPassword)).getText().toString())) {
-                            Toast.makeText(MainActivity.instance, "New passwords don't match", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(view.getContext(), "New passwords don't match", Toast.LENGTH_SHORT).show();
                             return; // TODO: make dialog not disappear in this case
                         }
                         Wallet.changePassword(((EditText) view.findViewById(R.id.currentPassword)).getText().toString(),
-                                newPassword, new SiaRequest.VolleyCallback());
+                                newPassword, new SiaRequest.VolleyCallback(getActivity()));
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

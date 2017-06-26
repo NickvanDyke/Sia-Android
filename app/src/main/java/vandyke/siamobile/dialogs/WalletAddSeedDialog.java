@@ -19,7 +19,7 @@ import vandyke.siamobile.api.Wallet;
 public class WalletAddSeedDialog extends DialogFragment {
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = MainActivity.getDialogBuilder();
+        AlertDialog.Builder builder = MainActivity.getDialogBuilder(getActivity());
         final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_wallet_sweep, null);
         builder.setTitle("Add Seed")
                 .setView(view)
@@ -27,7 +27,7 @@ public class WalletAddSeedDialog extends DialogFragment {
                     public void onClick(DialogInterface dialog, int id) {
                         Wallet.seed(((EditText)view.findViewById(R.id.walletPassword)).getText().toString(), "english",
                                 ((EditText)view.findViewById(R.id.walletAddSeed)).getText().toString(),
-                                new SiaRequest.VolleyCallback());
+                                new SiaRequest.VolleyCallback(getActivity()));
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

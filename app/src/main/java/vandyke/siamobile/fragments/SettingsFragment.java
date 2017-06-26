@@ -1,10 +1,12 @@
 package vandyke.siamobile.fragments;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.*;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 import vandyke.siamobile.BuildConfig;
 import vandyke.siamobile.MainActivity;
@@ -20,10 +22,9 @@ public class SettingsFragment extends PreferenceFragment {
 
     private static final int SELECT_PICTURE = 1;
 
-
     public void onCreate(Bundle savedInstanceState) { // TODO: restarts app on first loading
         super.onCreate(savedInstanceState);
-        MainActivity.instance.getSupportActionBar().setTitle("Settings");
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Settings");
         addPreferencesFromResource(R.xml.settings);
 
         final ListPreference operationMode = (ListPreference)findPreference("operationMode");
@@ -38,7 +39,7 @@ public class SettingsFragment extends PreferenceFragment {
                 if (MainActivity.abi.equals("aarch64") || MainActivity.abi.equals("x86_64"))
                     return true;
                 else
-                    Toast.makeText(MainActivity.instance, "Sorry, but your device's CPU architecture is not supported by siad. There is nothing Sia Mobile can do about this", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Sorry, but your device's CPU architecture is not supported by siad. There is nothing Sia Mobile can do about this", Toast.LENGTH_SHORT).show();
                 return false;
             }
         });
@@ -50,7 +51,7 @@ public class SettingsFragment extends PreferenceFragment {
                 if (MainActivity.isExternalStorageWritable())
                     return true;
                 else
-                    Toast.makeText(MainActivity.instance, "Error: " + MainActivity.externalStorageStateDescription(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), "Error: " + MainActivity.externalStorageStateDescription(), Toast.LENGTH_LONG).show();
                 return false;
             }
         });
@@ -73,10 +74,10 @@ public class SettingsFragment extends PreferenceFragment {
                         setRemoteSettingsVisibility();
                         if (sharedPreferences.getString("operationMode", "remote_full_node").equals("remote_full_node")) {
                             editor.putString("address", sharedPreferences.getString("remoteAddress", "192.168.1.11:9980"));
-                            Siad.getInstance().stop();
+                            Siad.getInstance(getActivity()).stop();
                         } else if (sharedPreferences.getString("operationMode", "remote_full_node").equals("local_full_node")) {
                             editor.putString("address", "localhost:9980");
-                            Siad.getInstance().start();
+                            Siad.getInstance(getActivity()).start();
                         }
                         editor.apply();
                         break;
@@ -94,12 +95,12 @@ public class SettingsFragment extends PreferenceFragment {
                                 startActivityForResult(Intent.createChooser(intent, "Select Background"), SELECT_PICTURE);
                                 break;
                             default:
-                                MainActivity.instance.restartAndLaunch("settings");
+                                getActivity().recreate();
                                 break;
                         }
                         break;
                     case "transparentBars":
-                        MainActivity.instance.restartAndLaunch("settings");
+                        getActivity().recreate();
                         break;
                 }
             }

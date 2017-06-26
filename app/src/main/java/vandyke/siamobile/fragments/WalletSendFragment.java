@@ -49,7 +49,7 @@ public class WalletSendFragment extends Fragment {
                 if (MainActivity.prefs.getBoolean("feesEnabled", true))
                     Wallet.sendSiacoinsWithDevFee(sendAmount,
                             recipient.getText().toString(),
-                            new SiaRequest.VolleyCallback() {
+                            new SiaRequest.VolleyCallback(getActivity()) {
                                 public void onSuccess(JSONObject response) {
                                     super.onSuccess(response);
                                     container.setVisibility(View.GONE);
@@ -59,7 +59,7 @@ public class WalletSendFragment extends Fragment {
                 else
                     Wallet.sendSiacoins(sendAmount,
                             ((EditText) view.findViewById(R.id.sendRecipient)).getText().toString(),
-                            new SiaRequest.VolleyCallback() {
+                            new SiaRequest.VolleyCallback(getActivity()) {
                                 public void onSuccess(JSONObject response) {
                                     super.onSuccess(response);
                                     container.setVisibility(View.GONE);

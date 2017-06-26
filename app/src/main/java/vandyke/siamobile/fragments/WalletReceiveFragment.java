@@ -26,10 +26,10 @@ public class WalletReceiveFragment extends Fragment {
         address = (TextView)view.findViewById(R.id.receiveAddress);
         view.findViewById(R.id.walletAddressCopy).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData clip = ClipData.newPlainText("receive address", ((TextView) view.findViewById(R.id.receiveAddress)).getText());
+                ClipboardManager clipboard = (ClipboardManager)getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("receive address", ((TextView)view.findViewById(R.id.receiveAddress)).getText());
                 clipboard.setPrimaryClip(clip);
-                Toast.makeText(MainActivity.instance, "Copied receive address", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Copied receive address", Toast.LENGTH_SHORT).show();
                 container.setVisibility(View.GONE);
             }
         });
@@ -42,7 +42,7 @@ public class WalletReceiveFragment extends Fragment {
     }
 
     public void getNewAddress() {
-        Wallet.newAddress(new SiaRequest.VolleyCallback() {
+        Wallet.newAddress(new SiaRequest.VolleyCallback(getActivity()) {
             public void onSuccess(JSONObject response) {
                 try {
                     address.setText(response.getString("address"));

@@ -19,13 +19,13 @@ import vandyke.siamobile.api.Wallet;
 public class WalletUnlockDialog extends DialogFragment {
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = MainActivity.getDialogBuilder();
+        AlertDialog.Builder builder = MainActivity.getDialogBuilder(getActivity());
         final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_wallet_unlock, null);
         builder.setTitle("Unlock Wallet")
                 .setView(view)
                 .setPositiveButton("Unlock", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        Wallet.unlock(((EditText)view.findViewById(R.id.walletPassword)).getText().toString(), new SiaRequest.VolleyCallback());
+                        Wallet.unlock(((EditText)view.findViewById(R.id.walletPassword)).getText().toString(), new SiaRequest.VolleyCallback(getActivity()));
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

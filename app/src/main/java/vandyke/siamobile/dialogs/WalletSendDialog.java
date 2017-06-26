@@ -26,7 +26,7 @@ import java.math.RoundingMode;
 public class WalletSendDialog extends DialogFragment {
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = MainActivity.getDialogBuilder();
+        AlertDialog.Builder builder = MainActivity.getDialogBuilder(getActivity());
         final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_wallet_send, null);
         final EditText amount = (EditText)view.findViewById(R.id.sendAmount);
         final TextView feeText = (TextView)view.findViewById(R.id.walletSendFee);
@@ -56,11 +56,11 @@ public class WalletSendDialog extends DialogFragment {
                         if (MainActivity.prefs.getBoolean("feesEnabled", true))
                             Wallet.sendSiacoinsWithDevFee(sendAmount,
                                     ((EditText) view.findViewById(R.id.sendRecipient)).getText().toString(),
-                                    new SiaRequest.VolleyCallback());
+                                    new SiaRequest.VolleyCallback(getActivity()));
                         else
                             Wallet.sendSiacoins(sendAmount,
                                     ((EditText) view.findViewById(R.id.sendRecipient)).getText().toString(),
-                                    new SiaRequest.VolleyCallback());
+                                    new SiaRequest.VolleyCallback(getActivity()));
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
