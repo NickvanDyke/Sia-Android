@@ -16,7 +16,7 @@ public class LocalWallet {
     private static LocalWallet instance;
 
     private String seed;
-    private HashSet<String> addresses;
+    private ArrayList<String> addresses;
 
     private ServerSocket socket;
     private Thread socketThread;
@@ -25,7 +25,7 @@ public class LocalWallet {
 
     private LocalWallet(Activity activity) {
         seed = MainActivity.prefs.getString("localWalletSeed", "noseed");
-        addresses = (HashSet<String>)MainActivity.prefs.getStringSet("localWalletAddresses", new HashSet<String>());
+        addresses = new ArrayList<>(MainActivity.prefs.getStringSet("localWalletAddresses", new HashSet<String>()));
         binary = MainActivity.copyBinary("sia-coldstorage-arm", activity);
     }
 
@@ -47,12 +47,46 @@ public class LocalWallet {
                     try {
                         while (true) {
                             System.out.println("waiting for connection");
-                            Socket client = socket.accept();
+                            Socket client = socket.accept(); // might want to fork when accepting, in case user sends lots at once
                             System.out.println("something connected to socket");
                             BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
                             PrintWriter out = new PrintWriter(client.getOutputStream());
+
+                            String line;
+                            while ((line = in.readLine()) != null) {
+                                System.out.println(line);
+                            }
+
+                            if (line == null)
+                                continue;
+
+                            // probably need some header stuff first
+                            out.print("HTTP/1.1 ");
+
+                            if (line.contains("/wallet/address")) {
+                                out.print("200 OK\n\n");
+                                JSONObject response = new JSONObject();
+                                response.put("address", addresses.get((int)(Math.random() * addresses.size())));
+                                out.print(response.toString());
+                            } else if (line.contains("/wallet/addresses")) {
+                                out.print("200 OK\n\n");
+                                JSONObject response = new JSONObject();
+                                JSONArray addressArray = new JSONArray();
+                                for (String address : addresses)
+                                    addressArray.put(address);
+                                response.put("address", addressArray);
+                                out.print(response.toString());
+                            } else {
+                                out.print("501 Not Implemented");
+                                out.print("{\"message\":unsupported on local wallet");
+                            }
+                            in.close();
+                            out.close();
+                            client.close();
                         }
                     } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
