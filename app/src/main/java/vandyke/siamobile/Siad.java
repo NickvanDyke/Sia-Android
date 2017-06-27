@@ -67,17 +67,16 @@ public class Siad {
                 public void run() {
                     try {
                         BufferedReader inputReader = new BufferedReader(new InputStreamReader(siadProcess.getInputStream()));
-                        int read;
-                        char[] buffer = new char[1024];
-                        while ((read = inputReader.read(buffer)) > 0) {
-                            final String text = new String(buffer).substring(0, read);
-                            if (text.contains("Finished loading") || text.contains("Done!"))
+                        String line;
+                        while ((line = inputReader.readLine()) != null) {
+                            if (line.contains("Finished loading") || line.contains("Done!"))
                                 WalletFragment.staticRefresh();
-                            siadNotification(text);
-                            System.out.println(text);
+                            siadNotification(line);
+                            System.out.println(line);
+                            final String lineFinal = line;
                             activity.runOnUiThread(new Runnable() {
                                 public void run() {
-                                    terminalAppend(text);
+                                    terminalAppend(lineFinal);
                                 }
                             });
                         }

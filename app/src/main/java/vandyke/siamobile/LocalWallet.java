@@ -1,30 +1,38 @@
 package vandyke.siamobile;
 
+import android.app.Activity;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashSet;
 
 public class LocalWallet {
 
+    private static LocalWallet instance;
+
     private String seed;
     private HashSet<String> addresses;
 
-    Thread socketThread;
+    private ServerSocket socket;
+    private Thread socketThread;
 
     private File binary;
 
-    public LocalWallet() {
+    private LocalWallet(Activity activity) {
         seed = MainActivity.prefs.getString("localWalletSeed", "noseed");
         addresses = (HashSet<String>)MainActivity.prefs.getStringSet("localWalletAddresses", new HashSet<String>());
-//        binary = MainActivity.copyBinary("sia-coldstorage-arm");
+        binary = MainActivity.copyBinary("sia-coldstorage-arm", activity);
+    }
+
+    public static LocalWallet getInstance(Activity activity) {
+        if (instance == null)
+            instance = new LocalWallet(activity);
+        return instance;
     }
 
     public void startListening(final int port) {
@@ -33,14 +41,16 @@ public class LocalWallet {
             return;
         }
         try {
-            final ServerSocket socket = new ServerSocket(port);
+            socket = new ServerSocket(port);
             socketThread = new Thread(new Runnable() {
                 public void run() {
                     try {
                         while (true) {
                             System.out.println("waiting for connection");
-                            socket.accept();
+                            Socket client = socket.accept();
                             System.out.println("something connected to socket");
+                            BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
+                            PrintWriter out = new PrintWriter(client.getOutputStream());
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -52,7 +62,7 @@ public class LocalWallet {
             e.printStackTrace();
         }
     }
-    
+
     public void newWallet() {
         try {
             ArrayList<String> fullCommand = new ArrayList<>();
@@ -62,7 +72,6 @@ public class LocalWallet {
             Process process = pb.start();
 
             StringBuilder stdOut = new StringBuilder();
-
             BufferedReader inputReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             int read;
             char[] buffer = new char[1024];

@@ -60,11 +60,10 @@ public class TerminalFragment extends Fragment {
                                 stdOut.setSpan(new StyleSpan(Typeface.BOLD), 0, stdOut.length(), 0);
 
                                 BufferedReader inputReader = new BufferedReader(new InputStreamReader(siac.getInputStream()));
-                                int read;
-                                char[] buffer = new char[1024];
-                                while ((read = inputReader.read(buffer)) > 0) {
-                                    String toBeAppended = new String(buffer).substring(0, read).replace(siacFile.getAbsolutePath(), "siac");
-                                    stdOut.append(toBeAppended, 0, toBeAppended.length());
+                                String line;
+                                while ((line = inputReader.readLine()) != null) {
+                                    String toBeAppended = line.replace(siacFile.getAbsolutePath(), "siac");
+                                    stdOut.append(toBeAppended);
                                 }
                                 inputReader.close();
 
