@@ -6,6 +6,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -20,13 +21,18 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class TransactionListAdapter extends RecyclerView.Adapter<TransactionHeaderHolder> {
+public class TransactionListAdapter extends RecyclerView.Adapter {
 
     private ArrayList<Transaction> data;
     private DateFormat df;
 
     private int red;
     private int green;
+
+    private int TYPE_TX = 0;
+    private int TYPE_AD = 1;
+
+    private int TX_PER_AD = 3;
 
     public TransactionListAdapter(ArrayList<Transaction> data) {
         super();
@@ -37,47 +43,64 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionHead
     }
 
     @Override
-    public TransactionHeaderHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_tx_header, parent, false);
-        // TODO: find how to make the view not expand if it's long pressed... spent a long time and still couldn't get it, idk if possible in this situation
-        final TextView idText = (TextView) view.findViewById(R.id.transactionHeaderId);
-        idText.setOnLongClickListener(new View.OnLongClickListener() {
-            public boolean onLongClick(View v) {
-                ClipData clip = ClipData.newPlainText("Sia transaction id", ((TextView)v).getText());
-                ((ClipboardManager) idText.getContext().getSystemService(Context.CLIPBOARD_SERVICE)).setPrimaryClip(clip);
-                Toast.makeText(idText.getContext(), "Copied transaction ID", Toast.LENGTH_SHORT).show();
-                return true;
-            }
-        });
-        return new TransactionHeaderHolder(view);
+    public RecyclerView.ViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
+        if (viewType == TYPE_TX) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_tx_header, parent, false);
+            // TODO: find how to make the view not expand if it's long pressed... spent a long time and still couldn't get it, idk if possible in this situation
+            final TextView idText = (TextView) view.findViewById(R.id.transactionHeaderId);
+            idText.setOnLongClickListener(new View.OnLongClickListener() {
+                public boolean onLongClick(View v) {
+                    ClipData clip = ClipData.newPlainText("Sia transaction id", ((TextView) v).getText().toString().replaceAll("\\s*", ""));
+                    ((ClipboardManager) idText.getContext().getSystemService(Context.CLIPBOARD_SERVICE)).setPrimaryClip(clip);
+                    Toast.makeText(idText.getContext(), "Copied transaction ID", Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+            });
+            idText.setOnTouchListener(new View.OnTouchListener() {
+                public boolean onTouch(View v, MotionEvent event) {
+                    event.addBatch(System.nanoTime(), event.getX() + v.getLeft(), event.getY() + v.getTop(), 1, 1, MotionEvent.ACTION_DOWN);
+                    ((View) v.getParent()).onTouchEvent(event);
+                    return false;
+                }
+            });
+            return new TransactionHeaderHolder(view);
+        } else {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.native_ad_layout, parent, false);
+            return new NativeAdHolder(view);
+        }
     }
 
     @Override
-    public void onBindViewHolder(TransactionHeaderHolder holder, int position) {
-        Transaction transaction = data.get(position);
-        String timeString;
-        if (!transaction.isConfirmed()) {
-            timeString = "Unconfirmed";
-            holder.transactionStatus.setTextColor(Color.RED);
-        } else {
-            timeString = df.format(transaction.getConfirmationDate());
-            holder.transactionStatus.setTextColor(MainActivity.defaultTextColor);
-        }
-        holder.transactionStatus.setText(timeString);
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        if (holder instanceof TransactionHeaderHolder) {
+            TransactionHeaderHolder txHolder = (TransactionHeaderHolder)holder;
+            Transaction transaction = data.get(position);
+            String timeString;
+            if (!transaction.isConfirmed()) {
+                timeString = "Unconfirmed";
+                txHolder.transactionStatus.setTextColor(Color.RED);
+            } else {
+                timeString = df.format(transaction.getConfirmationDate());
+                txHolder.transactionStatus.setTextColor(MainActivity.defaultTextColor);
+            }
+            txHolder.transactionStatus.setText(timeString);
 
-        String id = transaction.getTransactionId();
-        holder.transactionId.setText(id.substring(0, id.length() / 2) + "\n" + id.substring(id.length() / 2));
+            String id = transaction.getTransactionId();
+            txHolder.transactionId.setText(id.substring(0, id.length() / 2) + "\n" + id.substring(id.length() / 2));
 
-        String valueText = transaction.getNetValueStringRounded();
-        if (transaction.isNetZero()) {
-            holder.transactionValue.setTextColor(MainActivity.defaultTextColor);
-        } else if (valueText.contains("-")) {
-            holder.transactionValue.setTextColor(red);
+            String valueText = transaction.getNetValueStringRounded();
+            if (transaction.isNetZero()) {
+                txHolder.transactionValue.setTextColor(MainActivity.defaultTextColor);
+            } else if (valueText.contains("-")) {
+                txHolder.transactionValue.setTextColor(red);
+            } else {
+                valueText = "+" + valueText;
+                txHolder.transactionValue.setTextColor(green);
+            }
+            txHolder.transactionValue.setText(valueText);
         } else {
-            valueText = "+" + valueText;
-            holder.transactionValue.setTextColor(green);
+
         }
-        holder.transactionValue.setText(valueText);
     }
 
     @Override
@@ -85,13 +108,20 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionHead
         return data.size();
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        return position % TX_PER_AD == 0 ? TYPE_AD : TYPE_TX;
+    }
+
     public void setData(ArrayList<Transaction> data) {
         this.data = new ArrayList<>(data);
         if (MainActivity.prefs.getBoolean("hideZero", false))
             removeZeroTransactions();
+        if (MainActivity.prefs.getBoolean("adsEnabled", true))
+            insertNullsForAds();
         notifyDataSetChanged();
     }
-//
+
     public void removeZeroTransactions() {
         BigDecimal zero = new BigDecimal("0");
         for (int i = 0; i < data.size(); i++)
@@ -99,5 +129,14 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionHead
                 data.remove(i);
                 i--;
             }
+    }
+
+    public void insertNullsForAds() {
+        for (int i = 0; i < data.size(); i++) {
+            if (i % TX_PER_AD == 0) {
+                data.add(i, null);
+                System.out.println("Added null at index: " + i);
+            }
+        }
     }
 }
