@@ -252,7 +252,7 @@ public class MainActivity extends AppCompatActivity {
             if (currentFrag != null)
                 transaction.hide(currentFrag);
             if (newFragment == null) {
-                transaction.add(R.id.fragment_frame, (Fragment) clazz.newInstance(), className);
+                transaction.add(R.id.fragment_frame, (Fragment)clazz.newInstance(), className);
             } else {
                 transaction.show(newFragment);
             }

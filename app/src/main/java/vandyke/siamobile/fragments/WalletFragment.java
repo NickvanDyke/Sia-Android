@@ -227,7 +227,8 @@ public class WalletFragment extends Fragment {
                         syncText.setText("Synced");
                         syncBar.setProgress(100);
                         handler.removeCallbacks(refreshTask);
-//                        refresh();
+                        refreshTransactions();
+                        refreshBalanceAndStatus();
                     } else {
                         syncText.setText("Syncing");
                         double progress = ((double)response.getInt("height") / estimatedBlockHeightAt(System.currentTimeMillis() / 1000)) * 100;
