@@ -29,7 +29,6 @@ import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
 import vandyke.siamobile.dialogs.*;
 import vandyke.siamobile.transaction.Transaction;
-import vandyke.siamobile.transactionslist.TransactionExpandableGroup;
 import vandyke.siamobile.transactionslist.TransactionListAdapter;
 
 import java.math.BigDecimal;
@@ -52,8 +51,8 @@ public class WalletFragment extends Fragment {
     private NumberProgressBar syncBar;
     private TextView syncText;
     private TextView walletStatusText;
-    private final ArrayList<TransactionExpandableGroup> transactionExpandableGroups = new ArrayList<>();
     private RecyclerView transactionList;
+    private TransactionListAdapter adapter;
     private FrameLayout sendFrame;
     private FrameLayout receiveFrame;
     private FrameLayout unlockFrame;
@@ -100,6 +99,8 @@ public class WalletFragment extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         transactionList.setLayoutManager(layoutManager);
         transactionList.addItemDecoration(new DividerItemDecoration(transactionList.getContext(), layoutManager.getOrientation()));
+        adapter = new TransactionListAdapter(new ArrayList<Transaction>());
+        transactionList.setAdapter(adapter);
 
         sendFrame = (FrameLayout)v.findViewById(R.id.sendFrame);
         receiveFrame = (FrameLayout)v.findViewById(R.id.receiveFrame);
@@ -211,13 +212,7 @@ public class WalletFragment extends Fragment {
         public void onSuccess(JSONObject response) {
             boolean hideZero = MainActivity.prefs.getBoolean("hideZero", false);
             transactions = Transaction.populateTransactions(response);
-            transactionExpandableGroups.clear();
-            for (Transaction tx : transactions) {
-                if (hideZero && tx.isNetZero())
-                    continue;
-                transactionExpandableGroups.add(transactionToGroupWithChild(tx));
-            }
-            transactionList.setAdapter(new TransactionListAdapter(transactionExpandableGroups));
+            adapter.setData(transactions);
         }
     });
     }
@@ -232,7 +227,7 @@ public class WalletFragment extends Fragment {
                         syncText.setText("Synced");
                         syncBar.setProgress(100);
                         handler.removeCallbacks(refreshTask);
-                        refresh();
+//                        refresh();
                     } else {
                         syncText.setText("Syncing");
                         double progress = ((double)response.getInt("height") / estimatedBlockHeightAt(System.currentTimeMillis() / 1000)) * 100;
@@ -286,12 +281,6 @@ public class WalletFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.toolbar_wallet, menu);
-    }
-
-    private TransactionExpandableGroup transactionToGroupWithChild(Transaction tx) {
-        ArrayList<Transaction> child = new ArrayList<>();
-        child.add(tx);
-        return new TransactionExpandableGroup(tx.getNetValueStringRounded(), tx.getConfirmationDate(), child);
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
