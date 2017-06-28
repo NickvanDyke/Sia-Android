@@ -12,6 +12,6 @@ public class NativeAdHolder extends GroupViewHolder {
     public NativeAdHolder(View itemView) {
         super(itemView);
         adView = (NativeExpressAdView)itemView.findViewById(R.id.nativeListAd);
-        adView.loadAd(new AdRequest.Builder().addTestDevice("DB3FF58A6FB377012FA098B272105EF5").build());
+        adView.loadAd(new AdRequest.Builder().addTestDevice(AdRequest.DEVICE_ID_EMULATOR).build());
     }
 }

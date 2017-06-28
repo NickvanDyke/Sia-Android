@@ -31,7 +31,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
-import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import vandyke.siamobile.dialogs.RemoveAdsFeesDialog;
 import vandyke.siamobile.fragments.*;
 
@@ -113,12 +113,8 @@ public class MainActivity extends AppCompatActivity {
         backgroundColor = a.data;
 
         requestQueue = Volley.newRequestQueue(this);
-        // disabled for now because it's annoying. TODO: uncomment before release
-//        if (prefs.getBoolean("adsEnabled", true)) {
-//            MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713");
-//            ((AdView)findViewById(R.id.adView)).loadAd(new AdRequest.Builder().build());
-//        } else
-        findViewById(R.id.adView).setVisibility(View.GONE);
+        if (prefs.getBoolean("adsEnabled", true))
+            MobileAds.initialize(this, getString(R.string.ad_app_id));
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close) {

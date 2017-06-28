@@ -91,7 +91,7 @@ public class RemoveAdsFeesDialog extends DialogFragment {
                                                 SharedPreferences.Editor editor = MainActivity.prefs.edit();
                                                 editor.putBoolean("adsEnabled", false);
                                                 editor.apply();
-                                                getActivity().findViewById(R.id.adView).setVisibility(View.GONE);
+                                                // TODO: immediately disappear ads if needed
                                                 Toast.makeText(getActivity(), "Success. Ads removed", Toast.LENGTH_SHORT).show();
                                                 removeAdsButton.setVisibility(View.GONE);
                                                 adsCostText.setVisibility(View.GONE);
