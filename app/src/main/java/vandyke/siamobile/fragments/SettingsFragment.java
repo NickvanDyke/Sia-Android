@@ -1,6 +1,5 @@
 package vandyke.siamobile.fragments;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -94,13 +93,7 @@ public class SettingsFragment extends PreferenceFragment {
                                 intent.setType("image/*");
                                 startActivityForResult(Intent.createChooser(intent, "Select Background"), SELECT_PICTURE);
                                 break;
-                            default:
-                                getActivity().recreate();
-                                break;
                         }
-                        break;
-                    case "transparentBars":
-                        getActivity().recreate();
                         break;
                 }
             }

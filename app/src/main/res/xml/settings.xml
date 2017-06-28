@@ -2,70 +2,71 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory android:title="Appearance">
         <ListPreference
-            android:key="theme"
-            android:title="Theme"
-            android:entries="@array/theme_entries"
-            android:entryValues="@array/theme_values"
-            android:defaultValue="light"/>
+                android:summary="Changes will apply on next restart"
+                android:key="theme"
+                android:title="Theme"
+                android:entries="@array/theme_entries"
+                android:entryValues="@array/theme_values"
+                android:defaultValue="light"/>
         <SwitchPreference
-            android:key="transparentBars"
-            android:title="Transparent bars"
-            android:defaultValue="off"/>
+                android:key="transparentBars"
+                android:title="Transparent bars"
+                android:defaultValue="off"/>
     </PreferenceCategory>
     <PreferenceCategory android:title="Operation">
         <ListPreference
-            android:title="Mode"
-            android:key="operationMode"
-            android:entries="@array/operation_modes_entries"
-            android:entryValues="@array/operation_modes_values"
-            android:defaultValue="remote_full_node" />
+                android:title="Mode"
+                android:key="operationMode"
+                android:entries="@array/operation_modes_entries"
+                android:entryValues="@array/operation_modes_values"
+                android:defaultValue="remote_full_node"/>
         <EditTextPreference
-            android:key="remoteAddress"
-            android:title="Remote node address"
-            android:summary="The IP address and port number of your remote full node. If your device is not on the same network as it, you will have to port forward."
-            android:dialogTitle="Remote node address"
-            android:gravity="center"
-            android:hint="ip:port"
-            android:shouldDisableView="true" />
+                android:key="remoteAddress"
+                android:title="Remote node address"
+                android:summary="The IP address and port number of your remote full node. If your device is not on the same network as it, you will have to port forward."
+                android:dialogTitle="Remote node address"
+                android:gravity="center"
+                android:hint="ip:port"
+                android:shouldDisableView="true"/>
         <EditTextPreference
-            android:key="apiPass"
-            android:title="API password"
-            android:summary="The API password set on your remote full node."
-            android:dialogTitle="API password"
-            android:gravity="center"
-            android:inputType="textPassword"
-            android:password="true"
-            android:fontFamily="sans-serif"
-            android:shouldDisableView="true" />
+                android:key="apiPass"
+                android:title="API password"
+                android:summary="The API password set on your remote full node."
+                android:dialogTitle="API password"
+                android:gravity="center"
+                android:inputType="textPassword"
+                android:password="true"
+                android:fontFamily="sans-serif"
+                android:shouldDisableView="true"/>
         <SwitchPreference
-            android:key="useExternal"
-            android:title="Use external storage"
-            android:summary="If running a full node on this device, Sia Mobile will save the necessary files on internal storage. Turn this option on if you want it to instead use external storage, such as an SD card. Restart Sia Mobile after."
-            android:defaultValue="off"/>
+                android:key="useExternal"
+                android:title="Use external storage"
+                android:summary="If running a full node on this device, Sia Mobile will save the necessary files on internal storage. Turn this option on if you want it to instead use external storage, such as an SD card. Restart Sia Mobile after."
+                android:defaultValue="off"/>
     </PreferenceCategory>
     <PreferenceCategory android:title="Misc">
         <ListPreference
-            android:key="startupPage"
-            android:title="Launch screen"
-            android:summary="The screen to load to when Sia Mobile launches."
-            android:entries="@array/startup_entries"
-            android:entryValues="@array/startup_values"
-            android:defaultValue="wallet"/>
+                android:key="startupPage"
+                android:title="Launch screen"
+                android:summary="The screen to load to when Sia Mobile launches."
+                android:entries="@array/startup_entries"
+                android:entryValues="@array/startup_values"
+                android:defaultValue="wallet"/>
         <SwitchPreference
-            android:key="hideZero"
-            android:title="Hide net-zero transactions"
-            android:defaultValue="off"
-            android:summary="For each regular transaction, Sia also makes a setup transaction that does not affect your wallet balance. Check this to hide transactions that have zero net effect on your wallet."/>
+                android:key="hideZero"
+                android:title="Hide net-zero transactions"
+                android:defaultValue="off"
+                android:summary="For each regular transaction, Sia also makes a setup transaction that does not affect your wallet balance. Check this to hide transactions that have zero net effect on your wallet."/>
         <EditTextPreference
-            android:key="displayedDecimalPrecision"
-            android:title="Displayed decimal precision"
-            android:summary="The number of decimal places displayed. This does not affect actual precision of values in memory, which is exact. When displayed, they will be rounded up."
-            android:inputType="number"
-            android:gravity="center"
-            android:defaultValue="2"/>
+                android:key="displayedDecimalPrecision"
+                android:title="Displayed decimal precision"
+                android:summary="The number of decimal places displayed. This does not affect actual precision of values in memory, which is exact. When displayed, they will be rounded up."
+                android:inputType="number"
+                android:gravity="center"
+                android:defaultValue="2"/>
         <Preference
-            android:key="openAppSettings"
-            android:title="Open Application Info page for Sia Mobile"
+                android:key="openAppSettings"
+                android:title="Open Application Info page for Sia Mobile"
                 android:summary="You can clear data from here, such as the files that Sia Mobile creates and keeps when running a full node. WARNING: clearing data will delete your wallet files. Record your seed somewhere before doing so."/>
     </PreferenceCategory>
 

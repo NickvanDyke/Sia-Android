@@ -31,7 +31,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
-import com.google.android.gms.ads.AdView;
 import vandyke.siamobile.dialogs.RemoveAdsFeesDialog;
 import vandyke.siamobile.fragments.*;
 
@@ -256,7 +255,7 @@ public class MainActivity extends AppCompatActivity {
             if (currentFrag != null)
                 transaction.hide(currentFrag);
             if (newFragment == null) {
-                transaction.add(R.id.fragment_frame, (Fragment) clazz.newInstance(), className);
+                transaction.add(R.id.fragment_frame, (Fragment)clazz.newInstance(), className);
             } else {
                 transaction.show(newFragment);
             }
