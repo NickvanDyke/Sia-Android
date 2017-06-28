@@ -79,12 +79,19 @@ public class SettingsFragment extends PreferenceFragment {
                             Siad.getInstance(getActivity()).start();
                         }
                         editor.apply();
+                        refreshWallet();
                         break;
                     case "remoteAddress":
                         if (sharedPreferences.getString("operationMode", "remote_full_node").equals("remote_full_node")) {
                             editor.putString("address", sharedPreferences.getString("remoteAddress", "192.168.1.11:9980"));
                             editor.apply();
                         }
+                        refreshWallet();
+                        break;
+                    case "apiPass":
+                    case "hideZero":
+                    case "displayedDecimalPrecision":
+                        refreshWallet();
                         break;
                     case "theme":// restart to apply the theme; don't need to change theme variable since app is restarting and it'll load it
                         switch (sharedPreferences.getString("theme", "light")) {
@@ -109,5 +116,11 @@ public class SettingsFragment extends PreferenceFragment {
             remoteAddress.setEnabled(false);
             apiPass.setEnabled(false);
         }
+    }
+
+    private void refreshWallet() {
+        WalletFragment fragment = (WalletFragment)getFragmentManager().findFragmentByTag("WalletFragment");
+        if (fragment != null)
+            fragment.refresh();
     }
 }
