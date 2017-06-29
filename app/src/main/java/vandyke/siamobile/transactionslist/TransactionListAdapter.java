@@ -19,6 +19,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter {
 
     private ArrayList<Transaction> data;
     private DateFormat df;
+    private boolean ads;
 
     private int red;
     private int green;
@@ -30,6 +31,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter {
 
     public TransactionListAdapter(ArrayList<Transaction> data) {
         super();
+        ads = MainActivity.prefs.getBoolean("adsEnabled", true);
         this.data = data;
         df = new SimpleDateFormat("MMM dd\nh:mm a", Locale.getDefault());
         red = Color.rgb(186, 63, 63); // TODO: choose better colors maybe
@@ -88,14 +90,16 @@ public class TransactionListAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemViewType(int position) {
-        return position % TX_PER_AD == 0 ? TYPE_AD : TYPE_TX;
+
+        return ((position % TX_PER_AD == 0) && ads) ? TYPE_AD : TYPE_TX;
     }
 
     public void setData(ArrayList<Transaction> data) {
         this.data = new ArrayList<>(data);
         if (MainActivity.prefs.getBoolean("hideZero", false))
             removeZeroTransactions();
-        if (MainActivity.prefs.getBoolean("adsEnabled", true))
+        ads = MainActivity.prefs.getBoolean("adsEnabled", true);
+        if (ads)
             insertNullsForAds();
         notifyDataSetChanged();
     }
