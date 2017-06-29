@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
+import vandyke.siamobile.transaction.EmptyTransaction;
 import vandyke.siamobile.transaction.Transaction;
 
 import java.math.BigDecimal;
@@ -96,6 +97,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter {
         ads = MainActivity.prefs.getBoolean("adsEnabled", true);
         if (data.size() == 0 && ads) {
             this.data = new ArrayList<>();
+            this.data.add(new EmptyTransaction());
             for (int i = 0; i < 6; i ++)
                 this.data.add(null);
             return;

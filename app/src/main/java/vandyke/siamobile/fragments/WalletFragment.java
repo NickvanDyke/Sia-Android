@@ -60,11 +60,11 @@ public class WalletFragment extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_wallet, container, false);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Wallet");
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Wallet");
         setHasOptionsMenu(true);
 
-        final Button receiveButton = (Button)v.findViewById(R.id.receiveButton);
-        final Button sendButton = (Button)v.findViewById(R.id.sendButton);
+        final Button receiveButton = (Button) v.findViewById(R.id.receiveButton);
+        final Button sendButton = (Button) v.findViewById(R.id.sendButton);
 
         if (MainActivity.theme == MainActivity.Theme.AMOLED || MainActivity.theme == MainActivity.Theme.CUSTOM) {
             v.findViewById(R.id.top_shadow).setVisibility(View.GONE);
@@ -85,26 +85,28 @@ public class WalletFragment extends Fragment {
 
         balanceHastings = new BigDecimal("0");
         balanceUsd = new BigDecimal("0");
-        balanceText = (TextView)v.findViewById(R.id.balanceText);
-        balanceUsdText = (TextView)v.findViewById(R.id.balanceUsdText);
-        balanceUnconfirmedText = (TextView)v.findViewById(R.id.balanceUnconfirmed);
+        balanceText = (TextView) v.findViewById(R.id.balanceText);
+        balanceUsdText = (TextView) v.findViewById(R.id.balanceUsdText);
+        balanceUnconfirmedText = (TextView) v.findViewById(R.id.balanceUnconfirmed);
         transactions = new ArrayList<>();
 
-        syncBar = (NumberProgressBar)v.findViewById(R.id.syncBar);
-        syncText = (TextView)v.findViewById(R.id.syncText);
+        syncBar = (NumberProgressBar) v.findViewById(R.id.syncBar);
+        syncText = (TextView) v.findViewById(R.id.syncText);
         syncBar.setProgressTextColor(MainActivity.defaultTextColor);
-        walletStatusText = (TextView)v.findViewById(R.id.walletStatusText);
+        walletStatusText = (TextView) v.findViewById(R.id.walletStatusText);
 
-        transactionList = (RecyclerView)v.findViewById(R.id.transactionList);
+        transactionList = (RecyclerView) v.findViewById(R.id.transactionList);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         transactionList.setLayoutManager(layoutManager);
         transactionList.addItemDecoration(new DividerItemDecoration(transactionList.getContext(), layoutManager.getOrientation()));
         adapter = new TransactionListAdapter(new ArrayList<Transaction>());
         transactionList.setAdapter(adapter);
+        transactions = new ArrayList<>();
+        adapter.setData(transactions);
 
-        sendFrame = (FrameLayout)v.findViewById(R.id.sendFrame);
-        receiveFrame = (FrameLayout)v.findViewById(R.id.receiveFrame);
-        unlockFrame = (FrameLayout)v.findViewById(R.id.unlockFrame);
+        sendFrame = (FrameLayout) v.findViewById(R.id.sendFrame);
+        receiveFrame = (FrameLayout) v.findViewById(R.id.receiveFrame);
+        unlockFrame = (FrameLayout) v.findViewById(R.id.unlockFrame);
 
         final WalletSendFragment sendFrag = new WalletSendFragment();
         getFragmentManager().beginTransaction().add(R.id.sendFrame, sendFrag).commit();
@@ -182,6 +184,7 @@ public class WalletFragment extends Fragment {
                     e.printStackTrace();
                 }
             }
+
             public void onError(SiaRequest.Error error) {
                 super.onError(error);
                 balanceText.setText("Loading...");
@@ -209,12 +212,20 @@ public class WalletFragment extends Fragment {
 
     public void refreshTransactions() {
         Wallet.transactions(new SiaRequest.VolleyCallback(getActivity()) {
-        public void onSuccess(JSONObject response) {
-            boolean hideZero = MainActivity.prefs.getBoolean("hideZero", false);
-            transactions = Transaction.populateTransactions(response);
-            adapter.setData(transactions);
-        }
-    });
+            public void onSuccess(JSONObject response) {
+                transactions = Transaction.populateTransactions(response);
+                adapter.setData(transactions);
+            }
+
+            @Override
+            public void onError(SiaRequest.Error error) {
+                super.onError(error);
+                transactions = new ArrayList<>();
+                adapter = new TransactionListAdapter(transactions);
+                transactionList.setAdapter(adapter);
+                adapter.setData(transactions);
+            }
+        });
     }
 
     public void refreshSyncProgress() {
@@ -231,8 +242,8 @@ public class WalletFragment extends Fragment {
                         refreshBalanceAndStatus();
                     } else {
                         syncText.setText("Syncing");
-                        double progress = ((double)response.getInt("height") / estimatedBlockHeightAt(System.currentTimeMillis() / 1000)) * 100;
-                        syncBar.setProgress((int)progress);
+                        double progress = ((double) response.getInt("height") / estimatedBlockHeightAt(System.currentTimeMillis() / 1000)) * 100;
+                        syncBar.setProgress((int) progress);
                         syncNotification(R.drawable.ic_sync_white_48dp, "Syncing blockchain...", String.format("Progress (estimated): %.2f%%", progress), false);
                         handler.removeCallbacks(refreshTask);
                         handler.postDelayed(refreshTask, 60000);
@@ -241,6 +252,7 @@ public class WalletFragment extends Fragment {
                     e.printStackTrace();
                 }
             }
+
             public void onError(SiaRequest.Error error) {
                 super.onError(error);
                 syncText.setText("Not Synced");
@@ -262,7 +274,7 @@ public class WalletFragment extends Fragment {
         Intent intent = new Intent(getActivity(), MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(getActivity(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setContentIntent(pendingIntent);
-        NotificationManager notificationManager = (NotificationManager)getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager notificationManager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(SYNC_NOTIFICATION, builder.build());
     }
 
@@ -276,7 +288,7 @@ public class WalletFragment extends Fragment {
         long block100kTimestamp = 1492126789; // Unix timestamp; seconds
         int blockTime = 9; // overestimate
         long diff = time - block100kTimestamp;
-        return (int)(100000 + (diff / 60 / blockTime));
+        return (int) (100000 + (diff / 60 / blockTime));
     }
 
     @Override

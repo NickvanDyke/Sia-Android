@@ -3,7 +3,6 @@ package vandyke.siamobile.transaction;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.api.Wallet;
 
 import java.math.BigDecimal;
@@ -12,16 +11,20 @@ import java.util.Date;
 
 public class Transaction {
 
-    private String transactionId;
-    private boolean confirmed;
-    private int confirmationHeight;
-    private Date confirmationDate; // null if unconfirmed
-    private ArrayList<TransactionInput> inputs;
-    private ArrayList<TransactionOutput> outputs;
-    private BigDecimal netValue; // this is relevant to the wallet
-    private String netValueStringExact;
-    private String netValueStringRounded;
-    private boolean netZero;
+    protected String transactionId;
+    protected boolean confirmed;
+    protected int confirmationHeight;
+    protected Date confirmationDate; // null if unconfirmed
+    protected ArrayList<TransactionInput> inputs;
+    protected ArrayList<TransactionOutput> outputs;
+    protected BigDecimal netValue; // this is relevant to the wallet
+    protected String netValueStringExact;
+    protected String netValueStringRounded;
+    protected boolean netZero;
+    
+    public Transaction() {
+        
+    }
 
     public Transaction(JSONObject json) {
         try {

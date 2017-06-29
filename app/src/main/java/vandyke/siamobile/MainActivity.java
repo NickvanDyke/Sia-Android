@@ -64,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     private String currentFragmentTag;
-    private static final int SELECT_PICTURE = 1;
 
     public enum Theme {
         LIGHT, DARK, AMOLED, CUSTOM
