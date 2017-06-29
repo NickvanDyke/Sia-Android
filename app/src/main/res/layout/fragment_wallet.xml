@@ -125,6 +125,7 @@
             app:layout_constraintRight_toRightOf="parent"
             android:layout_marginRight="16dp"
             android:textAlignment="textEnd"
+            android:gravity="end"
             android:layout_marginTop="8dp"/>
 
     <View
@@ -144,7 +145,7 @@
             app:layout_constraintTop_toBottomOf="@+id/receiveButton"
             android:id="@+id/unlockFrame"
             android:visibility="gone"
-            android:layout_height="0dp">
+            android:layout_height="wrap_content">
     </FrameLayout>
     <FrameLayout
             android:layout_width="0dp"
@@ -153,7 +154,7 @@
             app:layout_constraintTop_toBottomOf="@+id/unlockFrame"
             android:id="@+id/sendFrame"
             android:visibility="gone"
-            android:layout_height="0dp">
+            android:layout_height="wrap_content">
     </FrameLayout>
     <FrameLayout
             android:layout_width="0dp"
@@ -162,7 +163,7 @@
             app:layout_constraintTop_toBottomOf="@+id/sendFrame"
             android:id="@+id/receiveFrame"
             android:visibility="gone"
-            android:layout_height="0dp">
+            android:layout_height="wrap_content">
     </FrameLayout>
 
     <android.support.v7.widget.RecyclerView

@@ -252,7 +252,7 @@ public class MainActivity extends AppCompatActivity {
             if (currentFrag != null)
                 transaction.hide(currentFrag);
             if (newFragment == null) {
-                transaction.add(R.id.fragment_frame, (Fragment)clazz.newInstance(), className);
+                transaction.add(R.id.fragment_frame, (Fragment) clazz.newInstance(), className);
             } else {
                 transaction.show(newFragment);
             }
@@ -263,6 +263,24 @@ public class MainActivity extends AppCompatActivity {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
+    }
+
+    public void loadTempFragment(Fragment fragment) {
+        String className = fragment.getClass().getSimpleName();
+        FragmentManager fragmentManager = getFragmentManager();
+        Fragment currentFrag = fragmentManager.findFragmentByTag(currentFragmentTag);
+        Fragment newFragment = fragment;
+
+//        if (currentFrag != null && currentFrag == newFragment)
+//            return;
+
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        if (currentFrag != null)
+            transaction.hide(currentFrag);
+        transaction.add(R.id.fragment_frame, fragment, className);
+        transaction.addToBackStack(null).commit();
+//            currentFragmentTag = className;
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {

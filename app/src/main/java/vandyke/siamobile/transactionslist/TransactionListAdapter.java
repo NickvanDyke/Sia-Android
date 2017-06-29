@@ -1,16 +1,10 @@
 package vandyke.siamobile.transactionslist;
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-import android.widget.Toast;
 import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
 import vandyke.siamobile.transaction.Transaction;
@@ -47,22 +41,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter {
         if (viewType == TYPE_TX) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_tx_header, parent, false);
             // TODO: find how to make the view not expand if it's long pressed... spent a long time and still couldn't get it, idk if possible in this situation
-            final TextView idText = (TextView) view.findViewById(R.id.transactionHeaderId);
-            idText.setOnLongClickListener(new View.OnLongClickListener() {
-                public boolean onLongClick(View v) {
-                    ClipData clip = ClipData.newPlainText("Sia transaction id", ((TextView) v).getText().toString().replaceAll("\\s*", ""));
-                    ((ClipboardManager) idText.getContext().getSystemService(Context.CLIPBOARD_SERVICE)).setPrimaryClip(clip);
-                    Toast.makeText(idText.getContext(), "Copied transaction ID", Toast.LENGTH_SHORT).show();
-                    return true;
-                }
-            });
-            idText.setOnTouchListener(new View.OnTouchListener() {
-                public boolean onTouch(View v, MotionEvent event) {
-                    event.addBatch(System.nanoTime(), event.getX() + v.getLeft(), event.getY() + v.getTop(), 1, 1, MotionEvent.ACTION_DOWN);
-                    ((View) v.getParent()).onTouchEvent(event);
-                    return false;
-                }
-            });
             return new TransactionHeaderHolder(view);
         } else {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.native_ad_layout, parent, false);
@@ -133,10 +111,8 @@ public class TransactionListAdapter extends RecyclerView.Adapter {
 
     public void insertNullsForAds() {
         for (int i = 0; i < data.size(); i++) {
-            if (i % TX_PER_AD == 0) {
+            if (i % TX_PER_AD == 0)
                 data.add(i, null);
-                System.out.println("Added null at index: " + i);
-            }
         }
     }
 }
