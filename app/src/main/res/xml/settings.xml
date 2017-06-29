@@ -2,13 +2,14 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory android:title="Appearance">
         <ListPreference
-                android:summary="Changes will apply on next restart"
+                android:summary="Changes will apply on next restart."
                 android:key="theme"
                 android:title="Theme"
                 android:entries="@array/theme_entries"
                 android:entryValues="@array/theme_values"
                 android:defaultValue="light"/>
         <SwitchPreference
+                android:summary="Changes will apply on next restart."
                 android:key="transparentBars"
                 android:title="Transparent bars"
                 android:defaultValue="off"/>
@@ -41,7 +42,7 @@
         <SwitchPreference
                 android:key="useExternal"
                 android:title="Use external storage"
-                android:summary="If running a full node on this device, Sia Mobile will save the necessary files on internal storage. Turn this option on if you want it to instead use external storage, such as an SD card. Restart Sia Mobile after."
+                android:summary="Sia Mobile uses some storage, especially when running a full node. By default it uses internal storage. Turn this option on if you want it to instead use external storage, such as an SD card. Restart Sia Mobile after."
                 android:defaultValue="off"/>
     </PreferenceCategory>
     <PreferenceCategory android:title="Misc">
@@ -67,7 +68,7 @@
         <Preference
                 android:key="openAppSettings"
                 android:title="Open Application Info page for Sia Mobile"
-                android:summary="You can clear data from here, such as the files that Sia Mobile creates and keeps when running a full node. WARNING: clearing data will delete your wallet files. Record your seed somewhere before doing so."/>
+                android:summary="Sia Mobile must save a lot of data when running a full node on your device. You can clear this data from here. WARNING: it will delete your wallet files if running a full node on this device. Write down your seed first."/>
     </PreferenceCategory>
 
 </PreferenceScreen>

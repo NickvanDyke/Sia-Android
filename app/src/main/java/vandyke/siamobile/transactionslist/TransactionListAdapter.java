@@ -27,7 +27,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter {
     private int TYPE_TX = 0;
     private int TYPE_AD = 1;
 
-    private int TX_PER_AD = 3;
+    private int TX_PER_AD = 4;
 
     public TransactionListAdapter(ArrayList<Transaction> data) {
         super();
@@ -42,8 +42,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter {
     public RecyclerView.ViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
         if (viewType == TYPE_TX) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_tx_header, parent, false);
-            // TODO: find how to make the view not expand if it's long pressed... spent a long time and still couldn't get it, idk if possible in this situation
-            return new TransactionHeaderHolder(view);
+            return new TransactionHolder(view);
         } else {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.native_ad_layout, parent, false);
             return new NativeAdHolder(view);
@@ -52,8 +51,8 @@ public class TransactionListAdapter extends RecyclerView.Adapter {
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        if (holder instanceof TransactionHeaderHolder) {
-            TransactionHeaderHolder txHolder = (TransactionHeaderHolder)holder;
+        if (holder instanceof TransactionHolder) {
+            TransactionHolder txHolder = (TransactionHolder)holder;
             Transaction transaction = data.get(position);
             String timeString;
             if (!transaction.isConfirmed()) {
@@ -90,15 +89,20 @@ public class TransactionListAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemViewType(int position) {
-
-        return ((position % TX_PER_AD == 0) && ads) ? TYPE_AD : TYPE_TX;
+        return data.get(position) == null ? TYPE_AD : TYPE_TX;
     }
 
     public void setData(ArrayList<Transaction> data) {
+        ads = MainActivity.prefs.getBoolean("adsEnabled", true);
+        if (data.size() == 0 && ads) {
+            this.data = new ArrayList<>();
+            for (int i = 0; i < 6; i ++)
+                this.data.add(null);
+            return;
+        }
         this.data = new ArrayList<>(data);
         if (MainActivity.prefs.getBoolean("hideZero", false))
             removeZeroTransactions();
-        ads = MainActivity.prefs.getBoolean("adsEnabled", true);
         if (ads)
             insertNullsForAds();
         notifyDataSetChanged();

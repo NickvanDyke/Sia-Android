@@ -7,13 +7,13 @@ import android.widget.TextView;
 import com.thoughtbot.expandablerecyclerview.viewholders.GroupViewHolder;
 import vandyke.siamobile.R;
 
-public class TransactionHeaderHolder extends GroupViewHolder {
+public class TransactionHolder extends GroupViewHolder {
 
     protected TextView transactionStatus;
     protected TextView transactionId;
     protected TextView transactionValue;
 
-    public TransactionHeaderHolder(View itemView) {
+    public TransactionHolder(View itemView) {
         super(itemView);
         transactionStatus = (TextView)itemView.findViewById(R.id.transactionStatus);
         transactionId = (TextView)itemView.findViewById(R.id.transactionHeaderId);

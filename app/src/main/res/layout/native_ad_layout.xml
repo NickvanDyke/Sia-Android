@@ -6,5 +6,5 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         ads:adUnitId="ca-app-pub-4153236763863764/5532908733"
-        ads:adSize="320x132">
+        ads:adSize="360x132">
 </com.google.android.gms.ads.NativeExpressAdView>

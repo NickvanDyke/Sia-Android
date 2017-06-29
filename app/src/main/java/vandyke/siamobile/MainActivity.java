@@ -1,12 +1,14 @@
 package vandyke.siamobile;
 
 import android.app.*;
-import android.content.*;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -35,7 +37,10 @@ import com.google.android.gms.ads.MobileAds;
 import vandyke.siamobile.dialogs.RemoveAdsFeesDialog;
 import vandyke.siamobile.fragments.*;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 
 public class MainActivity extends AppCompatActivity {
@@ -93,10 +98,11 @@ public class MainActivity extends AppCompatActivity {
         }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_layout);
-        if (theme == Theme.CUSTOM) {
+        if (theme == Theme.CUSTOM) { // TODO: not working? just black background?
+            System.out.println(prefs.getString("customBgBase64", "null"));
             byte[] b = Base64.decode(prefs.getString("customBgBase64", "null"), Base64.DEFAULT);
             Bitmap bitmap = BitmapFactory.decodeByteArray(b, 0, b.length);
-            getWindow().setBackgroundDrawable(new BitmapDrawable(bitmap));
+            getWindow().setBackgroundDrawable(new BitmapDrawable(getResources(), bitmap));
         }
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -119,7 +125,6 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close) {
             public void onDrawerClosed(View drawerView) {
-                // TODO: maybe make it so it waits until drawer close if fragment doesn't already exist, but loads immediately if it does?
                 super.onDrawerClosed(drawerView);
                 if (selectedMenuItem == null || !loadSomethingOnClose)
                     return;
@@ -211,29 +216,6 @@ public class MainActivity extends AppCompatActivity {
                 loadDrawerFragment(TerminalFragment.class);
                 navigationView.setCheckedItem(R.id.drawer_item_terminal);
                 break;
-        }
-    }
-
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            if (requestCode == SELECT_PICTURE) {
-                Uri selectedImageURI = data.getData();
-                InputStream input = null;
-                try {
-                    input = getContentResolver().openInputStream(selectedImageURI);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-                Bitmap bitmap = BitmapFactory.decodeStream(input, null, null);
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
-                byte[] b = baos.toByteArray();
-                SharedPreferences.Editor prefsEditor = prefs.edit();
-                prefsEditor.putString("customBgBase64", Base64.encodeToString(b, Base64.DEFAULT));
-                prefsEditor.apply();
-                recreate();
-            }
         }
     }
 
