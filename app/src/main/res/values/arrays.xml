@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="operation_modes_entries">
-        <item>Use your own remote full node</item>
-        <item>Run a full node on this device</item>
+        <item>Cold storage wallet</item>
+        <item>Remote full node</item>
+        <item>Local full node</item>
     </string-array>
     <string-array name="operation_modes_values">
+        <item>cold_storage</item>
         <item>remote_full_node</item>
         <item>local_full_node</item>
     </string-array>

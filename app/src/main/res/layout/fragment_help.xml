@@ -23,6 +23,32 @@
                 android:id="@+id/textView22"/>
 
         <TextView
+                android:text="Cold Storage"
+                android:paddingTop="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView28"
+                android:textSize="24sp"
+                android:textColor="@android:color/black"
+                android:textAlignment="center"/>
+
+        <TextView
+                android:text="Generate a wallet with a seed and addresses that you can send Siacoin to. Unable to make transactions. This is meant solely for securely storing coins for long periods of time."
+                android:padding="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView25"/>
+
+        <Button
+                android:text="Setup"
+                android:layout_gravity="center"
+                android:textColor="@android:color/white"
+                android:background="@color/colorPrimary"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/coldStorageSetup"/>
+
+        <TextView
                 android:text="Remote Full Node"
                 android:paddingTop="8dp"
                 android:layout_width="match_parent"
@@ -73,32 +99,6 @@
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/localSetup"/>
-
-        <TextView
-                android:text="Cold Storage"
-                android:paddingTop="16dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/textView28"
-                android:textSize="24sp"
-                android:textColor="@android:color/black"
-                android:textAlignment="center"/>
-
-        <TextView
-                android:text="Generate a wallet with a seed and addresses that you can send Siacoin to. Unable to make transactions. This is meant solely for securely storing coins for long periods of time."
-                android:padding="8dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/textView25"/>
-
-        <Button
-                android:text="Setup"
-                android:layout_gravity="center"
-                android:textColor="@android:color/white"
-                android:background="@color/colorPrimary"
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/coldStorageSetup"/>
 
         <TextView
                 android:layout_width="match_parent"

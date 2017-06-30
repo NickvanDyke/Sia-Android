@@ -80,18 +80,20 @@ public class SettingsFragment extends PreferenceFragment {
                 switch (key) {
                     case "operationMode":
                         setRemoteSettingsVisibility();
-                        if (sharedPreferences.getString("operationMode", "remote_full_node").equals("remote_full_node")) {
+                        if (sharedPreferences.getString("operationMode", "cold_storage").equals("remote_full_node")) {
                             editor.putString("address", sharedPreferences.getString("remoteAddress", "192.168.1.11:9980"));
                             Siad.getInstance(getActivity()).stop();
-                        } else if (sharedPreferences.getString("operationMode", "remote_full_node").equals("local_full_node")) {
+                        } else if (sharedPreferences.getString("operationMode", "cold_storage").equals("local_full_node")) {
                             editor.putString("address", "localhost:9980");
                             Siad.getInstance(getActivity()).start();
+                        } else if (sharedPreferences.getString("operationMode", "cold_storage").equals("cold_storage")) {
+                            editor.putString("address", "localhost:9980");
                         }
                         editor.apply();
                         refreshWallet();
                         break;
                     case "remoteAddress":
-                        if (sharedPreferences.getString("operationMode", "remote_full_node").equals("remote_full_node")) {
+                        if (sharedPreferences.getString("operationMode", "cold_storage").equals("remote_full_node")) {
                             editor.putString("address", sharedPreferences.getString("remoteAddress", "192.168.1.11:9980"));
                             editor.apply();
                         }
@@ -140,10 +142,10 @@ public class SettingsFragment extends PreferenceFragment {
     }
 
     private void setRemoteSettingsVisibility() {
-        if (MainActivity.prefs.getString("operationMode", "remote_full_node").equals("remote_full_node")) {
+        if (MainActivity.prefs.getString("operationMode", "cold_storage").equals("remote_full_node")) {
             remoteAddress.setEnabled(true);
             apiPass.setEnabled(true);
-        } else if (MainActivity.prefs.getString("operationMode", "remote_full_node").equals("local_full_node")) {
+        } else if (MainActivity.prefs.getString("operationMode", "cold_storage").equals("local_full_node")) {
             remoteAddress.setEnabled(false);
             apiPass.setEnabled(false);
         }

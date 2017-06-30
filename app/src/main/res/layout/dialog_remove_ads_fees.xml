@@ -56,7 +56,7 @@
             android:textColor="@color/colorPrimary"/>
 
     <TextView
-            android:text="SC costs are adjusted to equal 1 USD\nWarning: uninstalling Sia Mobile will clear all of it's saved data, including whether you've paid to remove ads and/or fees. Removing ads and/or fees will persist through updating Sia Mobile though."
+            android:text="SC costs are adjusted to equal 1 USD\nWarning: uninstalling Sia Mobile will clear all of it's saved data, including whether you've paid to remove ads. Removing ads will persist through updating Sia Mobile though."
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/textView20"

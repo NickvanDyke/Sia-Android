@@ -195,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
         // TODO: maybe add mips64 binary
 
 
-        if (prefs.getString("operationMode", "remote_full_node").equals("local_full_node"))
+        if (prefs.getString("operationMode", "cold_storage").equals("local_full_node"))
             Siad.getInstance(this).start();
 
         switch (prefs.getString("startupPage", "wallet")) {
