@@ -29,7 +29,7 @@ public class WalletSendFragment extends Fragment {
         recipient = (EditText) view.findViewById(R.id.sendRecipient);
         amount = (EditText)view.findViewById(R.id.sendAmount);
         feeText = (TextView)view.findViewById(R.id.walletSendFee);
-        if (!MainActivity.prefs.getBoolean("feesEnabled", true))
+        if (!MainActivity.prefs.getBoolean("feesEnabled", false))
             feeText.setVisibility(View.GONE);
         amount.addTextChangedListener(new TextWatcher() {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -46,7 +46,7 @@ public class WalletSendFragment extends Fragment {
         view.findViewById(R.id.walletSend).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 BigDecimal sendAmount = Wallet.scToHastings(amount.getText().toString());
-                if (MainActivity.prefs.getBoolean("feesEnabled", true))
+                if (MainActivity.prefs.getBoolean("feesEnabled", false))
                     Wallet.sendSiacoinsWithDevFee(sendAmount,
                             recipient.getText().toString(),
                             new SiaRequest.VolleyCallback(getActivity()) {

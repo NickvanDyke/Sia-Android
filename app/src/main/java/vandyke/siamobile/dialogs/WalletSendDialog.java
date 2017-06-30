@@ -1,11 +1,11 @@
 package vandyke.siamobile.dialogs;
 
 import android.app.Dialog;
+import android.app.DialogFragment;
+import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.app.DialogFragment;
-import android.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -32,7 +32,7 @@ public class WalletSendDialog extends DialogFragment {
         final TextView feeText = (TextView)view.findViewById(R.id.walletSendFee);
         if (MainActivity.theme == MainActivity.Theme.CUSTOM)
             feeText.setTextColor(Color.GRAY);
-        if (!MainActivity.prefs.getBoolean("feesEnabled", true))
+        if (!MainActivity.prefs.getBoolean("feesEnabled", false))
             feeText.setVisibility(View.GONE);
         amount.addTextChangedListener(new TextWatcher() {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -53,7 +53,7 @@ public class WalletSendDialog extends DialogFragment {
                 .setPositiveButton("Send", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         BigDecimal sendAmount = Wallet.scToHastings(amount.getText().toString());
-                        if (MainActivity.prefs.getBoolean("feesEnabled", true))
+                        if (MainActivity.prefs.getBoolean("feesEnabled", false))
                             Wallet.sendSiacoinsWithDevFee(sendAmount,
                                     ((EditText) view.findViewById(R.id.sendRecipient)).getText().toString(),
                                     new SiaRequest.VolleyCallback(getActivity()));

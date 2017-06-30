@@ -69,7 +69,7 @@ public class RemoveAdsFeesDialog extends DialogFragment {
                 }
             });
         }
-        if (!MainActivity.prefs.getBoolean("feesEnabled", true)) {
+        if (!MainActivity.prefs.getBoolean("feesEnabled", false)) {
             removeFeesButton.setVisibility(View.GONE);
             feesCostText.setVisibility(View.GONE);
         }
