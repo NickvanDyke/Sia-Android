@@ -82,14 +82,14 @@ public class SettingsFragment extends PreferenceFragment {
                         if (sharedPreferences.getString("operationMode", "cold_storage").equals("remote_full_node")) {
                             editor.putString("address", sharedPreferences.getString("remoteAddress", "192.168.1.11:9980"));
                             LocalWallet.destroy();
-                            Siad.stopSiad();
+                            Siad.stopSiad(getActivity());
                         } else if (sharedPreferences.getString("operationMode", "cold_storage").equals("local_full_node")) {
                             editor.putString("address", "localhost:9980");
                             LocalWallet.destroy();
-                            Siad.getInstance(getActivity()).start();
+                            Siad.getInstance(getActivity()).start(getActivity());
                         } else if (sharedPreferences.getString("operationMode", "cold_storage").equals("cold_storage")) {
                             editor.putString("address", "localhost:9980");
-                            Siad.stopSiad();
+                            Siad.stopSiad(getActivity());
                             try {
                                 LocalWallet.getInstance(getActivity()).start(NanoHTTPD.SOCKET_READ_TIMEOUT);
                             } catch (IOException e) {

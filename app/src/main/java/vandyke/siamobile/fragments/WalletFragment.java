@@ -280,11 +280,6 @@ public class WalletFragment extends Fragment {
         notificationManager.notify(SYNC_NOTIFICATION, builder.build());
     }
 
-    public static void staticRefresh() {
-        if (instance != null)
-            instance.refresh();
-    }
-
     // note time should be in seconds
     public int estimatedBlockHeightAt(long time) {
         long block100kTimestamp = 1492126789; // Unix timestamp; seconds

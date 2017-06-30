@@ -196,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         if (prefs.getString("operationMode", "cold_storage").equals("local_full_node"))
-            Siad.getInstance(this).start();
+            Siad.getInstance(this).start(this);
         else if (prefs.getString("operationMode", "cold_storage").equals("cold_storage"))
             try {
                 LocalWallet.getInstance(this).start();

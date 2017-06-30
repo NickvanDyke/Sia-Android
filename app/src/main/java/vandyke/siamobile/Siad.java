@@ -22,7 +22,6 @@ public class Siad {
 
     public static int SIAD_NOTIFICATION = 1;
 
-    private Activity activity;
     private static Siad instance; // TODO
     private File siadFile;
     private Process siadProcess;
@@ -33,7 +32,6 @@ public class Siad {
     private Siad(Activity activity) {
         siadFile = MainActivity.copyBinary("siad", activity);
         instance = this;
-        this.activity = activity;
     }
 
     public static Siad getInstance(Activity activity) {
@@ -46,7 +44,7 @@ public class Siad {
         instance = null;
     }
 
-    public void start() {
+    public void start(final Activity activity) {
         if (siadFile == null) {
             terminalAppend("Your device's processor architecture is not supported by siad. Sorry! There's nothing Sia Mobile can do about this");
             return;
@@ -70,8 +68,8 @@ public class Siad {
                         String line;
                         while ((line = inputReader.readLine()) != null) {
                             if (line.contains("Finished loading") || line.contains("Done!"))
-                                WalletFragment.staticRefresh();
-                            siadNotification(line);
+                                WalletFragment.refreshWallet(activity.getFragmentManager());
+                            siadNotification(line, activity);
                             System.out.println(line);
                             final String lineFinal = line + "\n";
                             activity.runOnUiThread(new Runnable() {
@@ -92,13 +90,13 @@ public class Siad {
         }
     }
 
-    public static void stopSiad() {
+    public static void stopSiad(Activity activity) {
         if (instance == null)
             return;
-        instance.stop();
+        instance.stop(activity);
     }
 
-    public void stop() {
+    public void stop(Activity activity) {
         Daemon.stop(new SiaRequest.VolleyCallback(activity));
         siadProcess = null;
         terminalAppend("Stopping siad... (may take a while. It's okay to close Sia Mobile during this)\n");
@@ -132,7 +130,7 @@ public class Siad {
             stdoutBuffer.append(text);
     }
 
-    private void siadNotification(String text) {
+    private void siadNotification(String text, Activity activity) {
         Notification.Builder builder = new Notification.Builder(activity);
         builder.setSmallIcon(R.drawable.ic_sync_white_48dp);
         Bitmap largeIcon = BitmapFactory.decodeResource(activity.getResources(), R.drawable.sia_logo_transparent);
