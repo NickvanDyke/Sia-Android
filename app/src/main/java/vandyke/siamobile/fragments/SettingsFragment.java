@@ -10,10 +10,7 @@ import android.preference.*;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.widget.Toast;
-import vandyke.siamobile.BuildConfig;
-import vandyke.siamobile.MainActivity;
-import vandyke.siamobile.R;
-import vandyke.siamobile.Siad;
+import vandyke.siamobile.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -44,18 +41,18 @@ public class SettingsFragment extends PreferenceFragment {
 
         operationMode.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             public boolean onPreferenceChange(Preference preference, Object o) {
-                if (MainActivity.abi.equals("aarch64") || MainActivity.abi.equals("x86_64"))
-                    return true;
-                else
+                if (((String)o).equals("local_full_node")
+                        && !(MainActivity.abi.equals("aarch64") || MainActivity.abi.equals("x86_64"))) {
                     Toast.makeText(getActivity(), "Sorry, but your device's CPU architecture is not supported by siad. There is nothing Sia Mobile can do about this", Toast.LENGTH_LONG).show();
-                return false;
+                    return false;
+                }
+                return true;
             }
         });
 
         final SwitchPreference useExternal = (SwitchPreference)findPreference("useExternal");
         useExternal.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             public boolean onPreferenceChange(Preference preference, Object o) {
-                System.out.println( MainActivity.externalStorageStateDescription());
                 if (MainActivity.isExternalStorageWritable())
                     return true;
                 else
@@ -88,6 +85,7 @@ public class SettingsFragment extends PreferenceFragment {
                             Siad.getInstance(getActivity()).start();
                         } else if (sharedPreferences.getString("operationMode", "cold_storage").equals("cold_storage")) {
                             editor.putString("address", "localhost:9980");
+                            LocalWallet.getInstance().startListening(9980);
                         }
                         editor.apply();
                         refreshWallet();

@@ -23,15 +23,14 @@ public class LocalWallet {
 
     private File binary;
 
-    private LocalWallet(Activity activity) {
+    private LocalWallet() {
         seed = MainActivity.prefs.getString("localWalletSeed", "noseed");
         addresses = new ArrayList<>(MainActivity.prefs.getStringSet("localWalletAddresses", new HashSet<String>()));
-        binary = MainActivity.copyBinary("sia-coldstorage-arm", activity);
     }
 
-    public static LocalWallet getInstance(Activity activity) {
+    public static LocalWallet getInstance() {
         if (instance == null)
-            instance = new LocalWallet(activity);
+            instance = new LocalWallet();
         return instance;
     }
 
@@ -78,7 +77,7 @@ public class LocalWallet {
                                 out.print(response.toString());
                             } else {
                                 out.print("501 Not Implemented");
-                                out.print("{\"message\":unsupported on local wallet");
+                                out.print("{\"message\":\"unsupported on local wallet\"}");
                             }
                             in.close();
                             out.close();
@@ -97,8 +96,9 @@ public class LocalWallet {
         }
     }
 
-    public void newWallet() {
+    public void newWallet(Activity activity) {
         try {
+            binary = MainActivity.copyBinary("sia-coldstorage", activity);
             ArrayList<String> fullCommand = new ArrayList<>();
             fullCommand.add(0, binary.getAbsolutePath());
             ProcessBuilder pb = new ProcessBuilder(fullCommand);
