@@ -29,9 +29,9 @@
                 android:icon="@drawable/ic_settings_white_48dp"
                 android:title="Settings"/>
         <item
-                android:id="@+id/drawer_item_about"
+                android:id="@+id/drawer_item_links"
                 android:icon="@drawable/icon_about"
-                android:title="About"/>
+                android:title="Links"/>
         <item
                 android:id="@+id/drawer_item_help"
                 android:icon="@drawable/icon_help"

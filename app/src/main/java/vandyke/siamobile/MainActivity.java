@@ -143,8 +143,8 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.drawer_item_settings:
                         loadDrawerFragment(SettingsFragment.class);
                         break;
-                    case R.id.drawer_item_about:
-                        loadDrawerFragment(AboutFragment.class);
+                    case R.id.drawer_item_links:
+                        loadDrawerFragment(LinksFragment.class);
                         break;
                     case R.id.drawer_item_help:
                         loadDrawerFragment(HelpFragment.class);

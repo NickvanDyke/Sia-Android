@@ -22,7 +22,7 @@ public class WelcomeFragment extends Fragment {
             });
             infoButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    ((MainActivity)getActivity()).loadDrawerFragment(AboutFragment.class);
+                    ((MainActivity)getActivity()).loadDrawerFragment(LinksFragment.class);
                 }
             });
             return v;

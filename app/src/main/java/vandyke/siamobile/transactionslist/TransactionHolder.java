@@ -2,12 +2,12 @@ package vandyke.siamobile.transactionslist;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
-import com.thoughtbot.expandablerecyclerview.viewholders.GroupViewHolder;
 import vandyke.siamobile.R;
 
-public class TransactionHolder extends GroupViewHolder {
+public class TransactionHolder extends RecyclerView.ViewHolder {
 
     protected TextView transactionStatus;
     protected TextView transactionId;

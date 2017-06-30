@@ -5,6 +5,8 @@
     <string name="drawer_open">open</string>
     <string name="drawer_close">close</string>
 
+    <string name="crash_toast_text">Sia Mobile has crashed. A report has been sent to the developer</string>
+
     <string name="terminal_warning" tools:ignore="TypographyDashes">ADVANCED:\nThis terminal uses siac as its backend. Siac is a command-line utility written by the
         Sia developers that can interface with all of Sia\'s API endpoints; you can type --help and press enter for a list
         of commands. The purpose of this terminal and its use of siac is to make available to you commands that might not
@@ -13,8 +15,8 @@
     full node on this device, siad\'s output will also appear in this terminal.\n</string>
 
     <!--Strings for explaining install-->
-    <string name="step_5" tools:ignore="TypographyDashes"><![CDATA[5. In the same command prompt, type siad --disable-api-security --authenticate-api
-    --api-addr <ip>:<port>, replacing <ip> with your computer\'s internal IP address from step 4, and <port> with a port number
+    <string name="step_5" tools:ignore="TypographyDashes"><![CDATA[5. In the same command prompt, type\n\nsiad --disable-api-security --authenticate-api
+    --api-addr <ip>:<port>\n\n replacing <ip> with your computer\'s internal IP address from step 4, and <port> with a port number
     of your choosing; remember your port number for later. This step will launch Sia on your computer in a fashion that
     allows Sia Mobile to interact with it. You will need to keep this command prompt open and running to use Sia Mobile with it.]]></string>
 
