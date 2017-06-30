@@ -187,8 +187,9 @@ public class WalletFragment extends Fragment {
 
             public void onError(SiaRequest.Error error) {
                 super.onError(error);
-                balanceText.setText("Loading...");
-                walletStatusText.setText("Loading...");
+                balanceText.setText(Wallet.round(new BigDecimal("0")));
+                walletStatusText.setText("No wallet");
+                balanceUnconfirmedText.setText(Wallet.round(new BigDecimal("0")) + " unconfirmed");
             }
         });
 

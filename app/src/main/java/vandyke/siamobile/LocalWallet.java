@@ -1,6 +1,7 @@
 package vandyke.siamobile;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import fi.iki.elonen.NanoHTTPD;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,8 +25,8 @@ public class LocalWallet extends NanoHTTPD {
 
     private LocalWallet(Activity activity) {
         super("localhost", 9980);
-        seed = MainActivity.prefs.getString("localWalletSeed", "noseed");
-        addresses = new ArrayList<>(MainActivity.prefs.getStringSet("localWalletAddresses", new HashSet<String>()));
+        seed = MainActivity.prefs.getString("coldStorageSeed", "noseed");
+        addresses = new ArrayList<>(MainActivity.prefs.getStringSet("coldStorageAddresses", new HashSet<String>()));
         binary = MainActivity.copyBinary("sia-coldstorage", activity ,true);
     }
 
@@ -97,8 +98,10 @@ public class LocalWallet extends NanoHTTPD {
             addresses.clear();
             for (int i = 0; i < addressesJson.length(); i++)
                 addresses.add(addressesJson.getString(i).trim());
-            System.out.println(seed);
-            System.out.println(addresses);
+            SharedPreferences.Editor editor = MainActivity.prefs.edit();
+            editor.putString("coldStorageSeed", seed);
+            editor.putStringSet("coldStorageAddresses", new HashSet<>(addresses));
+            editor.apply();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {
