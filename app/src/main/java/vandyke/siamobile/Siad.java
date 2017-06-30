@@ -30,7 +30,7 @@ public class Siad {
     private TerminalFragment terminalFragment;
 
     private Siad(Activity activity) {
-        siadFile = MainActivity.copyBinary("siad", activity);
+        siadFile = MainActivity.copyBinary("siad", activity, false);
         instance = this;
     }
 
@@ -46,7 +46,7 @@ public class Siad {
 
     public void start(final Activity activity) {
         if (siadFile == null) {
-            terminalAppend("Your device's processor architecture is not supported by siad. Sorry! There's nothing Sia Mobile can do about this");
+            terminalAppend("Your device's processor architecture is not supported by Sia's full node. Sorry! There's nothing Sia Mobile can do about this");
             return;
         }
         if (siadProcess != null) {

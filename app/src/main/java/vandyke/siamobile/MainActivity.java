@@ -46,6 +46,7 @@ import java.math.BigDecimal;
 public class MainActivity extends AppCompatActivity {
 
     public static String abi;
+    public static String abi32;
     public static SharedPreferences prefs;
     public static RequestQueue requestQueue;
     public static int defaultTextColor;
@@ -190,9 +191,14 @@ public class MainActivity extends AppCompatActivity {
             abi = Build.CPU_ABI;
         else
             abi = Build.SUPPORTED_ABIS[0];
+        if (abi.contains("arm"))
+            abi32 = "arm32";
+        else if (abi.contains("x86"))
+            abi32 = "x86";
         if (abi.equals("arm64-v8a"))
             abi = "aarch64";
         // TODO: maybe add mips64 binary
+        System.out.println(abi);
 
 
         if (prefs.getString("operationMode", "cold_storage").equals("local_full_node"))
@@ -349,10 +355,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // will return null if the abi is an unsupported one and therefore there is not a binary for it
-    public static File copyBinary(String filename, Activity activity) {
+    public static File copyBinary(String filename, Activity activity, boolean bit32) {
         try {
-            InputStream in = activity.getAssets().open(filename + "-" + abi);
-            File result = new File(activity.getFilesDir(), filename + "-" + abi);
+            InputStream in;
+            File result;
+            if (bit32) {
+                in = activity.getAssets().open(filename + "-" + abi32);
+                result = new File(activity.getFilesDir(), filename + "-" + abi32);
+            } else {
+                in = activity.getAssets().open(filename + "-" + abi);
+                result = new File(activity.getFilesDir(), filename + "-" + abi);
+            }
             if (result.exists())
                 return result;
             FileOutputStream out = new FileOutputStream(result);

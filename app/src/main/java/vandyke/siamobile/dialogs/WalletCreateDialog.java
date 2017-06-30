@@ -25,6 +25,7 @@ import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
 
 public class WalletCreateDialog extends DialogFragment {
+    
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = MainActivity.getDialogBuilder(getActivity());
         final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_wallet_create, null);
@@ -66,9 +67,6 @@ public class WalletCreateDialog extends DialogFragment {
                         String dictionary = "english";
                         if (createFromSeed.isChecked())
                             Wallet.initSeed(password, force, dictionary, seedField.getText().toString(), new SiaRequest.VolleyCallback(getActivity()) {
-                                public void onSuccess(JSONObject response) {
-                                    displaySeed(response, createFromSeed.getContext());
-                                }
                                 public void onError(SiaRequest.Error error) {
                                     if (error.getReason() == SiaRequest.Error.Reason.WALLET_NOT_ENCRYPTED)
                                         Toast.makeText(getActivity(), "Success. Scanning blockchain, please wait", Toast.LENGTH_SHORT).show();
@@ -77,11 +75,7 @@ public class WalletCreateDialog extends DialogFragment {
                                 }
                             });
                         else
-                            Wallet.init(password, force, dictionary, new SiaRequest.VolleyCallback(getActivity()) {
-                                public void onSuccess(JSONObject response) {
-                                    displaySeed(response, createFromSeed.getContext());
-                                }
-                            });
+                            Wallet.init(password, force, dictionary, new SiaRequest.VolleyCallback(getActivity()));
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -103,32 +97,5 @@ public class WalletCreateDialog extends DialogFragment {
 
     public static void createAndShow(FragmentManager fragmentManager) {
         new WalletCreateDialog().show(fragmentManager, "wallet init dialog");
-    }
-
-    private void displaySeed(JSONObject response, final Context context) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        try {
-            final String seed = response.getString("primaryseed");
-            builder.setTitle("Wallet Created")
-                    .setMessage("Wallet creation successful. Your wallet seed is shown below. Keep it safe. Your funds are linked to your wallet seed." +
-                            " This means that your seed is your means of recovering your funds should something happen to your device. Do not tell others your seed.\n\n"
-                            + seed)
-                    .setNegativeButton("Close", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-
-                        }
-                    })
-                    .setPositiveButton("Copy", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            ClipboardManager clipboard = (ClipboardManager)getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-                            ClipData clip = ClipData.newPlainText("Sia wallet primary seed", seed);
-                            clipboard.setPrimaryClip(clip);
-                            Toast.makeText(context, "Copied seed to clipboard", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        builder.show();
     }
 }

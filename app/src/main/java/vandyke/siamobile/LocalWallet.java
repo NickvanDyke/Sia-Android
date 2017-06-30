@@ -20,20 +20,13 @@ public class LocalWallet extends NanoHTTPD {
     private String seed;
     private ArrayList<String> addresses;
 
-    private ServerSocket socket;
-    private Thread socketThread;
-
     private File binary;
 
     private LocalWallet(Activity activity) {
         super("localhost", 9980);
         seed = MainActivity.prefs.getString("localWalletSeed", "noseed");
         addresses = new ArrayList<>(MainActivity.prefs.getStringSet("localWalletAddresses", new HashSet<String>()));
-        addresses.add("1");
-        addresses.add("2");
-        addresses.add("3");
-        addresses.add("4");
-        binary = MainActivity.copyBinary("sia-coldstorage", activity);
+        binary = MainActivity.copyBinary("sia-coldstorage", activity ,true);
     }
 
     public static LocalWallet getInstance(Activity activity) {
@@ -46,6 +39,7 @@ public class LocalWallet extends NanoHTTPD {
         String uri = session.getUri();
         JSONObject response = new JSONObject();
         Response.Status status = Response.Status.OK;
+        System.out.println(uri);
         try {
             if (uri.contains("/wallet/addresses")) {
                 JSONArray addressArray = new JSONArray();
@@ -58,6 +52,9 @@ public class LocalWallet extends NanoHTTPD {
                 JSONArray seedsArray = new JSONArray();
                 seedsArray.put(seed);
                 response.put("allseeds", seedsArray);
+            } else if (uri.contains("/wallet/init")) {
+                newWallet();
+                response.put("primaryseed", seed);
             } else {
                 response.put("message", "unsupported on cold storage wallet");
                 status = Response.Status.NOT_IMPLEMENTED;
@@ -78,7 +75,7 @@ public class LocalWallet extends NanoHTTPD {
         instance = null;
     }
 
-    public void newWallet(Activity activity) {
+    public void newWallet() {
         try {
             ArrayList<String> fullCommand = new ArrayList<>();
             fullCommand.add(0, binary.getAbsolutePath());
@@ -94,7 +91,6 @@ public class LocalWallet extends NanoHTTPD {
                 stdOut.append(new String(buffer), 0, read);
             }
             inputReader.close();
-            // parse the output
             JSONObject json = new JSONObject(stdOut.toString());
             seed = json.getString("Seed");
             JSONArray addressesJson = json.getJSONArray("Addresses");

@@ -45,7 +45,7 @@ public class SettingsFragment extends PreferenceFragment {
             public boolean onPreferenceChange(Preference preference, Object o) {
                 if (((String)o).equals("local_full_node")
                         && !(MainActivity.abi.equals("aarch64") || MainActivity.abi.equals("x86_64"))) {
-                    Toast.makeText(getActivity(), "Sorry, but your device's CPU architecture is not supported by siad. There is nothing Sia Mobile can do about this", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), "Sorry, but your device's CPU architecture is not supported by Sia's full node. There is nothing Sia Mobile can do about this", Toast.LENGTH_LONG).show();
                     return false;
                 }
                 return true;

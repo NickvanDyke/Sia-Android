@@ -5,7 +5,7 @@
     <string name="drawer_open">open</string>
     <string name="drawer_close">close</string>
 
-    <string name="crash_toast_text">Sia Mobile has crashed. A report has been sent to the developer</string>
+    <string name="crash_toast_text">Sia Mobile has crashed. Please send a crash report to the developer</string>
 
     <string name="terminal_warning" tools:ignore="TypographyDashes">ADVANCED:\nThis terminal uses siac as its backend. Siac is a command-line utility written by the
         Sia developers that can interface with all of Sia\'s API endpoints; you can type --help and press enter for a list
