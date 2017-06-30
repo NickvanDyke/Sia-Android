@@ -10,10 +10,12 @@ import android.preference.*;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.widget.Toast;
+import fi.iki.elonen.NanoHTTPD;
 import vandyke.siamobile.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 
 import static android.app.Activity.RESULT_OK;
@@ -79,28 +81,35 @@ public class SettingsFragment extends PreferenceFragment {
                         setRemoteSettingsVisibility();
                         if (sharedPreferences.getString("operationMode", "cold_storage").equals("remote_full_node")) {
                             editor.putString("address", sharedPreferences.getString("remoteAddress", "192.168.1.11:9980"));
-                            Siad.getInstance(getActivity()).stop();
+                            LocalWallet.destroy();
+                            Siad.stopSiad();
                         } else if (sharedPreferences.getString("operationMode", "cold_storage").equals("local_full_node")) {
                             editor.putString("address", "localhost:9980");
+                            LocalWallet.destroy();
                             Siad.getInstance(getActivity()).start();
                         } else if (sharedPreferences.getString("operationMode", "cold_storage").equals("cold_storage")) {
                             editor.putString("address", "localhost:9980");
-                            LocalWallet.getInstance().startListening(9980);
+                            Siad.stopSiad();
+                            try {
+                                LocalWallet.getInstance(getActivity()).start(NanoHTTPD.SOCKET_READ_TIMEOUT);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                         }
                         editor.apply();
-                        refreshWallet();
+//                        WalletFragment.refreshWallet(getFragmentManager());
                         break;
                     case "remoteAddress":
                         if (sharedPreferences.getString("operationMode", "cold_storage").equals("remote_full_node")) {
                             editor.putString("address", sharedPreferences.getString("remoteAddress", "192.168.1.11:9980"));
                             editor.apply();
                         }
-                        refreshWallet();
+//                        WalletFragment.refreshWallet(getFragmentManager());
                         break;
                     case "apiPass":
                     case "hideZero":
                     case "displayedDecimalPrecision":
-                        refreshWallet();
+//                        WalletFragment.refreshWallet(getFragmentManager());
                         break;
                     case "theme":// restart to apply the theme; don't need to change theme variable since app is restarting and it'll load it
                         switch (sharedPreferences.getString("theme", "light")) {
@@ -147,11 +156,5 @@ public class SettingsFragment extends PreferenceFragment {
             remoteAddress.setEnabled(false);
             apiPass.setEnabled(false);
         }
-    }
-
-    private void refreshWallet() {
-        WalletFragment fragment = (WalletFragment)getFragmentManager().findFragmentByTag("WalletFragment");
-        if (fragment != null)
-            fragment.refresh();
     }
 }

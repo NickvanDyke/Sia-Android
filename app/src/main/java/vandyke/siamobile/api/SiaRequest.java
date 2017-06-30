@@ -25,6 +25,7 @@ public class SiaRequest extends StringRequest {
             public void onResponse(String response) {
                 try {
                     JSONObject responseJson = response.length() == 0 ? new JSONObject() : new JSONObject(response);
+                    System.out.println(responseJson);
                     callback.onSuccess(responseJson);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -32,6 +33,8 @@ public class SiaRequest extends StringRequest {
             }
         }, new Response.ErrorListener() {
             public void onErrorResponse(VolleyError error) {
+                if (error.networkResponse != null)
+                    System.out.println(error.networkResponse.data);
                 callback.onError(new Error(error));
             }
         });
@@ -96,7 +99,8 @@ public class SiaRequest extends StringRequest {
             INCORRECT_API_PASSWORD("Incorrect API password"),
             UNACCOUNTED_FOR_ERROR("Unexpected error"),
             ANOTHER_WALLET_SCAN_UNDERWAY("Wallet scan in progress. Please wait"),
-            WALLET_NOT_ENCRYPTED("Wallet has not been encrypted yet");
+            WALLET_NOT_ENCRYPTED("Wallet has not been encrypted yet"),
+            UNSUPPORTED_ON_COLD_WALLET("Unsupported on cold storage wallet");
 
             private String msg;
 
@@ -131,7 +135,6 @@ public class SiaRequest extends StringRequest {
                 }
             } else {
                 reason = Reason.NO_NETWORK_RESPONSE;
-                System.out.println("ERROR WITH NO ACCOMPANYING NETWORKRESPONSE; I don't know what causes this versus timeout");
             }
         }
 
@@ -160,6 +163,8 @@ public class SiaRequest extends StringRequest {
                 return Reason.ANOTHER_WALLET_SCAN_UNDERWAY;
             else if (errorMessage.contains("wallet has not been encrypted yet"))
                 return Reason.WALLET_NOT_ENCRYPTED;
+            else if (errorMessage.contains("unsupported on cold storage wallet"))
+                return Reason.UNSUPPORTED_ON_COLD_WALLET;
             else
                 return Reason.UNACCOUNTED_FOR_ERROR;
         }

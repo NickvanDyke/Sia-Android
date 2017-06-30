@@ -20,7 +20,7 @@
                 android:key="operationMode"
                 android:entries="@array/operation_modes_entries"
                 android:entryValues="@array/operation_modes_values"
-                android:defaultValue="remote_full_node"/>
+                android:defaultValue="cold_storage"/>
         <EditTextPreference
                 android:key="remoteAddress"
                 android:title="Remote node address"

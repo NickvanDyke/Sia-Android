@@ -1,6 +1,7 @@
 package vandyke.siamobile;
 
 import android.app.Activity;
+import fi.iki.elonen.NanoHTTPD;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -10,8 +11,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Map;
 
-public class LocalWallet {
+public class LocalWallet extends NanoHTTPD {
 
     private static LocalWallet instance;
 
@@ -23,82 +25,61 @@ public class LocalWallet {
 
     private File binary;
 
-    private LocalWallet() {
+    private LocalWallet(Activity activity) {
+        super("localhost", 9980);
         seed = MainActivity.prefs.getString("localWalletSeed", "noseed");
         addresses = new ArrayList<>(MainActivity.prefs.getStringSet("localWalletAddresses", new HashSet<String>()));
+        addresses.add("1");
+        addresses.add("2");
+        addresses.add("3");
+        addresses.add("4");
+        binary = MainActivity.copyBinary("sia-coldstorage", activity);
     }
 
-    public static LocalWallet getInstance() {
+    public static LocalWallet getInstance(Activity activity) {
         if (instance == null)
-            instance = new LocalWallet();
+            instance = new LocalWallet(activity);
         return instance;
     }
 
-    public void startListening(final int port) {
-        if (socketThread != null || socketThread.isAlive()) {
-            System.out.println("localwallet is already listening");
-            return;
-        }
+    public Response serve(IHTTPSession session) {
+        String uri = session.getUri();
+        JSONObject response = new JSONObject();
+        Response.Status status = Response.Status.OK;
         try {
-            socket = new ServerSocket(port);
-            socketThread = new Thread(new Runnable() {
-                public void run() {
-                    try {
-                        while (true) {
-                            System.out.println("waiting for connection");
-                            Socket client = socket.accept(); // might want to fork when accepting, in case user sends lots at once
-                            System.out.println("something connected to socket");
-                            BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-                            PrintWriter out = new PrintWriter(client.getOutputStream());
-
-                            String line;
-                            while ((line = in.readLine()) != null) {
-                                System.out.println(line);
-                            }
-
-                            if (line == null)
-                                continue;
-
-                            // probably need some header stuff first
-                            out.print("HTTP/1.1 ");
-
-                            if (line.contains("/wallet/address")) {
-                                out.print("200 OK\n\n");
-                                JSONObject response = new JSONObject();
-                                response.put("address", addresses.get((int)(Math.random() * addresses.size())));
-                                out.print(response.toString());
-                            } else if (line.contains("/wallet/addresses")) {
-                                out.print("200 OK\n\n");
-                                JSONObject response = new JSONObject();
-                                JSONArray addressArray = new JSONArray();
-                                for (String address : addresses)
-                                    addressArray.put(address);
-                                response.put("address", addressArray);
-                                out.print(response.toString());
-                            } else {
-                                out.print("501 Not Implemented");
-                                out.print("{\"message\":\"unsupported on local wallet\"}");
-                            }
-                            in.close();
-                            out.close();
-                            client.close();
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-            socketThread.start();
-        } catch (IOException e) {
+            if (uri.contains("/wallet/addresses")) {
+                JSONArray addressArray = new JSONArray();
+                for (String address : addresses)
+                    addressArray.put(address);
+                response.put("addresses", addressArray);
+            } else if (uri.contains("/wallet/address")) {
+                response.put("address", addresses.get((int)(Math.random() * addresses.size())));
+            } else if (uri.contains("/wallet/seeds")) {
+                JSONArray seedsArray = new JSONArray();
+                seedsArray.put(seed);
+                response.put("allseeds", seedsArray);
+            } else {
+                response.put("message", "unsupported on cold storage wallet");
+                status = Response.Status.NOT_IMPLEMENTED;
+            }
+        } catch (JSONException e) {
             e.printStackTrace();
         }
+
+        Response httpResponse = newFixedLengthResponse(response.toString());
+        httpResponse.setStatus(status);
+        return httpResponse;
+    }
+
+    public static void destroy() {
+        if (instance == null)
+            return;
+        instance.stop();
+        instance = null;
     }
 
     public void newWallet(Activity activity) {
         try {
-            binary = MainActivity.copyBinary("sia-coldstorage", activity);
             ArrayList<String> fullCommand = new ArrayList<>();
             fullCommand.add(0, binary.getAbsolutePath());
             ProcessBuilder pb = new ProcessBuilder(fullCommand);
@@ -119,7 +100,7 @@ public class LocalWallet {
             JSONArray addressesJson = json.getJSONArray("Addresses");
             addresses.clear();
             for (int i = 0; i < addressesJson.length(); i++)
-                addresses.add(addressesJson.getString(i));
+                addresses.add(addressesJson.getString(i).trim());
             System.out.println(seed);
             System.out.println(addresses);
         } catch (IOException e) {

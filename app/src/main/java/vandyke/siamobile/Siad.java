@@ -73,7 +73,7 @@ public class Siad {
                                 WalletFragment.staticRefresh();
                             siadNotification(line);
                             System.out.println(line);
-                            final String lineFinal = line;
+                            final String lineFinal = line + "\n";
                             activity.runOnUiThread(new Runnable() {
                                 public void run() {
                                     terminalAppend(lineFinal);
@@ -90,6 +90,12 @@ public class Siad {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void stopSiad() {
+        if (instance == null)
+            return;
+        instance.stop();
     }
 
     public void stop() {

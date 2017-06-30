@@ -337,4 +337,10 @@ public class WalletFragment extends Fragment {
 
         return super.onOptionsItemSelected(item);
     }
+
+    public static void refreshWallet(FragmentManager fragmentManager) {
+        WalletFragment fragment = (WalletFragment)fragmentManager.findFragmentByTag("WalletFragment");
+        if (fragment != null)
+            fragment.refresh();
+    }
 }

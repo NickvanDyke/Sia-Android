@@ -197,6 +197,12 @@ public class MainActivity extends AppCompatActivity {
 
         if (prefs.getString("operationMode", "cold_storage").equals("local_full_node"))
             Siad.getInstance(this).start();
+        else if (prefs.getString("operationMode", "cold_storage").equals("cold_storage"))
+            try {
+                LocalWallet.getInstance(this).start();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
         switch (prefs.getString("startupPage", "wallet")) {
             case "files":
