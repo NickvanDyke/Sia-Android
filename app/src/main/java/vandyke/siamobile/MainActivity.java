@@ -200,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
         else if (abi.contains("x86"))
             abi32 = "x86";
         if (abi.equals("arm64-v8a"))
-            abi = "aarch64";
+            abi = "arm64";
         // TODO: maybe add mips binaries
 
 
