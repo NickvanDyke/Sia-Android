@@ -12,7 +12,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
-import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
 import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
@@ -42,6 +41,8 @@ public class WalletReceiveFragment extends Fragment {
     }
 
     public void getNewAddress() {
+        address.setText("Generating address...\n");
+        System.out.println(address.getText());
         Wallet.newAddress(new SiaRequest.VolleyCallback(getActivity()) {
             public void onSuccess(JSONObject response) {
                 try {

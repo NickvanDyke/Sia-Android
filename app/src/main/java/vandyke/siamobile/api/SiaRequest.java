@@ -25,7 +25,6 @@ public class SiaRequest extends StringRequest {
             public void onResponse(String response) {
                 try {
                     JSONObject responseJson = response.length() == 0 ? new JSONObject() : new JSONObject(response);
-                    System.out.println(responseJson);
                     callback.onSuccess(responseJson);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -33,8 +32,6 @@ public class SiaRequest extends StringRequest {
             }
         }, new Response.ErrorListener() {
             public void onErrorResponse(VolleyError error) {
-                if (error.networkResponse != null)
-                    System.out.println(error.networkResponse.data);
                 callback.onError(new Error(error));
             }
         });
@@ -127,7 +124,6 @@ public class SiaRequest extends StringRequest {
                     JSONObject responseJson = new JSONObject(response);
                     String errorMessage = responseJson.getString("message");
                     reason = determineReason(errorMessage);
-                    System.out.println("ERROR: " + reason + "\nMessage: " + errorMessage);
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 } catch (JSONException e) {

@@ -158,8 +158,10 @@ public class WalletFragment extends Fragment {
 
     public void refresh() {
         refreshBalanceAndStatus();
-        refreshTransactions();
-        refreshSyncProgress();
+        if (!MainActivity.prefs.getString("operationMode", "cold_storage").equals("cold_storage")) {
+            refreshTransactions();
+            refreshSyncProgress();
+        }
         //TODO: figure out a GOOD way to Toast "Refreshed" if all requests complete successfully
         //TODO: auto refresh every x seconds. Eventually add option to refresh in background, with notifications?
     }

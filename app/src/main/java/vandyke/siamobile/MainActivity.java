@@ -197,15 +197,14 @@ public class MainActivity extends AppCompatActivity {
             abi32 = "x86";
         if (abi.equals("arm64-v8a"))
             abi = "aarch64";
-        // TODO: maybe add mips64 binary
-        System.out.println(abi);
+        // TODO: maybe add mips binaries
 
 
         if (prefs.getString("operationMode", "cold_storage").equals("local_full_node"))
             Siad.getInstance(this).start(this);
         else if (prefs.getString("operationMode", "cold_storage").equals("cold_storage"))
             try {
-                LocalWallet.getInstance(this).start();
+                ColdStorageWallet.getInstance(this).start();
             } catch (IOException e) {
                 e.printStackTrace();
             }

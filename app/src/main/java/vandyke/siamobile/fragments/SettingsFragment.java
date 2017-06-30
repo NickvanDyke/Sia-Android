@@ -81,17 +81,17 @@ public class SettingsFragment extends PreferenceFragment {
                         setRemoteSettingsVisibility();
                         if (sharedPreferences.getString("operationMode", "cold_storage").equals("remote_full_node")) {
                             editor.putString("address", sharedPreferences.getString("remoteAddress", "192.168.1.11:9980"));
-                            LocalWallet.destroy();
+                            ColdStorageWallet.destroy();
                             Siad.stopSiad(getActivity());
                         } else if (sharedPreferences.getString("operationMode", "cold_storage").equals("local_full_node")) {
                             editor.putString("address", "localhost:9980");
-                            LocalWallet.destroy();
+                            ColdStorageWallet.destroy();
                             Siad.getInstance(getActivity()).start(getActivity());
                         } else if (sharedPreferences.getString("operationMode", "cold_storage").equals("cold_storage")) {
                             editor.putString("address", "localhost:9980");
                             Siad.stopSiad(getActivity());
                             try {
-                                LocalWallet.getInstance(getActivity()).start(NanoHTTPD.SOCKET_READ_TIMEOUT);
+                                ColdStorageWallet.getInstance(getActivity()).start(NanoHTTPD.SOCKET_READ_TIMEOUT);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -111,7 +111,7 @@ public class SettingsFragment extends PreferenceFragment {
                     case "displayedDecimalPrecision":
 //                        WalletFragment.refreshWallet(getFragmentManager());
                         break;
-                    case "theme":// restart to apply the theme; don't need to change theme variable since app is restarting and it'll load it
+                    case "theme":
                         switch (sharedPreferences.getString("theme", "light")) {
                             case "custom":
                                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -152,7 +152,7 @@ public class SettingsFragment extends PreferenceFragment {
         if (MainActivity.prefs.getString("operationMode", "cold_storage").equals("remote_full_node")) {
             remoteAddress.setEnabled(true);
             apiPass.setEnabled(true);
-        } else if (MainActivity.prefs.getString("operationMode", "cold_storage").equals("local_full_node")) {
+        } else {
             remoteAddress.setEnabled(false);
             apiPass.setEnabled(false);
         }
