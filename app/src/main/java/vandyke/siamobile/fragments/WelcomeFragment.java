@@ -17,12 +17,12 @@ public class WelcomeFragment extends Fragment {
             Button infoButton = (Button)v.findViewById(R.id.infoButton);
             setupButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-//                    MainActivity.instance.loadDrawerFragment(HelpFragment.class);
+                    ((MainActivity)getActivity()).loadDrawerFragment(HelpFragment.class);
                 }
             });
             infoButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-//                    MainActivity.instance.loadDrawerFragment(AboutFragment.class);
+                    ((MainActivity)getActivity()).loadDrawerFragment(AboutFragment.class);
                 }
             });
             return v;

@@ -221,6 +221,7 @@ public class MainActivity extends AppCompatActivity {
     public void loadDrawerFragment(Class clazz) {
         String className = clazz.getSimpleName();
         FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         Fragment currentFrag = fragmentManager.findFragmentByTag(currentFragmentTag);
         Fragment newFragment = fragmentManager.findFragmentByTag(className);
 
@@ -261,7 +262,7 @@ public class MainActivity extends AppCompatActivity {
             transaction.hide(currentFrag);
         transaction.add(R.id.fragment_frame, fragment, className);
         transaction.addToBackStack(null).commit();
-//            currentFragmentTag = className;
+        currentFragmentTag = className;
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {

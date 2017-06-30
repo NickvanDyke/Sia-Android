@@ -20,5 +20,7 @@
 
     <string name="step_8"><![CDATA[8. (optional) Following the steps above, you will only be able to access your
 computer\'s Sia from your phone when your phone is on the same network as your computer. In order to access it from anywhere, you will have to port forward on your
-router on your chosen port to your computer\'s internal IP address. Many guides exist online detailing how to do this.]]></string>
+router on your chosen port to your computer\'s internal IP address. Many guides exist online detailing how to do this. Please note that the Sia API uses HTTP requests,
+which are NOT inherently secure. If you communicate with your full node from outside your local network, other people can potentially see the info you are sending
+and receiving. This is not a concern if you will not be port forwarding your node.]]></string>
 </resources>

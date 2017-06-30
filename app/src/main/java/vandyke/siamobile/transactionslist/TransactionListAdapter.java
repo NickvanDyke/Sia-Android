@@ -69,7 +69,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter {
             txHolder.transactionId.setText(id.substring(0, id.length() / 2) + "\n" + id.substring(id.length() / 2));
 
             String valueText = transaction.getNetValueStringRounded();
-            if (transaction.isNetZero()) {
+            if (transaction.isNetZero() || transaction.getNetValueStringExact().equals("")) {
                 txHolder.transactionValue.setTextColor(MainActivity.defaultTextColor);
             } else if (valueText.contains("-")) {
                 txHolder.transactionValue.setTextColor(red);

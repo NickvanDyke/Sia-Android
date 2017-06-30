@@ -220,6 +220,8 @@ public class WalletFragment extends Fragment {
             @Override
             public void onError(SiaRequest.Error error) {
                 super.onError(error);
+                if (transactions.isEmpty())
+                    return;
                 transactions = new ArrayList<>();
                 adapter = new TransactionListAdapter(transactions);
                 transactionList.setAdapter(adapter);

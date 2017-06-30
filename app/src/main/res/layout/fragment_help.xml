@@ -1,102 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:layout_height="match_parent">
 
-            <TextView
-                android:text="Interfacing with your\nown remote full Sia node"
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <TextView
+                android:text="There are three different ways that Sia Mobile can function. Given Sia's current features, these are all of the possible options right now. Unfortunately, a light wallet is not currently a possibility for Sia. Once it is, Sia Mobile will add that functionality."
                 android:layout_width="match_parent"
-                android:padding="8dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/textView3"
-                android:textSize="20sp"
+                android:padding="8dp"
+                android:id="@+id/textView21"/>
+
+        <TextView
+                android:text="Each section below will briefly describe the functionality, followed by a button that will take you to more detailed information about it. You can change the mode that Sia Mobile functions in at any time from the settings page."
+                android:padding="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView22"/>
+
+        <TextView
+                android:text="Remote Full Node"
+                android:paddingTop="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView26"
                 android:textAlignment="center"
-                android:textColor="?android:attr/textColorPrimary"
-                />
+                android:textSize="24sp"
+                android:textColor="@android:color/black"/>
 
-            <TextView
-                android:text="Estimated setup time: 3-5 minutes.\nDetailed below is how to set up Sia on your Windows computer so that you can use Sia Mobile with it. If you're using Linux, it's assumed you are capable of adapting these instructions to Linux. It is possible to use an existing Sia installation; skip to step 3 in this case."
-                android:layout_width="match_parent"
-                android:padding="8dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/textView11" />
-
-            <TextView
-                android:text="1. Download the zip file for the latest Sia release for your platform at https://github.com/NebulousLabs/Sia/releases. This is the bare minimum for running a full Sia node on your computer to use with Sia Mobile. If you want a graphical interface on your computer for your wallet and files as well, instead download Sia-UI from here: https://github.com/NebulousLabs/Sia-UI/releases."
+        <TextView
+                android:text="Run a full Sia node on your computer, and interact with it from Sia Mobile."
                 android:padding="8dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/textView4"
-                android:textSize="14sp"
-                android:textAlignment="textStart"
-                android:layout_gravity="start"/>
+                android:id="@+id/textView23"/>
 
-            <TextView
-                android:text="2. Extract the zip file to a location of your choosing."
+        <Button
+                android:text="Setup"
+                android:layout_gravity="center"
+                android:background="@color/colorPrimary"
+                android:textColor="@android:color/white"
+                android:layout_height="wrap_content"
+                android:id="@+id/remoteSetup"
+                android:layout_width="200dp"/>
+
+        <TextView
+                android:text="Local Full Node"
+                android:paddingTop="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView27"
+                android:textSize="24sp"
+                android:textColor="@android:color/black"
+                android:textAlignment="center"/>
+
+        <TextView
+                android:text="Run a full Sia node on this device. Functions independently, unlike the remote full node. This is your best option if you want to have Sia with you at all times."
                 android:padding="8dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/textView5" />
+                android:id="@+id/textView24"/>
 
-            <TextView
-                android:text="3. Navigate within the Sia folder until you are in the directory that contains siad. If you downloaded Sia-UI in step 1, siad will be buried in resources > app > Sia. Open a command prompt in this directory by pressing Alt+d, typing cmd, and pressing enter."
+        <Button
+                android:text="Setup"
+                android:layout_gravity="center"
+                android:textColor="@android:color/white"
+                android:background="@color/colorPrimary"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/localSetup"/>
+
+        <TextView
+                android:text="Cold Storage"
+                android:paddingTop="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView28"
+                android:textSize="24sp"
+                android:textColor="@android:color/black"
+                android:textAlignment="center"/>
+
+        <TextView
+                android:text="Generate a wallet with a seed and addresses that you can send Siacoin to. Unable to make transactions. This is meant solely for securely storing coins for long periods of time."
                 android:padding="8dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/textView6" />
+                android:id="@+id/textView25"/>
 
-            <TextView
-                android:text="4. In the command prompt, type ipconfig and press enter. Note the number next to 'IP Address'. This is your computer's internal IP address. You will need this later."
-                android:layout_width="match_parent"
+        <Button
+                android:text="Setup"
+                android:layout_gravity="center"
+                android:textColor="@android:color/white"
+                android:background="@color/colorPrimary"
+                android:layout_width="200dp"
                 android:layout_height="wrap_content"
-                android:padding="8dp"
-                android:id="@+id/textView7" />
+                android:id="@+id/coldStorageSetup"/>
 
-            <TextView
-                    android:text="@string/step_5"
+        <TextView
                 android:layout_width="match_parent"
-                android:padding="8dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/textView8" />
-
-            <TextView
-                android:text="6. When prompted for an API password, enter one of your choosing. Remember your password for later."
-                android:padding="8dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/textView9" />
-
-            <TextView
-                android:text="7. Open the settings page in Sia Mobile. Tap 'Remote node address', and enter the IP address and port that you used to start Sia on your computer earlier. Do the same with 'API password'."
-                android:layout_width="match_parent"
-                android:padding="8dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/textView10" />
-
-            <TextView
-                android:text="If done correctly, your Sia Mobile will now be functional. If you have not already created a wallet on your Sia installation, navigate to the Wallet page of Sia Mobile, open the top-right menu, and select Create Wallet. Enter your desired password and then press Create. After creating a wallet, it is important to keep your wallet seed somewhere safe. To view your wallet seed, access the same menu, and select View Seeds."
-                android:layout_width="match_parent"
-                android:padding="8dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/textView12" />
-
-            <TextView
-                    android:text="Note that it might take a significant amount of time for Sia on your computer to sync with the rest of the Sia network. This is normal, and is not the fault of Sia Mobile."
-                    android:padding="8dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/textView13"/>
-
-            <TextView
-                    android:text="@string/step_8"
-                    android:padding="8dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/textView"/>
-        </LinearLayout>
-    </ScrollView>
+                android:id="@+id/textView29"
+                android:layout_height="24dp"/>
+    </LinearLayout>
+</ScrollView>
