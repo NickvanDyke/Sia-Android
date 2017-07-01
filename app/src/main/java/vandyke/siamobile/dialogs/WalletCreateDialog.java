@@ -19,7 +19,6 @@ import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
 import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
-import vandyke.siamobile.fragments.WalletFragment;
 
 public class WalletCreateDialog extends DialogFragment {
     
@@ -66,14 +65,14 @@ public class WalletCreateDialog extends DialogFragment {
                             Wallet.initSeed(password, force, dictionary, seedField.getText().toString(), new SiaRequest.VolleyCallback(getActivity()) {
                                 public void onSuccess(JSONObject response) {
                                     super.onSuccess(response);
-                                    WalletFragment.refreshWallet(getFragmentManager());
+//                                    WalletFragment.refreshWallet(getFragmentManager());
                                 }
                             });
                         else
                             Wallet.init(password, force, dictionary, new SiaRequest.VolleyCallback(getActivity()) {
                                 public void onSuccess(JSONObject response) {
                                     super.onSuccess(response);
-                                    WalletFragment.refreshWallet(getFragmentManager());
+//                                    WalletFragment.refreshWallet(getFragmentManager());
                                 }
                             });
                     }

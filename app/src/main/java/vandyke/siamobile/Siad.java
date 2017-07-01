@@ -11,7 +11,6 @@ import android.graphics.BitmapFactory;
 import vandyke.siamobile.api.Daemon;
 import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.fragments.TerminalFragment;
-import vandyke.siamobile.fragments.WalletFragment;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -65,8 +64,8 @@ public class Siad {
                         BufferedReader inputReader = new BufferedReader(new InputStreamReader(siadProcess.getInputStream()));
                         String line;
                         while ((line = inputReader.readLine()) != null) {
-                            if (line.contains("Finished loading") || line.contains("Done!"))
-                                WalletFragment.refreshWallet(activity.getFragmentManager());
+//                            if (line.contains("Finished loading") || line.contains("Done!"))
+//                                WalletFragment.refreshWallet(activity.getFragmentManager());
                             siadNotification(line, activity);
                             final String lineFinal = line + "\n";
                             activity.runOnUiThread(new Runnable() {
