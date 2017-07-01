@@ -32,7 +32,7 @@
                     />
 
             <TextView
-                    android:text="The Sia network offers completely private, decentralized, and affordable cloud storage. Sia Mobile lets you interact with the Sia network from your mobile device. This includes managing your Sia wallet, which stores Siacoins: the cryptocurrency used by the Sia network for renting and hosting storage, and for trading on cryptocurrency exchanges."
+                    android:text="The Sia network offers completely private, decentralized, and affordable cloud storage. Sia Mobile lets you interact with the Sia network from your mobile device."
                     android:layout_width="match_parent"
                     android:padding="8dp"
                     android:layout_height="wrap_content"

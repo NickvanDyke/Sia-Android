@@ -159,10 +159,8 @@ public class WalletFragment extends Fragment {
 
     public void refresh() {
         refreshBalanceAndStatus();
-        if (!MainActivity.prefs.getString("operationMode", "cold_storage").equals("cold_storage")) {
-            refreshTransactions();
-            refreshSyncProgress();
-        }
+        refreshSyncProgress();
+        refreshTransactions();
         //TODO: figure out a GOOD way to Toast "Refreshed" if all requests complete successfully
         //TODO: auto refresh every x seconds. Eventually add option to refresh in background, with notifications?
     }
@@ -186,6 +184,7 @@ public class WalletFragment extends Fragment {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                Toast.makeText(getActivity(), "Refreshed", Toast.LENGTH_SHORT).show();
             }
 
             public void onError(SiaRequest.Error error) {
@@ -227,9 +226,7 @@ public class WalletFragment extends Fragment {
                 adapter.setData(transactions);
             }
 
-            @Override
             public void onError(SiaRequest.Error error) {
-                super.onError(error);
                 if (transactions.isEmpty())
                     return;
                 transactions = new ArrayList<>();
@@ -266,7 +263,6 @@ public class WalletFragment extends Fragment {
             }
 
             public void onError(SiaRequest.Error error) {
-                super.onError(error);
                 syncText.setText("Not Synced");
                 syncBar.setProgress(0);
                 syncNotification(R.drawable.ic_sync_problem_white_48dp, "Syncing blockchain...", "Error during syncing", false);
@@ -344,7 +340,7 @@ public class WalletFragment extends Fragment {
     }
 
     public static void refreshWallet(FragmentManager fragmentManager) {
-        WalletFragment fragment = (WalletFragment)fragmentManager.findFragmentByTag("WalletFragment");
+        WalletFragment fragment = (WalletFragment) fragmentManager.findFragmentByTag("WalletFragment");
         if (fragment != null)
             fragment.refresh();
     }

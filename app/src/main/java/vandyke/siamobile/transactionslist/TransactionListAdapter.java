@@ -98,7 +98,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter {
         if (data.size() == 0 && ads) {
             this.data = new ArrayList<>();
             this.data.add(new EmptyTransaction());
-            for (int i = 0; i < 6; i ++)
+            for (int i = 0; i < 10; i ++)
                 this.data.add(null);
             return;
         }

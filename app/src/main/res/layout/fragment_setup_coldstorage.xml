@@ -20,7 +20,7 @@
             />
 
         <TextView
-            android:text="In cryptocurrency, a cold storage wallet is meant to be the most secure way of storing your coins."
+            android:text="In cryptocurrency, a cold storage wallet is meant to be the most secure way of storing your coins. While not necessary, cold storage wallets are generally created when disconnected from the internet, to ensure maximum security. Sia Mobile will only store your seed and addresses locally for your use, nothing else. But if you desire the extra security, then disable your wifi and data for the following steps, and even every time you open Sia Mobile if you wish."
             android:layout_width="match_parent"
             android:padding="8dp"
             android:layout_height="wrap_content"
@@ -34,17 +34,7 @@
             android:id="@+id/textView6" />
 
         <TextView
-            android:text="To create a cold storage wallet, ensure 'Mode' in Settings is set to Cold storage wallet. Then go to the wallet page and select Create wallet from the menu."
-            android:padding="8dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/textView4"
-            android:textSize="14sp"
-            android:textAlignment="textStart"
-            android:layout_gravity="start"/>
-
-        <TextView
-            android:text="A Sia wallet seed and its related addresses will be generated. You can view the seed (which you should record somewhere safe) by selecting View seed from the menu. You can view addresses related to the seed by pressing the Receive button, or selecting View addresses from the menu."
+            android:text="To create a cold storage wallet, ensure 'Mode' in Settings is set to Cold storage wallet. Then go to the wallet page and select Create wallet from the menu. A Sia wallet seed and its related addresses will be generated. You can view the seed (which you should record somewhere safe) by selecting View seed from the menu. You can view addresses related to the seed by pressing the Receive button, or selecting View addresses from the menu."
             android:padding="8dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
