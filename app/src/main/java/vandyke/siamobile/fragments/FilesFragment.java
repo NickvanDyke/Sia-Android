@@ -23,6 +23,6 @@ public class FilesFragment extends Fragment {
         android.support.v7.app.ActionBar actionBar = activity.getSupportActionBar();
         if (actionBar == null)
             return;
-        activity.getSupportActionBar().setTitle("Files");
+        actionBar.setTitle("Files");
     }
 }

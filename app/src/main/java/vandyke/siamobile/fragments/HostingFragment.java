@@ -23,6 +23,6 @@ public class HostingFragment extends Fragment {
         android.support.v7.app.ActionBar actionBar = activity.getSupportActionBar();
         if (actionBar == null)
             return;
-        activity.getSupportActionBar().setTitle("Hosting");
+        actionBar.setTitle("Hosting");
     }
 }

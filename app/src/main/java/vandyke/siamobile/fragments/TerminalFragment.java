@@ -98,7 +98,7 @@ public class TerminalFragment extends Fragment {
         android.support.v7.app.ActionBar actionBar = activity.getSupportActionBar();
         if (actionBar == null)
             return;
-        activity.getSupportActionBar().setTitle("Terminal");
+        actionBar.setTitle("Terminal");
     }
 
     public void appendToOutput(String text) {

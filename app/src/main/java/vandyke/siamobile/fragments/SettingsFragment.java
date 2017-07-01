@@ -142,7 +142,7 @@ public class SettingsFragment extends PreferenceFragment {
         android.support.v7.app.ActionBar actionBar = activity.getSupportActionBar();
         if (actionBar == null)
             return;
-        activity.getSupportActionBar().setTitle("Settings");
+        actionBar.setTitle("Settings");
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

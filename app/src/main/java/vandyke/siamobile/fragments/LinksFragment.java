@@ -23,6 +23,6 @@ public class LinksFragment extends Fragment {
         android.support.v7.app.ActionBar actionBar = activity.getSupportActionBar();
         if (actionBar == null)
             return;
-        activity.getSupportActionBar().setTitle("Links");
+        actionBar.setTitle("Links");
     }
 }

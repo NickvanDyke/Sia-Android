@@ -15,10 +15,11 @@
     full node on this device, siad\'s output will also appear in this terminal.\n</string>
 
     <!--Strings for explaining install-->
-    <string name="step_5" tools:ignore="TypographyDashes"><![CDATA[5. In the same command prompt, type\n\nsiad --disable-api-security --authenticate-api
-    --api-addr <ip>:<port>\n\n replacing <ip> with your computer\'s internal IP address from step 4, and <port> with a port number
+    <string formatted="false" name="step_5" tools:ignore="TypographyDashes"><![CDATA[5. In the same command prompt, type\n\nsiad --disable-api-security --authenticate-api
+    --api-addr <ip>:<port>\n\nreplacing <ip> with your computer\'s internal IP address from step 4, and <port> with a port number
     of your choosing; remember your port number for later. This step will launch Sia on your computer in a fashion that
-    allows Sia Mobile to interact with it. You will need to keep this command prompt open and running to use Sia Mobile with it.]]></string>
+    allows Sia Mobile to interact with it. You will need to keep this command prompt open and running to use Sia Mobile with it. If you instead downloaded Sia-UI in step 1, also add\n\n
+-d %APPDATA%\\Sia-UI\\sia\\Sia-UI\\sia\n\n to the command above, as this is the directory that Sia-UI stores its files in by default.]]></string>
 
     <string name="step_8"><![CDATA[8. (optional) Following the steps above, you will only be able to access your
 computer\'s Sia from your phone when your phone is on the same network as your computer. In order to access it from anywhere, you will have to port forward on your

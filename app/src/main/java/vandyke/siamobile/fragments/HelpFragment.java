@@ -2,6 +2,7 @@ package vandyke.siamobile.fragments;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,5 +37,16 @@ public class HelpFragment extends Fragment {
         });
 
         return v;
+    }
+
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        if (activity == null)
+            return;
+        android.support.v7.app.ActionBar actionBar = activity.getSupportActionBar();
+        if (actionBar == null)
+            return;
+        actionBar.setTitle("Help");
     }
 }

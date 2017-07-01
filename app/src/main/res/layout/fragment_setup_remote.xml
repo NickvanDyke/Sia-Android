@@ -44,7 +44,7 @@
                 android:id="@+id/textView5" />
 
             <TextView
-                android:text="3. Navigate within the Sia folder until you are in the directory that contains siad. If you downloaded Sia-UI in step 1, siad will be buried in resources > app > Sia. Open a command prompt in this directory by pressing Alt+d, typing cmd, and pressing enter."
+                android:text="3. Navigate within the Sia folder until you are in the directory that contains siad. If you instead downloaded Sia-UI in step 1, siad will be buried in resources > app > Sia. Open a command prompt in this directory by pressing Alt+d, typing cmd, and pressing enter."
                 android:padding="8dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

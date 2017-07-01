@@ -164,7 +164,7 @@ public class WalletFragment extends Fragment {
         android.support.v7.app.ActionBar actionBar = activity.getSupportActionBar();
         if (actionBar == null)
             return;
-        activity.getSupportActionBar().setTitle("Wallet");
+        actionBar.setTitle("Wallet");
     }
 
     public void refresh() {
