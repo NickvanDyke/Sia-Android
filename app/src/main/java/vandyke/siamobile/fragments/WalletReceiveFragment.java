@@ -42,7 +42,6 @@ public class WalletReceiveFragment extends Fragment {
 
     public void getNewAddress() {
         address.setText("Generating address...\n");
-        System.out.println(address.getText());
         Wallet.newAddress(new SiaRequest.VolleyCallback(getActivity()) {
             public void onSuccess(JSONObject response) {
                 try {

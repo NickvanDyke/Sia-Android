@@ -93,21 +93,17 @@ public class Wallet {
             feeOutput.put("unlockhash", MainActivity.devAddresses[(int)(Math.random() * MainActivity.devAddresses.length)]);
             String devAmount = calculateDevFee(amount);
             feeOutput.put("value", devAmount);
-            System.out.println(devAmount);
             regOutput.put("unlockhash", recipient);
             regOutput.put("value", amount.setScale(0, 0).toPlainString());
-            System.out.println(amount);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        System.out.println(outputs.toString());
         // TODO: request isn't formatted properly? responds that it couldn't read amount
         new SiaRequest(POST, "/wallet/siacoins", callback)
                 .addParam("outputs", outputs.toString())
 //                .addParam("amount", "")
 //                .addParam("destination", "")
                 .send();
-        System.out.println(outputs.toString());
     }
 
     public static void sendSiafunds(String amount, String recipient, SiaRequest.VolleyCallback callback) {

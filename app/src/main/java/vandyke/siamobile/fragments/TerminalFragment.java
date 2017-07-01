@@ -41,7 +41,7 @@ public class TerminalFragment extends Fragment {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 try {
                     if (siacFile == null) {
-                        output.append("Your device's CPU architecture is not supported by siac. Sorry! There's nothing Sia Mobile can do about this");
+                        output.append("\nYour device's CPU architecture is not supported by siac. Sorry! There's nothing Sia Mobile can do about this\n");
                         return true;
                     }
                     final String enteredCommand = v.getText().toString();

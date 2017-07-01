@@ -50,7 +50,6 @@ public class Siad {
             return;
         }
         if (siadProcess != null) {
-            System.out.println("siad already running");
             return;
         }
         stdoutBuffer.setLength(0);
@@ -60,7 +59,6 @@ public class Siad {
         pb.directory(MainActivity.getWorkingDirectory(activity));
         try {
             siadProcess = pb.start();
-            System.out.println(siadProcess);
             readStdoutThread = new Thread() {
                 public void run() {
                     try {
@@ -70,7 +68,6 @@ public class Siad {
                             if (line.contains("Finished loading") || line.contains("Done!"))
                                 WalletFragment.refreshWallet(activity.getFragmentManager());
                             siadNotification(line, activity);
-                            System.out.println(line);
                             final String lineFinal = line + "\n";
                             activity.runOnUiThread(new Runnable() {
                                 public void run() {

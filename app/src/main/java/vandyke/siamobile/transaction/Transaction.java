@@ -49,12 +49,10 @@ public class Transaction {
         for (TransactionInput transactionInput : inputs) {
             if (transactionInput.isWalletAddress())
                 netValue = netValue.subtract(transactionInput.getValue());
-//            System.out.println("input: " + Wallet.hastingsToSC(transactionInput.getValue()) + "  walletAddr: " + transactionInput.isWalletAddress());
         }
         for (TransactionOutput transactionOutput : outputs) {
             if (transactionOutput.isWalletAddress())
                 netValue = netValue.add(transactionOutput.getValue());
-//            System.out.println("output: " + Wallet.hastingsToSC(transactionOutput.getValue()) + "  walletAddr: " + transactionOutput.isWalletAddress());
         }
         netValueStringExact = netValue.toPlainString();
         netValueStringRounded = Wallet.round(Wallet.hastingsToSC(netValue));
