@@ -26,5 +26,6 @@ public class TransactionHolder extends RecyclerView.ViewHolder {
                 v.getContext().startActivity(i);
             }
         });
+        transactionId.setVisibility(View.GONE);
     }
 }

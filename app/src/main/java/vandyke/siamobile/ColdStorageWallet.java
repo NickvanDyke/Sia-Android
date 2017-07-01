@@ -164,6 +164,7 @@ public class ColdStorageWallet extends NanoHTTPD {
             SharedPreferences.Editor editor = MainActivity.prefs.edit();
             this.password = password;
             exists = true;
+            unlocked = false;
             editor.putString("coldStorageSeed", seed);
             editor.putStringSet("coldStorageAddresses", new HashSet<>(addresses));
             editor.putString("coldStoragePassword", password);

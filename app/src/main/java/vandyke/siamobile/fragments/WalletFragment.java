@@ -43,6 +43,7 @@ public class WalletFragment extends Fragment {
     private Runnable refreshTask;
 
     private BigDecimal balanceHastings;
+    private BigDecimal balanceHastingsUnconfirmed;
     private BigDecimal balanceUsd;
     private TextView balanceText;
     private TextView balanceUsdText;
@@ -178,10 +179,10 @@ public class WalletFragment extends Fragment {
                         walletStatusText.setText("Unlocked");
                     balanceHastings = new BigDecimal(response.getString("confirmedsiacoinbalance"));
                     balanceText.setText(Wallet.round(Wallet.hastingsToSC(balanceHastings)));
-                    BigDecimal netUnconfirmed = new BigDecimal(response.getString("unconfirmedincomingsiacoins"))
+                    balanceHastingsUnconfirmed = new BigDecimal(response.getString("unconfirmedincomingsiacoins"))
                             .subtract(new BigDecimal(response.getString("unconfirmedoutgoingsiacoins")));
-                    balanceUnconfirmedText.setText(netUnconfirmed.compareTo(BigDecimal.ZERO) > 0 ? "+" : "" +
-                            Wallet.round(Wallet.hastingsToSC(netUnconfirmed)) + " unconfirmed");
+                    balanceUnconfirmedText.setText(balanceHastingsUnconfirmed.compareTo(BigDecimal.ZERO) > 0 ? "+" : "" +
+                            Wallet.round(Wallet.hastingsToSC(balanceHastingsUnconfirmed)) + " unconfirmed");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -189,7 +190,11 @@ public class WalletFragment extends Fragment {
 
             public void onError(SiaRequest.Error error) {
                 super.onError(error);
-                balanceText.setText(Wallet.round(new BigDecimal("0")));
+                balanceHastings = new BigDecimal("0");
+                balanceHastingsUnconfirmed = new BigDecimal("0");
+                balanceUsd = new BigDecimal("0");
+                balanceText.setText(Wallet.round(balanceHastings));
+                balanceUsdText.setText(Wallet.round(balanceUsd) + " USD");
                 walletStatusText.setText("No wallet");
                 balanceUnconfirmedText.setText(Wallet.round(new BigDecimal("0")) + " unconfirmed");
             }
@@ -208,6 +213,8 @@ public class WalletFragment extends Fragment {
             }
         }, new Response.ErrorListener() {
             public void onErrorResponse(VolleyError error) {
+                balanceUsd = new BigDecimal("0");
+                balanceUsdText.setText(Wallet.round(balanceUsd) + " USD");
                 Toast.makeText(getActivity(), "Error retrieving USD value", Toast.LENGTH_SHORT).show();
             }
         });

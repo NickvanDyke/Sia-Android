@@ -9,7 +9,7 @@
             android:layout_height="wrap_content">
 
         <TextView
-                android:text="There are three different ways that Sia Mobile can function. Given Sia's current features, these are all of the possible options right now. Unfortunately, a light wallet is not currently a possibility for Sia. Once it is, Sia Mobile will add that functionality."
+                android:text="Given Sia's current features, there are three different ways that a mobile app can interact with Sia. Sia Mobile implements all three of these methods, listed below. Unfortunately, a light wallet is not currently a possibility for Sia. Once it is, Sia Mobile will add that functionality."
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="8dp"

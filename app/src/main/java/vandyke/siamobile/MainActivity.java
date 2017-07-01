@@ -34,7 +34,6 @@ import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.ads.MobileAds;
-import vandyke.siamobile.dialogs.RemoveAdsFeesDialog;
 import vandyke.siamobile.fragments.*;
 
 import java.io.File;
@@ -149,9 +148,6 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case R.id.drawer_item_help:
                         loadDrawerFragment(HelpFragment.class);
-                        break;
-                    case R.id.drawer_item_remove_ads_fees:
-                        RemoveAdsFeesDialog.createAndShow(getFragmentManager());
                         break;
 //                    case R.id.drawer_item_donate:
 //                        // TODO: donate stuff

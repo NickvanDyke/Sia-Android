@@ -160,7 +160,7 @@ public class Wallet {
     }
 
     public static String round(BigDecimal num) {
-        return num.setScale(Integer.parseInt(MainActivity.prefs.getString("displayedDecimalPrecision", "2")), BigDecimal.ROUND_FLOOR).toPlainString();
+        return num.setScale(Integer.parseInt(MainActivity.prefs.getString("displayedDecimalPrecision", "2")), BigDecimal.ROUND_CEILING).toPlainString();
     }
 
     /** will return value in the same units they were passed in, without decimal */

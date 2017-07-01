@@ -28,7 +28,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter {
     private int TYPE_TX = 0;
     private int TYPE_AD = 1;
 
-    private int TX_PER_AD = 4;
+    private int TX_PER_AD = 5;
 
     public TransactionListAdapter(ArrayList<Transaction> data) {
         super();

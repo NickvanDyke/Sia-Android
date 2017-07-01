@@ -3,9 +3,6 @@ package vandyke.siamobile.dialogs;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -17,12 +14,12 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-import org.json.JSONException;
 import org.json.JSONObject;
 import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
 import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
+import vandyke.siamobile.fragments.WalletFragment;
 
 public class WalletCreateDialog extends DialogFragment {
     
@@ -67,15 +64,18 @@ public class WalletCreateDialog extends DialogFragment {
                         String dictionary = "english";
                         if (createFromSeed.isChecked())
                             Wallet.initSeed(password, force, dictionary, seedField.getText().toString(), new SiaRequest.VolleyCallback(getActivity()) {
-                                public void onError(SiaRequest.Error error) {
-                                    if (error.getReason() == SiaRequest.Error.Reason.WALLET_NOT_ENCRYPTED)
-                                        Toast.makeText(getActivity(), "Success. Scanning blockchain, please wait", Toast.LENGTH_SHORT).show();
-                                    else
-                                        super.onError(error);
+                                public void onSuccess(JSONObject response) {
+                                    super.onSuccess(response);
+                                    WalletFragment.refreshWallet(getFragmentManager());
                                 }
                             });
                         else
-                            Wallet.init(password, force, dictionary, new SiaRequest.VolleyCallback(getActivity()));
+                            Wallet.init(password, force, dictionary, new SiaRequest.VolleyCallback(getActivity()) {
+                                public void onSuccess(JSONObject response) {
+                                    super.onSuccess(response);
+                                    WalletFragment.refreshWallet(getFragmentManager());
+                                }
+                            });
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

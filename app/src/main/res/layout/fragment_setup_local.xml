@@ -27,7 +27,7 @@
                 android:id="@+id/textView11" />
 
         <TextView
-                android:text='To start your full node, go to settings and under "Mode", select "Run a full node on this device." Unfortunately, Sia nodes require a 64-bit CPU. If your device does not have a supported CPU, a warning will be shown, and the node will not start. Otherwise, the output of your node will appear on the Terminal page, as well as in a notification.'
+                android:text='To start your full node, go to settings and under "Mode", select "Local full node" Unfortunately, Sia nodes require a 64-bit CPU. If your device does not have a supported CPU, a warning will be shown, and the node will not start. Otherwise, the output of your node will appear on the Terminal page, as well as in a notification.'
                 android:padding="8dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -61,11 +61,11 @@ public class RemoveAdsFeesDialog extends DialogFragment {
                 }
             }, new Response.ErrorListener() {
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(getActivity(), "Error retrieving SC/USD. Defaulting to 50 SC", Toast.LENGTH_SHORT).show();
-                    removeAdsCost = Wallet.scToHastings("50");
-                    removeFeesCost = Wallet.scToHastings("50");
-                    adsCostText.setText("50 SC");
-                    feesCostText.setText("50 SC");
+                    Toast.makeText(getActivity(), "Error retrieving SC/USD. Defaulting to 200 SC", Toast.LENGTH_SHORT).show();
+                    removeAdsCost = Wallet.scToHastings("200");
+                    removeFeesCost = Wallet.scToHastings("200");
+                    adsCostText.setText("200 SC");
+                    feesCostText.setText("200 SC");
                 }
             });
         }
@@ -85,7 +85,7 @@ public class RemoveAdsFeesDialog extends DialogFragment {
                         .setMessage("Spend " + Wallet.hastingsToSC(removeAdsCost) + " Siacoins to remove ads?")
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                Wallet.sendSiacoins(Wallet.scToHastings(removeAdsCost),
+                                Wallet.sendSiacoins(removeAdsCost,
                                         paymentRecipient, new SiaRequest.VolleyCallback(getActivity()) {
                                             public void onSuccess(JSONObject response) {
                                                 SharedPreferences.Editor editor = MainActivity.prefs.edit();
@@ -147,7 +147,7 @@ public class RemoveAdsFeesDialog extends DialogFragment {
             }
         });
 
-        builder.setTitle("Remove Ads/Fees")
+        builder.setTitle("Remove Ads")
                 .setView(view)
                 .setPositiveButton("Close", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
