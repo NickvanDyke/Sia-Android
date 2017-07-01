@@ -61,7 +61,6 @@ public class WalletFragment extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_wallet, container, false);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Wallet");
         setHasOptionsMenu(true);
 
         final Button receiveButton = (Button) v.findViewById(R.id.receiveButton);
@@ -155,6 +154,17 @@ public class WalletFragment extends Fragment {
 
         instance = this;
         return v;
+    }
+
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        if (activity == null)
+            return;
+        android.support.v7.app.ActionBar actionBar = activity.getSupportActionBar();
+        if (actionBar == null)
+            return;
+        activity.getSupportActionBar().setTitle("Wallet");
     }
 
     public void refresh() {

@@ -33,7 +33,6 @@ public class TerminalFragment extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_terminal, container, false);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Terminal");
         siacFile = MainActivity.copyBinary("siac", getActivity(), true);
 
         input = (EditText)v.findViewById(R.id.input);
@@ -89,6 +88,17 @@ public class TerminalFragment extends Fragment {
         output.setMovementMethod(new ScrollingMovementMethod());
         Siad.getInstance(getActivity()).setTerminalFragment(this);
         return v;
+    }
+
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        if (activity == null)
+            return;
+        android.support.v7.app.ActionBar actionBar = activity.getSupportActionBar();
+        if (actionBar == null)
+            return;
+        activity.getSupportActionBar().setTitle("Terminal");
     }
 
     public void appendToOutput(String text) {

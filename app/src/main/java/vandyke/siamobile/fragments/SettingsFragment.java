@@ -32,7 +32,6 @@ public class SettingsFragment extends PreferenceFragment {
 
     public void onCreate(Bundle savedInstanceState) { // TODO: restarts app on first loading
         super.onCreate(savedInstanceState);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Settings");
         addPreferencesFromResource(R.xml.settings);
 
         final ListPreference operationMode = (ListPreference)findPreference("operationMode");
@@ -133,6 +132,17 @@ public class SettingsFragment extends PreferenceFragment {
             }
         };
         MainActivity.prefs.registerOnSharedPreferenceChangeListener(prefsListener);
+    }
+
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        if (activity == null)
+            return;
+        android.support.v7.app.ActionBar actionBar = activity.getSupportActionBar();
+        if (actionBar == null)
+            return;
+        activity.getSupportActionBar().setTitle("Settings");
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
