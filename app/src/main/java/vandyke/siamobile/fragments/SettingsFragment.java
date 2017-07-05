@@ -12,7 +12,6 @@ import android.util.Base64;
 import android.widget.Toast;
 import fi.iki.elonen.NanoHTTPD;
 import vandyke.siamobile.*;
-import vandyke.siamobile.dialogs.DonateDialog;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -69,14 +68,6 @@ public class SettingsFragment extends PreferenceFragment {
                 Intent appSettings = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + BuildConfig.APPLICATION_ID));
                 appSettings.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(appSettings);
-                return false;
-            }
-        });
-
-        final Preference removeAds = findPreference("removeAds");
-        removeAds.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            public boolean onPreferenceClick(Preference preference) {
-                DonateDialog.createAndShow(getFragmentManager());
                 return false;
             }
         });

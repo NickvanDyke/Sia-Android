@@ -37,8 +37,6 @@ import java.util.ArrayList;
 
 public class WalletFragment extends Fragment {
 
-    private static WalletFragment instance;
-
     public static int SYNC_NOTIFICATION = 0;
     private Handler handler;
     private Runnable refreshTask;
@@ -96,7 +94,7 @@ public class WalletFragment extends Fragment {
         syncBar.setProgressTextColor(MainActivity.defaultTextColor);
         walletStatusText = (TextView) v.findViewById(R.id.walletStatusText);
 
-        transactionList = (RecyclerView)v.findViewById(R.id.transactionList);
+        transactionList = (RecyclerView) v.findViewById(R.id.transactionList);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         transactionList.setLayoutManager(layoutManager);
         transactionList.addItemDecoration(new DividerItemDecoration(transactionList.getContext(), layoutManager.getOrientation()));
@@ -149,7 +147,6 @@ public class WalletFragment extends Fragment {
 
         refresh();
 
-        instance = this;
         return v;
     }
 
@@ -191,7 +188,8 @@ public class WalletFragment extends Fragment {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                Toast.makeText(getActivity(), "Refreshed", Toast.LENGTH_SHORT).show();
+                if (isAdded())
+                    Toast.makeText(getActivity(), "Refreshed", Toast.LENGTH_SHORT).show();
             }
 
             public void onError(SiaRequest.Error error) {
@@ -221,7 +219,8 @@ public class WalletFragment extends Fragment {
             public void onErrorResponse(VolleyError error) {
                 balanceUsd = new BigDecimal("0");
                 balanceUsdText.setText(Wallet.round(balanceUsd) + " USD");
-                Toast.makeText(getActivity(), "Error retrieving USD value", Toast.LENGTH_SHORT).show();
+                if (isAdded())
+                    Toast.makeText(getActivity(), "Error retrieving USD value", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -270,13 +269,15 @@ public class WalletFragment extends Fragment {
             public void onError(SiaRequest.Error error) {
                 syncText.setText("Not Synced");
                 syncBar.setProgress(0);
-                syncNotification(R.drawable.ic_sync_problem_white_48dp, "Syncing blockchain...", "Error during syncing", false);
+                syncNotification(R.drawable.ic_sync_problem_white_48dp, "Syncing blockchain...", "Could not retrieve sync progress", false);
                 handler.removeCallbacks(refreshTask);
             }
         });
     }
 
     public void syncNotification(int icon, String title, String text, boolean ongoing) {
+        if (!isAdded())
+            return;
         Notification.Builder builder = new Notification.Builder(getActivity());
         builder.setSmallIcon(icon);
         Bitmap largeIcon = BitmapFactory.decodeResource(getActivity().getResources(), R.drawable.sia_logo_transparent);

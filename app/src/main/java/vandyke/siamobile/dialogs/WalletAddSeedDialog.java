@@ -20,7 +20,7 @@ public class WalletAddSeedDialog extends DialogFragment {
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = MainActivity.getDialogBuilder(getActivity());
-        final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_wallet_sweep, null);
+        final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_wallet_add_seed, null);
         builder.setTitle("Add Seed")
                 .setView(view)
                 .setPositiveButton("Add", new DialogInterface.OnClickListener() {
