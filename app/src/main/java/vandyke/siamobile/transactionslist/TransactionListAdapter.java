@@ -1,128 +1,176 @@
 package vandyke.siamobile.transactionslist;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.graphics.Color;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+import com.thoughtbot.expandablerecyclerview.ExpandableRecyclerViewAdapter;
+import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
 import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
-import vandyke.siamobile.transaction.EmptyTransaction;
 import vandyke.siamobile.transaction.Transaction;
+import vandyke.siamobile.transaction.TransactionIOBase;
 
-import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
-public class TransactionListAdapter extends RecyclerView.Adapter {
+public class TransactionListAdapter extends ExpandableRecyclerViewAdapter<TransactionHeaderHolder, TransactionDetailsHolder> {
 
-    private ArrayList<Transaction> data;
     private DateFormat df;
-    private boolean ads;
 
     private int red;
     private int green;
 
-    private int TYPE_TX = 0;
-    private int TYPE_AD = 1;
-
-    private int TX_PER_AD = 5;
-
-    public TransactionListAdapter(ArrayList<Transaction> data) {
-        super();
-        ads = MainActivity.prefs.getBoolean("adsEnabled", true);
-        this.data = data;
+    public TransactionListAdapter(List<? extends ExpandableGroup> groups) {
+        super(groups);
         df = new SimpleDateFormat("MMM dd\nh:mm a", Locale.getDefault());
         red = Color.rgb(186, 63, 63); // TODO: choose better colors maybe
         green = Color.rgb(0, 114, 11);
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
-        if (viewType == TYPE_TX) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_tx_header, parent, false);
-            return new TransactionHolder(view);
+    public TransactionHeaderHolder onCreateGroupViewHolder(final ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_tx_header, parent, false);
+        // TODO: find how to make the view not expand if it's long pressed... spent a long time and still couldn't get it, idk if possible in this situation
+        final TextView idText = (TextView) view.findViewById(R.id.transactionHeaderId);
+        idText.setOnLongClickListener(new View.OnLongClickListener() {
+            public boolean onLongClick(View v) {
+                ClipData clip = ClipData.newPlainText("Sia transaction id", ((TextView)v).getText());
+                ((ClipboardManager) idText.getContext().getSystemService(Context.CLIPBOARD_SERVICE)).setPrimaryClip(clip);
+                Toast.makeText(idText.getContext(), "Copied transaction ID", Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        });
+        idText.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                event.addBatch(System.nanoTime(), event.getX() + v.getLeft(), event.getY() + v.getTop(), 1, 1, MotionEvent.ACTION_DOWN);
+                ((View) v.getParent()).onTouchEvent(event);
+                return false;
+            }
+        });
+        return new TransactionHeaderHolder(view);
+    }
+
+    @Override
+    public TransactionDetailsHolder onCreateChildViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_tx_details, parent, false);
+        if (MainActivity.theme == MainActivity.Theme.AMOLED || MainActivity.theme == MainActivity.Theme.CUSTOM) {
+            view.findViewById(R.id.top_shadow).setVisibility(View.GONE);
+            view.findViewById(R.id.bot_shadow).setVisibility(View.GONE);
+        } else if (MainActivity.theme == MainActivity.Theme.DARK) {
+            view.findViewById(R.id.top_shadow).setBackgroundResource(R.drawable.top_shadow_dark);
+            view.findViewById(R.id.bot_shadow).setBackgroundResource(R.drawable.bot_shadow_dark);
+        }
+
+        ListView inputsList = (ListView) view.findViewById(R.id.transactionInputsList);
+        ListView outputsList = (ListView) view.findViewById(R.id.transactionOutputsList);
+
+        if (MainActivity.theme == MainActivity.Theme.CUSTOM) {
+            inputsList.setBackgroundColor(android.R.color.transparent);
+            outputsList.setBackgroundColor(android.R.color.transparent);
         } else {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.native_ad_layout, parent, false);
-            return new NativeAdHolder(view);
+            inputsList.setBackgroundColor(MainActivity.backgroundColor);
+            outputsList.setBackgroundColor(MainActivity.backgroundColor);
         }
+        return new TransactionDetailsHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        if (holder instanceof TransactionHolder) {
-            TransactionHolder txHolder = (TransactionHolder)holder;
-            Transaction transaction = data.get(position);
-            String timeString;
-            if (!transaction.isConfirmed()) {
-                timeString = "Unconfirmed";
-                txHolder.transactionStatus.setTextColor(Color.RED);
-            } else {
-                timeString = df.format(transaction.getConfirmationDate());
-                txHolder.transactionStatus.setTextColor(MainActivity.defaultTextColor);
-            }
-            txHolder.transactionStatus.setText(timeString);
+    public void onBindChildViewHolder(TransactionDetailsHolder holder, int flatPosition, ExpandableGroup group, int childIndex) {
+        Transaction transaction = (Transaction) group.getItems().get(childIndex);
+        System.out.println(transaction.getTransactionId());
 
-            String id = transaction.getTransactionId();
-            txHolder.transactionId.setText(id.substring(0, id.length() / 2) + "\n" + id.substring(id.length() / 2));
+        if (transaction.isConfirmed()) {
+            holder.confirmationHeight.setText("Confirmation block: " + transaction.getConfirmationHeight());
+        } else
+            holder.confirmationHeight.setText("Unconfirmed");
 
-            String valueText = transaction.getNetValueStringRounded();
-            if (transaction.isNetZero() || transaction.getNetValueStringExact().equals("")) {
-                txHolder.transactionValue.setTextColor(MainActivity.defaultTextColor);
-            } else if (valueText.contains("-")) {
-                txHolder.transactionValue.setTextColor(red);
-            } else {
-                valueText = "+" + valueText;
-                txHolder.transactionValue.setTextColor(green);
-            }
-            txHolder.transactionValue.setText(valueText);
+        ArrayList<TransactionIOBase> inputs = new ArrayList<>();
+        inputs.addAll(transaction.getInputs());
+        holder.inputs.setAdapter(new TransactionIOAdapter(holder.inputs.getContext(), R.layout.list_item_tx_io, inputs));
+
+        ArrayList<TransactionIOBase> outputs = new ArrayList<>();
+        outputs.addAll(transaction.getOutputs());
+        holder.outputs.setAdapter(new TransactionIOAdapter(holder.outputs.getContext(), R.layout.list_item_tx_io, outputs));
+
+        if (inputs.size() > 1)
+            holder.inputs.setOnTouchListener(new View.OnTouchListener() {
+                public boolean onTouch(View v, MotionEvent event) {
+                    v.getParent().requestDisallowInterceptTouchEvent(true);
+                    return false;
+                }
+            });
+        else
+            holder.inputs.setOnTouchListener(null);
+
+        if (outputs.size() > 1)
+            holder.outputs.setOnTouchListener(new View.OnTouchListener() {
+                public boolean onTouch(View v, MotionEvent event) {
+                    v.getParent().requestDisallowInterceptTouchEvent(true);
+                    return false;
+                }
+            });
+        else
+            holder.outputs.setOnTouchListener(null);
+    }
+
+    @Override
+    public void onBindGroupViewHolder(TransactionHeaderHolder holder, int flatPosition, ExpandableGroup group) {
+        Transaction transaction = (Transaction) group.getItems().get(0);
+        String timeString;
+        if (!transaction.isConfirmed()) {
+            timeString = "Unconfirmed";
+            holder.transactionStatus.setTextColor(Color.RED);
         } else {
-
+            timeString = df.format(((TransactionExpandableGroup) group).getConfirmationDate());
+            holder.transactionStatus.setTextColor(MainActivity.defaultTextColor);
         }
-    }
+        holder.transactionStatus.setText(timeString);
 
-    @Override
-    public int getItemCount() {
-        return data.size();
-    }
+        String id = transaction.getTransactionId();
+        holder.transactionId.setText(id.substring(0, id.length() / 2) + "\n" + id.substring(id.length() / 2));
 
-    @Override
-    public int getItemViewType(int position) {
-        return data.get(position) == null ? TYPE_AD : TYPE_TX;
-    }
-
-    public void setData(ArrayList<Transaction> data) {
-        ads = MainActivity.prefs.getBoolean("adsEnabled", true);
-        if (data.size() == 0 && ads) {
-            this.data = new ArrayList<>();
-            this.data.add(new EmptyTransaction());
-            for (int i = 0; i < 10; i ++)
-                this.data.add(null);
-            return;
+        String valueText = transaction.getNetValueStringRounded();
+        if (transaction.isNetZero()) {
+            holder.transactionValue.setTextColor(MainActivity.defaultTextColor);
+        } else if (valueText.contains("-")) {
+            holder.transactionValue.setTextColor(red);
+        } else {
+            valueText = "+" + valueText;
+            holder.transactionValue.setTextColor(green);
         }
-        this.data = new ArrayList<>(data);
-        if (MainActivity.prefs.getBoolean("hideZero", false))
-            removeZeroTransactions();
-        if (ads)
-            insertNullsForAds();
-        notifyDataSetChanged();
+        holder.transactionValue.setText(valueText);
     }
 
-    public void removeZeroTransactions() {
-        BigDecimal zero = new BigDecimal("0");
-        for (int i = 0; i < data.size(); i++)
-            if (data.get(i).getNetValue().compareTo(zero) == 0) {
-                data.remove(i);
-                i--;
-            }
-    }
-
-    public void insertNullsForAds() {
-        for (int i = 0; i < data.size(); i++) {
-            if (i % TX_PER_AD == 0)
-                data.add(i, null);
-        }
-    }
+//    public void setData(ArrayList<Transaction> data) {
+//        this.data = new ArrayList<>(data);
+//        if (MainActivity.prefs.getBoolean("hideZero", false)) {
+//            if (!removeZeroTransactions())
+//                notifyDataSetChanged();
+//        } else
+//            notifyDataSetChanged();
+//    }
+//
+//    public boolean removeZeroTransactions() {
+//        boolean changed = false;
+//        for (int i = 0; i < data.size(); i++)
+//            if (data.get(i).getNetValueStringRounded().equals("0.00")) {
+//                data.remove(i);
+//                changed = true;
+//                i--;
+//            }
+//        if (changed)
+//            notifyDataSetChanged();
+//        return changed;
+//    }
 }

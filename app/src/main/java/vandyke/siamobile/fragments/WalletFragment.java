@@ -29,6 +29,7 @@ import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
 import vandyke.siamobile.dialogs.*;
 import vandyke.siamobile.transaction.Transaction;
+import vandyke.siamobile.transactionslist.TransactionExpandableGroup;
 import vandyke.siamobile.transactionslist.TransactionListAdapter;
 
 import java.math.BigDecimal;
@@ -53,7 +54,7 @@ public class WalletFragment extends Fragment {
     private TextView syncText;
     private TextView walletStatusText;
     private RecyclerView transactionList;
-    private TransactionListAdapter adapter;
+    private final ArrayList<TransactionExpandableGroup> transactionExpandableGroups = new ArrayList<>();
     private FrameLayout sendFrame;
     private FrameLayout receiveFrame;
     private FrameLayout unlockFrame;
@@ -95,14 +96,10 @@ public class WalletFragment extends Fragment {
         syncBar.setProgressTextColor(MainActivity.defaultTextColor);
         walletStatusText = (TextView) v.findViewById(R.id.walletStatusText);
 
-        transactionList = (RecyclerView) v.findViewById(R.id.transactionList);
+        transactionList = (RecyclerView)v.findViewById(R.id.transactionList);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         transactionList.setLayoutManager(layoutManager);
         transactionList.addItemDecoration(new DividerItemDecoration(transactionList.getContext(), layoutManager.getOrientation()));
-        adapter = new TransactionListAdapter(new ArrayList<Transaction>());
-        transactionList.setAdapter(adapter);
-        transactions = new ArrayList<>();
-        adapter.setData(transactions);
 
         sendFrame = (FrameLayout) v.findViewById(R.id.sendFrame);
         receiveFrame = (FrameLayout) v.findViewById(R.id.receiveFrame);
@@ -232,17 +229,15 @@ public class WalletFragment extends Fragment {
     public void refreshTransactions() {
         Wallet.transactions(new SiaRequest.VolleyCallback(getActivity()) {
             public void onSuccess(JSONObject response) {
+                boolean hideZero = MainActivity.prefs.getBoolean("hideZero", false);
                 transactions = Transaction.populateTransactions(response);
-                adapter.setData(transactions);
-            }
-
-            public void onError(SiaRequest.Error error) {
-                if (transactions.isEmpty())
-                    return;
-                transactions = new ArrayList<>();
-                adapter = new TransactionListAdapter(transactions);
-                transactionList.setAdapter(adapter);
-                adapter.setData(transactions);
+                transactionExpandableGroups.clear();
+                for (Transaction tx : transactions) {
+                    if (hideZero && tx.isNetZero())
+                        continue;
+                    transactionExpandableGroups.add(transactionToGroupWithChild(tx));
+                }
+                transactionList.setAdapter(new TransactionListAdapter(transactionExpandableGroups));
             }
         });
     }
@@ -353,5 +348,11 @@ public class WalletFragment extends Fragment {
         WalletFragment fragment = (WalletFragment) fragmentManager.findFragmentByTag("WalletFragment");
         if (fragment != null)
             fragment.refresh();
+    }
+
+    private TransactionExpandableGroup transactionToGroupWithChild(Transaction tx) {
+        ArrayList<Transaction> child = new ArrayList<>();
+        child.add(tx);
+        return new TransactionExpandableGroup(tx.getNetValueStringRounded(), tx.getConfirmationDate(), child);
     }
 }

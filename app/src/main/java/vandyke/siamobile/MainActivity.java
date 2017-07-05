@@ -33,7 +33,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
-import com.google.android.gms.ads.MobileAds;
 import vandyke.siamobile.fragments.*;
 
 import java.io.File;
@@ -125,8 +124,6 @@ public class MainActivity extends AppCompatActivity {
         backgroundColor = a.data;
 
         requestQueue = Volley.newRequestQueue(this);
-        if (prefs.getBoolean("adsEnabled", true))
-            MobileAds.initialize(this, getString(R.string.ad_app_id));
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close) {
