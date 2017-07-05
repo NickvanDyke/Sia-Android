@@ -388,6 +388,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static File getWorkingDirectory(Activity activity) {
+        if (activity == null)
+            return null;
         File result;
         if (prefs.getBoolean("useExternal", false)) {
             result = activity.getExternalFilesDir(null);

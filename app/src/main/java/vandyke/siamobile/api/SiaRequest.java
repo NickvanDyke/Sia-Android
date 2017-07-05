@@ -174,12 +174,13 @@ public class SiaRequest extends StringRequest {
         }
 
         public void toast(Context context) {
-            if (reason != null)
+            if (reason != null && context != null)
                 Toast.makeText(context, reason.getMsg(), Toast.LENGTH_SHORT).show();
         }
     }
 
     public static void genericSuccessToast(Context context) {
-        Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show();
+        if (context != null)
+            Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show();
     }
 }

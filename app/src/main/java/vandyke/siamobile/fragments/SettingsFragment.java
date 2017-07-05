@@ -33,30 +33,31 @@ public class SettingsFragment extends PreferenceFragment {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.settings);
 
-        final ListPreference operationMode = (ListPreference)findPreference("operationMode");
-        remoteAddress = (EditTextPreference)findPreference("remoteAddress");
-        apiPass = (EditTextPreference)findPreference("apiPass");
+        final ListPreference operationMode = (ListPreference) findPreference("operationMode");
+        remoteAddress = (EditTextPreference) findPreference("remoteAddress");
+        apiPass = (EditTextPreference) findPreference("apiPass");
         setRemoteSettingsVisibility();
 
-        final EditTextPreference decimal = ((EditTextPreference)findPreference("displayedDecimalPrecision"));
+        final EditTextPreference decimal = ((EditTextPreference) findPreference("displayedDecimalPrecision"));
 
         operationMode.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             public boolean onPreferenceChange(Preference preference, Object o) {
-                if (((String)o).equals("local_full_node")
+                if (((String) o).equals("local_full_node")
                         && !(MainActivity.abi.equals("arm64"))) {
-                    Toast.makeText(getActivity(), "Sorry, but your device's CPU architecture is not supported by Sia's full node. There is nothing Sia Mobile can do about this", Toast.LENGTH_LONG).show();
+                    if (isAdded())
+                        Toast.makeText(getActivity(), "Sorry, but your device's CPU architecture is not supported by Sia's full node. There is nothing Sia Mobile can do about this", Toast.LENGTH_LONG).show();
                     return false;
                 }
                 return true;
             }
         });
 
-        final SwitchPreference useExternal = (SwitchPreference)findPreference("useExternal");
+        final SwitchPreference useExternal = (SwitchPreference) findPreference("useExternal");
         useExternal.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             public boolean onPreferenceChange(Preference preference, Object o) {
                 if (MainActivity.isExternalStorageWritable())
                     return true;
-                else
+                else if (isAdded())
                     Toast.makeText(getActivity(), "Error: " + MainActivity.externalStorageStateDescription(), Toast.LENGTH_LONG).show();
                 return false;
             }

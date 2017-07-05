@@ -1,10 +1,10 @@
 package vandyke.siamobile.dialogs;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
-import android.os.Bundle;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
+import android.content.DialogInterface;
+import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,7 +28,8 @@ public class WalletChangePasswordDialog extends DialogFragment {
                     public void onClick(DialogInterface dialog, int id) {
                         String newPassword = ((EditText)view.findViewById(R.id.newPassword)).getText().toString();
                         if (!newPassword.equals(((EditText)view.findViewById(R.id.confirmNewPassword)).getText().toString())) {
-                            Toast.makeText(view.getContext(), "New passwords don't match", Toast.LENGTH_SHORT).show();
+                            if (isAdded())
+                                Toast.makeText(view.getContext(), "New passwords don't match", Toast.LENGTH_SHORT).show();
                             return; // TODO: make dialog not disappear in this case
                         }
                         Wallet.changePassword(((EditText) view.findViewById(R.id.currentPassword)).getText().toString(),

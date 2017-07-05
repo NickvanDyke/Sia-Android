@@ -21,26 +21,28 @@ import vandyke.siamobile.api.Wallet;
 
 public class DonateDialog extends DialogFragment {
 
-    private String paymentRecipient = MainActivity.devAddresses[(int)(Math.random() * MainActivity.devAddresses.length)];
+    private String paymentRecipient = MainActivity.devAddresses[(int) (Math.random() * MainActivity.devAddresses.length)];
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = MainActivity.getDialogBuilder(getActivity());
 
         final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_donate, null);
 
-        final Button donateButton = (Button)view.findViewById(R.id.donateButton);
-        final EditText amount = (EditText)view.findViewById(R.id.donateAmount);
+        final Button donateButton = (Button) view.findViewById(R.id.donateButton);
+        final EditText amount = (EditText) view.findViewById(R.id.donateAmount);
 
         donateButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 Wallet.sendSiacoins(Wallet.scToHastings(amount.getText().toString()),
                         paymentRecipient, new SiaRequest.VolleyCallback(getActivity()) {
                             public void onSuccess(JSONObject response) {
-                                Toast.makeText(getActivity(), "Donation successful. Thank you!", Toast.LENGTH_SHORT).show();
+                                if (isAdded())
+                                    Toast.makeText(getActivity(), "Donation successful. Thank you!", Toast.LENGTH_SHORT).show();
                             }
 
                             public void onError(SiaRequest.Error error) {
-                                Toast.makeText(getActivity(), error.getMsg() + ". No donation made.", Toast.LENGTH_SHORT).show();
+                                if (isAdded())
+                                    Toast.makeText(getActivity(), error.getMsg() + ". No donation made.", Toast.LENGTH_SHORT).show();
                             }
                         });
             }
@@ -49,7 +51,7 @@ public class DonateDialog extends DialogFragment {
                 .setView(view)
                 .setPositiveButton("Close", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        
+
                     }
                 });
         return builder.create();

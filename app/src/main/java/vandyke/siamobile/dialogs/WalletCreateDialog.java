@@ -56,7 +56,8 @@ public class WalletCreateDialog extends DialogFragment {
                     public void onClick(DialogInterface dialog, int id) {
                         String password = ((EditText) view.findViewById(R.id.newPasswordCreate)).getText().toString();
                         if (!password.equals(((EditText) view.findViewById(R.id.confirmNewPasswordCreate)).getText().toString())) {
-                            Toast.makeText(getActivity(), "New passwords don't match", Toast.LENGTH_SHORT).show();
+                            if (isAdded())
+                                Toast.makeText(getActivity(), "New passwords don't match", Toast.LENGTH_SHORT).show();
                             return;
                         }
                         boolean force = forceCheck.isChecked();
