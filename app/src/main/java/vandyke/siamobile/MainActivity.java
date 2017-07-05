@@ -33,6 +33,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import vandyke.siamobile.dialogs.DonateDialog;
 import vandyke.siamobile.fragments.*;
 
 import java.io.File;
@@ -153,9 +154,9 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.drawer_item_help:
                         loadDrawerFragment(HelpFragment.class);
                         break;
-//                    case R.id.drawer_item_donate:
-//                        // TODO: donate stuff
-//                        break;
+                    case R.id.drawer_item_donate:
+                        DonateDialog.createAndShow(getFragmentManager());
+                        break;
                 }
                 loadSomethingOnClose = false;
             }

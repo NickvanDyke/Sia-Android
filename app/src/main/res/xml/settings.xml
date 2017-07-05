@@ -13,9 +13,6 @@
                 android:key="transparentBars"
                 android:title="Transparent bars"
                 android:defaultValue="off"/>
-        <Preference
-                android:key="removeAds"
-                android:title="Remove ads"/>
     </PreferenceCategory>
     <PreferenceCategory android:title="Operation">
         <ListPreference

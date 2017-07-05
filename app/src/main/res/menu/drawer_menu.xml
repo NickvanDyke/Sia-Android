@@ -40,8 +40,9 @@
     <group
         android:id="@+id/dialogs"
         android:checkableBehavior="none">
-        <!--<item-->
-                <!--android:id="@+id/drawer_item_donate"-->
-                <!--android:title="Donate"/>-->
+        <item
+                android:id="@+id/drawer_item_donate"
+                android:icon="@drawable/ic_favorite_white_48dp"
+                android:title="Donate"/>
     </group>
 </menu>

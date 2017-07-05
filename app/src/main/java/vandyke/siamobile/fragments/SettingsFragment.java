@@ -12,7 +12,7 @@ import android.util.Base64;
 import android.widget.Toast;
 import fi.iki.elonen.NanoHTTPD;
 import vandyke.siamobile.*;
-import vandyke.siamobile.dialogs.RemoveAdsFeesDialog;
+import vandyke.siamobile.dialogs.DonateDialog;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -76,7 +76,7 @@ public class SettingsFragment extends PreferenceFragment {
         final Preference removeAds = findPreference("removeAds");
         removeAds.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
-                RemoveAdsFeesDialog.createAndShow(getFragmentManager());
+                DonateDialog.createAndShow(getFragmentManager());
                 return false;
             }
         });
