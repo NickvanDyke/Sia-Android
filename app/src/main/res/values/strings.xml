@@ -5,8 +5,6 @@
     <string name="drawer_open">open</string>
     <string name="drawer_close">close</string>
 
-    <string name="crash_toast_text">Sia Mobile has crashed. Please send a crash report to the developer</string>
-
     <string name="terminal_warning" tools:ignore="TypographyDashes">ADVANCED:\nThis terminal uses siac as its backend. Siac is a command-line utility written by the
         Sia developers that can interface with all of Sia\'s API endpoints; you can type --help and press enter for a list
         of commands. The purpose of this terminal and its use of siac is to make available to you commands that might not
@@ -26,4 +24,11 @@ computer\'s Sia from your phone when your phone is on the same network as your c
 router on your chosen port to your computer\'s internal IP address. Many guides exist online detailing how to do this. Please note that the Sia API uses HTTP requests,
 which are NOT inherently secure. If you communicate with your full node from outside your local network, other people can potentially see the info you are sending
 and receiving. This is not a concern if you will not be port forwarding your node.]]></string>
+
+
+    <!--ACRA crash stuff-->
+    <string name="crash_dialog_title">Sia Mobile has crashed</string>
+    <string name="crash_dialog_text">An unexpected error occurred. I apologize for the inconvenience. Please help me fix this by sending error data -
+    all you have to do is click OK and send the generated email. Your help is appreciated.</string>
+    <string name="crash_dialog_comment_prompt">Please add any comments or useful info about the crash below:</string>
 </resources>

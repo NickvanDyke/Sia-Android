@@ -59,6 +59,8 @@ public class WalletFragment extends Fragment {
     private WalletUnlockFragment unlockFrag;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        String hi = null;
+        hi.substring(0);
         View v = inflater.inflate(R.layout.fragment_wallet, container, false);
         setHasOptionsMenu(true);
 

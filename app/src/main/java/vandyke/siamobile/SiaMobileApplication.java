@@ -6,8 +6,13 @@ import org.acra.ReportingInteractionMode;
 import org.acra.annotation.ReportsCrashes;
 
 @ReportsCrashes(mailTo = "siamobiledev@gmail.com",
-        mode = ReportingInteractionMode.TOAST,
-        resToastText = R.string.crash_toast_text)
+        mode = ReportingInteractionMode.DIALOG,
+        resDialogText = R.string.crash_dialog_text,
+        resDialogIcon = R.drawable.sia_logo_transparent,
+        resDialogTitle = R.string.crash_dialog_title, // optional. default is your application name
+        resDialogCommentPrompt = R.string.crash_dialog_comment_prompt, // optional. When defined, adds a user text field input with this text resource as a label
+        resDialogTheme = R.style.AppTheme_Light //optional. default is Theme.Dialog
+)
 public class SiaMobileApplication extends Application {
 
     public void onCreate() {
