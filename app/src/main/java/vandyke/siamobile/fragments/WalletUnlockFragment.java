@@ -21,7 +21,7 @@ public class WalletUnlockFragment extends Fragment {
         password = (EditText)view.findViewById(R.id.walletPassword);
         view.findViewById(R.id.walletUnlockConfirm).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Wallet.unlock(password.getText().toString(), new SiaRequest.VolleyCallback(getActivity()) {
+                Wallet.unlock(password.getText().toString(), new SiaRequest.VolleyCallback(view) {
                     public void onSuccess(JSONObject response) {
                         super.onSuccess(response);
 //                        WalletFragment.refreshWallet(getFragmentManager());

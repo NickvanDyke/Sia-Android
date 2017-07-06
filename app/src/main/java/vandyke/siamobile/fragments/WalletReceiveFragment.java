@@ -5,13 +5,14 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
+import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
 import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
@@ -28,7 +29,7 @@ public class WalletReceiveFragment extends Fragment {
                 ClipboardManager clipboard = (ClipboardManager)getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
                 ClipData clip = ClipData.newPlainText("receive address", ((TextView)view.findViewById(R.id.receiveAddress)).getText());
                 clipboard.setPrimaryClip(clip);
-                Toast.makeText(getActivity(), "Copied receive address", Toast.LENGTH_SHORT).show();
+                MainActivity.snackbar(view, "Copied receive address", Snackbar.LENGTH_SHORT);
                 container.setVisibility(View.GONE);
             }
         });
@@ -42,7 +43,7 @@ public class WalletReceiveFragment extends Fragment {
 
     public void getNewAddress() {
         address.setText("Generating address...\n");
-        Wallet.newAddress(new SiaRequest.VolleyCallback(getActivity()) {
+        Wallet.newAddress(new SiaRequest.VolleyCallback(getView()) {
             public void onSuccess(JSONObject response) {
                 try {
                     address.setText(response.getString("address"));

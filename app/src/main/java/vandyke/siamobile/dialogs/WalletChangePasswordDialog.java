@@ -5,13 +5,13 @@ import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.EditText;
-import android.widget.Toast;
 import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
 import vandyke.siamobile.api.SiaRequest;
@@ -28,12 +28,11 @@ public class WalletChangePasswordDialog extends DialogFragment {
                     public void onClick(DialogInterface dialog, int id) {
                         String newPassword = ((EditText)view.findViewById(R.id.newPassword)).getText().toString();
                         if (!newPassword.equals(((EditText)view.findViewById(R.id.confirmNewPassword)).getText().toString())) {
-                            if (isAdded())
-                                Toast.makeText(view.getContext(), "New passwords don't match", Toast.LENGTH_SHORT).show();
+                            MainActivity.snackbar(view, "New passwords don't match", Snackbar.LENGTH_SHORT);
                             return; // TODO: make dialog not disappear in this case
                         }
                         Wallet.changePassword(((EditText) view.findViewById(R.id.currentPassword)).getText().toString(),
-                                newPassword, new SiaRequest.VolleyCallback(getActivity()));
+                                newPassword, new SiaRequest.VolleyCallback(view));
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

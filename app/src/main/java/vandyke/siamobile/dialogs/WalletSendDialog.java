@@ -56,11 +56,11 @@ public class WalletSendDialog extends DialogFragment {
                         if (MainActivity.prefs.getBoolean("feesEnabled", false))
                             Wallet.sendSiacoinsWithDevFee(sendAmount,
                                     ((EditText) view.findViewById(R.id.sendRecipient)).getText().toString(),
-                                    new SiaRequest.VolleyCallback(getActivity()));
+                                    new SiaRequest.VolleyCallback(view));
                         else
                             Wallet.sendSiacoins(sendAmount,
                                     ((EditText) view.findViewById(R.id.sendRecipient)).getText().toString(),
-                                    new SiaRequest.VolleyCallback(getActivity()));
+                                    new SiaRequest.VolleyCallback(view));
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

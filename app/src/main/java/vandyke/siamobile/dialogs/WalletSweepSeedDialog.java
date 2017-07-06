@@ -1,10 +1,10 @@
 package vandyke.siamobile.dialogs;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
-import android.os.Bundle;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
+import android.content.DialogInterface;
+import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,7 +26,7 @@ public class WalletSweepSeedDialog extends DialogFragment {
                 .setPositiveButton("Sweep", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         Wallet.sweepSeed("english", ((EditText)view.findViewById(R.id.walletSweepSeed)).getText().toString(),
-                                new SiaRequest.VolleyCallback(getActivity()));
+                                new SiaRequest.VolleyCallback(view));
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

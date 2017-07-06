@@ -1,8 +1,8 @@
 package vandyke.siamobile.api;
 
-import android.content.Context;
+import android.support.design.widget.Snackbar;
 import android.util.Base64;
-import android.widget.Toast;
+import android.view.View;
 import com.android.volley.Response;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
@@ -64,18 +64,18 @@ public class SiaRequest extends StringRequest {
     }
 
     public static class VolleyCallback {
-        private Context context;
+        private View view;
 
-        public VolleyCallback(Context context) {
-            this.context = context;
+        public VolleyCallback(View view) {
+            this.view = view;
         }
 
         public void onSuccess(JSONObject response) {
-            genericSuccessToast(context);
+            genericSuccessSnackbar(view);
         }
 
         public void onError(Error error) {
-            error.toast(context);
+            error.snackbar(view);
         }
     }
 
@@ -173,14 +173,13 @@ public class SiaRequest extends StringRequest {
             return reason != null ? reason.getMsg() : "";
         }
 
-        public void toast(Context context) {
-            if (reason != null && context != null)
-                Toast.makeText(context, reason.getMsg(), Toast.LENGTH_SHORT).show();
+        public void snackbar(View view) {
+            if (reason != null)
+                MainActivity.snackbar(view, reason.getMsg(), Snackbar.LENGTH_SHORT);
         }
     }
 
-    public static void genericSuccessToast(Context context) {
-        if (context != null)
-            Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show();
+    public static void genericSuccessSnackbar(View view) {
+        MainActivity.snackbar(view, "Success", Snackbar.LENGTH_SHORT);
     }
 }

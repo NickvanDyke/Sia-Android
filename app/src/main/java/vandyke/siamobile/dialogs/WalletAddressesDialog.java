@@ -1,10 +1,10 @@
 package vandyke.siamobile.dialogs;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
-import android.os.Bundle;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
+import android.content.DialogInterface;
+import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,7 +30,7 @@ public class WalletAddressesDialog extends DialogFragment {
         final ArrayList<String> addresses = new ArrayList<>();
         final TextTouchCopyListAdapter adapter = new TextTouchCopyListAdapter(getActivity(), R.layout.text_touch_copy_list_item, addresses);
         seedsList.setAdapter(adapter);
-        Wallet.addresses(new SiaRequest.VolleyCallback(getActivity()) {
+        Wallet.addresses(new SiaRequest.VolleyCallback(view) {
             public void onSuccess(JSONObject response) {
                 try {
                     JSONArray addressesJson = response.getJSONArray("addresses");

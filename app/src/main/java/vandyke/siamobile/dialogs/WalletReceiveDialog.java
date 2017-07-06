@@ -1,14 +1,14 @@
 package vandyke.siamobile.dialogs;
 
 import android.app.Dialog;
+import android.app.DialogFragment;
+import android.app.FragmentManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.app.DialogFragment;
-import android.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,7 +28,7 @@ public class WalletReceiveDialog extends DialogFragment {
         final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_wallet_receive, null);
         if (MainActivity.theme == MainActivity.Theme.CUSTOM)
             ((TextView)view.findViewById(R.id.receiveAddress)).setTextColor(Color.GRAY);
-        Wallet.newAddress(new SiaRequest.VolleyCallback(getActivity()) {
+        Wallet.newAddress(new SiaRequest.VolleyCallback(view) {
             public void onSuccess(JSONObject response) {
                 try {
                     ((TextView)view.findViewById(R.id.receiveAddress)).setText(response.getString("address"));

@@ -27,7 +27,7 @@ public class WalletAddSeedDialog extends DialogFragment {
                     public void onClick(DialogInterface dialog, int id) {
                         Wallet.seed(((EditText)view.findViewById(R.id.walletPassword)).getText().toString(), "english",
                                 ((EditText)view.findViewById(R.id.walletAddSeed)).getText().toString(),
-                                new SiaRequest.VolleyCallback(getActivity()));
+                                new SiaRequest.VolleyCallback(view));
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

@@ -7,9 +7,9 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.*;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
-import android.widget.Toast;
 import fi.iki.elonen.NanoHTTPD;
 import vandyke.siamobile.*;
 
@@ -44,8 +44,7 @@ public class SettingsFragment extends PreferenceFragment {
             public boolean onPreferenceChange(Preference preference, Object o) {
                 if (((String) o).equals("local_full_node")
                         && !(MainActivity.abi.equals("arm64"))) {
-                    if (isAdded())
-                        Toast.makeText(getActivity(), "Sorry, but your device's CPU architecture is not supported by Sia's full node. There is nothing Sia Mobile can do about this", Toast.LENGTH_LONG).show();
+                    MainActivity.snackbar(getView(), "Sorry, but your device's CPU architecture is not supported by Sia's full node", Snackbar.LENGTH_LONG);
                     return false;
                 }
                 return true;
@@ -57,8 +56,8 @@ public class SettingsFragment extends PreferenceFragment {
             public boolean onPreferenceChange(Preference preference, Object o) {
                 if (MainActivity.isExternalStorageWritable())
                     return true;
-                else if (isAdded())
-                    Toast.makeText(getActivity(), "Error: " + MainActivity.externalStorageStateDescription(), Toast.LENGTH_LONG).show();
+                else
+                    MainActivity.snackbar(getView(), "Error: " + MainActivity.externalStorageStateDescription(), Snackbar.LENGTH_LONG);
                 return false;
             }
         });

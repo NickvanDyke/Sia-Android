@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,7 +17,6 @@ import android.view.*;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.daimajia.numberprogressbar.NumberProgressBar;
@@ -58,17 +58,19 @@ public class WalletFragment extends Fragment {
     private FrameLayout unlockFrame;
     private WalletUnlockFragment unlockFrag;
 
+    private View view;
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_wallet, container, false);
+        view = inflater.inflate(R.layout.fragment_wallet, container, false);
         setHasOptionsMenu(true);
 
-        final Button receiveButton = (Button) v.findViewById(R.id.receiveButton);
-        final Button sendButton = (Button) v.findViewById(R.id.sendButton);
+        final Button receiveButton = (Button) view.findViewById(R.id.receiveButton);
+        final Button sendButton = (Button) view.findViewById(R.id.sendButton);
 
         if (MainActivity.theme == MainActivity.Theme.AMOLED || MainActivity.theme == MainActivity.Theme.CUSTOM) {
-            v.findViewById(R.id.top_shadow).setVisibility(View.GONE);
+            view.findViewById(R.id.top_shadow).setVisibility(View.GONE);
         } else if (MainActivity.theme == MainActivity.Theme.DARK) {
-            v.findViewById(R.id.top_shadow).setBackgroundResource(R.drawable.top_shadow_dark);
+            view.findViewById(R.id.top_shadow).setBackgroundResource(R.drawable.top_shadow_dark);
         }
         if (MainActivity.theme == MainActivity.Theme.AMOLED) {
             receiveButton.setBackgroundColor(android.R.color.transparent);
@@ -85,24 +87,24 @@ public class WalletFragment extends Fragment {
 
         balanceHastings = new BigDecimal("0");
         balanceUsd = new BigDecimal("0");
-        balanceText = (TextView) v.findViewById(R.id.balanceText);
-        balanceUsdText = (TextView) v.findViewById(R.id.balanceUsdText);
-        balanceUnconfirmedText = (TextView) v.findViewById(R.id.balanceUnconfirmed);
+        balanceText = (TextView) view.findViewById(R.id.balanceText);
+        balanceUsdText = (TextView) view.findViewById(R.id.balanceUsdText);
+        balanceUnconfirmedText = (TextView) view.findViewById(R.id.balanceUnconfirmed);
         transactions = new ArrayList<>();
 
-        syncBar = (NumberProgressBar) v.findViewById(R.id.syncBar);
-        syncText = (TextView) v.findViewById(R.id.syncText);
+        syncBar = (NumberProgressBar) view.findViewById(R.id.syncBar);
+        syncText = (TextView) view.findViewById(R.id.syncText);
         syncBar.setProgressTextColor(MainActivity.defaultTextColor);
-        walletStatusText = (TextView) v.findViewById(R.id.walletStatusText);
+        walletStatusText = (TextView) view.findViewById(R.id.walletStatusText);
 
-        transactionList = (RecyclerView) v.findViewById(R.id.transactionList);
+        transactionList = (RecyclerView) view.findViewById(R.id.transactionList);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         transactionList.setLayoutManager(layoutManager);
         transactionList.addItemDecoration(new DividerItemDecoration(transactionList.getContext(), layoutManager.getOrientation()));
 
-        sendFrame = (FrameLayout) v.findViewById(R.id.sendFrame);
-        receiveFrame = (FrameLayout) v.findViewById(R.id.receiveFrame);
-        unlockFrame = (FrameLayout) v.findViewById(R.id.unlockFrame);
+        sendFrame = (FrameLayout) view.findViewById(R.id.sendFrame);
+        receiveFrame = (FrameLayout) view.findViewById(R.id.receiveFrame);
+        unlockFrame = (FrameLayout) view.findViewById(R.id.unlockFrame);
 
         final WalletSendFragment sendFrag = new WalletSendFragment();
         getFragmentManager().beginTransaction().add(R.id.sendFrame, sendFrag).commit();
@@ -146,10 +148,10 @@ public class WalletFragment extends Fragment {
             }
         });
 
-        refresh();
+        refreshAll();
         handler.postDelayed(refreshTask, 60000);
 
-        return v;
+        return view;
     }
 
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -163,16 +165,16 @@ public class WalletFragment extends Fragment {
         actionBar.setTitle("Wallet");
     }
 
-    public void refresh() {
+    public void refreshAll() {
         refreshBalanceAndStatus();
         refreshSyncProgress();
         refreshTransactions();
         //TODO: figure out a GOOD way to Toast "Refreshed" if all requests complete successfully
-        //TODO: auto refresh every x seconds. Eventually add option to refresh in background, with notifications?
+        //TODO: auto refreshAll every x seconds. Eventually add option to refreshAll in background, with notifications?
     }
 
     public void refreshBalanceAndStatus() {
-        Wallet.wallet(new SiaRequest.VolleyCallback(getActivity()) {
+        Wallet.wallet(new SiaRequest.VolleyCallback(view) {
             public void onSuccess(JSONObject response) {
                 try {
                     if (response.getString("encrypted").equals("false"))
@@ -190,8 +192,7 @@ public class WalletFragment extends Fragment {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                if (isAdded())
-                    Toast.makeText(getActivity(), "Refreshed", Toast.LENGTH_SHORT).show();
+                MainActivity.snackbar(view, "Refreshed", Snackbar.LENGTH_SHORT);
             }
 
             public void onError(SiaRequest.Error error) {
@@ -221,14 +222,13 @@ public class WalletFragment extends Fragment {
             public void onErrorResponse(VolleyError error) {
                 balanceUsd = new BigDecimal("0");
                 balanceUsdText.setText(Wallet.round(balanceUsd) + " USD");
-                if (isAdded())
-                    Toast.makeText(getActivity(), "Error retrieving USD value", Toast.LENGTH_SHORT).show();
+                MainActivity.snackbar(view, "Error retreiving SC/USD price", Snackbar.LENGTH_SHORT);
             }
         });
     }
 
     public void refreshTransactions() {
-        Wallet.transactions(new SiaRequest.VolleyCallback(getActivity()) {
+        Wallet.transactions(new SiaRequest.VolleyCallback(view) {
             public void onSuccess(JSONObject response) {
                 boolean hideZero = MainActivity.prefs.getBoolean("hideZero", false);
                 transactions = Transaction.populateTransactions(response);
@@ -244,7 +244,7 @@ public class WalletFragment extends Fragment {
     }
 
     public void refreshSyncProgress() {
-        Consensus.consensus(new SiaRequest.VolleyCallback(getActivity()) {
+        Consensus.consensus(new SiaRequest.VolleyCallback(view) {
             public void onSuccess(JSONObject response) {
                 try {
                     if (response.getBoolean("synced")) {
@@ -267,6 +267,7 @@ public class WalletFragment extends Fragment {
             }
 
             public void onError(SiaRequest.Error error) {
+                super.onError(error);
                 syncText.setText("Not Synced");
                 syncBar.setProgress(0);
                 syncNotification(R.drawable.ic_sync_problem_white_48dp, "Syncing blockchain...", "Could not retrieve sync progress", false);
@@ -307,14 +308,14 @@ public class WalletFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.actionRefresh:
-                refresh();
+                refreshAll();
                 break;
             case R.id.actionUnlock:
                 unlockFrag.clearFields();
                 unlockFrame.setVisibility(View.VISIBLE);
                 break;
             case R.id.actionLock:
-                Wallet.lock(new SiaRequest.VolleyCallback(getActivity()) {
+                Wallet.lock(new SiaRequest.VolleyCallback(view) {
                     public void onSuccess(JSONObject response) {
                         super.onSuccess(response);
                         walletStatusText.setText("Locked");
@@ -347,7 +348,7 @@ public class WalletFragment extends Fragment {
     public static void refreshWallet(FragmentManager fragmentManager) {
         WalletFragment fragment = (WalletFragment) fragmentManager.findFragmentByTag("WalletFragment");
         if (fragment != null)
-            fragment.refresh();
+            fragment.refreshAll();
     }
 
     private TransactionExpandableGroup transactionToGroupWithChild(Transaction tx) {

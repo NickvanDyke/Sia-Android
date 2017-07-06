@@ -5,6 +5,7 @@ import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +14,6 @@ import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 import org.json.JSONObject;
 import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
@@ -56,21 +56,20 @@ public class WalletCreateDialog extends DialogFragment {
                     public void onClick(DialogInterface dialog, int id) {
                         String password = ((EditText) view.findViewById(R.id.newPasswordCreate)).getText().toString();
                         if (!password.equals(((EditText) view.findViewById(R.id.confirmNewPasswordCreate)).getText().toString())) {
-                            if (isAdded())
-                                Toast.makeText(getActivity(), "New passwords don't match", Toast.LENGTH_SHORT).show();
+                            MainActivity.snackbar(view, "New passwords don't match", Snackbar.LENGTH_SHORT);
                             return;
                         }
                         boolean force = forceCheck.isChecked();
                         String dictionary = "english";
                         if (createFromSeed.isChecked())
-                            Wallet.initSeed(password, force, dictionary, seedField.getText().toString(), new SiaRequest.VolleyCallback(getActivity()) {
+                            Wallet.initSeed(password, force, dictionary, seedField.getText().toString(), new SiaRequest.VolleyCallback(view) {
                                 public void onSuccess(JSONObject response) {
                                     super.onSuccess(response);
 //                                    WalletFragment.refreshWallet(getFragmentManager());
                                 }
                             });
                         else
-                            Wallet.init(password, force, dictionary, new SiaRequest.VolleyCallback(getActivity()) {
+                            Wallet.init(password, force, dictionary, new SiaRequest.VolleyCallback(view) {
                                 public void onSuccess(JSONObject response) {
                                     super.onSuccess(response);
 //                                    WalletFragment.refreshWallet(getFragmentManager());

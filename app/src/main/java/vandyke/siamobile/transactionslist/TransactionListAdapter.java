@@ -4,13 +4,13 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.graphics.Color;
+import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 import com.thoughtbot.expandablerecyclerview.ExpandableRecyclerViewAdapter;
 import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
 import vandyke.siamobile.MainActivity;
@@ -40,14 +40,14 @@ public class TransactionListAdapter extends ExpandableRecyclerViewAdapter<Transa
 
     @Override
     public TransactionHeaderHolder onCreateGroupViewHolder(final ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_tx_header, parent, false);
+        final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_tx_header, parent, false);
         // TODO: find how to make the view not expand if it's long pressed... spent a long time and still couldn't get it, idk if possible in this situation
         final TextView idText = (TextView) view.findViewById(R.id.transactionHeaderId);
         idText.setOnLongClickListener(new View.OnLongClickListener() {
             public boolean onLongClick(View v) {
                 ClipData clip = ClipData.newPlainText("Sia transaction id", ((TextView)v).getText());
                 ((ClipboardManager) idText.getContext().getSystemService(Context.CLIPBOARD_SERVICE)).setPrimaryClip(clip);
-                Toast.makeText(idText.getContext(), "Copied transaction ID", Toast.LENGTH_SHORT).show();
+                MainActivity.snackbar(view, "Copied transaction ID", Snackbar.LENGTH_SHORT);
                 return true;
             }
         });

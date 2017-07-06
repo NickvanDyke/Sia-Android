@@ -93,7 +93,7 @@ public class Siad {
     }
 
     public void stop(Activity activity) {
-        Daemon.stop(new SiaRequest.VolleyCallback(activity));
+        Daemon.stop(new SiaRequest.VolleyCallback(null));
         siadProcess = null;
         terminalAppend("Stopping siad... (may take a while. It's okay to close Sia Mobile during this)\n");
     }

@@ -15,6 +15,8 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -322,7 +324,7 @@ public class MainActivity extends AppCompatActivity {
         ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText("Sia text touch copy", ((TextView) view).getText());
         clipboard.setPrimaryClip(clip);
-        Toast.makeText(this, "Copied selection to clipboard", Toast.LENGTH_SHORT).show();
+        snackbar(view, "Copied selection to clipboard", Snackbar.LENGTH_SHORT);
     }
 
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -356,6 +358,14 @@ public class MainActivity extends AppCompatActivity {
                         Activity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(
                 activity.getCurrentFocus().getWindowToken(), 0);
+    }
+
+    public static void snackbar(View view, String text, int duration) {
+        if (view == null)
+            return;
+        Snackbar snackbar = Snackbar.make(view, text, duration);
+        snackbar.getView().setBackgroundColor(ContextCompat.getColor(view.getContext(), R.color.colorAccent));
+        snackbar.show();
     }
 
     // will return null if the abi is an unsupported one and therefore there is not a binary for it
