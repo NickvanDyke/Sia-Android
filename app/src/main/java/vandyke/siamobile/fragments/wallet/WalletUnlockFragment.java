@@ -1,4 +1,4 @@
-package vandyke.siamobile.fragments;
+package vandyke.siamobile.fragments.wallet;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -40,9 +40,4 @@ public class WalletUnlockFragment extends Fragment {
 
         return view;
     }
-
-    public void clearFields() {
-        password.setText("");
-    }
-
 }

@@ -1,4 +1,4 @@
-package vandyke.siamobile.fragments;
+package vandyke.siamobile.fragments.wallet;
 
 import android.app.Fragment;
 import android.content.ClipData;
@@ -19,12 +19,24 @@ import vandyke.siamobile.api.Wallet;
 
 public class WalletReceiveFragment extends Fragment {
 
-    private TextView address;
-
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_wallet_receive, null);
-        address = (TextView)view.findViewById(R.id.receiveAddress);
-        getNewAddress();
+        final TextView address = (TextView)view.findViewById(R.id.receiveAddress);
+        Wallet.newAddress(new SiaRequest.VolleyCallback(view) {
+            public void onSuccess(JSONObject response) {
+                try {
+                    address.setText(response.getString("address"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onError(SiaRequest.Error error) {
+                super.onError(error);
+                address.setText(error.getMsg() + "\n");
+            }
+        });
         view.findViewById(R.id.walletAddressCopy).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 ClipboardManager clipboard = (ClipboardManager)getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
@@ -40,24 +52,5 @@ public class WalletReceiveFragment extends Fragment {
             }
         });
         return view;
-    }
-
-    public void getNewAddress() {
-        address.setText("Generating address...\n");
-        Wallet.newAddress(new SiaRequest.VolleyCallback(getView()) {
-            public void onSuccess(JSONObject response) {
-                try {
-                    address.setText(response.getString("address"));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onError(SiaRequest.Error error) {
-                super.onError(error);
-                address.setText(error.getMsg() + "\n");
-            }
-        });
     }
 }

@@ -37,6 +37,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import vandyke.siamobile.dialogs.DonateDialog;
 import vandyke.siamobile.fragments.*;
+import vandyke.siamobile.fragments.wallet.WalletFragment;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -361,6 +362,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static void snackbar(View view, String text, int duration) {
+        System.out.println(view);
         if (view == null)
             return;
         Snackbar snackbar = Snackbar.make(view, text, duration);

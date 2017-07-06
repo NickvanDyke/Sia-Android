@@ -1,4 +1,4 @@
-package vandyke.siamobile.fragments;
+package vandyke.siamobile.fragments.wallet;
 
 import android.app.Fragment;
 import android.os.Bundle;

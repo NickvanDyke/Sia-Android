@@ -1,4 +1,4 @@
-package vandyke.siamobile.fragments;
+package vandyke.siamobile.fragments.wallet;
 
 import android.app.*;
 import android.content.Context;
@@ -54,7 +54,6 @@ public class WalletFragment extends Fragment {
     private RecyclerView transactionList;
     private final ArrayList<TransactionExpandableGroup> transactionExpandableGroups = new ArrayList<>();
     private FrameLayout expandFrame;
-    private WalletUnlockFragment unlockFrag;
 
     private View view;
 
