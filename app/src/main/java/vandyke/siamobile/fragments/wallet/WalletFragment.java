@@ -27,7 +27,10 @@ import vandyke.siamobile.R;
 import vandyke.siamobile.api.Consensus;
 import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
-import vandyke.siamobile.dialogs.*;
+import vandyke.siamobile.dialogs.WalletAddressesDialog;
+import vandyke.siamobile.dialogs.WalletChangePasswordDialog;
+import vandyke.siamobile.dialogs.WalletCreateDialog;
+import vandyke.siamobile.dialogs.WalletSeedsDialog;
 import vandyke.siamobile.transaction.Transaction;
 import vandyke.siamobile.transactionslist.TransactionExpandableGroup;
 import vandyke.siamobile.transactionslist.TransactionListAdapter;
@@ -310,14 +313,13 @@ public class WalletFragment extends Fragment {
 //                replaceExpandFrame(new WalletCreateDialog());
                 break;
             case R.id.actionSweepSeed:
-                WalletSweepSeedDialog.createAndShow(getFragmentManager());
-//                replaceExpandFrame(new WalletSweepSeedDialog());
+                replaceExpandFrame(new WalletSweepSeedFragment());
                 break;
             case R.id.actionViewAddresses:
                 WalletAddressesDialog.createAndShow(getFragmentManager());
                 break;
             case R.id.actionAddSeed:
-                WalletAddSeedDialog.createAndShow(getFragmentManager());
+                replaceExpandFrame(new WalletAddSeedFragment());
                 break;
         }
 

@@ -68,7 +68,7 @@ public class WalletSendFragment extends Fragment {
                             });
             }
         });
-        view.findViewById(R.id.walletSendCancel).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.walletAddCancel).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 container.setVisibility(View.GONE);
                 MainActivity.hideSoftKeyboard(getActivity());
