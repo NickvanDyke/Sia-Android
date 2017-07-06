@@ -59,8 +59,6 @@ public class WalletFragment extends Fragment {
     private WalletUnlockFragment unlockFrag;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        String hi = null;
-        hi.substring(0);
         View v = inflater.inflate(R.layout.fragment_wallet, container, false);
         setHasOptionsMenu(true);
 
@@ -81,6 +79,7 @@ public class WalletFragment extends Fragment {
         refreshTask = new Runnable() {
             public void run() {
                 refreshSyncProgress();
+                handler.postDelayed(refreshTask, 60000);
             }
         };
 
@@ -148,6 +147,7 @@ public class WalletFragment extends Fragment {
         });
 
         refresh();
+        handler.postDelayed(refreshTask, 60000);
 
         return v;
     }
@@ -260,8 +260,6 @@ public class WalletFragment extends Fragment {
                         double progress = ((double) response.getInt("height") / estimatedBlockHeightAt(System.currentTimeMillis() / 1000)) * 100;
                         syncBar.setProgress((int) progress);
                         syncNotification(R.drawable.ic_sync_white_48dp, "Syncing blockchain...", String.format("Progress (estimated): %.2f%%", progress), false);
-                        handler.removeCallbacks(refreshTask);
-                        handler.postDelayed(refreshTask, 60000);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -272,7 +270,6 @@ public class WalletFragment extends Fragment {
                 syncText.setText("Not Synced");
                 syncBar.setProgress(0);
                 syncNotification(R.drawable.ic_sync_problem_white_48dp, "Syncing blockchain...", "Could not retrieve sync progress", false);
-                handler.removeCallbacks(refreshTask);
             }
         });
     }
