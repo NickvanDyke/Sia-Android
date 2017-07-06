@@ -77,10 +77,4 @@ public class WalletSendFragment extends Fragment {
 
         return view;
     }
-
-    public void clearFields() {
-        recipient.setText("");
-        amount.setText("");
-        feeText.setText("0.5% App fee: 0.000");
-    }
 }

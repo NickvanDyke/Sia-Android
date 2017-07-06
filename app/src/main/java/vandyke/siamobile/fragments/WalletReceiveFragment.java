@@ -24,6 +24,7 @@ public class WalletReceiveFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_wallet_receive, null);
         address = (TextView)view.findViewById(R.id.receiveAddress);
+        getNewAddress();
         view.findViewById(R.id.walletAddressCopy).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 ClipboardManager clipboard = (ClipboardManager)getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
@@ -50,6 +51,12 @@ public class WalletReceiveFragment extends Fragment {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+            }
+
+            @Override
+            public void onError(SiaRequest.Error error) {
+                super.onError(error);
+                address.setText(error.getMsg() + "\n");
             }
         });
     }
