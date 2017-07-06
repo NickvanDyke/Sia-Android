@@ -365,7 +365,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static void snackbar(View view, String text, int duration) {
         System.out.println(view);
-        if (view == null)
+        if (view == null || !view.isShown())
             return;
         Snackbar snackbar = Snackbar.make(view, text, duration);
         snackbar.getView().setBackgroundColor(ContextCompat.getColor(view.getContext(), R.color.colorAccent));

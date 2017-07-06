@@ -97,6 +97,7 @@ public class SiaRequest extends StringRequest {
             UNACCOUNTED_FOR_ERROR("Unexpected error"),
             ANOTHER_WALLET_SCAN_UNDERWAY("Wallet scan in progress. Please wait"),
             WALLET_NOT_ENCRYPTED("Wallet has not been encrypted yet"),
+            INVALID_WORD_IN_SEED("Invalid word in seed"),
             UNSUPPORTED_ON_COLD_WALLET("Unsupported on cold storage wallet");
 
             private String msg;
@@ -161,8 +162,12 @@ public class SiaRequest extends StringRequest {
                 return Reason.WALLET_NOT_ENCRYPTED;
             else if (errorMessage.contains("unsupported on cold storage wallet"))
                 return Reason.UNSUPPORTED_ON_COLD_WALLET;
-            else
+            else if (errorMessage.contains("word not found in dictionary for given language"))
+                return Reason.INVALID_WORD_IN_SEED;
+            else {
+                System.out.println(errorMessage);
                 return Reason.UNACCOUNTED_FOR_ERROR;
+            }
         }
 
         public Reason getReason() {

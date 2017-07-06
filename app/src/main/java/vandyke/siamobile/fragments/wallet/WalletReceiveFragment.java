@@ -30,8 +30,6 @@ public class WalletReceiveFragment extends Fragment {
                     e.printStackTrace();
                 }
             }
-
-            @Override
             public void onError(SiaRequest.Error error) {
                 super.onError(error);
                 address.setText(error.getMsg() + "\n");

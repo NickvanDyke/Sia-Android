@@ -41,10 +41,10 @@
         android:textColor="@color/colorAccent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/walletAddCancel"
+        android:id="@+id/walletCreateCancel"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/walletAddSeedButton"
-        app:layout_constraintBottom_toBottomOf="@+id/walletAddSeedButton"
+        app:layout_constraintRight_toLeftOf="@+id/walletCreateButton"
+        app:layout_constraintBottom_toBottomOf="@+id/walletCreateButton"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"/>
 
@@ -54,10 +54,10 @@
         android:textColor="@color/colorAccent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/walletAddSeedButton"
+        android:id="@+id/walletCreateButton"
         app:layout_constraintTop_toBottomOf="@+id/walletAddSeed"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toRightOf="@+id/walletAddCancel"
+        app:layout_constraintLeft_toRightOf="@+id/walletCreateCancel"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"/>
 </android.support.constraint.ConstraintLayout>

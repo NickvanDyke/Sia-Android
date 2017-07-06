@@ -1,11 +1,7 @@
-package vandyke.siamobile.dialogs;
+package vandyke.siamobile.fragments.wallet;
 
-import android.app.Dialog;
-import android.app.DialogFragment;
-import android.app.FragmentManager;
-import android.content.DialogInterface;
+import android.app.Fragment;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +9,6 @@ import android.widget.ListView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
 import vandyke.siamobile.TextTouchCopyListAdapter;
 import vandyke.siamobile.api.SiaRequest;
@@ -21,11 +16,10 @@ import vandyke.siamobile.api.Wallet;
 
 import java.util.ArrayList;
 
-public class WalletSeedsDialog extends DialogFragment {
+public class WalletSeedsFragment extends Fragment {
 
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = MainActivity.getDialogBuilder(getActivity());
-        final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_wallet_seeds, null);
+    public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
+        final View view = getActivity().getLayoutInflater().inflate(R.layout.fragment_wallet_seeds, null);
         ListView seedsList = (ListView) view.findViewById(R.id.seedsList);
         final ArrayList<String> seeds = new ArrayList<>();
         final TextTouchCopyListAdapter adapter = new TextTouchCopyListAdapter(getActivity(), R.layout.text_touch_copy_list_item, seeds);
@@ -42,22 +36,11 @@ public class WalletSeedsDialog extends DialogFragment {
                 adapter.notifyDataSetChanged();
             }
         });
-
-        builder.setTitle("Wallet Seeds")
-                .setView(view)
-                .setPositiveButton("Close", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-
-                    }
-                });
-        return builder.create();
-    }
-
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.dialog_wallet_seeds, null);
-    }
-
-    public static void createAndShow(FragmentManager fragmentManager) {
-        new WalletSeedsDialog().show(fragmentManager, "view seeds dialog");
+        view.findViewById(R.id.walletSeedsClose).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                container.setVisibility(View.GONE);
+            }
+        });
+        return view;
     }
 }

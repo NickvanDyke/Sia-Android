@@ -14,8 +14,8 @@
             android:layout_marginLeft="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
-            android:layout_height="200dp"
-            android:layout_marginTop="8dp"/>
+            android:layout_marginTop="8dp"
+            android:layout_height="192dp"/>
 
     <TextView
             android:text="Keep your seed(s) safe! You will need them to recover your funds if something happens to your device or wallet. If someone gets your seed(s), they can take your funds!"
@@ -31,4 +31,15 @@
             app:layout_constraintRight_toRightOf="parent"
             android:layout_marginRight="16dp"
             android:layout_marginTop="8dp"/>
+
+    <Button
+            android:text="Close"
+            android:background="@null"
+            android:textColor="@color/colorAccent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/walletSeedsClose"
+            app:layout_constraintTop_toBottomOf="@+id/seedsList"
+            app:layout_constraintRight_toRightOf="@+id/seedsList"
+            app:layout_constraintLeft_toLeftOf="@+id/seedsList"/>
 </android.support.constraint.ConstraintLayout>

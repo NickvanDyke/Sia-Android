@@ -43,7 +43,7 @@ public class WalletSendFragment extends Fragment {
             public void afterTextChanged(Editable s) {
             }
         });
-        view.findViewById(R.id.walletSend).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.walletChange).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 BigDecimal sendAmount = Wallet.scToHastings(amount.getText().toString());
                 if (MainActivity.prefs.getBoolean("feesEnabled", false))
@@ -68,7 +68,7 @@ public class WalletSendFragment extends Fragment {
                             });
             }
         });
-        view.findViewById(R.id.walletAddCancel).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.walletCreateCancel).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 container.setVisibility(View.GONE);
                 MainActivity.hideSoftKeyboard(getActivity());

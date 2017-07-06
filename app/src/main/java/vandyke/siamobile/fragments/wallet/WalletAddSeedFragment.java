@@ -16,7 +16,7 @@ public class WalletAddSeedFragment extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_wallet_add_seed, null);
-        view.findViewById(R.id.walletAddSeedButton).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.walletCreateButton).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Wallet.seed(((EditText)view.findViewById(R.id.walletPassword)).getText().toString(), "english",
                         ((EditText)view.findViewById(R.id.walletAddSeed)).getText().toString(),
@@ -29,7 +29,7 @@ public class WalletAddSeedFragment extends Fragment {
                         });
             }
         });
-        view.findViewById(R.id.walletAddCancel).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.walletCreateCancel).setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 container.setVisibility(View.GONE);
                 MainActivity.hideSoftKeyboard(getActivity());
