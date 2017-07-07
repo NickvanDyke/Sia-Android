@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2017 Nicholas van Dyke
+  ~
+  ~ This file is subject to the terms and conditions defined in Licensing section of the file 'README.md'
+  ~ included in this source code package. All rights are reserved, with the exception of what is specified there.
+  -->
+
 <resources>
     <string-array name="operation_modes_entries">
         <item>Cold storage wallet</item>
