@@ -85,14 +85,14 @@ public class SettingsFragment extends PreferenceFragment {
                         if (sharedPreferences.getString("operationMode", "cold_storage").equals("remote_full_node")) {
                             editor.putString("address", sharedPreferences.getString("remoteAddress", "192.168.1.11:9980"));
                             ColdStorageWallet.destroy();
-                            Siad.stopSiad(getActivity());
+                            getActivity().stopService(new Intent(getActivity(), Siad.class));
                         } else if (sharedPreferences.getString("operationMode", "cold_storage").equals("local_full_node")) {
                             editor.putString("address", "localhost:9980");
                             ColdStorageWallet.destroy();
-                            Siad.getInstance(getActivity()).start(getActivity());
+                            getActivity().startService(new Intent(getActivity(), Siad.class));
                         } else if (sharedPreferences.getString("operationMode", "cold_storage").equals("cold_storage")) {
                             editor.putString("address", "localhost:9980");
-                            Siad.stopSiad(getActivity());
+                            getActivity().stopService(new Intent(getActivity(), Siad.class));
                             try {
                                 ColdStorageWallet.getInstance(getActivity()).start(NanoHTTPD.SOCKET_READ_TIMEOUT);
                             } catch (IOException e) {

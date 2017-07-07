@@ -1,10 +1,7 @@
 package vandyke.siamobile;
 
 import android.app.*;
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
-import android.content.SharedPreferences;
+import android.content.*;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -213,7 +210,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         if (prefs.getString("operationMode", "cold_storage").equals("local_full_node"))
-            Siad.getInstance(this).start(this);
+            startService(new Intent(this, Siad.class));
         else if (prefs.getString("operationMode", "cold_storage").equals("cold_storage"))
             try {
                 ColdStorageWallet.getInstance(this).start();
@@ -380,16 +377,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // will return null if the abi is an unsupported one and therefore there is not a binary for it
-    public static File copyBinary(String filename, Activity activity, boolean bit32) {
+    public static File copyBinary(String filename, Context context, boolean bit32) {
         try {
             InputStream in;
             File result;
             if (bit32) {
-                in = activity.getAssets().open(filename + "-" + abi32);
-                result = new File(activity.getFilesDir(), filename + "-" + abi32);
+                in = context.getAssets().open(filename + "-" + abi32);
+                result = new File(context.getFilesDir(), filename + "-" + abi32);
             } else {
-                in = activity.getAssets().open(filename + "-" + abi);
-                result = new File(activity.getFilesDir(), filename + "-" + abi);
+                in = context.getAssets().open(filename + "-" + abi);
+                result = new File(context.getFilesDir(), filename + "-" + abi);
             }
             if (result.exists())
                 return result;
@@ -408,18 +405,18 @@ public class MainActivity extends AppCompatActivity {
         return null;
     }
 
-    public static File getWorkingDirectory(Activity activity) {
-        if (activity == null)
+    public static File getWorkingDirectory(Context context) {
+        if (context == null)
             return null;
         File result;
         if (prefs.getBoolean("useExternal", false)) {
-            result = activity.getExternalFilesDir(null);
+            result = context.getExternalFilesDir(null);
             if (result == null) { // external storage not found
-                Toast.makeText(activity, "No external storage found. Using internal", Toast.LENGTH_LONG).show();
-                result = activity.getFilesDir();
+                Toast.makeText(context, "No external storage found. Using internal", Toast.LENGTH_LONG).show();
+                result = context.getFilesDir();
             }
         } else
-            result = activity.getFilesDir();
+            result = context.getFilesDir();
         return result;
     }
 

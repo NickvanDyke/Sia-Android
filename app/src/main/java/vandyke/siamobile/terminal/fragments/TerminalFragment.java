@@ -16,7 +16,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
-import vandyke.siamobile.backend.Siad;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -86,7 +85,7 @@ public class TerminalFragment extends Fragment {
 
         output = (TextView)v.findViewById(R.id.output);
         output.setMovementMethod(new ScrollingMovementMethod());
-        Siad.getInstance(getActivity()).setTerminalFragment(this);
+//        Siad.getInstance(getActivity()).setTerminalFragment(this);
         return v;
     }
 
@@ -107,6 +106,6 @@ public class TerminalFragment extends Fragment {
 
     public void onResume() {
         super.onResume();
-        output.append(Siad.getInstance(getActivity()).getBufferedStdout());
+//        output.append(Siad.getInstance(getActivity()).getBufferedStdout());
     }
 }
