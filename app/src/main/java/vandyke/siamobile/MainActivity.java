@@ -32,13 +32,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import vandyke.siamobile.about.AboutActivity;
 import vandyke.siamobile.backend.ColdStorageWallet;
 import vandyke.siamobile.backend.Siad;
 import vandyke.siamobile.dialogs.DonateDialog;
 import vandyke.siamobile.files.fragments.FilesFragment;
 import vandyke.siamobile.help.fragments.HelpFragment;
 import vandyke.siamobile.hosting.fragments.HostingFragment;
-import vandyke.siamobile.intro.IntroActivity;
 import vandyke.siamobile.misc.LinksFragment;
 import vandyke.siamobile.settings.fragments.SettingsFragment;
 import vandyke.siamobile.terminal.fragments.TerminalFragment;
@@ -157,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
                         loadDrawerFragment(SettingsFragment.class);
                         break;
                     case R.id.drawer_item_about:
-                        startActivity(new Intent(getApplicationContext(), IntroActivity.class));
+                        startActivity(new Intent(getApplicationContext(), AboutActivity.class));
                         break;
                     case R.id.drawer_item_links:
                         loadDrawerFragment(LinksFragment.class);
@@ -187,6 +187,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 if (item.getGroupId() != R.id.dialogs && item.getItemId() != R.id.drawer_item_about) {
+                    System.out.println("hi");
                     getSupportActionBar().setTitle(item.getTitle());
                     if (activeMenuItem != null)
                         activeMenuItem.setChecked(false);
@@ -241,7 +242,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
             }
         if (prefs.getBoolean("firstTime", true)) {
-            startActivity(new Intent(this, IntroActivity.class));
+            startActivity(new Intent(this, AboutActivity.class));
             prefs.edit().putBoolean("firstTime", false).apply();
         }
     }
