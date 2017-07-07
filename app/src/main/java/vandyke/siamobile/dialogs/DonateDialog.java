@@ -45,7 +45,7 @@ public class DonateDialog extends DialogFragment {
                         });
             }
         });
-        builder.setTitle("Remove Ads")
+        builder.setTitle("Donate")
                 .setView(dialogView)
                 .setPositiveButton("Close", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {

@@ -35,9 +35,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import vandyke.siamobile.backend.ColdStorageWallet;
+import vandyke.siamobile.backend.Siad;
 import vandyke.siamobile.dialogs.DonateDialog;
-import vandyke.siamobile.fragments.*;
-import vandyke.siamobile.fragments.wallet.WalletFragment;
+import vandyke.siamobile.files.fragments.FilesFragment;
+import vandyke.siamobile.help.fragments.HelpFragment;
+import vandyke.siamobile.help.fragments.WelcomeFragment;
+import vandyke.siamobile.hosting.fragments.HostingFragment;
+import vandyke.siamobile.misc.LinksFragment;
+import vandyke.siamobile.settings.fragments.SettingsFragment;
+import vandyke.siamobile.terminal.fragments.TerminalFragment;
+import vandyke.siamobile.wallet.fragments.WalletFragment;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -364,7 +372,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static void snackbar(View view, String text, int duration) {
-        System.out.println(view);
         if (view == null || !view.isShown())
             return;
         Snackbar snackbar = Snackbar.make(view, text, duration);
