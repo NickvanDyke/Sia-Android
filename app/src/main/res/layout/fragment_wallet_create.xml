@@ -35,16 +35,16 @@
             android:text="Force"
             android:layout_width="0dp"
             android:layout_height="48dp" android:id="@+id/walletCreateForce"
-            tools:layout_constraintTop_creator="1"
-            app:layout_constraintTop_toBottomOf="@+id/confirmNewPasswordCreate"
-            app:layout_constraintLeft_toLeftOf="@+id/confirmNewPasswordCreate"/>
+            app:layout_constraintTop_toBottomOf="@+id/walletCreateFromSeed"
+            app:layout_constraintLeft_toLeftOf="@+id/confirmNewPasswordCreate"
+            />
     <CheckBox
             android:text="Create from existing seed"
             android:layout_width="wrap_content"
             android:layout_height="48dp"
             android:id="@+id/walletCreateFromSeed"
-            app:layout_constraintTop_toBottomOf="@+id/walletCreateForce"
-            app:layout_constraintLeft_toLeftOf="@+id/walletCreateForce"/>
+            app:layout_constraintTop_toBottomOf="@+id/confirmNewPasswordCreate"
+            app:layout_constraintLeft_toLeftOf="@+id/confirmNewPasswordCreate"/>
     <EditText
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -88,9 +88,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/walletCreateButton"
-            app:layout_constraintTop_toBottomOf="@+id/walletCreateFromSeed"
+            app:layout_constraintTop_toBottomOf="@+id/walletCreateForce"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintLeft_toRightOf="@+id/walletCreateCancel"
             android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"/>
+            android:layout_marginRight="16dp"
+            app:layout_constraintHorizontal_bias="0.44"/>
 </android.support.constraint.ConstraintLayout>
