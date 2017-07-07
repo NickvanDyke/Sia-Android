@@ -1,10 +1,7 @@
 package vandyke.siamobile;
 
 import android.app.*;
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
-import android.content.SharedPreferences;
+import android.content.*;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -40,8 +37,8 @@ import vandyke.siamobile.backend.Siad;
 import vandyke.siamobile.dialogs.DonateDialog;
 import vandyke.siamobile.files.fragments.FilesFragment;
 import vandyke.siamobile.help.fragments.HelpFragment;
-import vandyke.siamobile.help.fragments.WelcomeFragment;
 import vandyke.siamobile.hosting.fragments.HostingFragment;
+import vandyke.siamobile.intro.IntroActivity;
 import vandyke.siamobile.misc.LinksFragment;
 import vandyke.siamobile.settings.fragments.SettingsFragment;
 import vandyke.siamobile.terminal.fragments.TerminalFragment;
@@ -159,6 +156,9 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.drawer_item_settings:
                         loadDrawerFragment(SettingsFragment.class);
                         break;
+                    case R.id.drawer_item_about:
+                        startActivity(new Intent(getApplicationContext(), IntroActivity.class));
+                        break;
                     case R.id.drawer_item_links:
                         loadDrawerFragment(LinksFragment.class);
                         break;
@@ -221,10 +221,7 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-        if (prefs.getBoolean("firstTime", true)) {
-            prefs.edit().putBoolean("firstTime", false).apply();
-            loadDrawerFragment(WelcomeFragment.class);
-        } else
+
             switch (prefs.getString("startupPage", "wallet")) {
                 case "files":
                     loadDrawerFragment(FilesFragment.class);
@@ -243,6 +240,10 @@ public class MainActivity extends AppCompatActivity {
                     navigationView.setCheckedItem(R.id.drawer_item_terminal);
                     break;
             }
+        if (prefs.getBoolean("firstTime", true)) {
+            startActivity(new Intent(this, IntroActivity.class));
+            prefs.edit().putBoolean("firstTime", false).apply();
+        }
     }
 
     public void loadDrawerFragment(Class clazz) {

@@ -23,6 +23,11 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity android:name=".intro.IntroActivity"
+                  android:screenOrientation="portrait"
+                  android:launchMode="singleInstance">
+
+        </activity>
     </application>
 
 </manifest>
