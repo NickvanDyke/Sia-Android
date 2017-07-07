@@ -186,7 +186,7 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 }
 
-                if (item.getGroupId() != R.id.dialogs) {
+                if (item.getGroupId() != R.id.dialogs && item.getItemId() != R.id.drawer_item_about) {
                     getSupportActionBar().setTitle(item.getTitle());
                     if (activeMenuItem != null)
                         activeMenuItem.setChecked(false);
