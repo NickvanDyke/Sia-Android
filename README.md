@@ -10,7 +10,7 @@ Sia Mobile can
 
 [Sia Mobile on the Play Store](https://play.google.com/store/apps/details?id=vandyke.siamobile)
 
-My username on the [Sia Slack](siatalk.slack.com) is Nicktz. Please direct any questions or comments you have to me on there, particularly in the #android-dev channel.
+My username on the [Sia Slack](https://siatalk.slack.com) is Nicktz. Please direct any questions or comments you have to me on there, particularly in the #android-dev channel.
 
 # Contributing
 Sia Mobile is still in heavy development, and contributions to the Sia Mobile codebase through this repository (pull requests, issue reporting, etc.) are welcomed, encouraged, and appreciated. Please view the [projects page](https://github.com/NickvanDyke/Sia-Mobile/projects) for a to-do list of changes and features for Sia Mobile. This list is not exhaustive; not everything I want done is included. You also do not have to adhere to this list, but it can be a helpful resource if you want to contribute but don't know in what way. If you have any ideas for something you want to contribute that's not listed, I would be happy to hear them. Due to the lack of certain features of Sia right now, some things are currently impossible for Sia Mobile, such as a lite wallet. I've spoken with David Vorick extensively, and have a good understanding of what can and can't be done with Sia Mobile, so I recommend you run ideas by me first, to determine their viability. I would also be happy to help with implementation, at least as far as telling you what should be done, how, and where, and answering any questions you have.
