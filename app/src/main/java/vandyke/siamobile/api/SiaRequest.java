@@ -27,8 +27,8 @@ public class SiaRequest extends StringRequest {
     private HashMap<String, String> headers;
     private HashMap<String, String> params;
 
-    public SiaRequest(int method, String command, final VolleyCallback callback) {
-        super(method, "http://" + MainActivity.prefs.getString("address", "localhost:9980") + command, new Response.Listener<String>() {
+    public SiaRequest(int method, String destination, String command, final VolleyCallback callback) {
+        super(method, "http://" + destination + command, new Response.Listener<String>() {
             public void onResponse(String response) {
                 try {
                     JSONObject responseJson = response.length() == 0 ? new JSONObject() : new JSONObject(response);
@@ -46,6 +46,10 @@ public class SiaRequest extends StringRequest {
         headers.put("User-agent", "Sia-Agent");
         headers.put("Authorization", "Basic " + Base64.encodeToString((":" + MainActivity.prefs.getString("apiPass", "")).getBytes(), 0));
         params = new HashMap<>();
+    }
+
+    public SiaRequest(int method, String command, final VolleyCallback callback) {
+        this(method, MainActivity.prefs.getString("address", "localhost:9980"), command, callback);
     }
 
     public Map<String, String> getHeaders() {
