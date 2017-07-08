@@ -37,17 +37,20 @@ public class SettingsFragment extends PreferenceFragment {
 
     private EditTextPreference remoteAddress;
     private EditTextPreference apiPass;
+    private SwitchPreference runLocalNodeInBackground;
 
     private static final int SELECT_PICTURE = 1;
 
-    public void onCreate(Bundle savedInstanceState) { // TODO: restarts app on first loading
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.settings);
 
         final ListPreference operationMode = (ListPreference) findPreference("operationMode");
         remoteAddress = (EditTextPreference) findPreference("remoteAddress");
         apiPass = (EditTextPreference) findPreference("apiPass");
+        runLocalNodeInBackground = (SwitchPreference)findPreference("runLocalNodeInBackground");
         setRemoteSettingsVisibility();
+        setLocalSettingsVisibility();
 
         final EditTextPreference decimal = ((EditTextPreference) findPreference("displayedDecimalPrecision"));
 
@@ -89,6 +92,7 @@ public class SettingsFragment extends PreferenceFragment {
                 switch (key) {
                     case "operationMode":
                         setRemoteSettingsVisibility();
+                        setLocalSettingsVisibility();
                         if (sharedPreferences.getString("operationMode", "cold_storage").equals("remote_full_node")) {
                             editor.putString("address", sharedPreferences.getString("remoteAddress", "192.168.1.11:9980"));
                             ColdStorageWallet.destroy();
@@ -98,7 +102,7 @@ public class SettingsFragment extends PreferenceFragment {
                             ColdStorageWallet.destroy();
                             getActivity().startService(new Intent(getActivity(), Siad.class));
                         } else if (sharedPreferences.getString("operationMode", "cold_storage").equals("cold_storage")) {
-                            editor.putString("address", "localhost:9980");
+                            editor.putString("address", "localhost:9990");
                             getActivity().stopService(new Intent(getActivity(), Siad.class));
                             try {
                                 ColdStorageWallet.getInstance(getActivity()).start(NanoHTTPD.SOCKET_READ_TIMEOUT);
@@ -176,6 +180,14 @@ public class SettingsFragment extends PreferenceFragment {
         } else {
             remoteAddress.setEnabled(false);
             apiPass.setEnabled(false);
+        }
+    }
+
+    private void setLocalSettingsVisibility() {
+        if (MainActivity.prefs.getString("operationMode", "cold_storage").equals("local_full_node")) {
+            runLocalNodeInBackground.setEnabled(true);
+        } else {
+            runLocalNodeInBackground.setEnabled(false);
         }
     }
 }

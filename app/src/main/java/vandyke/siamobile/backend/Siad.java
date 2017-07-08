@@ -18,8 +18,6 @@ import android.graphics.BitmapFactory;
 import android.os.IBinder;
 import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
-import vandyke.siamobile.api.Daemon;
-import vandyke.siamobile.api.SiaRequest;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -61,7 +59,6 @@ public class Siad extends Service {
         final Siad instance = this;
         Thread thread = new Thread() {
             public void run() {
-                System.out.println("onCreate");
                 siadFile = MainActivity.copyBinary("siad", instance, false);
                 if (siadFile == null) {
                     siadNotification("Unsupported CPU architecture");
@@ -103,13 +100,14 @@ public class Siad extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        System.out.println("onStartCommand");
         return START_REDELIVER_INTENT;
     }
 
     @Override
     public void onDestroy() {
-        Daemon.stopSpecific("localhost:9980", new SiaRequest.VolleyCallback(null));
+//        Daemon.stopSpecific("localhost:9980", new SiaRequest.VolleyCallback(null));
+        if (siadProcess != null)
+            siadProcess.destroy();
     }
 
     @Override

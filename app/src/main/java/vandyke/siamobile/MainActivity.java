@@ -39,6 +39,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import vandyke.siamobile.backend.CleanupService;
 import vandyke.siamobile.backend.ColdStorageWallet;
 import vandyke.siamobile.backend.Siad;
 import vandyke.siamobile.dialogs.DonateDialog;
@@ -216,6 +217,7 @@ public class MainActivity extends AppCompatActivity {
         // TODO: maybe add mips binaries
 
 
+        startService(new Intent(this, CleanupService.class));
         if (prefs.getString("operationMode", "cold_storage").equals("local_full_node"))
             startService(new Intent(this, Siad.class));
         else if (prefs.getString("operationMode", "cold_storage").equals("cold_storage"))

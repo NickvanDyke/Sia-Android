@@ -36,7 +36,7 @@ public class ColdStorageWallet extends NanoHTTPD {
     private File binary;
 
     private ColdStorageWallet(Activity activity) {
-        super("localhost", 9980);
+        super("localhost", 9990);
         seed = MainActivity.prefs.getString("coldStorageSeed", "noseed");
         addresses = new ArrayList<>(MainActivity.prefs.getStringSet("coldStorageAddresses", new HashSet<String>()));
         password = MainActivity.prefs.getString("coldStoragePassword", "nopass");
