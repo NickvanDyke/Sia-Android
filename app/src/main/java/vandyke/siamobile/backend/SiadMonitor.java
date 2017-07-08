@@ -11,22 +11,25 @@ import android.app.Service;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.IBinder;
+import android.os.Looper;
 
 public class SiadMonitor extends Service {
 
-    private NetworkMonitor receiver;
+    private StatusReceiver statusReceiver;
 
     @Override
     public void onCreate() {
-        receiver = new NetworkMonitor();
-        registerReceiver(receiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
-//        Thread thread = new Thread() {
-//            public void run() {
-//
-//            }
-//        };
-//        thread.start();
+        statusReceiver = new StatusReceiver();
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        intentFilter.addAction(Intent.ACTION_BATTERY_CHANGED);
+        HandlerThread handlerThread = new HandlerThread("StatusReceiver");
+        handlerThread.start();
+        Looper looper = handlerThread.getLooper();
+        Handler handler = new Handler(looper);
+        registerReceiver(statusReceiver, intentFilter, null, handler);
     }
 
     @Override
@@ -42,7 +45,7 @@ public class SiadMonitor extends Service {
     @Override
     public void onDestroy() {
         stopService(new Intent(this, Siad.class));
-        unregisterReceiver(receiver);
+        unregisterReceiver(statusReceiver);
     }
 
     @Override

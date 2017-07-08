@@ -7,11 +7,16 @@
 
 package vandyke.siamobile.settings.fragments;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.BatteryManager;
 import android.os.Bundle;
 import android.preference.*;
 import android.support.design.widget.Snackbar;
@@ -22,6 +27,7 @@ import vandyke.siamobile.BuildConfig;
 import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
 import vandyke.siamobile.backend.ColdStorageWallet;
+import vandyke.siamobile.backend.Siad;
 import vandyke.siamobile.backend.SiadMonitor;
 
 import java.io.ByteArrayOutputStream;
@@ -41,6 +47,7 @@ public class SettingsFragment extends PreferenceFragment {
     private SwitchPreference runLocalNodeInBackground;
     private SwitchPreference runLocalNodeOffWifi;
     private SwitchPreference useExternal;
+    private EditTextPreference minBattery;
 
     private static final int SELECT_PICTURE = 1;
 
@@ -54,6 +61,7 @@ public class SettingsFragment extends PreferenceFragment {
         runLocalNodeInBackground = (SwitchPreference)findPreference("runLocalNodeInBackground");
         runLocalNodeOffWifi = (SwitchPreference)findPreference("runLocalNodeOffWifi");
         useExternal = (SwitchPreference) findPreference("useExternal");
+        minBattery = (EditTextPreference)findPreference("localNodeMinBattery");
         setRemoteSettingsVisibility();
         setLocalSettingsVisibility();
 
@@ -90,6 +98,17 @@ public class SettingsFragment extends PreferenceFragment {
                 return false;
             }
         });
+    }
+
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        if (activity == null)
+            return;
+        android.support.v7.app.ActionBar actionBar = activity.getSupportActionBar();
+        if (actionBar == null)
+            return;
+        actionBar.setTitle("Settings");
 
         prefsListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
@@ -118,6 +137,26 @@ public class SettingsFragment extends PreferenceFragment {
                         editor.apply();
 //                        WalletFragment.refreshWallet(getFragmentManager());
                         break;
+                    case "runLocalNodeOffWifi":
+                        ConnectivityManager connectivityManager =
+                                (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+                        NetworkInfo activeNetInfo = connectivityManager.getActiveNetworkInfo();
+
+                        if (activeNetInfo != null && activeNetInfo.getType() == ConnectivityManager.TYPE_WIFI
+                                || MainActivity.prefs.getBoolean("runLocalNodeOffWifi", false)) {
+                            getActivity().startService(new Intent(getActivity(), Siad.class));
+                        } else {
+                            getActivity().stopService(new Intent(getActivity(), Siad.class));
+                        }
+                        break;
+                    case "localNodeMinBattery":
+                        Intent batteryStatus = getActivity().registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+                        int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+                        if (level >= Integer.parseInt(MainActivity.prefs.getString("localNodeMinBattery", "20")))
+                            getActivity().startService(new Intent(getActivity(), Siad.class));
+                        else
+                            getActivity().stopService(new Intent(getActivity(), Siad.class));
+                        break;
                     case "remoteAddress":
                         if (sharedPreferences.getString("operationMode", "cold_storage").equals("remote_full_node")) {
                             editor.putString("address", sharedPreferences.getString("remoteAddress", "192.168.1.11:9980"));
@@ -143,17 +182,6 @@ public class SettingsFragment extends PreferenceFragment {
             }
         };
         MainActivity.prefs.registerOnSharedPreferenceChangeListener(prefsListener);
-    }
-
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        AppCompatActivity activity = (AppCompatActivity) getActivity();
-        if (activity == null)
-            return;
-        android.support.v7.app.ActionBar actionBar = activity.getSupportActionBar();
-        if (actionBar == null)
-            return;
-        actionBar.setTitle("Settings");
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -193,10 +221,12 @@ public class SettingsFragment extends PreferenceFragment {
             operation.addPreference(runLocalNodeInBackground);
             operation.addPreference(runLocalNodeOffWifi);
             operation.addPreference(useExternal);
+            operation.addPreference(minBattery);
         } else {
             operation.removePreference(runLocalNodeInBackground);
             operation.removePreference(runLocalNodeOffWifi);
             operation.removePreference(useExternal);
+            operation.removePreference(minBattery);
         }
     }
 }

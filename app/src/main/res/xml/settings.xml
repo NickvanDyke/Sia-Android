@@ -58,10 +58,17 @@
                 android:summary="Run the local node in the background even when not connected to WiFi. WARNING: Syncing the blockchain can involve a lot of downloading."
                 android:defaultValue="off"
                 android:shouldDisableView="true"/>
+        <EditTextPreference
+                android:key="localNodeMinBattery"
+                android:title="Minimum battery level to run local node"
+                android:numeric="integer"
+                android:gravity="center"
+                android:defaultValue="20"
+                android:shouldDisableView="true"/>
         <SwitchPreference
                 android:key="useExternal"
                 android:title="Use external storage"
-                android:summary="Sia Mobile uses some storage, especially when running a full node. By default it uses internal storage. Turn this option on if you want it to instead use external storage, such as an SD card. Restart Sia Mobile after."
+                android:summary="A full local node uses about 5GB of storage. By default it uses internal storage. Restart Sia Mobile after changing this. It's recommended you clear existing data using the button at the bottom of settings before changing this."
                 android:defaultValue="off"/>
     </PreferenceCategory>
     <PreferenceCategory android:title="Misc">
@@ -76,7 +83,7 @@
                 android:key="hideZero"
                 android:title="Hide net-zero transactions"
                 android:defaultValue="off"
-                android:summary="For each regular transaction, Sia also makes a setup transaction that does not affect your wallet balance. Check this to hide transactions that have zero net effect on your wallet."/>
+                android:summary="For each regular transaction, Sia also makes a setup transaction that does not affect your wallet balance."/>
         <EditTextPreference
                 android:key="displayedDecimalPrecision"
                 android:title="Displayed decimal precision"
