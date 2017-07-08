@@ -22,14 +22,18 @@ public class SiadMonitor extends Service {
 
     @Override
     public void onCreate() {
-        statusReceiver = new StatusReceiver();
-        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        intentFilter.addAction(Intent.ACTION_BATTERY_CHANGED);
-        HandlerThread handlerThread = new HandlerThread("StatusReceiver");
-        handlerThread.start();
-        Looper looper = handlerThread.getLooper();
-        Handler handler = new Handler(looper);
-        registerReceiver(statusReceiver, intentFilter, null, handler);
+        new Thread() {
+            public void run() {
+                statusReceiver = new StatusReceiver();
+                IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+                intentFilter.addAction(Intent.ACTION_BATTERY_CHANGED);
+                HandlerThread handlerThread = new HandlerThread("StatusReceiver");
+                handlerThread.start();
+                Looper looper = handlerThread.getLooper();
+                Handler handler = new Handler(looper);
+                registerReceiver(statusReceiver, intentFilter, null, handler);
+            }
+        }.start();
     }
 
     @Override
