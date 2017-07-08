@@ -38,6 +38,7 @@ public class SettingsFragment extends PreferenceFragment {
     private EditTextPreference remoteAddress;
     private EditTextPreference apiPass;
     private SwitchPreference runLocalNodeInBackground;
+    private SwitchPreference runLocalNodeOffWifi;
 
     private static final int SELECT_PICTURE = 1;
 
@@ -49,6 +50,7 @@ public class SettingsFragment extends PreferenceFragment {
         remoteAddress = (EditTextPreference) findPreference("remoteAddress");
         apiPass = (EditTextPreference) findPreference("apiPass");
         runLocalNodeInBackground = (SwitchPreference)findPreference("runLocalNodeInBackground");
+        runLocalNodeOffWifi = (SwitchPreference)findPreference("runLocalNodeOffWifi");
         setRemoteSettingsVisibility();
         setLocalSettingsVisibility();
 
@@ -186,8 +188,10 @@ public class SettingsFragment extends PreferenceFragment {
     private void setLocalSettingsVisibility() {
         if (MainActivity.prefs.getString("operationMode", "cold_storage").equals("local_full_node")) {
             runLocalNodeInBackground.setEnabled(true);
+            runLocalNodeOffWifi.setEnabled(true);
         } else {
             runLocalNodeInBackground.setEnabled(false);
+            runLocalNodeOffWifi.setEnabled(false);
         }
     }
 }

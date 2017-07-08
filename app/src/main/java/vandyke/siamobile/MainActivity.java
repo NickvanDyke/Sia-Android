@@ -216,7 +216,6 @@ public class MainActivity extends AppCompatActivity {
             abi = "arm64";
         // TODO: maybe add mips binaries
 
-
         startService(new Intent(this, CleanupService.class));
         if (prefs.getString("operationMode", "cold_storage").equals("local_full_node"))
             startService(new Intent(this, Siad.class));

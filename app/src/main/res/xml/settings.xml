@@ -52,6 +52,12 @@
                 android:defaultValue="off"
                 android:shouldDisableView="true"/>
         <SwitchPreference
+                android:key="runLocalNodeOffWifi"
+                android:title="Run local node off WiFi"
+                android:summary="Run the local node in the background even when not connected to WiFi. WARNING: Syncing the blockchain can involve a lot of downloading."
+                android:defaultValue="off"
+                android:shouldDisableView="true"/>
+        <SwitchPreference
                 android:key="useExternal"
                 android:title="Use external storage"
                 android:summary="Sia Mobile uses some storage, especially when running a full node. By default it uses internal storage. Turn this option on if you want it to instead use external storage, such as an SD card. Restart Sia Mobile after."

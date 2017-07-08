@@ -7,7 +7,9 @@
 
 package vandyke.siamobile.backend;
 
+import android.app.NotificationManager;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import vandyke.siamobile.MainActivity;
@@ -44,6 +46,8 @@ public class CleanupService extends Service {
         if (MainActivity.prefs.getBoolean("runLocalNodeInBackground", false)) {
             stopService(new Intent(this, Siad.class));
         }
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancelAll();
     }
 
     @Override
