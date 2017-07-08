@@ -42,6 +42,7 @@ import com.android.volley.toolbox.Volley;
 import vandyke.siamobile.backend.CleanupService;
 import vandyke.siamobile.backend.ColdStorageWallet;
 import vandyke.siamobile.backend.Siad;
+import vandyke.siamobile.backend.SiadMonitor;
 import vandyke.siamobile.dialogs.DonateDialog;
 import vandyke.siamobile.files.fragments.FilesFragment;
 import vandyke.siamobile.help.fragments.HelpFragment;
@@ -218,7 +219,7 @@ public class MainActivity extends AppCompatActivity {
 
         startService(new Intent(this, CleanupService.class));
         if (prefs.getString("operationMode", "cold_storage").equals("local_full_node"))
-            startService(new Intent(this, Siad.class));
+            startService(new Intent(this, SiadMonitor.class));
         else if (prefs.getString("operationMode", "cold_storage").equals("cold_storage"))
             try {
                 ColdStorageWallet.getInstance(this).start();
@@ -227,8 +228,8 @@ public class MainActivity extends AppCompatActivity {
             }
 
         if (prefs.getBoolean("firstTime", true)) {
-            prefs.edit().putBoolean("firstTime", false).apply();
             loadDrawerFragment(WelcomeFragment.class);
+            prefs.edit().putBoolean("firstTime", false).apply();
         } else
             switch (prefs.getString("startupPage", "wallet")) {
                 case "files":

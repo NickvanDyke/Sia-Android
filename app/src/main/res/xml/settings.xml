@@ -21,7 +21,8 @@
                 android:title="Transparent bars"
                 android:defaultValue="off"/>
     </PreferenceCategory>
-    <PreferenceCategory android:title="Operation">
+    <PreferenceCategory android:title="Operation"
+            android:key="operationCategory">
         <ListPreference
                 android:title="Mode"
                 android:key="operationMode"

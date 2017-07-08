@@ -13,10 +13,8 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.ConnectivityManager;
 import android.os.IBinder;
 import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
@@ -33,7 +31,6 @@ public class Siad extends Service {
     private File siadFile;
     private java.lang.Process siadProcess;
     private Thread readStdoutThread;
-    private NetworkMonitor receiver;
 //    final private StringBuilder stdoutBuffer = new StringBuilder();
 //    private TerminalFragment terminalFragment;
 
@@ -58,8 +55,6 @@ public class Siad extends Service {
 
     @Override
     public void onCreate() {
-        receiver = new NetworkMonitor();
-        registerReceiver(receiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)); // TODO: need a separate service for the receiver so it can restart siad
         startForeground(SIAD_NOTIFICATION, buildSiadNotification("Starting..."));
         final Siad instance = this;
         Thread thread = new Thread() {
@@ -111,7 +106,6 @@ public class Siad extends Service {
     @Override
     public void onDestroy() {
 //        Daemon.stopSpecific("localhost:9980", new SiaRequest.VolleyCallback(null));
-        unregisterReceiver(receiver);
         if (siadProcess != null)
             siadProcess.destroy();
     }

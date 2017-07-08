@@ -17,17 +17,14 @@ import vandyke.siamobile.MainActivity;
 public class NetworkMonitor extends BroadcastReceiver {
 
     public void onReceive(Context context, Intent intent) {
-        System.out.println("onreceive");
         ConnectivityManager connectivityManager =
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetInfo = connectivityManager.getActiveNetworkInfo();
 
         if (activeNetInfo != null && activeNetInfo.getType() == ConnectivityManager.TYPE_WIFI
                 || MainActivity.prefs.getBoolean("runNodeOffWifi", false)) {
-            System.out.println("wifi on or it's set to run off wifi");
             context.startService(new Intent(context, Siad.class));
         } else {
-            System.out.println("shutting off service");
             context.stopService(new Intent(context, Siad.class));
         }
     }

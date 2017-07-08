@@ -22,7 +22,7 @@ import vandyke.siamobile.BuildConfig;
 import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
 import vandyke.siamobile.backend.ColdStorageWallet;
-import vandyke.siamobile.backend.Siad;
+import vandyke.siamobile.backend.SiadMonitor;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -35,10 +35,12 @@ public class SettingsFragment extends PreferenceFragment {
 
     private SharedPreferences.OnSharedPreferenceChangeListener prefsListener;
 
+    private PreferenceCategory operation;
     private EditTextPreference remoteAddress;
     private EditTextPreference apiPass;
     private SwitchPreference runLocalNodeInBackground;
     private SwitchPreference runLocalNodeOffWifi;
+    private SwitchPreference useExternal;
 
     private static final int SELECT_PICTURE = 1;
 
@@ -46,16 +48,18 @@ public class SettingsFragment extends PreferenceFragment {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.settings);
 
-        final ListPreference operationMode = (ListPreference) findPreference("operationMode");
+        operation = (PreferenceCategory)findPreference("operationCategory");
         remoteAddress = (EditTextPreference) findPreference("remoteAddress");
         apiPass = (EditTextPreference) findPreference("apiPass");
         runLocalNodeInBackground = (SwitchPreference)findPreference("runLocalNodeInBackground");
         runLocalNodeOffWifi = (SwitchPreference)findPreference("runLocalNodeOffWifi");
+        useExternal = (SwitchPreference) findPreference("useExternal");
         setRemoteSettingsVisibility();
         setLocalSettingsVisibility();
 
         final EditTextPreference decimal = ((EditTextPreference) findPreference("displayedDecimalPrecision"));
 
+        final ListPreference operationMode = (ListPreference) findPreference("operationMode");
         operationMode.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             public boolean onPreferenceChange(Preference preference, Object o) {
                 if (((String) o).equals("local_full_node")
@@ -67,7 +71,6 @@ public class SettingsFragment extends PreferenceFragment {
             }
         });
 
-        final SwitchPreference useExternal = (SwitchPreference) findPreference("useExternal");
         useExternal.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             public boolean onPreferenceChange(Preference preference, Object o) {
                 if (MainActivity.isExternalStorageWritable())
@@ -98,14 +101,14 @@ public class SettingsFragment extends PreferenceFragment {
                         if (sharedPreferences.getString("operationMode", "cold_storage").equals("remote_full_node")) {
                             editor.putString("address", sharedPreferences.getString("remoteAddress", "192.168.1.11:9980"));
                             ColdStorageWallet.destroy();
-                            getActivity().stopService(new Intent(getActivity(), Siad.class));
+                            getActivity().stopService(new Intent(getActivity(), SiadMonitor.class));
                         } else if (sharedPreferences.getString("operationMode", "cold_storage").equals("local_full_node")) {
                             editor.putString("address", "localhost:9980");
                             ColdStorageWallet.destroy();
-                            getActivity().startService(new Intent(getActivity(), Siad.class));
+                            getActivity().startService(new Intent(getActivity(), SiadMonitor.class));
                         } else if (sharedPreferences.getString("operationMode", "cold_storage").equals("cold_storage")) {
                             editor.putString("address", "localhost:9990");
-                            getActivity().stopService(new Intent(getActivity(), Siad.class));
+                            getActivity().stopService(new Intent(getActivity(), SiadMonitor.class));
                             try {
                                 ColdStorageWallet.getInstance(getActivity()).start(NanoHTTPD.SOCKET_READ_TIMEOUT);
                             } catch (IOException e) {
@@ -177,21 +180,23 @@ public class SettingsFragment extends PreferenceFragment {
 
     private void setRemoteSettingsVisibility() {
         if (MainActivity.prefs.getString("operationMode", "cold_storage").equals("remote_full_node")) {
-            remoteAddress.setEnabled(true);
-            apiPass.setEnabled(true);
+            operation.addPreference(remoteAddress);
+            operation.addPreference(apiPass);
         } else {
-            remoteAddress.setEnabled(false);
-            apiPass.setEnabled(false);
+            operation.removePreference(remoteAddress);
+            operation.removePreference(apiPass);
         }
     }
 
     private void setLocalSettingsVisibility() {
         if (MainActivity.prefs.getString("operationMode", "cold_storage").equals("local_full_node")) {
-            runLocalNodeInBackground.setEnabled(true);
-            runLocalNodeOffWifi.setEnabled(true);
+            operation.addPreference(runLocalNodeInBackground);
+            operation.addPreference(runLocalNodeOffWifi);
+            operation.addPreference(useExternal);
         } else {
-            runLocalNodeInBackground.setEnabled(false);
-            runLocalNodeOffWifi.setEnabled(false);
+            operation.removePreference(runLocalNodeInBackground);
+            operation.removePreference(runLocalNodeOffWifi);
+            operation.removePreference(useExternal);
         }
     }
 }

@@ -7,16 +7,20 @@
 
 package vandyke.siamobile.backend;
 
-import android.app.NotificationManager;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.IBinder;
-import vandyke.siamobile.MainActivity;
 
-public class CleanupService extends Service {
+public class SiadMonitor extends Service {
+
+    private NetworkMonitor receiver;
+
     @Override
     public void onCreate() {
+        receiver = new NetworkMonitor();
+        registerReceiver(receiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 //        Thread thread = new Thread() {
 //            public void run() {
 //
@@ -32,22 +36,13 @@ public class CleanupService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        return START_REDELIVER_INTENT;
+        return START_STICKY;
     }
 
     @Override
     public void onDestroy() {
-
-    }
-
-    @Override
-    public void onTaskRemoved(Intent rootIntent) {
-        super.onTaskRemoved(rootIntent);
-        if (!MainActivity.prefs.getBoolean("runLocalNodeInBackground", false)) {
-            stopService(new Intent(this, SiadMonitor.class));
-        }
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancelAll();
+        stopService(new Intent(this, Siad.class));
+        unregisterReceiver(receiver);
     }
 
     @Override

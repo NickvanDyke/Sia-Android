@@ -26,6 +26,7 @@
             android:theme="@style/AppTheme.Light">
         <service android:name=".backend.Siad"/>
         <service android:name=".backend.CleanupService"/>
+        <service android:name=".backend.SiadMonitor"/>
 
         <activity
                 android:name="vandyke.siamobile.MainActivity"
