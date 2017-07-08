@@ -7,21 +7,21 @@
 
 package vandyke.siamobile.backend;
 
-import android.app.NotificationManager;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
+import vandyke.siamobile.MainActivity;
 
-public class CleanupService extends Service {
+public class TransactionMonitorService extends Service {
+
     @Override
     public void onCreate() {
-//        Thread thread = new Thread() {
-//            public void run() {
-//
-//            }
-//        };
-//        thread.start();
+        Thread thread = new Thread() {
+            public void run() {
+
+            }
+        };
+        thread.start();
     }
 
     @Override
@@ -41,10 +41,9 @@ public class CleanupService extends Service {
 
     @Override
     public void onTaskRemoved(Intent rootIntent) {
-        super.onTaskRemoved(rootIntent);
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancelAll();
-        stopSelf();
+        if (!MainActivity.prefs.getBoolean("monitorTransactions", true)) {
+            stopSelf();
+        }
     }
 
     @Override

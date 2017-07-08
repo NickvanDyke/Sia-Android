@@ -29,6 +29,10 @@
                 android:entries="@array/operation_modes_entries"
                 android:entryValues="@array/operation_modes_values"
                 android:defaultValue="cold_storage"/>
+        <SwitchPreference
+                android:key="monitorTransactions"
+                android:title="Check for new transactions in background"
+                android:defaultValue="on"/>
         <EditTextPreference
                 android:key="remoteAddress"
                 android:title="Remote node address"

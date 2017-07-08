@@ -27,6 +27,7 @@
         <service android:name=".backend.Siad"/>
         <service android:name=".backend.CleanupService"/>
         <service android:name=".backend.SiadMonitor"/>
+        <service android:name=".backend.TransactionMonitorService"/>
 
         <activity
                 android:name="vandyke.siamobile.MainActivity"

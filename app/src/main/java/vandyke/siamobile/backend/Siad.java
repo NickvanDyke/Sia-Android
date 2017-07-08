@@ -94,13 +94,8 @@ public class Siad extends Service {
     }
 
     @Override
-    public boolean stopService(Intent name) {
-        return super.stopService(name);
-    }
-
-    @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        return START_REDELIVER_INTENT;
+        return START_STICKY;
     }
 
     @Override

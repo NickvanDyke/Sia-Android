@@ -15,6 +15,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
+import vandyke.siamobile.MainActivity;
 
 public class SiadMonitor extends Service {
 
@@ -37,11 +38,6 @@ public class SiadMonitor extends Service {
     }
 
     @Override
-    public boolean stopService(Intent name) {
-        return super.stopService(name);
-    }
-
-    @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         return START_STICKY;
     }
@@ -50,6 +46,14 @@ public class SiadMonitor extends Service {
     public void onDestroy() {
         stopService(new Intent(this, Siad.class));
         unregisterReceiver(statusReceiver);
+    }
+
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        super.onTaskRemoved(rootIntent);
+        if (!MainActivity.prefs.getBoolean("runLocalNodeInBackground", false)) {
+            stopSelf();
+        }
     }
 
     @Override
