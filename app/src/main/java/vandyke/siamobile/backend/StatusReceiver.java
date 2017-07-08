@@ -10,20 +10,26 @@ package vandyke.siamobile.backend;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.BatteryManager;
-import vandyke.siamobile.MainActivity;
+import android.preference.PreferenceManager;
 
 public class StatusReceiver extends BroadcastReceiver {
 
     private boolean batteryGood;
     private boolean networkGood;
 
+    private SharedPreferences prefs;
+
     public void onReceive(Context context, Intent intent) {
+        if (prefs == null)
+            prefs = PreferenceManager.getDefaultSharedPreferences(context);
+
         if (intent.getAction().equals(Intent.ACTION_BATTERY_CHANGED)) {
             int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
-            if (level >= Integer.parseInt(MainActivity.prefs.getString("localNodeMinBattery", "20"))) {
+            if (level >= Integer.parseInt(prefs.getString("localNodeMinBattery", "20"))) {
                 batteryGood = true;
             } else
                 batteryGood = false;
@@ -33,7 +39,7 @@ public class StatusReceiver extends BroadcastReceiver {
             NetworkInfo activeNetInfo = connectivityManager.getActiveNetworkInfo();
 
             if (activeNetInfo != null && activeNetInfo.getType() == ConnectivityManager.TYPE_WIFI
-                    || MainActivity.prefs.getBoolean("runLocalNodeOffWifi", false)) {
+                    || prefs.getBoolean("runLocalNodeOffWifi", false)) {
                 networkGood = true;
             } else {
                 networkGood = false;

@@ -56,10 +56,9 @@ public class Siad extends Service {
     @Override
     public void onCreate() {
         startForeground(SIAD_NOTIFICATION, buildSiadNotification("Starting..."));
-        final Siad instance = this;
         Thread thread = new Thread() {
             public void run() {
-                siadFile = MainActivity.copyBinary("siad", instance, false);
+                siadFile = MainActivity.copyBinary("siad", Siad.this, false);
                 if (siadFile == null) {
                     siadNotification("Unsupported CPU architecture");
                     stopSelf();
@@ -67,7 +66,7 @@ public class Siad extends Service {
 //                stdoutBuffer.setLength(0);
                 ProcessBuilder pb = new ProcessBuilder(siadFile.getAbsolutePath(), "-M", "gctw");
                 pb.redirectErrorStream(true);
-                pb.directory(MainActivity.getWorkingDirectory(instance));
+                pb.directory(MainActivity.getWorkingDirectory(Siad.this));
                 try {
                     siadProcess = pb.start();
                     readStdoutThread = new Thread() {

@@ -39,10 +39,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
-import vandyke.siamobile.backend.CleanupService;
-import vandyke.siamobile.backend.ColdStorageWallet;
-import vandyke.siamobile.backend.Siad;
-import vandyke.siamobile.backend.SiadMonitor;
+import vandyke.siamobile.backend.*;
 import vandyke.siamobile.dialogs.DonateDialog;
 import vandyke.siamobile.files.fragments.FilesFragment;
 import vandyke.siamobile.help.fragments.HelpFragment;
@@ -249,6 +246,7 @@ public class MainActivity extends AppCompatActivity {
                     navigationView.setCheckedItem(R.id.drawer_item_terminal);
                     break;
             }
+        startService(new Intent(this, WalletService.class));
     }
 
     public void loadDrawerFragment(Class clazz) {
