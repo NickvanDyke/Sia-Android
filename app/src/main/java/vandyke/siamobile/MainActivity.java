@@ -52,6 +52,8 @@ import vandyke.siamobile.settings.fragments.SettingsFragment;
 import vandyke.siamobile.terminal.fragments.TerminalFragment;
 import vandyke.siamobile.wallet.fragments.WalletFragment;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
 
     public static int defaultTextColor;
@@ -65,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean loadSomethingOnClose;
 
     private String currentFragmentTag;
+    private ArrayList<Fragment> fragments;
 
     public enum Theme {
         LIGHT, DARK, AMOLED, CUSTOM
@@ -116,6 +119,8 @@ public class MainActivity extends AppCompatActivity {
         TypedValue a = new TypedValue();
         getTheme().resolveAttribute(android.R.attr.windowBackground, a, true);
         backgroundColor = a.data;
+
+        fragments = new ArrayList<>();
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close) {
@@ -211,61 +216,30 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void loadDrawerFragment(Class clazz) {
-//        String className = clazz.getSimpleName();
+        String className = clazz.getSimpleName();
         FragmentManager fragmentManager = getFragmentManager();
-//        fragmentManager.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-//        Fragment currentFrag = fragmentManager.findFragmentByTag(currentFragmentTag);
-//        Fragment newFragment = fragmentManager.findFragmentByTag(className);
-//
-//        if (currentFrag != null && currentFrag == newFragment)
-//            return;
-//
-//        FragmentTransaction transaction = fragmentManager.beginTransaction();
-//        try {
-//            transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-//            if (currentFrag != null)
-//                transaction.hide(currentFrag);
-//            if (newFragment == null) {
-//                transaction.add(R.id.fragment_frame, (Fragment) clazz.newInstance(), className);
-//            } else {
-//                transaction.show(newFragment);
-//            }
-//            transaction.commit();
-//            currentFragmentTag = className;
-//        } catch (InstantiationException e) {
-//            e.printStackTrace();
-//        } catch (IllegalAccessException e) {
-//            e.printStackTrace();
-//        }
-
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        try {
-            transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-            transaction.replace(R.id.fragment_frame, (Fragment) clazz.newInstance());
-            transaction.commit();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void loadTempFragment(Fragment fragment) {
-        String className = fragment.getClass().getSimpleName();
-        FragmentManager fragmentManager = getFragmentManager();
-        Fragment currentFrag = fragmentManager.findFragmentByTag(currentFragmentTag);
-        Fragment newFragment = fragment;
-
-//        if (currentFrag != null && currentFrag == newFragment)
-//            return;
-
+        Fragment newFragment = fragmentManager.findFragmentByTag(className);
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-        if (currentFrag != null)
-            transaction.hide(currentFrag);
-        transaction.add(R.id.fragment_frame, fragment, className);
-        transaction.addToBackStack(null).commit();
-        currentFragmentTag = className;
+
+        for (Fragment fragment : fragments) {
+            transaction.hide(fragment);
+        }
+
+        if (newFragment == null) {
+            try {
+                newFragment = (Fragment)clazz.newInstance();
+                fragments.add(newFragment);
+                transaction.add(R.id.fragment_frame, newFragment, className);
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        } else {
+            transaction.show(newFragment);
+        }
+        transaction.commit();
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
