@@ -39,6 +39,8 @@ public class WalletService extends Service {
     private ArrayList<Transaction> transactions;
     private double syncProgress;
 
+    private ArrayList<WalletUpdateListener> listeners;
+
     public void refreshAll() {
         refreshBalanceAndStatus();
         refreshTransactions();
@@ -61,6 +63,7 @@ public class WalletService extends Service {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                sendBalanceUpdate();
             }
 
             public void onError(SiaRequest.Error error) {
@@ -80,6 +83,7 @@ public class WalletService extends Service {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                sendUsdUpdate();
             }
         }, new Response.ErrorListener() {
             public void onErrorResponse(VolleyError error) {
@@ -92,6 +96,7 @@ public class WalletService extends Service {
         Wallet.transactions(new SiaRequest.VolleyCallback(null) {
             public void onSuccess(JSONObject response) {
                 transactions = Transaction.populateTransactions(response);
+                sendTransactionUpdate();
             }
             public void onError(SiaRequest.Error error) {
                 transactions.clear();
@@ -111,6 +116,7 @@ public class WalletService extends Service {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                sendSyncUpdate();
             }
             public void onError(SiaRequest.Error error) {
                 syncProgress = 0;
@@ -122,6 +128,7 @@ public class WalletService extends Service {
     public void onCreate() {
         Thread thread = new Thread() {
             public void run() {
+                listeners = new ArrayList<>();
                 walletStatus = WalletStatus.NONE;
                 balanceHastings = new BigDecimal("0");
                 balanceHastingsUnconfirmed = new BigDecimal("0");
@@ -160,6 +167,41 @@ public class WalletService extends Service {
         public WalletService getService() {
             return WalletService.this;
         }
+    }
+
+    public interface WalletUpdateListener {
+        void onBalanceUpdate(WalletService service);
+        void onUsdUpdate(WalletService service);
+        void onTransactionsUpdate(WalletService service);
+        void onSyncUpdate(WalletService service);
+    }
+
+    public void registerListener(WalletUpdateListener listener) {
+        listeners.add(listener);
+    }
+
+    public void unregisterListener(WalletUpdateListener listener) {
+        listeners.remove(listener);
+    }
+
+    public void sendBalanceUpdate() {
+        for (WalletUpdateListener listener : listeners)
+            listener.onBalanceUpdate(this);
+    }
+
+    public void sendUsdUpdate() {
+        for (WalletUpdateListener listener : listeners)
+            listener.onUsdUpdate(this);
+    }
+
+    public void sendTransactionUpdate() {
+        for (WalletUpdateListener listener : listeners)
+            listener.onTransactionsUpdate(this);
+    }
+
+    public void sendSyncUpdate() {
+        for (WalletUpdateListener listener : listeners)
+            listener.onSyncUpdate(this);
     }
 
     public WalletStatus getWalletStatus() {

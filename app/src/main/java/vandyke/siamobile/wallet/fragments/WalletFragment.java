@@ -12,9 +12,7 @@ import android.content.*;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -37,11 +35,9 @@ import vandyke.siamobile.wallet.transactionslist.TransactionListAdapter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
-public class WalletFragment extends Fragment {
+public class WalletFragment extends Fragment implements WalletService.WalletUpdateListener {
 
     public static int SYNC_NOTIFICATION = 0;
-    private Handler handler;
-    private Runnable refreshTask;
 
     private TextView balanceText;
     private TextView balanceUsdText;
@@ -60,6 +56,7 @@ public class WalletFragment extends Fragment {
     private boolean bound = false;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        getActivity().setTitle("Wallet");
         view = inflater.inflate(R.layout.fragment_wallet, container, false);
         setHasOptionsMenu(true);
 
@@ -75,14 +72,6 @@ public class WalletFragment extends Fragment {
             receiveButton.setBackgroundColor(android.R.color.transparent);
             sendButton.setBackgroundColor(android.R.color.transparent);
         }
-
-        handler = new Handler();
-        refreshTask = new Runnable() {
-            public void run() {
-                refreshSyncProgress();
-                handler.postDelayed(refreshTask, 60000);
-            }
-        };
 
         balanceText = (TextView) view.findViewById(R.id.balanceText);
         balanceUsdText = (TextView) view.findViewById(R.id.balanceUsdText);
@@ -125,25 +114,15 @@ public class WalletFragment extends Fragment {
             }
         });
 
-//        refreshAll();
-        handler.postDelayed(refreshTask, 60000);
-
         return view;
     }
 
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        AppCompatActivity activity = (AppCompatActivity) getActivity();
-        if (activity == null)
-            return;
-        android.support.v7.app.ActionBar actionBar = activity.getSupportActionBar();
-        if (actionBar == null)
-            return;
-        actionBar.setTitle("Wallet");
-
         connection = new ServiceConnection() {
             public void onServiceConnected(ComponentName name, IBinder service) {
                 walletService = ((WalletService.LocalBinder) service).getService();
+                walletService.registerListener(WalletFragment.this);
                 bound = true;
             }
 
@@ -154,17 +133,8 @@ public class WalletFragment extends Fragment {
         getActivity().bindService(new Intent(getActivity(), WalletService.class), connection, Context.BIND_AUTO_CREATE);
     }
 
-    public void refreshAll() {
-        refreshBalanceAndStatus();
-        refreshSyncProgress();
-        refreshTransactions();
-        //TODO: figure out a GOOD way to Toast "Refreshed" if all requests complete successfully
-        //TODO: auto refreshAll every x seconds. Eventually add option to refreshAll in background, with notifications?
-    }
-
-    public void refreshBalanceAndStatus() {
-        if (!bound)
-            return;
+    @Override
+    public void onBalanceUpdate(WalletService service) {
         switch (walletService.getWalletStatus()) {
             case NONE:
                 walletStatusText.setText("No Wallet");
@@ -175,18 +145,21 @@ public class WalletFragment extends Fragment {
             case UNLOCKED:
                 walletStatusText.setText("Unlocked");
         }
-        balanceText.setText(Wallet.round(Wallet.hastingsToSC(walletService.getBalanceHastings())));
-        balanceUnconfirmedText.setText(walletService.getBalanceHastingsUnconfirmed().compareTo(BigDecimal.ZERO) > 0 ? "+" : "" +
-                Wallet.round(Wallet.hastingsToSC(walletService.getBalanceHastingsUnconfirmed())) + " unconfirmed");
-        balanceUsdText.setText(Wallet.round(walletService.getBalanceUsd()) + " USD");
+        balanceText.setText(Wallet.round(Wallet.hastingsToSC(service.getBalanceHastings())));
+        balanceUnconfirmedText.setText(service.getBalanceHastingsUnconfirmed().compareTo(BigDecimal.ZERO) > 0 ? "+" : "" +
+                Wallet.round(Wallet.hastingsToSC(service.getBalanceHastingsUnconfirmed())) + " unconfirmed");
     }
 
-    public void refreshTransactions() {
-        if (!bound)
-            return;
+    public void onUsdUpdate(WalletService service) {
+        balanceUsdText.setText(Wallet.round(service.getBalanceUsd()) + " USD");
+
+    }
+
+    @Override
+    public void onTransactionsUpdate(WalletService service) {
         boolean hideZero = SiaMobileApplication.prefs.getBoolean("hideZero", false);
         transactionExpandableGroups.clear();
-        for (Transaction tx : walletService.getTransactions()) {
+        for (Transaction tx : service.getTransactions()) {
             if (hideZero && tx.isNetZero())
                 continue;
             transactionExpandableGroups.add(transactionToGroupWithChild(tx));
@@ -194,10 +167,9 @@ public class WalletFragment extends Fragment {
         transactionList.setAdapter(new TransactionListAdapter(transactionExpandableGroups));
     }
 
-    public void refreshSyncProgress() {
-        if (!bound)
-            return;
-        double syncProgress = walletService.getSyncProgress();
+    @Override
+    public void onSyncUpdate(WalletService service) {
+        double syncProgress = service.getSyncProgress();
         if (syncProgress == 100) {
             syncText.setText("Synced");
             syncBar.setProgress(100);
@@ -230,17 +202,11 @@ public class WalletFragment extends Fragment {
         notificationManager.notify(SYNC_NOTIFICATION, builder.build());
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.toolbar_wallet, menu);
-    }
-
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.actionRefresh:
                 if (bound)
                     walletService.refreshAll();
-                refreshAll();
                 break;
             case R.id.actionUnlock:
                 replaceExpandFrame(new WalletUnlockFragment());
@@ -289,9 +255,17 @@ public class WalletFragment extends Fragment {
 
     public void onStop() {
         super.onStop();
-        if (bound && isAdded()) {
-            getActivity().unbindService(connection);
-            bound = false;
+        if (bound) {
+            walletService.unregisterListener(this);
+            if (isAdded()) {
+                getActivity().unbindService(connection);
+                bound = false;
+            }
         }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.toolbar_wallet, menu);
     }
 }

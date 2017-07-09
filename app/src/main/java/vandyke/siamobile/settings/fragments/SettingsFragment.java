@@ -20,7 +20,6 @@ import android.os.BatteryManager;
 import android.os.Bundle;
 import android.preference.*;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import fi.iki.elonen.NanoHTTPD;
 import vandyke.siamobile.BuildConfig;
@@ -53,6 +52,7 @@ public class SettingsFragment extends PreferenceFragment {
     private static final int SELECT_PICTURE = 1;
 
     public void onCreate(Bundle savedInstanceState) {
+        getActivity().setTitle("Settings");
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.settings);
 
@@ -103,13 +103,6 @@ public class SettingsFragment extends PreferenceFragment {
 
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        AppCompatActivity activity = (AppCompatActivity) getActivity();
-        if (activity == null)
-            return;
-        android.support.v7.app.ActionBar actionBar = activity.getSupportActionBar();
-        if (actionBar == null)
-            return;
-        actionBar.setTitle("Settings");
 
         prefsListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
