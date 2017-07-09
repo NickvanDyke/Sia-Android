@@ -154,7 +154,7 @@ public class SiaRequest extends StringRequest {
             else if (errorMessage.contains("unable to fund transaction"))
                 return Reason.INSUFFICIENT_FUNDS;
             else if (errorMessage.contains("wallet is already encrypted, cannot encrypt again"))
-                return reason.EXISTING_WALLET;
+                return Reason.EXISTING_WALLET;
             else if (errorMessage.contains("API authentication failed"))
                 return Reason.INCORRECT_API_PASSWORD;
             else if (errorMessage.contains("another wallet rescan is already underway"))

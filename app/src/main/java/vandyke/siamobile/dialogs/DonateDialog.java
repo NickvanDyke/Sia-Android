@@ -21,7 +21,6 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import org.json.JSONObject;
-import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
 import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
@@ -29,7 +28,7 @@ import vandyke.siamobile.misc.Utils;
 
 public class DonateDialog extends DialogFragment {
 
-    private String paymentRecipient = MainActivity.devAddresses[(int) (Math.random() * MainActivity.devAddresses.length)];
+    private String paymentRecipient = Utils.devAddresses[(int) (Math.random() * Utils.devAddresses.length)];
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = Utils.getDialogBuilder(getActivity());

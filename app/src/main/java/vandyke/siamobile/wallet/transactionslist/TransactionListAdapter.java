@@ -96,7 +96,6 @@ public class TransactionListAdapter extends ExpandableRecyclerViewAdapter<Transa
     @Override
     public void onBindChildViewHolder(TransactionDetailsHolder holder, int flatPosition, ExpandableGroup group, int childIndex) {
         Transaction transaction = (Transaction) group.getItems().get(childIndex);
-        System.out.println(transaction.getTransactionId());
 
         if (transaction.isConfirmed()) {
             holder.confirmationHeight.setText("Confirmation block: " + transaction.getConfirmationHeight());

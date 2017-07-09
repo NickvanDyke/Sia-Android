@@ -48,7 +48,7 @@ public class WalletService extends Service {
     private Runnable refreshRunnable;
 
     private int SYNC_NOTIFICATION = 0;
-    private int TRANSACTION_NOTIFICATION = 0;
+    private int TRANSACTION_NOTIFICATION = 1;
 
     public void refreshAll() {
         refreshBalanceAndStatus();
@@ -101,8 +101,25 @@ public class WalletService extends Service {
     public void refreshTransactions() {
         Wallet.transactions(new SiaRequest.VolleyCallback() {
             public void onSuccess(JSONObject response) {
-                transactions = Transaction.populateTransactions(response);
-                sendTransactionUpdate();
+                int numTxs = SiaMobileApplication.prefs.getInt("numberOfTransactions", 0); // TODO: can give false positives when switching between wallets
+//                int newTxs = 0;
+                for (Transaction tx : Transaction.populateTransactions(response)) {
+                    if (!transactions.contains(tx)) {
+                        transactions.add(tx);
+//                        newTxs++;
+                    }
+                }
+                if (transactions.size() != numTxs) {
+                    SiaMobileApplication.prefs.edit().putInt("numberOfTransactions", transactions.size()).apply();
+                    if (transactions.size() != 0)
+                        Utils.notification(WalletService.this, TRANSACTION_NOTIFICATION,
+                                R.drawable.ic_account_balance_white_48dp, "New transaction",
+                                "", false); // TODO: more detailed notification (total value of new txs maybe? kind of complex to do)
+//                        Utils.notification(WalletService.this, TRANSACTION_NOTIFICATION,
+//                                R.drawable.ic_account_balance_white_48dp, newTxs + " new transaction" + (newTxs > 1 ? "s" : ""),
+//                                "", false);
+                }
+                sendTransactionsUpdate();
             }
 
             public void onError(SiaRequest.Error error) {
@@ -156,7 +173,6 @@ public class WalletService extends Service {
         final long refreshInterval = 60000 * Long.parseLong(SiaMobileApplication.prefs.getString("monitorRefreshInterval", "1"));
         refreshRunnable = new Runnable() {
             public void run() {
-                System.out.println("refreshing");
                 refreshAll();
                 handler.postDelayed(refreshRunnable, refreshInterval);
             }
@@ -229,7 +245,7 @@ public class WalletService extends Service {
             listener.onUsdUpdate(this);
     }
 
-    public void sendTransactionUpdate() {
+    public void sendTransactionsUpdate() {
         for (WalletUpdateListener listener : listeners)
             listener.onTransactionsUpdate(this);
     }

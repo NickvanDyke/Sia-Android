@@ -17,7 +17,6 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 import org.json.JSONObject;
-import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
 import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
@@ -47,7 +46,7 @@ public class WalletSendFragment extends Fragment {
                 if (amount.getText().toString().equals(""))
                     feeText.setText("0.5% App fee: 0.000");
                 else
-                    feeText.setText("0.5% App fee: " + new BigDecimal(s.toString()).multiply(MainActivity.devFee).setScale(3, RoundingMode.FLOOR).toPlainString() + " SC");
+                    feeText.setText("0.5% App fee: " + new BigDecimal(s.toString()).multiply(Utils.devFee).setScale(3, RoundingMode.FLOOR).toPlainString() + " SC");
             }
             public void afterTextChanged(Editable s) {
             }

@@ -27,7 +27,7 @@ import java.io.InputStreamReader;
 
 public class Siad extends Service {
 
-    public static int SIAD_NOTIFICATION = 1;
+    public static int SIAD_NOTIFICATION = 3;
 
     private File siadFile;
     private java.lang.Process siadProcess;
