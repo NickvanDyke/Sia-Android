@@ -63,7 +63,7 @@ public class Transaction {
         }
         netValueStringExact = netValue.toPlainString();
         netValueStringRounded = Wallet.round(Wallet.hastingsToSC(netValue));
-        netZero = (netValue.compareTo(new BigDecimal(0)) == 0);
+        netZero = (netValue.compareTo(BigDecimal.ZERO) == 0);
     }
 
     public Transaction(String jsonString) throws JSONException {

@@ -101,23 +101,27 @@ public class WalletService extends Service {
     public void refreshTransactions() {
         Wallet.transactions(new SiaRequest.VolleyCallback() {
             public void onSuccess(JSONObject response) {
-                int numTxs = SiaMobileApplication.prefs.getInt("numberOfTransactions", 0); // TODO: can give false positives when switching between wallets
-//                int newTxs = 0;
+                String mostRecentTxId = SiaMobileApplication.prefs.getString("mostRecentTxId", "0"); // TODO: can give false positives when switching between wallets
+                int newTxs = 0;
+                boolean foundMostRecent = false;
+                BigDecimal netOfNewTxs = new BigDecimal("0");
                 for (Transaction tx : Transaction.populateTransactions(response)) {
+                    if (tx.getTransactionId().equals(mostRecentTxId))
+                        foundMostRecent = true;
                     if (!transactions.contains(tx)) {
                         transactions.add(tx);
-//                        newTxs++;
+                        if (!foundMostRecent) {
+                            newTxs++;
+                            netOfNewTxs = netOfNewTxs.add(tx.getNetValue());
+                        }
                     }
                 }
-                if (transactions.size() != numTxs) {
-                    SiaMobileApplication.prefs.edit().putInt("numberOfTransactions", transactions.size()).apply();
-                    if (transactions.size() != 0)
-                        Utils.notification(WalletService.this, TRANSACTION_NOTIFICATION,
-                                R.drawable.ic_account_balance_white_48dp, "New transaction",
-                                "", false); // TODO: more detailed notification (total value of new txs maybe? kind of complex to do)
-//                        Utils.notification(WalletService.this, TRANSACTION_NOTIFICATION,
-//                                R.drawable.ic_account_balance_white_48dp, newTxs + " new transaction" + (newTxs > 1 ? "s" : ""),
-//                                "", false);
+                if (newTxs > 0) {
+                    SiaMobileApplication.prefs.edit().putString("mostRecentTxId", transactions.get(0).getTransactionId()).apply();
+                    Utils.notification(WalletService.this, TRANSACTION_NOTIFICATION,
+                            R.drawable.ic_account_balance_white_48dp, newTxs + " new transaction" + (newTxs > 1 ? "s" : ""),
+                            "Net value: " + (netOfNewTxs.compareTo(BigDecimal.ZERO) > 0 ? "+" : "") + Wallet.round(Wallet.hastingsToSC(netOfNewTxs)) + " SC",
+                            false);
                 }
                 sendTransactionsUpdate();
             }
@@ -138,7 +142,7 @@ public class WalletService extends Service {
                     } else {
                         syncProgress = ((double) response.getInt("height") / estimatedBlockHeightAt(System.currentTimeMillis() / 1000)) * 100;
                         Utils.notification(WalletService.this, SYNC_NOTIFICATION, R.drawable.ic_sync_white_48dp,
-                                "Syncing blockchain...", "Progress (estimated): " + syncProgress + "%", false);
+                                "Syncing blockchain...", String.format("Progress (estimated): %.2f%", syncProgress), false);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
