@@ -67,10 +67,7 @@ public class WalletService extends Service {
             }
 
             public void onError(SiaRequest.Error error) {
-                balanceHastings = new BigDecimal("0");
-                balanceHastingsUnconfirmed = new BigDecimal("0");
-                balanceUsd = new BigDecimal("0");
-                walletStatus = WalletStatus.NONE;
+                sendBalanceError(error);
             }
         });
 
@@ -87,7 +84,7 @@ public class WalletService extends Service {
             }
         }, new Response.ErrorListener() {
             public void onErrorResponse(VolleyError error) {
-                balanceUsd = new BigDecimal("0");
+                sendUsdError(error);
             }
         });
     }
@@ -99,7 +96,7 @@ public class WalletService extends Service {
                 sendTransactionUpdate();
             }
             public void onError(SiaRequest.Error error) {
-                transactions.clear();
+                sendTransactionsError(error);
             }
         });
     }
@@ -119,7 +116,7 @@ public class WalletService extends Service {
                 sendSyncUpdate();
             }
             public void onError(SiaRequest.Error error) {
-                syncProgress = 0;
+                sendSyncError(error);
             }
         });
     }
@@ -174,6 +171,11 @@ public class WalletService extends Service {
         void onUsdUpdate(WalletService service);
         void onTransactionsUpdate(WalletService service);
         void onSyncUpdate(WalletService service);
+
+        void onBalanceError(SiaRequest.Error error);
+        void onUsdError(VolleyError error);
+        void onTransactionsError(SiaRequest.Error error);
+        void onSyncError(SiaRequest.Error error);
     }
 
     public void registerListener(WalletUpdateListener listener) {
@@ -202,6 +204,26 @@ public class WalletService extends Service {
     public void sendSyncUpdate() {
         for (WalletUpdateListener listener : listeners)
             listener.onSyncUpdate(this);
+    }
+
+    public void sendBalanceError(SiaRequest.Error error) {
+        for (WalletUpdateListener listener : listeners)
+            listener.onBalanceError(error);
+    }
+
+    public void sendUsdError(VolleyError error) {
+        for (WalletUpdateListener listener : listeners)
+            listener.onUsdError(error);
+    }
+
+    public void sendTransactionsError(SiaRequest.Error error) {
+        for (WalletUpdateListener listener : listeners)
+            listener.onTransactionsError(error);
+    }
+
+    public void sendSyncError(SiaRequest.Error error) {
+        for (WalletUpdateListener listener : listeners)
+            listener.onSyncError(error);
     }
 
     public WalletStatus getWalletStatus() {

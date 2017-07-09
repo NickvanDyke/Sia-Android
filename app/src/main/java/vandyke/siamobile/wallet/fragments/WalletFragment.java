@@ -13,6 +13,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,6 +21,7 @@ import android.view.*;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import com.android.volley.VolleyError;
 import com.daimajia.numberprogressbar.NumberProgressBar;
 import org.json.JSONObject;
 import vandyke.siamobile.MainActivity;
@@ -133,7 +135,6 @@ public class WalletFragment extends Fragment implements WalletService.WalletUpda
         getActivity().bindService(new Intent(getActivity(), WalletService.class), connection, Context.BIND_AUTO_CREATE);
     }
 
-    @Override
     public void onBalanceUpdate(WalletService service) {
         switch (walletService.getWalletStatus()) {
             case NONE:
@@ -152,10 +153,8 @@ public class WalletFragment extends Fragment implements WalletService.WalletUpda
 
     public void onUsdUpdate(WalletService service) {
         balanceUsdText.setText(Wallet.round(service.getBalanceUsd()) + " USD");
-
     }
 
-    @Override
     public void onTransactionsUpdate(WalletService service) {
         boolean hideZero = SiaMobileApplication.prefs.getBoolean("hideZero", false);
         transactionExpandableGroups.clear();
@@ -167,7 +166,6 @@ public class WalletFragment extends Fragment implements WalletService.WalletUpda
         transactionList.setAdapter(new TransactionListAdapter(transactionExpandableGroups));
     }
 
-    @Override
     public void onSyncUpdate(WalletService service) {
         double syncProgress = service.getSyncProgress();
         if (syncProgress == 100) {
@@ -183,6 +181,22 @@ public class WalletFragment extends Fragment implements WalletService.WalletUpda
             syncBar.setProgress((int)syncProgress);
 //            syncNotification(R.drawable.ic_sync_white_48dp, "Syncing blockchain...", String.format("Progress (estimated): %.2f%%", syncProgress), false);
         }
+    }
+
+    public void onBalanceError(SiaRequest.Error error) {
+        MainActivity.snackbar(view, error.getMsg(), Snackbar.LENGTH_SHORT);
+    }
+
+    public void onUsdError(VolleyError error) {
+        MainActivity.snackbar(view, "Error retreiving USD value", Snackbar.LENGTH_SHORT);
+    }
+
+    public void onTransactionsError(SiaRequest.Error error) {
+        MainActivity.snackbar(view, error.getMsg(), Snackbar.LENGTH_SHORT);
+    }
+
+    public void onSyncError(SiaRequest.Error error) {
+        MainActivity.snackbar(view, error.getMsg(), Snackbar.LENGTH_SHORT);
     }
 
     public void syncNotification(int icon, String title, String text, boolean ongoing) {
@@ -253,8 +267,8 @@ public class WalletFragment extends Fragment implements WalletService.WalletUpda
         return new TransactionExpandableGroup(tx.getNetValueStringRounded(), tx.getConfirmationDate(), child);
     }
 
-    public void onStop() {
-        super.onStop();
+    public void onDestroy() {
+        super.onDestroy();
         if (bound) {
             walletService.unregisterListener(this);
             if (isAdded()) {
