@@ -142,7 +142,7 @@ public class WalletService extends Service {
                     } else {
                         syncProgress = ((double) response.getInt("height") / estimatedBlockHeightAt(System.currentTimeMillis() / 1000)) * 100;
                         Utils.notification(WalletService.this, SYNC_NOTIFICATION, R.drawable.ic_sync_white_48dp,
-                                "Syncing blockchain...", String.format("Progress (estimated): %.2f%", syncProgress), false);
+                                "Syncing blockchain...", String.format("Progress (estimated): %.2f%%", syncProgress), false);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -192,7 +192,8 @@ public class WalletService extends Service {
 
     @Override
     public void onDestroy() {
-
+        if (handler != null && refreshRunnable != null)
+            handler.removeCallbacks(refreshRunnable);
     }
 
     @Override
