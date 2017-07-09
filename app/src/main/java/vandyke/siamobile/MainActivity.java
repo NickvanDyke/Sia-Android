@@ -37,9 +37,9 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 import vandyke.siamobile.backend.CleanupService;
-import vandyke.siamobile.backend.ColdStorageWallet;
+import vandyke.siamobile.backend.ColdStorageService;
 import vandyke.siamobile.backend.SiadMonitor;
-import vandyke.siamobile.backend.WalletService;
+import vandyke.siamobile.backend.WalletMonitorService;
 import vandyke.siamobile.dialogs.DonateDialog;
 import vandyke.siamobile.files.fragments.FilesFragment;
 import vandyke.siamobile.help.fragments.HelpFragment;
@@ -51,8 +51,6 @@ import vandyke.siamobile.misc.Utils;
 import vandyke.siamobile.settings.fragments.SettingsFragment;
 import vandyke.siamobile.terminal.fragments.TerminalFragment;
 import vandyke.siamobile.wallet.fragments.WalletFragment;
-
-import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -185,11 +183,7 @@ public class MainActivity extends AppCompatActivity {
         if (SiaMobileApplication.prefs.getString("operationMode", "cold_storage").equals("local_full_node"))
             startService(new Intent(this, SiadMonitor.class));
         else if (SiaMobileApplication.prefs.getString("operationMode", "cold_storage").equals("cold_storage"))
-            try {
-                ColdStorageWallet.getInstance(this).start();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            startService(new Intent(this, ColdStorageService.class));
 
         if (SiaMobileApplication.prefs.getBoolean("firstTime", true)) {
             loadDrawerFragment(WelcomeFragment.class);
@@ -213,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
                     navigationView.setCheckedItem(R.id.drawer_item_terminal);
                     break;
             }
-        startService(new Intent(this, WalletService.class));
+        startService(new Intent(this, WalletMonitorService.class));
     }
 
     public void loadDrawerFragment(Class clazz) {

@@ -7,7 +7,7 @@
 
 package vandyke.siamobile.backend;
 
-import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import fi.iki.elonen.NanoHTTPD;
 import org.json.JSONArray;
@@ -24,9 +24,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
 
-public class ColdStorageWallet extends NanoHTTPD {
-
-    private static ColdStorageWallet instance;
+public class ColdStorageHttpServer extends NanoHTTPD {
 
     private String seed;
     private ArrayList<String> addresses;
@@ -36,20 +34,14 @@ public class ColdStorageWallet extends NanoHTTPD {
 
     private File binary;
 
-    private ColdStorageWallet(Activity activity) {
+    public ColdStorageHttpServer(Context context) {
         super("localhost", 9990);
         seed = SiaMobileApplication.prefs.getString("coldStorageSeed", "noseed");
         addresses = new ArrayList<>(SiaMobileApplication.prefs.getStringSet("coldStorageAddresses", new HashSet<String>()));
         password = SiaMobileApplication.prefs.getString("coldStoragePassword", "nopass");
         exists = SiaMobileApplication.prefs.getBoolean("coldStorageExists", false);
         unlocked = false;
-        binary = Utils.copyBinary("sia-coldstorage", activity, true);
-    }
-
-    public static ColdStorageWallet getInstance(Activity activity) {
-        if (instance == null)
-            instance = new ColdStorageWallet(activity);
-        return instance;
+        binary = Utils.copyBinary("sia-coldstorage", context, true);
     }
 
     public Response serve(IHTTPSession session) {
@@ -86,7 +78,10 @@ public class ColdStorageWallet extends NanoHTTPD {
                 } else
                     status = Response.Status.BAD_REQUEST;
             } else if (uri.equals("/wallet/init")) {
-                if (!exists || parms.get("force").equals("true")) {
+                if (binary == null) {
+                    response.put("message", "wallet is already encrypted, cannot encrypt again");
+                    status = Response.Status.BAD_REQUEST;
+                } else if (!exists || parms.get("force").equals("true")) {
                     newWallet(parms.get("encryptionpassword"));
                     response.put("primaryseed", seed);
                 } else {
@@ -125,13 +120,6 @@ public class ColdStorageWallet extends NanoHTTPD {
         Response httpResponse = newFixedLengthResponse(response.toString());
         httpResponse.setStatus(status);
         return httpResponse;
-    }
-
-    public static void destroy() {
-        if (instance == null)
-            return;
-        instance.stop();
-        instance = null;
     }
 
     private boolean checkUnlocked(JSONObject response) throws JSONException {

@@ -40,15 +40,14 @@
                 android:key="monitorInBackground"
                 android:title="Refresh in background"
                 android:summary="Continue refreshing when Sia Mobile isn't running."
-                android:defaultValue="true"/>
+                android:defaultValue="false"/>
         <EditTextPreference
                 android:key="remoteAddress"
                 android:title="Remote node address"
                 android:summary="The IP address and port number of your remote full node. If your device is not on the same network as it, you will have to port forward."
                 android:dialogTitle="Remote node address"
                 android:gravity="center"
-                android:hint="ip:port"
-                android:shouldDisableView="true"/>
+                android:hint="ip:port"/>
         <EditTextPreference
                 android:key="apiPass"
                 android:title="API password"
@@ -57,30 +56,30 @@
                 android:gravity="center"
                 android:inputType="textPassword"
                 android:password="true"
-                android:fontFamily="sans-serif"
-                android:shouldDisableView="true"/>
+                android:fontFamily="sans-serif"/>
+        <SwitchPreference
+                android:key="runColdStorageInBackground"
+                android:title="Run cold storage wallet in background"
+                android:defaultValue="false"/>
         <SwitchPreference
                 android:key="runLocalNodeInBackground"
                 android:title="Run local node in background"
-                android:defaultValue="false"
-                android:shouldDisableView="true"/>
+                android:defaultValue="false"/>
         <SwitchPreference
                 android:key="runLocalNodeOffWifi"
                 android:title="Run local node off WiFi"
                 android:summary="Run the local node in the background even when not connected to WiFi. WARNING: Syncing the blockchain can involve a lot of downloading."
-                android:defaultValue="false"
-                android:shouldDisableView="true"/>
+                android:defaultValue="false"/>
         <EditTextPreference
                 android:key="localNodeMinBattery"
                 android:title="Minimum battery level to run local node"
                 android:numeric="integer"
                 android:gravity="center"
-                android:defaultValue="20"
-                android:shouldDisableView="true"/>
+                android:defaultValue="20"/>
         <SwitchPreference
                 android:key="useExternal"
                 android:title="Use external storage"
-                android:summary="A full local node uses about 5GB of storage. By default it uses internal storage. Restart Sia Mobile after changing this. It's recommended you clear existing data using the button at the bottom of settings before changing this."
+                android:summary="A local full node uses about 5GB of storage. By default it uses internal storage. Restart Sia Mobile after changing this. It's recommended you clear existing data using the button at the bottom of settings before changing this."
                 android:defaultValue="false"/>
     </PreferenceCategory>
     <PreferenceCategory android:title="Misc">

@@ -28,7 +28,8 @@
         <service android:name=".backend.Siad"/>
         <service android:name=".backend.CleanupService"/>
         <service android:name=".backend.SiadMonitor"/>
-        <service android:name=".backend.WalletService"/>
+        <service android:name=".backend.WalletMonitorService"/>
+        <service android:name=".backend.ColdStorageService"/>
 
         <receiver android:name=".backend.BootReceiver">
             <intent-filter>
