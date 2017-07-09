@@ -5,7 +5,7 @@
  * included in this source code package. All rights are reserved, with the exception of what is specified there.
  */
 
-package vandyke.siamobile.backend;
+package vandyke.siamobile.backend.coldstorage;
 
 import android.content.Context;
 import android.content.SharedPreferences;

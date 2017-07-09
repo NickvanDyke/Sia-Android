@@ -21,10 +21,10 @@ import android.support.design.widget.Snackbar;
 import android.util.Base64;
 import vandyke.siamobile.BuildConfig;
 import vandyke.siamobile.R;
-import vandyke.siamobile.backend.ColdStorageService;
-import vandyke.siamobile.backend.Siad;
-import vandyke.siamobile.backend.SiadMonitor;
 import vandyke.siamobile.backend.WalletMonitorService;
+import vandyke.siamobile.backend.coldstorage.ColdStorageService;
+import vandyke.siamobile.backend.siad.Siad;
+import vandyke.siamobile.backend.siad.SiadMonitorService;
 import vandyke.siamobile.misc.SiaMobileApplication;
 import vandyke.siamobile.misc.Utils;
 
@@ -130,14 +130,14 @@ public class SettingsFragment extends PreferenceFragment {
                         if (sharedPreferences.getString("operationMode", "cold_storage").equals("remote_full_node")) {
                             editor.putString("address", sharedPreferences.getString("remoteAddress", "192.168.1.11:9980"));
                             getActivity().stopService(new Intent(getActivity(), ColdStorageService.class));
-                            getActivity().stopService(new Intent(getActivity(), SiadMonitor.class));
+                            getActivity().stopService(new Intent(getActivity(), SiadMonitorService.class));
                         } else if (sharedPreferences.getString("operationMode", "cold_storage").equals("local_full_node")) {
                             editor.putString("address", "localhost:9980");
                             getActivity().stopService(new Intent(getActivity(), ColdStorageService.class));
-                            getActivity().startService(new Intent(getActivity(), SiadMonitor.class));
+                            getActivity().startService(new Intent(getActivity(), SiadMonitorService.class));
                         } else if (sharedPreferences.getString("operationMode", "cold_storage").equals("cold_storage")) {
                             editor.putString("address", "localhost:9990");
-                            getActivity().stopService(new Intent(getActivity(), SiadMonitor.class));
+                            getActivity().stopService(new Intent(getActivity(), SiadMonitorService.class));
                             getActivity().startService(new Intent(getActivity(), ColdStorageService.class));
                         }
                         editor.apply();

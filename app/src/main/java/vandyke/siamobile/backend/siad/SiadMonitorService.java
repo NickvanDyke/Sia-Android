@@ -5,7 +5,7 @@
  * included in this source code package. All rights are reserved, with the exception of what is specified there.
  */
 
-package vandyke.siamobile.backend;
+package vandyke.siamobile.backend.siad;
 
 import android.app.Service;
 import android.content.Intent;
@@ -15,9 +15,10 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
+import vandyke.siamobile.backend.StatusReceiver;
 import vandyke.siamobile.misc.SiaMobileApplication;
 
-public class SiadMonitor extends Service {
+public class SiadMonitorService extends Service {
 
     private StatusReceiver statusReceiver;
 

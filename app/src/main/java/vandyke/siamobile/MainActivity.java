@@ -37,9 +37,9 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 import vandyke.siamobile.backend.CleanupService;
-import vandyke.siamobile.backend.ColdStorageService;
-import vandyke.siamobile.backend.SiadMonitor;
 import vandyke.siamobile.backend.WalletMonitorService;
+import vandyke.siamobile.backend.coldstorage.ColdStorageService;
+import vandyke.siamobile.backend.siad.SiadMonitorService;
 import vandyke.siamobile.dialogs.DonateDialog;
 import vandyke.siamobile.files.fragments.FilesFragment;
 import vandyke.siamobile.help.fragments.HelpFragment;
@@ -181,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
 
         startService(new Intent(this, CleanupService.class));
         if (SiaMobileApplication.prefs.getString("operationMode", "cold_storage").equals("local_full_node"))
-            startService(new Intent(this, SiadMonitor.class));
+            startService(new Intent(this, SiadMonitorService.class));
         else if (SiaMobileApplication.prefs.getString("operationMode", "cold_storage").equals("cold_storage"))
             startService(new Intent(this, ColdStorageService.class));
 
