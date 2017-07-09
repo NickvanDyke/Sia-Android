@@ -19,26 +19,27 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import org.json.JSONException;
 import org.json.JSONObject;
-import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
 import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
+import vandyke.siamobile.misc.Utils;
 
 public class WalletReceiveFragment extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_wallet_receive, null);
         final TextView address = (TextView)view.findViewById(R.id.receiveAddress);
-        Wallet.newAddress(new SiaRequest.VolleyCallback(view) {
+        Wallet.newAddress(new SiaRequest.VolleyCallback() {
             public void onSuccess(JSONObject response) {
                 try {
+                    Utils.successSnackbar(view);
                     address.setText(response.getString("address"));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
             public void onError(SiaRequest.Error error) {
-                super.onError(error);
+                error.snackbar(view);
                 address.setText(error.getMsg() + "\n");
             }
         });
@@ -47,7 +48,7 @@ public class WalletReceiveFragment extends Fragment {
                 ClipboardManager clipboard = (ClipboardManager)getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
                 ClipData clip = ClipData.newPlainText("receive address", ((TextView)view.findViewById(R.id.receiveAddress)).getText());
                 clipboard.setPrimaryClip(clip);
-                MainActivity.snackbar(view, "Copied receive address", Snackbar.LENGTH_SHORT);
+                Utils.snackbar(view, "Copied receive address", Snackbar.LENGTH_SHORT);
                 container.setVisibility(View.GONE);
             }
         });

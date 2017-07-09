@@ -16,7 +16,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
-import vandyke.siamobile.MainActivity;
+import vandyke.siamobile.misc.SiaMobileApplication;
+import vandyke.siamobile.misc.Utils;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
@@ -27,8 +28,8 @@ public class SiaRequest extends StringRequest {
     private HashMap<String, String> headers;
     private HashMap<String, String> params;
 
-    public SiaRequest(int method, String command, final VolleyCallback callback) {
-        super(method, "http://" + MainActivity.prefs.getString("address", "localhost:9980") + command, new Response.Listener<String>() {
+    public SiaRequest(int method, String destination, String command, final VolleyCallback callback) {
+        super(method, "http://" + destination + command, new Response.Listener<String>() {
             public void onResponse(String response) {
                 try {
                     JSONObject responseJson = response.length() == 0 ? new JSONObject() : new JSONObject(response);
@@ -44,8 +45,12 @@ public class SiaRequest extends StringRequest {
         });
         headers = new HashMap<>();
         headers.put("User-agent", "Sia-Agent");
-        headers.put("Authorization", "Basic " + Base64.encodeToString((":" + MainActivity.prefs.getString("apiPass", "")).getBytes(), 0));
+        headers.put("Authorization", "Basic " + Base64.encodeToString((":" + SiaMobileApplication.prefs.getString("apiPass", "")).getBytes(), 0));
         params = new HashMap<>();
+    }
+
+    public SiaRequest(int method, String command, final VolleyCallback callback) {
+        this(method, SiaMobileApplication.prefs.getString("address", "localhost:9980"), command, callback);
     }
 
     public Map<String, String> getHeaders() {
@@ -67,23 +72,12 @@ public class SiaRequest extends StringRequest {
     }
 
     public void send() {
-        MainActivity.requestQueue.add(this);
+        SiaMobileApplication.requestQueue.add(this);
     }
 
-    public static class VolleyCallback {
-        private View view;
-
-        public VolleyCallback(View view) {
-            this.view = view;
-        }
-
-        public void onSuccess(JSONObject response) {
-            genericSuccessSnackbar(view);
-        }
-
-        public void onError(Error error) {
-            error.snackbar(view);
-        }
+    public interface VolleyCallback {
+        void onSuccess(JSONObject response);
+        void onError(Error error);
     }
 
     public static class Error {
@@ -92,7 +86,7 @@ public class SiaRequest extends StringRequest {
             TIMEOUT("Response timed out"),
             NO_NETWORK_RESPONSE("No network response"),
             WALLET_PASSWORD_INCORRECT("Wallet password incorrect"),
-            WALLET_LOCKED("Wallet is locked"),
+            WALLET_LOCKED("Wallet must be unlocked first"),
             WALLET_ALREADY_UNLOCKED("Wallet already unlocked"),
             INVALID_AMOUNT("Invalid amount"),
             NO_NEW_PASSWORD("Must provide new password"),
@@ -160,7 +154,7 @@ public class SiaRequest extends StringRequest {
             else if (errorMessage.contains("unable to fund transaction"))
                 return Reason.INSUFFICIENT_FUNDS;
             else if (errorMessage.contains("wallet is already encrypted, cannot encrypt again"))
-                return reason.EXISTING_WALLET;
+                return Reason.EXISTING_WALLET;
             else if (errorMessage.contains("API authentication failed"))
                 return Reason.INCORRECT_API_PASSWORD;
             else if (errorMessage.contains("another wallet rescan is already underway"))
@@ -187,11 +181,11 @@ public class SiaRequest extends StringRequest {
 
         public void snackbar(View view) {
             if (reason != null)
-                MainActivity.snackbar(view, reason.getMsg(), Snackbar.LENGTH_SHORT);
+                Utils.snackbar(view, reason.getMsg(), Snackbar.LENGTH_SHORT);
         }
     }
 
     public static void genericSuccessSnackbar(View view) {
-        MainActivity.snackbar(view, "Success", Snackbar.LENGTH_SHORT);
+        Utils.snackbar(view, "Success", Snackbar.LENGTH_SHORT);
     }
 }

@@ -8,6 +8,11 @@
 package vandyke.siamobile.misc;
 
 import android.app.Application;
+import android.content.SharedPreferences;
+import android.os.Build;
+import android.preference.PreferenceManager;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 import org.acra.ACRA;
 import org.acra.ReportingInteractionMode;
 import org.acra.annotation.ReportsCrashes;
@@ -23,8 +28,26 @@ import vandyke.siamobile.R;
 )
 public class SiaMobileApplication extends Application {
 
+    public static SharedPreferences prefs;
+    public static RequestQueue requestQueue;
+    public static String abi;
+    public static String abi32;
+
     public void onCreate() {
         ACRA.init(this);
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        requestQueue = Volley.newRequestQueue(this);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
+            abi = Build.CPU_ABI;
+        else
+            abi = Build.SUPPORTED_ABIS[0];
+        if (abi.contains("arm"))
+            abi32 = "arm32";
+        else if (abi.contains("x86"))
+            abi32 = "x86";
+        if (abi.equals("arm64-v8a"))
+            abi = "arm64";
+        // TODO: maybe add mips binaries
         super.onCreate();
     }
 }

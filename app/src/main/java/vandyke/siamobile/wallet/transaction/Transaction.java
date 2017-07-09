@@ -28,9 +28,9 @@ public class Transaction {
     protected String netValueStringExact;
     protected String netValueStringRounded;
     protected boolean netZero;
-    
+
     public Transaction() {
-        
+
     }
 
     public Transaction(JSONObject json) {
@@ -63,7 +63,7 @@ public class Transaction {
         }
         netValueStringExact = netValue.toPlainString();
         netValueStringRounded = Wallet.round(Wallet.hastingsToSC(netValue));
-        netZero = (netValue.compareTo(new BigDecimal(0)) == 0);
+        netZero = (netValue.compareTo(BigDecimal.ZERO) == 0);
     }
 
     public Transaction(String jsonString) throws JSONException {
@@ -71,7 +71,6 @@ public class Transaction {
     }
 
     /**
-     *
      * @param json The JSONObject created from the string returned by the /wallet/transactions API request
      * @return ArrayList of transactions generated from the given json. Note it goes from most-to-least-recent
      */
@@ -132,5 +131,12 @@ public class Transaction {
 
     public boolean isNetZero() {
         return netZero;
+    }
+
+    public boolean equals(Object other) {
+        if (!(other instanceof Transaction))
+            return false;
+        else
+            return transactionId.equals(((Transaction) other).getTransactionId());
     }
 }

@@ -10,7 +10,6 @@ package vandyke.siamobile.terminal.fragments;
 import android.app.Fragment;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableStringBuilder;
 import android.text.method.ScrollingMovementMethod;
 import android.text.style.ForegroundColorSpan;
@@ -23,7 +22,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
-import vandyke.siamobile.backend.Siad;
+import vandyke.siamobile.misc.Utils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -39,8 +38,9 @@ public class TerminalFragment extends Fragment {
     private File siacFile;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        getActivity().setTitle("Terminal");
         View v = inflater.inflate(R.layout.fragment_terminal, container, false);
-        siacFile = MainActivity.copyBinary("siac", getActivity(), true);
+        siacFile = Utils.copyBinary("siac", getActivity(), true);
 
         input = (EditText)v.findViewById(R.id.input);
         input.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -93,19 +93,8 @@ public class TerminalFragment extends Fragment {
 
         output = (TextView)v.findViewById(R.id.output);
         output.setMovementMethod(new ScrollingMovementMethod());
-        Siad.getInstance(getActivity()).setTerminalFragment(this);
+//        Siad.getInstance(getActivity()).setTerminalFragment(this);
         return v;
-    }
-
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        AppCompatActivity activity = (AppCompatActivity) getActivity();
-        if (activity == null)
-            return;
-        android.support.v7.app.ActionBar actionBar = activity.getSupportActionBar();
-        if (actionBar == null)
-            return;
-        actionBar.setTitle("Terminal");
     }
 
     public void appendToOutput(String text) {
@@ -114,6 +103,6 @@ public class TerminalFragment extends Fragment {
 
     public void onResume() {
         super.onResume();
-        output.append(Siad.getInstance(getActivity()).getBufferedStdout());
+//        output.append(Siad.getInstance(getActivity()).getBufferedStdout());
     }
 }

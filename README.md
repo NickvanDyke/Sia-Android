@@ -13,6 +13,11 @@ Sia Mobile can
 My username on the [Sia Slack](https://siatalk.slack.com) is Nicktz. Please direct any questions or comments you have to me on there, particularly in the #android-dev channel.
 
 # Contributing
+Primarily involving:
+* Implementing new features, whether ones listed in [projects](https://github.com/NickvanDyke/Sia-Mobile/projects), or your own ideas
+* Improving implementation of existing features
+* Clean-up and refactoring
+
 Sia Mobile is still in heavy development, and contributions to the Sia Mobile codebase through this repository (pull requests, issue reporting, etc.) are welcomed, encouraged, and appreciated. Please view the [projects page](https://github.com/NickvanDyke/Sia-Mobile/projects) for a to-do list of changes and features for Sia Mobile. This list is not exhaustive; not everything I want done is included. You also do not have to adhere to this list, but it can be a helpful resource if you want to contribute but don't know in what way. If you have any ideas for something you want to contribute that's not listed, I would be happy to hear them. Due to the lack of certain features of Sia right now, some things are currently impossible for Sia Mobile, such as a lite wallet. I've spoken with David Vorick extensively, and have a good understanding of what can and can't be done with Sia Mobile, so I recommend you run ideas by me first, to determine their viability. I would also be happy to help with implementation, at least as far as telling you what should be done, how, and where, and answering any questions you have.
 
 The code may not be extremely clean or organized in some places. I've been focusing on adding features and fixing bugs, and haven't taken much time to go back and neatly organize everything. Some clean-up and refactoring would be a welcome contribution. If something is already implemented but could be done in a better fashion or doesn't follow ideal practices, a contribution changing that would also be welcome. I also have not commented most of it, especially not in an extensive fashion - initially I didn't plan on anyone but me seeing the code - although in my opinion a lot of it is self-explanatory.
@@ -26,3 +31,12 @@ When Sia Mobile initially launched, the community showed some concern that they 
 
 # Licensing
 You may have noticed that this reposity does not have a license. This means that the work here is, by default, under exclusive copyright of the repository owner, and no one but the copyright holder may legally use, copy, distribute, or modify the contents of this repository without express permission. More info [here](https://choosealicense.com/no-license/). However, as per section D5 of the [GitHub terms of service](https://help.github.com/articles/github-terms-of-service/), you may still view and fork this repository, as well as "use, display, and perform" its content. I believe this means you can legally clone the repository and build the Android APK from source if you wish (for yourself, not for redistribution). Note that the Github ToS does not include the right to make changes to forked content, nor to redistribute it. However, I grant you the right to make changes to the contents of your forked repository with the sole intent of contributing those changes to this repository through a pull request. You may not make changes for any other reason or purpose, and may not redistribute the source code nor the compiled APK. When making a pull request to this repository, you will be asked to agree to a relatively short Contributor License Agreement (CLA). Agreeing to [the CLA](https://gist.github.com/NickvanDyke/88e90b0cd9c95ff482b1ace258bd0e76) simply grants any rights you hold over your contribution to the project owner. This is purely so that I maintain ownership of this project that I have invested a lot of my time in (while also keeping it completely free and ad-free), and so that I can ensure that I remain the sole distributor of Sia Mobile, through the Google Play Store or otherwise. I have absolutely no malicious intent with this lack-of-licensing and CLA, and if others make significant contributions to Sia Mobile, I would happily include somewhere in the app a mention of them and their contributions. My goal in making Sia Mobile's GitHub repository public is for the community to have the ability to audit the code for trustworthiness, and make contributions if they wish - which, again, is greatly encouraged and appreciated. To my understanding, this is the best way to do that while still maintaining ownership over the project and its distribution. If it is not, then please let me know so I can make changes to it.
+
+# Donations
+Sia Mobile development is purely done for free/donations. Any amount is appreciated. Thanks!
+
+Siacoin: 20c9ed0d1c70ab0d6f694b7795bae2190db6b31d97bc2fba8067a336ffef37aacbc0c826e5d3
+
+BTC: 1G8Wzjk1d7ULXBpLTBHwK35kFb3VLGY4Fe
+
+Ether: 0x0f35db6c049df0183716bd7696f467d4873583bb

@@ -12,7 +12,8 @@ import com.android.volley.toolbox.StringRequest;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import vandyke.siamobile.MainActivity;
+import vandyke.siamobile.misc.SiaMobileApplication;
+import vandyke.siamobile.misc.Utils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -97,7 +98,7 @@ public class Wallet {
         try {
             outputs.put(regOutput);
             outputs.put(feeOutput);
-            feeOutput.put("unlockhash", MainActivity.devAddresses[(int)(Math.random() * MainActivity.devAddresses.length)]);
+            feeOutput.put("unlockhash", Utils.devAddresses[(int)(Math.random() * Utils.devAddresses.length)]);
             String devAmount = calculateDevFee(amount);
             feeOutput.put("value", devAmount);
             regOutput.put("unlockhash", recipient);
@@ -140,7 +141,7 @@ public class Wallet {
 
     public static void coincapSC(Response.Listener listener, Response.ErrorListener errorListener) {
         StringRequest request = new StringRequest(GET, "http://www.coincap.io/page/SC", listener, errorListener);
-        MainActivity.requestQueue.add(request);
+        SiaMobileApplication.requestQueue.add(request);
     }
 
     public static BigDecimal hastingsToSC(String hastings) {
@@ -163,16 +164,16 @@ public class Wallet {
     }
 
     public static String round(BigDecimal num) {
-        return num.setScale(Integer.parseInt(MainActivity.prefs.getString("displayedDecimalPrecision", "2")), BigDecimal.ROUND_CEILING).toPlainString();
+        return num.setScale(Integer.parseInt(SiaMobileApplication.prefs.getString("displayedDecimalPrecision", "2")), BigDecimal.ROUND_CEILING).toPlainString();
     }
 
     /** will return value in the same units they were passed in, without decimal */
     public static String calculateDevFee(BigDecimal amount) {
-        return amount.multiply(MainActivity.devFee).setScale(0, RoundingMode.FLOOR).toPlainString();
+        return amount.multiply(Utils.devFee).setScale(0, RoundingMode.FLOOR).toPlainString();
     }
 
     public static String calculateDevFee(String amount) {
-        return new BigDecimal(amount).multiply(MainActivity.devFee).setScale(0, RoundingMode.FLOOR).toPlainString();
+        return new BigDecimal(amount).multiply(Utils.devFee).setScale(0, RoundingMode.FLOOR).toPlainString();
     }
 
     public static BigDecimal usdInSC(double usdPrice, String targetUsd) {

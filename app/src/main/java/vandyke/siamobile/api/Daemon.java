@@ -15,4 +15,9 @@ public class Daemon {
         new SiaRequest(GET, "/daemon/stop", callback)
                 .send();
     }
+
+    public static void stopSpecific(String destination, SiaRequest.VolleyCallback callback) {
+        new SiaRequest(GET, destination, "/daemon/stop", callback)
+                .send();
+    }
 }

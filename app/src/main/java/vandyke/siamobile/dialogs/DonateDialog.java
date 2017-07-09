@@ -21,17 +21,17 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import org.json.JSONObject;
-import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
 import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
+import vandyke.siamobile.misc.Utils;
 
 public class DonateDialog extends DialogFragment {
 
-    private String paymentRecipient = MainActivity.devAddresses[(int) (Math.random() * MainActivity.devAddresses.length)];
+    private String paymentRecipient = Utils.devAddresses[(int) (Math.random() * Utils.devAddresses.length)];
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = MainActivity.getDialogBuilder(getActivity());
+        AlertDialog.Builder builder = Utils.getDialogBuilder(getActivity());
 
         final View dialogView = getActivity().getLayoutInflater().inflate(R.layout.dialog_donate, null);
 
@@ -41,13 +41,13 @@ public class DonateDialog extends DialogFragment {
         donateButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 Wallet.sendSiacoins(Wallet.scToHastings(amount.getText().toString()),
-                        paymentRecipient, new SiaRequest.VolleyCallback(view) {
+                        paymentRecipient, new SiaRequest.VolleyCallback() {
                             public void onSuccess(JSONObject response) {
-                                MainActivity.snackbar(dialogView, "Donation successful. Thank you!", Snackbar.LENGTH_SHORT);
+                                Utils.snackbar(dialogView, "Donation successful. Thank you!", Snackbar.LENGTH_SHORT);
                             }
 
                             public void onError(SiaRequest.Error error) {
-                                MainActivity.snackbar(dialogView, error.getMsg() + ". No donation made.", Snackbar.LENGTH_SHORT);
+                                Utils.snackbar(dialogView, error.getMsg() + ". No donation made.", Snackbar.LENGTH_SHORT);
                             }
                         });
             }

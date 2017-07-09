@@ -17,10 +17,10 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import org.json.JSONObject;
-import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
 import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
+import vandyke.siamobile.misc.Utils;
 
 public class WalletCreateFragment extends Fragment {
 
@@ -54,27 +54,33 @@ public class WalletCreateFragment extends Fragment {
             public void onClick(View v) {
                 String password = ((EditText) view.findViewById(R.id.newPasswordCreate)).getText().toString();
                 if (!password.equals(((EditText) view.findViewById(R.id.confirmNewPasswordCreate)).getText().toString())) {
-                    MainActivity.snackbar(view, "New passwords don't match", Snackbar.LENGTH_SHORT);
+                    Utils.snackbar(view, "New passwords don't match", Snackbar.LENGTH_SHORT);
                     return;
                 }
                 boolean force = forceCheck.isChecked();
                 String dictionary = "english";
                 if (createFromSeed.isChecked())
-                    Wallet.initSeed(password, force, dictionary, seedField.getText().toString(), new SiaRequest.VolleyCallback(view) {
+                    Wallet.initSeed(password, force, dictionary, seedField.getText().toString(), new SiaRequest.VolleyCallback() {
                         public void onSuccess(JSONObject response) {
-                            super.onSuccess(response);
+                            Utils.successSnackbar(view);
                             container.setVisibility(View.GONE);
-                            MainActivity.hideSoftKeyboard(getActivity());
+                            Utils.hideSoftKeyboard(getActivity());
 //                                    WalletFragment.refreshWallet(getFragmentManager());
+                        }
+                        public void onError(SiaRequest.Error error) {
+                            error.snackbar(view);
                         }
                     });
                 else
-                    Wallet.init(password, force, dictionary, new SiaRequest.VolleyCallback(view) {
+                    Wallet.init(password, force, dictionary, new SiaRequest.VolleyCallback() {
                         public void onSuccess(JSONObject response) {
-                            super.onSuccess(response);
+                            Utils.successSnackbar(view);
                             container.setVisibility(View.GONE);
-                            MainActivity.hideSoftKeyboard(getActivity());
+                            Utils.hideSoftKeyboard(getActivity());
 //                                    WalletFragment.refreshWallet(getFragmentManager());
+                        }
+                        public void onError(SiaRequest.Error error) {
+                            error.snackbar(view);
                         }
                     });
             }
@@ -83,7 +89,7 @@ public class WalletCreateFragment extends Fragment {
         view.findViewById(R.id.walletCreateCancel).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 container.setVisibility(View.GONE);
-                MainActivity.hideSoftKeyboard(getActivity());
+                Utils.hideSoftKeyboard(getActivity());
             }
         });
         return view;

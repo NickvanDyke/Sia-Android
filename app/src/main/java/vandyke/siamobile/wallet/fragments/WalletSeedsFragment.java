@@ -31,7 +31,7 @@ public class WalletSeedsFragment extends Fragment {
         final ArrayList<String> seeds = new ArrayList<>();
         final TextTouchCopyListAdapter adapter = new TextTouchCopyListAdapter(getActivity(), R.layout.text_touch_copy_list_item, seeds);
         seedsList.setAdapter(adapter);
-        Wallet.seeds("english", new SiaRequest.VolleyCallback(view) {
+        Wallet.seeds("english", new SiaRequest.VolleyCallback() {
             public void onSuccess(JSONObject response) {
                 try {
                     JSONArray seedsJson = response.getJSONArray("allseeds");
@@ -41,6 +41,9 @@ public class WalletSeedsFragment extends Fragment {
                     e.printStackTrace();
                 }
                 adapter.notifyDataSetChanged();
+            }
+            public void onError(SiaRequest.Error error) {
+                error.snackbar(view);
             }
         });
         view.findViewById(R.id.walletSeedsClose).setOnClickListener(new View.OnClickListener() {

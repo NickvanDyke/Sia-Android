@@ -7,146 +7,141 @@
 
 package vandyke.siamobile.backend;
 
-import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Looper;
 import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
-import vandyke.siamobile.api.Daemon;
-import vandyke.siamobile.api.SiaRequest;
-import vandyke.siamobile.terminal.fragments.TerminalFragment;
+import vandyke.siamobile.misc.Utils;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-public class Siad {
+public class Siad extends Service {
 
-    public static int SIAD_NOTIFICATION = 1;
+    private int SIAD_NOTIFICATION = 3;
+    private int SIAD_UNSUPPORTED_NOTIFICATION = 3;
 
-    private static Siad instance; // TODO
     private File siadFile;
-    private Process siadProcess;
+    private java.lang.Process siadProcess;
     private Thread readStdoutThread;
-    final private StringBuilder stdoutBuffer = new StringBuilder();
-    private TerminalFragment terminalFragment;
+//    final private StringBuilder stdoutBuffer = new StringBuilder();
+//    private TerminalFragment terminalFragment;
 
-    private Siad(Activity activity) {
-        siadFile = MainActivity.copyBinary("siad", activity, false);
-        instance = this;
-    }
+//    public String getBufferedStdout() {
+//        if (stdoutBuffer == null)
+//            return "";
+//        String result = stdoutBuffer.toString();
+//        stdoutBuffer.setLength(0);
+//        return result;
+//    }
+//
+//    public void setTerminalFragment(TerminalFragment fragment) {
+//        terminalFragment = fragment;
+//    }
+//
+//    private void terminalAppend(String text) {
+//        if (terminalFragment != null)
+//            terminalFragment.appendToOutput(text);
+//        else
+//            stdoutBuffer.append(text);
+//    }
 
-    public static Siad getInstance(Activity activity) {
-        if (instance == null)
-            instance = new Siad(activity);
-        return instance;
-    }
-
-    public static void destroyInstance() {
-        instance = null;
-    }
-
-    public void start(final Activity activity) {
-        if (siadFile == null) {
-            terminalAppend("Your device's processor architecture is not supported by Sia's full node. Sorry! There's nothing Sia Mobile can do about this");
-            return;
-        }
-        if (siadProcess != null) {
-            return;
-        }
-        stdoutBuffer.setLength(0);
-        terminalAppend("\nStarting siad...\n");
-        ProcessBuilder pb = new ProcessBuilder(siadFile.getAbsolutePath(), "-M", "gctw");
-        pb.redirectErrorStream(true);
-        pb.directory(MainActivity.getWorkingDirectory(activity));
-        try {
-            siadProcess = pb.start();
-            readStdoutThread = new Thread() {
-                public void run() {
-                    try {
-                        BufferedReader inputReader = new BufferedReader(new InputStreamReader(siadProcess.getInputStream()));
-                        String line;
-                        while ((line = inputReader.readLine()) != null) {
-//                            if (line.contains("Finished loading") || line.contains("Done!"))
-//                                WalletFragment.refreshWallet(activity.getFragmentManager());
-                            siadNotification(line, activity);
-                            final String lineFinal = line + "\n";
-                            activity.runOnUiThread(new Runnable() {
-                                public void run() {
-                                    terminalAppend(lineFinal);
-                                }
-                            });
+    @Override
+    public void onCreate() {
+        startForeground(SIAD_NOTIFICATION, buildSiadNotification("Starting..."));
+        Thread thread = new Thread() {
+            public void run() {
+                siadFile = Utils.copyBinary("siad", Siad.this, false);
+                if (siadFile == null) {
+                    Handler handler = new Handler(Looper.getMainLooper());
+                    handler.post(new Runnable() {
+                        public void run() {
+                            Utils.notification(Siad.this, SIAD_UNSUPPORTED_NOTIFICATION, R.drawable.ic_dns_white_48dp,
+                                    "Local full node", "Unsupported CPU architecture", false);
                         }
-                        inputReader.close();
+                    });
+                    stopForeground(true);
+                    stopSelf();
+                } else {
+//                stdoutBuffer.setLength(0);
+                    ProcessBuilder pb = new ProcessBuilder(siadFile.getAbsolutePath(), "-M", "gctw");
+                    pb.redirectErrorStream(true);
+                    pb.directory(Utils.getWorkingDirectory(Siad.this));
+                    try {
+                        siadProcess = pb.start();
+                        readStdoutThread = new Thread() {
+                            public void run() {
+                                try {
+                                    BufferedReader inputReader = new BufferedReader(new InputStreamReader(siadProcess.getInputStream()));
+                                    String line;
+                                    while ((line = inputReader.readLine()) != null) {
+                                        siadNotification(line);
+                                    }
+                                    inputReader.close();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        };
+                        readStdoutThread.start();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
-            };
-            readStdoutThread.start();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            }
+        };
+        thread.start();
     }
 
-    public static void stopSiad(Activity activity) {
-        if (instance == null)
-            return;
-        instance.stop(activity);
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        return START_STICKY;
     }
 
-    public void stop(Activity activity) {
-        Daemon.stop(new SiaRequest.VolleyCallback(null));
-        siadProcess = null;
-        terminalAppend("Stopping siad... (may take a while. It's okay to close Sia Mobile during this)\n");
-    }
-
-    public void forceStop() {
-        if (siadProcess != null) {
+    @Override
+    public void onDestroy() {
+//        Daemon.stopSpecific("localhost:9980", new SiaRequest.VolleyCallback(null));
+        if (siadProcess != null)
             siadProcess.destroy();
-            siadProcess = null;
-        }
-        destroyInstance();
-        terminalAppend("Force stopped siad\n");
     }
 
-    public String getBufferedStdout() {
-        if (stdoutBuffer == null)
-            return "";
-        String result = stdoutBuffer.toString();
-        stdoutBuffer.setLength(0);
-        return result;
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
     }
 
-    public void setTerminalFragment(TerminalFragment fragment) {
-        terminalFragment = fragment;
+    private void siadNotification(String text) {
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(SIAD_NOTIFICATION, buildSiadNotification(text));
     }
 
-    private void terminalAppend(String text) {
-        if (terminalFragment != null)
-            terminalFragment.appendToOutput(text);
-        else
-            stdoutBuffer.append(text);
+    private void siadUnsupportedNotification() {
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(SIAD_UNSUPPORTED_NOTIFICATION, buildSiadNotification("Unsupported CPU architecture"));
     }
 
-    private void siadNotification(String text, Activity activity) {
-        Notification.Builder builder = new Notification.Builder(activity);
-        builder.setSmallIcon(R.drawable.ic_sync_white_48dp);
-        Bitmap largeIcon = BitmapFactory.decodeResource(activity.getResources(), R.drawable.sia_logo_transparent);
+    private Notification buildSiadNotification(String text) {
+        Notification.Builder builder = new Notification.Builder(this);
+        builder.setSmallIcon(R.drawable.ic_dns_white_48dp);
+        Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.sia_logo_transparent);
         builder.setLargeIcon(largeIcon);
-        builder.setContentTitle("Sia Mobile siad");
+        builder.setContentTitle("Local full node");
         builder.setContentText(text);
         builder.setOngoing(false);
-        Intent intent = new Intent(activity, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(activity, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent intent = new Intent(this, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setContentIntent(pendingIntent);
-        NotificationManager notificationManager = (NotificationManager) activity.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(SIAD_NOTIFICATION, builder.build());
+        return builder.build();
     }
 }

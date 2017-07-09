@@ -14,10 +14,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import org.json.JSONObject;
-import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
 import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
+import vandyke.siamobile.misc.Utils;
 
 public class WalletUnlockFragment extends Fragment {
 
@@ -28,12 +28,15 @@ public class WalletUnlockFragment extends Fragment {
         password = (EditText)view.findViewById(R.id.walletPassword);
         view.findViewById(R.id.walletUnlockConfirm).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Wallet.unlock(password.getText().toString(), new SiaRequest.VolleyCallback(view) {
+                Wallet.unlock(password.getText().toString(), new SiaRequest.VolleyCallback() {
                     public void onSuccess(JSONObject response) {
-                        super.onSuccess(response);
+                        Utils.successSnackbar(view);
 //                        WalletFragment.refreshWallet(getFragmentManager());
                         container.setVisibility(View.GONE);
-                        MainActivity.hideSoftKeyboard(getActivity());
+                        Utils.hideSoftKeyboard(getActivity());
+                    }
+                    public void onError(SiaRequest.Error error) {
+                        error.snackbar(view);
                     }
                 });
             }
@@ -41,7 +44,7 @@ public class WalletUnlockFragment extends Fragment {
         view.findViewById(R.id.walletUnlockCancel).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 container.setVisibility(View.GONE);
-                MainActivity.hideSoftKeyboard(getActivity());
+                Utils.hideSoftKeyboard(getActivity());
             }
         });
 

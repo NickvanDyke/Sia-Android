@@ -22,10 +22,13 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.TextView;
+import org.json.JSONObject;
 import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
 import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
+import vandyke.siamobile.misc.SiaMobileApplication;
+import vandyke.siamobile.misc.Utils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -33,13 +36,13 @@ import java.math.RoundingMode;
 public class WalletSendDialog extends DialogFragment {
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = MainActivity.getDialogBuilder(getActivity());
+        AlertDialog.Builder builder = Utils.getDialogBuilder(getActivity());
         final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_wallet_send, null);
         final EditText amount = (EditText)view.findViewById(R.id.sendAmount);
         final TextView feeText = (TextView)view.findViewById(R.id.walletSendFee);
         if (MainActivity.theme == MainActivity.Theme.CUSTOM)
             feeText.setTextColor(Color.GRAY);
-        if (!MainActivity.prefs.getBoolean("feesEnabled", false))
+        if (!SiaMobileApplication.prefs.getBoolean("feesEnabled", false))
             feeText.setVisibility(View.GONE);
         amount.addTextChangedListener(new TextWatcher() {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -49,7 +52,7 @@ public class WalletSendDialog extends DialogFragment {
                 if (amount.getText().toString().equals(""))
                     feeText.setText("0.5% App fee: 0.000");
                 else
-                    feeText.setText("0.5% App fee: " + new BigDecimal(s.toString()).multiply(MainActivity.devFee).setScale(3, RoundingMode.FLOOR).toPlainString() + " SC");
+                    feeText.setText("0.5% App fee: " + new BigDecimal(s.toString()).multiply(Utils.devFee).setScale(3, RoundingMode.FLOOR).toPlainString() + " SC");
             }
             public void afterTextChanged(Editable s) {
 
@@ -60,14 +63,28 @@ public class WalletSendDialog extends DialogFragment {
                 .setPositiveButton("Send", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         BigDecimal sendAmount = Wallet.scToHastings(amount.getText().toString());
-                        if (MainActivity.prefs.getBoolean("feesEnabled", false))
+                        if (SiaMobileApplication.prefs.getBoolean("feesEnabled", false))
                             Wallet.sendSiacoinsWithDevFee(sendAmount,
                                     ((EditText) view.findViewById(R.id.sendRecipient)).getText().toString(),
-                                    new SiaRequest.VolleyCallback(view));
+                                    new SiaRequest.VolleyCallback() {
+                                        public void onSuccess(JSONObject response) {
+                                            Utils.successSnackbar(view);
+                                        }
+                                        public void onError(SiaRequest.Error error) {
+                                            error.snackbar(view);
+                                        }
+                                    });
                         else
                             Wallet.sendSiacoins(sendAmount,
                                     ((EditText) view.findViewById(R.id.sendRecipient)).getText().toString(),
-                                    new SiaRequest.VolleyCallback(view));
+                                    new SiaRequest.VolleyCallback() {
+                                        public void onSuccess(JSONObject response) {
+                                            Utils.successSnackbar(view);
+                                        }
+                                        public void onError(SiaRequest.Error error) {
+                                            error.snackbar(view);
+                                        }
+                                    });
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
