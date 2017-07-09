@@ -146,7 +146,7 @@ public class Utils {
         }
     }
 
-    public void syncNotification(Context context, int id, int icon, String title, String text, boolean ongoing) {
+    public static void notification(Context context, int id, int icon, String title, String text, boolean ongoing) {
         if (context == null)
             return;
         Notification.Builder builder = new Notification.Builder(context);
@@ -161,5 +161,10 @@ public class Utils {
         builder.setContentIntent(pendingIntent);
         NotificationManager notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(id, builder.build());
+    }
+
+    public static void cancelNotification(Context context, int id) {
+        NotificationManager notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancel(id);
     }
 }

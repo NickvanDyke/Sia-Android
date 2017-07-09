@@ -10,7 +10,6 @@ package vandyke.siamobile;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.app.NotificationManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -38,7 +37,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
-import vandyke.siamobile.backend.*;
+import vandyke.siamobile.backend.CleanupService;
+import vandyke.siamobile.backend.ColdStorageWallet;
+import vandyke.siamobile.backend.SiadMonitor;
+import vandyke.siamobile.backend.WalletService;
 import vandyke.siamobile.dialogs.DonateDialog;
 import vandyke.siamobile.files.fragments.FilesFragment;
 import vandyke.siamobile.help.fragments.HelpFragment;
@@ -303,13 +305,6 @@ public class MainActivity extends AppCompatActivity {
             drawerLayout.closeDrawer(GravityCompat.START);
         else
             super.onBackPressed();
-    }
-
-    public void onDestroy() {
-        super.onDestroy();
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancel(WalletFragment.SYNC_NOTIFICATION);
-        notificationManager.cancel(Siad.SIAD_NOTIFICATION);
     }
 
     public void copyTextView(View view) {

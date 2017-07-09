@@ -39,8 +39,6 @@ import java.util.ArrayList;
 
 public class WalletFragment extends Fragment implements WalletService.WalletUpdateListener {
 
-    public static int SYNC_NOTIFICATION = 0;
-
     private TextView balanceText;
     private TextView balanceUsdText;
     private TextView balanceUnconfirmedText;

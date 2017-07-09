@@ -16,10 +16,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import org.json.JSONException;
 import org.json.JSONObject;
+import vandyke.siamobile.R;
 import vandyke.siamobile.api.Consensus;
 import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
 import vandyke.siamobile.misc.SiaMobileApplication;
+import vandyke.siamobile.misc.Utils;
 import vandyke.siamobile.wallet.transaction.Transaction;
 
 import java.math.BigDecimal;
@@ -44,6 +46,9 @@ public class WalletService extends Service {
 
     private Handler handler;
     private Runnable refreshRunnable;
+
+    private int SYNC_NOTIFICATION = 0;
+    private int TRANSACTION_NOTIFICATION = 0;
 
     public void refreshAll() {
         refreshBalanceAndStatus();
@@ -112,8 +117,11 @@ public class WalletService extends Service {
                 try {
                     if (response.getBoolean("synced")) {
                         syncProgress = 100;
+                        Utils.cancelNotification(WalletService.this, SYNC_NOTIFICATION); // TODO: maybe have separate service for notifications that registers a listener... not sure if worth it
                     } else {
                         syncProgress = ((double) response.getInt("height") / estimatedBlockHeightAt(System.currentTimeMillis() / 1000)) * 100;
+                        Utils.notification(WalletService.this, SYNC_NOTIFICATION, R.drawable.ic_sync_white_48dp,
+                                "Syncing blockchain...", "Progress (estimated): " + syncProgress + "%", false);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -123,6 +131,8 @@ public class WalletService extends Service {
 
             public void onError(SiaRequest.Error error) {
                 sendSyncError(error);
+                Utils.notification(WalletService.this, SYNC_NOTIFICATION, R.drawable.ic_sync_problem_white_48dp,
+                        "Syncing blockchain...", "Error retrieving sync progress", false);
             }
         });
     }
