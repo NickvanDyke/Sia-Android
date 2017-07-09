@@ -25,13 +25,14 @@ import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
 import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
+import vandyke.siamobile.misc.Utils;
 
 public class DonateDialog extends DialogFragment {
 
     private String paymentRecipient = MainActivity.devAddresses[(int) (Math.random() * MainActivity.devAddresses.length)];
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = MainActivity.getDialogBuilder(getActivity());
+        AlertDialog.Builder builder = Utils.getDialogBuilder(getActivity());
 
         final View dialogView = getActivity().getLayoutInflater().inflate(R.layout.dialog_donate, null);
 
@@ -43,11 +44,11 @@ public class DonateDialog extends DialogFragment {
                 Wallet.sendSiacoins(Wallet.scToHastings(amount.getText().toString()),
                         paymentRecipient, new SiaRequest.VolleyCallback(view) {
                             public void onSuccess(JSONObject response) {
-                                MainActivity.snackbar(dialogView, "Donation successful. Thank you!", Snackbar.LENGTH_SHORT);
+                                Utils.snackbar(dialogView, "Donation successful. Thank you!", Snackbar.LENGTH_SHORT);
                             }
 
                             public void onError(SiaRequest.Error error) {
-                                MainActivity.snackbar(dialogView, error.getMsg() + ". No donation made.", Snackbar.LENGTH_SHORT);
+                                Utils.snackbar(dialogView, error.getMsg() + ". No donation made.", Snackbar.LENGTH_SHORT);
                             }
                         });
             }

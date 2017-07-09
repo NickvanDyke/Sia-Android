@@ -22,6 +22,7 @@ import com.thoughtbot.expandablerecyclerview.ExpandableRecyclerViewAdapter;
 import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
 import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
+import vandyke.siamobile.misc.Utils;
 import vandyke.siamobile.wallet.transaction.Transaction;
 import vandyke.siamobile.wallet.transaction.TransactionIOBase;
 
@@ -54,7 +55,7 @@ public class TransactionListAdapter extends ExpandableRecyclerViewAdapter<Transa
             public boolean onLongClick(View v) {
                 ClipData clip = ClipData.newPlainText("Sia transaction id", ((TextView)v).getText());
                 ((ClipboardManager) idText.getContext().getSystemService(Context.CLIPBOARD_SERVICE)).setPrimaryClip(clip);
-                MainActivity.snackbar(view, "Copied transaction ID", Snackbar.LENGTH_SHORT);
+                Utils.snackbar(view, "Copied transaction ID", Snackbar.LENGTH_SHORT);
                 return true;
             }
         });

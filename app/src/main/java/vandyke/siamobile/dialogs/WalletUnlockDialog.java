@@ -18,15 +18,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.EditText;
-import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
 import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
+import vandyke.siamobile.misc.Utils;
 
 public class WalletUnlockDialog extends DialogFragment {
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = MainActivity.getDialogBuilder(getActivity());
+        AlertDialog.Builder builder = Utils.getDialogBuilder(getActivity());
         final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_wallet_unlock, null);
         builder.setTitle("Unlock Wallet")
                 .setView(view)

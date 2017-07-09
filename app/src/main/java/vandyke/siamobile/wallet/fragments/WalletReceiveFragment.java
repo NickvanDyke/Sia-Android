@@ -19,10 +19,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import org.json.JSONException;
 import org.json.JSONObject;
-import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
 import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
+import vandyke.siamobile.misc.Utils;
 
 public class WalletReceiveFragment extends Fragment {
 
@@ -47,7 +47,7 @@ public class WalletReceiveFragment extends Fragment {
                 ClipboardManager clipboard = (ClipboardManager)getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
                 ClipData clip = ClipData.newPlainText("receive address", ((TextView)view.findViewById(R.id.receiveAddress)).getText());
                 clipboard.setPrimaryClip(clip);
-                MainActivity.snackbar(view, "Copied receive address", Snackbar.LENGTH_SHORT);
+                Utils.snackbar(view, "Copied receive address", Snackbar.LENGTH_SHORT);
                 container.setVisibility(View.GONE);
             }
         });

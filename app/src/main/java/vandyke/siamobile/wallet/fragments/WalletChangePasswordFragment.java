@@ -15,10 +15,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import org.json.JSONObject;
-import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
 import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
+import vandyke.siamobile.misc.Utils;
 
 public class WalletChangePasswordFragment extends Fragment {
 
@@ -28,7 +28,7 @@ public class WalletChangePasswordFragment extends Fragment {
             public void onClick(View v) {
                 String newPassword = ((EditText)view.findViewById(R.id.newPassword)).getText().toString();
                 if (!newPassword.equals(((EditText)view.findViewById(R.id.confirmNewPassword)).getText().toString())) {
-                    MainActivity.snackbar(view, "New passwords don't match", Snackbar.LENGTH_SHORT);
+                    Utils.snackbar(view, "New passwords don't match", Snackbar.LENGTH_SHORT);
                     return;
                 }
                 Wallet.changePassword(((EditText) view.findViewById(R.id.currentPassword)).getText().toString(),
@@ -36,7 +36,7 @@ public class WalletChangePasswordFragment extends Fragment {
                             public void onSuccess(JSONObject response) {
                                 super.onSuccess(response);
                                 container.setVisibility(View.GONE);
-                                MainActivity.hideSoftKeyboard(getActivity());
+                                Utils.hideSoftKeyboard(getActivity());
                             }
                         });
             }
@@ -44,7 +44,7 @@ public class WalletChangePasswordFragment extends Fragment {
         view.findViewById(R.id.walletCreateCancel).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 container.setVisibility(View.GONE);
-                MainActivity.hideSoftKeyboard(getActivity());
+                Utils.hideSoftKeyboard(getActivity());
             }
         });
         return view;

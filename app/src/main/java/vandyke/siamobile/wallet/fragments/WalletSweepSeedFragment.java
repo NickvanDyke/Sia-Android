@@ -15,10 +15,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import org.json.JSONObject;
-import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
 import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
+import vandyke.siamobile.misc.Utils;
 
 public class WalletSweepSeedFragment extends Fragment {
 
@@ -31,7 +31,7 @@ public class WalletSweepSeedFragment extends Fragment {
                             public void onSuccess(JSONObject response) {
                                 super.onSuccess(response);
                                 container.setVisibility(View.GONE);
-                                MainActivity.hideSoftKeyboard(getActivity());
+                                Utils.hideSoftKeyboard(getActivity());
                             }
                         });
             }
@@ -39,7 +39,7 @@ public class WalletSweepSeedFragment extends Fragment {
         ((Button)view.findViewById(R.id.walletCreateCancel)).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 container.setVisibility(View.GONE);
-                MainActivity.hideSoftKeyboard(getActivity());
+                Utils.hideSoftKeyboard(getActivity());
             }
         });
         return view;

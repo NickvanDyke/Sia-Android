@@ -7,10 +7,9 @@
 
 package vandyke.siamobile.wallet.fragments;
 
-import android.app.*;
+import android.app.AlertDialog;
+import android.app.Fragment;
 import android.content.*;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.Snackbar;
@@ -30,6 +29,7 @@ import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
 import vandyke.siamobile.backend.WalletService;
 import vandyke.siamobile.misc.SiaMobileApplication;
+import vandyke.siamobile.misc.Utils;
 import vandyke.siamobile.wallet.transaction.Transaction;
 import vandyke.siamobile.wallet.transactionslist.TransactionExpandableGroup;
 import vandyke.siamobile.wallet.transactionslist.TransactionListAdapter;
@@ -184,36 +184,19 @@ public class WalletFragment extends Fragment implements WalletService.WalletUpda
     }
 
     public void onBalanceError(SiaRequest.Error error) {
-        MainActivity.snackbar(view, error.getMsg(), Snackbar.LENGTH_SHORT);
+        Utils.snackbar(view, error.getMsg(), Snackbar.LENGTH_SHORT);
     }
 
     public void onUsdError(VolleyError error) {
-        MainActivity.snackbar(view, "Error retreiving USD value", Snackbar.LENGTH_SHORT);
+        Utils.snackbar(view, "Error retreiving USD value", Snackbar.LENGTH_SHORT);
     }
 
     public void onTransactionsError(SiaRequest.Error error) {
-        MainActivity.snackbar(view, error.getMsg(), Snackbar.LENGTH_SHORT);
+        Utils.snackbar(view, error.getMsg(), Snackbar.LENGTH_SHORT);
     }
 
     public void onSyncError(SiaRequest.Error error) {
-        MainActivity.snackbar(view, error.getMsg(), Snackbar.LENGTH_SHORT);
-    }
-
-    public void syncNotification(int icon, String title, String text, boolean ongoing) {
-        if (!isAdded())
-            return;
-        Notification.Builder builder = new Notification.Builder(getActivity());
-        builder.setSmallIcon(icon);
-        Bitmap largeIcon = BitmapFactory.decodeResource(getActivity().getResources(), R.drawable.sia_logo_transparent);
-        builder.setLargeIcon(largeIcon);
-        builder.setContentTitle(title);
-        builder.setContentText(text);
-        builder.setOngoing(ongoing);
-        Intent intent = new Intent(getActivity(), MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(getActivity(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        builder.setContentIntent(pendingIntent);
-        NotificationManager notificationManager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(SYNC_NOTIFICATION, builder.build());
+        Utils.snackbar(view, error.getMsg(), Snackbar.LENGTH_SHORT);
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {

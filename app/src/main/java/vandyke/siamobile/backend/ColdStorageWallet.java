@@ -13,8 +13,8 @@ import fi.iki.elonen.NanoHTTPD;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.misc.SiaMobileApplication;
+import vandyke.siamobile.misc.Utils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -43,7 +43,7 @@ public class ColdStorageWallet extends NanoHTTPD {
         password = SiaMobileApplication.prefs.getString("coldStoragePassword", "nopass");
         exists = SiaMobileApplication.prefs.getBoolean("coldStorageExists", false);
         unlocked = false;
-        binary = MainActivity.copyBinary("sia-coldstorage", activity, true);
+        binary = Utils.copyBinary("sia-coldstorage", activity, true);
     }
 
     public static ColdStorageWallet getInstance(Activity activity) {

@@ -29,6 +29,7 @@ import vandyke.siamobile.backend.ColdStorageWallet;
 import vandyke.siamobile.backend.Siad;
 import vandyke.siamobile.backend.SiadMonitor;
 import vandyke.siamobile.misc.SiaMobileApplication;
+import vandyke.siamobile.misc.Utils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -73,7 +74,7 @@ public class SettingsFragment extends PreferenceFragment {
             public boolean onPreferenceChange(Preference preference, Object o) {
                 if (((String) o).equals("local_full_node")
                         && !(MainActivity.abi.equals("arm64"))) {
-                    MainActivity.snackbar(getView(), "Sorry, but your device's CPU architecture is not supported by Sia's full node", Snackbar.LENGTH_LONG);
+                    Utils.snackbar(getView(), "Sorry, but your device's CPU architecture is not supported by Sia's full node", Snackbar.LENGTH_LONG);
                     return false;
                 }
                 return true;
@@ -82,10 +83,10 @@ public class SettingsFragment extends PreferenceFragment {
 
         useExternal.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             public boolean onPreferenceChange(Preference preference, Object o) {
-                if (MainActivity.isExternalStorageWritable())
+                if (Utils.isExternalStorageWritable())
                     return true;
                 else
-                    MainActivity.snackbar(getView(), "Error: " + MainActivity.externalStorageStateDescription(), Snackbar.LENGTH_LONG);
+                    Utils.snackbar(getView(), "Error: " + Utils.externalStorageStateDescription(), Snackbar.LENGTH_LONG);
                 return false;
             }
         });

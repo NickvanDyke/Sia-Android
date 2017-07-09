@@ -22,6 +22,7 @@ import vandyke.siamobile.R;
 import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
 import vandyke.siamobile.misc.SiaMobileApplication;
+import vandyke.siamobile.misc.Utils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -61,7 +62,7 @@ public class WalletSendFragment extends Fragment {
                                 public void onSuccess(JSONObject response) {
                                     super.onSuccess(response);
                                     container.setVisibility(View.GONE);
-                                    MainActivity.hideSoftKeyboard(getActivity());
+                                    Utils.hideSoftKeyboard(getActivity());
                                 }
                             });
                 else
@@ -71,7 +72,7 @@ public class WalletSendFragment extends Fragment {
                                 public void onSuccess(JSONObject response) {
                                     super.onSuccess(response);
                                     container.setVisibility(View.GONE);
-                                    MainActivity.hideSoftKeyboard(getActivity());
+                                    Utils.hideSoftKeyboard(getActivity());
                                 }
                             });
             }
@@ -79,7 +80,7 @@ public class WalletSendFragment extends Fragment {
         view.findViewById(R.id.walletCreateCancel).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 container.setVisibility(View.GONE);
-                MainActivity.hideSoftKeyboard(getActivity());
+                Utils.hideSoftKeyboard(getActivity());
             }
         });
 

@@ -18,6 +18,7 @@ import android.graphics.BitmapFactory;
 import android.os.IBinder;
 import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
+import vandyke.siamobile.misc.Utils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -58,7 +59,7 @@ public class Siad extends Service {
         startForeground(SIAD_NOTIFICATION, buildSiadNotification("Starting..."));
         Thread thread = new Thread() {
             public void run() {
-                siadFile = MainActivity.copyBinary("siad", Siad.this, false);
+                siadFile = Utils.copyBinary("siad", Siad.this, false);
                 if (siadFile == null) {
                     siadNotification("Unsupported CPU architecture");
                     stopSelf();
@@ -66,7 +67,7 @@ public class Siad extends Service {
 //                stdoutBuffer.setLength(0);
                 ProcessBuilder pb = new ProcessBuilder(siadFile.getAbsolutePath(), "-M", "gctw");
                 pb.redirectErrorStream(true);
-                pb.directory(MainActivity.getWorkingDirectory(Siad.this));
+                pb.directory(Utils.getWorkingDirectory(Siad.this));
                 try {
                     siadProcess = pb.start();
                     readStdoutThread = new Thread() {

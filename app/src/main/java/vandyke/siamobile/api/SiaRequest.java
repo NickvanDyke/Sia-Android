@@ -16,8 +16,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
-import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.misc.SiaMobileApplication;
+import vandyke.siamobile.misc.Utils;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
@@ -192,11 +192,11 @@ public class SiaRequest extends StringRequest {
 
         public void snackbar(View view) {
             if (reason != null)
-                MainActivity.snackbar(view, reason.getMsg(), Snackbar.LENGTH_SHORT);
+                Utils.snackbar(view, reason.getMsg(), Snackbar.LENGTH_SHORT);
         }
     }
 
     public static void genericSuccessSnackbar(View view) {
-        MainActivity.snackbar(view, "Success", Snackbar.LENGTH_SHORT);
+        Utils.snackbar(view, "Success", Snackbar.LENGTH_SHORT);
     }
 }

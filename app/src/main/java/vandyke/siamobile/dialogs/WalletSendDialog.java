@@ -27,6 +27,7 @@ import vandyke.siamobile.R;
 import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
 import vandyke.siamobile.misc.SiaMobileApplication;
+import vandyke.siamobile.misc.Utils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -34,7 +35,7 @@ import java.math.RoundingMode;
 public class WalletSendDialog extends DialogFragment {
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = MainActivity.getDialogBuilder(getActivity());
+        AlertDialog.Builder builder = Utils.getDialogBuilder(getActivity());
         final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_wallet_send, null);
         final EditText amount = (EditText)view.findViewById(R.id.sendAmount);
         final TextView feeText = (TextView)view.findViewById(R.id.walletSendFee);

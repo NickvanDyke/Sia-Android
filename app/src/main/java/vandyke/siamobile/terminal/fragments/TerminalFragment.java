@@ -22,6 +22,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
+import vandyke.siamobile.misc.Utils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -39,7 +40,7 @@ public class TerminalFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getActivity().setTitle("Terminal");
         View v = inflater.inflate(R.layout.fragment_terminal, container, false);
-        siacFile = MainActivity.copyBinary("siac", getActivity(), true);
+        siacFile = Utils.copyBinary("siac", getActivity(), true);
 
         input = (EditText)v.findViewById(R.id.input);
         input.setOnEditorActionListener(new TextView.OnEditorActionListener() {
