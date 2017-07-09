@@ -217,27 +217,38 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void loadDrawerFragment(Class clazz) {
-        String className = clazz.getSimpleName();
+//        String className = clazz.getSimpleName();
         FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        Fragment currentFrag = fragmentManager.findFragmentByTag(currentFragmentTag);
-        Fragment newFragment = fragmentManager.findFragmentByTag(className);
-
-        if (currentFrag != null && currentFrag == newFragment)
-            return;
+//        fragmentManager.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+//        Fragment currentFrag = fragmentManager.findFragmentByTag(currentFragmentTag);
+//        Fragment newFragment = fragmentManager.findFragmentByTag(className);
+//
+//        if (currentFrag != null && currentFrag == newFragment)
+//            return;
+//
+//        FragmentTransaction transaction = fragmentManager.beginTransaction();
+//        try {
+//            transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+//            if (currentFrag != null)
+//                transaction.hide(currentFrag);
+//            if (newFragment == null) {
+//                transaction.add(R.id.fragment_frame, (Fragment) clazz.newInstance(), className);
+//            } else {
+//                transaction.show(newFragment);
+//            }
+//            transaction.commit();
+//            currentFragmentTag = className;
+//        } catch (InstantiationException e) {
+//            e.printStackTrace();
+//        } catch (IllegalAccessException e) {
+//            e.printStackTrace();
+//        }
 
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         try {
             transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-            if (currentFrag != null)
-                transaction.hide(currentFrag);
-            if (newFragment == null) {
-                transaction.add(R.id.fragment_frame, (Fragment) clazz.newInstance(), className);
-            } else {
-                transaction.show(newFragment);
-            }
+            transaction.replace(R.id.fragment_frame, (Fragment) clazz.newInstance());
             transaction.commit();
-            currentFragmentTag = className;
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
