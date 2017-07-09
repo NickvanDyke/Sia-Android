@@ -36,6 +36,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
+import vandyke.siamobile.about.AboutActivity;
 import vandyke.siamobile.backend.CleanupService;
 import vandyke.siamobile.backend.WalletMonitorService;
 import vandyke.siamobile.backend.coldstorage.ColdStorageService;
@@ -147,6 +148,9 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case R.id.drawer_item_donate:
                         DonateDialog.createAndShow(getFragmentManager());
+                        break;
+                    case R.id.drawer_item_about:
+                        startActivity(new Intent(MainActivity.this, AboutActivity.class));
                         break;
                 }
                 loadSomethingOnClose = false;
