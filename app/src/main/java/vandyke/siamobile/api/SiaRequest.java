@@ -50,7 +50,7 @@ public class SiaRequest extends StringRequest {
     }
 
     public SiaRequest(int method, String command, final VolleyCallback callback) {
-        this(method, SiaMobileApplication.prefs.getString("address", "localhost:9980"), command, callback);
+        this(method, SiaMobileApplication.prefs.getString("address", "localhost:9990"), command, callback);
     }
 
     public Map<String, String> getHeaders() {

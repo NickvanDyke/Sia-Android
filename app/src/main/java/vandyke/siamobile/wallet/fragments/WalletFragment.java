@@ -27,7 +27,7 @@ import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
 import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
-import vandyke.siamobile.backend.WalletService;
+import vandyke.siamobile.backend.WalletMonitorService;
 import vandyke.siamobile.misc.SiaMobileApplication;
 import vandyke.siamobile.misc.Utils;
 import vandyke.siamobile.wallet.transaction.Transaction;
@@ -37,7 +37,7 @@ import vandyke.siamobile.wallet.transactionslist.TransactionListAdapter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
-public class WalletFragment extends Fragment implements WalletService.WalletUpdateListener {
+public class WalletFragment extends Fragment implements WalletMonitorService.WalletUpdateListener {
 
     private TextView balanceText;
     private TextView balanceUsdText;
@@ -52,7 +52,7 @@ public class WalletFragment extends Fragment implements WalletService.WalletUpda
     private View view;
 
     private ServiceConnection connection;
-    private WalletService walletService;
+    private WalletMonitorService walletMonitorService;
     private boolean bound = false;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -104,7 +104,7 @@ public class WalletFragment extends Fragment implements WalletService.WalletUpda
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setTitle("Exact Balance");
-                builder.setMessage(Wallet.hastingsToSC(walletService.getBalanceHastings()).toPlainString() + " Siacoins");
+                builder.setMessage(Wallet.hastingsToSC(walletMonitorService.getBalanceHastings()).toPlainString() + " Siacoins");
                 builder.setPositiveButton("Close", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
 
@@ -121,20 +121,20 @@ public class WalletFragment extends Fragment implements WalletService.WalletUpda
         super.onActivityCreated(savedInstanceState);
         connection = new ServiceConnection() {
             public void onServiceConnected(ComponentName name, IBinder service) {
-                walletService = ((WalletService.LocalBinder) service).getService();
-                walletService.registerListener(WalletFragment.this);
-                walletService.refreshAll();
+                walletMonitorService = ((WalletMonitorService.LocalBinder) service).getService();
+                walletMonitorService.registerListener(WalletFragment.this);
+                walletMonitorService.refreshAll();
                 bound = true;
             }
             public void onServiceDisconnected(ComponentName name) {
                 bound = false;
             }
         };
-        getActivity().bindService(new Intent(getActivity(), WalletService.class), connection, Context.BIND_AUTO_CREATE);
+        getActivity().bindService(new Intent(getActivity(), WalletMonitorService.class), connection, Context.BIND_AUTO_CREATE);
     }
 
-    public void onBalanceUpdate(WalletService service) {
-        switch (walletService.getWalletStatus()) {
+    public void onBalanceUpdate(WalletMonitorService service) {
+        switch (walletMonitorService.getWalletStatus()) {
             case NONE:
                 walletStatusText.setText("No Wallet");
                 break;
@@ -149,11 +149,11 @@ public class WalletFragment extends Fragment implements WalletService.WalletUpda
                 Wallet.round(Wallet.hastingsToSC(service.getBalanceHastingsUnconfirmed())) + " unconfirmed");
     }
 
-    public void onUsdUpdate(WalletService service) {
+    public void onUsdUpdate(WalletMonitorService service) {
         balanceUsdText.setText(Wallet.round(service.getBalanceUsd()) + " USD");
     }
 
-    public void onTransactionsUpdate(WalletService service) {
+    public void onTransactionsUpdate(WalletMonitorService service) {
         boolean hideZero = SiaMobileApplication.prefs.getBoolean("hideZero", false);
         transactionExpandableGroups.clear();
         for (Transaction tx : service.getTransactions()) {
@@ -164,7 +164,7 @@ public class WalletFragment extends Fragment implements WalletService.WalletUpda
         transactionList.setAdapter(new TransactionListAdapter(transactionExpandableGroups));
     }
 
-    public void onSyncUpdate(WalletService service) {
+    public void onSyncUpdate(WalletMonitorService service) {
         double syncProgress = service.getSyncProgress();
         if (syncProgress == 100) {
             syncText.setText("Synced");
@@ -201,7 +201,7 @@ public class WalletFragment extends Fragment implements WalletService.WalletUpda
         switch (item.getItemId()) {
             case R.id.actionRefresh:
                 if (bound)
-                    walletService.refreshAll();
+                    walletMonitorService.refreshAll();
                 break;
             case R.id.actionUnlock:
                 replaceExpandFrame(new WalletUnlockFragment());
@@ -252,9 +252,9 @@ public class WalletFragment extends Fragment implements WalletService.WalletUpda
     }
 
     public void onDestroy() {
-        super.onDestroy();
+        super.onDestroy(); // TODO: connection is leaked because when it's destroyed, it's not added. will be fixed by fixing fragment showing and hiding instead of making new one every time
         if (bound) {
-            walletService.unregisterListener(this);
+            walletMonitorService.unregisterListener(this);
             if (isAdded()) {
                 getActivity().unbindService(connection);
                 bound = false;

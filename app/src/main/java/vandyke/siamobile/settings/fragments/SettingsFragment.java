@@ -19,19 +19,17 @@ import android.os.IBinder;
 import android.preference.*;
 import android.support.design.widget.Snackbar;
 import android.util.Base64;
-import fi.iki.elonen.NanoHTTPD;
 import vandyke.siamobile.BuildConfig;
 import vandyke.siamobile.R;
-import vandyke.siamobile.backend.ColdStorageWallet;
-import vandyke.siamobile.backend.Siad;
-import vandyke.siamobile.backend.SiadMonitor;
-import vandyke.siamobile.backend.WalletService;
+import vandyke.siamobile.backend.WalletMonitorService;
+import vandyke.siamobile.backend.coldstorage.ColdStorageService;
+import vandyke.siamobile.backend.siad.Siad;
+import vandyke.siamobile.backend.siad.SiadMonitorService;
 import vandyke.siamobile.misc.SiaMobileApplication;
 import vandyke.siamobile.misc.Utils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 
 import static android.app.Activity.RESULT_OK;
@@ -47,9 +45,10 @@ public class SettingsFragment extends PreferenceFragment {
     private SwitchPreference runLocalNodeOffWifi;
     private SwitchPreference useExternal;
     private EditTextPreference minBattery;
+    private SwitchPreference runColdStorageInBackground;
 
     private ServiceConnection connection;
-    private WalletService walletService;
+    private WalletMonitorService walletMonitorService;
     private boolean bound;
 
     private static final int SELECT_PICTURE = 1;
@@ -66,6 +65,8 @@ public class SettingsFragment extends PreferenceFragment {
         runLocalNodeOffWifi = (SwitchPreference) findPreference("runLocalNodeOffWifi");
         useExternal = (SwitchPreference) findPreference("useExternal");
         minBattery = (EditTextPreference) findPreference("localNodeMinBattery");
+        runColdStorageInBackground = (SwitchPreference)findPreference("runColdStorageInBackground");
+        setColdStorageSettingsVisibility();
         setRemoteSettingsVisibility();
         setLocalSettingsVisibility();
 
@@ -109,7 +110,7 @@ public class SettingsFragment extends PreferenceFragment {
 
         connection = new ServiceConnection() {
             public void onServiceConnected(ComponentName name, IBinder service) {
-                walletService = ((WalletService.LocalBinder) service).getService();
+                walletMonitorService = ((WalletMonitorService.LocalBinder) service).getService();
                 bound = true;
             }
 
@@ -123,33 +124,30 @@ public class SettingsFragment extends PreferenceFragment {
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 switch (key) {
                     case "operationMode":
+                        setColdStorageSettingsVisibility();
                         setRemoteSettingsVisibility();
                         setLocalSettingsVisibility();
                         if (sharedPreferences.getString("operationMode", "cold_storage").equals("remote_full_node")) {
                             editor.putString("address", sharedPreferences.getString("remoteAddress", "192.168.1.11:9980"));
-                            ColdStorageWallet.destroy();
-                            getActivity().stopService(new Intent(getActivity(), SiadMonitor.class));
+                            getActivity().stopService(new Intent(getActivity(), ColdStorageService.class));
+                            getActivity().stopService(new Intent(getActivity(), SiadMonitorService.class));
                         } else if (sharedPreferences.getString("operationMode", "cold_storage").equals("local_full_node")) {
                             editor.putString("address", "localhost:9980");
-                            ColdStorageWallet.destroy();
-                            getActivity().startService(new Intent(getActivity(), SiadMonitor.class));
+                            getActivity().stopService(new Intent(getActivity(), ColdStorageService.class));
+                            getActivity().startService(new Intent(getActivity(), SiadMonitorService.class));
                         } else if (sharedPreferences.getString("operationMode", "cold_storage").equals("cold_storage")) {
                             editor.putString("address", "localhost:9990");
-                            getActivity().stopService(new Intent(getActivity(), SiadMonitor.class));
-                            try {
-                                ColdStorageWallet.getInstance(getActivity()).start(NanoHTTPD.SOCKET_READ_TIMEOUT);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+                            getActivity().stopService(new Intent(getActivity(), SiadMonitorService.class));
+                            getActivity().startService(new Intent(getActivity(), ColdStorageService.class));
                         }
                         editor.apply();
 //                        WalletFragment.refreshWallet(getFragmentManager());
                         break;
                     case "monitorRefreshInterval":
                         if (!bound)
-                            getActivity().bindService(new Intent(getActivity(), WalletService.class), connection, Context.BIND_AUTO_CREATE);
+                            getActivity().bindService(new Intent(getActivity(), WalletMonitorService.class), connection, Context.BIND_AUTO_CREATE);
                         else
-                            walletService.postRefreshRunnable();
+                            walletMonitorService.postRefreshRunnable();
                         break;
                     case "runLocalNodeOffWifi":
                         ConnectivityManager connectivityManager =
@@ -217,6 +215,14 @@ public class SettingsFragment extends PreferenceFragment {
                 prefsEditor.putString("customBgBase64", Base64.encodeToString(b, Base64.DEFAULT));
                 prefsEditor.apply();
             }
+        }
+    }
+
+    private void setColdStorageSettingsVisibility() {
+        if (SiaMobileApplication.prefs.getString("operationMode", "cold_storage").equals("cold_storage")) {
+            operation.addPreference(runColdStorageInBackground);
+        } else {
+            operation.removePreference(runColdStorageInBackground);
         }
     }
 

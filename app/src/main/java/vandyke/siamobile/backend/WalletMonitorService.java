@@ -27,7 +27,7 @@ import vandyke.siamobile.wallet.transaction.Transaction;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
-public class WalletService extends Service {
+public class WalletMonitorService extends Service {
 
     private final IBinder binder = new LocalBinder();
 
@@ -118,7 +118,7 @@ public class WalletService extends Service {
                 }
                 if (newTxs > 0) {
                     SiaMobileApplication.prefs.edit().putString("mostRecentTxId", transactions.get(0).getTransactionId()).apply();
-                    Utils.notification(WalletService.this, TRANSACTION_NOTIFICATION,
+                    Utils.notification(WalletMonitorService.this, TRANSACTION_NOTIFICATION,
                             R.drawable.ic_account_balance_white_48dp, newTxs + " new transaction" + (newTxs > 1 ? "s" : ""),
                             "Net value: " + (netOfNewTxs.compareTo(BigDecimal.ZERO) > 0 ? "+" : "") + Wallet.round(Wallet.hastingsToSC(netOfNewTxs)) + " SC",
                             false);
@@ -138,10 +138,10 @@ public class WalletService extends Service {
                 try {
                     if (response.getBoolean("synced")) {
                         syncProgress = 100;
-                        Utils.cancelNotification(WalletService.this, SYNC_NOTIFICATION); // TODO: maybe have separate service for notifications that registers a listener... not sure if worth it
+                        Utils.cancelNotification(WalletMonitorService.this, SYNC_NOTIFICATION); // TODO: maybe have separate service for notifications that registers a listener... not sure if worth it
                     } else {
                         syncProgress = ((double) response.getInt("height") / estimatedBlockHeightAt(System.currentTimeMillis() / 1000)) * 100;
-                        Utils.notification(WalletService.this, SYNC_NOTIFICATION, R.drawable.ic_sync_white_48dp,
+                        Utils.notification(WalletMonitorService.this, SYNC_NOTIFICATION, R.drawable.ic_sync_white_48dp,
                                 "Syncing blockchain...", String.format("Progress (estimated): %.2f%%", syncProgress), false);
                     }
                 } catch (JSONException e) {
@@ -152,7 +152,7 @@ public class WalletService extends Service {
 
             public void onError(SiaRequest.Error error) {
                 sendSyncError(error);
-                Utils.notification(WalletService.this, SYNC_NOTIFICATION, R.drawable.ic_sync_problem_white_48dp,
+                Utils.notification(WalletMonitorService.this, SYNC_NOTIFICATION, R.drawable.ic_sync_problem_white_48dp,
                         "Syncing blockchain...", "Error retrieving sync progress", false);
             }
         });
@@ -209,19 +209,19 @@ public class WalletService extends Service {
     }
 
     public class LocalBinder extends Binder {
-        public WalletService getService() {
-            return WalletService.this;
+        public WalletMonitorService getService() {
+            return WalletMonitorService.this;
         }
     }
 
     public interface WalletUpdateListener {
-        void onBalanceUpdate(WalletService service);
+        void onBalanceUpdate(WalletMonitorService service);
 
-        void onUsdUpdate(WalletService service);
+        void onUsdUpdate(WalletMonitorService service);
 
-        void onTransactionsUpdate(WalletService service);
+        void onTransactionsUpdate(WalletMonitorService service);
 
-        void onSyncUpdate(WalletService service);
+        void onSyncUpdate(WalletMonitorService service);
 
         void onBalanceError(SiaRequest.Error error);
 
