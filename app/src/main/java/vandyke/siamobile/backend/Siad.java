@@ -111,26 +111,16 @@ public class Siad extends Service {
     }
 
     private void siadNotification(String text) {
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(SIAD_NOTIFICATION, buildSiadNotification(text));
+    }
+
+    private Notification buildSiadNotification(String text) {
         Notification.Builder builder = new Notification.Builder(this);
-        builder.setSmallIcon(R.drawable.ic_sync_white_48dp);
+        builder.setSmallIcon(R.drawable.ic_dns_white_48dp);
         Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.sia_logo_transparent);
         builder.setLargeIcon(largeIcon);
         builder.setContentTitle("Local node");
-        builder.setContentText(text);
-        builder.setOngoing(false);
-        Intent intent = new Intent(this, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        builder.setContentIntent(pendingIntent);
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(SIAD_NOTIFICATION, builder.build());
-    }
-
-    public Notification buildSiadNotification(String text) {
-        Notification.Builder builder = new Notification.Builder(this);
-        builder.setSmallIcon(R.drawable.ic_sync_white_48dp);
-        Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.sia_logo_transparent);
-        builder.setLargeIcon(largeIcon);
-        builder.setContentTitle("Sia Mobile local node");
         builder.setContentText(text);
         builder.setOngoing(false);
         Intent intent = new Intent(this, MainActivity.class);
