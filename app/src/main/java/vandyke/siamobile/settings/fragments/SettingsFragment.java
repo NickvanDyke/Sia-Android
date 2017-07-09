@@ -7,10 +7,7 @@
 
 package vandyke.siamobile.settings.fragments;
 
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
+import android.content.*;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
@@ -18,6 +15,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.preference.*;
 import android.support.design.widget.Snackbar;
 import android.util.Base64;
@@ -28,6 +26,7 @@ import vandyke.siamobile.R;
 import vandyke.siamobile.backend.ColdStorageWallet;
 import vandyke.siamobile.backend.Siad;
 import vandyke.siamobile.backend.SiadMonitor;
+import vandyke.siamobile.backend.WalletService;
 import vandyke.siamobile.misc.SiaMobileApplication;
 import vandyke.siamobile.misc.Utils;
 
@@ -50,6 +49,10 @@ public class SettingsFragment extends PreferenceFragment {
     private SwitchPreference useExternal;
     private EditTextPreference minBattery;
 
+    private ServiceConnection connection;
+    private WalletService walletService;
+    private boolean bound;
+
     private static final int SELECT_PICTURE = 1;
 
     public void onCreate(Bundle savedInstanceState) {
@@ -57,13 +60,13 @@ public class SettingsFragment extends PreferenceFragment {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.settings);
 
-        operation = (PreferenceCategory)findPreference("operationCategory");
+        operation = (PreferenceCategory) findPreference("operationCategory");
         remoteAddress = (EditTextPreference) findPreference("remoteAddress");
         apiPass = (EditTextPreference) findPreference("apiPass");
-        runLocalNodeInBackground = (SwitchPreference)findPreference("runLocalNodeInBackground");
-        runLocalNodeOffWifi = (SwitchPreference)findPreference("runLocalNodeOffWifi");
+        runLocalNodeInBackground = (SwitchPreference) findPreference("runLocalNodeInBackground");
+        runLocalNodeOffWifi = (SwitchPreference) findPreference("runLocalNodeOffWifi");
         useExternal = (SwitchPreference) findPreference("useExternal");
-        minBattery = (EditTextPreference)findPreference("localNodeMinBattery");
+        minBattery = (EditTextPreference) findPreference("localNodeMinBattery");
         setRemoteSettingsVisibility();
         setLocalSettingsVisibility();
 
@@ -105,6 +108,17 @@ public class SettingsFragment extends PreferenceFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        connection = new ServiceConnection() {
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                walletService = ((WalletService.LocalBinder) service).getService();
+                bound = true;
+            }
+
+            public void onServiceDisconnected(ComponentName name) {
+                bound = false;
+            }
+        };
+
         prefsListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
                 SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -131,6 +145,12 @@ public class SettingsFragment extends PreferenceFragment {
                         }
                         editor.apply();
 //                        WalletFragment.refreshWallet(getFragmentManager());
+                        break;
+                    case "monitorRefreshInterval":
+                        if (!bound)
+                            getActivity().bindService(new Intent(getActivity(), WalletService.class), connection, Context.BIND_AUTO_CREATE);
+                        else
+                            walletService.postRefreshRunnable();
                         break;
                     case "runLocalNodeOffWifi":
                         ConnectivityManager connectivityManager =
@@ -222,6 +242,14 @@ public class SettingsFragment extends PreferenceFragment {
             operation.removePreference(runLocalNodeOffWifi);
             operation.removePreference(useExternal);
             operation.removePreference(minBattery);
+        }
+    }
+
+    public void onDestroy() {
+        super.onDestroy();
+        if (isAdded() && bound) {
+            getActivity().unbindService(connection);
+            bound = false;
         }
     }
 }

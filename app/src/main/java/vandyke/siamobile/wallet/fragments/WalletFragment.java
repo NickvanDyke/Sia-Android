@@ -125,9 +125,9 @@ public class WalletFragment extends Fragment implements WalletService.WalletUpda
             public void onServiceConnected(ComponentName name, IBinder service) {
                 walletService = ((WalletService.LocalBinder) service).getService();
                 walletService.registerListener(WalletFragment.this);
+                walletService.refreshAll();
                 bound = true;
             }
-
             public void onServiceDisconnected(ComponentName name) {
                 bound = false;
             }

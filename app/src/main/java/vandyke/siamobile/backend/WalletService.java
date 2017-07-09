@@ -10,6 +10,7 @@ package vandyke.siamobile.backend;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -40,6 +41,9 @@ public class WalletService extends Service {
     private double syncProgress;
 
     private ArrayList<WalletUpdateListener> listeners;
+
+    private Handler handler;
+    private Runnable refreshRunnable;
 
     public void refreshAll() {
         refreshBalanceAndStatus();
@@ -95,6 +99,7 @@ public class WalletService extends Service {
                 transactions = Transaction.populateTransactions(response);
                 sendTransactionUpdate();
             }
+
             public void onError(SiaRequest.Error error) {
                 sendTransactionsError(error);
             }
@@ -115,6 +120,7 @@ public class WalletService extends Service {
                 }
                 sendSyncUpdate();
             }
+
             public void onError(SiaRequest.Error error) {
                 sendSyncError(error);
             }
@@ -123,19 +129,30 @@ public class WalletService extends Service {
 
     @Override
     public void onCreate() {
-        Thread thread = new Thread() {
+        listeners = new ArrayList<>();
+        walletStatus = WalletStatus.NONE;
+        balanceHastings = new BigDecimal("0");
+        balanceHastingsUnconfirmed = new BigDecimal("0");
+        balanceUsd = new BigDecimal("0");
+        transactions = new ArrayList<>();
+        syncProgress = 0;
+        handler = new Handler();
+        postRefreshRunnable();
+    }
+
+    public void postRefreshRunnable() {
+        if (refreshRunnable != null)
+            handler.removeCallbacks(refreshRunnable);
+        final long refreshInterval = 60000 * Long.parseLong(SiaMobileApplication.prefs.getString("monitorRefreshInterval", "1"));
+        refreshRunnable = new Runnable() {
             public void run() {
-                listeners = new ArrayList<>();
-                walletStatus = WalletStatus.NONE;
-                balanceHastings = new BigDecimal("0");
-                balanceHastingsUnconfirmed = new BigDecimal("0");
-                balanceUsd = new BigDecimal("0");
-                transactions = new ArrayList<>();
-                syncProgress = 0;
+                System.out.println("refreshing");
                 refreshAll();
+                handler.postDelayed(refreshRunnable, refreshInterval);
             }
         };
-        thread.start();
+        if (refreshInterval != 0)
+            handler.post(refreshRunnable);
     }
 
     @Override
@@ -168,13 +185,19 @@ public class WalletService extends Service {
 
     public interface WalletUpdateListener {
         void onBalanceUpdate(WalletService service);
+
         void onUsdUpdate(WalletService service);
+
         void onTransactionsUpdate(WalletService service);
+
         void onSyncUpdate(WalletService service);
 
         void onBalanceError(SiaRequest.Error error);
+
         void onUsdError(VolleyError error);
+
         void onTransactionsError(SiaRequest.Error error);
+
         void onSyncError(SiaRequest.Error error);
     }
 
