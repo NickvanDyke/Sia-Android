@@ -29,6 +29,13 @@
         <service android:name=".backend.SiadMonitor"/>
         <service android:name=".backend.WalletService"/>
 
+        <receiver android:name=".backend.BootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+
         <activity
                 android:name="vandyke.siamobile.MainActivity"
                 android:screenOrientation="portrait"
