@@ -18,7 +18,6 @@ import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -57,8 +56,6 @@ import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static String abi;
-    public static String abi32;
     public static int defaultTextColor;
     public static int backgroundColor;
 
@@ -183,18 +180,6 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
-            abi = Build.CPU_ABI;
-        else
-            abi = Build.SUPPORTED_ABIS[0];
-        if (abi.contains("arm"))
-            abi32 = "arm32";
-        else if (abi.contains("x86"))
-            abi32 = "x86";
-        if (abi.equals("arm64-v8a"))
-            abi = "arm64";
-        // TODO: maybe add mips binaries
 
         startService(new Intent(this, CleanupService.class));
         if (SiaMobileApplication.prefs.getString("operationMode", "cold_storage").equals("local_full_node"))

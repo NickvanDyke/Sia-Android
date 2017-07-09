@@ -15,7 +15,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
 import vandyke.siamobile.misc.Utils;
@@ -27,7 +29,8 @@ import java.io.InputStreamReader;
 
 public class Siad extends Service {
 
-    public static int SIAD_NOTIFICATION = 3;
+    private int SIAD_NOTIFICATION = 3;
+    private int SIAD_UNSUPPORTED_NOTIFICATION = 3;
 
     private File siadFile;
     private java.lang.Process siadProcess;
@@ -61,32 +64,40 @@ public class Siad extends Service {
             public void run() {
                 siadFile = Utils.copyBinary("siad", Siad.this, false);
                 if (siadFile == null) {
-                    siadNotification("Unsupported CPU architecture");
-                    stopSelf();
-                }
-//                stdoutBuffer.setLength(0);
-                ProcessBuilder pb = new ProcessBuilder(siadFile.getAbsolutePath(), "-M", "gctw");
-                pb.redirectErrorStream(true);
-                pb.directory(Utils.getWorkingDirectory(Siad.this));
-                try {
-                    siadProcess = pb.start();
-                    readStdoutThread = new Thread() {
+                    Handler handler = new Handler(Looper.getMainLooper());
+                    handler.post(new Runnable() {
                         public void run() {
-                            try {
-                                BufferedReader inputReader = new BufferedReader(new InputStreamReader(siadProcess.getInputStream()));
-                                String line;
-                                while ((line = inputReader.readLine()) != null) {
-                                    siadNotification(line);
-                                }
-                                inputReader.close();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+                            Utils.notification(Siad.this, SIAD_UNSUPPORTED_NOTIFICATION, R.drawable.ic_dns_white_48dp,
+                                    "Local full node", "Unsupported CPU architecture", false);
                         }
-                    };
-                    readStdoutThread.start();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    });
+                    stopForeground(true);
+                    stopSelf();
+                } else {
+//                stdoutBuffer.setLength(0);
+                    ProcessBuilder pb = new ProcessBuilder(siadFile.getAbsolutePath(), "-M", "gctw");
+                    pb.redirectErrorStream(true);
+                    pb.directory(Utils.getWorkingDirectory(Siad.this));
+                    try {
+                        siadProcess = pb.start();
+                        readStdoutThread = new Thread() {
+                            public void run() {
+                                try {
+                                    BufferedReader inputReader = new BufferedReader(new InputStreamReader(siadProcess.getInputStream()));
+                                    String line;
+                                    while ((line = inputReader.readLine()) != null) {
+                                        siadNotification(line);
+                                    }
+                                    inputReader.close();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        };
+                        readStdoutThread.start();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         };
@@ -115,12 +126,17 @@ public class Siad extends Service {
         notificationManager.notify(SIAD_NOTIFICATION, buildSiadNotification(text));
     }
 
+    private void siadUnsupportedNotification() {
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(SIAD_UNSUPPORTED_NOTIFICATION, buildSiadNotification("Unsupported CPU architecture"));
+    }
+
     private Notification buildSiadNotification(String text) {
         Notification.Builder builder = new Notification.Builder(this);
         builder.setSmallIcon(R.drawable.ic_dns_white_48dp);
         Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.sia_logo_transparent);
         builder.setLargeIcon(largeIcon);
-        builder.setContentTitle("Local node");
+        builder.setContentTitle("Local full node");
         builder.setContentText(text);
         builder.setOngoing(false);
         Intent intent = new Intent(this, MainActivity.class);

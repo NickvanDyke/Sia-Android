@@ -21,7 +21,6 @@ import android.support.design.widget.Snackbar;
 import android.util.Base64;
 import fi.iki.elonen.NanoHTTPD;
 import vandyke.siamobile.BuildConfig;
-import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
 import vandyke.siamobile.backend.ColdStorageWallet;
 import vandyke.siamobile.backend.Siad;
@@ -76,7 +75,7 @@ public class SettingsFragment extends PreferenceFragment {
         operationMode.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             public boolean onPreferenceChange(Preference preference, Object o) {
                 if (((String) o).equals("local_full_node")
-                        && !(MainActivity.abi.equals("arm64"))) {
+                        && !(SiaMobileApplication.abi.equals("arm64"))) {
                     Utils.snackbar(getView(), "Sorry, but your device's CPU architecture is not supported by Sia's full node", Snackbar.LENGTH_LONG);
                     return false;
                 }

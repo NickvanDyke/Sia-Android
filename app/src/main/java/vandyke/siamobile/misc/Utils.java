@@ -89,11 +89,11 @@ public class Utils {
             InputStream in;
             File result;
             if (bit32) {
-                in = context.getAssets().open(filename + "-" + MainActivity.abi32);
-                result = new File(context.getFilesDir(), filename + "-" + MainActivity.abi32);
+                in = context.getAssets().open(filename + "-" + SiaMobileApplication.abi32);
+                result = new File(context.getFilesDir(), filename + "-" + SiaMobileApplication.abi32);
             } else {
-                in = context.getAssets().open(filename + "-" + MainActivity.abi);
-                result = new File(context.getFilesDir(), filename + "-" + MainActivity.abi);
+                in = context.getAssets().open(filename + "-" + SiaMobileApplication.abi);
+                result = new File(context.getFilesDir(), filename + "-" + SiaMobileApplication.abi);
             }
             if (result.exists())
                 return result;
