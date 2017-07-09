@@ -75,20 +75,9 @@ public class SiaRequest extends StringRequest {
         SiaMobileApplication.requestQueue.add(this);
     }
 
-    public static class VolleyCallback {
-        private View view;
-
-        public VolleyCallback(View view) {
-            this.view = view;
-        }
-
-        public void onSuccess(JSONObject response) {
-            genericSuccessSnackbar(view);
-        }
-
-        public void onError(Error error) {
-            error.snackbar(view);
-        }
+    public interface VolleyCallback {
+        void onSuccess(JSONObject response);
+        void onError(Error error);
     }
 
     public static class Error {
@@ -97,7 +86,7 @@ public class SiaRequest extends StringRequest {
             TIMEOUT("Response timed out"),
             NO_NETWORK_RESPONSE("No network response"),
             WALLET_PASSWORD_INCORRECT("Wallet password incorrect"),
-            WALLET_LOCKED("Wallet is locked"),
+            WALLET_LOCKED("Wallet must be unlocked first"),
             WALLET_ALREADY_UNLOCKED("Wallet already unlocked"),
             INVALID_AMOUNT("Invalid amount"),
             NO_NEW_PASSWORD("Must provide new password"),

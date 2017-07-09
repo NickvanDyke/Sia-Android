@@ -36,13 +36,16 @@ public class WalletReceiveDialog extends DialogFragment {
         final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_wallet_receive, null);
         if (MainActivity.theme == MainActivity.Theme.CUSTOM)
             ((TextView)view.findViewById(R.id.receiveAddress)).setTextColor(Color.GRAY);
-        Wallet.newAddress(new SiaRequest.VolleyCallback(view) {
+        Wallet.newAddress(new SiaRequest.VolleyCallback() {
             public void onSuccess(JSONObject response) {
                 try {
                     ((TextView)view.findViewById(R.id.receiveAddress)).setText(response.getString("address"));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+            }
+            public void onError(SiaRequest.Error error) {
+                error.snackbar(view);
             }
         });
         builder.setTitle("Receive Address")

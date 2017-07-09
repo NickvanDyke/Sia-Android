@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.EditText;
+import org.json.JSONObject;
 import vandyke.siamobile.R;
 import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
@@ -32,7 +33,14 @@ public class WalletUnlockDialog extends DialogFragment {
                 .setView(view)
                 .setPositiveButton("Unlock", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        Wallet.unlock(((EditText)view.findViewById(R.id.walletPassword)).getText().toString(), new SiaRequest.VolleyCallback(view));
+                        Wallet.unlock(((EditText)view.findViewById(R.id.walletPassword)).getText().toString(), new SiaRequest.VolleyCallback() {
+                            public void onSuccess(JSONObject response) {
+                                Utils.successSnackbar(view);
+                            }
+                            public void onError(SiaRequest.Error error) {
+                                error.snackbar(view);
+                            }
+                        });
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

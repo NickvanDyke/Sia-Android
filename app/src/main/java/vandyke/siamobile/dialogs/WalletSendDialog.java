@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.TextView;
+import org.json.JSONObject;
 import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
 import vandyke.siamobile.api.SiaRequest;
@@ -65,11 +66,25 @@ public class WalletSendDialog extends DialogFragment {
                         if (SiaMobileApplication.prefs.getBoolean("feesEnabled", false))
                             Wallet.sendSiacoinsWithDevFee(sendAmount,
                                     ((EditText) view.findViewById(R.id.sendRecipient)).getText().toString(),
-                                    new SiaRequest.VolleyCallback(view));
+                                    new SiaRequest.VolleyCallback() {
+                                        public void onSuccess(JSONObject response) {
+                                            Utils.successSnackbar(view);
+                                        }
+                                        public void onError(SiaRequest.Error error) {
+                                            error.snackbar(view);
+                                        }
+                                    });
                         else
                             Wallet.sendSiacoins(sendAmount,
                                     ((EditText) view.findViewById(R.id.sendRecipient)).getText().toString(),
-                                    new SiaRequest.VolleyCallback(view));
+                                    new SiaRequest.VolleyCallback() {
+                                        public void onSuccess(JSONObject response) {
+                                            Utils.successSnackbar(view);
+                                        }
+                                        public void onError(SiaRequest.Error error) {
+                                            error.snackbar(view);
+                                        }
+                                    });
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

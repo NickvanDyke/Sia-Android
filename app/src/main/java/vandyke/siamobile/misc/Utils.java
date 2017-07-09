@@ -64,6 +64,10 @@ public class Utils {
         snackbar.show();
     }
 
+    public static void successSnackbar(View view) {
+        snackbar(view, "Success", Snackbar.LENGTH_SHORT);
+    }
+
     // will return null if the abi is an unsupported one and therefore there is not a binary for it
     public static File copyBinary(String filename, Context context, boolean bit32) {
         try {

@@ -42,7 +42,7 @@ public class DonateDialog extends DialogFragment {
         donateButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 Wallet.sendSiacoins(Wallet.scToHastings(amount.getText().toString()),
-                        paymentRecipient, new SiaRequest.VolleyCallback(view) {
+                        paymentRecipient, new SiaRequest.VolleyCallback() {
                             public void onSuccess(JSONObject response) {
                                 Utils.snackbar(dialogView, "Donation successful. Thank you!", Snackbar.LENGTH_SHORT);
                             }

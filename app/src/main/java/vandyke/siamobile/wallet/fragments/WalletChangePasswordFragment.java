@@ -32,11 +32,14 @@ public class WalletChangePasswordFragment extends Fragment {
                     return;
                 }
                 Wallet.changePassword(((EditText) view.findViewById(R.id.currentPassword)).getText().toString(),
-                        newPassword, new SiaRequest.VolleyCallback(view) {
+                        newPassword, new SiaRequest.VolleyCallback() {
                             public void onSuccess(JSONObject response) {
-                                super.onSuccess(response);
+                                Utils.successSnackbar(view);
                                 container.setVisibility(View.GONE);
                                 Utils.hideSoftKeyboard(getActivity());
+                            }
+                            public void onError(SiaRequest.Error error) {
+                                error.snackbar(view);
                             }
                         });
             }

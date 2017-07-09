@@ -58,21 +58,27 @@ public class WalletSendFragment extends Fragment {
                 if (SiaMobileApplication.prefs.getBoolean("feesEnabled", false))
                     Wallet.sendSiacoinsWithDevFee(sendAmount,
                             recipient.getText().toString(),
-                            new SiaRequest.VolleyCallback(view) {
+                            new SiaRequest.VolleyCallback() {
                                 public void onSuccess(JSONObject response) {
-                                    super.onSuccess(response);
+                                    Utils.successSnackbar(view);
                                     container.setVisibility(View.GONE);
                                     Utils.hideSoftKeyboard(getActivity());
+                                }
+                                public void onError(SiaRequest.Error error) {
+                                    error.snackbar(view);
                                 }
                             });
                 else
                     Wallet.sendSiacoins(sendAmount,
                             ((EditText) view.findViewById(R.id.sendRecipient)).getText().toString(),
-                            new SiaRequest.VolleyCallback(view) {
+                            new SiaRequest.VolleyCallback() {
                                 public void onSuccess(JSONObject response) {
-                                    super.onSuccess(response);
+                                    Utils.successSnackbar(view);
                                     container.setVisibility(View.GONE);
                                     Utils.hideSoftKeyboard(getActivity());
+                                }
+                                public void onError(SiaRequest.Error error) {
+                                    error.snackbar(view);
                                 }
                             });
             }

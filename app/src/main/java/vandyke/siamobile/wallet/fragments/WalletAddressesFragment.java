@@ -26,12 +26,12 @@ import java.util.ArrayList;
 public class WalletAddressesFragment extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_wallet_addresses, null);
+        final View view = inflater.inflate(R.layout.fragment_wallet_addresses, null);
         ListView seedsList = (ListView)view.findViewById(R.id.addressesList);
         final ArrayList<String> addresses = new ArrayList<>();
         final TextTouchCopyListAdapter adapter = new TextTouchCopyListAdapter(getActivity(), R.layout.text_touch_copy_list_item, addresses);
         seedsList.setAdapter(adapter);
-        Wallet.addresses(new SiaRequest.VolleyCallback(view) {
+        Wallet.addresses(new SiaRequest.VolleyCallback() {
             public void onSuccess(JSONObject response) {
                 try {
                     JSONArray addressesJson = response.getJSONArray("addresses");
@@ -41,6 +41,9 @@ public class WalletAddressesFragment extends Fragment {
                     e.printStackTrace();
                 }
                 adapter.notifyDataSetChanged();
+            }
+            public void onError(SiaRequest.Error error) {
+                error.snackbar(view);
             }
         });
         view.findViewById(R.id.walletCreateCancel).setOnClickListener(new View.OnClickListener() {

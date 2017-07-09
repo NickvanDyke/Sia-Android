@@ -184,7 +184,7 @@ public class WalletFragment extends Fragment implements WalletService.WalletUpda
     }
 
     public void onBalanceError(SiaRequest.Error error) {
-        Utils.snackbar(view, error.getMsg(), Snackbar.LENGTH_SHORT);
+        error.snackbar(view);
     }
 
     public void onUsdError(VolleyError error) {
@@ -192,11 +192,11 @@ public class WalletFragment extends Fragment implements WalletService.WalletUpda
     }
 
     public void onTransactionsError(SiaRequest.Error error) {
-        Utils.snackbar(view, error.getMsg(), Snackbar.LENGTH_SHORT);
+        error.snackbar(view);
     }
 
     public void onSyncError(SiaRequest.Error error) {
-        Utils.snackbar(view, error.getMsg(), Snackbar.LENGTH_SHORT);
+        error.snackbar(view);
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -209,10 +209,13 @@ public class WalletFragment extends Fragment implements WalletService.WalletUpda
                 replaceExpandFrame(new WalletUnlockFragment());
                 break;
             case R.id.actionLock:
-                Wallet.lock(new SiaRequest.VolleyCallback(view) {
+                Wallet.lock(new SiaRequest.VolleyCallback() {
                     public void onSuccess(JSONObject response) {
-                        super.onSuccess(response);
+                        Utils.successSnackbar(view);
                         walletStatusText.setText("Locked");
+                    }
+                    public void onError(SiaRequest.Error error) {
+                        error.snackbar(view);
                     }
                 });
                 break;

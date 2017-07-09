@@ -48,7 +48,7 @@ public class WalletService extends Service {
     }
 
     public void refreshBalanceAndStatus() {
-        Wallet.wallet(new SiaRequest.VolleyCallback(null) {
+        Wallet.wallet(new SiaRequest.VolleyCallback() {
             public void onSuccess(JSONObject response) {
                 try {
                     if (response.getString("encrypted").equals("false"))
@@ -90,7 +90,7 @@ public class WalletService extends Service {
     }
 
     public void refreshTransactions() {
-        Wallet.transactions(new SiaRequest.VolleyCallback(null) {
+        Wallet.transactions(new SiaRequest.VolleyCallback() {
             public void onSuccess(JSONObject response) {
                 transactions = Transaction.populateTransactions(response);
                 sendTransactionUpdate();
@@ -102,7 +102,7 @@ public class WalletService extends Service {
     }
 
     public void refreshSyncProgress() {
-        Consensus.consensus(new SiaRequest.VolleyCallback(null) {
+        Consensus.consensus(new SiaRequest.VolleyCallback() {
             public void onSuccess(JSONObject response) {
                 try {
                     if (response.getBoolean("synced")) {

@@ -27,11 +27,14 @@ public class WalletAddSeedFragment extends Fragment {
             public void onClick(View v) {
                 Wallet.seed(((EditText)view.findViewById(R.id.walletPassword)).getText().toString(), "english",
                         ((EditText)view.findViewById(R.id.walletAddSeed)).getText().toString(),
-                        new SiaRequest.VolleyCallback(view) {
+                        new SiaRequest.VolleyCallback() {
                             public void onSuccess(JSONObject response) {
-                                super.onSuccess(response);
+                                Utils.successSnackbar(view);
                                 container.setVisibility(View.GONE);
                                 Utils.hideSoftKeyboard(getActivity());
+                            }
+                            public void onError(SiaRequest.Error error) {
+                                error.snackbar(view);
                             }
                         });
             }

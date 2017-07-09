@@ -29,16 +29,17 @@ public class WalletReceiveFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_wallet_receive, null);
         final TextView address = (TextView)view.findViewById(R.id.receiveAddress);
-        Wallet.newAddress(new SiaRequest.VolleyCallback(view) {
+        Wallet.newAddress(new SiaRequest.VolleyCallback() {
             public void onSuccess(JSONObject response) {
                 try {
+                    Utils.successSnackbar(view);
                     address.setText(response.getString("address"));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
             public void onError(SiaRequest.Error error) {
-                super.onError(error);
+                error.snackbar(view);
                 address.setText(error.getMsg() + "\n");
             }
         });
