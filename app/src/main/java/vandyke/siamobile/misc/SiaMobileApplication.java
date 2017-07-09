@@ -8,6 +8,10 @@
 package vandyke.siamobile.misc;
 
 import android.app.Application;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 import org.acra.ACRA;
 import org.acra.ReportingInteractionMode;
 import org.acra.annotation.ReportsCrashes;
@@ -23,8 +27,13 @@ import vandyke.siamobile.R;
 )
 public class SiaMobileApplication extends Application {
 
+    public static SharedPreferences prefs;
+    public static RequestQueue requestQueue;
+
     public void onCreate() {
         ACRA.init(this);
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        requestQueue = Volley.newRequestQueue(this);
         super.onCreate();
     }
 }

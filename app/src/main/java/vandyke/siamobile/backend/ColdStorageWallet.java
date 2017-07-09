@@ -14,6 +14,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import vandyke.siamobile.MainActivity;
+import vandyke.siamobile.misc.SiaMobileApplication;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -37,10 +38,10 @@ public class ColdStorageWallet extends NanoHTTPD {
 
     private ColdStorageWallet(Activity activity) {
         super("localhost", 9990);
-        seed = MainActivity.prefs.getString("coldStorageSeed", "noseed");
-        addresses = new ArrayList<>(MainActivity.prefs.getStringSet("coldStorageAddresses", new HashSet<String>()));
-        password = MainActivity.prefs.getString("coldStoragePassword", "nopass");
-        exists = MainActivity.prefs.getBoolean("coldStorageExists", false);
+        seed = SiaMobileApplication.prefs.getString("coldStorageSeed", "noseed");
+        addresses = new ArrayList<>(SiaMobileApplication.prefs.getStringSet("coldStorageAddresses", new HashSet<String>()));
+        password = SiaMobileApplication.prefs.getString("coldStoragePassword", "nopass");
+        exists = SiaMobileApplication.prefs.getBoolean("coldStorageExists", false);
         unlocked = false;
         binary = MainActivity.copyBinary("sia-coldstorage", activity, true);
     }
@@ -169,7 +170,7 @@ public class ColdStorageWallet extends NanoHTTPD {
             addresses.clear();
             for (int i = 0; i < addressesJson.length(); i++)
                 addresses.add(addressesJson.getString(i).trim());
-            SharedPreferences.Editor editor = MainActivity.prefs.edit();
+            SharedPreferences.Editor editor = SiaMobileApplication.prefs.edit();
             this.password = password;
             exists = true;
             unlocked = false;

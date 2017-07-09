@@ -17,6 +17,7 @@ import com.android.volley.toolbox.StringRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
 import vandyke.siamobile.MainActivity;
+import vandyke.siamobile.misc.SiaMobileApplication;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
@@ -44,12 +45,12 @@ public class SiaRequest extends StringRequest {
         });
         headers = new HashMap<>();
         headers.put("User-agent", "Sia-Agent");
-        headers.put("Authorization", "Basic " + Base64.encodeToString((":" + MainActivity.prefs.getString("apiPass", "")).getBytes(), 0));
+        headers.put("Authorization", "Basic " + Base64.encodeToString((":" + SiaMobileApplication.prefs.getString("apiPass", "")).getBytes(), 0));
         params = new HashMap<>();
     }
 
     public SiaRequest(int method, String command, final VolleyCallback callback) {
-        this(method, MainActivity.prefs.getString("address", "localhost:9980"), command, callback);
+        this(method, SiaMobileApplication.prefs.getString("address", "localhost:9980"), command, callback);
     }
 
     public Map<String, String> getHeaders() {
@@ -71,7 +72,7 @@ public class SiaRequest extends StringRequest {
     }
 
     public void send() {
-        MainActivity.requestQueue.add(this);
+        SiaMobileApplication.requestQueue.add(this);
     }
 
     public static class VolleyCallback {

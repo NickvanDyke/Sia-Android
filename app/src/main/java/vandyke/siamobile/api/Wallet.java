@@ -13,6 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import vandyke.siamobile.MainActivity;
+import vandyke.siamobile.misc.SiaMobileApplication;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -140,7 +141,7 @@ public class Wallet {
 
     public static void coincapSC(Response.Listener listener, Response.ErrorListener errorListener) {
         StringRequest request = new StringRequest(GET, "http://www.coincap.io/page/SC", listener, errorListener);
-        MainActivity.requestQueue.add(request);
+        SiaMobileApplication.requestQueue.add(request);
     }
 
     public static BigDecimal hastingsToSC(String hastings) {
@@ -163,7 +164,7 @@ public class Wallet {
     }
 
     public static String round(BigDecimal num) {
-        return num.setScale(Integer.parseInt(MainActivity.prefs.getString("displayedDecimalPrecision", "2")), BigDecimal.ROUND_CEILING).toPlainString();
+        return num.setScale(Integer.parseInt(SiaMobileApplication.prefs.getString("displayedDecimalPrecision", "2")), BigDecimal.ROUND_CEILING).toPlainString();
     }
 
     /** will return value in the same units they were passed in, without decimal */

@@ -9,10 +9,8 @@ package vandyke.siamobile.backend;
 
 import android.app.Service;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import org.json.JSONException;
@@ -20,6 +18,7 @@ import org.json.JSONObject;
 import vandyke.siamobile.api.Consensus;
 import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
+import vandyke.siamobile.misc.SiaMobileApplication;
 import vandyke.siamobile.wallet.transaction.Transaction;
 
 import java.math.BigDecimal;
@@ -39,8 +38,6 @@ public class WalletService extends Service {
     private BigDecimal balanceUsd;
     private ArrayList<Transaction> transactions;
     private double syncProgress;
-
-    private SharedPreferences prefs;
 
     public void refreshAll() {
         refreshBalanceAndStatus();
@@ -125,7 +122,6 @@ public class WalletService extends Service {
     public void onCreate() {
         Thread thread = new Thread() {
             public void run() {
-                prefs = PreferenceManager.getDefaultSharedPreferences(WalletService.this);
                 walletStatus = WalletStatus.NONE;
                 balanceHastings = new BigDecimal("0");
                 balanceHastingsUnconfirmed = new BigDecimal("0");
@@ -150,7 +146,7 @@ public class WalletService extends Service {
 
     @Override
     public void onTaskRemoved(Intent rootIntent) {
-        if (!prefs.getBoolean("monitorInBackground", true)) {
+        if (!SiaMobileApplication.prefs.getBoolean("monitorInBackground", true)) {
             stopSelf();
         }
     }

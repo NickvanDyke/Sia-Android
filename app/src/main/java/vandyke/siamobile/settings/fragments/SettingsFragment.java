@@ -29,6 +29,7 @@ import vandyke.siamobile.R;
 import vandyke.siamobile.backend.ColdStorageWallet;
 import vandyke.siamobile.backend.Siad;
 import vandyke.siamobile.backend.SiadMonitor;
+import vandyke.siamobile.misc.SiaMobileApplication;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -143,7 +144,7 @@ public class SettingsFragment extends PreferenceFragment {
                         NetworkInfo activeNetInfo = connectivityManager.getActiveNetworkInfo();
 
                         if (activeNetInfo != null && activeNetInfo.getType() == ConnectivityManager.TYPE_WIFI
-                                || MainActivity.prefs.getBoolean("runLocalNodeOffWifi", false)) {
+                                || SiaMobileApplication.prefs.getBoolean("runLocalNodeOffWifi", false)) {
                             getActivity().startService(new Intent(getActivity(), Siad.class));
                         } else {
                             getActivity().stopService(new Intent(getActivity(), Siad.class));
@@ -152,7 +153,7 @@ public class SettingsFragment extends PreferenceFragment {
                     case "localNodeMinBattery":
                         Intent batteryStatus = getActivity().registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
                         int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-                        if (level >= Integer.parseInt(MainActivity.prefs.getString("localNodeMinBattery", "20")))
+                        if (level >= Integer.parseInt(SiaMobileApplication.prefs.getString("localNodeMinBattery", "20")))
                             getActivity().startService(new Intent(getActivity(), Siad.class));
                         else
                             getActivity().stopService(new Intent(getActivity(), Siad.class));
@@ -181,7 +182,7 @@ public class SettingsFragment extends PreferenceFragment {
                 }
             }
         };
-        MainActivity.prefs.registerOnSharedPreferenceChangeListener(prefsListener);
+        SiaMobileApplication.prefs.registerOnSharedPreferenceChangeListener(prefsListener);
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -199,7 +200,7 @@ public class SettingsFragment extends PreferenceFragment {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
                 byte[] b = baos.toByteArray();
-                SharedPreferences.Editor prefsEditor = MainActivity.prefs.edit();
+                SharedPreferences.Editor prefsEditor = SiaMobileApplication.prefs.edit();
                 prefsEditor.putString("customBgBase64", Base64.encodeToString(b, Base64.DEFAULT));
                 prefsEditor.apply();
             }
@@ -207,7 +208,7 @@ public class SettingsFragment extends PreferenceFragment {
     }
 
     private void setRemoteSettingsVisibility() {
-        if (MainActivity.prefs.getString("operationMode", "cold_storage").equals("remote_full_node")) {
+        if (SiaMobileApplication.prefs.getString("operationMode", "cold_storage").equals("remote_full_node")) {
             operation.addPreference(remoteAddress);
             operation.addPreference(apiPass);
         } else {
@@ -217,7 +218,7 @@ public class SettingsFragment extends PreferenceFragment {
     }
 
     private void setLocalSettingsVisibility() {
-        if (MainActivity.prefs.getString("operationMode", "cold_storage").equals("local_full_node")) {
+        if (SiaMobileApplication.prefs.getString("operationMode", "cold_storage").equals("local_full_node")) {
             operation.addPreference(runLocalNodeInBackground);
             operation.addPreference(runLocalNodeOffWifi);
             operation.addPreference(useExternal);

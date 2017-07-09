@@ -8,7 +8,10 @@
 package vandyke.siamobile;
 
 import android.app.*;
-import android.content.*;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -37,8 +40,6 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.Volley;
 import vandyke.siamobile.backend.*;
 import vandyke.siamobile.dialogs.DonateDialog;
 import vandyke.siamobile.files.fragments.FilesFragment;
@@ -46,6 +47,7 @@ import vandyke.siamobile.help.fragments.HelpFragment;
 import vandyke.siamobile.help.fragments.WelcomeFragment;
 import vandyke.siamobile.hosting.fragments.HostingFragment;
 import vandyke.siamobile.misc.LinksFragment;
+import vandyke.siamobile.misc.SiaMobileApplication;
 import vandyke.siamobile.settings.fragments.SettingsFragment;
 import vandyke.siamobile.terminal.fragments.TerminalFragment;
 import vandyke.siamobile.wallet.fragments.WalletFragment;
@@ -60,8 +62,6 @@ public class MainActivity extends AppCompatActivity {
 
     public static String abi;
     public static String abi32;
-    public static SharedPreferences prefs;
-    public static RequestQueue requestQueue;
     public static int defaultTextColor;
     public static int backgroundColor;
     public static final String[] devAddresses = {
@@ -94,8 +94,8 @@ public class MainActivity extends AppCompatActivity {
     public static Theme theme;
 
     protected void onCreate(Bundle savedInstanceState) {
-        prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        switch (prefs.getString("theme", "light")) {
+        SiaMobileApplication.prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        switch (SiaMobileApplication.prefs.getString("theme", "light")) {
             default:
             case "light":
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
@@ -120,14 +120,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_layout);
         if (theme == Theme.CUSTOM) { // TODO: not working? just black background?
-            byte[] b = Base64.decode(prefs.getString("customBgBase64", "null"), Base64.DEFAULT);
+            byte[] b = Base64.decode(SiaMobileApplication.prefs.getString("customBgBase64", "null"), Base64.DEFAULT);
             Bitmap bitmap = BitmapFactory.decodeByteArray(b, 0, b.length);
             getWindow().setBackgroundDrawable(new BitmapDrawable(getResources(), bitmap));
         }
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        if (prefs.getBoolean("transparentBars", false)) {
+        if (SiaMobileApplication.prefs.getBoolean("transparentBars", false)) {
             toolbar.setBackgroundColor(android.R.color.transparent);
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
             toolbar.setPadding(0, getStatusBarHeight(), 0, 0);
@@ -137,8 +137,6 @@ public class MainActivity extends AppCompatActivity {
         TypedValue a = new TypedValue();
         getTheme().resolveAttribute(android.R.attr.windowBackground, a, true);
         backgroundColor = a.data;
-
-        requestQueue = Volley.newRequestQueue(this);
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close) {
@@ -215,20 +213,20 @@ public class MainActivity extends AppCompatActivity {
         // TODO: maybe add mips binaries
 
         startService(new Intent(this, CleanupService.class));
-        if (prefs.getString("operationMode", "cold_storage").equals("local_full_node"))
+        if (SiaMobileApplication.prefs.getString("operationMode", "cold_storage").equals("local_full_node"))
             startService(new Intent(this, SiadMonitor.class));
-        else if (prefs.getString("operationMode", "cold_storage").equals("cold_storage"))
+        else if (SiaMobileApplication.prefs.getString("operationMode", "cold_storage").equals("cold_storage"))
             try {
                 ColdStorageWallet.getInstance(this).start();
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
-        if (prefs.getBoolean("firstTime", true)) {
+        if (SiaMobileApplication.prefs.getBoolean("firstTime", true)) {
             loadDrawerFragment(WelcomeFragment.class);
-            prefs.edit().putBoolean("firstTime", false).apply();
+            SiaMobileApplication.prefs.edit().putBoolean("firstTime", false).apply();
         } else
-            switch (prefs.getString("startupPage", "wallet")) {
+            switch (SiaMobileApplication.prefs.getString("startupPage", "wallet")) {
                 case "files":
                     loadDrawerFragment(FilesFragment.class);
                     navigationView.setCheckedItem(R.id.drawer_item_files);
@@ -416,7 +414,7 @@ public class MainActivity extends AppCompatActivity {
         if (context == null)
             return null;
         File result;
-        if (prefs.getBoolean("useExternal", false)) {
+        if (SiaMobileApplication.prefs.getBoolean("useExternal", false)) {
             result = context.getExternalFilesDir(null);
             if (result == null) { // external storage not found
                 Toast.makeText(context, "No external storage found. Using internal", Toast.LENGTH_LONG).show();

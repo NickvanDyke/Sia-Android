@@ -29,6 +29,7 @@ import vandyke.siamobile.R;
 import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
 import vandyke.siamobile.backend.WalletService;
+import vandyke.siamobile.misc.SiaMobileApplication;
 import vandyke.siamobile.wallet.transaction.Transaction;
 import vandyke.siamobile.wallet.transactionslist.TransactionExpandableGroup;
 import vandyke.siamobile.wallet.transactionslist.TransactionListAdapter;
@@ -183,7 +184,7 @@ public class WalletFragment extends Fragment {
     public void refreshTransactions() {
         if (!bound)
             return;
-        boolean hideZero = MainActivity.prefs.getBoolean("hideZero", false);
+        boolean hideZero = SiaMobileApplication.prefs.getBoolean("hideZero", false);
         transactionExpandableGroups.clear();
         for (Transaction tx : walletService.getTransactions()) {
             if (hideZero && tx.isNetZero())

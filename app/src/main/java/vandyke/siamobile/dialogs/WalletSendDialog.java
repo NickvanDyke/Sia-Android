@@ -26,6 +26,7 @@ import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
 import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
+import vandyke.siamobile.misc.SiaMobileApplication;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -39,7 +40,7 @@ public class WalletSendDialog extends DialogFragment {
         final TextView feeText = (TextView)view.findViewById(R.id.walletSendFee);
         if (MainActivity.theme == MainActivity.Theme.CUSTOM)
             feeText.setTextColor(Color.GRAY);
-        if (!MainActivity.prefs.getBoolean("feesEnabled", false))
+        if (!SiaMobileApplication.prefs.getBoolean("feesEnabled", false))
             feeText.setVisibility(View.GONE);
         amount.addTextChangedListener(new TextWatcher() {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -60,7 +61,7 @@ public class WalletSendDialog extends DialogFragment {
                 .setPositiveButton("Send", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         BigDecimal sendAmount = Wallet.scToHastings(amount.getText().toString());
-                        if (MainActivity.prefs.getBoolean("feesEnabled", false))
+                        if (SiaMobileApplication.prefs.getBoolean("feesEnabled", false))
                             Wallet.sendSiacoinsWithDevFee(sendAmount,
                                     ((EditText) view.findViewById(R.id.sendRecipient)).getText().toString(),
                                     new SiaRequest.VolleyCallback(view));
