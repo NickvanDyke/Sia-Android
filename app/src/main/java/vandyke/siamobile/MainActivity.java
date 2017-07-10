@@ -35,6 +35,7 @@ import android.view.WindowManager;
 import android.widget.TextView;
 import vandyke.siamobile.about.AboutActivity;
 import vandyke.siamobile.backend.CleanupService;
+import vandyke.siamobile.backend.GlobalPrefsListener;
 import vandyke.siamobile.backend.WalletMonitorService;
 import vandyke.siamobile.backend.coldstorage.ColdStorageService;
 import vandyke.siamobile.backend.siad.SiadMonitorService;
@@ -56,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
 
     public static int backgroundColor;
 
+    private GlobalPrefsListener globalPrefsListener;
+
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private NavigationView navigationView;
@@ -70,6 +73,8 @@ public class MainActivity extends AppCompatActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         SiaMobileApplication.prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        globalPrefsListener = new GlobalPrefsListener(this);
+        SiaMobileApplication.prefs.registerOnSharedPreferenceChangeListener(globalPrefsListener);
         switch (SiaMobileApplication.prefs.getString("theme", "light")) {
             default:
             case "light":
