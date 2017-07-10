@@ -252,7 +252,7 @@ public class WalletFragment extends Fragment implements WalletMonitorService.Wal
     }
 
     public void onDestroy() {
-        super.onDestroy(); // TODO: connection is leaked because when it's destroyed, it's not added. will be fixed by fixing fragment showing and hiding instead of making new one every time
+        super.onDestroy();
         if (bound) {
             walletMonitorService.unregisterListener(this);
             if (isAdded()) {

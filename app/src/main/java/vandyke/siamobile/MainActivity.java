@@ -220,8 +220,6 @@ public class MainActivity extends AppCompatActivity {
         Fragment newFragment = fragmentManager.findFragmentByTag(className);
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-        System.out.println(className);
-        System.out.println(newFragment);
 
         for (Fragment fragment : fragments) {
             transaction.hide(fragment);
@@ -230,7 +228,6 @@ public class MainActivity extends AppCompatActivity {
         if (newFragment == null) {
             try {
                 newFragment = (Fragment)clazz.newInstance();
-                System.out.println(newFragment);
                 fragments.add(newFragment);
                 transaction.add(R.id.fragment_frame, newFragment, className);
             } catch (InstantiationException e) {

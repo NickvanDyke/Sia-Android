@@ -105,15 +105,14 @@ public class WalletMonitorService extends Service {
                 int newTxs = 0;
                 boolean foundMostRecent = false;
                 BigDecimal netOfNewTxs = new BigDecimal("0");
+                transactions.clear();
                 for (Transaction tx : Transaction.populateTransactions(response)) {
                     if (tx.getTransactionId().equals(mostRecentTxId))
                         foundMostRecent = true;
-                    if (!transactions.contains(tx)) {
-                        transactions.add(tx);
-                        if (!foundMostRecent) {
-                            newTxs++;
-                            netOfNewTxs = netOfNewTxs.add(tx.getNetValue());
-                        }
+                    transactions.add(tx);
+                    if (!foundMostRecent) {
+                        newTxs++;
+                        netOfNewTxs = netOfNewTxs.add(tx.getNetValue());
                     }
                 }
                 if (newTxs > 0) {
@@ -141,8 +140,9 @@ public class WalletMonitorService extends Service {
                         Utils.cancelNotification(WalletMonitorService.this, SYNC_NOTIFICATION); // TODO: maybe have separate service for notifications that registers a listener... not sure if worth it
                     } else {
                         syncProgress = ((double) response.getInt("height") / estimatedBlockHeightAt(System.currentTimeMillis() / 1000)) * 100;
+//                        if (!SiaMobileApplication.prefs.getString("operationMode", "cold_storage").equals("cold_storage"))
                         Utils.notification(WalletMonitorService.this, SYNC_NOTIFICATION, R.drawable.ic_sync_white_48dp,
-                                "Syncing blockchain...", String.format("Progress (estimated): %.2f%%", syncProgress), false);
+                                "Syncing...", String.format("Progress (estimated): %.2f%%", syncProgress), false);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -153,7 +153,7 @@ public class WalletMonitorService extends Service {
             public void onError(SiaRequest.Error error) {
                 sendSyncError(error);
                 Utils.notification(WalletMonitorService.this, SYNC_NOTIFICATION, R.drawable.ic_sync_problem_white_48dp,
-                        "Syncing blockchain...", "Error retrieving sync progress", false);
+                        "Syncing...", "Error retrieving sync progress", false);
             }
         });
     }

@@ -57,61 +57,76 @@ public class ColdStorageHttpServer extends NanoHTTPD {
             e.printStackTrace();
         }
         try {
-            if (uri.equals("/wallet/addresses")) {
-                if (checkExists(response) && checkUnlocked(response)) {
-                    JSONArray addressArray = new JSONArray();
-                    for (String address : addresses)
-                        addressArray.put(address);
-                    response.put("addresses", addressArray);
-                } else
-                    status = Response.Status.BAD_REQUEST;
-            } else if (uri.equals("/wallet/address")) {
-                if (checkExists(response) && checkUnlocked(response)) {
-                    response.put("address", addresses.get((int) (Math.random() * addresses.size())));
-                } else
-                    status = Response.Status.BAD_REQUEST;
-            } else if (uri.equals("/wallet/seeds")) {
-                if (checkExists(response) && checkUnlocked(response)) {
-                    JSONArray seedsArray = new JSONArray();
-                    seedsArray.put(seed);
-                    response.put("allseeds", seedsArray);
-                } else
-                    status = Response.Status.BAD_REQUEST;
-            } else if (uri.equals("/wallet/init")) {
-                if (binary == null) {
-                    response.put("message", "wallet is already encrypted, cannot encrypt again");
-                    status = Response.Status.BAD_REQUEST;
-                } else if (!exists || parms.get("force").equals("true")) {
-                    newWallet(parms.get("encryptionpassword"));
-                    response.put("primaryseed", seed);
-                } else {
-                    response.put("message", "wallet is already encrypted, cannot encrypt again");
-                    status = Response.Status.BAD_REQUEST;
-                }
-            } else if (uri.equals("/wallet/unlock")) {
-                if (checkExists(response) && parms.get("encryptionpassword").equals(password)) {
-                    unlocked = true;
-                } else {
-                    status = Response.Status.BAD_REQUEST;
-                    response.put("message", "provided encryption key is incorrect");
-                }
-            } else if (uri.equals("/wallet/lock")) {
-                if (checkExists(response))
-                    unlocked = false;
-                else
-                    status = Response.Status.BAD_REQUEST;
-            } else if (uri.equals("/wallet")) {
-                response.put("encrypted", exists);
-                response.put("unlocked", unlocked);
-                response.put("rescanning", false);
-                response.put("confirmedsiacoinbalance", 0);
-                response.put("unconfirmedoutgoingsiacoins", 0);
-                response.put("unconfirmedincomingsiacoins", 0);
-                response.put("siafundbalance", 0);
-                response.put("siacoinclaimbalance", 0);
-            } else {
-                response.put("message", "unsupported on cold storage wallet");
-                status = Response.Status.NOT_IMPLEMENTED;
+            switch (uri) {
+                case "/wallet/addresses":
+                    if (checkExists(response) && checkUnlocked(response)) {
+                        JSONArray addressArray = new JSONArray();
+                        for (String address : addresses)
+                            addressArray.put(address);
+                        response.put("addresses", addressArray);
+                    } else
+                        status = Response.Status.BAD_REQUEST;
+                    break;
+                case "/wallet/address":
+                    if (checkExists(response) && checkUnlocked(response)) {
+                        response.put("address", addresses.get((int) (Math.random() * addresses.size())));
+                    } else
+                        status = Response.Status.BAD_REQUEST;
+                    break;
+                case "/wallet/seeds":
+                    if (checkExists(response) && checkUnlocked(response)) {
+                        JSONArray seedsArray = new JSONArray();
+                        seedsArray.put(seed);
+                        response.put("allseeds", seedsArray);
+                    } else
+                        status = Response.Status.BAD_REQUEST;
+                    break;
+                case "/wallet/init":
+                    if (binary == null) {
+                        response.put("message", "wallet is already encrypted, cannot encrypt again");
+                        status = Response.Status.BAD_REQUEST;
+                    } else if (!exists || parms.get("force").equals("true")) {
+                        newWallet(parms.get("encryptionpassword"));
+                        response.put("primaryseed", seed);
+                    } else {
+                        response.put("message", "wallet is already encrypted, cannot encrypt again");
+                        status = Response.Status.BAD_REQUEST;
+                    }
+                    break;
+                case "/wallet/unlock":
+                    if (checkExists(response) && parms.get("encryptionpassword").equals(password)) {
+                        unlocked = true;
+                    } else {
+                        status = Response.Status.BAD_REQUEST;
+                        response.put("message", "provided encryption key is incorrect");
+                    }
+                    break;
+                case "/wallet/lock":
+                    if (checkExists(response))
+                        unlocked = false;
+                    else
+                        status = Response.Status.BAD_REQUEST;
+                    break;
+                case "/wallet":
+                    response.put("encrypted", exists);
+                    response.put("unlocked", unlocked);
+                    response.put("rescanning", false);
+                    response.put("confirmedsiacoinbalance", 0);
+                    response.put("unconfirmedoutgoingsiacoins", 0);
+                    response.put("unconfirmedincomingsiacoins", 0);
+                    response.put("siafundbalance", 0);
+                    response.put("siacoinclaimbalance", 0);
+                    break;
+                case "/wallet/transactions":
+                    break;
+                case "/consensus":
+                    response.put("synced", true);
+                    response.put("height", 0);
+                    break;
+                default:
+                    response.put("message", "unsupported on cold storage wallet");
+                    status = Response.Status.NOT_IMPLEMENTED;
+                    break;
             }
         } catch (JSONException e) {
             e.printStackTrace();

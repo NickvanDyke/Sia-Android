@@ -79,7 +79,7 @@
         <SwitchPreference
                 android:key="useExternal"
                 android:title="Use external storage"
-                android:summary="A local full node uses about 5GB of storage. By default it uses internal storage. Restart Sia Mobile after changing this. It's recommended you clear existing data using the button at the bottom of settings before changing this."
+                android:summary="A local full node uses about 5GB of storage. By default it uses internal storage. Restart Sia Mobile after changing this. It's recommended you clear existing data using the button at the bottom of settings after changing this."
                 android:defaultValue="false"/>
     </PreferenceCategory>
     <PreferenceCategory android:title="Misc">
