@@ -140,7 +140,7 @@ public class TransactionListAdapter extends ExpandableRecyclerViewAdapter<Transa
             holder.transactionStatus.setTextColor(Color.RED);
         } else {
             timeString = df.format(((TransactionExpandableGroup) group).getConfirmationDate());
-            holder.transactionStatus.setTextColor(MainActivity.defaultTextColor);
+            holder.transactionStatus.setTextColor(holder.transactionStatus.getTextColors().getDefaultColor());
         }
         holder.transactionStatus.setText(timeString);
 
@@ -149,7 +149,7 @@ public class TransactionListAdapter extends ExpandableRecyclerViewAdapter<Transa
 
         String valueText = transaction.getNetValueStringRounded();
         if (transaction.isNetZero()) {
-            holder.transactionValue.setTextColor(MainActivity.defaultTextColor);
+            holder.transactionValue.setTextColor(holder.transactionValue.getTextColors().getDefaultColor());
         } else if (valueText.contains("-")) {
             holder.transactionValue.setTextColor(red);
         } else {

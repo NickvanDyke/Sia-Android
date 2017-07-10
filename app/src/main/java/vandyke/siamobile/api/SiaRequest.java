@@ -97,7 +97,7 @@ public class SiaRequest extends StringRequest {
             INCORRECT_API_PASSWORD("Incorrect API password"),
             UNACCOUNTED_FOR_ERROR("Unexpected error"),
             ANOTHER_WALLET_SCAN_UNDERWAY("Wallet scan in progress. Please wait"),
-            WALLET_NOT_ENCRYPTED("Wallet has not been encrypted yet"),
+            WALLET_NOT_ENCRYPTED("Wallet has not been created yet"),
             INVALID_WORD_IN_SEED("Invalid word in seed"),
             UNSUPPORTED_ON_COLD_WALLET("Unsupported on cold storage wallet");
 

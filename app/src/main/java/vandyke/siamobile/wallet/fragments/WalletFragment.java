@@ -78,7 +78,7 @@ public class WalletFragment extends Fragment implements WalletMonitorService.Wal
 
         syncBar = (NumberProgressBar) view.findViewById(R.id.syncBar);
         syncText = (TextView) view.findViewById(R.id.syncText);
-        syncBar.setProgressTextColor(MainActivity.defaultTextColor);
+        syncBar.setProgressTextColor(syncText.getCurrentTextColor());
         walletStatusText = (TextView) view.findViewById(R.id.walletStatusText);
 
         transactionList = (RecyclerView) view.findViewById(R.id.transactionList);

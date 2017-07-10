@@ -57,7 +57,6 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static int defaultTextColor;
     public static int backgroundColor;
 
     private DrawerLayout drawerLayout;
@@ -112,7 +111,6 @@ public class MainActivity extends AppCompatActivity {
             toolbar.setPadding(0, getStatusBarHeight(), 0, 0);
         }
 
-        defaultTextColor = new TextView(this).getTextColors().getDefaultColor();
         TypedValue a = new TypedValue();
         getTheme().resolveAttribute(android.R.attr.windowBackground, a, true);
         backgroundColor = a.data;
