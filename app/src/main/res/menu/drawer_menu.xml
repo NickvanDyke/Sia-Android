@@ -36,8 +36,12 @@
                 android:icon="@drawable/ic_settings_white_48dp"
                 android:title="Settings"/>
         <item
-                android:id="@+id/drawer_item_links"
+                android:id="@+id/drawer_item_about"
                 android:icon="@drawable/icon_about"
+                android:title="About"/>
+        <item
+                android:id="@+id/drawer_item_links"
+                android:icon="@drawable/ic_link_white_48dp"
                 android:title="Links"/>
         <item
                 android:id="@+id/drawer_item_help"

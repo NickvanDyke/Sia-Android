@@ -47,4 +47,5 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:25.3.1'
     compile 'ch.acra:acra:4.9.2'
     compile 'com.nanohttpd:nanohttpd:2.2.0'
+    compile 'com.github.apl-devs:appintro:v4.2.0'
 }
