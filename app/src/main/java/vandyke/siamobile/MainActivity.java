@@ -43,7 +43,7 @@ import vandyke.siamobile.backend.coldstorage.ColdStorageService;
 import vandyke.siamobile.backend.siad.SiadMonitorService;
 import vandyke.siamobile.dialogs.DonateDialog;
 import vandyke.siamobile.files.fragments.FilesFragment;
-import vandyke.siamobile.help.fragments.HelpFragment;
+import vandyke.siamobile.help.ModesActivity;
 import vandyke.siamobile.help.fragments.WelcomeFragment;
 import vandyke.siamobile.hosting.fragments.HostingFragment;
 import vandyke.siamobile.misc.LinksFragment;
@@ -148,8 +148,8 @@ public class MainActivity extends AppCompatActivity {
                         displayFragment(LinksFragment.class, "Links");
                         return true;
                     case R.id.drawer_item_help:
-                        displayFragment(HelpFragment.class, "Help");
-                        return true;
+                        startActivity(new Intent(MainActivity.this, ModesActivity.class));
+                        return false;
                     case R.id.drawer_item_donate:
                         DonateDialog.createAndShow(getFragmentManager());
                         return false;

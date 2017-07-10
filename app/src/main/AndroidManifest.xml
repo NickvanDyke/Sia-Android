@@ -51,7 +51,10 @@
         <activity android:name=".about.AboutActivity"
                   android:screenOrientation="portrait"
                   android:launchMode="singleTask">
-
+        </activity>
+        <activity android:name=".help.ModesActivity"
+                  android:screenOrientation="portrait"
+                  android:launchMode="singleTask">
         </activity>
     </application>
 
