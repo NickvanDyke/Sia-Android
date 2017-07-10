@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
         }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_layout);
-        if (theme == Theme.CUSTOM) { // TODO: not working? just black background?
+        if (theme == Theme.CUSTOM) {
             byte[] b = Base64.decode(SiaMobileApplication.prefs.getString("customBgBase64", "null"), Base64.DEFAULT);
             Bitmap bitmap = BitmapFactory.decodeByteArray(b, 0, b.length);
             getWindow().setBackgroundDrawable(new BitmapDrawable(getResources(), bitmap));
