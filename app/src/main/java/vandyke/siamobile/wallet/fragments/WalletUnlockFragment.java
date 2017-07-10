@@ -8,7 +8,12 @@
 package vandyke.siamobile.wallet.fragments;
 
 import android.app.Fragment;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,11 +22,15 @@ import org.json.JSONObject;
 import vandyke.siamobile.R;
 import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
+import vandyke.siamobile.backend.WalletMonitorService;
 import vandyke.siamobile.misc.Utils;
 
 public class WalletUnlockFragment extends Fragment {
 
     private EditText password;
+
+    private ServiceConnection connection;
+    private boolean bound;
 
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_wallet_unlock, null);
@@ -31,7 +40,7 @@ public class WalletUnlockFragment extends Fragment {
                 Wallet.unlock(password.getText().toString(), new SiaRequest.VolleyCallback() {
                     public void onSuccess(JSONObject response) {
                         Utils.successSnackbar(view);
-//                        WalletFragment.refreshWallet(getFragmentManager());
+                        getActivity().bindService(new Intent(getActivity(), WalletMonitorService.class), connection, Context.BIND_AUTO_CREATE);
                         container.setVisibility(View.GONE);
                         Utils.hideSoftKeyboard(getActivity());
                     }
@@ -48,6 +57,23 @@ public class WalletUnlockFragment extends Fragment {
             }
         });
 
+        connection = new ServiceConnection() {
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                ((WalletMonitorService.LocalBinder)service).getService().refreshAll();
+                bound = true;
+            }
+
+            public void onServiceDisconnected(ComponentName name) {
+                bound = false;
+            }
+        };
+
         return view;
+    }
+
+    public void onDestroy() {
+        super.onDestroy();
+        if (bound && isAdded())
+            getActivity().unbindService(connection);
     }
 }

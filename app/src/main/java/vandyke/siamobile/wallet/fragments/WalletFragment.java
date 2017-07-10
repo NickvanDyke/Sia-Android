@@ -261,7 +261,6 @@ public class WalletFragment extends Fragment implements WalletMonitorService.Wal
         }
     }
 
-    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.toolbar_wallet, menu);
     }
