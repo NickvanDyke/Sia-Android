@@ -7,7 +7,6 @@
 
 package vandyke.siamobile;
 
-import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -231,7 +230,7 @@ public class MainActivity extends AppCompatActivity {
         if (drawerLayout.isDrawerVisible(GravityCompat.START))
             drawerLayout.closeDrawer(GravityCompat.START);
         else {
-            new AlertDialog.Builder(this)
+            Utils.getDialogBuilder(this)
                     .setTitle("Quit?")
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialogInterface, int i) {
