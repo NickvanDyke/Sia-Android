@@ -8,7 +8,7 @@
 
 <resources>
     <string-array name="operation_modes_entries">
-        <item>Cold storage wallet</item>
+        <item>Cold storage</item>
         <item>Remote full node</item>
         <item>Local full node</item>
     </string-array>

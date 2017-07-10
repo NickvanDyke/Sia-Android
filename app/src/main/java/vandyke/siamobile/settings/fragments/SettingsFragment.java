@@ -39,6 +39,7 @@ public class SettingsFragment extends PreferenceFragment {
     private SharedPreferences.OnSharedPreferenceChangeListener prefsListener;
 
     private PreferenceCategory operation;
+    private ListPreference operationMode;
     private EditTextPreference remoteAddress;
     private EditTextPreference apiPass;
     private SwitchPreference runLocalNodeInBackground;
@@ -71,7 +72,7 @@ public class SettingsFragment extends PreferenceFragment {
 
         final EditTextPreference decimal = ((EditTextPreference) findPreference("displayedDecimalPrecision"));
 
-        final ListPreference operationMode = (ListPreference) findPreference("operationMode");
+        operationMode = (ListPreference) findPreference("operationMode");
         operationMode.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             public boolean onPreferenceChange(Preference preference, Object o) {
                 if (((String) o).equals("local_full_node")
@@ -102,6 +103,18 @@ public class SettingsFragment extends PreferenceFragment {
                 return false;
             }
         });
+
+        switch(SiaMobileApplication.prefs.getString("operationMode", "cold_storage")) {
+            case "cold_storage":
+                operationMode.setSummary("Cold storage");
+                break;
+            case "remote_full_node":
+                operationMode.setSummary("Remote full node");
+                break;
+            case "local_full_node":
+                operationMode.setSummary("Local full node");
+                break;
+        }
     }
 
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -111,6 +124,7 @@ public class SettingsFragment extends PreferenceFragment {
             public void onServiceConnected(ComponentName name, IBinder service) {
                 walletMonitorService = ((WalletMonitorService.LocalBinder) service).getService();
                 bound = true;
+                walletMonitorService.postRefreshRunnable();
             }
 
             public void onServiceDisconnected(ComponentName name) {
@@ -126,21 +140,23 @@ public class SettingsFragment extends PreferenceFragment {
                         setColdStorageSettingsVisibility();
                         setRemoteSettingsVisibility();
                         setLocalSettingsVisibility();
-                        if (sharedPreferences.getString("operationMode", "cold_storage").equals("remote_full_node")) {
+                        if (sharedPreferences.getString("operationMode", "cold_storage").equals("cold_storage")) {
+                            operationMode.setSummary("Cold storage");
+                            editor.putString("address", "localhost:9990");
+                            getActivity().stopService(new Intent(getActivity(), SiadMonitorService.class));
+                            getActivity().startService(new Intent(getActivity(), ColdStorageService.class));
+                        } else if (sharedPreferences.getString("operationMode", "cold_storage").equals("remote_full_node")) {
+                            operationMode.setSummary("Remote full node");
                             editor.putString("address", sharedPreferences.getString("remoteAddress", "192.168.1.11:9980"));
                             getActivity().stopService(new Intent(getActivity(), ColdStorageService.class));
                             getActivity().stopService(new Intent(getActivity(), SiadMonitorService.class));
                         } else if (sharedPreferences.getString("operationMode", "cold_storage").equals("local_full_node")) {
+                            operationMode.setSummary("Local full node");
                             editor.putString("address", "localhost:9980");
                             getActivity().stopService(new Intent(getActivity(), ColdStorageService.class));
                             getActivity().startService(new Intent(getActivity(), SiadMonitorService.class));
-                        } else if (sharedPreferences.getString("operationMode", "cold_storage").equals("cold_storage")) {
-                            editor.putString("address", "localhost:9990");
-                            getActivity().stopService(new Intent(getActivity(), SiadMonitorService.class));
-                            getActivity().startService(new Intent(getActivity(), ColdStorageService.class));
                         }
                         editor.apply();
-//                        WalletFragment.refreshWallet(getFragmentManager());
                         break;
                     case "monitorRefreshInterval":
                         if (!bound)
