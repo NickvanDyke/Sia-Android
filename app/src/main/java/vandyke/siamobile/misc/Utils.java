@@ -49,7 +49,6 @@ public class Utils {
     public static AlertDialog.Builder getDialogBuilder(Context context) {
         switch (MainActivity.theme) {
             case LIGHT:
-                return new AlertDialog.Builder(context);
             case DARK:
                 return new AlertDialog.Builder(context);
             case AMOLED:
