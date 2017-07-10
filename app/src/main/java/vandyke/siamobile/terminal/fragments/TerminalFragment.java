@@ -38,7 +38,6 @@ public class TerminalFragment extends Fragment {
     private File siacFile;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        getActivity().setTitle("Terminal");
         View v = inflater.inflate(R.layout.fragment_terminal, container, false);
         siacFile = Utils.copyBinary("siac", getActivity(), true);
 

@@ -19,27 +19,26 @@ import vandyke.siamobile.R;
 public class HelpFragment extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        getActivity().setTitle("Help");
         View v = inflater.inflate(R.layout.fragment_help, null);
 
         final Button remoteButton = (Button)v.findViewById(R.id.remoteSetup);
         remoteButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                ((MainActivity)getActivity()).loadDrawerFragment(FragmentSetupRemote.class);
+                ((MainActivity)getActivity()).displayFragment(FragmentSetupRemote.class, "Setup");
             }
         });
 
         final Button localButton = (Button)v.findViewById(R.id.localSetup);
         localButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                ((MainActivity)getActivity()).loadDrawerFragment(FragmentSetupLocal.class);
+                ((MainActivity)getActivity()).displayFragment(FragmentSetupLocal.class, "Setup");
             }
         });
 
         final Button coldButton = (Button)v.findViewById(R.id.coldStorageSetup);
         coldButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                ((MainActivity)getActivity()).loadDrawerFragment(FragmentSetupCold.class);
+                ((MainActivity)getActivity()).displayFragment(FragmentSetupCold.class, "Setup");
             }
         });
 

@@ -17,7 +17,6 @@ import vandyke.siamobile.R;
 public class FilesFragment extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        getActivity().setTitle("Files");
         View v = inflater.inflate(R.layout.fragment_files, container, false);
         return v;
     }

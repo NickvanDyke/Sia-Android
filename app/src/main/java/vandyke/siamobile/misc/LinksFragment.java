@@ -17,7 +17,6 @@ import vandyke.siamobile.R;
 public class LinksFragment extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        getActivity().setTitle("Links");
         View v = inflater.inflate(R.layout.fragment_links, null);
         return v;
     }

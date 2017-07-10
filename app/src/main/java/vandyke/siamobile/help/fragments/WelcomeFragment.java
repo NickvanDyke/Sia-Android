@@ -25,12 +25,12 @@ public class WelcomeFragment extends Fragment {
             Button infoButton = (Button)v.findViewById(R.id.infoButton);
             setupButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    ((MainActivity)getActivity()).loadDrawerFragment(HelpFragment.class);
+                    ((MainActivity)getActivity()).displayFragment(HelpFragment.class, "Help");
                 }
             });
             infoButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    ((MainActivity)getActivity()).loadDrawerFragment(LinksFragment.class);
+                    ((MainActivity)getActivity()).displayFragment(LinksFragment.class, "Links");
                 }
             });
             return v;

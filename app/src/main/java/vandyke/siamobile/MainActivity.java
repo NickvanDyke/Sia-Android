@@ -63,9 +63,6 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private NavigationView navigationView;
-    private MenuItem activeMenuItem;
-    private MenuItem selectedMenuItem;
-    private boolean loadSomethingOnClose;
 
     private ArrayList<Fragment> fragments;
 
@@ -122,70 +119,49 @@ public class MainActivity extends AppCompatActivity {
 
         fragments = new ArrayList<>();
 
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close) {
-            public void onDrawerClosed(View drawerView) {
-                super.onDrawerClosed(drawerView);
-                if (selectedMenuItem == null || !loadSomethingOnClose)
-                    return;
-                switch (selectedMenuItem.getItemId()) {
-                    case R.id.drawer_item_files:
-                        loadDrawerFragment(FilesFragment.class);
-                        break;
-                    case R.id.drawer_item_wallet:
-                        loadDrawerFragment(WalletFragment.class);
-                        break;
-                    case R.id.drawer_item_hosting:
-                        loadDrawerFragment(HostingFragment.class);
-                        break;
-                    case R.id.drawer_item_terminal:
-                        loadDrawerFragment(TerminalFragment.class);
-                        break;
-                    case R.id.drawer_item_settings:
-                        loadDrawerFragment(SettingsFragment.class);
-                        break;
-                    case R.id.drawer_item_links:
-                        loadDrawerFragment(LinksFragment.class);
-                        break;
-                    case R.id.drawer_item_help:
-                        loadDrawerFragment(HelpFragment.class);
-                        break;
-                    case R.id.drawer_item_donate:
-                        DonateDialog.createAndShow(getFragmentManager());
-                        break;
-                    case R.id.drawer_item_about:
-                        startActivity(new Intent(MainActivity.this, AboutActivity.class));
-                        break;
-                }
-                loadSomethingOnClose = false;
-            }
-        };
-        drawerLayout.addDrawerListener(drawerToggle);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         // set action stuff for when drawer items are selected
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         navigationView = (NavigationView) findViewById(R.id.drawer_navigation_view);
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+        NavigationView.OnNavigationItemSelectedListener drawerListener = new NavigationView.OnNavigationItemSelectedListener() {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                selectedMenuItem = item;
-                if (selectedMenuItem == activeMenuItem) {
-                    loadSomethingOnClose = false;
-                    drawerLayout.closeDrawers();
-                    return true;
-                }
-
-                if (item.getGroupId() != R.id.dialogs) {
-                    getSupportActionBar().setTitle(item.getTitle());
-                    if (activeMenuItem != null)
-                        activeMenuItem.setChecked(false);
-                    item.setChecked(true);
-                    activeMenuItem = item;
-                }
-                loadSomethingOnClose = true;
                 drawerLayout.closeDrawers();
+                switch (item.getItemId()) {
+                    case R.id.drawer_item_files:
+                        displayFragment(FilesFragment.class, "Files");
+                        return true;
+                    case R.id.drawer_item_wallet:
+                        displayFragment(WalletFragment.class, "Wallet");
+                        return true;
+                    case R.id.drawer_item_hosting:
+                        displayFragment(HostingFragment.class, "Hosting");
+                        return true;
+                    case R.id.drawer_item_terminal:
+                        displayFragment(TerminalFragment.class, "Terminal");
+                        return true;
+                    case R.id.drawer_item_settings:
+                        displayFragment(SettingsFragment.class, "Settings");
+                        return true;
+                    case R.id.drawer_item_about:
+                        startActivity(new Intent(MainActivity.this, AboutActivity.class));
+                        return false;
+                    case R.id.drawer_item_links:
+                        displayFragment(LinksFragment.class, "Links");
+                        return true;
+                    case R.id.drawer_item_help:
+                        displayFragment(HelpFragment.class, "Help");
+                        return true;
+                    case R.id.drawer_item_donate:
+                        DonateDialog.createAndShow(getFragmentManager());
+                        return false;
+                }
                 return true;
             }
-        });
+        };
+        navigationView.setNavigationItemSelectedListener(drawerListener);
+        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close);
+        drawerLayout.addDrawerListener(drawerToggle);
 
         startService(new Intent(this, CleanupService.class));
         if (SiaMobileApplication.prefs.getString("operationMode", "cold_storage").equals("local_full_node"))
@@ -194,31 +170,31 @@ public class MainActivity extends AppCompatActivity {
             startService(new Intent(this, ColdStorageService.class));
 
         if (SiaMobileApplication.prefs.getBoolean("firstTime", true)) {
-            loadDrawerFragment(WelcomeFragment.class);
+            displayFragment(WelcomeFragment.class, "Sia Mobile");
             SiaMobileApplication.prefs.edit().putBoolean("firstTime", false).apply();
         } else
             switch (SiaMobileApplication.prefs.getString("startupPage", "wallet")) {
                 case "files":
-                    loadDrawerFragment(FilesFragment.class);
+                    drawerListener.onNavigationItemSelected(navigationView.getMenu().findItem(R.id.drawer_item_files));
                     navigationView.setCheckedItem(R.id.drawer_item_files);
                     break;
                 case "hosting":
-                    loadDrawerFragment(HostingFragment.class);
+                    drawerListener.onNavigationItemSelected(navigationView.getMenu().findItem(R.id.drawer_item_hosting));
                     navigationView.setCheckedItem(R.id.drawer_item_hosting);
                     break;
                 case "wallet":
-                    loadDrawerFragment(WalletFragment.class);
+                    drawerListener.onNavigationItemSelected(navigationView.getMenu().findItem(R.id.drawer_item_wallet));
                     navigationView.setCheckedItem(R.id.drawer_item_wallet);
                     break;
                 case "terminal":
-                    loadDrawerFragment(TerminalFragment.class);
+                    drawerListener.onNavigationItemSelected(navigationView.getMenu().findItem(R.id.drawer_item_terminal));
                     navigationView.setCheckedItem(R.id.drawer_item_terminal);
                     break;
             }
         startService(new Intent(this, WalletMonitorService.class));
     }
 
-    public void loadDrawerFragment(Class clazz) {
+    public void displayFragment(Class clazz, String title) {
         String className = clazz.getSimpleName();
         FragmentManager fragmentManager = getFragmentManager();
         Fragment newFragment = fragmentManager.findFragmentByTag(className);
@@ -226,12 +202,13 @@ public class MainActivity extends AppCompatActivity {
         transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
 
         for (Fragment fragment : fragments) {
-            transaction.hide(fragment);
+            if (fragment != newFragment)
+                transaction.hide(fragment);
         }
 
         if (newFragment == null) {
             try {
-                newFragment = (Fragment)clazz.newInstance();
+                newFragment = (Fragment) clazz.newInstance();
                 fragments.add(newFragment);
                 transaction.add(R.id.fragment_frame, newFragment, className);
             } catch (InstantiationException e) {
@@ -243,6 +220,7 @@ public class MainActivity extends AppCompatActivity {
             transaction.show(newFragment);
         }
         transaction.commit();
+        setTitle(title);
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {

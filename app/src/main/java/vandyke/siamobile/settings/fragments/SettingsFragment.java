@@ -54,7 +54,6 @@ public class SettingsFragment extends PreferenceFragment {
     private static final int SELECT_PICTURE = 1;
 
     public void onCreate(Bundle savedInstanceState) {
-        getActivity().setTitle("Settings");
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.settings);
 

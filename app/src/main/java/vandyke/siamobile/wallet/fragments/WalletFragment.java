@@ -56,7 +56,6 @@ public class WalletFragment extends Fragment implements WalletMonitorService.Wal
     private boolean bound = false;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        getActivity().setTitle("Wallet");
         view = inflater.inflate(R.layout.fragment_wallet, container, false);
         setHasOptionsMenu(true);
 

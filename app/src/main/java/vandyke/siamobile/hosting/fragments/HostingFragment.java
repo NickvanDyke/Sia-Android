@@ -17,7 +17,6 @@ import vandyke.siamobile.R;
 public class HostingFragment extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        getActivity().setTitle("Hosting");
         View v = inflater.inflate(R.layout.fragment_hosting, container, false);
         return v;
     }
