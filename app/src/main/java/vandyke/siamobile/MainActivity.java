@@ -228,6 +228,7 @@ public class MainActivity extends AppCompatActivity {
             if (resultCode == ModesActivity.COLD_STORAGE) {
                 SiaMobileApplication.prefs.edit().putString("operationMode", "cold_storage").apply();
                 displayFragment(WalletFragment.class, "Wallet", R.id.drawer_item_wallet);
+                navigationView.setCheckedItem(R.id.drawer_item_wallet);
             } else if (resultCode == ModesActivity.REMOTE_FULL_NODE) {
                 SiaMobileApplication.prefs.edit().putString("operationMode", "remote_full_node").apply();
                 displayFragment(FragmentSetupRemote.class, "Remote setup", null);
@@ -237,6 +238,7 @@ public class MainActivity extends AppCompatActivity {
                 else
                     Toast.makeText(this, "Sorry, but your device's CPU architecture is not supported by Sia's full node", Toast.LENGTH_LONG).show();
                 displayFragment(WalletFragment.class, "Wallet", R.id.drawer_item_wallet);
+                navigationView.setCheckedItem(R.id.drawer_item_wallet);
             }
         }
     }
@@ -312,7 +314,6 @@ public class MainActivity extends AppCompatActivity {
 
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        // Sync the toggle state after onRestoreInstanceState has occurred.
         drawerToggle.syncState();
     }
 

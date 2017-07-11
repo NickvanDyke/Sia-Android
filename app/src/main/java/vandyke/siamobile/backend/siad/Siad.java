@@ -15,9 +15,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Looper;
 import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
 import vandyke.siamobile.misc.Utils;
@@ -64,13 +62,13 @@ public class Siad extends Service {
             public void run() {
                 siadFile = Utils.copyBinary("siad", Siad.this, false);
                 if (siadFile == null) {
-                    Handler handler = new Handler(Looper.getMainLooper());
-                    handler.post(new Runnable() {
-                        public void run() {
-                            Utils.notification(Siad.this, SIAD_UNSUPPORTED_NOTIFICATION, R.drawable.ic_dns_white_48dp,
-                                    "Local full node", "Unsupported CPU architecture", false);
-                        }
-                    });
+//                    Handler handler = new Handler(Looper.getMainLooper());
+//                    handler.post(new Runnable() {
+//                        public void run() {
+//                            Utils.notification(Siad.this, SIAD_UNSUPPORTED_NOTIFICATION, R.drawable.ic_dns_white_48dp,
+//                                    "Local full node", "Unsupported CPU architecture", false);
+//                        }
+//                    });
                     stopForeground(true);
                     stopSelf();
                 } else {
