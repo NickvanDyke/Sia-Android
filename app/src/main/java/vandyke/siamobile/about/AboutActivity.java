@@ -1,6 +1,5 @@
 package vandyke.siamobile.about;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -8,8 +7,6 @@ import android.support.v4.content.ContextCompat;
 import com.github.paolorotolo.appintro.AppIntro;
 import com.github.paolorotolo.appintro.AppIntroFragment;
 import vandyke.siamobile.R;
-import vandyke.siamobile.help.ModesActivity;
-import vandyke.siamobile.misc.SiaMobileApplication;
 
 public class AboutActivity extends AppIntro {
 
@@ -49,20 +46,12 @@ public class AboutActivity extends AppIntro {
     public void onSkipPressed(Fragment currentFragment) {
         super.onSkipPressed(currentFragment);
         finish();
-        if (!SiaMobileApplication.prefs.getBoolean("hasViewedHelp", false)) {
-            startActivity(new Intent(this, ModesActivity.class));
-            SiaMobileApplication.prefs.edit().putBoolean("hasViewedHelp", true).apply();
-        }
     }
 
     @Override
     public void onDonePressed(Fragment currentFragment) {
         super.onDonePressed(currentFragment);
         finish();
-        if (!SiaMobileApplication.prefs.getBoolean("hasViewedHelp", false)) {
-            startActivity(new Intent(this, ModesActivity.class));
-            SiaMobileApplication.prefs.edit().putBoolean("hasViewedHelp", true).apply();
-        }
     }
 
     @Override

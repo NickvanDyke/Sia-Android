@@ -216,9 +216,10 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
 
-        if (!SiaMobileApplication.prefs.getBoolean("hasViewedAbout", false)) {
+        if (SiaMobileApplication.prefs.getBoolean("firstTime", true)) {
+            startActivity(new Intent(this, ModesActivity.class));
             startActivity(new Intent(this, AboutActivity.class));
-            SiaMobileApplication.prefs.edit().putBoolean("hasViewedAbout", true).apply();
+            SiaMobileApplication.prefs.edit().putBoolean("firstTime", false).apply();
         }
     }
 

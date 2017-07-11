@@ -26,6 +26,11 @@ public class ModesActivity extends AppIntro {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        addSlide(AppIntroFragment.newInstance("Options",
+                "Sia Mobile can operate in three different modes. Read the following slides and press the lower-left button on the slide of the mode you want. You can change this at any time in Settings.",
+                R.drawable.ic_settings_black_48dp, ContextCompat.getColor(this, android.R.color.white),
+                ContextCompat.getColor(this, android.R.color.black),
+                ContextCompat.getColor(this, android.R.color.darker_gray)));
         addSlide(AppIntroFragment.newInstance("Cold storage",
                 "Most secure. Limited functionality - can only view receive addresses and seed. Meant for securely" +
                         " storing coins for long periods of time.",
@@ -43,14 +48,13 @@ public class ModesActivity extends AppIntro {
                 R.drawable.local_node_graphic, ContextCompat.getColor(this, android.R.color.white),
                 ContextCompat.getColor(this, android.R.color.black),
                 ContextCompat.getColor(this, android.R.color.darker_gray)));
-        // OPTIONAL METHODS
-        // Override bar/separator color.
+
         setBarColor(ContextCompat.getColor(this, R.color.colorPrimary));
         setDoneText("Close");
 //        setSeparatorColor(Color.parseColor("#2196F3"));
 
         // Hide Skip/Done button.
-//        showSkipButton(false);
+        showSkipButton(false);
 //        setProgressButtonEnabled(false);
     }
 
@@ -58,13 +62,13 @@ public class ModesActivity extends AppIntro {
     public void onSkipPressed(Fragment currentFragment) {
         super.onSkipPressed(currentFragment);
         switch (currentSlide) {
-            case 0:
+            case 1:
                 setResult(COLD_STORAGE);
                 break;
-            case 1:
+            case 2:
                 setResult(REMOTE_FULL_NODE);
                 break;
-            case 2:
+            case 3:
                 setResult(LOCAL_FULL_NODE);
                 break;
         }
@@ -86,14 +90,15 @@ public class ModesActivity extends AppIntro {
                 break;
         }
         currentSlide = i;
+        showSkipButton(currentSlide != 0);
         switch (currentSlide) {
-            case 0:
-               setSkipText("Create");
-               break;
             case 1:
-                setSkipText("Setup");
+                setSkipText("Create");
                 break;
             case 2:
+                setSkipText("Setup");
+                break;
+            case 3:
                 setSkipText("Start");
                 showSkipButton(true);
                 break;
