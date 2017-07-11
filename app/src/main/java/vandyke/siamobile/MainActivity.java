@@ -157,11 +157,11 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.drawer_item_files:
                         displayFragment(FilesFragment.class, "Files", menuItemId);
                         return true;
-                    case R.id.drawer_item_wallet:
-                        displayFragment(WalletFragment.class, "Wallet", menuItemId);
-                        return true;
                     case R.id.drawer_item_hosting:
                         displayFragment(HostingFragment.class, "Hosting", menuItemId);
+                        return true;
+                    case R.id.drawer_item_wallet:
+                        displayFragment(WalletFragment.class, "Wallet", menuItemId);
                         return true;
                     case R.id.drawer_item_terminal:
                         displayFragment(TerminalFragment.class, "Terminal", menuItemId);
@@ -199,25 +199,25 @@ public class MainActivity extends AppCompatActivity {
 
         switch (SiaMobileApplication.prefs.getString("startupPage", "wallet")) {
             case "files":
-                drawerListener.onNavigationItemSelected(navigationView.getMenu().findItem(R.id.drawer_item_files));
+                displayFragment(FilesFragment.class, "Files", R.id.drawer_item_files);
                 navigationView.setCheckedItem(R.id.drawer_item_files);
                 break;
             case "hosting":
-                drawerListener.onNavigationItemSelected(navigationView.getMenu().findItem(R.id.drawer_item_hosting));
+                displayFragment(HostingFragment.class, "Hosting", R.id.drawer_item_hosting);
                 navigationView.setCheckedItem(R.id.drawer_item_hosting);
                 break;
             case "wallet":
-                drawerListener.onNavigationItemSelected(navigationView.getMenu().findItem(R.id.drawer_item_wallet));
+                displayFragment(WalletFragment.class, "Wallet", R.id.drawer_item_wallet);
                 navigationView.setCheckedItem(R.id.drawer_item_wallet);
                 break;
             case "terminal":
-                drawerListener.onNavigationItemSelected(navigationView.getMenu().findItem(R.id.drawer_item_terminal));
+                displayFragment(TerminalFragment.class, "Terminal", R.id.drawer_item_terminal);
                 navigationView.setCheckedItem(R.id.drawer_item_terminal);
                 break;
         }
 
         if (SiaMobileApplication.prefs.getBoolean("firstTime", true)) {
-            startActivity(new Intent(this, ModesActivity.class));
+            startActivityForResult(new Intent(this, ModesActivity.class), REQUEST_MODE);
             startActivity(new Intent(this, AboutActivity.class));
             SiaMobileApplication.prefs.edit().putBoolean("firstTime", false).apply();
         }
@@ -258,8 +258,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         for (Fragment fragment : fragments) {
-            if (fragment != newFragment && fragment.isVisible())
-                transaction.hide(fragment);
+            if (fragment != newFragment && fragment.isVisible()) // TODO: on first start, loading remote setup fragment doesn't hide
+                transaction.hide(fragment); // the wallet fragment. I think it might be because the wallet fragment isn't visible?
         }
 
         if (newFragment == null) {
