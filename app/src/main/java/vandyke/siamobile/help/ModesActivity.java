@@ -26,14 +26,18 @@ public class ModesActivity extends AppIntro {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        addSlide(AppIntroFragment.newInstance("Options",
-                "Sia Mobile can operate in three different modes. Read the following slides and press the lower-left button on the slide of the mode you want. You can change this at any time in Settings.",
+        addSlide(AppIntroFragment.newInstance("Modes",
+                "Sia Mobile can operate in three different modes, which are explained in the following slides. Press the " +
+                        "lower-left button on the slide of the mode you want. The modes are independent - changes " +
+                        "made while in one mode will not affect other modes. You can change mode at any time in Settings, " +
+                        "as well as view this again by selecting Help from the drawer.",
                 R.drawable.ic_settings_black_48dp, ContextCompat.getColor(this, android.R.color.white),
                 ContextCompat.getColor(this, android.R.color.black),
                 ContextCompat.getColor(this, android.R.color.darker_gray)));
         addSlide(AppIntroFragment.newInstance("Cold storage",
                 "Most secure. Limited functionality - can only view receive addresses and seed. Meant for securely" +
-                        " storing coins for long periods of time.",
+                        " storing coins for long periods of time. Completely offline - to see your correct balance and transactions, you'll" +
+                        " have to load your seed on a full node, such as Sia-UI.",
                 R.drawable.safe_image, ContextCompat.getColor(this, android.R.color.white),
                 ContextCompat.getColor(this, android.R.color.black),
                 ContextCompat.getColor(this, android.R.color.darker_gray)));
@@ -43,8 +47,8 @@ public class ModesActivity extends AppIntro {
                 ContextCompat.getColor(this, android.R.color.black),
                 ContextCompat.getColor(this, android.R.color.darker_gray)));
         addSlide(AppIntroFragment.newInstance("Local full node",
-                "Run a full node on your Android device. Completely independent. Allows all Sia features. Must " +
-                        "sync Sia blockchain, which uses significant storage - about 5GB.",
+                "Run a full node on your device. Completely independent. Allows all Sia features. Must " +
+                        "sync Sia blockchain, which uses significant storage and bandwidth - about 5GB.",
                 R.drawable.local_node_graphic, ContextCompat.getColor(this, android.R.color.white),
                 ContextCompat.getColor(this, android.R.color.black),
                 ContextCompat.getColor(this, android.R.color.darker_gray)));

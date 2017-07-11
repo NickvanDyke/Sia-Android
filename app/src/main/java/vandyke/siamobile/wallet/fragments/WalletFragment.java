@@ -135,7 +135,7 @@ public class WalletFragment extends Fragment implements WalletMonitorService.Wal
     public void onBalanceUpdate(WalletMonitorService service) {
         switch (walletMonitorService.getWalletStatus()) {
             case NONE:
-                walletStatusText.setText("No Wallet");
+                walletStatusText.setText("No wallet");
                 break;
             case LOCKED:
                 walletStatusText.setText("Locked");
@@ -170,7 +170,7 @@ public class WalletFragment extends Fragment implements WalletMonitorService.Wal
             syncBar.setProgress(100);
 //            syncNotification(R.drawable.ic_sync_white_48dp, "Syncing blockchain...", "Finished", false);
         } else if (syncProgress == 0) {
-            syncText.setText("Not Synced");
+            syncText.setText("Not synced");
             syncBar.setProgress(0);
 //            syncNotification(R.drawable.ic_sync_problem_white_48dp, "Syncing blockchain...", "Could not retrieve sync progress", false);
         } else {
@@ -194,6 +194,8 @@ public class WalletFragment extends Fragment implements WalletMonitorService.Wal
 
     public void onSyncError(SiaRequest.Error error) {
         error.snackbar(view);
+        syncText.setText("Not synced");
+        syncBar.setProgress(0);
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {

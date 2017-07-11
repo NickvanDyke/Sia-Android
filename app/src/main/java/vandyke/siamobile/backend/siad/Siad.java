@@ -20,6 +20,7 @@ import android.os.IBinder;
 import android.os.Looper;
 import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
+import vandyke.siamobile.backend.WalletMonitorService;
 import vandyke.siamobile.misc.Utils;
 
 import java.io.BufferedReader;
@@ -87,8 +88,9 @@ public class Siad extends Service {
                                     String line;
                                     while ((line = inputReader.readLine()) != null) {
                                         siadNotification(line);
+                                        if (line.contains("Finished loading") || line.contains("Done!"))
+                                            WalletMonitorService.staticRefreshAll();
                                     }
-                                    // TODO: ideally should refresh walletmonitorservice when done loading
                                     inputReader.close();
                                 } catch (IOException e) {
                                     e.printStackTrace();

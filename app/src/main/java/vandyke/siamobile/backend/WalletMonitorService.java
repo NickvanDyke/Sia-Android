@@ -29,6 +29,8 @@ import java.util.ArrayList;
 
 public class WalletMonitorService extends Service {
 
+    public static WalletMonitorService instance; // TODO: don't know if there's any disadvantages to this
+
     private final IBinder binder = new LocalBinder();
 
     public enum WalletStatus {
@@ -160,6 +162,7 @@ public class WalletMonitorService extends Service {
 
     @Override
     public void onCreate() {
+        instance = this;
         listeners = new ArrayList<>();
         walletStatus = WalletStatus.NONE;
         balanceHastings = new BigDecimal("0");
@@ -194,6 +197,7 @@ public class WalletMonitorService extends Service {
     public void onDestroy() {
         if (handler != null && refreshRunnable != null)
             handler.removeCallbacks(refreshRunnable);
+        instance = null;
     }
 
     @Override
@@ -309,5 +313,10 @@ public class WalletMonitorService extends Service {
         int blockTime = 9; // overestimate
         long diff = time - block100kTimestamp;
         return (int) (100000 + (diff / 60 / blockTime));
+    }
+
+    public static void staticRefreshAll() {
+        if (instance != null)
+            instance.refreshAll();
     }
 }

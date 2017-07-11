@@ -7,11 +7,13 @@
 
 package vandyke.siamobile.backend;
 
-import android.content.*;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.BatteryManager;
-import android.os.IBinder;
 import vandyke.siamobile.backend.coldstorage.ColdStorageService;
 import vandyke.siamobile.backend.siad.Siad;
 import vandyke.siamobile.backend.siad.SiadMonitorService;
@@ -20,23 +22,9 @@ import vandyke.siamobile.misc.SiaMobileApplication;
 public class GlobalPrefsListener implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private Context context;
-    private ServiceConnection connection;
-    private WalletMonitorService walletMonitorService;
-    private boolean bound;
 
     public GlobalPrefsListener(Context context) {
         this.context = context;
-        connection = new ServiceConnection() {
-            public void onServiceConnected(ComponentName name, IBinder service) {
-                walletMonitorService = ((WalletMonitorService.LocalBinder) service).getService();
-                bound = true;
-                walletMonitorService.postRefreshRunnable();
-            }
-
-            public void onServiceDisconnected(ComponentName name) {
-                bound = false;
-            }
-        };
     }
 
     @Override
@@ -67,16 +55,12 @@ public class GlobalPrefsListener implements SharedPreferences.OnSharedPreference
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        refreshWalletMonitorService();
+                        WalletMonitorService.staticRefreshAll();
                     }
                 }).start();
                 break;
             case "monitorRefreshInterval":
-                if (!bound)
-                    context.bindService(new Intent(context, WalletMonitorService.class), connection, Context.BIND_AUTO_CREATE);
-                else
-                    walletMonitorService.postRefreshRunnable();
-                break;
+                WalletMonitorService.staticRefreshAll();
             case "runLocalNodeOffWifi":
                 if (!SiaMobileApplication.prefs.getString("operationMode", "cold_storage").equals("local_full_node"))
                     break;
@@ -105,18 +89,9 @@ public class GlobalPrefsListener implements SharedPreferences.OnSharedPreference
                 if (sharedPreferences.getString("operationMode", "cold_storage").equals("remote_full_node")) {
                     editor.putString("address", sharedPreferences.getString("remoteAddress", "192.168.1.11:9980"));
                     if (editor.commit())
-                        refreshWalletMonitorService();
+                        WalletMonitorService.staticRefreshAll();
                 }
                 break;
         }
     }
-
-    private void refreshWalletMonitorService() {
-        if (!bound)
-            context.bindService(new Intent(context, WalletMonitorService.class), connection, Context.BIND_AUTO_CREATE);
-        else
-            walletMonitorService.refreshAll();
-    }
-
-    // TODO: wallet service is sometimes leaked
 }
