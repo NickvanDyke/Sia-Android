@@ -9,19 +9,19 @@ package vandyke.siamobile.wallet.transactionslist;
 
 import android.view.View;
 import android.widget.TextView;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import com.thoughtbot.expandablerecyclerview.viewholders.GroupViewHolder;
 import vandyke.siamobile.R;
 
 public class TransactionHeaderHolder extends GroupViewHolder {
 
-    protected TextView transactionStatus;
-    protected TextView transactionId;
-    protected TextView transactionValue;
+    @BindView(R.id.transactionStatus) protected TextView transactionStatus;
+    @BindView(R.id.transactionHeaderId) protected TextView transactionId;
+    @BindView(R.id.transactionValue) protected TextView transactionValue;
 
     public TransactionHeaderHolder(View itemView) {
         super(itemView);
-        transactionStatus = (TextView)itemView.findViewById(R.id.transactionStatus);
-        transactionId = (TextView)itemView.findViewById(R.id.transactionHeaderId);
-        transactionValue = (TextView)itemView.findViewById(R.id.transactionValue);
+        ButterKnife.bind(this, itemView);
     }
 }

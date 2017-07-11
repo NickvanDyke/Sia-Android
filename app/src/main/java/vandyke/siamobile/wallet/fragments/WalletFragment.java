@@ -20,6 +20,8 @@ import android.view.*;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import com.android.volley.VolleyError;
 import com.daimajia.numberprogressbar.NumberProgressBar;
 import org.json.JSONObject;
@@ -39,15 +41,18 @@ import java.util.ArrayList;
 
 public class WalletFragment extends Fragment implements WalletMonitorService.WalletUpdateListener {
 
-    private TextView balanceText;
-    private TextView balanceUsdText;
-    private TextView balanceUnconfirmedText;
-    private NumberProgressBar syncBar;
-    private TextView syncText;
-    private TextView walletStatusText;
-    private RecyclerView transactionList;
+    @BindView(R.id.sendButton) private Button sendButton;
+    @BindView(R.id.receiveButton) private Button receiveButton;
+    @BindView(R.id.balanceText) private TextView balanceText;
+    @BindView(R.id.balanceUsdText) private TextView balanceUsdText;
+    @BindView(R.id.balanceUnconfirmed) private TextView balanceUnconfirmedText;
+    @BindView(R.id.syncBar) private NumberProgressBar syncBar;
+    @BindView(R.id.syncText) private TextView syncText;
+    @BindView(R.id.walletStatusText) private TextView walletStatusText;
+    @BindView(R.id.transactionList) private RecyclerView transactionList;
+    @BindView(R.id.expandFrame) private FrameLayout expandFrame;
+
     private final ArrayList<TransactionExpandableGroup> transactionExpandableGroups = new ArrayList<>();
-    private FrameLayout expandFrame;
 
     private View view;
 
@@ -57,10 +62,8 @@ public class WalletFragment extends Fragment implements WalletMonitorService.Wal
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_wallet, container, false);
+        ButterKnife.bind(this, view);
         setHasOptionsMenu(true);
-
-        final Button receiveButton = (Button) view.findViewById(R.id.receiveButton);
-        final Button sendButton = (Button) view.findViewById(R.id.sendButton);
 
         if (MainActivity.theme == MainActivity.Theme.AMOLED || MainActivity.theme == MainActivity.Theme.CUSTOM) {
             view.findViewById(R.id.top_shadow).setVisibility(View.GONE);
@@ -72,21 +75,9 @@ public class WalletFragment extends Fragment implements WalletMonitorService.Wal
             sendButton.setBackgroundColor(android.R.color.transparent);
         }
 
-        balanceText = (TextView) view.findViewById(R.id.balanceText);
-        balanceUsdText = (TextView) view.findViewById(R.id.balanceUsdText);
-        balanceUnconfirmedText = (TextView) view.findViewById(R.id.balanceUnconfirmed);
-
-        syncBar = (NumberProgressBar) view.findViewById(R.id.syncBar);
-        syncText = (TextView) view.findViewById(R.id.syncText);
-        syncBar.setProgressTextColor(syncText.getCurrentTextColor());
-        walletStatusText = (TextView) view.findViewById(R.id.walletStatusText);
-
-        transactionList = (RecyclerView) view.findViewById(R.id.transactionList);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         transactionList.setLayoutManager(layoutManager);
         transactionList.addItemDecoration(new DividerItemDecoration(transactionList.getContext(), layoutManager.getOrientation()));
-
-        expandFrame = (FrameLayout) view.findViewById(R.id.expandFrame);
 
         sendButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {

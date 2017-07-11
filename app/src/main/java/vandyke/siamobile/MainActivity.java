@@ -34,6 +34,8 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import vandyke.siamobile.about.AboutActivity;
 import vandyke.siamobile.backend.CleanupService;
 import vandyke.siamobile.backend.GlobalPrefsListener;
@@ -62,9 +64,9 @@ public class MainActivity extends AppCompatActivity {
 
     private GlobalPrefsListener globalPrefsListener;
 
-    private DrawerLayout drawerLayout;
+    @BindView(R.id.drawer_layout) private DrawerLayout drawerLayout;
+    @BindView(R.id.drawer_navigation_view) private NavigationView navigationView;
     private ActionBarDrawerToggle drawerToggle;
-    private NavigationView navigationView;
 
     private Fragment currentlyVisibleFragment;
     private Stack<String> titleBackstack;
@@ -104,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
         super.onCreate(savedInstanceState);
+        ButterKnife.bind(this);
         setContentView(R.layout.activity_main_layout);
         if (theme == Theme.CUSTOM) {
             byte[] b = Base64.decode(SiaMobileApplication.prefs.getString("customBgBase64", "null"), Base64.DEFAULT);
@@ -145,8 +148,6 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         // set action stuff for when drawer items are selected
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        navigationView = (NavigationView) findViewById(R.id.drawer_navigation_view);
         NavigationView.OnNavigationItemSelectedListener drawerListener = new NavigationView.OnNavigationItemSelectedListener() {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 drawerLayout.closeDrawers();
