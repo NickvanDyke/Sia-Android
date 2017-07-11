@@ -116,10 +116,13 @@ public class SettingsFragment extends PreferenceFragment {
                         setLocalSettingsVisibility();
                         if (sharedPreferences.getString("operationMode", "cold_storage").equals("cold_storage")) {
                             operationMode.setSummary("Cold storage");
+                            operationMode.setValueIndex(0);
                         } else if (sharedPreferences.getString("operationMode", "cold_storage").equals("remote_full_node")) {
                             operationMode.setSummary("Remote full node");
+                            operationMode.setValueIndex(1);
                         } else if (sharedPreferences.getString("operationMode", "cold_storage").equals("local_full_node")) {
                             operationMode.setSummary("Local full node");
+                            operationMode.setValueIndex(2);
                         }
                         break;
                     case "theme":
