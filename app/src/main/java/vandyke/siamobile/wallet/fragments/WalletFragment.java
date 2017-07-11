@@ -241,7 +241,7 @@ public class WalletFragment extends Fragment implements WalletMonitorService.Wal
         return super.onOptionsItemSelected(item);
     }
 
-    private void replaceExpandFrame(Fragment fragment) {
+    public void replaceExpandFrame(Fragment fragment) {
         getFragmentManager().beginTransaction().replace(R.id.expandFrame, fragment).commit();
         expandFrame.setVisibility(View.VISIBLE);
     }

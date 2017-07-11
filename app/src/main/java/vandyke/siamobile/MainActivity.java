@@ -50,9 +50,9 @@ import vandyke.siamobile.misc.SiaMobileApplication;
 import vandyke.siamobile.misc.Utils;
 import vandyke.siamobile.settings.fragments.SettingsFragment;
 import vandyke.siamobile.terminal.fragments.TerminalFragment;
+import vandyke.siamobile.wallet.fragments.WalletCreateFragment;
 import vandyke.siamobile.wallet.fragments.WalletFragment;
 
-import java.util.ArrayList;
 import java.util.Stack;
 
 public class MainActivity extends AppCompatActivity {
@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
     private ActionBarDrawerToggle drawerToggle;
     private NavigationView navigationView;
 
-    private ArrayList<Fragment> fragments;
+    private Fragment currentlyVisibleFragment;
     private Stack<String> titleBackstack;
     private Stack<Integer> menuItemBackstack;
     private int backstackCount;
@@ -123,18 +123,16 @@ public class MainActivity extends AppCompatActivity {
         getTheme().resolveAttribute(android.R.attr.windowBackground, a, true);
         backgroundColor = a.data;
 
-        fragments = new ArrayList<>();
         titleBackstack = new Stack<>();
         menuItemBackstack = new Stack<>();
         backstackCount = 0;
         getFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
             public void onBackStackChanged() {
                 if (getFragmentManager().getBackStackEntryCount() < backstackCount) {
-                    Integer menuItemId;
                     titleBackstack.pop();
                     menuItemBackstack.pop();
                     setTitle(titleBackstack.peek());
-                    menuItemId = menuItemBackstack.peek();
+                    Integer menuItemId = menuItemBackstack.peek();
                     if (menuItemId != null)
                         navigationView.setCheckedItem(menuItemId);
                     backstackCount--;
@@ -200,19 +198,15 @@ public class MainActivity extends AppCompatActivity {
         switch (SiaMobileApplication.prefs.getString("startupPage", "wallet")) {
             case "files":
                 displayFragment(FilesFragment.class, "Files", R.id.drawer_item_files);
-                navigationView.setCheckedItem(R.id.drawer_item_files);
                 break;
             case "hosting":
                 displayFragment(HostingFragment.class, "Hosting", R.id.drawer_item_hosting);
-                navigationView.setCheckedItem(R.id.drawer_item_hosting);
                 break;
             case "wallet":
                 displayFragment(WalletFragment.class, "Wallet", R.id.drawer_item_wallet);
-                navigationView.setCheckedItem(R.id.drawer_item_wallet);
                 break;
             case "terminal":
                 displayFragment(TerminalFragment.class, "Terminal", R.id.drawer_item_terminal);
-                navigationView.setCheckedItem(R.id.drawer_item_terminal);
                 break;
         }
 
@@ -228,17 +222,18 @@ public class MainActivity extends AppCompatActivity {
             if (resultCode == ModesActivity.COLD_STORAGE) {
                 SiaMobileApplication.prefs.edit().putString("operationMode", "cold_storage").apply();
                 displayFragment(WalletFragment.class, "Wallet", R.id.drawer_item_wallet);
-                navigationView.setCheckedItem(R.id.drawer_item_wallet);
+                ((WalletFragment)currentlyVisibleFragment).replaceExpandFrame(new WalletCreateFragment());
             } else if (resultCode == ModesActivity.REMOTE_FULL_NODE) {
                 SiaMobileApplication.prefs.edit().putString("operationMode", "remote_full_node").apply();
                 displayFragment(FragmentSetupRemote.class, "Remote setup", null);
             } else if (resultCode == ModesActivity.LOCAL_FULL_NODE) {
-                if (Utils.isSiadSupported())
+                displayFragment(WalletFragment.class, "Wallet", R.id.drawer_item_wallet);
+                if (Utils.isSiadSupported()) {
                     SiaMobileApplication.prefs.edit().putString("operationMode", "local_full_node").apply();
-                else
+                    ((WalletFragment)currentlyVisibleFragment).replaceExpandFrame(new WalletCreateFragment());
+                } else
                     Toast.makeText(this, "Sorry, but your device's CPU architecture is not supported by Sia's full node", Toast.LENGTH_LONG).show();
                 displayFragment(WalletFragment.class, "Wallet", R.id.drawer_item_wallet);
-                navigationView.setCheckedItem(R.id.drawer_item_wallet);
             }
         }
     }
@@ -253,19 +248,14 @@ public class MainActivity extends AppCompatActivity {
         if (newFragment != null && newFragment.isVisible())
             return;
 
-        if (!fragments.isEmpty()) {
+        if (currentlyVisibleFragment != null) {
             transaction.addToBackStack(null);
-        }
-
-        for (Fragment fragment : fragments) {
-            if (fragment != newFragment && fragment.isVisible()) // TODO: on first start, loading remote setup fragment doesn't hide
-                transaction.hide(fragment); // the wallet fragment. I think it might be because the wallet fragment isn't visible?
+            transaction.hide(currentlyVisibleFragment);
         }
 
         if (newFragment == null) {
             try {
                 newFragment = (Fragment) clazz.newInstance();
-                fragments.add(newFragment);
                 transaction.add(R.id.fragment_frame, newFragment, className);
             } catch (InstantiationException e) {
                 e.printStackTrace();
@@ -275,10 +265,13 @@ public class MainActivity extends AppCompatActivity {
         } else {
             transaction.show(newFragment);
         }
-        transaction.commit();
         setTitle(title);
+        transaction.commit();
+        currentlyVisibleFragment = newFragment;
         titleBackstack.push(title);
         menuItemBackstack.push(menuItemId);
+        if (menuItemId != null)
+            navigationView.setCheckedItem(menuItemId);
     }
 
     public void onBackPressed() {
