@@ -38,22 +38,23 @@ public class GlobalPrefsListener implements SharedPreferences.OnSharedPreference
             }
         };
     }
+
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         switch (key) {
             case "operationMode":
-                if (sharedPreferences.getString("operationMode", "cold_storage").equals("cold_storage")) {
+                if (SiaMobileApplication.prefs.getString("operationMode", "cold_storage").equals("cold_storage")) {
                     if (editor.putString("address", "localhost:9990").commit()) {
                         context.stopService(new Intent(context, SiadMonitorService.class));
                         context.startService(new Intent(context, ColdStorageService.class));
                     }
-                } else if (sharedPreferences.getString("operationMode", "cold_storage").equals("remote_full_node")) {
+                } else if (SiaMobileApplication.prefs.getString("operationMode", "cold_storage").equals("remote_full_node")) {
                     if (editor.putString("address", sharedPreferences.getString("remoteAddress", "192.168.1.11:9980")).commit()) {
                         context.stopService(new Intent(context, ColdStorageService.class));
                         context.stopService(new Intent(context, SiadMonitorService.class));
                     }
-                } else if (sharedPreferences.getString("operationMode", "cold_storage").equals("local_full_node")) {
+                } else if (SiaMobileApplication.prefs.getString("operationMode", "cold_storage").equals("local_full_node")) {
                     if (editor.putString("address", "localhost:9980").commit()) {
                         context.stopService(new Intent(context, ColdStorageService.class));
                         context.startService(new Intent(context, SiadMonitorService.class));
@@ -77,6 +78,8 @@ public class GlobalPrefsListener implements SharedPreferences.OnSharedPreference
                     walletMonitorService.postRefreshRunnable();
                 break;
             case "runLocalNodeOffWifi":
+                if (!SiaMobileApplication.prefs.getString("operationMode", "cold_storage").equals("local_full_node"))
+                    break;
                 ConnectivityManager connectivityManager =
                         (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
                 NetworkInfo activeNetInfo = connectivityManager.getActiveNetworkInfo();
@@ -89,6 +92,8 @@ public class GlobalPrefsListener implements SharedPreferences.OnSharedPreference
                 }
                 break;
             case "localNodeMinBattery":
+                if (!SiaMobileApplication.prefs.getString("operationMode", "cold_storage").equals("local_full_node"))
+                    break;
                 Intent batteryStatus = context.registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
                 int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
                 if (level >= Integer.parseInt(SiaMobileApplication.prefs.getString("localNodeMinBattery", "20")))
@@ -112,4 +117,6 @@ public class GlobalPrefsListener implements SharedPreferences.OnSharedPreference
         else
             walletMonitorService.refreshAll();
     }
+
+    // TODO: wallet service is sometimes leaked
 }

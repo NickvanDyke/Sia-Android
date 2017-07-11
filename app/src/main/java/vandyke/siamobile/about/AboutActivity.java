@@ -13,6 +13,8 @@ public class AboutActivity extends AppIntro {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // TODO: need to make this more memory efficient while still using sharp images
+
         addSlide(AppIntroFragment.newInstance("Completely private",
                 "Sia splits apart, encrypts, and distributes your files across a decentralized network. Since you hold the keys, you own your data. No outside company can access or control your files, unlike traditional cloud storage providers.",
                 R.drawable.siainfo1, ContextCompat.getColor(this, android.R.color.white),
