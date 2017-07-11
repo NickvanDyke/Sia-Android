@@ -33,6 +33,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
+import android.widget.Toast;
 import vandyke.siamobile.about.AboutActivity;
 import vandyke.siamobile.backend.CleanupService;
 import vandyke.siamobile.backend.GlobalPrefsListener;
@@ -42,7 +43,7 @@ import vandyke.siamobile.backend.siad.SiadMonitorService;
 import vandyke.siamobile.dialogs.DonateDialog;
 import vandyke.siamobile.files.fragments.FilesFragment;
 import vandyke.siamobile.help.ModesActivity;
-import vandyke.siamobile.help.fragments.WelcomeFragment;
+import vandyke.siamobile.help.fragments.FragmentSetupRemote;
 import vandyke.siamobile.hosting.fragments.HostingFragment;
 import vandyke.siamobile.misc.LinksFragment;
 import vandyke.siamobile.misc.SiaMobileApplication;
@@ -129,7 +130,6 @@ public class MainActivity extends AppCompatActivity {
         getFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
             public void onBackStackChanged() {
                 if (getFragmentManager().getBackStackEntryCount() < backstackCount) {
-                    System.out.println("backstack was decremented");
                     Integer menuItemId;
                     titleBackstack.pop();
                     menuItemBackstack.pop();
@@ -195,36 +195,49 @@ public class MainActivity extends AppCompatActivity {
         else if (SiaMobileApplication.prefs.getString("operationMode", "cold_storage").equals("cold_storage"))
             startService(new Intent(this, ColdStorageService.class));
 
-        if (SiaMobileApplication.prefs.getBoolean("firstTime", true)) {
-            displayFragment(WelcomeFragment.class, "Sia Mobile", null);
-            SiaMobileApplication.prefs.edit().putBoolean("firstTime", false).apply();
-        } else
-            switch (SiaMobileApplication.prefs.getString("startupPage", "wallet")) {
-                case "files":
-                    drawerListener.onNavigationItemSelected(navigationView.getMenu().findItem(R.id.drawer_item_files));
-                    navigationView.setCheckedItem(R.id.drawer_item_files);
-                    break;
-                case "hosting":
-                    drawerListener.onNavigationItemSelected(navigationView.getMenu().findItem(R.id.drawer_item_hosting));
-                    navigationView.setCheckedItem(R.id.drawer_item_hosting);
-                    break;
-                case "wallet":
-                    drawerListener.onNavigationItemSelected(navigationView.getMenu().findItem(R.id.drawer_item_wallet));
-                    navigationView.setCheckedItem(R.id.drawer_item_wallet);
-                    break;
-                case "terminal":
-                    drawerListener.onNavigationItemSelected(navigationView.getMenu().findItem(R.id.drawer_item_terminal));
-                    navigationView.setCheckedItem(R.id.drawer_item_terminal);
-                    break;
-            }
         startService(new Intent(this, WalletMonitorService.class));
+
+        switch (SiaMobileApplication.prefs.getString("startupPage", "wallet")) {
+            case "files":
+                drawerListener.onNavigationItemSelected(navigationView.getMenu().findItem(R.id.drawer_item_files));
+                navigationView.setCheckedItem(R.id.drawer_item_files);
+                break;
+            case "hosting":
+                drawerListener.onNavigationItemSelected(navigationView.getMenu().findItem(R.id.drawer_item_hosting));
+                navigationView.setCheckedItem(R.id.drawer_item_hosting);
+                break;
+            case "wallet":
+                drawerListener.onNavigationItemSelected(navigationView.getMenu().findItem(R.id.drawer_item_wallet));
+                navigationView.setCheckedItem(R.id.drawer_item_wallet);
+                break;
+            case "terminal":
+                drawerListener.onNavigationItemSelected(navigationView.getMenu().findItem(R.id.drawer_item_terminal));
+                navigationView.setCheckedItem(R.id.drawer_item_terminal);
+                break;
+        }
+
+        if (!SiaMobileApplication.prefs.getBoolean("hasViewedAbout", false)) {
+            startActivity(new Intent(this, AboutActivity.class));
+            SiaMobileApplication.prefs.edit().putBoolean("hasViewedAbout", true).apply();
+        }
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_MODE) {
-
+            if (resultCode == ModesActivity.COLD_STORAGE) {
+                SiaMobileApplication.prefs.edit().putString("operationMode", "cold_storage").apply();
+                displayFragment(WalletFragment.class, "Wallet", R.id.drawer_item_wallet);
+            } else if (resultCode == ModesActivity.REMOTE_FULL_NODE) {
+                SiaMobileApplication.prefs.edit().putString("operationMode", "remote_full_node").apply();
+                displayFragment(FragmentSetupRemote.class, "Remote setup", null);
+            } else if (resultCode == ModesActivity.LOCAL_FULL_NODE) {
+                if (Utils.isSiadSupported())
+                    SiaMobileApplication.prefs.edit().putString("operationMode", "local_full_node").apply();
+                else
+                    Toast.makeText(this, "Sorry, but your device's CPU architecture is not supported by Sia's full node", Toast.LENGTH_LONG).show();
+                displayFragment(WalletFragment.class, "Wallet", R.id.drawer_item_wallet);
+            }
         }
-        System.out.println(resultCode);
     }
 
     public void displayFragment(Class clazz, String title, Integer menuItemId) {

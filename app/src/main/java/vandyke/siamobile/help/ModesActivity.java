@@ -18,6 +18,8 @@ import vandyke.siamobile.R;
 public class ModesActivity extends AppIntro {
 
     public static int COLD_STORAGE = 0;
+    public static int REMOTE_FULL_NODE = 1;
+    public static int LOCAL_FULL_NODE = 2;
 
     private int currentSlide;
 
@@ -55,7 +57,17 @@ public class ModesActivity extends AppIntro {
     @Override
     public void onSkipPressed(Fragment currentFragment) {
         super.onSkipPressed(currentFragment);
-        setResult(2);
+        switch (currentSlide) {
+            case 0:
+                setResult(COLD_STORAGE);
+                break;
+            case 1:
+                setResult(REMOTE_FULL_NODE);
+                break;
+            case 2:
+                setResult(LOCAL_FULL_NODE);
+                break;
+        }
         finish();
     }
 
@@ -63,7 +75,6 @@ public class ModesActivity extends AppIntro {
     public void onDonePressed(Fragment currentFragment) {
         super.onDonePressed(currentFragment);
         finish();
-        // Do something when users tap on Done button.
     }
 
     @Override

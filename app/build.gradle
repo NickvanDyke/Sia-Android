@@ -48,4 +48,6 @@ dependencies {
     compile 'ch.acra:acra:4.9.2'
     compile 'com.nanohttpd:nanohttpd:2.2.0'
     compile 'com.github.apl-devs:appintro:v4.2.0'
+    compile 'com.jakewharton:butterknife:8.7.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.7.0'
 }
