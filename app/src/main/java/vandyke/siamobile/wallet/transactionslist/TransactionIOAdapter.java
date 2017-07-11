@@ -16,9 +16,9 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import vandyke.siamobile.R;
 import vandyke.siamobile.api.Wallet;
-import vandyke.siamobile.wallet.transaction.TransactionIOBase;
-import vandyke.siamobile.wallet.transaction.TransactionInput;
-import vandyke.siamobile.wallet.transaction.TransactionOutput;
+import vandyke.siamobile.backend.transaction.TransactionIOBase;
+import vandyke.siamobile.backend.transaction.TransactionInput;
+import vandyke.siamobile.backend.transaction.TransactionOutput;
 
 import java.util.ArrayList;
 

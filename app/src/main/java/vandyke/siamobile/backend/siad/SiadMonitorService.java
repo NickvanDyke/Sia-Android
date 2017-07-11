@@ -16,7 +16,7 @@ import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import vandyke.siamobile.backend.StatusReceiver;
-import vandyke.siamobile.misc.SiaMobileApplication;
+import vandyke.siamobile.SiaMobileApplication;
 
 public class SiadMonitorService extends Service {
 

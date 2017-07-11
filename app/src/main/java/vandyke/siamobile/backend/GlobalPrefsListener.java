@@ -17,7 +17,7 @@ import android.os.BatteryManager;
 import vandyke.siamobile.backend.coldstorage.ColdStorageService;
 import vandyke.siamobile.backend.siad.Siad;
 import vandyke.siamobile.backend.siad.SiadMonitorService;
-import vandyke.siamobile.misc.SiaMobileApplication;
+import vandyke.siamobile.SiaMobileApplication;
 
 public class GlobalPrefsListener implements SharedPreferences.OnSharedPreferenceChangeListener {
 

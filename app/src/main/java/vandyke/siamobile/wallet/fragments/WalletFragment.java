@@ -30,9 +30,9 @@ import vandyke.siamobile.R;
 import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
 import vandyke.siamobile.backend.WalletMonitorService;
-import vandyke.siamobile.misc.SiaMobileApplication;
+import vandyke.siamobile.SiaMobileApplication;
 import vandyke.siamobile.misc.Utils;
-import vandyke.siamobile.wallet.transaction.Transaction;
+import vandyke.siamobile.backend.transaction.Transaction;
 import vandyke.siamobile.wallet.transactionslist.TransactionExpandableGroup;
 import vandyke.siamobile.wallet.transactionslist.TransactionListAdapter;
 

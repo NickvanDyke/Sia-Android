@@ -5,7 +5,7 @@
  * included in this source code package. All rights are reserved, with the exception of what is specified there.
  */
 
-package vandyke.siamobile.wallet.transaction;
+package vandyke.siamobile.backend.transaction;
 
 import org.json.JSONArray;
 import org.json.JSONException;

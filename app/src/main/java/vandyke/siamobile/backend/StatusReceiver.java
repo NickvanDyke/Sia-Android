@@ -14,7 +14,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.BatteryManager;
 import vandyke.siamobile.backend.siad.Siad;
-import vandyke.siamobile.misc.SiaMobileApplication;
+import vandyke.siamobile.SiaMobileApplication;
 
 public class StatusReceiver extends BroadcastReceiver {
 

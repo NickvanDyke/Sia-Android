@@ -10,7 +10,7 @@ package vandyke.siamobile.backend.coldstorage;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-import vandyke.siamobile.misc.SiaMobileApplication;
+import vandyke.siamobile.SiaMobileApplication;
 
 import java.io.IOException;
 

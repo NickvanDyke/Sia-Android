@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import vandyke.siamobile.backend.coldstorage.ColdStorageService;
 import vandyke.siamobile.backend.siad.SiadMonitorService;
-import vandyke.siamobile.misc.SiaMobileApplication;
+import vandyke.siamobile.SiaMobileApplication;
 
 public class BootReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {

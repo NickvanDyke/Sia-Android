@@ -18,7 +18,7 @@ import android.support.design.widget.Snackbar;
 import android.util.Base64;
 import vandyke.siamobile.BuildConfig;
 import vandyke.siamobile.R;
-import vandyke.siamobile.misc.SiaMobileApplication;
+import vandyke.siamobile.SiaMobileApplication;
 import vandyke.siamobile.misc.Utils;
 
 import java.io.ByteArrayOutputStream;

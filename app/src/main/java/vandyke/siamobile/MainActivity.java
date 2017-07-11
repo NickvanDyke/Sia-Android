@@ -48,7 +48,6 @@ import vandyke.siamobile.help.ModesActivity;
 import vandyke.siamobile.help.fragments.FragmentSetupRemote;
 import vandyke.siamobile.hosting.fragments.HostingFragment;
 import vandyke.siamobile.misc.LinksFragment;
-import vandyke.siamobile.misc.SiaMobileApplication;
 import vandyke.siamobile.misc.Utils;
 import vandyke.siamobile.settings.fragments.SettingsFragment;
 import vandyke.siamobile.terminal.fragments.TerminalFragment;

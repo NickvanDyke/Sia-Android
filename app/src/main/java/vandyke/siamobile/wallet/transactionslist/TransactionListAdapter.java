@@ -23,8 +23,8 @@ import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
 import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
 import vandyke.siamobile.misc.Utils;
-import vandyke.siamobile.wallet.transaction.Transaction;
-import vandyke.siamobile.wallet.transaction.TransactionIOBase;
+import vandyke.siamobile.backend.transaction.Transaction;
+import vandyke.siamobile.backend.transaction.TransactionIOBase;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
