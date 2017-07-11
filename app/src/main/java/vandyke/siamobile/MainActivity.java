@@ -52,10 +52,12 @@ import vandyke.siamobile.terminal.fragments.TerminalFragment;
 import vandyke.siamobile.wallet.fragments.WalletFragment;
 
 import java.util.ArrayList;
+import java.util.Stack;
 
 public class MainActivity extends AppCompatActivity {
 
     public static int backgroundColor;
+    public static int REQUEST_MODE = 2;
 
     private GlobalPrefsListener globalPrefsListener;
 
@@ -64,6 +66,9 @@ public class MainActivity extends AppCompatActivity {
     private NavigationView navigationView;
 
     private ArrayList<Fragment> fragments;
+    private Stack<String> titleBackstack;
+    private Stack<Integer> menuItemBackstack;
+    private int backstackCount;
 
     public enum Theme {
         LIGHT, DARK, AMOLED, CUSTOM
@@ -118,6 +123,26 @@ public class MainActivity extends AppCompatActivity {
         backgroundColor = a.data;
 
         fragments = new ArrayList<>();
+        titleBackstack = new Stack<>();
+        menuItemBackstack = new Stack<>();
+        backstackCount = 0;
+        getFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+            public void onBackStackChanged() {
+                if (getFragmentManager().getBackStackEntryCount() < backstackCount) {
+                    System.out.println("backstack was decremented");
+                    Integer menuItemId;
+                    titleBackstack.pop();
+                    menuItemBackstack.pop();
+                    setTitle(titleBackstack.peek());
+                    menuItemId = menuItemBackstack.peek();
+                    if (menuItemId != null)
+                        navigationView.setCheckedItem(menuItemId);
+                    backstackCount--;
+                } else {
+                    backstackCount++;
+                }
+            }
+        });
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
@@ -127,30 +152,31 @@ public class MainActivity extends AppCompatActivity {
         NavigationView.OnNavigationItemSelectedListener drawerListener = new NavigationView.OnNavigationItemSelectedListener() {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 drawerLayout.closeDrawers();
-                switch (item.getItemId()) {
+                int menuItemId = item.getItemId();
+                switch (menuItemId) {
                     case R.id.drawer_item_files:
-                        displayFragment(FilesFragment.class, "Files");
+                        displayFragment(FilesFragment.class, "Files", menuItemId);
                         return true;
                     case R.id.drawer_item_wallet:
-                        displayFragment(WalletFragment.class, "Wallet");
+                        displayFragment(WalletFragment.class, "Wallet", menuItemId);
                         return true;
                     case R.id.drawer_item_hosting:
-                        displayFragment(HostingFragment.class, "Hosting");
+                        displayFragment(HostingFragment.class, "Hosting", menuItemId);
                         return true;
                     case R.id.drawer_item_terminal:
-                        displayFragment(TerminalFragment.class, "Terminal");
+                        displayFragment(TerminalFragment.class, "Terminal", menuItemId);
                         return true;
                     case R.id.drawer_item_settings:
-                        displayFragment(SettingsFragment.class, "Settings");
+                        displayFragment(SettingsFragment.class, "Settings", menuItemId);
                         return true;
                     case R.id.drawer_item_about:
                         startActivity(new Intent(MainActivity.this, AboutActivity.class));
                         return false;
                     case R.id.drawer_item_links:
-                        displayFragment(LinksFragment.class, "Links");
+                        displayFragment(LinksFragment.class, "Links", menuItemId);
                         return true;
                     case R.id.drawer_item_help:
-                        startActivity(new Intent(MainActivity.this, ModesActivity.class));
+                        startActivityForResult(new Intent(MainActivity.this, ModesActivity.class), REQUEST_MODE);
                         return false;
                     case R.id.drawer_item_donate:
                         DonateDialog.createAndShow(getFragmentManager());
@@ -170,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
             startService(new Intent(this, ColdStorageService.class));
 
         if (SiaMobileApplication.prefs.getBoolean("firstTime", true)) {
-            displayFragment(WelcomeFragment.class, "Sia Mobile");
+            displayFragment(WelcomeFragment.class, "Sia Mobile", null);
             SiaMobileApplication.prefs.edit().putBoolean("firstTime", false).apply();
         } else
             switch (SiaMobileApplication.prefs.getString("startupPage", "wallet")) {
@@ -194,15 +220,29 @@ public class MainActivity extends AppCompatActivity {
         startService(new Intent(this, WalletMonitorService.class));
     }
 
-    public void displayFragment(Class clazz, String title) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_MODE) {
+
+        }
+        System.out.println(resultCode);
+    }
+
+    public void displayFragment(Class clazz, String title, Integer menuItemId) {
         String className = clazz.getSimpleName();
         FragmentManager fragmentManager = getFragmentManager();
         Fragment newFragment = fragmentManager.findFragmentByTag(className);
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
 
+        if (newFragment != null && newFragment.isVisible())
+            return;
+
+        if (!fragments.isEmpty()) {
+            transaction.addToBackStack(null);
+        }
+
         for (Fragment fragment : fragments) {
-            if (fragment != newFragment)
+            if (fragment != newFragment && fragment.isVisible())
                 transaction.hide(fragment);
         }
 
@@ -221,20 +261,14 @@ public class MainActivity extends AppCompatActivity {
         }
         transaction.commit();
         setTitle(title);
-    }
-
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (drawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+        titleBackstack.push(title);
+        menuItemBackstack.push(menuItemId);
     }
 
     public void onBackPressed() {
         if (drawerLayout.isDrawerVisible(GravityCompat.START))
             drawerLayout.closeDrawer(GravityCompat.START);
-        else {
+        else if (titleBackstack.size() <= 1) {
             Utils.getDialogBuilder(this)
                     .setTitle("Quit?")
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -244,7 +278,15 @@ public class MainActivity extends AppCompatActivity {
                     })
                     .setNegativeButton("No", null)
                     .show();
+        } else {
+            super.onBackPressed();
         }
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (drawerToggle.onOptionsItemSelected(item))
+            return true;
+        return super.onOptionsItemSelected(item);
     }
 
     public void copyTextView(View view) {

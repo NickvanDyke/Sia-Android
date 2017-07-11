@@ -24,21 +24,21 @@ public class HelpFragment extends Fragment {
         final Button remoteButton = (Button)v.findViewById(R.id.remoteSetup);
         remoteButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                ((MainActivity)getActivity()).displayFragment(FragmentSetupRemote.class, "Setup");
+                ((MainActivity)getActivity()).displayFragment(FragmentSetupRemote.class, "Setup", null);
             }
         });
 
         final Button localButton = (Button)v.findViewById(R.id.localSetup);
         localButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                ((MainActivity)getActivity()).displayFragment(FragmentSetupLocal.class, "Setup");
+                ((MainActivity)getActivity()).displayFragment(FragmentSetupLocal.class, "Setup", null);
             }
         });
 
         final Button coldButton = (Button)v.findViewById(R.id.coldStorageSetup);
         coldButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                ((MainActivity)getActivity()).displayFragment(FragmentSetupCold.class, "Setup");
+                ((MainActivity)getActivity()).displayFragment(FragmentSetupCold.class, "Setup", null);
             }
         });
 

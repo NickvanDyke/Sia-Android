@@ -17,6 +17,8 @@ import vandyke.siamobile.R;
 
 public class ModesActivity extends AppIntro {
 
+    public static int COLD_STORAGE = 0;
+
     private int currentSlide;
 
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -53,8 +55,8 @@ public class ModesActivity extends AppIntro {
     @Override
     public void onSkipPressed(Fragment currentFragment) {
         super.onSkipPressed(currentFragment);
+        setResult(2);
         finish();
-        // Do something when users tap on Skip button.
     }
 
     @Override
