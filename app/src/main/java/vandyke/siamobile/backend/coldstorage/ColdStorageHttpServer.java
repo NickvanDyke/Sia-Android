@@ -16,10 +16,7 @@ import org.json.JSONObject;
 import vandyke.siamobile.SiaMobileApplication;
 import vandyke.siamobile.misc.Utils;
 
-import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
@@ -32,7 +29,7 @@ public class ColdStorageHttpServer extends NanoHTTPD {
     private boolean exists;
     private boolean unlocked;
 
-    private File binary;
+    private Context context;
 
     public ColdStorageHttpServer(Context context) {
         super("localhost", 9990);
@@ -41,7 +38,7 @@ public class ColdStorageHttpServer extends NanoHTTPD {
         password = SiaMobileApplication.prefs.getString("coldStoragePassword", "nopass");
         exists = SiaMobileApplication.prefs.getBoolean("coldStorageExists", false);
         unlocked = false;
-        binary = Utils.copyBinary("sia-coldstorage", context, true);
+        this.context = context;
     }
 
     public Response serve(IHTTPSession session) {
@@ -82,10 +79,7 @@ public class ColdStorageHttpServer extends NanoHTTPD {
                         status = Response.Status.BAD_REQUEST;
                     break;
                 case "/wallet/init":
-                    if (binary == null) {
-                        response.put("message", "wallet is already encrypted, cannot encrypt again");
-                        status = Response.Status.BAD_REQUEST;
-                    } else if (!exists || parms.get("force").equals("true")) {
+                    if (!exists || parms.get("force").equals("true")) {
                         newWallet(parms.get("encryptionpassword"));
                         response.put("primaryseed", seed);
                     } else {
@@ -152,40 +146,19 @@ public class ColdStorageHttpServer extends NanoHTTPD {
     }
 
     public void newWallet(String password) {
-        try {
-            ArrayList<String> fullCommand = new ArrayList<>();
-            fullCommand.add(0, binary.getAbsolutePath());
-            ProcessBuilder pb = new ProcessBuilder(fullCommand);
-            pb.redirectErrorStream(true);
-            Process process = pb.start();
-
-            StringBuilder stdOut = new StringBuilder();
-            BufferedReader inputReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            int read;
-            char[] buffer = new char[1024];
-            while ((read = inputReader.read(buffer)) > 0) {
-                stdOut.append(new String(buffer), 0, read);
-            }
-            inputReader.close();
-            JSONObject json = new JSONObject(stdOut.toString());
-            seed = json.getString("Seed");
-            JSONArray addressesJson = json.getJSONArray("Addresses");
-            addresses.clear();
-            for (int i = 0; i < addressesJson.length(); i++)
-                addresses.add(addressesJson.getString(i).trim());
-            SharedPreferences.Editor editor = SiaMobileApplication.prefs.edit();
-            this.password = password;
-            exists = true;
-            unlocked = false;
-            editor.putString("coldStorageSeed", seed);
-            editor.putStringSet("coldStorageAddresses", new HashSet<>(addresses));
-            editor.putString("coldStoragePassword", password);
-            editor.putBoolean("coldStorageExists", true);
-            editor.apply();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        ArrayList<String> wallet = Utils.getNewWallet(context);
+        if (wallet == null)
+            return;
+        seed = wallet.remove(0);
+        addresses = wallet;
+        SharedPreferences.Editor editor = SiaMobileApplication.prefs.edit();
+        this.password = password;
+        exists = true;
+        unlocked = false;
+        editor.putString("coldStorageSeed", seed);
+        editor.putStringSet("coldStorageAddresses", new HashSet<>(addresses));
+        editor.putString("coldStoragePassword", password);
+        editor.putBoolean("coldStorageExists", true);
+        editor.apply();
     }
 }
