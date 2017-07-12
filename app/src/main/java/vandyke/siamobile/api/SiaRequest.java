@@ -190,12 +190,15 @@ public class SiaRequest extends StringRequest {
                         builder.setTitle("Cold storage help")
                                 .setMessage("Sia Mobile's cold storage wallet operates independently of the Sia network." +
                                         " Since it doesn't have a copy of the Sia blockchain and is not connected to the " +
-                                        "Sia network, it cannot perform certain functions that require this. Normally, you" +
-                                        " also wouldn't be able to view your cold wallet's balance or transactions because of this, " +
-                                        "but Sia Mobile estimates these values using SiaPulse.com to retrieve transactions involving" +
-                                        " your cold wallet.\n\nIf you wish to use unsupported functions, you will have to run a full" +
+                                        "Sia network, it cannot perform certain functions that require this. It also cannot display your correct balance and transactions." +
+                                        "\n\nIf you wish to use unsupported functions, or view your cold wallet balance and transactions, you will have to run a full" +
                                         " Sia node (either in Sia Mobile or using something like Sia-UI on your computer), and then load your" +
-                                        " wallet seed on that full node.")
+                                        " wallet seed on that full node. Your coins are not \"lost\" - if you did everything properly, they will be there when you load your seed" +
+                                        " on a full node at any time in the future. No need to worry.")
+//                        Normally, you" +
+//                        " also wouldn't be able to view your cold wallet's balance or transactions because of this, " +
+//                                "but Sia Mobile estimates these values using SiaPulse.com to retrieve transactions involving" +
+//                                " your cold wallet.
                                 .setPositiveButton("OK", null)
                                 .show();
                     }

@@ -105,7 +105,7 @@
         <Preference
                 android:key="openAppSettings"
                 android:title="Open Application Info page for Sia Mobile"
-                android:summary="Sia Mobile must save a lot of data when running a full node on your device. You can clear this data from here. WARNING: it will delete your wallet files if running a full node on this device. Write down your seed first."/>
+                android:summary="You can clear all of Sia Mobile's data from here, such as the blockchain. WARNING: this will delete ALL of Sia Mobile's data, including any wallet files. Write down your seed(s) first."/>
     </PreferenceCategory>
 
 </PreferenceScreen>

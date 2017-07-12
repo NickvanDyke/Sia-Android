@@ -37,7 +37,7 @@ public class ModesActivity extends AppIntro {
                 ContextCompat.getColor(this, android.R.color.darker_gray)));
         addSlide(AppIntroFragment.newInstance("Cold storage",
                 "Most secure. Limited functionality - can only view receive addresses and seed. Meant for securely" +
-                        " storing coins for long periods of time. Completely offline - to see your correct balance and transactions, you'll" +
+                        " storing coins for long periods of time. Completely offline the Sia network - to see your correct balance and transactions, you'll" +
                         " have to load your seed on a full node, such as Sia-UI.",
                 R.drawable.safe_image, ContextCompat.getColor(this, android.R.color.white),
                 ContextCompat.getColor(this, android.R.color.black),
