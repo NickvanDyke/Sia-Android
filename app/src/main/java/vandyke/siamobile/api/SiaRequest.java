@@ -8,6 +8,7 @@
 package vandyke.siamobile.api;
 
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.util.Base64;
 import android.view.View;
 import com.android.volley.Response;
@@ -180,7 +181,26 @@ public class SiaRequest extends StringRequest {
         }
 
         public void snackbar(View view) {
-            if (reason != null)
+            if (reason == null || view == null)
+                return;
+            if (reason == Reason.UNSUPPORTED_ON_COLD_WALLET) {
+                Snackbar.make(view, reason.getMsg(), Snackbar.LENGTH_LONG).setAction("Help", new View.OnClickListener() {
+                    public void onClick(View view) {
+                        AlertDialog.Builder builder = Utils.getDialogBuilder(view.getContext());
+                        builder.setTitle("Cold storage help")
+                                .setMessage("Sia Mobile's cold storage wallet operates independently of the Sia network." +
+                                        " Since it doesn't have a copy of the Sia blockchain and is not connected to the " +
+                                        "Sia network, it cannot perform certain functions that require this. Normally, you" +
+                                        " also wouldn't be able to view your cold wallet's balance or transactions because of this, " +
+                                        "but Sia Mobile estimates these values using SiaPulse.com to retrieve transactions involving" +
+                                        " your cold wallet.\n\nIf you wish to use unsupported functions, you will have to run a full" +
+                                        " Sia node (either in Sia Mobile or using something like Sia-UI on your computer), and then load your" +
+                                        " wallet seed on that full node.")
+                                .setPositiveButton("OK", null)
+                                .show();
+                    }
+                }).show();
+            } else
                 Utils.snackbar(view, reason.getMsg(), Snackbar.LENGTH_SHORT);
         }
     }
