@@ -17,9 +17,10 @@ import vandyke.siamobile.R;
 
 public class ModesActivity extends AppIntro {
 
-    public static int COLD_STORAGE = 0;
-    public static int REMOTE_FULL_NODE = 1;
-    public static int LOCAL_FULL_NODE = 2;
+    public static int COLD_STORAGE = 1;
+    public static int REMOTE_FULL_NODE = 2;
+    public static int LOCAL_FULL_NODE = 3;
+    public static int CANCELLED = 3;
 
     private int currentSlide;
 
@@ -27,7 +28,7 @@ public class ModesActivity extends AppIntro {
         super.onCreate(savedInstanceState);
 
         addSlide(AppIntroFragment.newInstance("Modes",
-                "Sia Mobile can operate in three different modes, which are explained in the following slides. Press the " +
+                "Sia Mobile can operate in three different modes, explained in the following slides. Press the " +
                         "lower-left button on the slide of the mode you want. The modes are independent - changes " +
                         "made while in one mode will not affect other modes. You can change mode at any time in Settings, " +
                         "as well as view this again by selecting Help from the drawer.",
@@ -55,11 +56,8 @@ public class ModesActivity extends AppIntro {
 
         setBarColor(ContextCompat.getColor(this, R.color.colorPrimary));
         setDoneText("Close");
-//        setSeparatorColor(Color.parseColor("#2196F3"));
 
-        // Hide Skip/Done button.
         showSkipButton(false);
-//        setProgressButtonEnabled(false);
     }
 
     @Override

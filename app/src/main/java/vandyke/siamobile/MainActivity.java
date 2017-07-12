@@ -63,8 +63,10 @@ public class MainActivity extends AppCompatActivity {
 
     private GlobalPrefsListener globalPrefsListener;
 
-    @BindView(R.id.drawer_layout) private DrawerLayout drawerLayout;
-    @BindView(R.id.drawer_navigation_view) private NavigationView navigationView;
+    @BindView(R.id.drawer_layout)
+    public DrawerLayout drawerLayout;
+    @BindView(R.id.drawer_navigation_view)
+    public NavigationView navigationView;
     private ActionBarDrawerToggle drawerToggle;
 
     private Fragment currentlyVisibleFragment;
@@ -105,8 +107,8 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
         super.onCreate(savedInstanceState);
-        ButterKnife.bind(this);
         setContentView(R.layout.activity_main_layout);
+        ButterKnife.bind(this);
         if (theme == Theme.CUSTOM) {
             byte[] b = Base64.decode(SiaMobileApplication.prefs.getString("customBgBase64", "null"), Base64.DEFAULT);
             Bitmap bitmap = BitmapFactory.decodeByteArray(b, 0, b.length);
@@ -138,6 +140,7 @@ public class MainActivity extends AppCompatActivity {
                     if (menuItemId != null)
                         navigationView.setCheckedItem(menuItemId);
                     backstackCount--;
+                    currentlyVisibleFragment = getFragmentManager().findFragmentById(R.id.fragment_frame);
                 } else {
                     backstackCount++;
                 }
@@ -222,7 +225,8 @@ public class MainActivity extends AppCompatActivity {
             if (resultCode == ModesActivity.COLD_STORAGE) {
                 SiaMobileApplication.prefs.edit().putString("operationMode", "cold_storage").apply();
                 displayFragment(WalletFragment.class, "Wallet", R.id.drawer_item_wallet);
-                ((WalletFragment)currentlyVisibleFragment).replaceExpandFrame(new WalletCreateFragment());
+                if (currentlyVisibleFragment instanceof WalletFragment)
+                    ((WalletFragment) currentlyVisibleFragment).replaceExpandFrame(new WalletCreateFragment());
             } else if (resultCode == ModesActivity.REMOTE_FULL_NODE) {
                 SiaMobileApplication.prefs.edit().putString("operationMode", "remote_full_node").apply();
                 displayFragment(FragmentSetupRemote.class, "Remote setup", null);
@@ -230,7 +234,8 @@ public class MainActivity extends AppCompatActivity {
                 displayFragment(WalletFragment.class, "Wallet", R.id.drawer_item_wallet);
                 if (Utils.isSiadSupported()) {
                     SiaMobileApplication.prefs.edit().putString("operationMode", "local_full_node").apply();
-                    ((WalletFragment)currentlyVisibleFragment).replaceExpandFrame(new WalletCreateFragment());
+                    if (currentlyVisibleFragment instanceof WalletFragment)
+                        ((WalletFragment) currentlyVisibleFragment).replaceExpandFrame(new WalletCreateFragment());
                 } else
                     Toast.makeText(this, "Sorry, but your device's CPU architecture is not supported by Sia's full node", Toast.LENGTH_LONG).show();
                 displayFragment(WalletFragment.class, "Wallet", R.id.drawer_item_wallet);
@@ -245,7 +250,8 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
 
-        if (newFragment != null && newFragment.isVisible())
+        if ((newFragment != null && newFragment.isVisible())
+        || (currentlyVisibleFragment != null && currentlyVisibleFragment == newFragment))
             return;
 
         if (currentlyVisibleFragment != null) {

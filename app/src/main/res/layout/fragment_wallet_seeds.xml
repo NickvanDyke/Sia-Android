@@ -28,7 +28,6 @@
             android:text="Keep your seed(s) safe! You will need them to recover your funds if something happens to your device or wallet. If someone gets your seed(s), they can take your funds!"
             android:textColor="@android:color/holo_red_light"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
             android:id="@+id/seedsWarning"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -37,7 +36,8 @@
             android:layout_marginEnd="16dp"
             app:layout_constraintRight_toRightOf="parent"
             android:layout_marginRight="16dp"
-            android:layout_marginTop="8dp"/>
+            android:layout_marginTop="8dp"
+            android:layout_height="50dp"/>
 
     <Button
             android:text="Close"

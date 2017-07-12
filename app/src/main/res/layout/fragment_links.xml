@@ -33,7 +33,7 @@
                 android:textSize="16sp"/>
 
         <TextView
-                android:text="Blog: blog.sia.tech\n\nForum: forum.sia.tech\n\nSlack: slackin.sia.tech\n\nTwitter: twitter.com/siatechhq"
+                android:text="Blog: blog.sia.tech\n\nForum: forum.sia.tech\n\nSlack: slackin.sia.tech\n\nTwitter: twitter.com/siatechhq\n\nSiaPulse.com - Large donator to Sia Mobile's development"
                 android:padding="8dp"
                 android:autoLink="web"
                 android:layout_width="match_parent"

@@ -21,17 +21,19 @@ public class AboutActivity extends AppIntro {
                 ContextCompat.getColor(this, android.R.color.black),
                 ContextCompat.getColor(this, android.R.color.darker_gray)));
         addSlide(AppIntroFragment.newInstance("Far more affordable",
-                "Sia's decentralized cloud is on average 10x less expensive than current cloud storage providers. Storing 1TB on Sia costs about $2 per month, compared with $23 on Amazon S3.",
+                "Sia's decentralized cloud is on average significantly less expensive than current cloud storage providers.",
                 R.drawable.siainfo2, ContextCompat.getColor(this, android.R.color.white),
                 ContextCompat.getColor(this, android.R.color.black),
                 ContextCompat.getColor(this, android.R.color.darker_gray)));
         addSlide(AppIntroFragment.newInstance("Highly redundant",
-                "Sia stores tiny pieces of your files on dozens of nodes across the globe. This eliminates any single point of failure and ensures highest possible uptime, on par with other cloud storage providers.",
+                "Sia stores tiny pieces of your files on dozens of nodes across the globe. This eliminates any " +
+                        "single point of failure and ensures highest possible uptime, superior to traditional cloud storage providers.",
                 R.drawable.siainfo3, ContextCompat.getColor(this, android.R.color.white),
                 ContextCompat.getColor(this, android.R.color.black),
                 ContextCompat.getColor(this, android.R.color.darker_gray)));
         addSlide(AppIntroFragment.newInstance("Open source",
-                "Sia is completely open source. Over a dozen individuals have contributed to Sia's software, and there is an active community building innovative applications on top of the Sia API.",
+                "Sia is completely open source. Over a dozen individuals have contributed to Sia's software, and " +
+                        "there is an active community building innovative applications on top of the Sia API.",
                 R.drawable.siainfo4, ContextCompat.getColor(this, android.R.color.white),
                 ContextCompat.getColor(this, android.R.color.black),
                 ContextCompat.getColor(this, android.R.color.darker_gray)));

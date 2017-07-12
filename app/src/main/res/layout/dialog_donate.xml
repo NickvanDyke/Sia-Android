@@ -31,13 +31,13 @@
 
     <Button
             android:text="Donate"
-            android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:background="@color/colorPrimary"
             android:textColor="#FFFFFF"
             android:id="@+id/donateButton" android:layout_marginTop="16dp"
             app:layout_constraintTop_toTopOf="parent" android:layout_marginEnd="32dp"
-            app:layout_constraintRight_toRightOf="parent" android:layout_marginRight="32dp"/>
+            app:layout_constraintRight_toRightOf="parent" android:layout_marginRight="32dp"
+            android:layout_width="wrap_content"/>
 
     <TextView
             android:text="Sia Mobile is kept free and ad-free solely through donations. Any amount is appreciated. Thank you!"

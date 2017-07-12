@@ -27,12 +27,12 @@ import com.daimajia.numberprogressbar.NumberProgressBar;
 import org.json.JSONObject;
 import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
+import vandyke.siamobile.SiaMobileApplication;
 import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
 import vandyke.siamobile.backend.WalletMonitorService;
-import vandyke.siamobile.SiaMobileApplication;
-import vandyke.siamobile.misc.Utils;
 import vandyke.siamobile.backend.transaction.Transaction;
+import vandyke.siamobile.misc.Utils;
 import vandyke.siamobile.wallet.transactionslist.TransactionExpandableGroup;
 import vandyke.siamobile.wallet.transactionslist.TransactionListAdapter;
 
@@ -41,16 +41,16 @@ import java.util.ArrayList;
 
 public class WalletFragment extends Fragment implements WalletMonitorService.WalletUpdateListener {
 
-    @BindView(R.id.sendButton) private Button sendButton;
-    @BindView(R.id.receiveButton) private Button receiveButton;
-    @BindView(R.id.balanceText) private TextView balanceText;
-    @BindView(R.id.balanceUsdText) private TextView balanceUsdText;
-    @BindView(R.id.balanceUnconfirmed) private TextView balanceUnconfirmedText;
-    @BindView(R.id.syncBar) private NumberProgressBar syncBar;
-    @BindView(R.id.syncText) private TextView syncText;
-    @BindView(R.id.walletStatusText) private TextView walletStatusText;
-    @BindView(R.id.transactionList) private RecyclerView transactionList;
-    @BindView(R.id.expandFrame) private FrameLayout expandFrame;
+    @BindView(R.id.sendButton) public Button sendButton;
+    @BindView(R.id.receiveButton) public Button receiveButton;
+    @BindView(R.id.balanceText) public TextView balanceText;
+    @BindView(R.id.balanceUsdText) public TextView balanceUsdText;
+    @BindView(R.id.balanceUnconfirmed) public TextView balanceUnconfirmedText;
+    @BindView(R.id.syncBar) public NumberProgressBar syncBar;
+    @BindView(R.id.syncText) public TextView syncText;
+    @BindView(R.id.walletStatusText) public TextView walletStatusText;
+    @BindView(R.id.transactionList) public RecyclerView transactionList;
+    @BindView(R.id.expandFrame) public FrameLayout expandFrame;
 
     private final ArrayList<TransactionExpandableGroup> transactionExpandableGroups = new ArrayList<>();
 
@@ -103,6 +103,8 @@ public class WalletFragment extends Fragment implements WalletMonitorService.Wal
                 builder.show();
             }
         });
+
+        syncBar.setProgressTextColor(walletStatusText.getTextColors().getDefaultColor());
 
         return view;
     }

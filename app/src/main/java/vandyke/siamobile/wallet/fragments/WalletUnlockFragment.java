@@ -32,16 +32,16 @@ public class WalletUnlockFragment extends Fragment {
             public void onClick(View v) {
                 Wallet.unlock(password.getText().toString(), new SiaRequest.VolleyCallback() {
                     public void onSuccess(JSONObject response) {
-                        container.setVisibility(View.GONE);
-                        Utils.hideSoftKeyboard(getActivity());
                         Utils.successSnackbar(view);
+                        Utils.hideSoftKeyboard(getActivity());
+                        container.setVisibility(View.GONE);
                         WalletMonitorService.staticRefreshAll();
                     }
                     public void onError(SiaRequest.Error error) {
                         if (error.getReason() == SiaRequest.Error.Reason.ANOTHER_WALLET_SCAN_UNDERWAY) {
-                            container.setVisibility(View.GONE);
-                            Utils.hideSoftKeyboard(getActivity());
                             Utils.snackbar(view, error.getMsg(), Snackbar.LENGTH_LONG);
+                            Utils.hideSoftKeyboard(getActivity());
+                            container.setVisibility(View.GONE);
                         } else {
                             error.snackbar(view);
                         }
