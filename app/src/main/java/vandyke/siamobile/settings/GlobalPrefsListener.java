@@ -5,7 +5,7 @@
  * included in this source code package. All rights are reserved, with the exception of what is specified there.
  */
 
-package vandyke.siamobile.backend;
+package vandyke.siamobile.settings;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,10 +14,11 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.BatteryManager;
+import vandyke.siamobile.SiaMobileApplication;
+import vandyke.siamobile.backend.WalletMonitorService;
 import vandyke.siamobile.backend.coldstorage.ColdStorageService;
 import vandyke.siamobile.backend.siad.Siad;
 import vandyke.siamobile.backend.siad.SiadMonitorService;
-import vandyke.siamobile.SiaMobileApplication;
 
 public class GlobalPrefsListener implements SharedPreferences.OnSharedPreferenceChangeListener {
 

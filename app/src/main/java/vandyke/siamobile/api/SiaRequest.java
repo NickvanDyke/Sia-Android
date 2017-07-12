@@ -8,6 +8,7 @@
 package vandyke.siamobile.api;
 
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Base64;
 import android.view.View;
@@ -17,6 +18,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
+import vandyke.siamobile.R;
 import vandyke.siamobile.SiaMobileApplication;
 import vandyke.siamobile.misc.Utils;
 
@@ -184,7 +186,7 @@ public class SiaRequest extends StringRequest {
             if (reason == null || view == null)
                 return;
             if (reason == Reason.UNSUPPORTED_ON_COLD_WALLET) {
-                Snackbar.make(view, reason.getMsg(), Snackbar.LENGTH_LONG).setAction("Help", new View.OnClickListener() {
+                Snackbar snackbar = Snackbar.make(view, reason.getMsg(), Snackbar.LENGTH_LONG).setAction("Help", new View.OnClickListener() {
                     public void onClick(View view) {
                         AlertDialog.Builder builder = Utils.getDialogBuilder(view.getContext());
                         builder.setTitle("Cold storage help")
@@ -202,13 +204,12 @@ public class SiaRequest extends StringRequest {
                                 .setPositiveButton("OK", null)
                                 .show();
                     }
-                }).show();
+                });
+                snackbar.getView().setBackgroundColor(ContextCompat.getColor(view.getContext(), R.color.colorAccent));
+                snackbar.setActionTextColor(ContextCompat.getColor(view.getContext(), android.R.color.white));
+                snackbar.show();
             } else
                 Utils.snackbar(view, reason.getMsg(), Snackbar.LENGTH_SHORT);
         }
-    }
-
-    public static void genericSuccessSnackbar(View view) {
-        Utils.snackbar(view, "Success", Snackbar.LENGTH_SHORT);
     }
 }

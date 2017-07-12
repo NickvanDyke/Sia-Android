@@ -5,7 +5,7 @@
  * included in this source code package. All rights are reserved, with the exception of what is specified there.
  */
 
-package vandyke.siamobile.terminal.fragments;
+package vandyke.siamobile.terminal;
 
 import android.app.Fragment;
 import android.graphics.Typeface;
