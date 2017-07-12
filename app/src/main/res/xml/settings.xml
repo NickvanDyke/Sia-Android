@@ -37,9 +37,9 @@
                 android:entryValues="@array/refresh_interval_values"
                 android:defaultValue="1"/>
         <SwitchPreference
-                android:key="monitorInBackground"
-                android:title="Refresh in background"
-                android:summary="Continue refreshing when Sia Mobile isn't running."
+                android:key="runInBackground"
+                android:title="Run in background"
+                android:summary="Continue running and refreshing when Sia Mobile isn't open."
                 android:defaultValue="false"/>
         <EditTextPreference
                 android:key="remoteAddress"
@@ -57,14 +57,6 @@
                 android:inputType="textPassword"
                 android:password="true"
                 android:fontFamily="sans-serif"/>
-        <SwitchPreference
-                android:key="runColdStorageInBackground"
-                android:title="Run cold storage wallet in background"
-                android:defaultValue="false"/>
-        <SwitchPreference
-                android:key="runLocalNodeInBackground"
-                android:title="Run local node in background"
-                android:defaultValue="false"/>
         <SwitchPreference
                 android:key="runLocalNodeOffWifi"
                 android:title="Run local node off WiFi"

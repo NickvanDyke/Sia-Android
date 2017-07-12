@@ -17,12 +17,12 @@ import com.android.volley.VolleyError;
 import org.json.JSONException;
 import org.json.JSONObject;
 import vandyke.siamobile.R;
+import vandyke.siamobile.SiaMobileApplication;
 import vandyke.siamobile.api.Consensus;
 import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
-import vandyke.siamobile.SiaMobileApplication;
-import vandyke.siamobile.misc.Utils;
 import vandyke.siamobile.backend.transaction.Transaction;
+import vandyke.siamobile.misc.Utils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -202,7 +202,7 @@ public class WalletMonitorService extends Service {
 
     @Override
     public void onTaskRemoved(Intent rootIntent) {
-        if (!SiaMobileApplication.prefs.getBoolean("monitorInBackground", true)) {
+        if (!SiaMobileApplication.prefs.getBoolean("runInBackground", true)) {
             stopSelf();
         }
     }

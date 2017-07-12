@@ -47,7 +47,7 @@ public class ColdStorageService extends Service {
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         super.onTaskRemoved(rootIntent);
-        if (!SiaMobileApplication.prefs.getBoolean("runColdStorageInBackground", false)) {
+        if (!SiaMobileApplication.prefs.getBoolean("runInBackground", false)) {
             stopSelf();
         }
     }

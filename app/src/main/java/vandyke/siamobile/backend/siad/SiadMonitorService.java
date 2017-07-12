@@ -15,8 +15,8 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
-import vandyke.siamobile.backend.StatusReceiver;
 import vandyke.siamobile.SiaMobileApplication;
+import vandyke.siamobile.backend.StatusReceiver;
 
 public class SiadMonitorService extends Service {
 
@@ -52,7 +52,7 @@ public class SiadMonitorService extends Service {
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         super.onTaskRemoved(rootIntent);
-        if (!SiaMobileApplication.prefs.getBoolean("runLocalNodeInBackground", false)) {
+        if (!SiaMobileApplication.prefs.getBoolean("runInBackground", false)) {
             stopSelf();
         }
     }

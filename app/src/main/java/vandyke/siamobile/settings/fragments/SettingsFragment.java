@@ -35,12 +35,10 @@ public class SettingsFragment extends PreferenceFragment {
     private ListPreference operationMode;
     private EditTextPreference remoteAddress;
     private EditTextPreference apiPass;
-    private SwitchPreference runLocalNodeInBackground;
     private SwitchPreference runLocalNodeOffWifi;
     private SwitchPreference useExternal;
     private EditTextPreference minBattery;
-    private SwitchPreference runColdStorageInBackground;
-    private SwitchPreference refreshInBackground;
+    private SwitchPreference runInBackground;
 
     private static final int SELECT_PICTURE = 1;
 
@@ -51,12 +49,10 @@ public class SettingsFragment extends PreferenceFragment {
         operation = (PreferenceCategory) findPreference("operationCategory");
         remoteAddress = (EditTextPreference) findPreference("remoteAddress");
         apiPass = (EditTextPreference) findPreference("apiPass");
-        runLocalNodeInBackground = (SwitchPreference) findPreference("runLocalNodeInBackground");
         runLocalNodeOffWifi = (SwitchPreference) findPreference("runLocalNodeOffWifi");
         useExternal = (SwitchPreference) findPreference("useExternal");
         minBattery = (EditTextPreference) findPreference("localNodeMinBattery");
-        runColdStorageInBackground = (SwitchPreference)findPreference("runColdStorageInBackground");
-        refreshInBackground = (SwitchPreference) findPreference("monitorInBackground");
+        runInBackground = (SwitchPreference) findPreference("runInBackground");
         setColdStorageSettingsVisibility();
         setRemoteSettingsVisibility();
         setLocalSettingsVisibility();
@@ -129,9 +125,9 @@ public class SettingsFragment extends PreferenceFragment {
                         break;
                     case "monitorRefreshInterval":
                         if (Integer.parseInt(sharedPreferences.getString("monitorRefreshInterval", "1")) == 0)
-                            operation.removePreference(refreshInBackground);
+                            operation.removePreference(runInBackground);
                         else
-                            operation.addPreference(refreshInBackground);
+                            operation.addPreference(runInBackground);
                         break;
                     case "theme":
                         switch (sharedPreferences.getString("theme", "light")) {
@@ -171,11 +167,7 @@ public class SettingsFragment extends PreferenceFragment {
     }
 
     private void setColdStorageSettingsVisibility() {
-        if (SiaMobileApplication.prefs.getString("operationMode", "cold_storage").equals("cold_storage")) {
-            operation.addPreference(runColdStorageInBackground);
-        } else {
-            operation.removePreference(runColdStorageInBackground);
-        }
+
     }
 
     private void setRemoteSettingsVisibility() {
@@ -190,12 +182,10 @@ public class SettingsFragment extends PreferenceFragment {
 
     private void setLocalSettingsVisibility() {
         if (SiaMobileApplication.prefs.getString("operationMode", "cold_storage").equals("local_full_node")) {
-            operation.addPreference(runLocalNodeInBackground);
             operation.addPreference(runLocalNodeOffWifi);
             operation.addPreference(useExternal);
             operation.addPreference(minBattery);
         } else {
-            operation.removePreference(runLocalNodeInBackground);
             operation.removePreference(runLocalNodeOffWifi);
             operation.removePreference(useExternal);
             operation.removePreference(minBattery);
