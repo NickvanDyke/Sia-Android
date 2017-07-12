@@ -40,6 +40,7 @@ public class SettingsFragment extends PreferenceFragment {
     private SwitchPreference useExternal;
     private EditTextPreference minBattery;
     private SwitchPreference runColdStorageInBackground;
+    private SwitchPreference refreshInBackground;
 
     private static final int SELECT_PICTURE = 1;
 
@@ -55,6 +56,7 @@ public class SettingsFragment extends PreferenceFragment {
         useExternal = (SwitchPreference) findPreference("useExternal");
         minBattery = (EditTextPreference) findPreference("localNodeMinBattery");
         runColdStorageInBackground = (SwitchPreference)findPreference("runColdStorageInBackground");
+        refreshInBackground = (SwitchPreference) findPreference("monitorInBackground");
         setColdStorageSettingsVisibility();
         setRemoteSettingsVisibility();
         setLocalSettingsVisibility();
@@ -124,6 +126,12 @@ public class SettingsFragment extends PreferenceFragment {
                             operationMode.setSummary("Local full node");
                             operationMode.setValueIndex(2);
                         }
+                        break;
+                    case "monitorRefreshInterval":
+                        if (Integer.parseInt(sharedPreferences.getString("monitorRefreshInterval", "1")) == 0)
+                            operation.removePreference(refreshInBackground);
+                        else
+                            operation.addPreference(refreshInBackground);
                         break;
                     case "theme":
                         switch (sharedPreferences.getString("theme", "light")) {

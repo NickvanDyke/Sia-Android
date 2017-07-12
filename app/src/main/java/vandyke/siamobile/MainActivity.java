@@ -234,8 +234,6 @@ public class MainActivity extends AppCompatActivity {
                 displayFragment(WalletFragment.class, "Wallet", R.id.drawer_item_wallet);
                 if (Utils.isSiadSupported()) {
                     SiaMobileApplication.prefs.edit().putString("operationMode", "local_full_node").apply();
-                    if (currentlyVisibleFragment instanceof WalletFragment)
-                        ((WalletFragment) currentlyVisibleFragment).replaceExpandFrame(new WalletCreateFragment());
                 } else
                     Toast.makeText(this, "Sorry, but your device's CPU architecture is not supported by Sia's full node", Toast.LENGTH_LONG).show();
                 displayFragment(WalletFragment.class, "Wallet", R.id.drawer_item_wallet);
