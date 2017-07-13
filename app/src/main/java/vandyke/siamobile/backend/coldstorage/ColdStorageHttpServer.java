@@ -13,8 +13,8 @@ import fi.iki.elonen.NanoHTTPD;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import siawallet.Wallet;
 import vandyke.siamobile.SiaMobileApplication;
-import vandyke.siamobile.misc.Utils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -146,11 +146,19 @@ public class ColdStorageHttpServer extends NanoHTTPD {
     }
 
     public void newWallet(String password) {
-        ArrayList<String> wallet = Utils.getNewWallet(context);
-        if (wallet == null)
+        Wallet wallet = new Wallet();
+        try {
+            wallet.generateSeed();
+        } catch (Exception e) {
+            e.printStackTrace();
+            seed = "Error generating seed";
             return;
-        seed = wallet.remove(0);
-        addresses = wallet;
+        }
+        seed = wallet.getSeed();
+        addresses.clear();
+        for (int i = 0; i < 20; i++)
+            addresses.add(wallet.getAddress(i));
+
         SharedPreferences.Editor editor = SiaMobileApplication.prefs.edit();
         this.password = password;
         exists = true;
