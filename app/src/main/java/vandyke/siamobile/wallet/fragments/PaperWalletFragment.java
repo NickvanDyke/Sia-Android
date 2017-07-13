@@ -38,7 +38,7 @@ public class PaperWalletFragment extends Fragment {
     public Button copyAll;
 
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
-        final View view = inflater.inflate(R.layout.fragment_paper_wallet, null);
+        final View view = inflater.inflate(R.layout.fragment_wallet_paper, null);
         ButterKnife.bind(this, view);
         return view;
     }
@@ -51,6 +51,7 @@ public class PaperWalletFragment extends Fragment {
         } catch (Exception e) {
             seedText.setText("Failed to generate seed");
             e.printStackTrace();
+            return;
         }
 
         final String seed = wallet.getSeed();

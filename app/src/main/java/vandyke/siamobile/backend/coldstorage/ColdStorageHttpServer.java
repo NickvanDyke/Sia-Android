@@ -8,7 +8,6 @@
 package vandyke.siamobile.backend.coldstorage;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import fi.iki.elonen.NanoHTTPD;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -152,21 +151,20 @@ public class ColdStorageHttpServer extends NanoHTTPD {
         } catch (Exception e) {
             e.printStackTrace();
             seed = "Error generating seed";
-            return;
         }
         seed = wallet.getSeed();
         addresses.clear();
         for (int i = 0; i < 20; i++)
             addresses.add(wallet.getAddress(i));
 
-        SharedPreferences.Editor editor = SiaMobileApplication.prefs.edit();
         this.password = password;
         exists = true;
         unlocked = false;
-        editor.putString("coldStorageSeed", seed);
-        editor.putStringSet("coldStorageAddresses", new HashSet<>(addresses));
-        editor.putString("coldStoragePassword", password);
-        editor.putBoolean("coldStorageExists", true);
-        editor.apply();
+        SiaMobileApplication.prefs.edit()
+                .putString("coldStorageSeed", seed)
+                .putStringSet("coldStorageAddresses", new HashSet<>(addresses))
+                .putString("coldStoragePassword", password)
+                .putBoolean("coldStorageExists", true)
+                .apply();
     }
 }
