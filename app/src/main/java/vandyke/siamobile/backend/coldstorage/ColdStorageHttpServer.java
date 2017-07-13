@@ -8,13 +8,12 @@
 package vandyke.siamobile.backend.coldstorage;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import fi.iki.elonen.NanoHTTPD;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import siawallet.Wallet;
 import vandyke.siamobile.SiaMobileApplication;
-import vandyke.siamobile.misc.Utils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -146,19 +145,26 @@ public class ColdStorageHttpServer extends NanoHTTPD {
     }
 
     public void newWallet(String password) {
-        ArrayList<String> wallet = Utils.getNewWallet(context);
-        if (wallet == null)
-            return;
-        seed = wallet.remove(0);
-        addresses = wallet;
-        SharedPreferences.Editor editor = SiaMobileApplication.prefs.edit();
+        Wallet wallet = new Wallet();
+        try {
+            wallet.generateSeed();
+        } catch (Exception e) {
+            e.printStackTrace();
+            seed = "Error generating seed";
+        }
+        seed = wallet.getSeed();
+        addresses.clear();
+        for (int i = 0; i < 20; i++)
+            addresses.add(wallet.getAddress(i));
+
         this.password = password;
         exists = true;
         unlocked = false;
-        editor.putString("coldStorageSeed", seed);
-        editor.putStringSet("coldStorageAddresses", new HashSet<>(addresses));
-        editor.putString("coldStoragePassword", password);
-        editor.putBoolean("coldStorageExists", true);
-        editor.apply();
+        SiaMobileApplication.prefs.edit()
+                .putString("coldStorageSeed", seed)
+                .putStringSet("coldStorageAddresses", new HashSet<>(addresses))
+                .putString("coldStoragePassword", password)
+                .putBoolean("coldStorageExists", true)
+                .apply();
     }
 }

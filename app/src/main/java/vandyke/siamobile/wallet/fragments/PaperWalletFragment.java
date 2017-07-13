@@ -21,6 +21,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import siawallet.Wallet;
 import vandyke.siamobile.R;
 import vandyke.siamobile.misc.TextTouchCopyListAdapter;
 import vandyke.siamobile.misc.Utils;
@@ -29,28 +30,34 @@ import java.util.ArrayList;
 
 public class PaperWalletFragment extends Fragment {
 
-    @BindView(R.id.paperSeed) public TextView seedText;
-    @BindView(R.id.paperAddresses) public ListView addressList;
-    @BindView(R.id.paperCopy) public Button copyAll;
+    @BindView(R.id.paperSeed)
+    public TextView seedText;
+    @BindView(R.id.paperAddresses)
+    public ListView addressList;
+    @BindView(R.id.paperCopy)
+    public Button copyAll;
 
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
-        final View view = inflater.inflate(R.layout.fragment_paper_wallet, null);
+        final View view = inflater.inflate(R.layout.fragment_wallet_paper, null);
         ButterKnife.bind(this, view);
         return view;
     }
 
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        final ArrayList<String> walletInfo = Utils.getNewWallet(getActivity());
-        if (walletInfo == null) {
-            seedText.setText("Failed to generate paper wallet");
+        Wallet wallet = new Wallet();
+        try {
+            wallet.generateSeed();
+        } catch (Exception e) {
+            seedText.setText("Failed to generate seed");
+            e.printStackTrace();
             return;
         }
 
-        final String seed = walletInfo.remove(0);
+        final String seed = wallet.getSeed();
         seedText.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                ClipboardManager clipboard = (ClipboardManager)getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
                 ClipData clip = ClipData.newPlainText("paper wallet info", seed);
                 clipboard.setPrimaryClip(clip);
                 Utils.snackbar(v, "Copied seed to clipboard", Snackbar.LENGTH_SHORT);
@@ -58,7 +65,11 @@ public class PaperWalletFragment extends Fragment {
         });
         seedText.setText(seed);
 
-        addressList.setAdapter(new TextTouchCopyListAdapter(getActivity(), R.layout.text_touch_copy_list_item, walletInfo));
+        final ArrayList<String> addresses = new ArrayList<>();
+        for (int i = 0; i < 20; i++)
+            addresses.add(wallet.getAddress(i));
+
+        addressList.setAdapter(new TextTouchCopyListAdapter(getActivity(), R.layout.text_touch_copy_list_item, addresses));
 
         copyAll.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -66,12 +77,12 @@ public class PaperWalletFragment extends Fragment {
                 result.append("Seed:\n");
                 result.append(seed + "\n");
                 result.append("Addresses:\n");
-                for (int i = 0; i < walletInfo.size(); i++) {
-                    result.append(walletInfo.get(i));
-                    if (i < walletInfo.size() - 1)
+                for (int i = 0; i < addresses.size(); i++) {
+                    result.append(addresses.get(i));
+                    if (i < addresses.size() - 1)
                         result.append(",\n");
                 }
-                ClipboardManager clipboard = (ClipboardManager)getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
                 ClipData clip = ClipData.newPlainText("paper wallet info", result.toString());
                 clipboard.setPrimaryClip(clip);
                 Utils.snackbar(v, "Copied seed and addresses to clipboard", Snackbar.LENGTH_SHORT);
