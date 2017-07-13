@@ -1,11 +1,13 @@
 # Sia Mobile
 Sia Mobile serves as an Android client for [Sia](https://github.com/NebulousLabs/Sia), and provides a way for users to interact with the Sia network from their Android device. Sia has the potential to disrupt the cloud storage industry, and a successful mobile app for Sia will greatly help in making this a reality; Sia Mobile aims to be that.
 
-Sia Mobile can
-* set up and maintain a cold-storage wallet on your mobile device
-* interact with a full node running on your computer
-* run a full node on your mobile device
-* coming soon: upload to and download from the Sia cloud storage network
+Sia Mobile can:
+* Send and receive Siacoin, the cryptocurrency used to buy cloud storage on the Sia network
+* Generate a paper wallet
+* Set up and maintain a local cold-storage wallet
+* Interact with a full node running on your computer
+* Run a full node on your device
+* Coming soon: upload to and download from the Sia cloud storage network
 * coming soon: SPV functionality (a.k.a. "lite wallet") once Sia implements this feature
 
 [Sia Mobile on the Play Store](https://play.google.com/store/apps/details?id=vandyke.siamobile)
@@ -13,11 +15,6 @@ Sia Mobile can
 My username on the [Sia Slack](https://siatalk.slack.com) is Nicktz. Please direct any questions or comments you have to me on there, particularly in the #android-dev channel.
 
 # Contributing
-Primarily involving:
-* Implementing new features, whether ones listed in [projects](https://github.com/NickvanDyke/Sia-Mobile/projects), or your own ideas
-* Improving implementation of existing features
-* Clean-up and refactoring
-
 Sia Mobile is still in heavy development, and contributions to the Sia Mobile codebase through this repository (pull requests, issue reporting, etc.) are welcomed, encouraged, and appreciated. Please view the [projects page](https://github.com/NickvanDyke/Sia-Mobile/projects) for a to-do list of changes and features for Sia Mobile. This list is not exhaustive; not everything I want done is included. You also do not have to adhere to this list, but it can be a helpful resource if you want to contribute but don't know in what way. If you have any ideas for something you want to contribute that's not listed, I would be happy to hear them. Due to the lack of certain features of Sia right now, some things are currently impossible for Sia Mobile, such as a lite wallet. I've spoken with David Vorick extensively, and have a good understanding of what can and can't be done with Sia Mobile, so I recommend you run ideas by me first, to determine their viability. I would also be happy to help with implementation, at least as far as telling you what should be done, how, and where, and answering any questions you have.
 
 If contributing, check out the Sia Slack's #android-dev channel. The Sia Slack is also a great resource for any Sia-related questions that you may have while contributing to Sia Mobile.
