@@ -12,7 +12,7 @@
                                              android:layout_height="match_parent">
 
     <TextView
-            android:text="Sia Mobile does not save any of the below info. It will be shown only once. Keep it safe. You can send Siacoins to any of the given addresses, and load the given seed on a full node (such as Sia-UI) at any time to access the sent coins."
+            android:text="Sia Mobile does not save any of the below info. Keep it safe. You can send Siacoins to any of the given addresses, and load the given seed on a full node (such as Sia-UI) at any time to access the sent coins."
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/textView14"

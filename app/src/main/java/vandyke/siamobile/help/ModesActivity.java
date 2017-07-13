@@ -19,10 +19,10 @@ import vandyke.siamobile.misc.Utils;
 
 public class ModesActivity extends AppIntro {
 
-    public static int COLD_STORAGE = 1;
-    public static int REMOTE_FULL_NODE = 2;
-    public static int LOCAL_FULL_NODE = 3;
-    public static int CANCELLED = 3;
+    public static int PAPER_WALLET = 1;
+    public static int COLD_STORAGE = 2;
+    public static int REMOTE_FULL_NODE = 3;
+    public static int LOCAL_FULL_NODE = 4;
 
     private int currentSlide;
 
@@ -34,13 +34,20 @@ public class ModesActivity extends AppIntro {
                         "lower-left button on the slide of the mode you want. The modes are independent - changes " +
                         "made while in one mode will not affect other modes. You can change mode at any time in Settings, " +
                         "as well as view this again by selecting Help from the drawer.",
-                R.drawable.ic_settings_black_48dp, ContextCompat.getColor(this, android.R.color.white),
+                R.drawable.sia_logo_svg, ContextCompat.getColor(this, android.R.color.white),
+                ContextCompat.getColor(this, android.R.color.black),
+                ContextCompat.getColor(this, android.R.color.darker_gray)));
+        addSlide(AppIntroFragment.newInstance("Paper wallet",
+                "Generates a fresh seed and addresses from it. You can send coins to any of the addresses, and later load" +
+                        " the seed on a full node to access the coins. Sia Mobile does not save any of this" +
+                        " info for you - record it elsewhere.",
+                R.drawable.paper_wallet_svg, ContextCompat.getColor(this, android.R.color.white),
                 ContextCompat.getColor(this, android.R.color.black),
                 ContextCompat.getColor(this, android.R.color.darker_gray)));
         addSlide(AppIntroFragment.newInstance("Cold storage",
-                "Most secure. Limited functionality - can only view receive addresses and seed. Meant for securely" +
-                        " storing coins for long periods of time. Completely offline the Sia network - to see your correct balance and transactions, you'll" +
-                        " have to load your seed on a full node, such as Sia-UI.",
+                "Similar to a paper wallet, except Sia Mobile will store the generated seed and addresses for you. Limited functionality. " +
+                        "Completely offline the Sia network - like a paper wallet, to see your correct balance and transactions and access your coins, you'll" +
+                        " have to load your seed on a full node.",
                 R.drawable.safe_image, ContextCompat.getColor(this, android.R.color.white),
                 ContextCompat.getColor(this, android.R.color.black),
                 ContextCompat.getColor(this, android.R.color.darker_gray)));
@@ -67,12 +74,15 @@ public class ModesActivity extends AppIntro {
         super.onSkipPressed(currentFragment);
         switch (currentSlide) {
             case 1:
-                setResult(COLD_STORAGE);
+                setResult(PAPER_WALLET);
                 break;
             case 2:
-                setResult(REMOTE_FULL_NODE);
+                setResult(COLD_STORAGE);
                 break;
             case 3:
+                setResult(REMOTE_FULL_NODE);
+                break;
+            case 4:
                 if (Utils.isSiadSupported()) {
                     setResult(LOCAL_FULL_NODE);
                 } else {
@@ -102,12 +112,15 @@ public class ModesActivity extends AppIntro {
         showSkipButton(currentSlide != 0);
         switch (currentSlide) {
             case 1:
-                setSkipText("Create");
+                setSkipText("Generate");
                 break;
             case 2:
-                setSkipText("Setup");
+                setSkipText("Create");
                 break;
             case 3:
+                setSkipText("Setup");
+                break;
+            case 4:
                 setSkipText("Start");
                 showSkipButton(true);
                 break;

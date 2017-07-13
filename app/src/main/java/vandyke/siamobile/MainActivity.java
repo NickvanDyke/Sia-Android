@@ -51,6 +51,7 @@ import vandyke.siamobile.misc.Utils;
 import vandyke.siamobile.settings.GlobalPrefsListener;
 import vandyke.siamobile.settings.fragments.SettingsFragment;
 import vandyke.siamobile.terminal.TerminalFragment;
+import vandyke.siamobile.wallet.fragments.PaperWalletFragment;
 import vandyke.siamobile.wallet.fragments.WalletCreateFragment;
 import vandyke.siamobile.wallet.fragments.WalletFragment;
 
@@ -222,7 +223,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_MODE) {
-            if (resultCode == ModesActivity.COLD_STORAGE) {
+            if (resultCode == ModesActivity.PAPER_WALLET) {
+                displayFragmentClass(PaperWalletFragment.class, "Generated paper wallet", null);
+            } else if (resultCode == ModesActivity.COLD_STORAGE) {
                 SiaMobileApplication.prefs.edit().putString("operationMode", "cold_storage").apply();
                 displayFragmentClass(WalletFragment.class, "Wallet", R.id.drawer_item_wallet);
                 if (currentlyVisibleFragment instanceof WalletFragment)
