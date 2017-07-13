@@ -7,7 +7,9 @@
 
 package vandyke.siamobile.wallet.fragments;
 
+import android.app.Activity;
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -22,6 +24,7 @@ import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
 import vandyke.siamobile.SiaMobileApplication;
 import vandyke.siamobile.misc.Utils;
+import vandyke.siamobile.scanner.ScannerActivity;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -31,6 +34,9 @@ public class WalletSendFragment extends Fragment {
     private EditText recipient;
     private EditText amount;
     private TextView feeText;
+
+    private static final int SCAN_REQUEST = 20;
+    public static final String SCAN_RESULT_KEY = "SCAN_RESULT";
 
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_wallet_send, null);
@@ -89,6 +95,21 @@ public class WalletSendFragment extends Fragment {
             }
         });
 
+        view.findViewById(R.id.walletScan).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivityForResult(new Intent(getActivity(), ScannerActivity.class), SCAN_REQUEST);
+            }
+        });
+
         return view;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == Activity.RESULT_OK && requestCode == SCAN_REQUEST) {
+            recipient.setText(data.getStringExtra(SCAN_RESULT_KEY));
+        }
     }
 }
