@@ -138,6 +138,9 @@ public class SettingsFragment extends PreferenceFragment {
                                 break;
                         }
                         break;
+                    case "displayedDecimalPrecision":
+                        if (SiaMobileApplication.prefs.getString("displayedDecimalPrecision", "1").equals(""))
+                            SiaMobileApplication.prefs.edit().putString("displayedDecimalPrecision", "2").apply();
                 }
             }
         };
