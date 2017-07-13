@@ -11,9 +11,11 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.widget.Toast;
 import com.github.paolorotolo.appintro.AppIntro;
 import com.github.paolorotolo.appintro.AppIntroFragment;
 import vandyke.siamobile.R;
+import vandyke.siamobile.misc.Utils;
 
 public class ModesActivity extends AppIntro {
 
@@ -71,7 +73,12 @@ public class ModesActivity extends AppIntro {
                 setResult(REMOTE_FULL_NODE);
                 break;
             case 3:
-                setResult(LOCAL_FULL_NODE);
+                if (Utils.isSiadSupported()) {
+                    setResult(LOCAL_FULL_NODE);
+                } else {
+                    Toast.makeText(this, "Sorry, but your device's CPU architecture is not supported by Sia's full node", Toast.LENGTH_LONG).show();
+                    return;
+                }
                 break;
         }
         finish();

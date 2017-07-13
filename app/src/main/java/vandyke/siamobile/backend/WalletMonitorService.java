@@ -202,7 +202,7 @@ public class WalletMonitorService extends Service {
 
     @Override
     public void onTaskRemoved(Intent rootIntent) {
-        if (!SiaMobileApplication.prefs.getBoolean("runInBackground", true)) {
+        if (!SiaMobileApplication.prefs.getBoolean("runInBackground", false)) {
             stopSelf();
         }
     }
