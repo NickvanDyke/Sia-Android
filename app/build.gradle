@@ -6,6 +6,7 @@
  */
 
 apply plugin: 'com.android.application'
+apply plugin: 'me.tatarka.retrolambda'
 
 android {
     compileSdkVersion 25
@@ -30,6 +31,11 @@ android {
 //            enable true
 //        }
 //    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
@@ -50,6 +56,8 @@ dependencies {
     compile 'com.jakewharton:butterknife:8.7.0'
     compile 'com.github.kenglxn.QRGen:android:2.3.0'
     compile 'me.dm7.barcodescanner:zxing:1.9.3'
+    compile 'com.jakewharton.rxbinding2:rxbinding:2.0.0'
+    compile 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.4@aar'
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.7.0'
 }
