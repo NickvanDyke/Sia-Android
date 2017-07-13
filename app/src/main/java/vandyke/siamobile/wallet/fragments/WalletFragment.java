@@ -229,6 +229,9 @@ public class WalletFragment extends Fragment implements WalletMonitorService.Wal
             case R.id.actionAddSeed:
                 replaceExpandFrame(new WalletAddSeedFragment());
                 break;
+            case R.id.actionGenPaperWallet:
+                ((MainActivity)getActivity()).displayFragmentClass(PaperWalletFragment.class, "Generated paper wallet", null);
+                break;
         }
 
         return super.onOptionsItemSelected(item);

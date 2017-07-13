@@ -156,25 +156,25 @@ public class MainActivity extends AppCompatActivity {
                 int menuItemId = item.getItemId();
                 switch (menuItemId) {
                     case R.id.drawer_item_files:
-                        displayFragment(FilesFragment.class, "Files", menuItemId);
+                        displayFragmentClass(FilesFragment.class, "Files", menuItemId);
                         return true;
                     case R.id.drawer_item_hosting:
-                        displayFragment(HostingFragment.class, "Hosting", menuItemId);
+                        displayFragmentClass(HostingFragment.class, "Hosting", menuItemId);
                         return true;
                     case R.id.drawer_item_wallet:
-                        displayFragment(WalletFragment.class, "Wallet", menuItemId);
+                        displayFragmentClass(WalletFragment.class, "Wallet", menuItemId);
                         return true;
                     case R.id.drawer_item_terminal:
-                        displayFragment(TerminalFragment.class, "Terminal", menuItemId);
+                        displayFragmentClass(TerminalFragment.class, "Terminal", menuItemId);
                         return true;
                     case R.id.drawer_item_settings:
-                        displayFragment(SettingsFragment.class, "Settings", menuItemId);
+                        displayFragmentClass(SettingsFragment.class, "Settings", menuItemId);
                         return true;
                     case R.id.drawer_item_about:
                         startActivity(new Intent(MainActivity.this, AboutActivity.class));
                         return false;
                     case R.id.drawer_item_links:
-                        displayFragment(LinksFragment.class, "Links", menuItemId);
+                        displayFragmentClass(LinksFragment.class, "Links", menuItemId);
                         return true;
                     case R.id.drawer_item_help:
                         startActivityForResult(new Intent(MainActivity.this, ModesActivity.class), REQUEST_MODE);
@@ -200,16 +200,16 @@ public class MainActivity extends AppCompatActivity {
 
         switch (SiaMobileApplication.prefs.getString("startupPage", "wallet")) {
             case "files":
-                displayFragment(FilesFragment.class, "Files", R.id.drawer_item_files);
+                displayFragmentClass(FilesFragment.class, "Files", R.id.drawer_item_files);
                 break;
             case "hosting":
-                displayFragment(HostingFragment.class, "Hosting", R.id.drawer_item_hosting);
+                displayFragmentClass(HostingFragment.class, "Hosting", R.id.drawer_item_hosting);
                 break;
             case "wallet":
-                displayFragment(WalletFragment.class, "Wallet", R.id.drawer_item_wallet);
+                displayFragmentClass(WalletFragment.class, "Wallet", R.id.drawer_item_wallet);
                 break;
             case "terminal":
-                displayFragment(TerminalFragment.class, "Terminal", R.id.drawer_item_terminal);
+                displayFragmentClass(TerminalFragment.class, "Terminal", R.id.drawer_item_terminal);
                 break;
         }
 
@@ -224,24 +224,24 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == REQUEST_MODE) {
             if (resultCode == ModesActivity.COLD_STORAGE) {
                 SiaMobileApplication.prefs.edit().putString("operationMode", "cold_storage").apply();
-                displayFragment(WalletFragment.class, "Wallet", R.id.drawer_item_wallet);
+                displayFragmentClass(WalletFragment.class, "Wallet", R.id.drawer_item_wallet);
                 if (currentlyVisibleFragment instanceof WalletFragment)
                     ((WalletFragment) currentlyVisibleFragment).replaceExpandFrame(new WalletCreateFragment());
             } else if (resultCode == ModesActivity.REMOTE_FULL_NODE) {
                 SiaMobileApplication.prefs.edit().putString("operationMode", "remote_full_node").apply();
-                displayFragment(FragmentSetupRemote.class, "Remote setup", null);
+                displayFragmentClass(FragmentSetupRemote.class, "Remote setup", null);
             } else if (resultCode == ModesActivity.LOCAL_FULL_NODE) {
-                displayFragment(WalletFragment.class, "Wallet", R.id.drawer_item_wallet);
+                displayFragmentClass(WalletFragment.class, "Wallet", R.id.drawer_item_wallet);
                 if (Utils.isSiadSupported()) {
                     SiaMobileApplication.prefs.edit().putString("operationMode", "local_full_node").apply();
                 } else
                     Toast.makeText(this, "Sorry, but your device's CPU architecture is not supported by Sia's full node", Toast.LENGTH_LONG).show();
-                displayFragment(WalletFragment.class, "Wallet", R.id.drawer_item_wallet);
+                displayFragmentClass(WalletFragment.class, "Wallet", R.id.drawer_item_wallet);
             }
         }
     }
 
-    public void displayFragment(Class clazz, String title, Integer menuItemId) {
+    public void displayFragmentClass(Class clazz, String title, Integer menuItemId) {
         String className = clazz.getSimpleName();
         FragmentManager fragmentManager = getFragmentManager();
         Fragment newFragment = fragmentManager.findFragmentByTag(className);
