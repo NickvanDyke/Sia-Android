@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2017 Nicholas van Dyke
   ~
   ~ This file is subject to the terms and conditions defined in Licensing section of the file 'README.md'
@@ -7,51 +6,65 @@
   -->
 
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                             xmlns:app="http://schemas.android.com/apk/res-auto"
-                                             android:orientation="vertical"
-                                             android:layout_width="match_parent"
-                                             android:layout_height="match_parent">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <TextView
-        android:text="Generating address...\n"
+        android:id="@+id/receiveAddress"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:id="@+id/receiveAddress"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:textAlignment="center"/>
-    <Button
-            android:text="Close"
-            android:background="@null"
-            android:textColor="@color/colorAccent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/walletAddressClose"
-            app:layout_constraintTop_toBottomOf="@+id/receiveAddress"
-            android:layout_marginStart="16dp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            android:layout_marginLeft="16dp"
-            app:layout_constraintRight_toLeftOf="@+id/walletAddressCopy"/>
+        android:text="Generating address...\n"
+        android:textAlignment="center"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-            android:text="Copy"
-            android:background="@null"
-            android:textColor="@color/colorAccent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/walletAddressCopy"
-            android:layout_marginEnd="16dp"
-            app:layout_constraintRight_toRightOf="parent"
-            android:layout_marginRight="16dp"
-            android:layout_marginStart="8dp"
-            app:layout_constraintLeft_toRightOf="@+id/walletAddressClose"
-            android:layout_marginLeft="8dp"
-            app:layout_constraintHorizontal_bias="0.47"
-            app:layout_constraintBottom_toBottomOf="@+id/walletAddressClose"/>
+        android:id="@+id/walletAddressClose"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:background="@null"
+        android:text="Close"
+        android:textColor="@color/colorAccent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/walletAddressCopy"
+        app:layout_constraintTop_toBottomOf="@+id/receiveAddress" />
+
+    <Button
+        android:id="@+id/walletAddressCopy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginStart="8dp"
+        android:background="@null"
+        android:text="Copy"
+        android:textColor="@color/colorAccent"
+        app:layout_constraintBottom_toBottomOf="@+id/walletAddressClose"
+        app:layout_constraintHorizontal_bias="0.47"
+        app:layout_constraintLeft_toRightOf="@+id/walletAddressClose"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <ImageView
+        android:id="@+id/walletQrCode"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintHorizontal_bias="0.50"
+        app:layout_constraintLeft_toLeftOf="@+id/walletAddressClose"
+        app:layout_constraintRight_toRightOf="@+id/walletAddressCopy"
+        app:layout_constraintTop_toBottomOf="@+id/walletAddressClose" />
 </android.support.constraint.ConstraintLayout>
