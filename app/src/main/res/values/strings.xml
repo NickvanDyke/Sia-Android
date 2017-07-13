@@ -19,7 +19,7 @@
         it has been done on a mobile device. Functionality is not guaranteed. Use at your own risk.\n\n</string>
 
     <!--Strings for explaining install-->
-    <string formatted="false" name="step_5" tools:ignore="TypographyDashes"><![CDATA[5. In the same command prompt, type\n\nsiad --disable-api-security --authenticate-api
+    <string name="step_5" formatted="false" tools:ignore="TypographyDashes"><![CDATA[5. In the same command prompt, type\n\nsiad --disable-api-security --authenticate-api
     --api-addr <ip>:<port>\n\nreplacing <ip> with your computer\'s internal IP address from step 4, and <port> with a port number
     of your choosing; remember your port number for later. This step will launch Sia on your computer in a fashion that
     allows Sia Mobile to interact with it. You will need to keep this command prompt open and running to use Sia Mobile with it. If you instead downloaded Sia-UI in step 1, also add\n\n
