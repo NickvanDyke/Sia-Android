@@ -11,12 +11,18 @@ import android.app.Fragment;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+
+import net.glxn.qrgen.android.QRCode;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import vandyke.siamobile.R;
@@ -26,14 +32,20 @@ import vandyke.siamobile.misc.Utils;
 
 public class WalletReceiveFragment extends Fragment {
 
+    ImageView qrImageView;
+
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_wallet_receive, null);
         final TextView address = (TextView)view.findViewById(R.id.receiveAddress);
+        qrImageView = (ImageView) view.findViewById(R.id.walletQrCode);
+        qrImageView.setVisibility(View.GONE);
+
         Wallet.newAddress(new SiaRequest.VolleyCallback() {
             public void onSuccess(JSONObject response) {
                 try {
                     Utils.successSnackbar(view);
                     address.setText(response.getString("address"));
+                    setQrCode(response.getString("address"));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -57,6 +69,13 @@ public class WalletReceiveFragment extends Fragment {
                 container.setVisibility(View.GONE);
             }
         });
+
         return view;
+    }
+
+    public void setQrCode(String walletAddress) {
+        qrImageView.setVisibility(View.VISIBLE);
+        qrImageView.setImageBitmap(QRCode.from(walletAddress).bitmap());
+
     }
 }
