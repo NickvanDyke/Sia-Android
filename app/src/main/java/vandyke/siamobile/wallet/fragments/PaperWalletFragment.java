@@ -21,7 +21,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import siawallet.Wallet;
 import vandyke.siamobile.R;
 import vandyke.siamobile.misc.TextTouchCopyListAdapter;
 import vandyke.siamobile.misc.Utils;
@@ -45,16 +44,13 @@ public class PaperWalletFragment extends Fragment {
 
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Wallet wallet = new Wallet();
-        try {
-            wallet.generateSeed();
-        } catch (Exception e) {
+        ArrayList<String> walletInfo = Utils.getNewWallet(getActivity());
+        if (walletInfo == null) {
             seedText.setText("Failed to generate seed");
-            e.printStackTrace();
             return;
         }
 
-        final String seed = wallet.getSeed();
+        final String seed = walletInfo.remove(0);
         seedText.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
@@ -65,9 +61,7 @@ public class PaperWalletFragment extends Fragment {
         });
         seedText.setText(seed);
 
-        final ArrayList<String> addresses = new ArrayList<>();
-        for (int i = 0; i < 20; i++)
-            addresses.add(wallet.getAddress(i));
+        final ArrayList<String> addresses = walletInfo;
 
         addressList.setAdapter(new TextTouchCopyListAdapter(getActivity(), R.layout.text_touch_copy_list_item, addresses));
 

@@ -12,8 +12,8 @@ import fi.iki.elonen.NanoHTTPD;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import siawallet.Wallet;
 import vandyke.siamobile.SiaMobileApplication;
+import vandyke.siamobile.misc.Utils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -145,17 +145,16 @@ public class ColdStorageHttpServer extends NanoHTTPD {
     }
 
     public void newWallet(String password) {
-        Wallet wallet = new Wallet();
-        try {
-            wallet.generateSeed();
-        } catch (Exception e) {
-            e.printStackTrace();
-            seed = "Error generating seed";
-        }
-        seed = wallet.getSeed();
-        addresses.clear();
-        for (int i = 0; i < 20; i++)
-            addresses.add(wallet.getAddress(i));
+        ArrayList<String> walletInfo = Utils.getNewWallet(context);
+        if (walletInfo == null) {
+            seed = "Failed to generate seed";
+        } else
+        seed = walletInfo.remove(0);
+//        addresses.clear();
+//        for (int i = 0; i < 20; i++)
+//            addresses.add(wallet.getAddress(i));
+
+        addresses = walletInfo;
 
         this.password = password;
         exists = true;
