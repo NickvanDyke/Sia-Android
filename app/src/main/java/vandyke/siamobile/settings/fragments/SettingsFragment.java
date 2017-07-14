@@ -89,7 +89,17 @@ public class SettingsFragment extends PreferenceFragment {
             }
         });
 
-        switch(SiaMobileApplication.prefs.getString("operationMode", "cold_storage")) {
+        final EditTextPreference decimalPrecision = (EditTextPreference) findPreference("displayedDecimalPrecision");
+        decimalPrecision.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                if (newValue.equals(""))
+                    return false;
+                else
+                    return true;
+            }
+        });
+
+        switch (SiaMobileApplication.prefs.getString("operationMode", "cold_storage")) {
             case "cold_storage":
                 operationMode.setSummary("Cold storage");
                 break;
@@ -138,9 +148,6 @@ public class SettingsFragment extends PreferenceFragment {
                                 break;
                         }
                         break;
-                    case "displayedDecimalPrecision":
-                        if (SiaMobileApplication.prefs.getString("displayedDecimalPrecision", "2").equals(""))
-                            SiaMobileApplication.prefs.edit().putString("displayedDecimalPrecision", "2").apply();
                 }
             }
         };
