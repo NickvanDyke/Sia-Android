@@ -10,7 +10,6 @@ import com.google.zxing.Result;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
-import vandyke.siamobile.R;
 
 import static vandyke.siamobile.wallet.fragments.WalletSendFragment.SCAN_RESULT_KEY;
 
@@ -30,14 +29,14 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
     @Override
     public void onResume() {
         super.onResume();
-        scannerView.setResultHandler(this); // Register ourselves as a handler for scan results.
-        scannerView.startCamera();          // Start camera on resume
+        scannerView.setResultHandler(this);
+        scannerView.startCamera();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        scannerView.stopCamera();           // Stop camera on pause
+        scannerView.stopCamera();
     }
 
     public void onPermissionResult(boolean granted) {
@@ -50,16 +49,10 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
 
     @Override
     public void handleResult(Result rawResult) {
-
         String result = rawResult.getText();
         Intent returnIntent = new Intent();
         returnIntent.putExtra(SCAN_RESULT_KEY, result);
         setResult(Activity.RESULT_OK,returnIntent);
         finish();
-
-/*
-        // If you would like to resume scanning, call this method below:
-        scannerView.resumeCameraPreview(this);
-        */
     }
 }
