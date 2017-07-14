@@ -10,6 +10,7 @@ import com.google.zxing.Result;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
+import vandyke.siamobile.R;
 
 import static vandyke.siamobile.wallet.fragments.WalletSendFragment.SCAN_RESULT_KEY;
 
