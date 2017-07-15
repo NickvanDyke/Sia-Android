@@ -5,7 +5,6 @@
       <module fileurl="file://$PROJECT_DIR$/Sia-Mobile.iml" filepath="$PROJECT_DIR$/Sia-Mobile.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/siacoldstorage/siacoldstorage.iml" filepath="$PROJECT_DIR$/siacoldstorage/siacoldstorage.iml" />
-      <module fileurl="file://$PROJECT_DIR$/siacoldstorage/siacoldstorage.iml" filepath="$PROJECT_DIR$/siacoldstorage/siacoldstorage.iml" />
     </modules>
   </component>
 </project>
