@@ -7,8 +7,12 @@
 
 package vandyke.siamobile.wallet.fragments;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -16,12 +20,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.jakewharton.rxbinding2.view.RxView;
+import com.tbruyelle.rxpermissions2.RxPermissions;
+
 import org.json.JSONObject;
 import vandyke.siamobile.R;
 import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
 import vandyke.siamobile.SiaMobileApplication;
 import vandyke.siamobile.misc.Utils;
+import vandyke.siamobile.scanner.ScannerActivity;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -31,6 +40,9 @@ public class WalletSendFragment extends Fragment {
     private EditText recipient;
     private EditText amount;
     private TextView feeText;
+
+    private static final int SCAN_REQUEST = 20;
+    public static final String SCAN_RESULT_KEY = "SCAN_RESULT";
 
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_wallet_send, null);
@@ -89,6 +101,19 @@ public class WalletSendFragment extends Fragment {
             }
         });
 
+        RxView.clicks(view.findViewById(R.id.walletScan)).subscribe(v -> startScannerActivity());
         return view;
+    }
+
+    private void startScannerActivity() {
+        startActivityForResult(new Intent(getActivity(), ScannerActivity.class), SCAN_REQUEST);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == Activity.RESULT_OK && requestCode == SCAN_REQUEST) {
+            recipient.setText(data.getStringExtra(SCAN_RESULT_KEY));
+        }
     }
 }
