@@ -8,8 +8,7 @@
 
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
                                              xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
+                                             android:orientation="vertical"
                                              android:layout_width="match_parent"
                                              android:layout_height="match_parent">
 
@@ -19,30 +18,31 @@
             android:inputType="textNoSuggestions|textVisiblePassword"
             android:ems="10"
             android:id="@+id/sendRecipient"
-            app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:hint="Recipient address"
             android:textAlignment="center"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginLeft="16dp"
-            android:layout_marginTop="12dp"/>
+            app:layout_constraintRight_toLeftOf="@+id/walletScan"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp"/>
 
     <EditText
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:ems="10"
             android:id="@+id/sendAmount"
-            app:layout_constraintRight_toRightOf="@+id/sendRecipient"
+            app:layout_constraintRight_toRightOf="parent"
             android:layout_marginTop="8dp"
             app:layout_constraintTop_toBottomOf="@+id/sendRecipient"
             app:layout_constraintLeft_toLeftOf="@+id/sendRecipient"
             android:hint="Amount (SC)"
             android:textAlignment="center"
             android:inputType="numberDecimal"
-            />
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"/>
 
     <TextView
             android:text="0.5% App fee: 0.000 SC"
@@ -93,18 +93,19 @@
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"/>
 
-    <Button
-        android:text="Scan"
-        android:background="@null"
-        android:textColor="@color/colorAccent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/walletScan"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@+id/walletSendFee"
-        android:layout_marginRight="8dp"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="parent" />
+    <ImageButton
+            android:contentDescription="Scan QR code"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:src="@drawable/qr_image"
+            android:background="@null"
+            android:textColor="@color/colorAccent"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:id="@+id/walletScan"
+            app:layout_constraintTop_toTopOf="@+id/sendRecipient"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginRight="16dp"
+            app:layout_constraintBottom_toBottomOf="@+id/sendRecipient"/>
 </android.support.constraint.ConstraintLayout>

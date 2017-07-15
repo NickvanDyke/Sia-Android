@@ -11,7 +11,6 @@ import android.app.Fragment;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
@@ -19,10 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-
 import net.glxn.qrgen.android.QRCode;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 import vandyke.siamobile.R;
@@ -38,7 +34,7 @@ public class WalletReceiveFragment extends Fragment {
         final View view = inflater.inflate(R.layout.fragment_wallet_receive, null);
         final TextView address = (TextView)view.findViewById(R.id.receiveAddress);
         qrImageView = (ImageView) view.findViewById(R.id.walletQrCode);
-        qrImageView.setVisibility(View.GONE);
+        qrImageView.setVisibility(View.INVISIBLE);
 
         Wallet.newAddress(new SiaRequest.VolleyCallback() {
             public void onSuccess(JSONObject response) {

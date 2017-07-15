@@ -92,10 +92,7 @@ public class SettingsFragment extends PreferenceFragment {
         final EditTextPreference decimalPrecision = (EditTextPreference) findPreference("displayedDecimalPrecision");
         decimalPrecision.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                if (newValue.equals(""))
-                    return false;
-                else
-                    return true;
+                return !newValue.equals("");
             }
         });
 

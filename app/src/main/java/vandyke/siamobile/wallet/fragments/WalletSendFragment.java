@@ -7,12 +7,10 @@
 
 package vandyke.siamobile.wallet.fragments;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -20,15 +18,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
-
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import com.jakewharton.rxbinding2.view.RxView;
-import com.tbruyelle.rxpermissions2.RxPermissions;
-
 import org.json.JSONObject;
 import vandyke.siamobile.R;
+import vandyke.siamobile.SiaMobileApplication;
 import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
-import vandyke.siamobile.SiaMobileApplication;
 import vandyke.siamobile.misc.Utils;
 import vandyke.siamobile.scanner.ScannerActivity;
 
@@ -37,8 +34,11 @@ import java.math.RoundingMode;
 
 public class WalletSendFragment extends Fragment {
 
+    @BindView(R.id.sendRecipient)
     private EditText recipient;
+    @BindView(R.id.sendAmount)
     private EditText amount;
+    @BindView(R.id.walletSendFee)
     private TextView feeText;
 
     private static final int SCAN_REQUEST = 20;
@@ -46,9 +46,7 @@ public class WalletSendFragment extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_wallet_send, null);
-        recipient = (EditText) view.findViewById(R.id.sendRecipient);
-        amount = (EditText)view.findViewById(R.id.sendAmount);
-        feeText = (TextView)view.findViewById(R.id.walletSendFee);
+        ButterKnife.bind(this, view);
         if (!SiaMobileApplication.prefs.getBoolean("feesEnabled", false))
             feeText.setVisibility(View.GONE);
         amount.addTextChangedListener(new TextWatcher() {
@@ -112,7 +110,7 @@ public class WalletSendFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == Activity.RESULT_OK && requestCode == SCAN_REQUEST) {
+        if (resultCode == Activity.RESULT_OK && requestCode == SCAN_REQUEST) {
             recipient.setText(data.getStringExtra(SCAN_RESULT_KEY));
         }
     }
