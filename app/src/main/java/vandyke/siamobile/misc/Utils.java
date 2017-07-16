@@ -22,16 +22,15 @@ import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
 import vandyke.siamobile.SiaMobileApplication;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 
 public class Utils {
     public static final String[] devAddresses = {
@@ -186,40 +185,5 @@ public class Utils {
     public static void cancelNotification(Context context, int id) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(id);
-    }
-
-    public static ArrayList<String> getNewWallet(Context context) {
-        File binary = copyBinary("sia-coldstorage", context, true);
-        if (binary == null)
-            return null;
-        try {
-            ArrayList<String> fullCommand = new ArrayList<>();
-            fullCommand.add(0, binary.getAbsolutePath());
-            ProcessBuilder pb = new ProcessBuilder(fullCommand);
-            pb.redirectErrorStream(true);
-            Process process = pb.start();
-
-            StringBuilder stdOut = new StringBuilder();
-            BufferedReader inputReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            int read;
-            char[] buffer = new char[1024];
-            while ((read = inputReader.read(buffer)) > 0) {
-                stdOut.append(new String(buffer), 0, read);
-            }
-            inputReader.close();
-            JSONObject json = new JSONObject(stdOut.toString());
-            String seed = json.getString("Seed");
-            JSONArray addressesJson = json.getJSONArray("Addresses");
-            ArrayList<String> addresses = new ArrayList<>();
-            for (int i = 0; i < addressesJson.length(); i++)
-                addresses.add(addressesJson.getString(i).trim());
-            addresses.add(0, seed);
-            return addresses;
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 }

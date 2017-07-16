@@ -35,11 +35,11 @@ import java.math.RoundingMode;
 public class WalletSendFragment extends Fragment {
 
     @BindView(R.id.sendRecipient)
-    private EditText recipient;
+    public EditText recipient;
     @BindView(R.id.sendAmount)
-    private EditText amount;
+    public EditText amount;
     @BindView(R.id.walletSendFee)
-    private TextView feeText;
+    public TextView feeText;
 
     private static final int SCAN_REQUEST = 20;
     public static final String SCAN_RESULT_KEY = "SCAN_RESULT";
