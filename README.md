@@ -30,6 +30,8 @@ You may have noticed that this reposity does not have a license. This means that
 # Acknowledgements
 Huge thanks to SiaPulse.com for a donation that made the time spent on Sia Mobile many times more possible.
 
+[JGall1](https://github.com/JGall1) for implementing QR code generation and scanning.
+
 [Gsora](https://github.com/gsora) for letting me use the AAR he created from [this](https://github.com/johnathanhowell/sia-coldstorage), which Sia Mobile uses to generate paper and cold storage wallets.
 
 # Donations
