@@ -148,6 +148,7 @@ public class ColdStorageHttpServer extends NanoHTTPD {
         Wallet wallet = new Wallet();
         try {
             wallet.generateSeed();
+            seed = wallet.getSeed();
         } catch (Exception e) {
             e.printStackTrace();
             seed = "Failed to generate seed";
