@@ -21,17 +21,16 @@ import vandyke.siamobile.SiaMobileApplication;
 import vandyke.siamobile.api.Consensus;
 import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
+import vandyke.siamobile.backend.BaseMonitorService;
 import vandyke.siamobile.backend.wallet.transaction.Transaction;
 import vandyke.siamobile.misc.Utils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
-public class WalletMonitorService extends Service {
+public class WalletMonitorService extends BaseMonitorService {
 
-    public static WalletMonitorService instance; // TODO: don't know if there's any disadvantages to this
-
-    private final IBinder binder = new LocalBinder();
+    private static WalletMonitorService instance;
 
     public enum WalletStatus {
         NONE, LOCKED, UNLOCKED
@@ -46,13 +45,27 @@ public class WalletMonitorService extends Service {
 
     private ArrayList<WalletUpdateListener> listeners;
 
-    private Handler handler;
-    private Runnable refreshRunnable;
-
     private int SYNC_NOTIFICATION = 0;
     private int TRANSACTION_NOTIFICATION = 1;
 
-    public void refreshAll() {
+    public void onCreate() {
+        listeners = new ArrayList<>();
+        walletStatus = WalletStatus.NONE;
+        balanceHastings = new BigDecimal("0");
+        balanceHastingsUnconfirmed = new BigDecimal("0");
+        balanceUsd = new BigDecimal("0");
+        transactions = new ArrayList<>();
+        syncProgress = 0;
+        instance = this;
+        super.onCreate();
+    }
+
+    public void onDestroy() {
+        super.onDestroy();
+        instance = null;
+    }
+
+    public void refresh() {
         refreshBalanceAndStatus();
         refreshTransactions();
         refreshSyncProgress();
@@ -160,64 +173,6 @@ public class WalletMonitorService extends Service {
         });
     }
 
-    @Override
-    public void onCreate() {
-        instance = this;
-        listeners = new ArrayList<>();
-        walletStatus = WalletStatus.NONE;
-        balanceHastings = new BigDecimal("0");
-        balanceHastingsUnconfirmed = new BigDecimal("0");
-        balanceUsd = new BigDecimal("0");
-        transactions = new ArrayList<>();
-        syncProgress = 0;
-        handler = new Handler();
-        postRefreshRunnable();
-    }
-
-    public void postRefreshRunnable() {
-        if (refreshRunnable != null)
-            handler.removeCallbacks(refreshRunnable);
-        final long refreshInterval = 60000 * Long.parseLong(SiaMobileApplication.prefs.getString("monitorRefreshInterval", "1"));
-        refreshRunnable = new Runnable() {
-            public void run() {
-                refreshAll();
-                handler.postDelayed(refreshRunnable, refreshInterval);
-            }
-        };
-        if (refreshInterval != 0)
-            handler.post(refreshRunnable);
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        return START_STICKY;
-    }
-
-    @Override
-    public void onDestroy() {
-        if (handler != null && refreshRunnable != null)
-            handler.removeCallbacks(refreshRunnable);
-        instance = null;
-    }
-
-    @Override
-    public void onTaskRemoved(Intent rootIntent) {
-        if (!SiaMobileApplication.prefs.getBoolean("runInBackground", false)) {
-            stopSelf();
-        }
-    }
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        return binder;
-    }
-
-    public class LocalBinder extends Binder {
-        public WalletMonitorService getService() {
-            return WalletMonitorService.this;
-        }
-    }
-
     public interface WalletUpdateListener {
         void onBalanceUpdate(WalletMonitorService service);
 
@@ -315,8 +270,13 @@ public class WalletMonitorService extends Service {
         return (int) (100000 + (diff / 60 / blockTime));
     }
 
-    public static void staticRefreshAll() {
+    public static void staticRefresh() {
         if (instance != null)
-            instance.refreshAll();
+            instance.refresh();
+    }
+
+    public static void staticPostRunnable() {
+        if (instance != null)
+            instance.postRefreshRunnable();
     }
 }

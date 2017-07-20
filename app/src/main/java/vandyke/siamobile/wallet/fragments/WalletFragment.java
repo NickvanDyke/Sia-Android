@@ -113,9 +113,9 @@ public class WalletFragment extends Fragment implements WalletMonitorService.Wal
         super.onActivityCreated(savedInstanceState);
         connection = new ServiceConnection() {
             public void onServiceConnected(ComponentName name, IBinder service) {
-                walletMonitorService = ((WalletMonitorService.LocalBinder) service).getService();
+                walletMonitorService = (WalletMonitorService) ((WalletMonitorService.LocalBinder)service).getService();
                 walletMonitorService.registerListener(WalletFragment.this);
-                walletMonitorService.refreshAll();
+                walletMonitorService.refresh();
                 bound = true;
             }
             public void onServiceDisconnected(ComponentName name) {
@@ -195,7 +195,7 @@ public class WalletFragment extends Fragment implements WalletMonitorService.Wal
         switch (item.getItemId()) {
             case R.id.actionRefresh:
                 if (bound)
-                    walletMonitorService.refreshAll();
+                    walletMonitorService.refresh();
                 break;
             case R.id.actionUnlock:
                 replaceExpandFrame(new WalletUnlockFragment());

@@ -89,7 +89,7 @@ public class Siad extends Service {
                                     while ((line = inputReader.readLine()) != null) {
                                         siadNotification(line);
                                         if (line.contains("Finished loading") || line.contains("Done!"))
-                                            WalletMonitorService.staticRefreshAll();
+                                            WalletMonitorService.staticRefresh();
                                     }
                                     inputReader.close();
                                 } catch (IOException e) {

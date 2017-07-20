@@ -66,7 +66,7 @@ public class WalletCreateFragment extends Fragment {
                             Utils.successSnackbar(view);
                             container.setVisibility(View.GONE);
                             Utils.hideSoftKeyboard(getActivity());
-                            WalletMonitorService.staticRefreshAll();
+                            WalletMonitorService.staticRefresh();
                         }
                         public void onError(SiaRequest.Error error) {
                             error.snackbar(view);
@@ -78,7 +78,7 @@ public class WalletCreateFragment extends Fragment {
                             Utils.successSnackbar(view);
                             container.setVisibility(View.GONE);
                             Utils.hideSoftKeyboard(getActivity());
-                            WalletMonitorService.staticRefreshAll();
+                            WalletMonitorService.staticRefresh();
                         }
                         public void onError(SiaRequest.Error error) {
                             error.snackbar(view);

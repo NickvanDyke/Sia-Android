@@ -35,7 +35,7 @@ public class WalletUnlockFragment extends Fragment {
                         Utils.successSnackbar(view);
                         Utils.hideSoftKeyboard(getActivity());
                         container.setVisibility(View.GONE);
-                        WalletMonitorService.staticRefreshAll();
+                        WalletMonitorService.staticRefresh();
                     }
                     public void onError(SiaRequest.Error error) {
                         if (error.getReason() == SiaRequest.Error.Reason.ANOTHER_WALLET_SCAN_UNDERWAY) {

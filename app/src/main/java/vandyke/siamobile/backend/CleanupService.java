@@ -12,8 +12,10 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
+import vandyke.siamobile.SiaMobileApplication;
 
 public class CleanupService extends Service {
+
     @Override
     public void onCreate() {
 //        Thread thread = new Thread() {
@@ -42,9 +44,11 @@ public class CleanupService extends Service {
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         super.onTaskRemoved(rootIntent);
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancelAll();
-        stopSelf();
+        if (!SiaMobileApplication.prefs.getBoolean("runInBackground", false)) {
+            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.cancelAll();
+            stopSelf();
+        }
     }
 
     @Override

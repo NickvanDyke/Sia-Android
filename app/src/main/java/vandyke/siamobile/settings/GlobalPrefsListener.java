@@ -49,19 +49,17 @@ public class GlobalPrefsListener implements SharedPreferences.OnSharedPreference
                         context.startService(new Intent(context, SiadMonitorService.class));
                     }
                 }
-                new Thread(new Runnable() {
-                    public void run() {
-                        try {
-                            Thread.sleep(1000); // sleep for 1 second to give whatever service/server was started time to start before querying it
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        WalletMonitorService.staticRefreshAll();
+                new Thread(() -> {
+                    try {
+                        Thread.sleep(1000); // sleep for 1 second to give whatever service/server was started time to start before querying it
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
+                    WalletMonitorService.staticRefresh();
                 }).start();
                 break;
             case "monitorRefreshInterval":
-                WalletMonitorService.staticRefreshAll();
+                WalletMonitorService.staticPostRunnable();
             case "runLocalNodeOffWifi":
                 if (!SiaMobileApplication.prefs.getString("operationMode", "cold_storage").equals("local_full_node"))
                     break;
@@ -90,7 +88,7 @@ public class GlobalPrefsListener implements SharedPreferences.OnSharedPreference
                 if (sharedPreferences.getString("operationMode", "cold_storage").equals("remote_full_node")) {
                     editor.putString("address", sharedPreferences.getString("remoteAddress", "192.168.1.11:9980"));
                     if (editor.commit())
-                        WalletMonitorService.staticRefreshAll();
+                        WalletMonitorService.staticRefresh();
                 }
                 break;
         }
