@@ -23,7 +23,7 @@
     --api-addr <ip>:<port>\n\nreplacing <ip> with your computer\'s internal IP address from step 4, and <port> with a port number
     of your choosing; remember your port number for later. This step will launch Sia on your computer in a fashion that
     allows Sia Mobile to interact with it. You will need to keep this command prompt open and running to use Sia Mobile with it. If you instead downloaded Sia-UI in step 1, also add\n\n
--d %APPDATA%\\Sia-UI\\sia\\Sia-UI\\sia\n\n to the command above, as this is the directory that Sia-UI stores its files in by default.]]></string>
+-d %APPDATA%\\Sia-UI\\sia\\\n\nto the command above, as this is the directory that Sia-UI stores its files in by default.]]></string>
 
     <string name="step_8"><![CDATA[8. (optional) Following the steps above, you will only be able to access your
 computer\'s Sia from your phone when your phone is on the same network as your computer. In order to access it from anywhere, you will have to port forward on your
@@ -34,7 +34,7 @@ and receiving. This is not a concern if you will not be port forwarding your nod
 
     <!--ACRA crash stuff-->
     <string name="crash_dialog_title">Sia Mobile has crashed</string>
-    <string name="crash_dialog_text">An unexpected error occurred. I apologize for the inconvenience. Please help me fix this by sending error data -
-    all you have to do is click OK and send the generated email. Your help is appreciated.</string>
-    <string name="crash_dialog_comment_prompt">Please add any comments or useful info about the crash below:</string>
+    <string name="crash_dialog_text">An unexpected error occurred. Please help me fix this by sending error data -
+    all you have to do is click OK and send the generated email. Your help is greatly appreciated.</string>
+    <string name="crash_dialog_comment_prompt">Add any comments or useful info below:</string>
 </resources>

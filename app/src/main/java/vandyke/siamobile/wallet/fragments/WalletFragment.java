@@ -30,6 +30,7 @@ import vandyke.siamobile.R;
 import vandyke.siamobile.SiaMobileApplication;
 import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
+import vandyke.siamobile.backend.BaseMonitorService;
 import vandyke.siamobile.backend.wallet.WalletMonitorService;
 import vandyke.siamobile.backend.wallet.transaction.Transaction;
 import vandyke.siamobile.misc.Utils;
@@ -113,7 +114,7 @@ public class WalletFragment extends Fragment implements WalletMonitorService.Wal
         super.onActivityCreated(savedInstanceState);
         connection = new ServiceConnection() {
             public void onServiceConnected(ComponentName name, IBinder service) {
-                walletMonitorService = (WalletMonitorService) ((WalletMonitorService.LocalBinder)service).getService();
+                walletMonitorService = (WalletMonitorService) ((BaseMonitorService.LocalBinder)service).getService();
                 walletMonitorService.registerListener(WalletFragment.this);
                 walletMonitorService.refresh();
                 bound = true;

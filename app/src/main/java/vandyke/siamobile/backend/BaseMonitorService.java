@@ -27,14 +27,15 @@ public abstract class BaseMonitorService extends Service {
         if (refreshRunnable != null)
             handler.removeCallbacks(refreshRunnable);
         final long refreshInterval = 60000 * Long.parseLong(SiaMobileApplication.prefs.getString("monitorRefreshInterval", "1"));
+        if (refreshInterval == 0)
+            return;
         refreshRunnable = new Runnable() {
             public void run() {
                 refresh();
                 handler.postDelayed(refreshRunnable, refreshInterval);
             }
         };
-        if (refreshInterval != 0)
-            handler.post(refreshRunnable);
+        handler.post(refreshRunnable);
     }
 
     public int onStartCommand(Intent intent, int flags, int startId) {
