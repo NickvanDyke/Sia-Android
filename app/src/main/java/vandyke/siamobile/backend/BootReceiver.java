@@ -6,6 +6,7 @@ import android.content.Intent;
 import vandyke.siamobile.SiaMobileApplication;
 import vandyke.siamobile.backend.coldstorage.ColdStorageService;
 import vandyke.siamobile.backend.siad.SiadMonitorService;
+import vandyke.siamobile.backend.wallet.WalletMonitorService;
 
 public class BootReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {

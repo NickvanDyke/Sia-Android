@@ -18,7 +18,7 @@ import org.json.JSONObject;
 import vandyke.siamobile.R;
 import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
-import vandyke.siamobile.backend.WalletMonitorService;
+import vandyke.siamobile.backend.wallet.WalletMonitorService;
 import vandyke.siamobile.misc.Utils;
 
 public class WalletUnlockFragment extends Fragment {

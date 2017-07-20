@@ -5,7 +5,7 @@
  * included in this source code package. All rights are reserved, with the exception of what is specified there.
  */
 
-package vandyke.siamobile.backend;
+package vandyke.siamobile.backend.siad;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -13,7 +13,6 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.BatteryManager;
-import vandyke.siamobile.backend.siad.Siad;
 import vandyke.siamobile.SiaMobileApplication;
 
 public class StatusReceiver extends BroadcastReceiver {

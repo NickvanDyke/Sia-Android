@@ -5,7 +5,7 @@
  * included in this source code package. All rights are reserved, with the exception of what is specified there.
  */
 
-package vandyke.siamobile.backend;
+package vandyke.siamobile.backend.wallet;
 
 import android.app.Service;
 import android.content.Intent;
@@ -21,7 +21,7 @@ import vandyke.siamobile.SiaMobileApplication;
 import vandyke.siamobile.api.Consensus;
 import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
-import vandyke.siamobile.backend.transaction.Transaction;
+import vandyke.siamobile.backend.wallet.transaction.Transaction;
 import vandyke.siamobile.misc.Utils;
 
 import java.math.BigDecimal;

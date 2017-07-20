@@ -20,7 +20,7 @@ import android.os.IBinder;
 import android.os.Looper;
 import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
-import vandyke.siamobile.backend.WalletMonitorService;
+import vandyke.siamobile.backend.wallet.WalletMonitorService;
 import vandyke.siamobile.misc.Utils;
 
 import java.io.BufferedReader;
