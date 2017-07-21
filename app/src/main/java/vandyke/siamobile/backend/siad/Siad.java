@@ -15,6 +15,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
@@ -142,6 +143,8 @@ public class Siad extends Service {
         builder.setContentTitle("Local full node");
         builder.setContentText(text);
         builder.setOngoing(false);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            builder.setChannelId("sia");
         Intent intent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setContentIntent(pendingIntent);

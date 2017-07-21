@@ -7,14 +7,12 @@
 
 package vandyke.siamobile.misc;
 
-import android.app.Activity;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
+import android.app.*;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Environment;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
@@ -33,6 +31,8 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 
 public class Utils {
+
+    public static final String NOTIFICATION_CHANNEL = "sia";
     public static final String[] devAddresses = {
             "20c9ed0d1c70ab0d6f694b7795bae2190db6b31d97bc2fba8067a336ffef37aacbc0c826e5d3",
             "36ab7ac91b981f998a0f5417b7f64299375cc5ffe096841044597b48346936b49741bfeb6cf5",
@@ -175,6 +175,8 @@ public class Utils {
         builder.setContentTitle(title);
         builder.setContentText(text);
         builder.setOngoing(ongoing);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            builder.setChannelId("sia");
         Intent intent = new Intent(context, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setContentIntent(pendingIntent);
@@ -185,5 +187,14 @@ public class Utils {
     public static void cancelNotification(Context context, int id) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(id);
+    }
+
+    public static void createSiaNotificationChannel(Context context) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
+            return;
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL, "Sia Mobile", NotificationManager.IMPORTANCE_LOW);
+        channel.setVibrationPattern(null);
+        notificationManager.createNotificationChannel(channel);
     }
 }

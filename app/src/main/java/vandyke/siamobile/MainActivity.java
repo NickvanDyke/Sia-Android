@@ -52,7 +52,6 @@ import vandyke.siamobile.settings.GlobalPrefsListener;
 import vandyke.siamobile.settings.fragments.SettingsFragment;
 import vandyke.siamobile.terminal.TerminalFragment;
 import vandyke.siamobile.wallet.fragments.PaperWalletFragment;
-import vandyke.siamobile.wallet.fragments.WalletCreateFragment;
 import vandyke.siamobile.wallet.fragments.WalletFragment;
 
 import java.util.Stack;
@@ -70,10 +69,10 @@ public class MainActivity extends AppCompatActivity {
     public NavigationView navigationView;
     private ActionBarDrawerToggle drawerToggle;
 
-    private Fragment currentlyVisibleFragment;
     private Stack<String> titleBackstack;
     private Stack<Integer> menuItemBackstack;
-    private int backstackCount;
+    private Stack<Class> classBackstack;
+    private Fragment currentlyVisibleFragment;
 
     public enum Theme {
         LIGHT, DARK, AMOLED, CUSTOM
@@ -130,23 +129,7 @@ public class MainActivity extends AppCompatActivity {
 
         titleBackstack = new Stack<>();
         menuItemBackstack = new Stack<>();
-        backstackCount = 0;
-        getFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
-            public void onBackStackChanged() {
-                if (getFragmentManager().getBackStackEntryCount() < backstackCount) {
-                    titleBackstack.pop();
-                    menuItemBackstack.pop();
-                    setTitle(titleBackstack.peek());
-                    Integer menuItemId = menuItemBackstack.peek();
-                    if (menuItemId != null)
-                        navigationView.setCheckedItem(menuItemId);
-                    backstackCount--;
-                    currentlyVisibleFragment = getFragmentManager().findFragmentById(R.id.fragment_frame);
-                } else {
-                    backstackCount++;
-                }
-            }
-        });
+        classBackstack = new Stack<>();
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
@@ -228,8 +211,8 @@ public class MainActivity extends AppCompatActivity {
             } else if (resultCode == ModesActivity.COLD_STORAGE) {
                 SiaMobileApplication.prefs.edit().putString("operationMode", "cold_storage").apply();
                 displayFragmentClass(WalletFragment.class, "Wallet", R.id.drawer_item_wallet);
-                if (currentlyVisibleFragment instanceof WalletFragment)
-                    ((WalletFragment) currentlyVisibleFragment).replaceExpandFrame(new WalletCreateFragment());
+//                if (currentlyVisibleFragment instanceof WalletFragment)
+//                    ((WalletFragment) currentlyVisibleFragment).replaceExpandFrame(new WalletCreateFragment());
             } else if (resultCode == ModesActivity.REMOTE_FULL_NODE) {
                 SiaMobileApplication.prefs.edit().putString("operationMode", "remote_full_node").apply();
                 displayFragmentClass(FragmentSetupRemote.class, "Remote setup", null);
@@ -247,38 +230,42 @@ public class MainActivity extends AppCompatActivity {
     public void displayFragmentClass(Class clazz, String title, Integer menuItemId) {
         String className = clazz.getSimpleName();
         FragmentManager fragmentManager = getFragmentManager();
-        Fragment newFragment = fragmentManager.findFragmentByTag(className);
+        Fragment fragmentToBeDisplayed = fragmentManager.findFragmentByTag(className);
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-
-        if ((newFragment != null && newFragment.isVisible())
-        || (currentlyVisibleFragment != null && currentlyVisibleFragment == newFragment))
-            return;
 
         if (currentlyVisibleFragment != null) {
-            transaction.addToBackStack(null);
+            if (currentlyVisibleFragment == fragmentToBeDisplayed)
+                return;
             transaction.hide(currentlyVisibleFragment);
         }
 
-        if (newFragment == null) {
+        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+
+        if (currentlyVisibleFragment != null)
+            transaction.hide(currentlyVisibleFragment);
+
+        if (fragmentToBeDisplayed == null) {
             try {
-                newFragment = (Fragment) clazz.newInstance();
-                transaction.add(R.id.fragment_frame, newFragment, className);
+                fragmentToBeDisplayed = (Fragment) clazz.newInstance();
+                transaction.addToBackStack(className);
+                transaction.add(R.id.fragment_frame, fragmentToBeDisplayed, className);
             } catch (InstantiationException e) {
                 e.printStackTrace();
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
         } else {
-            transaction.show(newFragment);
+            transaction.show(fragmentToBeDisplayed);
         }
         setTitle(title);
         transaction.commit();
-        currentlyVisibleFragment = newFragment;
+        currentlyVisibleFragment = fragmentToBeDisplayed;
         titleBackstack.push(title);
         menuItemBackstack.push(menuItemId);
+        classBackstack.push(clazz);
         if (menuItemId != null)
             navigationView.setCheckedItem(menuItemId);
+
     }
 
     public void onBackPressed() {
@@ -295,7 +282,10 @@ public class MainActivity extends AppCompatActivity {
                     .setNegativeButton("No", null)
                     .show();
         } else {
-            super.onBackPressed();
+            titleBackstack.pop();
+            menuItemBackstack.pop();
+            classBackstack.pop();
+            displayFragmentClass(classBackstack.pop(), titleBackstack.pop(), menuItemBackstack.pop());
         }
     }
 
@@ -335,5 +325,4 @@ public class MainActivity extends AppCompatActivity {
         }
         return result;
     }
-
 }

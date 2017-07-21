@@ -16,7 +16,7 @@ import com.android.volley.toolbox.Volley;
 import org.acra.ACRA;
 import org.acra.ReportingInteractionMode;
 import org.acra.annotation.ReportsCrashes;
-import vandyke.siamobile.R;
+import vandyke.siamobile.misc.Utils;
 
 @ReportsCrashes(mailTo = "siamobiledev@gmail.com",
         mode = ReportingInteractionMode.DIALOG,
@@ -37,6 +37,7 @@ public class SiaMobileApplication extends Application {
         ACRA.init(this);
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
         requestQueue = Volley.newRequestQueue(this);
+        Utils.createSiaNotificationChannel(this);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
             abi = Build.CPU_ABI;
         else

@@ -9,14 +9,14 @@ apply plugin: 'com.android.application'
 apply plugin: 'me.tatarka.retrolambda'
 
 android {
-    compileSdkVersion 25
+    compileSdkVersion 26
     buildToolsVersion '26.0.0'
     defaultConfig {
         applicationId "vandyke.siamobile"
         minSdkVersion 16
-        targetSdkVersion 25
-        versionCode 38
-        versionName "1.7.1"
+        targetSdkVersion 26
+        versionCode 40
+        versionName "1.7.3"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
