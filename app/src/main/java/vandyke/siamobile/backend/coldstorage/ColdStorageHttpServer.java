@@ -113,7 +113,7 @@ public class ColdStorageHttpServer extends NanoHTTPD {
                 case "/wallet/transactions":
                     break;
                 case "/consensus":
-                    response.put("synced", true);
+                    response.put("synced", false);
                     response.put("height", 0);
                     break;
                 default:

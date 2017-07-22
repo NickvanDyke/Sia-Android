@@ -30,7 +30,7 @@ public class ModesActivity extends AppIntro {
         super.onCreate(savedInstanceState);
 
         addSlide(AppIntroFragment.newInstance("Modes",
-                "Sia Mobile can operate in three different modes, explained in the following slides. The modes are independent - changes " +
+                "Sia Mobile can operate in multiple modes, explained in the following slides. The modes are independent - changes " +
                         "made while in one mode will not affect other modes. You can change mode at any time in Settings, " +
                         "and view this again by selecting Help from the drawer.",
                 R.drawable.sia_logo_svg, ContextCompat.getColor(this, android.R.color.white),
