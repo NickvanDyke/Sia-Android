@@ -10,14 +10,11 @@ package vandyke.siamobile.scanner;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-
+import android.support.v7.app.AppCompatActivity;
 import com.google.zxing.Result;
 import com.tbruyelle.rxpermissions2.RxPermissions;
-
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
-import vandyke.siamobile.R;
 
 import static vandyke.siamobile.wallet.fragments.WalletSendFragment.SCAN_RESULT_KEY;
 
@@ -48,7 +45,7 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
     }
 
     public void onPermissionResult(boolean granted) {
-        if(!granted) {
+        if (!granted) {
             Intent returnIntent = new Intent();
             setResult(Activity.RESULT_CANCELED, returnIntent);
             finish();

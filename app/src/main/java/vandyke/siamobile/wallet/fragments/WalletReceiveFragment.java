@@ -28,7 +28,7 @@ import vandyke.siamobile.misc.Utils;
 
 public class WalletReceiveFragment extends Fragment {
 
-    ImageView qrImageView;
+    private ImageView qrImageView;
 
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_wallet_receive, null);
@@ -72,6 +72,5 @@ public class WalletReceiveFragment extends Fragment {
     public void setQrCode(String walletAddress) {
         qrImageView.setVisibility(View.VISIBLE);
         qrImageView.setImageBitmap(QRCode.from(walletAddress).bitmap());
-
     }
 }

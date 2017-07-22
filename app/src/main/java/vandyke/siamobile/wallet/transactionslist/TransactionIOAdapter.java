@@ -86,14 +86,14 @@ public class TransactionIOAdapter extends ArrayAdapter {
         return data.size();
     }
 
-    static class Holder {
-        TextView idLabel;
-        TextView id;
-        TextView address;
-        TextView wallet;
-        TextView type;
-        TextView amount;
-        TextView maturityHeightLabel;
-        TextView maturityHeight;
+    private static class Holder {
+        private TextView idLabel;
+        private TextView id;
+        private TextView address;
+        private TextView wallet;
+        private TextView type;
+        private TextView amount;
+        private TextView maturityHeightLabel;
+        private TextView maturityHeight;
     }
 }
