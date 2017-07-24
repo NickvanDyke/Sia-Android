@@ -105,7 +105,7 @@ public class WalletFragment extends Fragment implements WalletMonitorService.Wal
             }
         });
 
-        syncBar.setProgressTextColor(walletStatusText.getTextColors().getDefaultColor());
+        syncBar.setProgressTextColor(MainActivity.defaultTextColor);
 
         return view;
     }

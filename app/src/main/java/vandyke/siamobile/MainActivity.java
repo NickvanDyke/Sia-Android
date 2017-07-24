@@ -59,6 +59,7 @@ import java.util.Stack;
 public class MainActivity extends AppCompatActivity {
 
     public static int backgroundColor;
+    public static int defaultTextColor;
     public static int REQUEST_MODE = 2;
 
     private GlobalPrefsListener globalPrefsListener;
@@ -126,6 +127,8 @@ public class MainActivity extends AppCompatActivity {
         TypedValue a = new TypedValue();
         getTheme().resolveAttribute(android.R.attr.windowBackground, a, true);
         backgroundColor = a.data;
+
+        defaultTextColor = new TextView(this).getCurrentTextColor();
 
         titleBackstack = new Stack<>();
         menuItemBackstack = new Stack<>();
