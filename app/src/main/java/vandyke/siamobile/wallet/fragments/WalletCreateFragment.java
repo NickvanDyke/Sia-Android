@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import org.json.JSONObject;
 import vandyke.siamobile.R;
+import vandyke.siamobile.SiaMobileApplication;
 import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
 import vandyke.siamobile.backend.wallet.WalletMonitorService;
@@ -67,6 +68,8 @@ public class WalletCreateFragment extends Fragment {
                             container.setVisibility(View.GONE);
                             Utils.hideSoftKeyboard(getActivity());
                             WalletMonitorService.staticRefresh();
+                            if (SiaMobileApplication.prefs.getString("operationMode", "cold_storage").equals("cold_storage"))
+                                showDialog();
                         }
                         public void onError(SiaRequest.Error error) {
                             error.snackbar(view);
@@ -79,6 +82,8 @@ public class WalletCreateFragment extends Fragment {
                             container.setVisibility(View.GONE);
                             Utils.hideSoftKeyboard(getActivity());
                             WalletMonitorService.staticRefresh();
+                            if (SiaMobileApplication.prefs.getString("operationMode", "cold_storage").equals("cold_storage"))
+                                showDialog();
                         }
                         public void onError(SiaRequest.Error error) {
                             error.snackbar(view);
@@ -94,5 +99,16 @@ public class WalletCreateFragment extends Fragment {
             }
         });
         return view;
+    }
+
+    private void showDialog() {
+        Utils.getDialogBuilder(getActivity())
+                .setTitle("IMPORTANT")
+                .setMessage("You just created a wallet while in cold storage mode. While in cold storage mode," +
+                        " Sia Mobile is not connected to the Sia network and does not have a copy of the Sia blockchain. This means it cannot show your correct balance or transactions." +
+                        " You can send coins to any of the addresses of your cold storage wallet, and at any time in the future, load your wallet seed" +
+                        " on a full node (such as Sia-UI on your computer or Sia Mobile's full node mode), and have access to your previously sent coins.")
+                .setPositiveButton("I have read and understood this", null)
+                .show();
     }
 }

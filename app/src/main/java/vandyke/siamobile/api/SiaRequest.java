@@ -9,7 +9,6 @@ package vandyke.siamobile.api;
 
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.util.Base64;
 import android.view.View;
 import com.android.volley.Response;
@@ -20,6 +19,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import vandyke.siamobile.R;
 import vandyke.siamobile.SiaMobileApplication;
+import vandyke.siamobile.backend.coldstorage.ColdStorageHttpServer;
 import vandyke.siamobile.misc.Utils;
 
 import java.io.UnsupportedEncodingException;
@@ -188,21 +188,7 @@ public class SiaRequest extends StringRequest {
             if (reason == Reason.UNSUPPORTED_ON_COLD_WALLET) {
                 Snackbar snackbar = Snackbar.make(view, reason.getMsg(), Snackbar.LENGTH_LONG).setAction("Help", new View.OnClickListener() {
                     public void onClick(View view) {
-                        AlertDialog.Builder builder = Utils.getDialogBuilder(view.getContext());
-                        builder.setTitle("Cold storage help")
-                                .setMessage("Sia Mobile's cold storage wallet operates independently of the Sia network." +
-                                        " Since it doesn't have a copy of the Sia blockchain and is not connected to the " +
-                                        "Sia network, it cannot perform certain functions that require this. It also cannot display your correct balance and transactions." +
-                                        "\n\nIf you wish to use unsupported functions, or view your cold wallet balance and transactions, you will have to run a full" +
-                                        " Sia node (either in Sia Mobile or using something like Sia-UI on your computer), and then load your" +
-                                        " wallet seed on that full node. Your coins are not \"lost\" - if you did everything properly, they will be there when you load your seed" +
-                                        " on a full node at any time in the future. No need to worry.")
-//                        Normally, you" +
-//                        " also wouldn't be able to view your cold wallet's balance or transactions because of this, " +
-//                                "but Sia Mobile estimates these values using SiaPulse.com to retrieve transactions involving" +
-//                                " your cold wallet.
-                                .setPositiveButton("OK", null)
-                                .show();
+                        ColdStorageHttpServer.showColdStorageHelp(view.getContext());
                     }
                 });
                 snackbar.getView().setBackgroundColor(ContextCompat.getColor(view.getContext(), R.color.colorAccent));

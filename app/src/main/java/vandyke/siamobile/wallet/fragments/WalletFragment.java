@@ -7,9 +7,11 @@
 
 package vandyke.siamobile.wallet.fragments;
 
-import android.app.AlertDialog;
 import android.app.Fragment;
-import android.content.*;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.Snackbar;
@@ -31,6 +33,7 @@ import vandyke.siamobile.SiaMobileApplication;
 import vandyke.siamobile.api.SiaRequest;
 import vandyke.siamobile.api.Wallet;
 import vandyke.siamobile.backend.BaseMonitorService;
+import vandyke.siamobile.backend.coldstorage.ColdStorageHttpServer;
 import vandyke.siamobile.backend.wallet.WalletMonitorService;
 import vandyke.siamobile.backend.wallet.transaction.Transaction;
 import vandyke.siamobile.misc.Utils;
@@ -42,16 +45,26 @@ import java.util.ArrayList;
 
 public class WalletFragment extends Fragment implements WalletMonitorService.WalletUpdateListener {
 
-    @BindView(R.id.sendButton) public Button sendButton;
-    @BindView(R.id.receiveButton) public Button receiveButton;
-    @BindView(R.id.balanceText) public TextView balanceText;
-    @BindView(R.id.balanceUsdText) public TextView balanceUsdText;
-    @BindView(R.id.balanceUnconfirmed) public TextView balanceUnconfirmedText;
-    @BindView(R.id.syncBar) public NumberProgressBar syncBar;
-    @BindView(R.id.syncText) public TextView syncText;
-    @BindView(R.id.walletStatusText) public TextView walletStatusText;
-    @BindView(R.id.transactionList) public RecyclerView transactionList;
-    @BindView(R.id.expandFrame) public FrameLayout expandFrame;
+    @BindView(R.id.sendButton)
+    public Button sendButton;
+    @BindView(R.id.receiveButton)
+    public Button receiveButton;
+    @BindView(R.id.balanceText)
+    public TextView balanceText;
+    @BindView(R.id.balanceUsdText)
+    public TextView balanceUsdText;
+    @BindView(R.id.balanceUnconfirmed)
+    public TextView balanceUnconfirmedText;
+    @BindView(R.id.syncBar)
+    public NumberProgressBar syncBar;
+    @BindView(R.id.syncText)
+    public TextView syncText;
+    @BindView(R.id.walletStatusText)
+    public TextView walletStatusText;
+    @BindView(R.id.transactionList)
+    public RecyclerView transactionList;
+    @BindView(R.id.expandFrame)
+    public FrameLayout expandFrame;
 
     private final ArrayList<TransactionExpandableGroup> transactionExpandableGroups = new ArrayList<>();
 
@@ -93,15 +106,16 @@ public class WalletFragment extends Fragment implements WalletMonitorService.Wal
 
         balanceText.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setTitle("Exact Balance");
-                builder.setMessage(Wallet.hastingsToSC(walletMonitorService.getBalanceHastings()).toPlainString() + " Siacoins");
-                builder.setPositiveButton("Close", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
+                if (SiaMobileApplication.prefs.getString("operationMode", "cold_storage").equals("cold_storage")) {
+                    ColdStorageHttpServer.showColdStorageHelp(v.getContext());
+                } else {
+                    Utils.getDialogBuilder(v.getContext())
+                            .setTitle("Exact Balance")
+                            .setMessage(Wallet.hastingsToSC(walletMonitorService.getBalanceHastings()).toPlainString() + " Siacoins")
+                            .setPositiveButton("Close", null)
+                            .show();
+                }
 
-                    }
-                });
-                builder.show();
             }
         });
 
@@ -114,11 +128,12 @@ public class WalletFragment extends Fragment implements WalletMonitorService.Wal
         super.onActivityCreated(savedInstanceState);
         connection = new ServiceConnection() {
             public void onServiceConnected(ComponentName name, IBinder service) {
-                walletMonitorService = (WalletMonitorService) ((BaseMonitorService.LocalBinder)service).getService();
+                walletMonitorService = (WalletMonitorService) ((BaseMonitorService.LocalBinder) service).getService();
                 walletMonitorService.registerListener(WalletFragment.this);
                 walletMonitorService.refresh();
                 bound = true;
             }
+
             public void onServiceDisconnected(ComponentName name) {
                 bound = false;
             }
@@ -137,9 +152,14 @@ public class WalletFragment extends Fragment implements WalletMonitorService.Wal
             case UNLOCKED:
                 walletStatusText.setText("Unlocked");
         }
-        balanceText.setText(Wallet.round(Wallet.hastingsToSC(service.getBalanceHastings())));
-        balanceUnconfirmedText.setText(service.getBalanceHastingsUnconfirmed().compareTo(BigDecimal.ZERO) > 0 ? "+" : "" +
-                Wallet.round(Wallet.hastingsToSC(service.getBalanceHastingsUnconfirmed())) + " unconfirmed");
+        if (SiaMobileApplication.prefs.getString("operationMode", "cold_storage").equals("cold_storage")) {
+            balanceText.setText("N/A");
+            balanceUnconfirmedText.setText("");
+        } else {
+            balanceText.setText(Wallet.round(Wallet.hastingsToSC(service.getBalanceHastings())));
+            balanceUnconfirmedText.setText(service.getBalanceHastingsUnconfirmed().compareTo(BigDecimal.ZERO) > 0 ? "+" : "" +
+                    Wallet.round(Wallet.hastingsToSC(service.getBalanceHastingsUnconfirmed())) + " unconfirmed");
+        }
     }
 
     public void onUsdUpdate(WalletMonitorService service) {
@@ -169,7 +189,7 @@ public class WalletFragment extends Fragment implements WalletMonitorService.Wal
 //            syncNotification(R.drawable.ic_sync_problem_white_48dp, "Syncing blockchain...", "Could not retrieve sync progress", false);
         } else {
             syncText.setText("Syncing");
-            syncBar.setProgress((int)syncProgress);
+            syncBar.setProgress((int) syncProgress);
 //            syncNotification(R.drawable.ic_sync_white_48dp, "Syncing blockchain...", String.format("Progress (estimated): %.2f%%", syncProgress), false);
         }
     }
@@ -207,6 +227,7 @@ public class WalletFragment extends Fragment implements WalletMonitorService.Wal
                         Utils.successSnackbar(view);
                         walletStatusText.setText("Locked");
                     }
+
                     public void onError(SiaRequest.Error error) {
                         error.snackbar(view);
                     }
@@ -231,7 +252,7 @@ public class WalletFragment extends Fragment implements WalletMonitorService.Wal
                 replaceExpandFrame(new WalletAddSeedFragment());
                 break;
             case R.id.actionGenPaperWallet:
-                ((MainActivity)getActivity()).displayFragmentClass(PaperWalletFragment.class, "Generated paper wallet", null);
+                ((MainActivity) getActivity()).displayFragmentClass(PaperWalletFragment.class, "Generated paper wallet", null);
                 break;
         }
 

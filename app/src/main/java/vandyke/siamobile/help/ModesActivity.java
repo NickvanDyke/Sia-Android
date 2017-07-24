@@ -44,8 +44,8 @@ public class ModesActivity extends AppIntro {
                 ContextCompat.getColor(this, android.R.color.black),
                 ContextCompat.getColor(this, android.R.color.darker_gray)));
         addSlide(AppIntroFragment.newInstance("Cold storage",
-                "Similar to a paper wallet, except Sia Mobile will store the generated seed and addresses for you. Limited functionality. " +
-                        "Completely offline the Sia network - like a paper wallet, to see your correct balance and transactions and access your coins, you'll" +
+                "Similar to a paper wallet, except Sia Mobile will store the generated seed and addresses for you. Only for receiving and storing coins. " +
+                        "Completely offline the Sia network - like a paper wallet, to see your correct balance and transactions and access/send your coins, you'll" +
                         " have to load your seed on a full node.",
                 R.drawable.safe_image, ContextCompat.getColor(this, android.R.color.white),
                 ContextCompat.getColor(this, android.R.color.black),

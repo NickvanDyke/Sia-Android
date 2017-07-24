@@ -48,6 +48,7 @@ public class Utils {
     public static final BigDecimal devFee = new BigDecimal("0.005"); // 0.5%
 
     public static AlertDialog.Builder getDialogBuilder(Context context) {
+        System.out.println(MainActivity.theme);
         switch (MainActivity.theme) {
             case LIGHT:
             case DARK:

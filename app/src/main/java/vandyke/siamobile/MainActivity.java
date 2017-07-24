@@ -52,6 +52,7 @@ import vandyke.siamobile.settings.GlobalPrefsListener;
 import vandyke.siamobile.settings.fragments.SettingsFragment;
 import vandyke.siamobile.terminal.TerminalFragment;
 import vandyke.siamobile.wallet.fragments.PaperWalletFragment;
+import vandyke.siamobile.wallet.fragments.WalletCreateFragment;
 import vandyke.siamobile.wallet.fragments.WalletFragment;
 
 import java.util.Stack;
@@ -214,8 +215,8 @@ public class MainActivity extends AppCompatActivity {
             } else if (resultCode == ModesActivity.COLD_STORAGE) {
                 SiaMobileApplication.prefs.edit().putString("operationMode", "cold_storage").apply();
                 displayFragmentClass(WalletFragment.class, "Wallet", R.id.drawer_item_wallet);
-//                if (currentlyVisibleFragment instanceof WalletFragment)
-//                    ((WalletFragment) currentlyVisibleFragment).replaceExpandFrame(new WalletCreateFragment());
+                if (currentlyVisibleFragment instanceof WalletFragment)
+                    ((WalletFragment) currentlyVisibleFragment).replaceExpandFrame(new WalletCreateFragment());
             } else if (resultCode == ModesActivity.REMOTE_FULL_NODE) {
                 SiaMobileApplication.prefs.edit().putString("operationMode", "remote_full_node").apply();
                 displayFragmentClass(FragmentSetupRemote.class, "Remote setup", null);

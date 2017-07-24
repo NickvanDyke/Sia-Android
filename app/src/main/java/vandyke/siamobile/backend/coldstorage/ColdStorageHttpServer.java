@@ -14,6 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import siawallet.Wallet;
 import vandyke.siamobile.SiaMobileApplication;
+import vandyke.siamobile.misc.Utils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -167,5 +168,19 @@ public class ColdStorageHttpServer extends NanoHTTPD {
                 .putString("coldStoragePassword", password)
                 .putBoolean("coldStorageExists", true)
                 .apply();
+    }
+
+    public static void showColdStorageHelp(Context context) {
+        Utils.getDialogBuilder(context)
+                .setTitle("Cold storage help")
+                .setMessage("Sia Mobile's cold storage wallet operates independently of the Sia network." +
+                        " Since it doesn't have a copy of the Sia blockchain and is not connected to the " +
+                        "Sia network, it cannot perform certain functions that require this. It also cannot display your correct balance and transactions." +
+                        "\n\nIf you wish to use unsupported functions, or view your cold wallet balance and transactions, you will have to run a full" +
+                        " Sia node (either in Sia Mobile or using something like Sia-UI on your computer), and then load your" +
+                        " wallet seed on that full node. Your coins are not \"lost\" - if you did everything properly, they will be there when you load your seed" +
+                        " on a full node at any time in the future. No need to worry.")
+                .setPositiveButton("OK", null)
+                .show();
     }
 }
