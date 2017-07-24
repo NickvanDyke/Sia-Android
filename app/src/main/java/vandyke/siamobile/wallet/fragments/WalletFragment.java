@@ -115,7 +115,6 @@ public class WalletFragment extends Fragment implements WalletMonitorService.Wal
                             .setPositiveButton("Close", null)
                             .show();
                 }
-
             }
         });
 
@@ -152,14 +151,9 @@ public class WalletFragment extends Fragment implements WalletMonitorService.Wal
             case UNLOCKED:
                 walletStatusText.setText("Unlocked");
         }
-        if (SiaMobileApplication.prefs.getString("operationMode", "cold_storage").equals("cold_storage")) {
-            balanceText.setText("N/A");
-            balanceUnconfirmedText.setText("");
-        } else {
-            balanceText.setText(Wallet.round(Wallet.hastingsToSC(service.getBalanceHastings())));
-            balanceUnconfirmedText.setText(service.getBalanceHastingsUnconfirmed().compareTo(BigDecimal.ZERO) > 0 ? "+" : "" +
-                    Wallet.round(Wallet.hastingsToSC(service.getBalanceHastingsUnconfirmed())) + " unconfirmed");
-        }
+        balanceText.setText(Wallet.round(Wallet.hastingsToSC(service.getBalanceHastings())));
+        balanceUnconfirmedText.setText(service.getBalanceHastingsUnconfirmed().compareTo(BigDecimal.ZERO) > 0 ? "+" : "" +
+                Wallet.round(Wallet.hastingsToSC(service.getBalanceHastingsUnconfirmed())) + " unconfirmed");
     }
 
     public void onUsdUpdate(WalletMonitorService service) {
@@ -179,18 +173,16 @@ public class WalletFragment extends Fragment implements WalletMonitorService.Wal
 
     public void onSyncUpdate(WalletMonitorService service) {
         double syncProgress = service.getSyncProgress();
+        long height = service.getBlockHeight();
         if (syncProgress == 100) {
-            syncText.setText("Synced");
+            syncText.setText("Synced: " + height);
             syncBar.setProgress(100);
-//            syncNotification(R.drawable.ic_sync_white_48dp, "Syncing blockchain...", "Finished", false);
         } else if (syncProgress == 0) {
             syncText.setText("Not synced");
             syncBar.setProgress(0);
-//            syncNotification(R.drawable.ic_sync_problem_white_48dp, "Syncing blockchain...", "Could not retrieve sync progress", false);
         } else {
-            syncText.setText("Syncing");
+            syncText.setText("Syncing: " + height);
             syncBar.setProgress((int) syncProgress);
-//            syncNotification(R.drawable.ic_sync_white_48dp, "Syncing blockchain...", String.format("Progress (estimated): %.2f%%", syncProgress), false);
         }
     }
 

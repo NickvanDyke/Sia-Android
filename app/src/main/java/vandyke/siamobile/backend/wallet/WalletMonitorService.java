@@ -37,6 +37,7 @@ public class WalletMonitorService extends BaseMonitorService {
     private BigDecimal balanceUsd;
     private ArrayList<Transaction> transactions;
     private double syncProgress;
+    private long blockHeight;
 
     private ArrayList<WalletUpdateListener> listeners;
 
@@ -51,6 +52,7 @@ public class WalletMonitorService extends BaseMonitorService {
         balanceUsd = new BigDecimal("0");
         transactions = new ArrayList<>();
         syncProgress = 0;
+        blockHeight = 0;
         instance = this;
         super.onCreate();
     }
@@ -145,6 +147,7 @@ public class WalletMonitorService extends BaseMonitorService {
         Consensus.consensus(new SiaRequest.VolleyCallback() {
             public void onSuccess(JSONObject response) {
                 try {
+                    blockHeight = response.getLong("height");
                     if (response.getBoolean("synced")) {
                         syncProgress = 100;
                         Utils.cancelNotification(WalletMonitorService.this, SYNC_NOTIFICATION); // TODO: maybe have separate service for notifications that registers a listener... not sure if worth it
@@ -258,6 +261,10 @@ public class WalletMonitorService extends BaseMonitorService {
 
     public double getSyncProgress() {
         return syncProgress;
+    }
+
+    public long getBlockHeight() {
+        return blockHeight;
     }
 
     public int estimatedBlockHeightAt(long time) {

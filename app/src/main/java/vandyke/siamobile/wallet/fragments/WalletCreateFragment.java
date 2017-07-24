@@ -72,7 +72,14 @@ public class WalletCreateFragment extends Fragment {
                                 showDialog();
                         }
                         public void onError(SiaRequest.Error error) {
-                            error.snackbar(view);
+                            if (error.getReason() == SiaRequest.Error.Reason.ANOTHER_WALLET_SCAN_UNDERWAY) {
+                                Utils.snackbar(view, "Success. Scanning the blockchain for coins belonging to the given seed. Please wait - it can take a while", Snackbar.LENGTH_LONG);
+                                container.setVisibility(View.GONE);
+                                Utils.hideSoftKeyboard(getActivity());
+                                WalletMonitorService.staticRefresh();
+                            } else {
+                                error.snackbar(view);
+                            }
                         }
                     });
                 else

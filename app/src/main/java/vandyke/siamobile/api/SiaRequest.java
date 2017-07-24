@@ -102,6 +102,7 @@ public class SiaRequest extends StringRequest {
             ANOTHER_WALLET_SCAN_UNDERWAY("Wallet scan in progress. Please wait"),
             WALLET_NOT_ENCRYPTED("Wallet has not been created yet"),
             INVALID_WORD_IN_SEED("Invalid word in seed"),
+            CANNOT_INIT_FROM_SEED_UNTIL_SYNCED("Cannot create wallet from seed until blockchain is synced"),
             UNSUPPORTED_ON_COLD_WALLET("Unsupported on cold storage wallet");
 
             private String msg;
@@ -164,6 +165,8 @@ public class SiaRequest extends StringRequest {
                 return Reason.ANOTHER_WALLET_SCAN_UNDERWAY;
             else if (errorMessage.contains("wallet has not been encrypted yet"))
                 return Reason.WALLET_NOT_ENCRYPTED;
+            else if (errorMessage.contains("cannot init from seed until blockchain is synced"))
+                return Reason.CANNOT_INIT_FROM_SEED_UNTIL_SYNCED;
             else if (errorMessage.contains("unsupported on cold storage wallet"))
                 return Reason.UNSUPPORTED_ON_COLD_WALLET;
             else if (errorMessage.contains("word not found in dictionary for given language"))
