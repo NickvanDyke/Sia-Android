@@ -21,6 +21,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.*;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -59,8 +60,8 @@ public class WalletFragment extends Fragment implements WalletMonitorService.Wal
     public NumberProgressBar syncBar;
     @BindView(R.id.syncText)
     public TextView syncText;
-    @BindView(R.id.walletStatusText)
-    public TextView walletStatusText;
+    @BindView(R.id.walletStatusImage)
+    public ImageView walletStatus;
     @BindView(R.id.transactionList)
     public RecyclerView transactionList;
     @BindView(R.id.expandFrame)
@@ -143,13 +144,38 @@ public class WalletFragment extends Fragment implements WalletMonitorService.Wal
     public void onBalanceUpdate(WalletMonitorService service) {
         switch (walletMonitorService.getWalletStatus()) {
             case NONE:
-                walletStatusText.setText("No wallet");
+                walletStatus.setImageResource(R.drawable.ic_add_black);
+                walletStatus.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View view) {
+                        replaceExpandFrame(new WalletCreateFragment());
+                    }
+                });
                 break;
             case LOCKED:
-                walletStatusText.setText("Locked");
+                walletStatus.setImageResource(R.drawable.ic_lock_outline_black);
+                walletStatus.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View view) {
+                        replaceExpandFrame(new WalletUnlockFragment());
+                    }
+                });
                 break;
             case UNLOCKED:
-                walletStatusText.setText("Unlocked");
+                walletStatus.setImageResource(R.drawable.ic_lock_open_black);
+                walletStatus.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View view) {
+                        Wallet.lock(new SiaRequest.VolleyCallback() {
+                            public void onSuccess(JSONObject response) {
+                                Utils.successSnackbar(view);
+                                walletStatus.setImageResource(R.drawable.ic_lock_outline_black);
+                            }
+
+                            public void onError(SiaRequest.Error error) {
+                                error.snackbar(view);
+                            }
+                        });
+                    }
+                });
+                break;
         }
         balanceText.setText(Wallet.round(Wallet.hastingsToSC(service.getBalanceHastings())));
         balanceUnconfirmedText.setText(service.getBalanceHastingsUnconfirmed().compareTo(BigDecimal.ZERO) > 0 ? "+" : "" +
@@ -217,7 +243,6 @@ public class WalletFragment extends Fragment implements WalletMonitorService.Wal
                 Wallet.lock(new SiaRequest.VolleyCallback() {
                     public void onSuccess(JSONObject response) {
                         Utils.successSnackbar(view);
-                        walletStatusText.setText("Locked");
                     }
 
                     public void onError(SiaRequest.Error error) {

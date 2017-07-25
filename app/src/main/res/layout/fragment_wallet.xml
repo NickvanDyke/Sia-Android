@@ -104,19 +104,6 @@
         android:text="Loading..."
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/walletStatusText"
-        android:textAlignment="textEnd"
-        android:gravity="end"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginRight="16dp"/>
-
-    <TextView
-        android:text="Loading..."
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/balanceUnconfirmed"
         app:layout_constraintTop_toBottomOf="@+id/scNote"
         app:layout_constraintLeft_toLeftOf="@+id/balanceText"
@@ -164,5 +151,17 @@
             android:scrollbars="vertical"
             android:layout_height="0dp"
             android:layout_marginTop="12dp"/>
+
+    <ImageView
+        app:srcCompat="@drawable/ic_add_black"
+        android:tint="@color/colorAccent"
+        android:id="@+id/walletStatusImage"
+        android:layout_height="32dp"
+        android:layout_width="32dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toTopOf="parent"/>
 
 </android.support.constraint.ConstraintLayout>
