@@ -166,7 +166,7 @@ public class WalletFragment extends Fragment implements WalletMonitorService.Wal
                         Wallet.lock(new SiaRequest.VolleyCallback() {
                             public void onSuccess(JSONObject response) {
                                 Utils.successSnackbar(view);
-                                walletStatus.setImageResource(R.drawable.ic_lock_outline_black);
+                                walletMonitorService.refresh();
                             }
 
                             public void onError(SiaRequest.Error error) {
