@@ -7,8 +7,8 @@ Sia Mobile can:
 * Set up and maintain a local cold-storage wallet
 * Interact with a full node running on your computer
 * Run a full node on your device
-* Coming soon: upload to and download from the Sia cloud storage network
-* coming soon: SPV functionality (a.k.a. "lite wallet") once Sia implements this feature
+* Coming soon: upload to and download from the Sia cloud storage network (check the "files" branch)
+* coming soon: SPV functionality (a.k.a. "lite wallet") once Sia implements this feature (check the "spv" branch)
 
 [Sia Mobile on the Play Store](https://play.google.com/store/apps/details?id=vandyke.siamobile)
 
