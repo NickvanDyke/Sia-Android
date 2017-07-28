@@ -28,7 +28,7 @@ class WalletSendDialog : BaseDialogFragment() {
     override val layout: Int = R.layout.fragment_wallet_send
 
     override fun create(view: View?, savedInstanceState: Bundle?) {
-        if (prefs.feesEnabled)
+        if (!prefs.feesEnabled)
             walletSendFee.visibility = View.GONE
         sendAmount.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}

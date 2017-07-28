@@ -41,7 +41,7 @@ class WalletCreateDialog : BaseDialogFragment() {
 
         walletCreateButton.setOnClickListener(View.OnClickListener {
             val password = newPasswordCreate.text.toString()
-            if (newPasswordCreate.text != confirmNewPasswordCreate.text) {
+            if (password != confirmNewPasswordCreate.text.toString()) {
                 Utils.snackbar(view, "New passwords don't match", Snackbar.LENGTH_SHORT)
                 return@OnClickListener
             }
@@ -58,7 +58,7 @@ class WalletCreateDialog : BaseDialogFragment() {
                     }
 
                     override fun onError(error: SiaRequest.Error) {
-                        if (error.reason == SiaRequest.Error.Reason.ANOTHER_WALLET_SCAN_UNDERWAY) {
+                        if (error.reason == SiaRequest.Error.Reason.WALLET_SCAN_IN_PROGRESS) {
                             Utils.snackbar(view, "Success. Scanning the blockchain for coins belonging to the given seed. Please wait", Snackbar.LENGTH_LONG)
                             close()
                             WalletMonitorService.staticRefresh()

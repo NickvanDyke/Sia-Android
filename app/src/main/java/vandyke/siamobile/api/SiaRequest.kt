@@ -27,7 +27,7 @@ import java.util.*
 
 class SiaRequest(method: Int, destination: String, command: String, callback: VolleyCallback) : StringRequest(method, "http://" + destination + command, Response.Listener<String> { response ->
     try {
-        val responseJson = if (response.length == 0) JSONObject() else JSONObject(response)
+        val responseJson = if (response.isEmpty()) JSONObject() else JSONObject(response)
         callback.onSuccess(responseJson)
     } catch (e: JSONException) {
         e.printStackTrace()
@@ -52,13 +52,13 @@ class SiaRequest(method: Int, destination: String, command: String, callback: Vo
         return params
     }
 
-    fun addParam(key: String, value: String): SiaRequest {
-        params.put(key, value)
+    fun addHeader(key: String, value: String): SiaRequest {
+        headers.put(key, value)
         return this
     }
 
-    fun addHeader(key: String, value: String): SiaRequest {
-        headers.put(key, value)
+    fun addParam(key: String, value: String): SiaRequest {
+        params.put(key, value)
         return this
     }
 
@@ -71,13 +71,9 @@ class SiaRequest(method: Int, destination: String, command: String, callback: Vo
         fun onError(error: Error)
     }
 
-    class Error
-    /**
-     * also attempts to determine what caused the error
-     */
-    (error: VolleyError) {
+    class Error(error: VolleyError) {
 
-        enum class Reason private constructor(val msg: String) {
+        enum class Reason(val msg: String) {
             TIMEOUT("Response timed out"),
             NO_NETWORK_RESPONSE("No network response"),
             WALLET_PASSWORD_INCORRECT("Wallet password incorrect"),
@@ -85,21 +81,20 @@ class SiaRequest(method: Int, destination: String, command: String, callback: Vo
             WALLET_ALREADY_UNLOCKED("Wallet already unlocked"),
             INVALID_AMOUNT("Invalid amount"),
             NO_NEW_PASSWORD("Must provide new password"),
-            WRONG_LENGTH_ADDRESS("Address of invalid length"),
+            COULD_NOT_READ_ADDRESS("Could not read address"),
             AMOUNT_ZERO("Amount cannot be zero"),
             INSUFFICIENT_FUNDS("Insufficient funds"),
             EXISTING_WALLET("A wallet already exists. Use force option to overwrite"),
             INCORRECT_API_PASSWORD("Incorrect API password"),
             UNACCOUNTED_FOR_ERROR("Unexpected error"),
-            ANOTHER_WALLET_SCAN_UNDERWAY("Wallet scan in progress. Please wait"),
+            WALLET_SCAN_IN_PROGRESS("Wallet scan in progress. Please wait"),
             WALLET_NOT_ENCRYPTED("Wallet has not been created yet"),
             INVALID_WORD_IN_SEED("Invalid word in seed"),
             CANNOT_INIT_FROM_SEED_UNTIL_SYNCED("Cannot create wallet from seed until blockchain is synced"),
             UNSUPPORTED_ON_COLD_WALLET("Unsupported on cold storage wallet")
         }
 
-        var reason: Reason? = null
-            private set
+        lateinit var reason: Reason
 
         init {
             if (error is TimeoutError)
@@ -132,8 +127,8 @@ class SiaRequest(method: Int, destination: String, command: String, callback: Vo
                 return Reason.INVALID_AMOUNT
             else if (errorMessage.contains("a password must be provided to newpassword"))
                 return Reason.NO_NEW_PASSWORD
-            else if (errorMessage.contains("marshalled unlock hash is the wrong length"))
-                return Reason.WRONG_LENGTH_ADDRESS
+            else if (errorMessage.contains("could not read address"))
+                return Reason.COULD_NOT_READ_ADDRESS
             else if (errorMessage.contains("transaction cannot have an output or payout that has zero value"))
                 return Reason.AMOUNT_ZERO
             else if (errorMessage.contains("unable to fund transaction"))
@@ -143,7 +138,7 @@ class SiaRequest(method: Int, destination: String, command: String, callback: Vo
             else if (errorMessage.contains("API authentication failed"))
                 return Reason.INCORRECT_API_PASSWORD
             else if (errorMessage.contains("another wallet rescan is already underway"))
-                return Reason.ANOTHER_WALLET_SCAN_UNDERWAY
+                return Reason.WALLET_SCAN_IN_PROGRESS
             else if (errorMessage.contains("wallet has not been encrypted yet"))
                 return Reason.WALLET_NOT_ENCRYPTED
             else if (errorMessage.contains("cannot init from seed until blockchain is synced"))
@@ -159,18 +154,18 @@ class SiaRequest(method: Int, destination: String, command: String, callback: Vo
         }
 
         val msg: String
-            get() = if (reason != null) reason!!.msg else ""
+            get() = reason.msg
 
         fun snackbar(view: View?) {
-            if (reason == null || view == null)
+            if (view == null)
                 return
             if (reason == Reason.UNSUPPORTED_ON_COLD_WALLET) {
-                val snackbar = Snackbar.make(view, reason!!.msg, Snackbar.LENGTH_LONG).setAction("Help") { view -> ColdStorageHttpServer.showColdStorageHelp(view.context) }
+                val snackbar = Snackbar.make(view, reason.msg, Snackbar.LENGTH_LONG).setAction("Help") { v -> ColdStorageHttpServer.showColdStorageHelp(view.context) }
                 snackbar.view.setBackgroundColor(ContextCompat.getColor(view.context, R.color.colorAccent))
                 snackbar.setActionTextColor(ContextCompat.getColor(view.context, android.R.color.white))
                 snackbar.show()
             } else
-                Utils.snackbar(view, reason!!.msg, Snackbar.LENGTH_SHORT)
+                Utils.snackbar(view, reason.msg, Snackbar.LENGTH_SHORT)
         }
     }
 }

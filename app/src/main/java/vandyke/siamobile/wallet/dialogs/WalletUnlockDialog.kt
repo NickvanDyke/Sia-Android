@@ -25,12 +25,13 @@ class WalletUnlockDialog : BaseDialogFragment() {
         walletUnlockConfirm.setOnClickListener {
             Wallet.unlock(walletPassword.text.toString(), object : SiaRequest.VolleyCallback {
                 override fun onSuccess(response: JSONObject) {
+                    Utils.successSnackbar(view)
                     close()
                     WalletMonitorService.staticRefresh()
                 }
 
                 override fun onError(error: SiaRequest.Error) {
-                    if (error.reason == SiaRequest.Error.Reason.ANOTHER_WALLET_SCAN_UNDERWAY) {
+                    if (error.reason == SiaRequest.Error.Reason.WALLET_SCAN_IN_PROGRESS) {
                         Utils.snackbar(container, "Scanning the blockchain, please wait. Your wallet will unlock when finished", Snackbar.LENGTH_LONG)
                         close()
                     } else {

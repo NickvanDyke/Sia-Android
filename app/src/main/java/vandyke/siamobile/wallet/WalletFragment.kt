@@ -145,7 +145,7 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
                 continue
             transactionExpandableGroups.add(transactionToGroupWithChild(tx))
         }
-        transactionList!!.adapter = TransactionListAdapter(transactionExpandableGroups)
+        transactionList.adapter = TransactionListAdapter(transactionExpandableGroups)
     }
 
     override fun onSyncUpdate(service: WalletMonitorService) {

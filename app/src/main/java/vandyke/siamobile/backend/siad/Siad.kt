@@ -85,8 +85,7 @@ class Siad : Service() {
 
     override fun onDestroy() {
         //        Daemon.stopSpecific("localhost:9980", new SiaRequest.VolleyCallback(null));
-        if (siadProcess != null)
-            siadProcess!!.destroy()
+        siadProcess.destroy()
     }
 
     override fun onBind(intent: Intent): IBinder? {

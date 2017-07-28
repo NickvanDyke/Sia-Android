@@ -36,9 +36,9 @@ abstract class BaseDialogFragment : DialogFragment() {
     }
 
     fun close() {
-        Utils.hideSoftKeyboard(activity)
         container?.visibility = View.GONE
-        dismiss()
+        if (dialog != null) dismiss()
+        Utils.hideSoftKeyboard(activity)
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {

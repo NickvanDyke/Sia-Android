@@ -87,6 +87,7 @@ object Utils {
             var length: Int = `in`.read(buf)
             while (length > 0) {
                 out.write(buf, 0, length)
+                length = `in`.read(buf)
             }
             result.setExecutable(true)
             `in`.close()
