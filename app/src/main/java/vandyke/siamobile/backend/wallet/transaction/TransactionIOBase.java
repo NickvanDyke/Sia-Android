@@ -53,7 +53,7 @@ public class TransactionIOBase {
             result += "Address: " + relatedAddress +
                     "\nWallet address: " + (walletAddress ? "yes" : "no") + "\n";
         result += "Type: " + fundType +
-                "\nAmount: " + Wallet.hastingsToSC(value).toPlainString();
+                "\nAmount: " + Wallet.INSTANCE.hastingsToSC(value).toPlainString();
         return result;
     }
 }

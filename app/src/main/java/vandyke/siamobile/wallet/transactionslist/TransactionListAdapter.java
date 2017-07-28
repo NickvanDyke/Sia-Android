@@ -55,7 +55,7 @@ public class TransactionListAdapter extends ExpandableRecyclerViewAdapter<Transa
             public boolean onLongClick(View v) {
                 ClipData clip = ClipData.newPlainText("Sia transaction id", ((TextView)v).getText());
                 ((ClipboardManager) idText.getContext().getSystemService(Context.CLIPBOARD_SERVICE)).setPrimaryClip(clip);
-                Utils.snackbar(view, "Copied transaction ID", Snackbar.LENGTH_SHORT);
+                Utils.INSTANCE.snackbar(view, "Copied transaction ID", Snackbar.LENGTH_SHORT);
                 return true;
             }
         });
@@ -72,10 +72,10 @@ public class TransactionListAdapter extends ExpandableRecyclerViewAdapter<Transa
     @Override
     public TransactionDetailsHolder onCreateChildViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_tx_details, parent, false);
-        if (MainActivity.theme == MainActivity.Theme.AMOLED || MainActivity.theme == MainActivity.Theme.CUSTOM) {
+        if (MainActivity.Companion.getAppTheme() == MainActivity.Theme.AMOLED || MainActivity.Companion.getAppTheme() == MainActivity.Theme.CUSTOM) {
             view.findViewById(R.id.top_shadow).setVisibility(View.GONE);
             view.findViewById(R.id.bot_shadow).setVisibility(View.GONE);
-        } else if (MainActivity.theme == MainActivity.Theme.DARK) {
+        } else if (MainActivity.Companion.getAppTheme() == MainActivity.Theme.DARK) {
             view.findViewById(R.id.top_shadow).setBackgroundResource(R.drawable.top_shadow_dark);
             view.findViewById(R.id.bot_shadow).setBackgroundResource(R.drawable.bot_shadow_dark);
         }
@@ -83,12 +83,12 @@ public class TransactionListAdapter extends ExpandableRecyclerViewAdapter<Transa
         ListView inputsList = (ListView) view.findViewById(R.id.transactionInputsList);
         ListView outputsList = (ListView) view.findViewById(R.id.transactionOutputsList);
 
-        if (MainActivity.theme == MainActivity.Theme.CUSTOM) {
+        if (MainActivity.Companion.getAppTheme() == MainActivity.Theme.CUSTOM) {
             inputsList.setBackgroundColor(android.R.color.transparent);
             outputsList.setBackgroundColor(android.R.color.transparent);
         } else {
-            inputsList.setBackgroundColor(MainActivity.backgroundColor);
-            outputsList.setBackgroundColor(MainActivity.backgroundColor);
+            inputsList.setBackgroundColor(MainActivity.Companion.getBackgroundColor());
+            outputsList.setBackgroundColor(MainActivity.Companion.getBackgroundColor());
         }
         return new TransactionDetailsHolder(view);
     }
@@ -140,7 +140,7 @@ public class TransactionListAdapter extends ExpandableRecyclerViewAdapter<Transa
             holder.transactionStatus.setTextColor(Color.RED);
         } else {
             timeString = df.format(((TransactionExpandableGroup) group).getConfirmationDate());
-            holder.transactionStatus.setTextColor(MainActivity.defaultTextColor);
+            holder.transactionStatus.setTextColor(MainActivity.Companion.getDefaultTextColor());
         }
         holder.transactionStatus.setText(timeString);
 
@@ -149,7 +149,7 @@ public class TransactionListAdapter extends ExpandableRecyclerViewAdapter<Transa
 
         String valueText = transaction.getNetValueStringRounded();
         if (transaction.isNetZero()) {
-            holder.transactionValue.setTextColor(MainActivity.defaultTextColor);
+            holder.transactionValue.setTextColor(MainActivity.Companion.getDefaultTextColor());
         } else if (valueText.contains("-")) {
             holder.transactionValue.setTextColor(red);
         } else {

@@ -44,7 +44,7 @@ public class TextTouchCopyListAdapter extends ArrayAdapter {
 
             holder = new Holder();
             holder.textView = (TextView)row.findViewById(R.id.listTextView);
-            if (MainActivity.theme == MainActivity.Theme.CUSTOM)
+            if (MainActivity.Companion.getAppTheme() == MainActivity.Theme.CUSTOM)
                 holder.textView.setTextColor(Color.GRAY);
 
             row.setTag(holder);

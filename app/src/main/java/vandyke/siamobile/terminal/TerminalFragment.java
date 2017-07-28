@@ -37,7 +37,7 @@ public class TerminalFragment extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_terminal, container, false);
-        siacFile = Utils.copyBinary("siac", getActivity(), true);
+        siacFile = Utils.INSTANCE.copyBinary("siac", getActivity(), true);
 
         input = (EditText)v.findViewById(R.id.input);
         input.setOnEditorActionListener(new TextView.OnEditorActionListener() {

@@ -62,7 +62,7 @@ public class Transaction {
                 netValue = netValue.add(transactionOutput.getValue());
         }
         netValueStringExact = netValue.toPlainString();
-        netValueStringRounded = Wallet.round(Wallet.hastingsToSC(netValue));
+        netValueStringRounded = Wallet.INSTANCE.round(Wallet.INSTANCE.hastingsToSC(netValue));
         netZero = (netValue.compareTo(BigDecimal.ZERO) == 0);
     }
 

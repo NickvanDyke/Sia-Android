@@ -51,7 +51,7 @@
         <!--TODO: figure out how to make buttons at bottom green. Also some dialog text colors are handled manually rn...-->
     </style>
 
-    <!--startup splash screen theme-->
+    <!--startup splash scrappThemeheme-->
     <style name="splashScreenTheme" parent="AppTheme.Light">
         <item name="android:windowBackground">@drawable/splash_screen</item>
         <!--TODO: idk if setting primarydark color is working-->

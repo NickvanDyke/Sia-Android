@@ -62,12 +62,12 @@ public class Siad extends Service {
     public void onCreate() {
         startForeground(SIAD_NOTIFICATION, buildSiadNotification("Starting..."));
         Thread thread = new Thread(() -> {
-            siadFile = Utils.copyBinary("siad", Siad.this, false);
+            siadFile = Utils.INSTANCE.copyBinary("siad", Siad.this, false);
             if (siadFile == null) {
                 Handler handler = new Handler(Looper.getMainLooper());
                 handler.post(new Runnable() {
                     public void run() {
-                        Utils.notification(Siad.this, SIAD_NOTIFICATION, R.drawable.ic_dns_white_48dp,
+                        Utils.INSTANCE.notification(Siad.this, SIAD_NOTIFICATION, R.drawable.ic_dns_white_48dp,
                                 "Local full node", "Unsupported CPU architecture", false);
                     }
                 });
@@ -77,7 +77,7 @@ public class Siad extends Service {
 //                stdoutBuffer.setLength(0);
                 ProcessBuilder pb = new ProcessBuilder(siadFile.getAbsolutePath(), "-M", "gctw");
                 pb.redirectErrorStream(true);
-                pb.directory(Utils.getWorkingDirectory(Siad.this));
+                pb.directory(Utils.INSTANCE.getWorkingDirectory(Siad.this));
                 try {
                     siadProcess = pb.start();
                     readStdoutThread = new Thread(() -> {
@@ -87,7 +87,7 @@ public class Siad extends Service {
                             while ((line = inputReader.readLine()) != null) {
                                 siadNotification(line);
                                 if (line.contains("Finished loading") || line.contains("Done!"))
-                                    WalletMonitorService.staticRefresh();
+                                    WalletMonitorService.Companion.staticRefresh();
                             }
                             inputReader.close();
                         } catch (IOException e) {

@@ -28,10 +28,10 @@ import vandyke.siamobile.misc.Utils;
 
 public class DonateDialog extends DialogFragment {
 
-    private String paymentRecipient = Utils.devAddresses[(int) (Math.random() * Utils.devAddresses.length)];
+    private String paymentRecipient = Utils.INSTANCE.getDevAddresses()[(int) (Math.random() * Utils.INSTANCE.getDevAddresses().length)];
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = Utils.getDialogBuilder(getActivity());
+        AlertDialog.Builder builder = Utils.INSTANCE.getDialogBuilder(getActivity());
 
         final View dialogView = getActivity().getLayoutInflater().inflate(R.layout.dialog_donate, null);
 
@@ -40,14 +40,14 @@ public class DonateDialog extends DialogFragment {
 
         donateButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                Wallet.sendSiacoins(Wallet.scToHastings(amount.getText().toString()),
+                Wallet.INSTANCE.sendSiacoins(Wallet.INSTANCE.scToHastings(amount.getText().toString()),
                         paymentRecipient, new SiaRequest.VolleyCallback() {
                             public void onSuccess(JSONObject response) {
-                                Utils.snackbar(dialogView, "Donation successful. Thank you!", Snackbar.LENGTH_SHORT);
+                                Utils.INSTANCE.snackbar(dialogView, "Donation successful. Thank you!", Snackbar.LENGTH_SHORT);
                             }
 
                             public void onError(SiaRequest.Error error) {
-                                Utils.snackbar(dialogView, error.getMsg() + ". No donation made.", Snackbar.LENGTH_SHORT);
+                                Utils.INSTANCE.snackbar(dialogView, error.getMsg() + ". No donation made.", Snackbar.LENGTH_SHORT);
                             }
                         });
             }

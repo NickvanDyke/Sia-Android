@@ -77,7 +77,7 @@ public class TransactionIOAdapter extends ArrayAdapter {
         holder.address.setText(txBase.getRelatedAddress());
         holder.wallet.setText(txBase.isWalletAddress() ? "yes" : "no");
         holder.type.setText(txBase.getFundType());
-        holder.amount.setText(Wallet.hastingsToSC(txBase.getValue()).toPlainString());
+        holder.amount.setText(Wallet.INSTANCE.hastingsToSC(txBase.getValue()).toPlainString());
 
         return row;
     }

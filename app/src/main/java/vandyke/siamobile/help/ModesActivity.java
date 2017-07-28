@@ -82,7 +82,7 @@ public class ModesActivity extends AppIntro {
                 setResult(REMOTE_FULL_NODE);
                 break;
             case 4:
-                if (Utils.isSiadSupported()) {
+                if (Utils.INSTANCE.isSiadSupported()) {
                     setResult(LOCAL_FULL_NODE);
                 } else {
                     Toast.makeText(this, "Sorry, but your device's CPU architecture is not supported by Sia's full node", Toast.LENGTH_LONG).show();
