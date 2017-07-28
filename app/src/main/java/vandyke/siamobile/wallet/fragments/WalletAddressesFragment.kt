@@ -23,7 +23,7 @@ import java.util.*
 
 class WalletAddressesFragment : Fragment() {
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View {
         val view = inflater.inflate(R.layout.fragment_wallet_addresses, null)
         val addresses = ArrayList<String>()
         val adapter = TextTouchCopyListAdapter(activity, R.layout.text_touch_copy_list_item, addresses)

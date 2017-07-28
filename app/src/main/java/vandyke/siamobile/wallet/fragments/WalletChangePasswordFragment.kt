@@ -22,7 +22,7 @@ import vandyke.siamobile.misc.Utils
 
 class WalletChangePasswordFragment : Fragment() {
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View {
         val view = inflater.inflate(R.layout.fragment_wallet_change_password, null)
         walletChange.setOnClickListener(View.OnClickListener {
             val newPassword = newPassword.text.toString()

@@ -29,7 +29,7 @@ import java.math.RoundingMode
 
 class WalletSendFragment : Fragment() {
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View {
         val view = inflater.inflate(R.layout.fragment_wallet_send, null)
         if (prefs.feesEnabled)
             walletSendFee.visibility = View.GONE

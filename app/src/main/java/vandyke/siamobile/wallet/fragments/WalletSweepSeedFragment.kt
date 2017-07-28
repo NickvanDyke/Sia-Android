@@ -22,7 +22,7 @@ import vandyke.siamobile.misc.Utils
 
 class WalletSweepSeedFragment : Fragment() {
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View {
         val view = inflater.inflate(R.layout.fragment_wallet_sweep, null)
         walletAddSeed.setOnClickListener {
             Wallet.sweepSeed("english", (view.findViewById<View>(R.id.walletSweepSeed) as EditText).text.toString(),

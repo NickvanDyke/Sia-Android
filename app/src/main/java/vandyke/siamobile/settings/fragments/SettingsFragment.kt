@@ -28,18 +28,18 @@ import java.io.InputStream
 
 class SettingsFragment : PreferenceFragment() {
 
-    private var prefsListener: SharedPreferences.OnSharedPreferenceChangeListener? = null
+    private lateinit var prefsListener: SharedPreferences.OnSharedPreferenceChangeListener
 
-    private var operation: PreferenceCategory? = null
-    private var operationMode: ListPreference? = null
-    private var remoteAddress: EditTextPreference? = null
-    private var apiPass: EditTextPreference? = null
-    private var runLocalNodeOffWifi: SwitchPreference? = null
-    private var useExternal: SwitchPreference? = null
-    private var minBattery: EditTextPreference? = null
-    private var runInBackground: SwitchPreference? = null
+    private lateinit var operation: PreferenceCategory
+    private lateinit var operationMode: ListPreference
+    private lateinit var remoteAddress: EditTextPreference
+    private lateinit var apiPass: EditTextPreference
+    private lateinit var runLocalNodeOffWifi: SwitchPreference
+    private lateinit var useExternal: SwitchPreference
+    private lateinit var minBattery: EditTextPreference
+    private lateinit var runInBackground: SwitchPreference
 
-    override fun onCreate(savedInstanceState: Bundle) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         addPreferencesFromResource(R.xml.settings)
 
@@ -55,7 +55,7 @@ class SettingsFragment : PreferenceFragment() {
         setLocalSettingsVisibility()
 
         operationMode = findPreference("operationMode") as ListPreference
-        operationMode?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, o ->
+        operationMode.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, o ->
             if (o as String == "local_full_node" && SiaMobileApplication.abi != "arm64") {
                 Utils.snackbar(view, "Sorry, but your device's CPU architecture is not supported by Sia's full node", Snackbar.LENGTH_LONG)
                 return@OnPreferenceChangeListener false
@@ -63,7 +63,7 @@ class SettingsFragment : PreferenceFragment() {
             true
         }
 
-        useExternal?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, o ->
+        useExternal.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, o ->
             if (Utils.isExternalStorageWritable)
                 return@OnPreferenceChangeListener true
             else
@@ -83,13 +83,13 @@ class SettingsFragment : PreferenceFragment() {
         decimalPrecision.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, newValue -> newValue != "" }
 
         when (prefs.operationMode) {
-            "cold_storage" -> operationMode?.summary = "Cold storage"
-            "remote_full_node" -> operationMode?.summary = "Remote full node"
-            "local_full_node" -> operationMode?.summary = "Local full node"
+            "cold_storage" -> operationMode.summary = "Cold storage"
+            "remote_full_node" -> operationMode.summary = "Remote full node"
+            "local_full_node" -> operationMode.summary = "Local full node"
         }
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle) {
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
         prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
@@ -98,21 +98,25 @@ class SettingsFragment : PreferenceFragment() {
                     setColdStorageSettingsVisibility()
                     setRemoteSettingsVisibility()
                     setLocalSettingsVisibility()
-                    if (sharedPreferences.getString("operationMode", "cold_storage") == "cold_storage") {
-                        operationMode?.summary = "Cold storage"
-                        operationMode?.setValueIndex(0)
-                    } else if (sharedPreferences.getString("operationMode", "cold_storage") == "remote_full_node") {
-                        operationMode?.summary = "Remote full node"
-                        operationMode?.setValueIndex(1)
-                    } else if (sharedPreferences.getString("operationMode", "cold_storage") == "local_full_node") {
-                        operationMode?.summary = "Local full node"
-                        operationMode?.setValueIndex(2)
+                    when (prefs.operationMode) {
+                        "cold_storage" -> {
+                            operationMode.summary = "Cold storage"
+                            operationMode.setValueIndex(0)
+                        }
+                        "remote_full_node" -> {
+                            operationMode.summary = "Remote full node"
+                            operationMode.setValueIndex(1)
+                        }
+                        "local_full_node" -> {
+                            operationMode.summary = "Local full node"
+                            operationMode.setValueIndex(2)
+                        }
                     }
                 }
-                "monitorRefreshInterval" -> if (Integer.parseInt(sharedPreferences.getString("monitorRefreshInterval", "1")) == 0)
-                    operation?.removePreference(runInBackground)
+                "monitorRefreshInterval" -> if (prefs.refreshInterval == 0)
+                    operation.removePreference(runInBackground)
                 else
-                    operation?.addPreference(runInBackground)
+                    operation.addPreference(runInBackground)
                 "appTheme" -> when (sharedPreferences.getString("appTheme", "light")) {
                     "custom" -> {
                         val intent = Intent(Intent.ACTION_GET_CONTENT)
@@ -122,7 +126,7 @@ class SettingsFragment : PreferenceFragment() {
                 }
             }
         }
-        prefs.registerOnSharedPreferenceChangeListener(prefsListener!!)
+        prefs.registerOnSharedPreferenceChangeListener(prefsListener)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
@@ -152,23 +156,23 @@ class SettingsFragment : PreferenceFragment() {
 
     private fun setRemoteSettingsVisibility() {
         if (prefs.operationMode == "remote_full_node") {
-            operation?.addPreference(remoteAddress)
-            operation?.addPreference(apiPass)
+            operation.addPreference(remoteAddress)
+            operation.addPreference(apiPass)
         } else {
-            operation?.removePreference(remoteAddress)
-            operation?.removePreference(apiPass)
+            operation.removePreference(remoteAddress)
+            operation.removePreference(apiPass)
         }
     }
 
     private fun setLocalSettingsVisibility() {
         if (prefs.operationMode == "local_full_node") {
-            operation?.addPreference(runLocalNodeOffWifi)
-            operation?.addPreference(useExternal)
-            operation?.addPreference(minBattery)
+            operation.addPreference(runLocalNodeOffWifi)
+            operation.addPreference(useExternal)
+            operation.addPreference(minBattery)
         } else {
-            operation?.removePreference(runLocalNodeOffWifi)
-            operation?.removePreference(useExternal)
-            operation?.removePreference(minBattery)
+            operation.removePreference(runLocalNodeOffWifi)
+            operation.removePreference(useExternal)
+            operation.removePreference(minBattery)
         }
     }
 

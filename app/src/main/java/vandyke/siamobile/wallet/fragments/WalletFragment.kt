@@ -85,7 +85,7 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
         syncBar.setProgressTextColor(MainActivity.defaultTextColor)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle) {
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         connection = object : ServiceConnection {
             override fun onServiceConnected(name: ComponentName, service: IBinder) {
@@ -129,7 +129,7 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
             }
         }
         balanceText.text = Wallet.round(Wallet.hastingsToSC(service.balanceHastings))
-        balanceUnconfirmed.text = "${if (service.balanceHastingsUnconfirmed > BigDecimal.ZERO) "+" else ""} ${Wallet.round(Wallet.hastingsToSC(service.balanceHastingsUnconfirmed!!))} unconfirmed"
+        balanceUnconfirmed.text = "${if (service.balanceHastingsUnconfirmed > BigDecimal.ZERO) "+" else ""}${Wallet.round(Wallet.hastingsToSC(service.balanceHastingsUnconfirmed))} unconfirmed"
     }
 
     override fun onUsdUpdate(service: WalletMonitorService) {

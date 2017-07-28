@@ -31,16 +31,16 @@ class Prefs(context: Context) {
         set(value) = prefs.edit().putString("remoteAddress", value).apply()
 
     var refreshInterval: Int
-        get() = prefs.getInt("operationMode", 1)
-        set(value) = prefs.edit().putInt("refreshInterval", value).apply()
+        get() = prefs.getString("refreshInterval", "1").toInt()
+        set(value) = prefs.edit().putString("refreshInterval", value.toString()).apply()
 
     var runLocalNodeOffWifi: Boolean
         get() = prefs.getBoolean("runLocalNodeOffWifi", false)
         set(value) = prefs.edit().putBoolean("runLocalNodeOffWifi", value).apply()
 
     var localNodeMinBattery: Int
-        get() = prefs.getInt("localNodeMinBattery", 20)
-        set(value) = prefs.edit().putInt("localNodeMinBattery", value).apply()
+        get() = prefs.getString("localNodeMinBattery", "20").toInt()
+        set(value) = prefs.edit().putString("localNodeMinBattery", value.toString()).apply()
 
     var runInBackground: Boolean
         get() = prefs.getBoolean("runInBackground", false)
@@ -83,8 +83,8 @@ class Prefs(context: Context) {
         set(value) = prefs.edit().putString("mostRecentTxId", value).apply()
 
     var displayedDecimalPrecision: Int
-        get() = prefs.getInt("displayedDecimalPrecision", 2)
-        set(value) = prefs.edit().putInt("mostRecentTxId", value).apply()
+        get() = prefs.getString("displayedDecimalPrecision", "2").toInt()
+        set(value) = prefs.edit().putString("displayedDecimalPrecision", value.toString()).apply()
 
     var coldStorageExists: Boolean
         get() = prefs.getBoolean("coldStorageExists", false)

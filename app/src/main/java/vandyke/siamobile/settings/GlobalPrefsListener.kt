@@ -50,7 +50,7 @@ class GlobalPrefsListener(private val context: Context) : SharedPreferences.OnSh
                     WalletMonitorService.staticRefresh()
                 }.start()
             }
-            "monitorRefreshInterval" -> WalletMonitorService.staticPostRunnable()
+            "refreshInterval" -> WalletMonitorService.staticPostRunnable()
             "runLocalNodeOffWifi" -> {
                 if (prefs.operationMode == "local_full_node") {
                     val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager

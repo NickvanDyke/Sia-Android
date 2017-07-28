@@ -36,7 +36,6 @@ object Utils {
     val devFee = BigDecimal("0.005") // 0.5%
 
     fun getDialogBuilder(context: Context): AlertDialog.Builder {
-        println(MainActivity.appTheme)
         when (MainActivity.appTheme) {
             MainActivity.Theme.LIGHT, MainActivity.Theme.DARK -> return AlertDialog.Builder(context)
             MainActivity.Theme.AMOLED -> return AlertDialog.Builder(context, R.style.DialogTheme_Amoled)

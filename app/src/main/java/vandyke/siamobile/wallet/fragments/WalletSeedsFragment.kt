@@ -23,7 +23,7 @@ import java.util.*
 
 class WalletSeedsFragment : Fragment() {
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View {
         val view = activity.layoutInflater.inflate(R.layout.fragment_wallet_seeds, null)
         val seeds = ArrayList<String>()
         val adapter = TextTouchCopyListAdapter(activity, R.layout.text_touch_copy_list_item, seeds)

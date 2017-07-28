@@ -36,7 +36,7 @@ abstract class BaseMonitorService : Service() {
         handler!!.post(refreshRunnable)
     }
 
-    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         return Service.START_STICKY
     }
 
@@ -50,7 +50,7 @@ abstract class BaseMonitorService : Service() {
             handler!!.removeCallbacks(refreshRunnable)
     }
 
-    override fun onTaskRemoved(rootIntent: Intent) {
+    override fun onTaskRemoved(rootIntent: Intent?) {
         if (!prefs.runInBackground)
             stopSelf()
     }

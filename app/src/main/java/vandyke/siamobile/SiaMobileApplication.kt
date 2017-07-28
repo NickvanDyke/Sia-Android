@@ -15,6 +15,30 @@ import org.acra.ACRA
 import vandyke.siamobile.misc.Utils
 import vandyke.siamobile.settings.Prefs
 
+//object prefs: KotprefModel() {
+//    var theme by stringPref()
+//    var operationMode by stringPref()
+//    var address by stringPref()
+//    var remoteAddress by stringPref()
+//    var refreshInterval by intPref()
+//    var runLocalNodeOffWifi by booleanPref()
+//    var localNodeMinBattery by intPref()
+//    var runInBackground by booleanPref()
+//    var firstTime by booleanPref()
+//    var startupPage by stringPref()
+//    var transparentBars by booleanPref()
+//    var customBgBase64 by stringPref()
+//    var hideZero by booleanPref()
+//    var useExternal by booleanPref()
+//    var feesEnabled by booleanPref()
+//    var apiPass by stringPref()
+//    var mostRecentTxId by stringPref()
+//    var displayedDecimalPrecision by intPref()
+//    var coldStorageExists by booleanPref()
+//    var coldStorageSeed by stringPref()
+//    var coldStoragePassword by stringPref()
+//}
+
 val prefs: Prefs by lazy {
     SiaMobileApplication.prefs!!
 }
@@ -29,8 +53,6 @@ class SiaMobileApplication : Application() {
     }
 
     override fun onCreate() {
-        val hi = "hi"
-        hi.contains("hi")
         ACRA.init(this)
         prefs = Prefs(applicationContext)
         requestQueue = Volley.newRequestQueue(this)

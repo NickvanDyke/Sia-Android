@@ -110,13 +110,12 @@
         android:textColor="@color/colorPrimary"
         android:layout_marginStart="2dp"
         android:layout_marginLeft="2dp"/>
+
     <TextView
         android:text="Loading..."
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/balanceUsdText"
-        android:textAlignment="textEnd"
-        android:gravity="end"
         android:textSize="12sp"
         app:layout_constraintTop_toBottomOf="@+id/balanceUnconfirmed"
         app:layout_constraintLeft_toLeftOf="@+id/balanceUnconfirmed"/>

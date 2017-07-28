@@ -190,7 +190,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_MODE) {
             if (resultCode == ModesActivity.PAPER_WALLET) {
                 displayFragmentClass(PaperWalletFragment::class.java, "Generated paper wallet", null)
@@ -258,7 +258,7 @@ class MainActivity : AppCompatActivity() {
     override fun onBackPressed() {
         if (drawerLayout.isDrawerVisible(GravityCompat.START))
             drawerLayout.closeDrawer(GravityCompat.START)
-        else if (titleBackstack!!.size <= 1) {
+        else if (titleBackstack.size <= 1) {
             Utils.getDialogBuilder(this)
                     .setTitle("Quit?")
                     .setPositiveButton("Yes") { dialogInterface, i -> finish() }

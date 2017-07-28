@@ -9,6 +9,7 @@ package vandyke.siamobile.backend.wallet
 
 import com.android.volley.Response
 import com.android.volley.VolleyError
+import org.json.JSONException
 import org.json.JSONObject
 import vandyke.siamobile.R
 import vandyke.siamobile.api.Consensus
@@ -19,7 +20,6 @@ import vandyke.siamobile.backend.wallet.transaction.Transaction
 import vandyke.siamobile.misc.Utils
 import vandyke.siamobile.prefs
 import java.math.BigDecimal
-import java.util.*
 
 class WalletMonitorService : BaseMonitorService() {
 
@@ -27,35 +27,27 @@ class WalletMonitorService : BaseMonitorService() {
         NONE, LOCKED, UNLOCKED
     }
 
-    lateinit var walletStatus: WalletStatus
+     var walletStatus: WalletStatus = WalletStatus.NONE
         private set
-    lateinit var balanceHastings: BigDecimal
+     var balanceHastings: BigDecimal = BigDecimal("0")
         private set
-    lateinit var balanceHastingsUnconfirmed: BigDecimal
+     var balanceHastingsUnconfirmed: BigDecimal = BigDecimal("0")
         private set
-    lateinit var balanceUsd: BigDecimal
+     var balanceUsd: BigDecimal = BigDecimal("0")
         private set
-    lateinit var transactions: ArrayList<Transaction>
+     var transactions: ArrayList<Transaction> = ArrayList()
         private set
-    var syncProgress: Double = 0.toDouble()
+    var syncProgress: Double = 0.0
         private set
     var blockHeight: Long = 0
         private set
 
-    private var listeners: ArrayList<WalletUpdateListener>? = null
+    private var listeners: ArrayList<WalletUpdateListener> = ArrayList()
 
     private val SYNC_NOTIFICATION = 0
     private val TRANSACTION_NOTIFICATION = 1
 
     override fun onCreate() {
-        listeners = ArrayList<WalletUpdateListener>()
-        walletStatus = WalletStatus.NONE
-        balanceHastings = BigDecimal("0")
-        balanceHastingsUnconfirmed = BigDecimal("0")
-        balanceUsd = BigDecimal("0")
-        transactions = ArrayList<Transaction>()
-        syncProgress = 0.0
-        blockHeight = 0
         instance = this
         super.onCreate()
     }
@@ -94,9 +86,13 @@ class WalletMonitorService : BaseMonitorService() {
 
         Wallet.coincapSC(object : Response.Listener<String> {
             override fun onResponse(response: String?) {
-                val json = JSONObject(response as String)
-                val usdPrice = json.getDouble("usdPrice")
-                balanceUsd = Wallet.scToUsd(usdPrice, Wallet.hastingsToSC(balanceHastings))
+                try {
+                    val json = JSONObject(response)
+                    val usdPrice = json.getDouble("usdPrice")
+                    balanceUsd = Wallet.scToUsd(usdPrice, Wallet.hastingsToSC(balanceHastings))
+                } catch (e: JSONException) {
+                    balanceUsd = BigDecimal("0")
+                }
                 sendUsdUpdate()
             }
         }, Response.ErrorListener { error -> sendUsdError(error) })
@@ -113,7 +109,7 @@ class WalletMonitorService : BaseMonitorService() {
                 for (tx in Transaction.populateTransactions(response)) {
                     if (tx.transactionId == mostRecentTxId)
                         foundMostRecent = true
-                    transactions!!.add(tx)
+                    transactions.add(tx)
                     if (!foundMostRecent) {
                         newTxs++
                         netOfNewTxs = netOfNewTxs.add(tx.netValue)
