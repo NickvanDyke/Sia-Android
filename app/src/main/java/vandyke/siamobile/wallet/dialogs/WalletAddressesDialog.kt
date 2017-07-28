@@ -5,13 +5,10 @@
  * included in this source code package. All rights are reserved, with the exception of what is specified there.
  */
 
-package vandyke.siamobile.wallet.fragments
+package vandyke.siamobile.wallet.dialogs
 
-import android.app.Fragment
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_wallet_addresses.*
 import org.json.JSONException
 import org.json.JSONObject
@@ -21,10 +18,10 @@ import vandyke.siamobile.api.Wallet
 import vandyke.siamobile.misc.TextTouchCopyListAdapter
 import java.util.*
 
-class WalletAddressesFragment : Fragment() {
+class WalletAddressesDialog : BaseDialogFragment() {
+    override val layout: Int = R.layout.fragment_wallet_addresses
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View {
-        val view = inflater.inflate(R.layout.fragment_wallet_addresses, null)
+    override fun create(view: View?, savedInstanceState: Bundle?) {
         val addresses = ArrayList<String>()
         val adapter = TextTouchCopyListAdapter(activity, R.layout.text_touch_copy_list_item, addresses)
         addressesList.adapter = adapter
@@ -45,7 +42,6 @@ class WalletAddressesFragment : Fragment() {
                 error.snackbar(view)
             }
         })
-        walletCreateCancel.setOnClickListener { container.visibility = View.GONE }
-        return view
+        setCloseListener(walletAddressesCancel)
     }
 }

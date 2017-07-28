@@ -29,7 +29,7 @@
             android:layout_marginLeft="16dp"/>
 
     <Button
-        android:id="@+id/walletAddressClose"
+        android:id="@+id/walletReceiveClose"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
@@ -52,9 +52,9 @@
         android:background="@null"
         android:text="Copy"
         android:textColor="@color/colorAccent"
-        app:layout_constraintBottom_toBottomOf="@+id/walletAddressClose"
+        app:layout_constraintBottom_toBottomOf="@+id/walletReceiveClose"
         app:layout_constraintHorizontal_bias="0.47"
-        app:layout_constraintLeft_toRightOf="@+id/walletAddressClose"
+        app:layout_constraintLeft_toRightOf="@+id/walletReceiveClose"
         app:layout_constraintRight_toRightOf="parent" />
 
     <ImageView

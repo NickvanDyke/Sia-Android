@@ -5,15 +5,11 @@
  * included in this source code package. All rights are reserved, with the exception of what is specified there.
  */
 
-package vandyke.siamobile.wallet.fragments
+package vandyke.siamobile.wallet.dialogs
 
-import android.app.Fragment
 import android.os.Bundle
 import android.support.design.widget.Snackbar
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.EditText
 import kotlinx.android.synthetic.main.fragment_wallet_create.*
 import org.json.JSONObject
 import vandyke.siamobile.R
@@ -23,10 +19,10 @@ import vandyke.siamobile.backend.wallet.WalletMonitorService
 import vandyke.siamobile.misc.Utils
 import vandyke.siamobile.prefs
 
-class WalletCreateFragment : Fragment() {
+class WalletCreateDialog : BaseDialogFragment() {
+    override val layout: Int = R.layout.fragment_wallet_create
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View {
-        val view = inflater.inflate(R.layout.fragment_wallet_create, null)
+    override fun create(view: View?, savedInstanceState: Bundle?) {
         walletCreateSeed.visibility = View.GONE
         walletCreateFromSeed.setOnClickListener {
             if (walletCreateFromSeed.isChecked)
@@ -44,7 +40,7 @@ class WalletCreateFragment : Fragment() {
         }
 
         walletCreateButton.setOnClickListener(View.OnClickListener {
-            val password = (view.findViewById<View>(R.id.newPasswordCreate) as EditText).text.toString()
+            val password = newPasswordCreate.text.toString()
             if (newPasswordCreate.text != confirmNewPasswordCreate.text) {
                 Utils.snackbar(view, "New passwords don't match", Snackbar.LENGTH_SHORT)
                 return@OnClickListener
@@ -55,8 +51,7 @@ class WalletCreateFragment : Fragment() {
                 Wallet.initSeed(password, force, dictionary, walletCreateSeed.text.toString(), object : SiaRequest.VolleyCallback {
                     override fun onSuccess(response: JSONObject) {
                         Utils.successSnackbar(view)
-                        container.visibility = View.GONE
-                        Utils.hideSoftKeyboard(activity)
+                        close()
                         WalletMonitorService.staticRefresh()
                         if (prefs.operationMode == "cold_storage")
                             showDialog()
@@ -64,9 +59,8 @@ class WalletCreateFragment : Fragment() {
 
                     override fun onError(error: SiaRequest.Error) {
                         if (error.reason == SiaRequest.Error.Reason.ANOTHER_WALLET_SCAN_UNDERWAY) {
-                            Utils.snackbar(view, "Success. Scanning the blockchain for coins belonging to the given seed. Please wait - it can take a while", Snackbar.LENGTH_LONG)
-                            container.visibility = View.GONE
-                            Utils.hideSoftKeyboard(activity)
+                            Utils.snackbar(view, "Success. Scanning the blockchain for coins belonging to the given seed. Please wait", Snackbar.LENGTH_LONG)
+                            close()
                             WalletMonitorService.staticRefresh()
                         } else {
                             error.snackbar(view)
@@ -77,8 +71,7 @@ class WalletCreateFragment : Fragment() {
                 Wallet.init(password, force, dictionary, object : SiaRequest.VolleyCallback {
                     override fun onSuccess(response: JSONObject) {
                         Utils.successSnackbar(view)
-                        container.visibility = View.GONE
-                        Utils.hideSoftKeyboard(activity)
+                        close()
                         WalletMonitorService.staticRefresh()
                         if (prefs.operationMode == "cold_storage")
                             showDialog()
@@ -89,12 +82,7 @@ class WalletCreateFragment : Fragment() {
                     }
                 })
         })
-
-        walletCreateCancel.setOnClickListener {
-            container.visibility = View.GONE
-            Utils.hideSoftKeyboard(activity)
-        }
-        return view
+        setCloseListener(walletCreateCancel)
     }
 
     private fun showDialog() {

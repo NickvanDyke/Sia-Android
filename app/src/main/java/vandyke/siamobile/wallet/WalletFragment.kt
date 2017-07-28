@@ -5,7 +5,7 @@
  * included in this source code package. All rights are reserved, with the exception of what is specified there.
  */
 
-package vandyke.siamobile.wallet.fragments
+package vandyke.siamobile.wallet
 
 import android.app.Fragment
 import android.content.ComponentName
@@ -31,6 +31,7 @@ import vandyke.siamobile.backend.wallet.WalletMonitorService
 import vandyke.siamobile.backend.wallet.transaction.Transaction
 import vandyke.siamobile.misc.Utils
 import vandyke.siamobile.prefs
+import vandyke.siamobile.wallet.dialogs.*
 import vandyke.siamobile.wallet.transactionslist.TransactionExpandableGroup
 import vandyke.siamobile.wallet.transactionslist.TransactionListAdapter
 import java.math.BigDecimal
@@ -67,8 +68,8 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
         transactionList.layoutManager = layoutManager
         transactionList.addItemDecoration(DividerItemDecoration(transactionList.context, layoutManager.orientation))
 
-        sendButton.setOnClickListener { replaceExpandFrame(WalletSendFragment()) }
-        receiveButton.setOnClickListener { replaceExpandFrame(WalletReceiveFragment()) }
+        sendButton.setOnClickListener { replaceExpandFrame(WalletSendDialog()) }
+        receiveButton.setOnClickListener { replaceExpandFrame(WalletReceiveDialog()) }
 
         balanceText.setOnClickListener { v ->
             if (prefs.operationMode == "cold_storage") {
@@ -106,11 +107,11 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
         when (walletMonitorService.walletStatus) {
             WalletMonitorService.WalletStatus.NONE -> {
                 walletStatusImage.setImageResource(R.drawable.ic_add_black)
-                walletStatusImage.setOnClickListener { replaceExpandFrame(WalletCreateFragment()) }
+                walletStatusImage.setOnClickListener { replaceExpandFrame(WalletCreateDialog()) }
             }
             WalletMonitorService.WalletStatus.LOCKED -> {
                 walletStatusImage.setImageResource(R.drawable.ic_lock_outline_black)
-                walletStatusImage.setOnClickListener { replaceExpandFrame(WalletUnlockFragment()) }
+                walletStatusImage.setOnClickListener { replaceExpandFrame(WalletUnlockDialog()) }
             }
             WalletMonitorService.WalletStatus.UNLOCKED -> {
                 walletStatusImage.setImageResource(R.drawable.ic_lock_open_black)
@@ -184,7 +185,7 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
         when (item.itemId) {
             R.id.actionRefresh -> if (bound)
                 walletMonitorService.refresh()
-            R.id.actionUnlock -> replaceExpandFrame(WalletUnlockFragment())
+            R.id.actionUnlock -> replaceExpandFrame(WalletUnlockDialog())
             R.id.actionLock -> Wallet.lock(object : SiaRequest.VolleyCallback {
                 override fun onSuccess(response: JSONObject) {
                     Utils.successSnackbar(myView)
@@ -194,12 +195,12 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
                     error.snackbar(myView)
                 }
             })
-            R.id.actionChangePassword -> replaceExpandFrame(WalletChangePasswordFragment())
-            R.id.actionViewSeeds -> replaceExpandFrame(WalletSeedsFragment())
-            R.id.actionCreateWallet -> replaceExpandFrame(WalletCreateFragment())
-            R.id.actionSweepSeed -> replaceExpandFrame(WalletSweepSeedFragment())
-            R.id.actionViewAddresses -> replaceExpandFrame(WalletAddressesFragment())
-            R.id.actionAddSeed -> replaceExpandFrame(WalletAddSeedFragment())
+            R.id.actionChangePassword -> replaceExpandFrame(WalletChangePasswordDialog())
+            R.id.actionViewSeeds -> replaceExpandFrame(WalletSeedsDialog())
+            R.id.actionCreateWallet -> replaceExpandFrame(WalletCreateDialog())
+            R.id.actionSweepSeed -> replaceExpandFrame(WalletSweepSeedDialog())
+            R.id.actionViewAddresses -> replaceExpandFrame(WalletAddressesDialog())
+            R.id.actionAddSeed -> replaceExpandFrame(WalletAddSeedDialog())
             R.id.actionGenPaperWallet -> (activity as MainActivity).displayFragmentClass(PaperWalletFragment::class.java, "Generated paper wallet", null)
         }
 

@@ -48,9 +48,9 @@ import vandyke.siamobile.misc.Utils
 import vandyke.siamobile.settings.GlobalPrefsListener
 import vandyke.siamobile.settings.fragments.SettingsFragment
 import vandyke.siamobile.terminal.TerminalFragment
-import vandyke.siamobile.wallet.fragments.PaperWalletFragment
-import vandyke.siamobile.wallet.fragments.WalletCreateFragment
-import vandyke.siamobile.wallet.fragments.WalletFragment
+import vandyke.siamobile.wallet.WalletFragment
+import vandyke.siamobile.wallet.dialogs.PaperWalletFragment
+import vandyke.siamobile.wallet.dialogs.WalletCreateDialog
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -198,7 +198,7 @@ class MainActivity : AppCompatActivity() {
                 prefs.operationMode = "cold_storage"
                 displayFragmentClass(WalletFragment::class.java, "Wallet", R.id.drawer_item_wallet)
                 if (currentlyVisibleFragment is WalletFragment)
-                    (currentlyVisibleFragment as WalletFragment).replaceExpandFrame(WalletCreateFragment())
+                    (currentlyVisibleFragment as WalletFragment).replaceExpandFrame(WalletCreateDialog())
             } else if (resultCode == ModesActivity.REMOTE_FULL_NODE) {
                 prefs.operationMode = "remote_full_node"
                 displayFragmentClass(FragmentSetupRemote::class.java, "Remote setup", null)

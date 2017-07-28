@@ -5,7 +5,7 @@
  * included in this source code package. All rights are reserved, with the exception of what is specified there.
  */
 
-package vandyke.siamobile.wallet.fragments
+package vandyke.siamobile.wallet.dialogs
 
 import android.app.Fragment
 import android.content.ClipData

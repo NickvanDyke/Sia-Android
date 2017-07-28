@@ -177,50 +177,50 @@ class WalletMonitorService : BaseMonitorService() {
     }
 
     fun registerListener(listener: WalletUpdateListener) {
-        listeners?.add(listener)
+        listeners.add(listener)
     }
 
     fun unregisterListener(listener: WalletUpdateListener) {
-        listeners?.remove(listener)
+        listeners.remove(listener)
     }
 
     fun sendBalanceUpdate() {
-        for (listener in listeners!!)
+        for (listener in listeners)
             listener.onBalanceUpdate(this)
     }
 
     fun sendUsdUpdate() {
-        for (listener in listeners!!)
+        for (listener in listeners)
             listener.onUsdUpdate(this)
     }
 
     fun sendTransactionsUpdate() {
-        for (listener in listeners!!)
+        for (listener in listeners)
             listener.onTransactionsUpdate(this)
     }
 
     fun sendSyncUpdate() {
-        for (listener in listeners!!)
+        for (listener in listeners)
             listener.onSyncUpdate(this)
     }
 
     fun sendBalanceError(error: SiaRequest.Error) {
-        for (listener in listeners!!)
+        for (listener in listeners)
             listener.onBalanceError(error)
     }
 
     fun sendUsdError(error: VolleyError) {
-        for (listener in listeners!!)
+        for (listener in listeners)
             listener.onUsdError(error)
     }
 
     fun sendTransactionsError(error: SiaRequest.Error) {
-        for (listener in listeners!!)
+        for (listener in listeners)
             listener.onTransactionsError(error)
     }
 
     fun sendSyncError(error: SiaRequest.Error) {
-        for (listener in listeners!!)
+        for (listener in listeners)
             listener.onSyncError(error)
     }
 

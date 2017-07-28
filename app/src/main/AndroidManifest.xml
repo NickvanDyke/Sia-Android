@@ -55,7 +55,7 @@
             android:name=".help.ModesActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
-        <activity android:name=".scanner.ScannerActivity"/>
+        <activity android:name=".wallet.ScannerActivity"/>
     </application>
 
 </manifest>

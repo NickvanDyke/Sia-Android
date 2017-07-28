@@ -5,13 +5,10 @@
  * included in this source code package. All rights are reserved, with the exception of what is specified there.
  */
 
-package vandyke.siamobile.wallet.fragments
+package vandyke.siamobile.wallet.dialogs
 
-import android.app.Fragment
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_wallet_add_seed.*
 import org.json.JSONObject
 import vandyke.siamobile.R
@@ -19,18 +16,17 @@ import vandyke.siamobile.api.SiaRequest
 import vandyke.siamobile.api.Wallet
 import vandyke.siamobile.misc.Utils
 
-class WalletAddSeedFragment : Fragment() {
+class WalletAddSeedDialog : BaseDialogFragment() {
+    override val layout: Int = R.layout.fragment_wallet_add_seed
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View {
-        val view = inflater.inflate(R.layout.fragment_wallet_add_seed, null)
-        walletCreateButton.setOnClickListener {
+    override fun create(view: View?, savedInstanceState: Bundle?) {
+        walletAddSeed.setOnClickListener {
             Wallet.seed(walletPassword.text.toString(), "english",
                     walletAddSeed.text.toString(),
                     object : SiaRequest.VolleyCallback {
                         override fun onSuccess(response: JSONObject) {
                             Utils.successSnackbar(view)
-                            container.visibility = View.GONE
-                            Utils.hideSoftKeyboard(activity)
+                            close()
                         }
 
                         override fun onError(error: SiaRequest.Error) {
@@ -38,10 +34,6 @@ class WalletAddSeedFragment : Fragment() {
                         }
                     })
         }
-        walletCreateCancel.setOnClickListener {
-            container.visibility = View.GONE
-            Utils.hideSoftKeyboard(activity)
-        }
-        return view
+        setCloseListener(walletAddSeedCancel)
     }
 }

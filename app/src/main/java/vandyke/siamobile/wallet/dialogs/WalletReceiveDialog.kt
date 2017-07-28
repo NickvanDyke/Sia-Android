@@ -5,18 +5,14 @@
  * included in this source code package. All rights are reserved, with the exception of what is specified there.
  */
 
-package vandyke.siamobile.wallet.fragments
+package vandyke.siamobile.wallet.dialogs
 
-import android.app.Fragment
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.Snackbar
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
 import kotlinx.android.synthetic.main.fragment_wallet_receive.*
 import net.glxn.qrgen.android.QRCode
 import org.json.JSONException
@@ -26,11 +22,10 @@ import vandyke.siamobile.api.SiaRequest
 import vandyke.siamobile.api.Wallet
 import vandyke.siamobile.misc.Utils
 
-class WalletReceiveFragment : Fragment() {
+class WalletReceiveDialog : BaseDialogFragment() {
+    override val layout: Int = R.layout.fragment_wallet_receive
 
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View {
-        val view = inflater.inflate(R.layout.fragment_wallet_receive, null)
+    override fun create(view: View?, savedInstanceState: Bundle?) {
         walletQrCode.visibility = View.INVISIBLE
 
         Wallet.newAddress(object : SiaRequest.VolleyCallback {
@@ -50,16 +45,14 @@ class WalletReceiveFragment : Fragment() {
                 receiveAddress.text = "${error.msg}\n"
             }
         })
-        view.findViewById<View>(R.id.walletAddressCopy).setOnClickListener {
+        walletAddressCopy.setOnClickListener {
             val clipboard = activity.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            val clip = ClipData.newPlainText("receive address", (view.findViewById<View>(R.id.receiveAddress) as TextView).text)
+            val clip = ClipData.newPlainText("receive address", receiveAddress.text)
             clipboard.primaryClip = clip
             Utils.snackbar(view, "Copied receive address", Snackbar.LENGTH_SHORT)
-            container.visibility = View.GONE
+            close()
         }
-        view.findViewById<View>(R.id.walletAddressClose).setOnClickListener { container.visibility = View.GONE }
-
-        return view
+        setCloseListener(walletReceiveClose)
     }
 
     fun setQrCode(walletAddress: String) {

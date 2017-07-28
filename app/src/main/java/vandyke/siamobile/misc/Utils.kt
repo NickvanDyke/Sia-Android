@@ -61,7 +61,7 @@ object Utils {
         snackbar.show()
     }
 
-    fun successSnackbar(view: View) {
+    fun successSnackbar(view: View?) {
         snackbar(view, "Success", Snackbar.LENGTH_SHORT)
     }
 
