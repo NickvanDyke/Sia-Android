@@ -71,6 +71,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         globalPrefsListener = GlobalPrefsListener(this)
         prefs.registerOnSharedPreferenceChangeListener(globalPrefsListener)
+        println(prefs.theme)
         when (prefs.theme) {
             "light" -> {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)

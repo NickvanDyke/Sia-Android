@@ -27,7 +27,7 @@ import java.io.FileNotFoundException
 import java.io.InputStream
 
 class SettingsFragment : PreferenceFragment() {
-
+    private val SELECT_PICTURE = 1
     private lateinit var prefsListener: SharedPreferences.OnSharedPreferenceChangeListener
 
     private lateinit var operation: PreferenceCategory
@@ -91,7 +91,6 @@ class SettingsFragment : PreferenceFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
         prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
             when (key) {
                 "operationMode" -> {
@@ -117,12 +116,10 @@ class SettingsFragment : PreferenceFragment() {
                     operation.removePreference(runInBackground)
                 else
                     operation.addPreference(runInBackground)
-                "appTheme" -> when (sharedPreferences.getString("appTheme", "light")) {
-                    "custom" -> {
-                        val intent = Intent(Intent.ACTION_GET_CONTENT)
-                        intent.type = "image/*"
-                        startActivityForResult(Intent.createChooser(intent, "Select Background"), SELECT_PICTURE)
-                    }
+                "theme" -> if (prefs.theme == "custom") {
+                    val intent = Intent(Intent.ACTION_GET_CONTENT)
+                    intent.type = "image/*"
+                    startActivityForResult(Intent.createChooser(intent, "Select Background"), SELECT_PICTURE)
                 }
             }
         }
@@ -174,9 +171,5 @@ class SettingsFragment : PreferenceFragment() {
             operation.removePreference(useExternal)
             operation.removePreference(minBattery)
         }
-    }
-
-    companion object {
-        private val SELECT_PICTURE = 1
     }
 }
