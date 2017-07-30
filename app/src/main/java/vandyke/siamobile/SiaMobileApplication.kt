@@ -40,16 +40,18 @@ import vandyke.siamobile.settings.Prefs
 //}
 
 val prefs: Prefs by lazy {
-    SiaMobileApplication.prefs!!
+    SiaMobileApplication.prefs
 }
+
+
 
 @org.acra.annotation.ReportsCrashes(mailTo = "siamobiledev@gmail.com", mode = org.acra.ReportingInteractionMode.DIALOG, resDialogText = vandyke.siamobile.R.string.crash_dialog_text, resDialogIcon = vandyke.siamobile.R.drawable.sia_logo_transparent, resDialogTitle = vandyke.siamobile.R.string.crash_dialog_title, resDialogCommentPrompt = vandyke.siamobile.R.string.crash_dialog_comment_prompt, resDialogTheme = vandyke.siamobile.R.style.AppTheme_Light) // optional. default is your application name
 class SiaMobileApplication : Application() {
     companion object {
-        var prefs: Prefs? = null
-        var requestQueue: RequestQueue? = null
-        var abi: String? = null
-        var abi32: String? = null
+        lateinit var prefs: Prefs
+        lateinit var requestQueue: RequestQueue
+        lateinit var abi: String
+        lateinit var abi32: String
     }
 
     override fun onCreate() {
@@ -61,9 +63,9 @@ class SiaMobileApplication : Application() {
             abi = Build.CPU_ABI
         else
             abi = Build.SUPPORTED_ABIS[0]
-        if ("arm" in abi!!)
+        if ("arm" in abi)
             abi32 = "arm32"
-        else if ("x86" in abi!!)
+        else if ("x86" in abi)
             abi32 = "x86"
         if (abi == "arm64-v8a")
             abi = "arm64"

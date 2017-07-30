@@ -46,8 +46,8 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
     private lateinit var walletMonitorService: WalletMonitorService
     private var bound = false
 
-    private lateinit var refreshButton: MenuItem
-    private lateinit var statusButton: MenuItem
+    private var refreshButton: MenuItem? = null
+    private var statusButton: MenuItem? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View {
         setHasOptionsMenu(true)
@@ -105,13 +105,13 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
     }
 
     override fun onBalanceUpdate(service: WalletMonitorService) {
-        when (walletMonitorService.walletStatus) {
-            WalletMonitorService.WalletStatus.NONE -> statusButton.setIcon(R.drawable.ic_add_white)
-            WalletMonitorService.WalletStatus.LOCKED -> statusButton.setIcon(R.drawable.ic_lock_outline_white)
-            WalletMonitorService.WalletStatus.UNLOCKED -> statusButton.setIcon(R.drawable.ic_lock_open_white)
-        }
         balanceText.text = Wallet.round(Wallet.hastingsToSC(service.balanceHastings))
         balanceUnconfirmed.text = "${if (service.balanceHastingsUnconfirmed > BigDecimal.ZERO) "+" else ""}${Wallet.round(Wallet.hastingsToSC(service.balanceHastingsUnconfirmed))} unconfirmed"
+        when (walletMonitorService.walletStatus) {
+            WalletMonitorService.WalletStatus.NONE -> statusButton?.setIcon(R.drawable.ic_add_white)
+            WalletMonitorService.WalletStatus.LOCKED -> statusButton?.setIcon(R.drawable.ic_lock_outline_white)
+            WalletMonitorService.WalletStatus.UNLOCKED -> statusButton?.setIcon(R.drawable.ic_lock_open_white)
+        }
 //        refreshButton.actionView = null
     }
 

@@ -14,16 +14,11 @@ import vandyke.siamobile.prefs
 
 class ColdStorageService : Service() {
 
-    private var coldStorageHttpServer: ColdStorageHttpServer? = null
+    private lateinit var coldStorageHttpServer: ColdStorageHttpServer
 
     override fun onCreate() {
-        val thread = object : Thread() {
-            override fun run() {
-                coldStorageHttpServer = ColdStorageHttpServer(this@ColdStorageService)
-                coldStorageHttpServer?.start()
-            }
-        }
-        thread.start()
+        coldStorageHttpServer = ColdStorageHttpServer(this@ColdStorageService)
+        coldStorageHttpServer.start()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -31,7 +26,7 @@ class ColdStorageService : Service() {
     }
 
     override fun onDestroy() {
-        coldStorageHttpServer?.stop()
+        coldStorageHttpServer.stop()
     }
 
     override fun onTaskRemoved(rootIntent: Intent?) {

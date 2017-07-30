@@ -13,6 +13,9 @@ import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import android.os.BatteryManager
+import com.android.volley.Request
+import com.android.volley.RequestQueue
+import vandyke.siamobile.SiaMobileApplication
 import vandyke.siamobile.backend.coldstorage.ColdStorageService
 import vandyke.siamobile.backend.siad.Siad
 import vandyke.siamobile.backend.siad.SiadMonitorService

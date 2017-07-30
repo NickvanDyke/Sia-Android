@@ -21,19 +21,11 @@ import kotlin.collections.HashSet
 
 class ColdStorageHttpServer(private val context: Context) : NanoHTTPD("localhost", 9990) {
 
-    private var seed: String? = null
-    private val addresses: ArrayList<String>
-    private var password: String? = null
-    private var exists: Boolean = false
+    private var seed: String = prefs.coldStorageSeed
+    private var addresses: ArrayList<String> = ArrayList(prefs.coldStorageAddresses)
+    private var password: String = prefs.coldStoragePassword
+    private var exists: Boolean = prefs.coldStorageExists
     private var unlocked: Boolean = false
-
-    init {
-        seed = prefs.coldStorageSeed
-        addresses = ArrayList(prefs.coldStorageAddresses)
-        password = prefs.coldStoragePassword
-        exists = prefs.coldStorageExists
-        unlocked = false
-    }
 
     override fun serve(session: NanoHTTPD.IHTTPSession): NanoHTTPD.Response {
         val uri = session.uri
@@ -147,7 +139,7 @@ class ColdStorageHttpServer(private val context: Context) : NanoHTTPD("localhost
         this.password = password
         exists = true
         unlocked = false
-        prefs.coldStorageSeed = seed!!
+        prefs.coldStorageSeed = seed
         prefs.coldStorageAddresses = HashSet(addresses)
         prefs.coldStoragePassword = password
         prefs.coldStorageExists = exists

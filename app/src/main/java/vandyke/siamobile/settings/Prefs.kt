@@ -23,11 +23,11 @@ class Prefs(context: Context) {
         set(value) = prefs.edit().putString("operationMode", value).apply()
 
     var address: String
-        get() = prefs.getString("address", "192.168.1.100")
+        get() = prefs.getString("address", "localhost:9990")
         set(value) = prefs.edit().putString("address", value).apply()
 
     var remoteAddress: String
-        get() = prefs.getString("remoteAddress", "192.168.1.100")
+        get() = prefs.getString("remoteAddress", "192.168.1.100:9980")
         set(value) = prefs.edit().putString("remoteAddress", value).apply()
 
     var refreshInterval: Int
@@ -47,7 +47,7 @@ class Prefs(context: Context) {
         set(value) = prefs.edit().putBoolean("runInBackground", value).apply()
 
     var firstTime: Boolean
-        get() = prefs.getBoolean("firstTime", false)
+        get() = prefs.getBoolean("firstTime", true)
         set(value) = prefs.edit().putBoolean("firstTime", value).apply()
 
     var startupPage: String

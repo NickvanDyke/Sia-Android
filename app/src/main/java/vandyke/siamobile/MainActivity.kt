@@ -71,7 +71,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         globalPrefsListener = GlobalPrefsListener(this)
         prefs.registerOnSharedPreferenceChangeListener(globalPrefsListener)
-        println(prefs.theme)
         when (prefs.theme) {
             "light" -> {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
@@ -165,9 +164,9 @@ class MainActivity : AppCompatActivity() {
             }
             true
         }
-        navigationView?.setNavigationItemSelectedListener(drawerListener)
+        navigationView.setNavigationItemSelectedListener(drawerListener)
         drawerToggle = ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close)
-        drawerLayout?.addDrawerListener(drawerToggle)
+        drawerLayout.addDrawerListener(drawerToggle)
 
         startService(Intent(this, CleanupService::class.java))
         if (prefs.operationMode == "local_full_node")
@@ -252,7 +251,7 @@ class MainActivity : AppCompatActivity() {
         menuItemBackstack.push(menuItemId)
         classBackstack.push(clazz)
         if (menuItemId != null)
-            navigationView?.setCheckedItem(menuItemId)
+            navigationView.setCheckedItem(menuItemId)
 
     }
 
