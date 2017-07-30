@@ -126,11 +126,11 @@ class SettingsFragment : PreferenceFragment() {
         prefs.registerOnSharedPreferenceChangeListener(prefsListener)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK) {
             if (requestCode == SELECT_PICTURE) {
-                val selectedImageURI = data.data
+                val selectedImageURI = data?.data
                 var input: InputStream? = null
                 try {
                     input = activity.contentResolver.openInputStream(selectedImageURI)
