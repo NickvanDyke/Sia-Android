@@ -15,6 +15,7 @@ import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
 import android.support.design.widget.Snackbar
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.view.*
@@ -41,16 +42,16 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
 
     private val transactionExpandableGroups = ArrayList<TransactionExpandableGroup>()
 
-    private lateinit var myView: View
-
     private lateinit var connection: ServiceConnection
     private lateinit var walletMonitorService: WalletMonitorService
     private var bound = false
 
+    private lateinit var refreshButton: MenuItem
+    private lateinit var statusButton: MenuItem
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View {
-        myView = inflater.inflate(R.layout.fragment_wallet, container, false)
         setHasOptionsMenu(true)
-        return myView
+        return inflater.inflate(R.layout.fragment_wallet, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
@@ -92,7 +93,7 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
             override fun onServiceConnected(name: ComponentName, service: IBinder) {
                 walletMonitorService = (service as BaseMonitorService.LocalBinder).service as WalletMonitorService
                 walletMonitorService.registerListener(this@WalletFragment)
-                walletMonitorService.refresh()
+                refreshWalletService()
                 bound = true
             }
 
@@ -105,32 +106,13 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
 
     override fun onBalanceUpdate(service: WalletMonitorService) {
         when (walletMonitorService.walletStatus) {
-            WalletMonitorService.WalletStatus.NONE -> {
-                walletStatusImage.setImageResource(R.drawable.ic_add_black)
-                walletStatusImage.setOnClickListener { replaceExpandFrame(WalletCreateDialog()) }
-            }
-            WalletMonitorService.WalletStatus.LOCKED -> {
-                walletStatusImage.setImageResource(R.drawable.ic_lock_outline_black)
-                walletStatusImage.setOnClickListener { replaceExpandFrame(WalletUnlockDialog()) }
-            }
-            WalletMonitorService.WalletStatus.UNLOCKED -> {
-                walletStatusImage.setImageResource(R.drawable.ic_lock_open_black)
-                walletStatusImage.setOnClickListener { view ->
-                    Wallet.lock(object : SiaRequest.VolleyCallback {
-                        override fun onSuccess(response: JSONObject) {
-                            Utils.successSnackbar(view)
-                            walletMonitorService.refresh()
-                        }
-
-                        override fun onError(error: SiaRequest.Error) {
-                            error.snackbar(view)
-                        }
-                    })
-                }
-            }
+            WalletMonitorService.WalletStatus.NONE -> statusButton.setIcon(R.drawable.ic_add_white)
+            WalletMonitorService.WalletStatus.LOCKED -> statusButton.setIcon(R.drawable.ic_lock_outline_white)
+            WalletMonitorService.WalletStatus.UNLOCKED -> statusButton.setIcon(R.drawable.ic_lock_open_white)
         }
         balanceText.text = Wallet.round(Wallet.hastingsToSC(service.balanceHastings))
         balanceUnconfirmed.text = "${if (service.balanceHastingsUnconfirmed > BigDecimal.ZERO) "+" else ""}${Wallet.round(Wallet.hastingsToSC(service.balanceHastingsUnconfirmed))} unconfirmed"
+//        refreshButton.actionView = null
     }
 
     override fun onUsdUpdate(service: WalletMonitorService) {
@@ -164,35 +146,52 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
     }
 
     override fun onBalanceError(error: SiaRequest.Error) {
-        error.snackbar(myView)
+        error.snackbar(view)
+//        refreshButton.actionView = null
     }
 
     override fun onUsdError(error: VolleyError) {
-        Utils.snackbar(myView, "Error retreiving USD value", Snackbar.LENGTH_SHORT)
+        Utils.snackbar(view, "Error retreiving USD value", Snackbar.LENGTH_SHORT)
     }
 
     override fun onTransactionsError(error: SiaRequest.Error) {
-        error.snackbar(myView)
+        error.snackbar(view)
     }
 
     override fun onSyncError(error: SiaRequest.Error) {
-        error.snackbar(myView)
+        error.snackbar(view)
         syncText.text = "Not synced"
         syncBar.progress = 0
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.actionRefresh -> if (bound)
-                walletMonitorService.refresh()
+            R.id.actionRefresh -> refreshWalletService()
+            R.id.actionStatus -> {
+                when (item.icon.constantState) {
+                    ContextCompat.getDrawable(activity, R.drawable.ic_add_white).constantState -> replaceExpandFrame(WalletCreateDialog())
+                    ContextCompat.getDrawable(activity, R.drawable.ic_lock_outline_white).constantState -> replaceExpandFrame(WalletUnlockDialog())
+                    ContextCompat.getDrawable(activity, R.drawable.ic_lock_open_white).constantState -> Wallet.lock(object : SiaRequest.VolleyCallback {
+                        override fun onSuccess(response: JSONObject) {
+                            refreshWalletService()
+                            Utils.successSnackbar(view)
+                        }
+
+                        override fun onError(error: SiaRequest.Error) {
+                            error.snackbar(view)
+                        }
+                    })
+                }
+            }
             R.id.actionUnlock -> replaceExpandFrame(WalletUnlockDialog())
             R.id.actionLock -> Wallet.lock(object : SiaRequest.VolleyCallback {
                 override fun onSuccess(response: JSONObject) {
-                    Utils.successSnackbar(myView)
+                    refreshWalletService()
+                    Utils.successSnackbar(view)
                 }
 
                 override fun onError(error: SiaRequest.Error) {
-                    error.snackbar(myView)
+                    error.snackbar(view)
                 }
             })
             R.id.actionChangePassword -> replaceExpandFrame(WalletChangePasswordDialog())
@@ -205,6 +204,13 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
         }
 
         return super.onOptionsItemSelected(item)
+    }
+
+    fun refreshWalletService() {
+        if (bound) {
+//            refreshButton.setActionView(R.layout.refresh_progress)
+            walletMonitorService.refresh()
+        }
     }
 
     fun replaceExpandFrame(fragment: Fragment) {
@@ -231,5 +237,7 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.toolbar_wallet, menu)
+        refreshButton = menu.findItem(R.id.actionRefresh)
+        statusButton = menu.findItem(R.id.actionStatus)
     }
 }

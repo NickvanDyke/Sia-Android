@@ -15,6 +15,11 @@
             android:icon="@drawable/ic_refresh_white_48dp"
             android:id="@+id/actionRefresh"/>
     <item
+        android:title="Status"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_add_white"
+        android:id="@+id/actionStatus"/>
+    <item
             android:title="Unlock wallet"
             android:id="@+id/actionUnlock"
             app:showAsAction="never"/>
