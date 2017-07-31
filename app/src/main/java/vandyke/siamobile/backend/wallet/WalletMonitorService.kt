@@ -20,6 +20,7 @@ import vandyke.siamobile.api.networking.SiaCallback
 import vandyke.siamobile.api.networking.SiaError
 import vandyke.siamobile.api.networking.Wallet
 import vandyke.siamobile.backend.BaseMonitorService
+import vandyke.siamobile.util.toSC
 import java.math.BigDecimal
 
 class WalletMonitorService : BaseMonitorService() {
@@ -55,7 +56,7 @@ class WalletMonitorService : BaseMonitorService() {
                 try {
                     val json = JSONObject(response)
                     val usdPrice = json.getDouble("usdPrice")
-                    balanceUsd = WalletApiJava.scToUsd(usdPrice, WalletApiJava.hastingsToSC(balanceHastings))
+                    balanceUsd = WalletApiJava.scToUsd(usdPrice, balanceHastings.toSC())
                 } catch (e: JSONException) {
                     balanceUsd = BigDecimal("0")
                 }
@@ -84,9 +85,9 @@ class WalletMonitorService : BaseMonitorService() {
 //                }
 //                if (newTxs > 0) {
 //                    prefs.mostRecentTxId = transactions[0].transactionId
-//                    Utils.notification(this@WalletMonitorService, TRANSACTION_NOTIFICATION,
+//                    NotificationUtil.notification(this@WalletMonitorService, TRANSACTION_NOTIFICATION,
 //                            R.drawable.ic_account_balance_white_48dp, newTxs.toString() + " new transaction" + if (newTxs > 1) "s" else "",
-//                            "Net value: " + (if (netOfNewTxs > BigDecimal.ZERO) "+" else "") + WalletApiJava.round(WalletApiJava.hastingsToSC(netOfNewTxs)) + " SC",
+//                            "Net value: " + (if (netOfNewTxs > BigDecimal.ZERO) "+" else "") + WalletApiJava.round(SCUtil.hastingsToSc(netOfNewTxs)) + " SC",
 //                            false)
 //                }
 //                sendTransactionsUpdate()

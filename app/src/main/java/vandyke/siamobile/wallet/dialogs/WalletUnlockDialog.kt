@@ -16,7 +16,7 @@ import vandyke.siamobile.R
 import vandyke.siamobile.api.SiaRequest
 import vandyke.siamobile.api.WalletApiJava
 import vandyke.siamobile.backend.wallet.WalletMonitorService
-import vandyke.siamobile.misc.Utils
+import vandyke.siamobile.util.SnackbarUtil
 
 class WalletUnlockDialog : BaseDialogFragment() {
     override val layout: Int = R.layout.fragment_wallet_unlock
@@ -25,14 +25,14 @@ class WalletUnlockDialog : BaseDialogFragment() {
         walletUnlockConfirm.setOnClickListener {
             WalletApiJava.unlock(walletPassword.text.toString(), object : SiaRequest.VolleyCallback {
                 override fun onSuccess(response: JSONObject) {
-                    Utils.successSnackbar(view)
+                    SnackbarUtil.successSnackbar(view)
                     close()
                     WalletMonitorService.staticRefresh()
                 }
 
                 override fun onError(error: SiaRequest.Error) {
                     if (error.reason == SiaRequest.Error.Reason.WALLET_SCAN_IN_PROGRESS) {
-                        Utils.snackbar(container, "Scanning the blockchain, please wait. Your walletModel will unlock when finished", Snackbar.LENGTH_LONG)
+                        SnackbarUtil.snackbar(container, "Scanning the blockchain, please wait. Your walletModel will unlock when finished", Snackbar.LENGTH_LONG)
                         close()
                     } else {
                         error.snackbar(view)

@@ -2,7 +2,7 @@ package vandyke.siamobile.api.networking
 
 import android.support.design.widget.Snackbar
 import android.view.View
-import vandyke.siamobile.misc.Utils
+import vandyke.siamobile.util.SnackbarUtil
 import java.net.SocketException
 import java.net.SocketTimeoutException
 
@@ -74,6 +74,6 @@ class SiaError {
     }
 
     fun snackbar(view: View?) {
-        Utils.snackbar(view, reason.msg, Snackbar.LENGTH_SHORT)
+        SnackbarUtil.snackbar(view, reason.msg, Snackbar.LENGTH_SHORT)
     }
 }

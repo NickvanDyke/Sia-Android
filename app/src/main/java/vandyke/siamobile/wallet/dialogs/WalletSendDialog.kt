@@ -18,8 +18,10 @@ import org.json.JSONObject
 import vandyke.siamobile.R
 import vandyke.siamobile.api.SiaRequest
 import vandyke.siamobile.api.WalletApiJava
-import vandyke.siamobile.misc.Utils
 import vandyke.siamobile.prefs
+import vandyke.siamobile.util.GenUtil
+import vandyke.siamobile.util.SnackbarUtil
+import vandyke.siamobile.util.toSC
 import vandyke.siamobile.wallet.ScannerActivity
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -36,18 +38,18 @@ class WalletSendDialog : BaseDialogFragment() {
                 if (sendAmount.text.toString() == "")
                     walletSendFee.text = "0.5% App fee: 0.000"
                 else
-                    walletSendFee.text = "0.5% App fee: ${BigDecimal(s.toString()).multiply(Utils.devFee).setScale(3, RoundingMode.FLOOR).toPlainString()} SC"
+                    walletSendFee.text = "0.5% App fee: ${BigDecimal(s.toString()).multiply(GenUtil.devFee).setScale(3, RoundingMode.FLOOR).toPlainString()} SC"
             }
             override fun afterTextChanged(s: Editable) {}
         })
         walletSend.setOnClickListener {
-            val sendAmount = WalletApiJava.scToHastings(sendAmount.text.toString())
+            val sendAmount = sendAmount.text.toString().toSC()
             if (prefs.feesEnabled)
                 WalletApiJava.sendSiacoinsWithDevFee(sendAmount,
                         sendRecipient.text.toString(),
                         object : SiaRequest.VolleyCallback {
                             override fun onSuccess(response: JSONObject) {
-                                Utils.successSnackbar(view)
+                                SnackbarUtil.successSnackbar(view)
                                 close()
                             }
 
@@ -60,7 +62,7 @@ class WalletSendDialog : BaseDialogFragment() {
                         sendRecipient.text.toString(),
                         object : SiaRequest.VolleyCallback {
                             override fun onSuccess(response: JSONObject) {
-                                Utils.successSnackbar(view)
+                                SnackbarUtil.successSnackbar(view)
                                 close()
                             }
 

@@ -12,8 +12,8 @@ import android.os.Build
 import com.android.volley.RequestQueue
 import com.android.volley.toolbox.Volley
 import org.acra.ACRA
-import vandyke.siamobile.misc.Utils
 import vandyke.siamobile.settings.Prefs
+import vandyke.siamobile.util.NotificationUtil
 
 //object prefs: KotprefModel() {
 //    var theme by stringPref()
@@ -58,7 +58,7 @@ class SiaMobileApplication : Application() {
         ACRA.init(this)
         prefs = Prefs(applicationContext)
         requestQueue = Volley.newRequestQueue(this)
-        Utils.createSiaNotificationChannel(this)
+        NotificationUtil.createSiaNotificationChannel(this)
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
             abi = Build.CPU_ABI
         else

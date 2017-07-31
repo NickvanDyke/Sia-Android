@@ -20,8 +20,8 @@ import org.json.JSONObject
 import vandyke.siamobile.R
 import vandyke.siamobile.SiaMobileApplication
 import vandyke.siamobile.backend.coldstorage.ColdStorageHttpServer
-import vandyke.siamobile.misc.Utils
 import vandyke.siamobile.prefs
+import vandyke.siamobile.util.SnackbarUtil
 import java.io.UnsupportedEncodingException
 import java.util.*
 
@@ -167,7 +167,7 @@ class SiaRequest(method: Int, destination: String, command: String, callback: Vo
                 snackbar.setActionTextColor(ContextCompat.getColor(view.context, android.R.color.white))
                 snackbar.show()
             } else
-                Utils.snackbar(view, reason.msg, Snackbar.LENGTH_SHORT)
+                SnackbarUtil.snackbar(view, reason.msg, Snackbar.LENGTH_SHORT)
         }
     }
 }

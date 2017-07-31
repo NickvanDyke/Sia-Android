@@ -21,7 +21,8 @@ import android.os.Looper
 import vandyke.siamobile.MainActivity
 import vandyke.siamobile.R
 import vandyke.siamobile.backend.wallet.WalletMonitorService
-import vandyke.siamobile.misc.Utils
+import vandyke.siamobile.util.NotificationUtil
+import vandyke.siamobile.util.StorageUtil
 import java.io.BufferedReader
 import java.io.File
 import java.io.IOException
@@ -37,11 +38,11 @@ class Siad : Service() {
     override fun onCreate() {
         startForeground(SIAD_NOTIFICATION, buildSiadNotification("Starting..."))
         val thread = Thread {
-            siadFile = Utils.copyBinary("siad", this@Siad, false)
+            siadFile = StorageUtil.copyBinary("siad", this@Siad, false)
             if (siadFile == null) {
                 val handler = Handler(Looper.getMainLooper())
                 handler.post {
-                    Utils.notification(this@Siad, SIAD_NOTIFICATION, R.drawable.ic_dns_white_48dp,
+                    NotificationUtil.notification(this@Siad, SIAD_NOTIFICATION, R.drawable.ic_dns_white_48dp,
                             "Local full node", "Unsupported CPU architecture", false)
                 }
                 stopForeground(true)
@@ -49,7 +50,7 @@ class Siad : Service() {
             } else {
                 val pb = ProcessBuilder(siadFile?.absolutePath, "-M", "gctw")
                 pb.redirectErrorStream(true)
-                pb.directory(Utils.getWorkingDirectory(this@Siad))
+                pb.directory(StorageUtil.getWorkingDirectory(this@Siad))
                 try {
                     siadProcess = pb.start()
                     Thread {

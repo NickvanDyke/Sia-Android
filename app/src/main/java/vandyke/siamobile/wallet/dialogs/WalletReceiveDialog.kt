@@ -20,7 +20,7 @@ import org.json.JSONObject
 import vandyke.siamobile.R
 import vandyke.siamobile.api.SiaRequest
 import vandyke.siamobile.api.WalletApiJava
-import vandyke.siamobile.misc.Utils
+import vandyke.siamobile.util.SnackbarUtil
 
 class WalletReceiveDialog : BaseDialogFragment() {
     override val layout: Int = R.layout.fragment_wallet_receive
@@ -31,7 +31,7 @@ class WalletReceiveDialog : BaseDialogFragment() {
         WalletApiJava.newAddress(object : SiaRequest.VolleyCallback {
             override fun onSuccess(response: JSONObject) {
                 try {
-                    Utils.successSnackbar(view)
+                    SnackbarUtil.successSnackbar(view)
                     receiveAddress.text = response.getString("address")
                     setQrCode(response.getString("address"))
                 } catch (e: JSONException) {
@@ -49,7 +49,7 @@ class WalletReceiveDialog : BaseDialogFragment() {
             val clipboard = activity.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             val clip = ClipData.newPlainText("receive address", receiveAddress.text)
             clipboard.primaryClip = clip
-            Utils.snackbar(view, "Copied receive address", Snackbar.LENGTH_SHORT)
+            SnackbarUtil.snackbar(view, "Copied receive address", Snackbar.LENGTH_SHORT)
             close()
         }
         setCloseListener(walletReceiveClose)

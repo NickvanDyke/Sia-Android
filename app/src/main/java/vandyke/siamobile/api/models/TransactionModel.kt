@@ -1,6 +1,5 @@
 package vandyke.siamobile.api.models
 
-import vandyke.siamobile.api.WalletApiJava
 import java.math.BigDecimal
 import java.util.*
 
@@ -26,6 +25,4 @@ data class TransactionModel(val transactionid: String = "",
     val isNetZero: Boolean by lazy { netValue == BigDecimal.ZERO }
 
     val confirmationDate: Date by lazy { if (confirmed) Date(confirmationtimestamp * 1000) else Date() }
-
-    val netValueStringRounded: String by lazy { WalletApiJava.round(WalletApiJava.hastingsToSC(netValue)) }
 }

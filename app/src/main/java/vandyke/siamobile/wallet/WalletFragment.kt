@@ -34,8 +34,11 @@ import vandyke.siamobile.api.networking.SiaError
 import vandyke.siamobile.backend.BaseMonitorService
 import vandyke.siamobile.backend.coldstorage.ColdStorageHttpServer
 import vandyke.siamobile.backend.wallet.WalletMonitorService
-import vandyke.siamobile.misc.Utils
 import vandyke.siamobile.prefs
+import vandyke.siamobile.util.GenUtil
+import vandyke.siamobile.util.SnackbarUtil
+import vandyke.siamobile.util.round
+import vandyke.siamobile.util.toSC
 import vandyke.siamobile.wallet.dialogs.*
 import vandyke.siamobile.wallet.transactionslist.TransactionExpandableGroup
 import vandyke.siamobile.wallet.transactionslist.TransactionListAdapter
@@ -80,9 +83,9 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
             if (prefs.operationMode == "cold_storage") {
                 ColdStorageHttpServer.showColdStorageHelp(v.context)
             } else {
-                Utils.getDialogBuilder(v.context)
+                GenUtil.getDialogBuilder(v.context)
                         .setTitle("Exact Balance")
-                        .setMessage("${WalletApiJava.hastingsToSC(walletMonitorService.balanceHastings).toPlainString()} Siacoins")
+                        .setMessage("${walletMonitorService.balanceHastings.toSC().toPlainString()} Siacoins")
                         .setPositiveButton("Close", null)
                         .show()
             }
@@ -110,14 +113,14 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
 
     override fun onBalanceUpdate(walletModel: WalletModel) {
         this.walletModel = walletModel
-        balanceText.text = WalletApiJava.round(WalletApiJava.hastingsToSC(walletModel.confirmedsiacoinbalance))
-        balanceUnconfirmed.text = "${if (walletModel.unconfirmedsiacoinbalance > BigDecimal.ZERO) "+" else ""}${WalletApiJava.round(WalletApiJava.hastingsToSC(walletModel.unconfirmedsiacoinbalance))} unconfirmed"
+        balanceText.text = walletModel.confirmedsiacoinbalance.toSC().round().toPlainString()
+        balanceUnconfirmed.text = "${if (walletModel.unconfirmedsiacoinbalance > BigDecimal.ZERO) "+" else ""}${walletModel.unconfirmedsiacoinbalance.toSC().round().toPlainString()} unconfirmed"
         setStatusIcon()
 //        refreshButton.actionView = null
     }
 
     override fun onUsdUpdate(service: WalletMonitorService) {
-        balanceUsdText.text = "${WalletApiJava.round(service.balanceUsd)} USD"
+        balanceUsdText.text = "${service.balanceUsd.round().toPlainString()} USD"
     }
 
     override fun onTransactionsUpdate(transactionsModel: TransactionsModel) {
@@ -163,7 +166,7 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
     }
 
     override fun onUsdError(error: VolleyError) {
-        Utils.snackbar(view, "Error retreiving USD value", Snackbar.LENGTH_SHORT)
+        SnackbarUtil.snackbar(view, "Error retreiving USD value", Snackbar.LENGTH_SHORT)
     }
 
     override fun onTransactionsError(error: SiaError) {
@@ -186,7 +189,7 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
                     ContextCompat.getDrawable(activity, R.drawable.ic_lock_open_white).constantState -> WalletApiJava.lock(object : SiaRequest.VolleyCallback {
                         override fun onSuccess(response: JSONObject) {
                             refreshWalletService()
-                            Utils.successSnackbar(view)
+                            SnackbarUtil.successSnackbar(view)
                         }
 
                         override fun onError(error: SiaRequest.Error) {
@@ -199,7 +202,7 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
             R.id.actionLock -> WalletApiJava.lock(object : SiaRequest.VolleyCallback {
                 override fun onSuccess(response: JSONObject) {
                     refreshWalletService()
-                    Utils.successSnackbar(view)
+                    SnackbarUtil.successSnackbar(view)
                 }
 
                 override fun onError(error: SiaRequest.Error) {
@@ -233,7 +236,7 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
     private fun transactionToGroupWithChild(tx: TransactionModel): TransactionExpandableGroup {
         val child = ArrayList<TransactionModel>()
         child.add(tx)
-        return TransactionExpandableGroup(tx.netValueStringRounded, tx.confirmationDate, child)
+        return TransactionExpandableGroup(tx.netValue.toSC().round().toPlainString(), tx.confirmationDate, child)
     }
 
     override fun onDestroy() {

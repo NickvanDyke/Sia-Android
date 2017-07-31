@@ -14,7 +14,7 @@ import org.json.JSONObject
 import vandyke.siamobile.R
 import vandyke.siamobile.api.SiaRequest
 import vandyke.siamobile.api.WalletApiJava
-import vandyke.siamobile.misc.Utils
+import vandyke.siamobile.util.SnackbarUtil
 
 class WalletSweepSeedDialog : BaseDialogFragment() {
     override val layout: Int = R.layout.fragment_wallet_sweep
@@ -24,7 +24,7 @@ class WalletSweepSeedDialog : BaseDialogFragment() {
             WalletApiJava.sweepSeed("english", walletSweepSeed.text.toString(),
                     object : SiaRequest.VolleyCallback {
                         override fun onSuccess(response: JSONObject) {
-                            Utils.successSnackbar(view)
+                            SnackbarUtil.successSnackbar(view)
                             close()
                         }
 

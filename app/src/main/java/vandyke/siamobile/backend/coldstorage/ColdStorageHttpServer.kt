@@ -13,8 +13,8 @@ import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import siawallet.Wallet
-import vandyke.siamobile.misc.Utils
 import vandyke.siamobile.prefs
+import vandyke.siamobile.util.GenUtil
 import java.io.IOException
 import java.util.ArrayList
 import kotlin.collections.HashSet
@@ -148,7 +148,7 @@ class ColdStorageHttpServer(private val context: Context) : NanoHTTPD("localhost
     companion object {
 
         fun showColdStorageHelp(context: Context) {
-            Utils.getDialogBuilder(context)
+            GenUtil.getDialogBuilder(context)
                     .setTitle("Cold storage help")
                     .setMessage("Sia Mobile's cold storage wallet operates independently of the Sia network." +
                             " Since it doesn't have a copy of the Sia blockchain and is not connected to the " +

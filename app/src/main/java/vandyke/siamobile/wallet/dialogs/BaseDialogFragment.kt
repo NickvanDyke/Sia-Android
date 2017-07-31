@@ -13,7 +13,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import vandyke.siamobile.misc.Utils
+import vandyke.siamobile.util.GenUtil
 
 abstract class BaseDialogFragment : DialogFragment() {
     protected abstract val layout: Int
@@ -38,7 +38,7 @@ abstract class BaseDialogFragment : DialogFragment() {
     fun close() {
         container?.visibility = View.GONE
         if (dialog != null) dismiss()
-        Utils.hideSoftKeyboard(activity)
+        GenUtil.hideSoftKeyboard(activity)
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {

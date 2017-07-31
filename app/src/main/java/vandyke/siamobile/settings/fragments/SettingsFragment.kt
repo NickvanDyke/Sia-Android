@@ -20,8 +20,9 @@ import android.util.Base64
 import vandyke.siamobile.BuildConfig
 import vandyke.siamobile.R
 import vandyke.siamobile.SiaMobileApplication
-import vandyke.siamobile.misc.Utils
 import vandyke.siamobile.prefs
+import vandyke.siamobile.util.SnackbarUtil
+import vandyke.siamobile.util.StorageUtil
 import java.io.ByteArrayOutputStream
 import java.io.FileNotFoundException
 import java.io.InputStream
@@ -57,17 +58,17 @@ class SettingsFragment : PreferenceFragment() {
         operationMode = findPreference("operationMode") as ListPreference
         operationMode.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, o ->
             if (o as String == "local_full_node" && SiaMobileApplication.abi != "arm64") {
-                Utils.snackbar(view, "Sorry, but your device's CPU architecture is not supported by Sia's full node", Snackbar.LENGTH_LONG)
+                SnackbarUtil.snackbar(view, "Sorry, but your device's CPU architecture is not supported by Sia's full node", Snackbar.LENGTH_LONG)
                 return@OnPreferenceChangeListener false
             }
             true
         }
 
         useExternal.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, o ->
-            if (Utils.isExternalStorageWritable)
+            if (StorageUtil.isExternalStorageWritable)
                 return@OnPreferenceChangeListener true
             else
-                Utils.snackbar(view, "Error: " + Utils.externalStorageStateDescription(), Snackbar.LENGTH_LONG)
+                SnackbarUtil.snackbar(view, "Error: " + StorageUtil.externalStorageStateDescription(), Snackbar.LENGTH_LONG)
             false
         }
 

@@ -20,7 +20,7 @@ import kotlinx.android.synthetic.main.fragment_wallet_paper.*
 import siawallet.Wallet
 import vandyke.siamobile.R
 import vandyke.siamobile.misc.TextTouchCopyListAdapter
-import vandyke.siamobile.misc.Utils
+import vandyke.siamobile.util.SnackbarUtil
 import java.util.*
 
 class PaperWalletFragment : Fragment() {
@@ -52,7 +52,7 @@ class PaperWalletFragment : Fragment() {
             val clipboard = activity.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             val clip = ClipData.newPlainText("paper walletModel info", seed)
             clipboard.primaryClip = clip
-            Utils.snackbar(v, "Copied seed to clipboard", Snackbar.LENGTH_SHORT)
+            SnackbarUtil.snackbar(v, "Copied seed to clipboard", Snackbar.LENGTH_SHORT)
         }
         paperSeed.text = seed
 
@@ -71,7 +71,7 @@ class PaperWalletFragment : Fragment() {
             val clipboard = activity.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             val clip = ClipData.newPlainText("paper walletModel info", result.toString())
             clipboard.primaryClip = clip
-            Utils.snackbar(v, "Copied seed and addresses to clipboard", Snackbar.LENGTH_SHORT)
+            SnackbarUtil.snackbar(v, "Copied seed and addresses to clipboard", Snackbar.LENGTH_SHORT)
         }
     }
 }

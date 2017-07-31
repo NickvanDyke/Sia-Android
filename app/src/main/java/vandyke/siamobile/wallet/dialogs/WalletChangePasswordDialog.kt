@@ -15,7 +15,7 @@ import org.json.JSONObject
 import vandyke.siamobile.R
 import vandyke.siamobile.api.SiaRequest
 import vandyke.siamobile.api.WalletApiJava
-import vandyke.siamobile.misc.Utils
+import vandyke.siamobile.util.SnackbarUtil
 
 class WalletChangePasswordDialog : BaseDialogFragment() {
     override val layout: Int = R.layout.fragment_wallet_change_password
@@ -24,13 +24,13 @@ class WalletChangePasswordDialog : BaseDialogFragment() {
         walletChange.setOnClickListener(View.OnClickListener {
             val newPassword = newPassword.text.toString()
             if (newPassword != confirmNewPassword.text.toString()) {
-                Utils.snackbar(view, "New passwords don't match", Snackbar.LENGTH_SHORT)
+                SnackbarUtil.snackbar(view, "New passwords don't match", Snackbar.LENGTH_SHORT)
                 return@OnClickListener
             }
             WalletApiJava.changePassword(currentPassword.text.toString(),
                     newPassword, object : SiaRequest.VolleyCallback {
                 override fun onSuccess(response: JSONObject) {
-                    Utils.successSnackbar(view)
+                    SnackbarUtil.successSnackbar(view)
                     close()
                 }
 

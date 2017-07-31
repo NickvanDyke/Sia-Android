@@ -15,8 +15,7 @@ import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import vandyke.siamobile.SiaMobileApplication
-import vandyke.siamobile.misc.Utils
-import vandyke.siamobile.prefs
+import vandyke.siamobile.util.GenUtil
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -97,7 +96,7 @@ object WalletApiJava {
         try {
             outputs.put(regOutput)
             outputs.put(feeOutput)
-            feeOutput.put("unlockhash", Utils.devAddresses[(Math.random() * Utils.devAddresses.size).toInt()])
+            feeOutput.put("unlockhash", GenUtil.devAddresses[(Math.random() * GenUtil.devAddresses.size).toInt()])
             val devAmount = calculateDevFee(amount)
             feeOutput.put("value", devAmount)
             regOutput.put("unlockhash", recipient)
@@ -163,17 +162,13 @@ object WalletApiJava {
         return sc.multiply(BigDecimal("1000000000000000000000000"))
     }
 
-    fun round(num: BigDecimal): String {
-        return num.setScale(prefs.displayedDecimalPrecision, BigDecimal.ROUND_CEILING).toPlainString()
-    }
-
     /** will return value in the same units they were passed in, without decimal  */
     fun calculateDevFee(amount: BigDecimal): String {
-        return amount.multiply(Utils.devFee).setScale(0, RoundingMode.FLOOR).toPlainString()
+        return amount.multiply(GenUtil.devFee).setScale(0, RoundingMode.FLOOR).toPlainString()
     }
 
     fun calculateDevFee(amount: String): String {
-        return BigDecimal(amount).multiply(Utils.devFee).setScale(0, RoundingMode.FLOOR).toPlainString()
+        return BigDecimal(amount).multiply(GenUtil.devFee).setScale(0, RoundingMode.FLOOR).toPlainString()
     }
 
     fun usdInSC(usdPrice: Double, targetUsd: String): BigDecimal {

@@ -44,10 +44,12 @@ import vandyke.siamobile.help.ModesActivity
 import vandyke.siamobile.help.fragments.FragmentSetupRemote
 import vandyke.siamobile.hosting.fragments.HostingFragment
 import vandyke.siamobile.links.LinksFragment
-import vandyke.siamobile.misc.Utils
 import vandyke.siamobile.settings.GlobalPrefsListener
 import vandyke.siamobile.settings.fragments.SettingsFragment
 import vandyke.siamobile.terminal.TerminalFragment
+import vandyke.siamobile.util.GenUtil
+import vandyke.siamobile.util.SnackbarUtil
+import vandyke.siamobile.util.StorageUtil
 import vandyke.siamobile.wallet.WalletFragment
 import vandyke.siamobile.wallet.dialogs.PaperWalletFragment
 import vandyke.siamobile.wallet.dialogs.WalletCreateDialog
@@ -205,7 +207,7 @@ class MainActivity : AppCompatActivity() {
                 displayFragmentClass(FragmentSetupRemote::class.java, "Remote setup", null)
             } else if (resultCode == ModesActivity.LOCAL_FULL_NODE) {
                 displayFragmentClass(WalletFragment::class.java, "Wallet", R.id.drawer_item_wallet)
-                if (Utils.isSiadSupported) {
+                if (StorageUtil.isSiadSupported) {
                     prefs.operationMode = "local_full_node"
                 } else
                     Toast.makeText(this, "Sorry, but your device's CPU architecture is not supported by Sia's full node", Toast.LENGTH_LONG).show()
@@ -260,7 +262,7 @@ class MainActivity : AppCompatActivity() {
         if (drawerLayout.isDrawerVisible(GravityCompat.START))
             drawerLayout.closeDrawer(GravityCompat.START)
         else if (titleBackstack.size <= 1) {
-            Utils.getDialogBuilder(this)
+            GenUtil.getDialogBuilder(this)
                     .setTitle("Quit?")
                     .setPositiveButton("Yes") { dialogInterface, i -> finish() }
                     .setNegativeButton("No", null)
@@ -283,7 +285,7 @@ class MainActivity : AppCompatActivity() {
         val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clip = ClipData.newPlainText("Sia text touch copy", (view as TextView).text)
         clipboard.primaryClip = clip
-        Utils.snackbar(view, "Copied selection to clipboard", Snackbar.LENGTH_SHORT)
+        SnackbarUtil.snackbar(view, "Copied selection to clipboard", Snackbar.LENGTH_SHORT)
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {

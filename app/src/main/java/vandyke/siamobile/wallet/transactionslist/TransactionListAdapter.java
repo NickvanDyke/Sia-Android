@@ -25,7 +25,7 @@ import vandyke.siamobile.R;
 import vandyke.siamobile.api.models.TransactionInputModel;
 import vandyke.siamobile.api.models.TransactionModel;
 import vandyke.siamobile.api.models.TransactionOutputModel;
-import vandyke.siamobile.misc.Utils;
+import vandyke.siamobile.util.SnackbarUtil;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -56,7 +56,7 @@ public class TransactionListAdapter extends ExpandableRecyclerViewAdapter<Transa
             public boolean onLongClick(View v) {
                 ClipData clip = ClipData.newPlainText("Sia transaction id", ((TextView)v).getText());
                 ((ClipboardManager) idText.getContext().getSystemService(Context.CLIPBOARD_SERVICE)).setPrimaryClip(clip);
-                Utils.INSTANCE.snackbar(view, "Copied transaction ID", Snackbar.LENGTH_SHORT);
+                SnackbarUtil.INSTANCE.snackbar(view, "Copied transaction ID", Snackbar.LENGTH_SHORT);
                 return true;
             }
         });
@@ -148,7 +148,7 @@ public class TransactionListAdapter extends ExpandableRecyclerViewAdapter<Transa
         String id = transaction.getTransactionid();
         holder.transactionId.setText(id.substring(0, id.length() / 2) + "\n" + id.substring(id.length() / 2));
 
-        String valueText = transaction.getNetValueStringRounded();
+        String valueText = transaction.getNetValue().toPlainString();
         if (transaction.isNetZero()) {
             holder.transactionValue.setTextColor(MainActivity.Companion.getDefaultTextColor());
         } else if (valueText.contains("-")) {

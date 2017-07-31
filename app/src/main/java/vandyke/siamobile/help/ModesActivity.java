@@ -15,7 +15,7 @@ import android.widget.Toast;
 import com.github.paolorotolo.appintro.AppIntro;
 import com.github.paolorotolo.appintro.AppIntroFragment;
 import vandyke.siamobile.R;
-import vandyke.siamobile.misc.Utils;
+import vandyke.siamobile.util.StorageUtil;
 
 public class ModesActivity extends AppIntro {
 
@@ -82,7 +82,7 @@ public class ModesActivity extends AppIntro {
                 setResult(REMOTE_FULL_NODE);
                 break;
             case 4:
-                if (Utils.INSTANCE.isSiadSupported()) {
+                if (StorageUtil.INSTANCE.isSiadSupported()) {
                     setResult(LOCAL_FULL_NODE);
                 } else {
                     Toast.makeText(this, "Sorry, but your device's CPU architecture is not supported by Sia's full node", Toast.LENGTH_LONG).show();

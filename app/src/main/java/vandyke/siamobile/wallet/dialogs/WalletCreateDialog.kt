@@ -16,8 +16,9 @@ import vandyke.siamobile.R
 import vandyke.siamobile.api.SiaRequest
 import vandyke.siamobile.api.WalletApiJava
 import vandyke.siamobile.backend.wallet.WalletMonitorService
-import vandyke.siamobile.misc.Utils
 import vandyke.siamobile.prefs
+import vandyke.siamobile.util.GenUtil
+import vandyke.siamobile.util.SnackbarUtil
 
 class WalletCreateDialog : BaseDialogFragment() {
     override val layout: Int = R.layout.fragment_wallet_create
@@ -42,7 +43,7 @@ class WalletCreateDialog : BaseDialogFragment() {
         walletCreateButton.setOnClickListener(View.OnClickListener {
             val password = newPasswordCreate.text.toString()
             if (password != confirmNewPasswordCreate.text.toString()) {
-                Utils.snackbar(view, "New passwords don't match", Snackbar.LENGTH_SHORT)
+                SnackbarUtil.snackbar(view, "New passwords don't match", Snackbar.LENGTH_SHORT)
                 return@OnClickListener
             }
             val force = walletCreateForce.isChecked
@@ -50,7 +51,7 @@ class WalletCreateDialog : BaseDialogFragment() {
             if (walletCreateFromSeed.isChecked)
                 WalletApiJava.initSeed(password, force, dictionary, walletCreateSeed.text.toString(), object : SiaRequest.VolleyCallback {
                     override fun onSuccess(response: JSONObject) {
-                        Utils.successSnackbar(view)
+                        SnackbarUtil.successSnackbar(view)
                         close()
                         WalletMonitorService.staticRefresh()
                         if (prefs.operationMode == "cold_storage")
@@ -59,7 +60,7 @@ class WalletCreateDialog : BaseDialogFragment() {
 
                     override fun onError(error: SiaRequest.Error) {
                         if (error.reason == SiaRequest.Error.Reason.WALLET_SCAN_IN_PROGRESS) {
-                            Utils.snackbar(view, "Success. Scanning the blockchain for coins belonging to the given seed. Please wait", Snackbar.LENGTH_LONG)
+                            SnackbarUtil.snackbar(view, "Success. Scanning the blockchain for coins belonging to the given seed. Please wait", Snackbar.LENGTH_LONG)
                             close()
                             WalletMonitorService.staticRefresh()
                         } else {
@@ -70,7 +71,7 @@ class WalletCreateDialog : BaseDialogFragment() {
             else
                 WalletApiJava.init(password, force, dictionary, object : SiaRequest.VolleyCallback {
                     override fun onSuccess(response: JSONObject) {
-                        Utils.successSnackbar(view)
+                        SnackbarUtil.successSnackbar(view)
                         close()
                         WalletMonitorService.staticRefresh()
                         if (prefs.operationMode == "cold_storage")
@@ -86,7 +87,7 @@ class WalletCreateDialog : BaseDialogFragment() {
     }
 
     private fun showDialog() {
-        Utils.getDialogBuilder(activity)
+        GenUtil.getDialogBuilder(activity)
                 .setTitle("IMPORTANT")
                 .setMessage("You just created a walletModel while in cold storage mode. While in cold storage mode," +
                         " Sia Mobile is not connected to the Sia network and does not have a copy of the Sia blockchain. This means it cannot show your correct balance or transactions." +

@@ -19,7 +19,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import kotlinx.android.synthetic.main.fragment_terminal.*
 import vandyke.siamobile.R
-import vandyke.siamobile.misc.Utils
+import vandyke.siamobile.util.StorageUtil
 import java.io.BufferedReader
 import java.io.File
 import java.io.IOException
@@ -35,7 +35,7 @@ class TerminalFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        siacFile = Utils.copyBinary("siac", activity, true)
+        siacFile = StorageUtil.copyBinary("siac", activity, true)
 
         input.setOnEditorActionListener(TextView.OnEditorActionListener { v, actionId, event ->
             try {
