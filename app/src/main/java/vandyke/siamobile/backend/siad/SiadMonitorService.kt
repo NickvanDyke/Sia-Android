@@ -35,7 +35,7 @@ class SiadMonitorService : Service() {
         }.start()
     }
 
-    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         return Service.START_STICKY
     }
 
@@ -44,7 +44,7 @@ class SiadMonitorService : Service() {
         unregisterReceiver(statusReceiver)
     }
 
-    override fun onTaskRemoved(rootIntent: Intent) {
+    override fun onTaskRemoved(rootIntent: Intent?) {
         super.onTaskRemoved(rootIntent)
         if (!prefs.runInBackground) {
             stopSelf()

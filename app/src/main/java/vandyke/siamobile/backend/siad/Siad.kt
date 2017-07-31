@@ -32,8 +32,7 @@ class Siad : Service() {
     private val SIAD_NOTIFICATION = 3
 
     private var siadFile: File? = null
-    private lateinit var siadProcess: java.lang.Process
-    private lateinit var readStdoutThread: Thread
+    private var siadProcess: java.lang.Process? = null
 
     override fun onCreate() {
         startForeground(SIAD_NOTIFICATION, buildSiadNotification("Starting..."))
@@ -48,14 +47,14 @@ class Siad : Service() {
                 stopForeground(true)
                 stopSelf()
             } else {
-                val pb = ProcessBuilder(siadFile!!.absolutePath, "-M", "gctw")
+                val pb = ProcessBuilder(siadFile?.absolutePath, "-M", "gctw")
                 pb.redirectErrorStream(true)
                 pb.directory(Utils.getWorkingDirectory(this@Siad))
                 try {
                     siadProcess = pb.start()
-                    readStdoutThread = Thread {
+                    Thread {
                         try {
-                            val inputReader = BufferedReader(InputStreamReader(siadProcess.inputStream))
+                            val inputReader = BufferedReader(InputStreamReader(siadProcess?.inputStream))
                             var line: String? = inputReader.readLine()
                             while (line != null) {
                                 siadNotification(line)
@@ -67,8 +66,7 @@ class Siad : Service() {
                         } catch (e: IOException) {
                             e.printStackTrace()
                         }
-                    }
-                    readStdoutThread.start()
+                    }.start()
                 } catch (e: IOException) {
                     e.printStackTrace()
                     siadNotification("Failed to start")
@@ -85,7 +83,7 @@ class Siad : Service() {
 
     override fun onDestroy() {
         //        Daemon.stopSpecific("localhost:9980", new SiaRequest.VolleyCallback(null));
-        siadProcess.destroy()
+        siadProcess?.destroy()
     }
 
     override fun onBind(intent: Intent): IBinder? {

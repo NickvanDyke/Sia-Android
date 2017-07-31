@@ -69,6 +69,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
         globalPrefsListener = GlobalPrefsListener(this)
         prefs.registerOnSharedPreferenceChangeListener(globalPrefsListener)
         when (prefs.theme) {
