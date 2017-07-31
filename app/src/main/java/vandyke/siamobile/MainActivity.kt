@@ -135,7 +135,7 @@ class MainActivity : AppCompatActivity() {
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.drawer_item_wallet -> {
-                    displayFragmentClass(WalletFragment::class.java, "WalletApiJava", menuItemId)
+                    displayFragmentClass(WalletFragment::class.java, "Wallet", menuItemId)
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.drawer_item_terminal -> {
@@ -180,7 +180,7 @@ class MainActivity : AppCompatActivity() {
         when (prefs.startupPage) {
             "files" -> displayFragmentClass(FilesFragment::class.java, "Files", R.id.drawer_item_files)
             "hosting" -> displayFragmentClass(HostingFragment::class.java, "Hosting", R.id.drawer_item_hosting)
-            "walletModel" -> displayFragmentClass(WalletFragment::class.java, "WalletApiJava", R.id.drawer_item_wallet)
+            "wallet" -> displayFragmentClass(WalletFragment::class.java, "Wallet", R.id.drawer_item_wallet)
             "terminal" -> displayFragmentClass(TerminalFragment::class.java, "Terminal", R.id.drawer_item_terminal)
         }
 
@@ -194,7 +194,7 @@ class MainActivity : AppCompatActivity() {
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_MODE) {
             if (resultCode == ModesActivity.PAPER_WALLET) {
-                displayFragmentClass(PaperWalletFragment::class.java, "Generated paper walletModel", null)
+                displayFragmentClass(PaperWalletFragment::class.java, "Generated paper wallet", null)
             } else if (resultCode == ModesActivity.COLD_STORAGE) {
                 prefs.operationMode = "cold_storage"
                 displayFragmentClass(WalletFragment::class.java, "WalletApiJava", R.id.drawer_item_wallet)
@@ -204,12 +204,12 @@ class MainActivity : AppCompatActivity() {
                 prefs.operationMode = "remote_full_node"
                 displayFragmentClass(FragmentSetupRemote::class.java, "Remote setup", null)
             } else if (resultCode == ModesActivity.LOCAL_FULL_NODE) {
-                displayFragmentClass(WalletFragment::class.java, "WalletApiJava", R.id.drawer_item_wallet)
+                displayFragmentClass(WalletFragment::class.java, "Wallet", R.id.drawer_item_wallet)
                 if (Utils.isSiadSupported) {
                     prefs.operationMode = "local_full_node"
                 } else
                     Toast.makeText(this, "Sorry, but your device's CPU architecture is not supported by Sia's full node", Toast.LENGTH_LONG).show()
-                displayFragmentClass(WalletFragment::class.java, "WalletApiJava", R.id.drawer_item_wallet)
+                displayFragmentClass(WalletFragment::class.java, "Wallet", R.id.drawer_item_wallet)
             }
         }
     }

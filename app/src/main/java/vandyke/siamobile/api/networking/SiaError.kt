@@ -1,13 +1,16 @@
 package vandyke.siamobile.api.networking
 
-import retrofit2.Response
+import android.support.design.widget.Snackbar
+import android.view.View
+import vandyke.siamobile.misc.Utils
+import java.net.SocketException
 import java.net.SocketTimeoutException
 
 class SiaError {
     val reason: Reason
 
-    constructor(response: Response) {
-        reason = getReasonFromMsg(response.errorBody().toString())
+    constructor(errorMessage: String) {
+        reason = getReasonFromMsg(errorMessage)
     }
 
     constructor(t: Throwable) {
@@ -32,7 +35,7 @@ class SiaError {
             errorMessage.contains("unsupported on cold storage walletModel") -> return SiaError.Reason.UNSUPPORTED_ON_COLD_WALLET
             errorMessage.contains("word not found in dictionary for given language") -> return SiaError.Reason.INVALID_WORD_IN_SEED
             else -> {
-                println(errorMessage)
+                println("unaccounted for error message: $errorMessage")
                 return SiaError.Reason.UNACCOUNTED_FOR_ERROR
             }
         }
@@ -41,7 +44,11 @@ class SiaError {
     fun getReasonFromThrowable(t: Throwable): Reason {
         when (t) {
             is SocketTimeoutException -> return Reason.TIMEOUT
-            else -> return Reason.UNACCOUNTED_FOR_ERROR
+            is SocketException -> return Reason.NO_NETWORK_RESPONSE
+            else -> {
+                println("unaccounted for throwable: $t")
+                return Reason.UNACCOUNTED_FOR_ERROR
+            }
         }
     }
 
@@ -64,5 +71,9 @@ class SiaError {
         INVALID_WORD_IN_SEED("Invalid word in seed"),
         CANNOT_INIT_FROM_SEED_UNTIL_SYNCED("Cannot create walletModel from seed until blockchain is synced"),
         UNSUPPORTED_ON_COLD_WALLET("Unsupported on cold storage walletModel")
+    }
+
+    fun snackbar(view: View?) {
+        Utils.snackbar(view, reason.msg, Snackbar.LENGTH_SHORT)
     }
 }

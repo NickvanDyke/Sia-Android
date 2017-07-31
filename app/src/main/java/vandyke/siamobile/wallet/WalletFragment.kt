@@ -26,11 +26,14 @@ import vandyke.siamobile.MainActivity
 import vandyke.siamobile.R
 import vandyke.siamobile.api.SiaRequest
 import vandyke.siamobile.api.WalletApiJava
-import vandyke.siamobile.api.WalletModel
+import vandyke.siamobile.api.models.ConsensusModel
+import vandyke.siamobile.api.models.TransactionModel
+import vandyke.siamobile.api.models.TransactionsModel
+import vandyke.siamobile.api.models.WalletModel
+import vandyke.siamobile.api.networking.SiaError
 import vandyke.siamobile.backend.BaseMonitorService
 import vandyke.siamobile.backend.coldstorage.ColdStorageHttpServer
 import vandyke.siamobile.backend.wallet.WalletMonitorService
-import vandyke.siamobile.backend.wallet.transaction.Transaction
 import vandyke.siamobile.misc.Utils
 import vandyke.siamobile.prefs
 import vandyke.siamobile.wallet.dialogs.*
@@ -48,6 +51,7 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
     private var bound = false
 
     private var statusButton: MenuItem? = null
+    private var walletModel: WalletModel? = null // TODO: temp fix for tracking status to set icon
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View {
         setHasOptionsMenu(true)
@@ -93,8 +97,8 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
             override fun onServiceConnected(name: ComponentName, service: IBinder) {
                 walletMonitorService = (service as BaseMonitorService.LocalBinder).service as WalletMonitorService
                 walletMonitorService.registerListener(this@WalletFragment)
-                refreshWalletService()
                 bound = true
+                refreshWalletService()
             }
 
             override fun onServiceDisconnected(name: ComponentName) {
@@ -105,9 +109,10 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
     }
 
     override fun onBalanceUpdate(walletModel: WalletModel) {
+        this.walletModel = walletModel
         balanceText.text = WalletApiJava.round(WalletApiJava.hastingsToSC(walletModel.confirmedsiacoinbalance))
         balanceUnconfirmed.text = "${if (walletModel.unconfirmedsiacoinbalance > BigDecimal.ZERO) "+" else ""}${WalletApiJava.round(WalletApiJava.hastingsToSC(walletModel.unconfirmedsiacoinbalance))} unconfirmed"
-        setStatusIcon(walletModel)
+        setStatusIcon()
 //        refreshButton.actionView = null
     }
 
@@ -115,33 +120,44 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
         balanceUsdText.text = "${WalletApiJava.round(service.balanceUsd)} USD"
     }
 
-    override fun onTransactionsUpdate(service: WalletMonitorService) {
+    override fun onTransactionsUpdate(transactionsModel: TransactionsModel) {
+        val allTxs: List<TransactionModel>
+        if (transactionsModel.confirmedtransactions == null) {
+            if (transactionsModel.unconfirmedtransactions == null)
+                allTxs = ArrayList()
+            else
+                allTxs = transactionsModel.unconfirmedtransactions
+        } else if (transactionsModel.unconfirmedtransactions == null) {
+            allTxs = transactionsModel.confirmedtransactions
+        } else {
+            allTxs = transactionsModel.confirmedtransactions + transactionsModel.unconfirmedtransactions
+        }
+
         val hideZero = prefs.hideZero
         transactionExpandableGroups.clear()
-        for (tx in service.transactions) {
+        for (tx in allTxs) {
             if (hideZero && tx.isNetZero)
                 continue
-            transactionExpandableGroups.add(transactionToGroupWithChild(tx))
+            transactionExpandableGroups.add(0, transactionToGroupWithChild(tx))
         }
         transactionList.adapter = TransactionListAdapter(transactionExpandableGroups)
     }
 
-    override fun onSyncUpdate(service: WalletMonitorService) {
-        val syncProgress = service.syncProgress
-        val height = service.blockHeight
-        if (syncProgress == 100.0) {
+    override fun onSyncUpdate(consensusModel: ConsensusModel) {
+        val height = consensusModel.height
+        if (consensusModel.synced) {
             syncText.text = "Synced: $height"
             syncBar.progress = 100
-        } else if (syncProgress == 0.0) {
+        } else if (consensusModel.syncprogress == 0.0) {
             syncText.text = "Not synced"
             syncBar.progress = 0
         } else {
             syncText.text = "Syncing: $height"
-            syncBar.progress = syncProgress.toInt()
+            syncBar.progress = consensusModel.syncprogress.toInt()
         }
     }
 
-    override fun onBalanceError(error: SiaRequest.Error) {
+    override fun onBalanceError(error: SiaError) {
         error.snackbar(view)
 //        refreshButton.actionView = null
     }
@@ -150,11 +166,11 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
         Utils.snackbar(view, "Error retreiving USD value", Snackbar.LENGTH_SHORT)
     }
 
-    override fun onTransactionsError(error: SiaRequest.Error) {
+    override fun onTransactionsError(error: SiaError) {
         error.snackbar(view)
     }
 
-    override fun onSyncError(error: SiaRequest.Error) {
+    override fun onSyncError(error: SiaError) {
         error.snackbar(view)
         syncText.text = "Not synced"
         syncBar.progress = 0
@@ -214,8 +230,8 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
         expandFrame.visibility = View.VISIBLE
     }
 
-    private fun transactionToGroupWithChild(tx: Transaction): TransactionExpandableGroup {
-        val child = ArrayList<Transaction>()
+    private fun transactionToGroupWithChild(tx: TransactionModel): TransactionExpandableGroup {
+        val child = ArrayList<TransactionModel>()
         child.add(tx)
         return TransactionExpandableGroup(tx.netValueStringRounded, tx.confirmationDate, child)
     }
@@ -241,15 +257,17 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
         inflater.inflate(R.menu.toolbar_wallet, menu)
         if (bound) {
             statusButton = menu.findItem(R.id.actionStatus)
-            setStatusIcon(walletMonitorService.walletModel)
+            if (walletModel != null)
+                setStatusIcon()
         }
     }
 
-    fun setStatusIcon(walletModel: WalletModel) {
-        when (walletModel.encrypted) {
-            false -> statusButton?.setIcon(R.drawable.ic_add_white)
-            true -> if (!walletModel.unlocked) statusButton?.setIcon(R.drawable.ic_lock_outline_white)
-            else statusButton?.setIcon(R.drawable.ic_lock_open_white)
-        }
+    fun setStatusIcon() {
+        if (walletModel != null)
+            when (walletModel!!.encrypted) {
+                false -> statusButton?.setIcon(R.drawable.ic_add_white)
+                true -> if (!walletModel!!.unlocked) statusButton?.setIcon(R.drawable.ic_lock_outline_white)
+                else statusButton?.setIcon(R.drawable.ic_lock_open_white)
+            }
     }
 }

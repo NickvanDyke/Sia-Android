@@ -23,29 +23,29 @@ import java.math.RoundingMode
 object WalletApiJava {
 
     fun wallet(callback: SiaRequest.VolleyCallback) {
-        SiaRequest(GET, "/walletModel", callback).send()
+        SiaRequest(GET, "/wallet", callback).send()
     }
 
     fun unlock(password: String, callback: SiaRequest.VolleyCallback) {
-        SiaRequest(POST, "/walletModel/unlock", callback)
+        SiaRequest(POST, "/wallet/unlock", callback)
                 .addParam("encryptionpassword", password)
                 .send()
     }
 
     fun lock(callback: SiaRequest.VolleyCallback) {
-        SiaRequest(POST, "/walletModel/lock", callback).send()
+        SiaRequest(POST, "/wallet/lock", callback).send()
     }
 
     fun newAddress(callback: SiaRequest.VolleyCallback) {
-        SiaRequest(GET, "/walletModel/address", callback).send()
+        SiaRequest(GET, "/wallet/address", callback).send()
     }
 
     fun addresses(callback: SiaRequest.VolleyCallback) {
-        SiaRequest(GET, "/walletModel/addresses", callback).send()
+        SiaRequest(GET, "/wallet/addresses", callback).send()
     }
 
     fun init(password: String, force: Boolean, dictionary: String, callback: SiaRequest.VolleyCallback) {
-        SiaRequest(POST, "/walletModel/init", callback)
+        SiaRequest(POST, "/wallet/init", callback)
                 .addParam("encryptionpassword", password)
                 .addParam("force", if (force) "true" else "false")
                 .addParam("dictionary", dictionary)
@@ -53,7 +53,7 @@ object WalletApiJava {
     }
 
     fun initSeed(password: String, force: Boolean, dictionary: String, seed: String, callback: SiaRequest.VolleyCallback) {
-        SiaRequest(POST, "/walletModel/init/seed", callback)
+        SiaRequest(POST, "/wallet/init/seed", callback)
                 .addParam("encryptionpassword", password)
                 .addParam("force", if (force) "true" else "false")
                 .addParam("dictionary", dictionary)
@@ -62,7 +62,7 @@ object WalletApiJava {
     }
 
     fun seed(password: String, dictionary: String, seed: String, callback: SiaRequest.VolleyCallback) {
-        SiaRequest(POST, "/walletModel/seed", callback)
+        SiaRequest(POST, "/wallet/seed", callback)
                 .addParam("encryptionpassword", password)
                 .addParam("dictionary", dictionary)
                 .addParam("seed", seed)
@@ -70,13 +70,13 @@ object WalletApiJava {
     }
 
     fun seeds(dictionary: String, callback: SiaRequest.VolleyCallback) {
-        SiaRequest(GET, String.format("/walletModel/seeds?dictionary=%s", dictionary), callback)
+        SiaRequest(GET, String.format("/wallet/seeds?dictionary=%s", dictionary), callback)
                 .send()
     }
 
 
     fun changePassword(currentPassword: String, newPassword: String, callback: SiaRequest.VolleyCallback) {
-        SiaRequest(POST, "/walletModel/changepassword", callback)
+        SiaRequest(POST, "/wallet/changepassword", callback)
                 .addParam("encryptionpassword", currentPassword)
                 .addParam("newpassword", newPassword)
                 .send()
@@ -84,7 +84,7 @@ object WalletApiJava {
 
     /** amount should be in hastings  */
     fun sendSiacoins(amount: BigDecimal, recipient: String, callback: SiaRequest.VolleyCallback) {
-        SiaRequest(POST, "/walletModel/siacoins", callback)
+        SiaRequest(POST, "/wallet/siacoins", callback)
                 .addParam("amount", amount.setScale(0, 0).toPlainString())
                 .addParam("destination", recipient)
                 .send()
@@ -107,7 +107,7 @@ object WalletApiJava {
         }
 
         // TODO: request isn't formatted properly? responds that it couldn't read amount
-        SiaRequest(POST, "/walletModel/siacoins", callback)
+        SiaRequest(POST, "/wallet/siacoins", callback)
                 .addParam("outputs", outputs.toString())
                 //                .addParam("amount", "")
                 //                .addParam("destination", "")
@@ -115,27 +115,27 @@ object WalletApiJava {
     }
 
     fun sendSiafunds(amount: String, recipient: String, callback: SiaRequest.VolleyCallback) {
-        SiaRequest(POST, "/walletModel/siafunds", callback)
+        SiaRequest(POST, "/wallet/siafunds", callback)
                 .addParam("amount", amount)
                 .addParam("destination", recipient)
                 .send()
     }
 
     fun sweepSeed(dictionary: String, seed: String, callback: SiaRequest.VolleyCallback) {
-        SiaRequest(POST, "/walletModel/sweep/seed", callback)
+        SiaRequest(POST, "/wallet/sweep/seed", callback)
                 .addParam("dictionary", dictionary)
                 .addParam("seed", seed)
                 .send()
     }
 
     fun transaction(id: String, callback: SiaRequest.VolleyCallback) {
-        SiaRequest(GET, String.format("/walletModel/transaction/%s", id), callback)
+        SiaRequest(GET, String.format("/wallet/transaction/%s", id), callback)
                 .send()
     }
 
     fun transactions(callback: SiaRequest.VolleyCallback) {
         // TODO: maybe use actual value instead of really big literal lol
-        SiaRequest(GET, String.format("/walletModel/transactions?startheight=%s&endheight=%s", "0", "2000000000"), callback)
+        SiaRequest(GET, String.format("/wallet/transactions?startheight=%s&endheight=%s", "0", "2000000000"), callback)
                 .send()
     }
 

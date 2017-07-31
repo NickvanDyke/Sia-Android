@@ -22,7 +22,9 @@ import com.thoughtbot.expandablerecyclerview.ExpandableRecyclerViewAdapter;
 import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
 import vandyke.siamobile.MainActivity;
 import vandyke.siamobile.R;
-import vandyke.siamobile.backend.wallet.transaction.TransactionIOBase;
+import vandyke.siamobile.api.models.TransactionInputModel;
+import vandyke.siamobile.api.models.TransactionModel;
+import vandyke.siamobile.api.models.TransactionOutputModel;
 import vandyke.siamobile.misc.Utils;
 
 import java.text.DateFormat;
@@ -94,20 +96,20 @@ public class TransactionListAdapter extends ExpandableRecyclerViewAdapter<Transa
 
     @Override
     public void onBindChildViewHolder(TransactionDetailsHolder holder, int flatPosition, ExpandableGroup group, int childIndex) {
-        Transaction transaction = (Transaction) group.getItems().get(childIndex);
+        TransactionModel transaction = (TransactionModel) group.getItems().get(childIndex);
 
-        if (transaction.isConfirmed()) {
-            holder.confirmationHeight.setText("Confirmation block: " + transaction.getConfirmationHeight());
+        if (transaction.getConfirmed()) {
+            holder.confirmationHeight.setText("Confirmation block: " + transaction.getConfirmationheight());
         } else
             holder.confirmationHeight.setText("Unconfirmed");
 
-        ArrayList<TransactionIOBase> inputs = new ArrayList<>();
+        ArrayList<TransactionInputModel> inputs = new ArrayList<>();
         inputs.addAll(transaction.getInputs());
-        holder.inputs.setAdapter(new TransactionIOAdapter(holder.inputs.getContext(), R.layout.list_item_tx_io, inputs));
+//        holder.inputs.setAdapter(new TransactionIOAdapter(holder.inputs.getContext(), R.layout.list_item_tx_io, inputs));
 
-        ArrayList<TransactionIOBase> outputs = new ArrayList<>();
+        ArrayList<TransactionOutputModel> outputs = new ArrayList<>();
         outputs.addAll(transaction.getOutputs());
-        holder.outputs.setAdapter(new TransactionIOAdapter(holder.outputs.getContext(), R.layout.list_item_tx_io, outputs));
+//        holder.outputs.setAdapter(new TransactionIOAdapter(holder.outputs.getContext(), R.layout.list_item_tx_io, outputs));
 
         if (inputs.size() > 1)
             holder.inputs.setOnTouchListener(new View.OnTouchListener() {
@@ -132,9 +134,9 @@ public class TransactionListAdapter extends ExpandableRecyclerViewAdapter<Transa
 
     @Override
     public void onBindGroupViewHolder(TransactionHeaderHolder holder, int flatPosition, ExpandableGroup group) {
-        Transaction transaction = (Transaction) group.getItems().get(0);
+        TransactionModel transaction = (TransactionModel) group.getItems().get(0);
         String timeString;
-        if (!transaction.isConfirmed()) {
+        if (!transaction.getConfirmed()) {
             timeString = "Unconfirmed";
             holder.transactionStatus.setTextColor(Color.RED);
         } else {
@@ -143,7 +145,7 @@ public class TransactionListAdapter extends ExpandableRecyclerViewAdapter<Transa
         }
         holder.transactionStatus.setText(timeString);
 
-        String id = transaction.getTransactionId();
+        String id = transaction.getTransactionid();
         holder.transactionId.setText(id.substring(0, id.length() / 2) + "\n" + id.substring(id.length() / 2));
 
         String valueText = transaction.getNetValueStringRounded();
