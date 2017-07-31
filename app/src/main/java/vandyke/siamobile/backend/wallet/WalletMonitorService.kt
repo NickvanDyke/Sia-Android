@@ -12,7 +12,12 @@ import com.android.volley.VolleyError
 import org.json.JSONException
 import org.json.JSONObject
 import vandyke.siamobile.R
-import vandyke.siamobile.api.*
+import vandyke.siamobile.api.Consensus
+import vandyke.siamobile.api.SiaRequest
+import vandyke.siamobile.api.WalletApiJava
+import vandyke.siamobile.api.WalletModel
+import vandyke.siamobile.api.networking.SiaCallback
+import vandyke.siamobile.api.networking.Wallet
 import vandyke.siamobile.backend.BaseMonitorService
 import vandyke.siamobile.backend.wallet.transaction.Transaction
 import vandyke.siamobile.misc.Utils
@@ -64,7 +69,7 @@ class WalletMonitorService : BaseMonitorService() {
     }
 
     fun refreshBalanceAndStatus() {
-        Wallet.wallet(callback({ response -> println("response") }, { t -> println("error") }))
+        Wallet.wallet(SiaCallback({ response -> println("response") }, { t -> println("error") }))
         WalletApiJava.wallet(object : SiaRequest.VolleyCallback {
             override fun onSuccess(response: JSONObject) {
                 if (response.getString("encrypted") == "false")
