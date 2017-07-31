@@ -13,7 +13,7 @@ import kotlinx.android.synthetic.main.fragment_wallet_sweep.*
 import org.json.JSONObject
 import vandyke.siamobile.R
 import vandyke.siamobile.api.SiaRequest
-import vandyke.siamobile.api.Wallet
+import vandyke.siamobile.api.WalletApiJava
 import vandyke.siamobile.misc.Utils
 
 class WalletSweepSeedDialog : BaseDialogFragment() {
@@ -21,7 +21,7 @@ class WalletSweepSeedDialog : BaseDialogFragment() {
 
     override fun create(view: View?, savedInstanceState: Bundle?) {
         walletAddSeed.setOnClickListener {
-            Wallet.sweepSeed("english", walletSweepSeed.text.toString(),
+            WalletApiJava.sweepSeed("english", walletSweepSeed.text.toString(),
                     object : SiaRequest.VolleyCallback {
                         override fun onSuccess(response: JSONObject) {
                             Utils.successSnackbar(view)

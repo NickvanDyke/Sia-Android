@@ -23,7 +23,7 @@ import android.widget.EditText;
 import org.json.JSONObject;
 import vandyke.siamobile.R;
 import vandyke.siamobile.api.SiaRequest;
-import vandyke.siamobile.api.Wallet;
+import vandyke.siamobile.api.WalletApiJava;
 import vandyke.siamobile.misc.Utils;
 
 public class DonateDialog extends DialogFragment {
@@ -40,7 +40,7 @@ public class DonateDialog extends DialogFragment {
 
         donateButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                Wallet.INSTANCE.sendSiacoins(Wallet.INSTANCE.scToHastings(amount.getText().toString()),
+                WalletApiJava.INSTANCE.sendSiacoins(WalletApiJava.INSTANCE.scToHastings(amount.getText().toString()),
                         paymentRecipient, new SiaRequest.VolleyCallback() {
                             public void onSuccess(JSONObject response) {
                                 Utils.INSTANCE.snackbar(dialogView, "Donation successful. Thank you!", Snackbar.LENGTH_SHORT);

@@ -14,7 +14,7 @@ import kotlinx.android.synthetic.main.fragment_wallet_change_password.*
 import org.json.JSONObject
 import vandyke.siamobile.R
 import vandyke.siamobile.api.SiaRequest
-import vandyke.siamobile.api.Wallet
+import vandyke.siamobile.api.WalletApiJava
 import vandyke.siamobile.misc.Utils
 
 class WalletChangePasswordDialog : BaseDialogFragment() {
@@ -27,7 +27,7 @@ class WalletChangePasswordDialog : BaseDialogFragment() {
                 Utils.snackbar(view, "New passwords don't match", Snackbar.LENGTH_SHORT)
                 return@OnClickListener
             }
-            Wallet.changePassword(currentPassword.text.toString(),
+            WalletApiJava.changePassword(currentPassword.text.toString(),
                     newPassword, object : SiaRequest.VolleyCallback {
                 override fun onSuccess(response: JSONObject) {
                     Utils.successSnackbar(view)

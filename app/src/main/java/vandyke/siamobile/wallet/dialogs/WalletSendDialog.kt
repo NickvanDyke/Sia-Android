@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.main.fragment_wallet_send.*
 import org.json.JSONObject
 import vandyke.siamobile.R
 import vandyke.siamobile.api.SiaRequest
-import vandyke.siamobile.api.Wallet
+import vandyke.siamobile.api.WalletApiJava
 import vandyke.siamobile.misc.Utils
 import vandyke.siamobile.prefs
 import vandyke.siamobile.wallet.ScannerActivity
@@ -41,9 +41,9 @@ class WalletSendDialog : BaseDialogFragment() {
             override fun afterTextChanged(s: Editable) {}
         })
         walletSend.setOnClickListener {
-            val sendAmount = Wallet.scToHastings(sendAmount.text.toString())
+            val sendAmount = WalletApiJava.scToHastings(sendAmount.text.toString())
             if (prefs.feesEnabled)
-                Wallet.sendSiacoinsWithDevFee(sendAmount,
+                WalletApiJava.sendSiacoinsWithDevFee(sendAmount,
                         sendRecipient.text.toString(),
                         object : SiaRequest.VolleyCallback {
                             override fun onSuccess(response: JSONObject) {
@@ -56,7 +56,7 @@ class WalletSendDialog : BaseDialogFragment() {
                             }
                         })
             else
-                Wallet.sendSiacoins(sendAmount,
+                WalletApiJava.sendSiacoins(sendAmount,
                         sendRecipient.text.toString(),
                         object : SiaRequest.VolleyCallback {
                             override fun onSuccess(response: JSONObject) {

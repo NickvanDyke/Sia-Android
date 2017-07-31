@@ -19,7 +19,7 @@ import org.json.JSONException
 import org.json.JSONObject
 import vandyke.siamobile.R
 import vandyke.siamobile.api.SiaRequest
-import vandyke.siamobile.api.Wallet
+import vandyke.siamobile.api.WalletApiJava
 import vandyke.siamobile.misc.Utils
 
 class WalletReceiveDialog : BaseDialogFragment() {
@@ -28,7 +28,7 @@ class WalletReceiveDialog : BaseDialogFragment() {
     override fun create(view: View?, savedInstanceState: Bundle?) {
         walletQrCode.visibility = View.INVISIBLE
 
-        Wallet.newAddress(object : SiaRequest.VolleyCallback {
+        WalletApiJava.newAddress(object : SiaRequest.VolleyCallback {
             override fun onSuccess(response: JSONObject) {
                 try {
                     Utils.successSnackbar(view)

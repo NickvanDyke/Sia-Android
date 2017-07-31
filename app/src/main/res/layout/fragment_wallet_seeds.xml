@@ -25,7 +25,7 @@
             android:layout_height="96dp"/>
 
     <TextView
-            android:text="Keep your seed(s) safe! You will need them to recover your funds if something happens to your device or wallet. If someone gets your seed(s), they can take your funds!"
+            android:text="Keep your seed(s) safe! You will need them to recover your funds if something happens to your device or walletModel. If someone gets your seed(s), they can take your funds!"
             android:textColor="@android:color/holo_red_light"
             android:layout_width="0dp"
             android:id="@+id/seedsWarning"

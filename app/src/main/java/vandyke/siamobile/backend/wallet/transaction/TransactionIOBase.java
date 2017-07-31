@@ -9,7 +9,7 @@ package vandyke.siamobile.backend.wallet.transaction;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import vandyke.siamobile.api.Wallet;
+import vandyke.siamobile.api.WalletApiJava;
 
 import java.math.BigDecimal;
 
@@ -51,9 +51,9 @@ public class TransactionIOBase {
         String result = "";
         if (!fundType.contains("miner"))
             result += "Address: " + relatedAddress +
-                    "\nWallet address: " + (walletAddress ? "yes" : "no") + "\n";
+                    "\nWalletApiJava address: " + (walletAddress ? "yes" : "no") + "\n";
         result += "Type: " + fundType +
-                "\nAmount: " + Wallet.INSTANCE.hastingsToSC(value).toPlainString();
+                "\nAmount: " + WalletApiJava.INSTANCE.hastingsToSC(value).toPlainString();
         return result;
     }
 }

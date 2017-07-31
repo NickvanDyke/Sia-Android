@@ -45,7 +45,7 @@ abstract class BaseDialogFragment : DialogFragment() {
         val dialog = super.onCreateDialog(savedInstanceState)
         // TODO: find some way to make dialog normal sized instead of wrap_content?
 //        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-//        dialog.window.setTitle("Unlock wallet")
+//        dialog.window.setTitle("Unlock walletModel")
         return dialog
     }
 }

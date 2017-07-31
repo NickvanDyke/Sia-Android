@@ -67,7 +67,7 @@
             android:layout_marginLeft="8dp"
             app:layout_constraintBottom_toBottomOf="@+id/walletCreateFromSeed"/>
     <TextView
-            android:text="Warning: this will overwrite\nany existing wallet"
+            android:text="Warning: this will overwrite\nany existing walletModel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/walletCreateForceWarning" android:layout_marginStart="16dp"

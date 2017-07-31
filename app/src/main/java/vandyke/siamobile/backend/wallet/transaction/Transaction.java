@@ -10,7 +10,7 @@ package vandyke.siamobile.backend.wallet.transaction;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import vandyke.siamobile.api.Wallet;
+import vandyke.siamobile.api.WalletApiJava;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ public class Transaction {
     protected Date confirmationDate; // null if unconfirmed
     protected ArrayList<TransactionInput> inputs;
     protected ArrayList<TransactionOutput> outputs;
-    protected BigDecimal netValue; // this is relevant to the wallet
+    protected BigDecimal netValue; // this is relevant to the walletModel
     protected String netValueStringExact;
     protected String netValueStringRounded;
     protected boolean netZero;
@@ -62,7 +62,7 @@ public class Transaction {
                 netValue = netValue.add(transactionOutput.getValue());
         }
         netValueStringExact = netValue.toPlainString();
-        netValueStringRounded = Wallet.INSTANCE.round(Wallet.INSTANCE.hastingsToSC(netValue));
+        netValueStringRounded = WalletApiJava.INSTANCE.round(WalletApiJava.INSTANCE.hastingsToSC(netValue));
         netZero = (netValue.compareTo(BigDecimal.ZERO) == 0);
     }
 
@@ -71,7 +71,7 @@ public class Transaction {
     }
 
     /**
-     * @param json The JSONObject created from the string returned by the /wallet/transactions API request
+     * @param json The JSONObject created from the string returned by the /walletModel/transactions API request
      * @return ArrayList of transactions generated from the given json. Note it goes from most-to-least-recent
      */
     public static ArrayList<Transaction> populateTransactions(JSONObject json) {

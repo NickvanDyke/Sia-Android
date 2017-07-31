@@ -12,7 +12,7 @@
                                              android:layout_width="match_parent"
                                              android:layout_height="match_parent"
                                              android:animateLayoutChanges="true">
-<!--TODO: some indicator of whether the wallet is locked/unlock, and only show the appropriate button-->
+<!--TODO: some indicator of whether walletModelllet is locked/unlock, and only show the appropriate button-->
     <Button
             android:text="Send"
             android:layout_width="0dp"

@@ -27,7 +27,7 @@
         <service android:name=".backend.siad.Siad"/>
         <service android:name=".backend.CleanupService"/>
         <service android:name=".backend.siad.SiadMonitorService"/>
-        <service android:name=".backend.wallet.WalletMonitorService"/>
+        <service android:name=".backend.walletModel.WalletMonitorService"/>
         <service android:name=".backend.coldstorage.ColdStorageService"/>
 
         <receiver android:name=".backend.BootReceiver">
@@ -55,7 +55,7 @@
             android:name=".help.ModesActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
-        <activity android:name=".wallet.ScannerActivity"/>
+        <activity android:name=".walletModel.ScannerActivity"/>
     </application>
 
 </manifest>

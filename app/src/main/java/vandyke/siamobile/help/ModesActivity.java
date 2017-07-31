@@ -36,7 +36,7 @@ public class ModesActivity extends AppIntro {
                 R.drawable.sia_logo_svg, ContextCompat.getColor(this, android.R.color.white),
                 ContextCompat.getColor(this, android.R.color.black),
                 ContextCompat.getColor(this, android.R.color.darker_gray)));
-        addSlide(AppIntroFragment.newInstance("Paper wallet",
+        addSlide(AppIntroFragment.newInstance("Paper walletModel",
                 "Generates a fresh seed and addresses from it. You can send coins to any of the addresses, and later load" +
                         " the seed on a full node to access the coins. Sia Mobile does not save any of this" +
                         " info for you - record it elsewhere.",
@@ -44,8 +44,8 @@ public class ModesActivity extends AppIntro {
                 ContextCompat.getColor(this, android.R.color.black),
                 ContextCompat.getColor(this, android.R.color.darker_gray)));
         addSlide(AppIntroFragment.newInstance("Cold storage",
-                "Similar to a paper wallet, except Sia Mobile will store the generated seed and addresses for you. Only for receiving and storing coins. " +
-                        "Completely offline the Sia network - like a paper wallet, to see your correct balance and transactions and access/send your coins, you'll" +
+                "Similar to a paper walletModel, except Sia Mobile will store the generated seed and addresses for you. Only for receiving and storing coins. " +
+                        "Completely offline the Sia network - like a paper walletModel, to see your correct balance and transactions and access/send your coins, you'll" +
                         " have to load your seed on a full node.",
                 R.drawable.safe_image, ContextCompat.getColor(this, android.R.color.white),
                 ContextCompat.getColor(this, android.R.color.black),

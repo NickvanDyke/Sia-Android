@@ -14,7 +14,7 @@ import org.json.JSONException
 import org.json.JSONObject
 import vandyke.siamobile.R
 import vandyke.siamobile.api.SiaRequest
-import vandyke.siamobile.api.Wallet
+import vandyke.siamobile.api.WalletApiJava
 import vandyke.siamobile.misc.TextTouchCopyListAdapter
 import java.util.*
 
@@ -25,7 +25,7 @@ class WalletSeedsDialog : BaseDialogFragment() {
         val seeds = ArrayList<String>()
         val adapter = TextTouchCopyListAdapter(activity, R.layout.text_touch_copy_list_item, seeds)
         seedsList.adapter = adapter
-        Wallet.seeds("english", object : SiaRequest.VolleyCallback {
+        WalletApiJava.seeds("english", object : SiaRequest.VolleyCallback {
             override fun onSuccess(response: JSONObject) {
                 try {
                     val seedsJson = response.getJSONArray("allseeds")

@@ -25,7 +25,8 @@ import org.json.JSONObject
 import vandyke.siamobile.MainActivity
 import vandyke.siamobile.R
 import vandyke.siamobile.api.SiaRequest
-import vandyke.siamobile.api.Wallet
+import vandyke.siamobile.api.WalletApiJava
+import vandyke.siamobile.api.WalletModel
 import vandyke.siamobile.backend.BaseMonitorService
 import vandyke.siamobile.backend.coldstorage.ColdStorageHttpServer
 import vandyke.siamobile.backend.wallet.WalletMonitorService
@@ -77,7 +78,7 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
             } else {
                 Utils.getDialogBuilder(v.context)
                         .setTitle("Exact Balance")
-                        .setMessage("${Wallet.hastingsToSC(walletMonitorService.balanceHastings).toPlainString()} Siacoins")
+                        .setMessage("${WalletApiJava.hastingsToSC(walletMonitorService.balanceHastings).toPlainString()} Siacoins")
                         .setPositiveButton("Close", null)
                         .show()
             }
@@ -103,19 +104,15 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
         activity.bindService(Intent(activity, WalletMonitorService::class.java), connection, Context.BIND_AUTO_CREATE)
     }
 
-    override fun onBalanceUpdate(service: WalletMonitorService) {
-        balanceText.text = Wallet.round(Wallet.hastingsToSC(service.balanceHastings))
-        balanceUnconfirmed.text = "${if (service.balanceHastingsUnconfirmed > BigDecimal.ZERO) "+" else ""}${Wallet.round(Wallet.hastingsToSC(service.balanceHastingsUnconfirmed))} unconfirmed"
-        when (walletMonitorService.walletStatus) {
-            WalletMonitorService.WalletStatus.NONE -> statusButton?.setIcon(R.drawable.ic_add_white)
-            WalletMonitorService.WalletStatus.LOCKED -> statusButton?.setIcon(R.drawable.ic_lock_outline_white)
-            WalletMonitorService.WalletStatus.UNLOCKED -> statusButton?.setIcon(R.drawable.ic_lock_open_white)
-        }
+    override fun onBalanceUpdate(walletModel: WalletModel) {
+        balanceText.text = WalletApiJava.round(WalletApiJava.hastingsToSC(walletModel.confirmedsiacoinbalance))
+        balanceUnconfirmed.text = "${if (walletModel.unconfirmedsiacoinbalance > BigDecimal.ZERO) "+" else ""}${WalletApiJava.round(WalletApiJava.hastingsToSC(walletModel.unconfirmedsiacoinbalance))} unconfirmed"
+        setStatusIcon(walletModel)
 //        refreshButton.actionView = null
     }
 
     override fun onUsdUpdate(service: WalletMonitorService) {
-        balanceUsdText.text = "${Wallet.round(service.balanceUsd)} USD"
+        balanceUsdText.text = "${WalletApiJava.round(service.balanceUsd)} USD"
     }
 
     override fun onTransactionsUpdate(service: WalletMonitorService) {
@@ -170,7 +167,7 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
                 when (item.icon.constantState) {
                     ContextCompat.getDrawable(activity, R.drawable.ic_add_white).constantState -> replaceExpandFrame(WalletCreateDialog())
                     ContextCompat.getDrawable(activity, R.drawable.ic_lock_outline_white).constantState -> replaceExpandFrame(WalletUnlockDialog())
-                    ContextCompat.getDrawable(activity, R.drawable.ic_lock_open_white).constantState -> Wallet.lock(object : SiaRequest.VolleyCallback {
+                    ContextCompat.getDrawable(activity, R.drawable.ic_lock_open_white).constantState -> WalletApiJava.lock(object : SiaRequest.VolleyCallback {
                         override fun onSuccess(response: JSONObject) {
                             refreshWalletService()
                             Utils.successSnackbar(view)
@@ -183,7 +180,7 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
                 }
             }
             R.id.actionUnlock -> replaceExpandFrame(WalletUnlockDialog())
-            R.id.actionLock -> Wallet.lock(object : SiaRequest.VolleyCallback {
+            R.id.actionLock -> WalletApiJava.lock(object : SiaRequest.VolleyCallback {
                 override fun onSuccess(response: JSONObject) {
                     refreshWalletService()
                     Utils.successSnackbar(view)
@@ -199,7 +196,7 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
             R.id.actionSweepSeed -> replaceExpandFrame(WalletSweepSeedDialog())
             R.id.actionViewAddresses -> replaceExpandFrame(WalletAddressesDialog())
             R.id.actionAddSeed -> replaceExpandFrame(WalletAddSeedDialog())
-            R.id.actionGenPaperWallet -> (activity as MainActivity).displayFragmentClass(PaperWalletFragment::class.java, "Generated paper wallet", null)
+            R.id.actionGenPaperWallet -> (activity as MainActivity).displayFragmentClass(PaperWalletFragment::class.java, "Generated paper walletModel", null)
         }
 
         return super.onOptionsItemSelected(item)
@@ -244,11 +241,15 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
         inflater.inflate(R.menu.toolbar_wallet, menu)
         if (bound) {
             statusButton = menu.findItem(R.id.actionStatus)
-            when (walletMonitorService.walletStatus) {
-                WalletMonitorService.WalletStatus.NONE -> statusButton?.setIcon(R.drawable.ic_add_white)
-                WalletMonitorService.WalletStatus.LOCKED -> statusButton?.setIcon(R.drawable.ic_lock_outline_white)
-                WalletMonitorService.WalletStatus.UNLOCKED -> statusButton?.setIcon(R.drawable.ic_lock_open_white)
-            }
+            setStatusIcon(walletMonitorService.walletModel)
+        }
+    }
+
+    fun setStatusIcon(walletModel: WalletModel) {
+        when (walletModel.encrypted) {
+            false -> statusButton?.setIcon(R.drawable.ic_add_white)
+            true -> if (!walletModel.unlocked) statusButton?.setIcon(R.drawable.ic_lock_outline_white)
+            else statusButton?.setIcon(R.drawable.ic_lock_open_white)
         }
     }
 }

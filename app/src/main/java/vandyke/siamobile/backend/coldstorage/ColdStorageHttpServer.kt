@@ -42,41 +42,41 @@ class ColdStorageHttpServer(private val context: Context) : NanoHTTPD("localhost
 
         try {
             when (uri) {
-                "/wallet/addresses" -> if (checkExists(response) && checkUnlocked(response)) {
+                "/walletModel/addresses" -> if (checkExists(response) && checkUnlocked(response)) {
                     val addressArray = JSONArray()
                     for (address in addresses)
                         addressArray.put(address)
                     response.put("addresses", addressArray)
                 } else
                     status = NanoHTTPD.Response.Status.BAD_REQUEST
-                "/wallet/address" -> if (checkExists(response) && checkUnlocked(response)) {
+                "/walletModel/address" -> if (checkExists(response) && checkUnlocked(response)) {
                     response.put("address", addresses[(Math.random() * addresses.size).toInt()])
                 } else
                     status = NanoHTTPD.Response.Status.BAD_REQUEST
-                "/wallet/seeds" -> if (checkExists(response) && checkUnlocked(response)) {
+                "/walletModel/seeds" -> if (checkExists(response) && checkUnlocked(response)) {
                     val seedsArray = JSONArray()
                     seedsArray.put(seed)
                     response.put("allseeds", seedsArray)
                 } else
                     status = NanoHTTPD.Response.Status.BAD_REQUEST
-                "/wallet/init" -> if (!exists || parms["force"] == "true") {
+                "/walletModel/init" -> if (!exists || parms["force"] == "true") {
                     newWallet(parms["encryptionpassword"]!!)
                     response.put("primaryseed", seed)
                 } else {
-                    response.put("message", "wallet is already encrypted, cannot encrypt again")
+                    response.put("message", "walletModel is already encrypted, cannot encrypt again")
                     status = NanoHTTPD.Response.Status.BAD_REQUEST
                 }
-                "/wallet/unlock" -> if (checkExists(response) && parms["encryptionpassword"] == password) {
+                "/walletModel/unlock" -> if (checkExists(response) && parms["encryptionpassword"] == password) {
                     unlocked = true
                 } else {
                     status = NanoHTTPD.Response.Status.BAD_REQUEST
                     response.put("message", "provided encryption key is incorrect")
                 }
-                "/wallet/lock" -> if (checkExists(response))
+                "/walletModel/lock" -> if (checkExists(response))
                     unlocked = false
                 else
                     status = NanoHTTPD.Response.Status.BAD_REQUEST
-                "/wallet" -> {
+                "/walletModel" -> {
                     response.put("encrypted", exists)
                     response.put("unlocked", unlocked)
                     response.put("rescanning", false)
@@ -86,14 +86,14 @@ class ColdStorageHttpServer(private val context: Context) : NanoHTTPD("localhost
                     response.put("siafundbalance", 0)
                     response.put("siacoinclaimbalance", 0)
                 }
-                "/wallet/transactions" -> {
+                "/walletModel/transactions" -> {
                 }
                 "/consensus" -> {
                     response.put("synced", false)
                     response.put("height", 0)
                 }
                 else -> {
-                    response.put("message", "unsupported on cold storage wallet")
+                    response.put("message", "unsupported on cold storage walletModel")
                     status = NanoHTTPD.Response.Status.NOT_IMPLEMENTED
                 }
             }
@@ -109,7 +109,7 @@ class ColdStorageHttpServer(private val context: Context) : NanoHTTPD("localhost
     @Throws(JSONException::class)
     private fun checkUnlocked(response: JSONObject): Boolean {
         if (!unlocked) {
-            response.put("message", "wallet must be unlocked before it can be used")
+            response.put("message", "walletModel must be unlocked before it can be used")
         }
         return unlocked
     }
@@ -117,7 +117,7 @@ class ColdStorageHttpServer(private val context: Context) : NanoHTTPD("localhost
     @Throws(JSONException::class)
     private fun checkExists(response: JSONObject): Boolean {
         if (!exists) {
-            response.put("message", "wallet has not been encrypted yet")
+            response.put("message", "walletModel has not been encrypted yet")
         }
         return exists
     }
@@ -150,12 +150,12 @@ class ColdStorageHttpServer(private val context: Context) : NanoHTTPD("localhost
         fun showColdStorageHelp(context: Context) {
             Utils.getDialogBuilder(context)
                     .setTitle("Cold storage help")
-                    .setMessage("Sia Mobile's cold storage wallet operates independently of the Sia network." +
+                    .setMessage("Sia Mobile's cold storage walletModel operates independently of the Sia network." +
                             " Since it doesn't have a copy of the Sia blockchain and is not connected to the " +
                             "Sia network, it cannot perform certain functions that require this. It also cannot display your correct balance and transactions." +
-                            "\n\nIf you wish to use unsupported functions, or view your cold wallet balance and transactions, you will have to run a full" +
+                            "\n\nIf you wish to use unsupported functions, or view your cold walletModel balance and transactions, you will have to run a full" +
                             " Sia node (either in Sia Mobile or using something like Sia-UI on your computer), and then load your" +
-                            " wallet seed on that full node. Your coins are not \"lost\" - if you did everything properly, they will be there when you load your seed" +
+                            " walletModel seed on that full node. Your coins are not \"lost\" - if you did everything properly, they will be there when you load your seed" +
                             " on a full node at any time in the future. No need to worry.")
                     .setPositiveButton("OK", null)
                     .show()

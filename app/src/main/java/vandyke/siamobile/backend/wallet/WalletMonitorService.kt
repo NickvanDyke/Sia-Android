@@ -12,9 +12,7 @@ import com.android.volley.VolleyError
 import org.json.JSONException
 import org.json.JSONObject
 import vandyke.siamobile.R
-import vandyke.siamobile.api.Consensus
-import vandyke.siamobile.api.SiaRequest
-import vandyke.siamobile.api.Wallet
+import vandyke.siamobile.api.*
 import vandyke.siamobile.backend.BaseMonitorService
 import vandyke.siamobile.backend.wallet.transaction.Transaction
 import vandyke.siamobile.misc.Utils
@@ -26,6 +24,8 @@ class WalletMonitorService : BaseMonitorService() {
     enum class WalletStatus {
         NONE, LOCKED, UNLOCKED
     }
+
+    lateinit var walletModel: WalletModel
 
      var walletStatus: WalletStatus = WalletStatus.NONE
         private set
@@ -64,7 +64,8 @@ class WalletMonitorService : BaseMonitorService() {
     }
 
     fun refreshBalanceAndStatus() {
-        Wallet.wallet(object : SiaRequest.VolleyCallback {
+        Wallet.wallet(callback({ response -> println("response") }, { t -> println("error") }))
+        WalletApiJava.wallet(object : SiaRequest.VolleyCallback {
             override fun onSuccess(response: JSONObject) {
                 if (response.getString("encrypted") == "false")
                     walletStatus = WalletStatus.NONE
@@ -84,12 +85,12 @@ class WalletMonitorService : BaseMonitorService() {
             }
         })
 
-        Wallet.coincapSC(object : Response.Listener<String> {
+        WalletApiJava.coincapSC(object : Response.Listener<String> {
             override fun onResponse(response: String?) {
                 try {
                     val json = JSONObject(response)
                     val usdPrice = json.getDouble("usdPrice")
-                    balanceUsd = Wallet.scToUsd(usdPrice, Wallet.hastingsToSC(balanceHastings))
+                    balanceUsd = WalletApiJava.scToUsd(usdPrice, WalletApiJava.hastingsToSC(balanceHastings))
                 } catch (e: JSONException) {
                     balanceUsd = BigDecimal("0")
                 }
@@ -99,7 +100,7 @@ class WalletMonitorService : BaseMonitorService() {
     }
 
     fun refreshTransactions() {
-        Wallet.transactions(object : SiaRequest.VolleyCallback {
+        WalletApiJava.transactions(object : SiaRequest.VolleyCallback {
             override fun onSuccess(response: JSONObject) {
                 val mostRecentTxId = prefs.mostRecentTxId // TODO: can give false positives when switching between wallets
                 var newTxs = 0
@@ -119,7 +120,7 @@ class WalletMonitorService : BaseMonitorService() {
                     prefs.mostRecentTxId = transactions[0].transactionId
                     Utils.notification(this@WalletMonitorService, TRANSACTION_NOTIFICATION,
                             R.drawable.ic_account_balance_white_48dp, newTxs.toString() + " new transaction" + if (newTxs > 1) "s" else "",
-                            "Net value: " + (if (netOfNewTxs > BigDecimal.ZERO) "+" else "") + Wallet.round(Wallet.hastingsToSC(netOfNewTxs)) + " SC",
+                            "Net value: " + (if (netOfNewTxs > BigDecimal.ZERO) "+" else "") + WalletApiJava.round(WalletApiJava.hastingsToSC(netOfNewTxs)) + " SC",
                             false)
                 }
                 sendTransactionsUpdate()
@@ -159,7 +160,7 @@ class WalletMonitorService : BaseMonitorService() {
     }
 
     interface WalletUpdateListener {
-        fun onBalanceUpdate(service: WalletMonitorService)
+        fun onBalanceUpdate(walletModel: WalletModel)
 
         fun onUsdUpdate(service: WalletMonitorService)
 
@@ -186,7 +187,7 @@ class WalletMonitorService : BaseMonitorService() {
 
     fun sendBalanceUpdate() {
         for (listener in listeners)
-            listener.onBalanceUpdate(this)
+            listener.onBalanceUpdate(walletModel)
     }
 
     fun sendUsdUpdate() {

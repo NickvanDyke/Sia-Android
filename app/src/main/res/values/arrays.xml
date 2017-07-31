@@ -40,7 +40,7 @@
     <string-array name="startup_values">
         <item>files</item>
         <item>hosting</item>
-        <item>wallet</item>
+        <item>walletModel</item>
         <item>terminal</item>
     </string-array>
 

@@ -13,7 +13,7 @@ import kotlinx.android.synthetic.main.fragment_wallet_add_seed.*
 import org.json.JSONObject
 import vandyke.siamobile.R
 import vandyke.siamobile.api.SiaRequest
-import vandyke.siamobile.api.Wallet
+import vandyke.siamobile.api.WalletApiJava
 import vandyke.siamobile.misc.Utils
 
 class WalletAddSeedDialog : BaseDialogFragment() {
@@ -21,7 +21,7 @@ class WalletAddSeedDialog : BaseDialogFragment() {
 
     override fun create(view: View?, savedInstanceState: Bundle?) {
         walletAddSeed.setOnClickListener {
-            Wallet.seed(walletPassword.text.toString(), "english",
+            WalletApiJava.seed(walletPassword.text.toString(), "english",
                     walletAddSeed.text.toString(),
                     object : SiaRequest.VolleyCallback {
                         override fun onSuccess(response: JSONObject) {

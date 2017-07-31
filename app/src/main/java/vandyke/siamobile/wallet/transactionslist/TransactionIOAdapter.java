@@ -15,7 +15,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import vandyke.siamobile.R;
-import vandyke.siamobile.api.Wallet;
+import vandyke.siamobile.api.WalletApiJava;
 import vandyke.siamobile.backend.wallet.transaction.TransactionIOBase;
 import vandyke.siamobile.backend.wallet.transaction.TransactionInput;
 import vandyke.siamobile.backend.wallet.transaction.TransactionOutput;
@@ -77,7 +77,7 @@ public class TransactionIOAdapter extends ArrayAdapter {
         holder.address.setText(txBase.getRelatedAddress());
         holder.wallet.setText(txBase.isWalletAddress() ? "yes" : "no");
         holder.type.setText(txBase.getFundType());
-        holder.amount.setText(Wallet.INSTANCE.hastingsToSC(txBase.getValue()).toPlainString());
+        holder.amount.setText(WalletApiJava.INSTANCE.hastingsToSC(txBase.getValue()).toPlainString());
 
         return row;
     }

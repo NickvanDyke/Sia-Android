@@ -14,7 +14,7 @@ import kotlinx.android.synthetic.main.fragment_wallet_create.*
 import org.json.JSONObject
 import vandyke.siamobile.R
 import vandyke.siamobile.api.SiaRequest
-import vandyke.siamobile.api.Wallet
+import vandyke.siamobile.api.WalletApiJava
 import vandyke.siamobile.backend.wallet.WalletMonitorService
 import vandyke.siamobile.misc.Utils
 import vandyke.siamobile.prefs
@@ -48,7 +48,7 @@ class WalletCreateDialog : BaseDialogFragment() {
             val force = walletCreateForce.isChecked
             val dictionary = "english"
             if (walletCreateFromSeed.isChecked)
-                Wallet.initSeed(password, force, dictionary, walletCreateSeed.text.toString(), object : SiaRequest.VolleyCallback {
+                WalletApiJava.initSeed(password, force, dictionary, walletCreateSeed.text.toString(), object : SiaRequest.VolleyCallback {
                     override fun onSuccess(response: JSONObject) {
                         Utils.successSnackbar(view)
                         close()
@@ -68,7 +68,7 @@ class WalletCreateDialog : BaseDialogFragment() {
                     }
                 })
             else
-                Wallet.init(password, force, dictionary, object : SiaRequest.VolleyCallback {
+                WalletApiJava.init(password, force, dictionary, object : SiaRequest.VolleyCallback {
                     override fun onSuccess(response: JSONObject) {
                         Utils.successSnackbar(view)
                         close()
@@ -88,9 +88,9 @@ class WalletCreateDialog : BaseDialogFragment() {
     private fun showDialog() {
         Utils.getDialogBuilder(activity)
                 .setTitle("IMPORTANT")
-                .setMessage("You just created a wallet while in cold storage mode. While in cold storage mode," +
+                .setMessage("You just created a walletModel while in cold storage mode. While in cold storage mode," +
                         " Sia Mobile is not connected to the Sia network and does not have a copy of the Sia blockchain. This means it cannot show your correct balance or transactions." +
-                        " You can send coins to any of the addresses of your cold storage wallet, and at any time in the future, load your wallet seed" +
+                        " You can send coins to any of the addresses of your cold storage walletModel, and at any time in the future, load your walletModel seed" +
                         " on a full node (such as Sia-UI on your computer or Sia Mobile's full node mode), and have access to your previously sent coins.")
                 .setPositiveButton("I have read and understood this", null)
                 .show()
