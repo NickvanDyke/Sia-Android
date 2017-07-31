@@ -94,7 +94,7 @@ class SiaRequest(method: Int, destination: String, command: String, callback: Vo
             UNSUPPORTED_ON_COLD_WALLET("Unsupported on cold storage walletModel")
         }
 
-        lateinit var reason: Reason
+        var reason: Reason
 
         init {
             if (error is TimeoutError)
@@ -107,8 +107,10 @@ class SiaRequest(method: Int, destination: String, command: String, callback: Vo
                     reason = determineReason(errorMessage)
                 } catch (e: UnsupportedEncodingException) {
                     e.printStackTrace()
+                    reason = Reason.NO_NETWORK_RESPONSE
                 } catch (e: JSONException) {
                     e.printStackTrace()
+                    reason = Reason.NO_NETWORK_RESPONSE
                 }
 
             } else {
