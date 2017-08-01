@@ -24,6 +24,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Light">
+
         <service android:name=".backend.siad.Siad"/>
         <service android:name=".backend.CleanupService"/>
         <service android:name=".backend.siad.SiadMonitorService"/>
@@ -48,14 +49,17 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".about.AboutActivity"
+            android:name=".about.AboutSiaActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".help.ModesActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
-        <activity android:name=".walletModel.ScannerActivity"/>
+        <activity
+            android:name=".wallet.ScannerActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

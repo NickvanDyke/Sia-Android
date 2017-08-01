@@ -15,7 +15,6 @@ import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
 import android.support.design.widget.Snackbar
-import android.support.v4.content.ContextCompat
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.view.*
@@ -183,10 +182,10 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
         when (item.itemId) {
             R.id.actionRefresh -> refreshWalletService()
             R.id.actionStatus -> {
-                when (item.icon.constantState) {
-                    ContextCompat.getDrawable(activity, R.drawable.ic_add_white).constantState -> replaceExpandFrame(WalletCreateDialog())
-                    ContextCompat.getDrawable(activity, R.drawable.ic_lock_outline_white).constantState -> replaceExpandFrame(WalletUnlockDialog())
-                    ContextCompat.getDrawable(activity, R.drawable.ic_lock_open_white).constantState -> WalletApiJava.lock(object : SiaRequest.VolleyCallback {
+                when (walletModel?.encrypted) {
+                    false -> replaceExpandFrame(WalletCreateDialog())
+                    true -> if (!walletModel!!.unlocked) replaceExpandFrame(WalletUnlockDialog())
+                    else WalletApiJava.lock(object : SiaRequest.VolleyCallback {
                         override fun onSuccess(response: JSONObject) {
                             refreshWalletService()
                             SnackbarUtil.successSnackbar(view)

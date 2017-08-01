@@ -13,15 +13,15 @@
             android:checkableBehavior="all">
         <item
                 android:id="@+id/drawer_item_files"
-                android:icon="@drawable/ic_cloud_white_48dp"
+                android:icon="@drawable/ic_cloud"
                 android:title="Files"/>
         <item
                 android:id="@+id/drawer_item_hosting"
-                android:icon="@drawable/ic_folder_shared_white_48dp"
+                android:icon="@drawable/ic_folder_shared"
                 android:title="Hosting"/>
         <item
                 android:id="@+id/drawer_item_wallet"
-                android:icon="@drawable/ic_account_balance_wallet_white_48dp"
+                android:icon="@drawable/ic_account_balance_wallet"
                 android:title="Wallet"/>
         <item
                 android:id="@+id/drawer_item_terminal"
@@ -33,27 +33,11 @@
             android:checkableBehavior="all">
         <item
                 android:id="@+id/drawer_item_settings"
-                android:icon="@drawable/ic_settings_white_48dp"
+                android:icon="@drawable/ic_settings"
                 android:title="Settings"/>
         <item
                 android:id="@+id/drawer_item_about"
-                android:icon="@drawable/ic_info_outline_white_48dp"
+                android:icon="@drawable/ic_info"
                 android:title="About"/>
-        <item
-                android:id="@+id/drawer_item_links"
-                android:icon="@drawable/ic_link_white_48dp"
-                android:title="Links"/>
-        <item
-                android:id="@+id/drawer_item_help"
-                android:icon="@drawable/ic_help_outline_white_48dp"
-                android:title="Help"/>
-    </group>
-    <group
-        android:id="@+id/dialogs"
-        android:checkableBehavior="none">
-        <item
-                android:id="@+id/drawer_item_donate"
-                android:icon="@drawable/ic_favorite_white_48dp"
-                android:title="Donate"/>
     </group>
 </menu>

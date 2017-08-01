@@ -12,12 +12,12 @@
     <item
             android:title="Refresh"
             app:showAsAction="always"
-            android:icon="@drawable/ic_refresh_white_48dp"
+            android:icon="@drawable/ic_refresh"
             android:id="@+id/actionRefresh"/>
     <item
         android:title="Status"
         app:showAsAction="always"
-        android:icon="@drawable/ic_add_white"
+        android:icon="@drawable/ic_add"
         android:id="@+id/actionStatus"/>
     <item
             android:title="Unlock walletModel"
