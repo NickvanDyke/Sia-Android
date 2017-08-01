@@ -15,7 +15,6 @@ import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
 import android.support.design.widget.Snackbar
-import android.support.v4.content.ContextCompat
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.view.*
@@ -47,6 +46,12 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
     private var bound = false
 
     private var statusButton: MenuItem? = null
+
+    enum class Status {
+        NONE, LOCKED, UNLOCKED
+    }
+
+    private var status: Status = Status.NONE
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View {
         setHasOptionsMenu(true)
@@ -107,9 +112,9 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
         balanceText.text = Wallet.round(Wallet.hastingsToSC(service.balanceHastings))
         balanceUnconfirmed.text = "${if (service.balanceHastingsUnconfirmed > BigDecimal.ZERO) "+" else ""}${Wallet.round(Wallet.hastingsToSC(service.balanceHastingsUnconfirmed))} unconfirmed"
         when (walletMonitorService.walletStatus) {
-            WalletMonitorService.WalletStatus.NONE -> statusButton?.setIcon(R.drawable.ic_add_white)
-            WalletMonitorService.WalletStatus.LOCKED -> statusButton?.setIcon(R.drawable.ic_lock_outline_white)
-            WalletMonitorService.WalletStatus.UNLOCKED -> statusButton?.setIcon(R.drawable.ic_lock_open_white)
+            WalletMonitorService.WalletStatus.NONE -> { statusButton?.setIcon(R.drawable.ic_add); status = Status.NONE }
+            WalletMonitorService.WalletStatus.LOCKED -> { statusButton?.setIcon(R.drawable.ic_lock_outline); status = Status.LOCKED }
+            WalletMonitorService.WalletStatus.UNLOCKED -> { statusButton?.setIcon(R.drawable.ic_lock_open); status = Status.UNLOCKED }
         }
 //        refreshButton.actionView = null
     }
@@ -167,10 +172,10 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
         when (item.itemId) {
             R.id.actionRefresh -> refreshWalletService()
             R.id.actionStatus -> {
-                when (item.icon.constantState) {
-                    ContextCompat.getDrawable(activity, R.drawable.ic_add_white).constantState -> replaceExpandFrame(WalletCreateDialog())
-                    ContextCompat.getDrawable(activity, R.drawable.ic_lock_outline_white).constantState -> replaceExpandFrame(WalletUnlockDialog())
-                    ContextCompat.getDrawable(activity, R.drawable.ic_lock_open_white).constantState -> Wallet.lock(object : SiaRequest.VolleyCallback {
+                when (status) {
+                    Status.NONE -> replaceExpandFrame(WalletCreateDialog())
+                    Status.LOCKED -> replaceExpandFrame(WalletUnlockDialog())
+                    Status.UNLOCKED -> Wallet.lock(object : SiaRequest.VolleyCallback {
                         override fun onSuccess(response: JSONObject) {
                             refreshWalletService()
                             Utils.successSnackbar(view)
@@ -244,10 +249,10 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
         inflater.inflate(R.menu.toolbar_wallet, menu)
         if (bound) {
             statusButton = menu.findItem(R.id.actionStatus)
-            when (walletMonitorService.walletStatus) {
-                WalletMonitorService.WalletStatus.NONE -> statusButton?.setIcon(R.drawable.ic_add_white)
-                WalletMonitorService.WalletStatus.LOCKED -> statusButton?.setIcon(R.drawable.ic_lock_outline_white)
-                WalletMonitorService.WalletStatus.UNLOCKED -> statusButton?.setIcon(R.drawable.ic_lock_open_white)
+            when (status) {
+                Status.NONE -> statusButton?.setIcon(R.drawable.ic_add)
+                Status.LOCKED -> statusButton?.setIcon(R.drawable.ic_lock_outline)
+                Status.UNLOCKED -> statusButton?.setIcon(R.drawable.ic_lock_open)
             }
         }
     }

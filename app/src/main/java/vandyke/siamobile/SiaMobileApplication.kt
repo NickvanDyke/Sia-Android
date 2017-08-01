@@ -44,7 +44,6 @@ val prefs: Prefs by lazy {
 }
 
 
-
 @org.acra.annotation.ReportsCrashes(mailTo = "siamobiledev@gmail.com", mode = org.acra.ReportingInteractionMode.DIALOG, resDialogText = vandyke.siamobile.R.string.crash_dialog_text, resDialogIcon = vandyke.siamobile.R.drawable.sia_logo_transparent, resDialogTitle = vandyke.siamobile.R.string.crash_dialog_title, resDialogCommentPrompt = vandyke.siamobile.R.string.crash_dialog_comment_prompt, resDialogTheme = vandyke.siamobile.R.style.AppTheme_Light) // optional. default is your application name
 class SiaMobileApplication : Application() {
     companion object {

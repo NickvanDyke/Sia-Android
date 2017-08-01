@@ -41,7 +41,7 @@ class Siad : Service() {
             if (siadFile == null) {
                 val handler = Handler(Looper.getMainLooper())
                 handler.post {
-                    Utils.notification(this@Siad, SIAD_NOTIFICATION, R.drawable.ic_dns_white_48dp,
+                    Utils.notification(this@Siad, SIAD_NOTIFICATION, R.drawable.ic_dns,
                             "Local full node", "Unsupported CPU architecture", false)
                 }
                 stopForeground(true)
@@ -97,7 +97,7 @@ class Siad : Service() {
 
     private fun buildSiadNotification(text: String): Notification {
         val builder = Notification.Builder(this)
-        builder.setSmallIcon(R.drawable.ic_dns_white_48dp)
+        builder.setSmallIcon(R.drawable.ic_dns)
         val largeIcon = BitmapFactory.decodeResource(resources, R.drawable.sia_logo_transparent)
         builder.setLargeIcon(largeIcon)
         builder.setContentTitle("Local full node")

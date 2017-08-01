@@ -31,8 +31,7 @@ public class ModesActivity extends AppIntro {
 
         addSlide(AppIntroFragment.newInstance("Modes",
                 "Sia Mobile can operate in multiple modes, explained in the following slides. The modes are independent - changes " +
-                        "made while in one mode will not affect other modes. You can change mode at any time in Settings, " +
-                        "and view this again by selecting Help from the drawer.",
+                        "made while in one mode will not affect other modes. You can change mode and view this again at any time in Settings.",
                 R.drawable.sia_logo_svg, ContextCompat.getColor(this, android.R.color.white),
                 ContextCompat.getColor(this, android.R.color.black),
                 ContextCompat.getColor(this, android.R.color.darker_gray)));
@@ -40,7 +39,7 @@ public class ModesActivity extends AppIntro {
                 "Generates a fresh seed and addresses from it. You can send coins to any of the addresses, and later load" +
                         " the seed on a full node to access the coins. Sia Mobile does not save any of this" +
                         " info for you - record it elsewhere.",
-                R.drawable.paper_wallet_svg, ContextCompat.getColor(this, android.R.color.white),
+                R.drawable.paper_wallet, ContextCompat.getColor(this, android.R.color.white),
                 ContextCompat.getColor(this, android.R.color.black),
                 ContextCompat.getColor(this, android.R.color.darker_gray)));
         addSlide(AppIntroFragment.newInstance("Cold storage",

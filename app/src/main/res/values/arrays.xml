@@ -8,11 +8,13 @@
 
 <resources>
     <string-array name="operation_modes_entries">
+        <item>View explanation</item>
         <item>Cold storage</item>
         <item>Remote full node</item>
         <item>Local full node</item>
     </string-array>
     <string-array name="operation_modes_values">
+        <item>view_explanation</item>
         <item>cold_storage</item>
         <item>remote_full_node</item>
         <item>local_full_node</item>

@@ -34,9 +34,9 @@ class WalletCreateDialog : BaseDialogFragment() {
         walletCreateForceWarning.visibility = View.GONE
         walletCreateForce.setOnClickListener {
             if (walletCreateForce.isChecked)
-                walletCreateForce.visibility = View.VISIBLE
+                walletCreateForceWarning.visibility = View.VISIBLE
             else
-                walletCreateForce.visibility = View.GONE
+                walletCreateForceWarning.visibility = View.GONE
         }
 
         walletCreateButton.setOnClickListener(View.OnClickListener {

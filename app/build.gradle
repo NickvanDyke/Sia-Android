@@ -17,8 +17,8 @@ android {
         applicationId "vandyke.siamobile"
         minSdkVersion 16
         targetSdkVersion 26
-        versionCode 49
-        versionName "2.0.4"
+        versionCode 50
+        versionName "2.0.5"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -62,6 +62,7 @@ dependencies {
     compile 'me.dm7.barcodescanner:zxing:1.9.3'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.7.0'
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    compile 'com.github.medyo:android-about-page:1.2.1'
 }
 repositories {
     mavenCentral()

@@ -17,11 +17,9 @@ import android.os.Bundle
 import android.preference.*
 import android.support.design.widget.Snackbar
 import android.util.Base64
-import vandyke.siamobile.BuildConfig
-import vandyke.siamobile.R
-import vandyke.siamobile.SiaMobileApplication
+import vandyke.siamobile.*
+import vandyke.siamobile.help.ModesActivity
 import vandyke.siamobile.misc.Utils
-import vandyke.siamobile.prefs
 import java.io.ByteArrayOutputStream
 import java.io.FileNotFoundException
 import java.io.InputStream
@@ -44,6 +42,7 @@ class SettingsFragment : PreferenceFragment() {
         addPreferencesFromResource(R.xml.settings)
 
         operation = findPreference("operationCategory") as PreferenceCategory
+        operationMode = findPreference("operationMode") as ListPreference
         remoteAddress = findPreference("remoteAddress") as EditTextPreference
         apiPass = findPreference("apiPass") as EditTextPreference
         runLocalNodeOffWifi = findPreference("runLocalNodeOffWifi") as SwitchPreference
@@ -54,13 +53,16 @@ class SettingsFragment : PreferenceFragment() {
         setRemoteSettingsVisibility()
         setLocalSettingsVisibility()
 
-        operationMode = findPreference("operationMode") as ListPreference
         operationMode.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, o ->
-            if (o as String == "local_full_node" && SiaMobileApplication.abi != "arm64") {
+            if (o == "view_explanation") {
+                activity.startActivityForResult(Intent(activity, ModesActivity::class.java), MainActivity.REQUEST_MODE)
+                return@OnPreferenceChangeListener false
+            }
+            if (o == "local_full_node" && SiaMobileApplication.abi != "arm64") {
                 Utils.snackbar(view, "Sorry, but your device's CPU architecture is not supported by Sia's full node", Snackbar.LENGTH_LONG)
                 return@OnPreferenceChangeListener false
             }
-            true
+            return@OnPreferenceChangeListener true
         }
 
         useExternal.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, o ->
@@ -68,11 +70,10 @@ class SettingsFragment : PreferenceFragment() {
                 return@OnPreferenceChangeListener true
             else
                 Utils.snackbar(view, "Error: " + Utils.externalStorageStateDescription(), Snackbar.LENGTH_LONG)
-            false
+            return@OnPreferenceChangeListener false
         }
 
-        val openAppSettings = findPreference("openAppSettings")
-        openAppSettings.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+        findPreference("openAppSettings").onPreferenceClickListener = Preference.OnPreferenceClickListener {
             val appSettings = Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + BuildConfig.APPLICATION_ID))
             appSettings.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(appSettings)
@@ -100,15 +101,15 @@ class SettingsFragment : PreferenceFragment() {
                     when (prefs.operationMode) {
                         "cold_storage" -> {
                             operationMode.summary = "Cold storage"
-                            operationMode.setValueIndex(0)
+                            operationMode.setValueIndex(1)
                         }
                         "remote_full_node" -> {
                             operationMode.summary = "Remote full node"
-                            operationMode.setValueIndex(1)
+                            operationMode.setValueIndex(2)
                         }
                         "local_full_node" -> {
                             operationMode.summary = "Local full node"
-                            operationMode.setValueIndex(2)
+                            operationMode.setValueIndex(3)
                         }
                     }
                 }

@@ -33,17 +33,16 @@ import android.view.WindowManager
 import android.widget.TextView
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main_layout.*
-import vandyke.siamobile.about.AboutActivity
+import vandyke.siamobile.about.AboutFragment
+import vandyke.siamobile.about.AboutSiaActivity
 import vandyke.siamobile.backend.CleanupService
 import vandyke.siamobile.backend.coldstorage.ColdStorageService
 import vandyke.siamobile.backend.siad.SiadMonitorService
 import vandyke.siamobile.backend.wallet.WalletMonitorService
-import vandyke.siamobile.dialogs.DonateDialog
 import vandyke.siamobile.files.fragments.FilesFragment
 import vandyke.siamobile.help.ModesActivity
 import vandyke.siamobile.help.fragments.FragmentSetupRemote
 import vandyke.siamobile.hosting.fragments.HostingFragment
-import vandyke.siamobile.links.LinksFragment
 import vandyke.siamobile.misc.Utils
 import vandyke.siamobile.settings.GlobalPrefsListener
 import vandyke.siamobile.settings.fragments.SettingsFragment
@@ -147,19 +146,7 @@ class MainActivity : AppCompatActivity() {
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.drawer_item_about -> {
-                    startActivity(Intent(this@MainActivity, AboutActivity::class.java))
-                    return@OnNavigationItemSelectedListener false
-                }
-                R.id.drawer_item_links -> {
-                    displayFragmentClass(LinksFragment::class.java, "Links", menuItemId)
-                    return@OnNavigationItemSelectedListener true
-                }
-                R.id.drawer_item_help -> {
-                    startActivityForResult(Intent(this@MainActivity, ModesActivity::class.java), REQUEST_MODE)
-                    return@OnNavigationItemSelectedListener false
-                }
-                R.id.drawer_item_donate -> {
-                    DonateDialog.createAndShow(fragmentManager)
+                    displayFragmentClass(AboutFragment::class.java, "About", menuItemId)
                     return@OnNavigationItemSelectedListener false
                 }
             }
@@ -186,7 +173,7 @@ class MainActivity : AppCompatActivity() {
 
         if (prefs.firstTime) {
             startActivityForResult(Intent(this, ModesActivity::class.java), REQUEST_MODE)
-            startActivity(Intent(this, AboutActivity::class.java))
+            startActivity(Intent(this, AboutSiaActivity::class.java))
             prefs.firstTime = false
         }
     }

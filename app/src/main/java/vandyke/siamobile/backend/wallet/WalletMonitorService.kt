@@ -118,7 +118,7 @@ class WalletMonitorService : BaseMonitorService() {
                 if (newTxs > 0) {
                     prefs.mostRecentTxId = transactions[0].transactionId
                     Utils.notification(this@WalletMonitorService, TRANSACTION_NOTIFICATION,
-                            R.drawable.ic_account_balance_white_48dp, newTxs.toString() + " new transaction" + if (newTxs > 1) "s" else "",
+                            R.drawable.ic_account_balance, newTxs.toString() + " new transaction" + if (newTxs > 1) "s" else "",
                             "Net value: " + (if (netOfNewTxs > BigDecimal.ZERO) "+" else "") + Wallet.round(Wallet.hastingsToSC(netOfNewTxs)) + " SC",
                             false)
                 }
@@ -143,7 +143,7 @@ class WalletMonitorService : BaseMonitorService() {
                     if (syncProgress == 0.0)
                         Utils.cancelNotification(this@WalletMonitorService, SYNC_NOTIFICATION)
                     else
-                        Utils.notification(this@WalletMonitorService, SYNC_NOTIFICATION, R.drawable.ic_sync_white_48dp,
+                        Utils.notification(this@WalletMonitorService, SYNC_NOTIFICATION, R.drawable.ic_sync,
                                 "Syncing...", String.format("Progress (estimated): %.2f%%", syncProgress), false)
                 }
 
@@ -152,7 +152,7 @@ class WalletMonitorService : BaseMonitorService() {
 
             override fun onError(error: SiaRequest.Error) {
                 sendSyncError(error)
-                Utils.notification(this@WalletMonitorService, SYNC_NOTIFICATION, R.drawable.ic_sync_problem_white_48dp,
+                Utils.notification(this@WalletMonitorService, SYNC_NOTIFICATION, R.drawable.ic_sync_problem,
                         "Syncing...", "Error retrieving sync progress", false)
             }
         })

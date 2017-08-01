@@ -15,7 +15,7 @@ import com.github.paolorotolo.appintro.AppIntro;
 import com.github.paolorotolo.appintro.AppIntroFragment;
 import vandyke.siamobile.R;
 
-public class AboutActivity extends AppIntro {
+public class AboutSiaActivity extends AppIntro {
 
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
