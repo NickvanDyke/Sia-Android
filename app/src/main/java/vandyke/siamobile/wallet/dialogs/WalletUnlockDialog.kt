@@ -32,7 +32,7 @@ class WalletUnlockDialog : BaseDialogFragment() {
 
                 override fun onError(error: SiaRequest.Error) {
                     if (error.reason == SiaRequest.Error.Reason.WALLET_SCAN_IN_PROGRESS) {
-                        SnackbarUtil.snackbar(container, "Scanning the blockchain, please wait. Your walletModel will unlock when finished", Snackbar.LENGTH_LONG)
+                        SnackbarUtil.snackbar(container, "Scanning the blockchain, please wait. Your wallet will unlock when finished", Snackbar.LENGTH_LONG)
                         close()
                     } else {
                         error.snackbar(view)

@@ -51,7 +51,7 @@ class Prefs(context: Context) {
         set(value) = prefs.edit().putBoolean("firstTime", value).apply()
 
     var startupPage: String
-        get() = prefs.getString("startupPage", "walletModel")
+        get() = prefs.getString("startupPage", "wallet")
         set(value) = prefs.edit().putString("startupPage", value).apply()
 
     var transparentBars: Boolean

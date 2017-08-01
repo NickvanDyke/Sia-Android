@@ -20,15 +20,15 @@
         android:icon="@drawable/ic_add"
         android:id="@+id/actionStatus"/>
     <item
-            android:title="Unlock walletModel"
+            android:title="Unlock wallet"
             android:id="@+id/actionUnlock"
             app:showAsAction="never"/>
     <item
-            android:title="Lock walletModel"
+            android:title="Lock wallet"
             android:id="@+id/actionLock"
             app:showAsAction="never"/>
     <item
-            android:title="Create walletModel"
+            android:title="Create wallet"
             android:id="@+id/actionCreateWallet"
             app:showAsAction="never"/>
     <item
@@ -52,7 +52,7 @@
             android:id="@+id/actionChangePassword"
             app:showAsAction="never"/>
     <item
-            android:title="Generate paper walletModel"
+            android:title="Generate paper wallet"
             android:id="@+id/actionGenPaperWallet"
             app:showAsAction="never"/>
 </menu>

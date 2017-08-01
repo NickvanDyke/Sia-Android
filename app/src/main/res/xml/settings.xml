@@ -82,12 +82,12 @@
             android:summary="The screen to load to when Sia Mobile launches."
             android:entries="@array/startup_entries"
             android:entryValues="@array/startup_values"
-            android:defaultValue="walletModel"/>
+            android:defaultValue="wallet"/>
         <SwitchPreference
             android:key="hideZero"
             android:title="Hide net-zero transactions"
             android:defaultValue="false"
-            android:summary="For each regular transaction, Sia also makes a setup transaction that does not affect your walletModel balance."/>
+            android:summary="For each regular transaction, Sia also makes a setup transaction that does not affect your wallet balance."/>
         <EditTextPreference
             android:key="displayedDecimalPrecision"
             android:title="Displayed decimal precision"
@@ -99,7 +99,7 @@
         <Preference
             android:key="openAppSettings"
             android:title="Open Application Info page for Sia Mobile"
-            android:summary="You can clear all of Sia Mobile's data from here, such as the blockchain. WARNING: this will delete ALL of Sia Mobile's data, including any walletModel files. Write down your seed(s) first."/>
+            android:summary="You can clear all of Sia Mobile's data from here, such as the blockchain. WARNING: this will delete ALL of Sia Mobile's data, including any wallet files. Write down your seed(s) first."/>
     </PreferenceCategory>
 
 </PreferenceScreen>

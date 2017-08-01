@@ -50,7 +50,7 @@ class PaperWalletFragment : Fragment() {
 
         paperSeed.setOnClickListener { v ->
             val clipboard = activity.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            val clip = ClipData.newPlainText("paper walletModel info", seed)
+            val clip = ClipData.newPlainText("paper wallet info", seed)
             clipboard.primaryClip = clip
             SnackbarUtil.snackbar(v, "Copied seed to clipboard", Snackbar.LENGTH_SHORT)
         }
@@ -69,7 +69,7 @@ class PaperWalletFragment : Fragment() {
                     result.append(",\n")
             }
             val clipboard = activity.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            val clip = ClipData.newPlainText("paper walletModel info", result.toString())
+            val clip = ClipData.newPlainText("paper wallet info", result.toString())
             clipboard.primaryClip = clip
             SnackbarUtil.snackbar(v, "Copied seed and addresses to clipboard", Snackbar.LENGTH_SHORT)
         }

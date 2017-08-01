@@ -89,9 +89,9 @@ class WalletCreateDialog : BaseDialogFragment() {
     private fun showDialog() {
         GenUtil.getDialogBuilder(activity)
                 .setTitle("IMPORTANT")
-                .setMessage("You just created a walletModel while in cold storage mode. While in cold storage mode," +
+                .setMessage("You just created a wallet while in cold storage mode. While in cold storage mode," +
                         " Sia Mobile is not connected to the Sia network and does not have a copy of the Sia blockchain. This means it cannot show your correct balance or transactions." +
-                        " You can send coins to any of the addresses of your cold storage walletModel, and at any time in the future, load your walletModel seed" +
+                        " You can send coins to any of the addresses of your cold storage wallet, and at any time in the future, load your wallet seed" +
                         " on a full node (such as Sia-UI on your computer or Sia Mobile's full node mode), and have access to your previously sent coins.")
                 .setPositiveButton("I have read and understood this", null)
                 .show()

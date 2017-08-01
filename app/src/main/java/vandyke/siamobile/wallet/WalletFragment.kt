@@ -267,9 +267,9 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
     fun setStatusIcon() {
         if (walletModel != null)
             when (walletModel!!.encrypted) {
-                false -> statusButton?.setIcon(R.drawable.ic_add_white)
-                true -> if (!walletModel!!.unlocked) statusButton?.setIcon(R.drawable.ic_lock_outline_white)
-                else statusButton?.setIcon(R.drawable.ic_lock_open_white)
+                false -> statusButton?.setIcon(R.drawable.ic_add)
+                true -> if (!walletModel!!.unlocked) statusButton?.setIcon(R.drawable.ic_lock_outline)
+                else statusButton?.setIcon(R.drawable.ic_lock_open)
             }
     }
 }

@@ -34,7 +34,7 @@
                 android:id="@+id/textView11" />
 
             <TextView
-                android:text="1. Download the zip file for the latest Sia release for your platform at https://github.com/NebulousLabs/Sia/releases. This is the bare minimum for running a full Sia node on your computer to use with Sia Mobile. If you want a graphical interface on your computer for your walletModel and files as well, instead download Sia-UI from here: https://github.com/NebulousLabs/Sia-UI/releases."
+                android:text="1. Download the zip file for the latest Sia release for your platform at https://github.com/NebulousLabs/Sia/releases. This is the bare minimum for running a full Sia node on your computer to use with Sia Mobile. If you want a graphical interface on your computer for your wallet and files as well, instead download Sia-UI from here: https://github.com/NebulousLabs/Sia-UI/releases."
                 android:padding="8dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -86,7 +86,7 @@
                 android:id="@+id/textView10" />
 
             <TextView
-                android:text="If done correctly, your Sia Mobile will now be functional. If you have not already created a walletModel on your Sia installation, navigate to the Wallet page of Sia Mobile, open the top-right menu, and select Create Wallet. Enter your desired password and then press Create. After creating a walletModel, it is important to keep your walletModel seed somewhere safe. To myView your walletModel seed, access the same menu, and select View Seeds."
+                android:text="If done correctly, your Sia Mobile will now be functional. If you have not already created a wallet on your Sia installation, navigate to the Wallet page of Sia Mobile, open the top-right menu, and select Create Wallet. Enter your desired password and then press Create. After creating a wallet, it is important to keep your wallet seed somewhere safe. To view your wallet seed, access the same menu, and select View Seeds."
                 android:layout_width="match_parent"
                 android:padding="8dp"
                 android:layout_height="wrap_content"
