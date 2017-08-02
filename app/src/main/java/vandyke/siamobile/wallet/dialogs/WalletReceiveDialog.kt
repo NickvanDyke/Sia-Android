@@ -15,11 +15,9 @@ import android.support.design.widget.Snackbar
 import android.view.View
 import kotlinx.android.synthetic.main.fragment_wallet_receive.*
 import net.glxn.qrgen.android.QRCode
-import org.json.JSONException
-import org.json.JSONObject
 import vandyke.siamobile.R
-import vandyke.siamobile.api.SiaRequest
-import vandyke.siamobile.api.WalletApiJava
+import vandyke.siamobile.api.networking.SiaCallback
+import vandyke.siamobile.api.networking.Wallet
 import vandyke.siamobile.util.SnackbarUtil
 
 class WalletReceiveDialog : BaseDialogFragment() {
@@ -28,23 +26,15 @@ class WalletReceiveDialog : BaseDialogFragment() {
     override fun create(view: View?, savedInstanceState: Bundle?) {
         walletQrCode.visibility = View.INVISIBLE
 
-        WalletApiJava.newAddress(object : SiaRequest.VolleyCallback {
-            override fun onSuccess(response: JSONObject) {
-                try {
-                    SnackbarUtil.successSnackbar(view)
-                    receiveAddress.text = response.getString("address")
-                    setQrCode(response.getString("address"))
-                } catch (e: JSONException) {
-                    e.printStackTrace()
-                }
+        Wallet.address(SiaCallback({
+            SnackbarUtil.successSnackbar(view)
+            receiveAddress.text = it.address
+            setQrCode(it.address)
+        }, {
+            it.snackbar(view)
+            receiveAddress.text = "${it.reason.msg}\n"
+        }))
 
-            }
-
-            override fun onError(error: SiaRequest.Error) {
-                error.snackbar(view)
-                receiveAddress.text = "${error.msg}\n"
-            }
-        })
         walletAddressCopy.setOnClickListener {
             val clipboard = activity.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             val clip = ClipData.newPlainText("receive address", receiveAddress.text)

@@ -10,11 +10,9 @@ package vandyke.siamobile.wallet.dialogs
 import android.os.Bundle
 import android.view.View
 import kotlinx.android.synthetic.main.fragment_wallet_addresses.*
-import org.json.JSONException
-import org.json.JSONObject
 import vandyke.siamobile.R
-import vandyke.siamobile.api.SiaRequest
-import vandyke.siamobile.api.WalletApiJava
+import vandyke.siamobile.api.networking.SiaCallback
+import vandyke.siamobile.api.networking.Wallet
 import vandyke.siamobile.misc.TextTouchCopyListAdapter
 import java.util.*
 
@@ -25,23 +23,14 @@ class WalletAddressesDialog : BaseDialogFragment() {
         val addresses = ArrayList<String>()
         val adapter = TextTouchCopyListAdapter(activity, R.layout.text_touch_copy_list_item, addresses)
         addressesList.adapter = adapter
-        WalletApiJava.addresses(object : SiaRequest.VolleyCallback {
-            override fun onSuccess(response: JSONObject) {
-                try {
-                    val addressesJson = response.getJSONArray("addresses")
-                    for (i in 0..addressesJson.length() - 1)
-                        addresses.add(addressesJson.getString(i))
-                } catch (e: JSONException) {
-                    e.printStackTrace()
-                }
 
-                adapter.notifyDataSetChanged()
-            }
+        Wallet.addresses(SiaCallback({
+            addresses += it.addresses
+            adapter.notifyDataSetChanged()
+        }, {
+            it.snackbar(view)
+        }))
 
-            override fun onError(error: SiaRequest.Error) {
-                error.snackbar(view)
-            }
-        })
         setCloseListener(walletAddressesCancel)
     }
 }

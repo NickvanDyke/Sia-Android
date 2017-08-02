@@ -8,21 +8,41 @@ import retrofit2.Callback
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Query
-import vandyke.siamobile.api.models.ConsensusModel
-import vandyke.siamobile.api.models.TransactionsModel
-import vandyke.siamobile.api.models.WalletModel
+import vandyke.siamobile.api.models.*
 import vandyke.siamobile.prefs
 
 interface SiaApiInterface {
     @GET("wallet")
     fun getWallet(): Call<WalletModel>
 
-    @GET("consensus")
-    fun getConsensus(): Call<ConsensusModel>
+    @GET("wallet/address")
+    fun getAddress(): Call<AddressModel>
+
+    @GET("wallet/addresses")
+    fun getAddresses(): Call<AddressesModel>
+
+    @GET("wallet/seeds")
+    fun getSeeds(@Query("dictionary") dictionary: String): Call<SeedsModel>
 
     @GET("wallet/transactions")
     fun getTransactions(@Query("startheight") startHeight: String, @Query("endheight") endHeight: String): Call<TransactionsModel>
+
+    @POST("wallet/init")
+    fun initWallet()
+
+    @POST("wallet/lock")
+    fun lockWallet(): Call<Unit>
+
+    @POST("wallet/unlock")
+    fun unlockWallet(@Query("encryptionpassword") password: String): Call<Unit>
+
+    @POST("wallet/changepassword")
+    fun changeWalletPassword(@Query("encryptionpassword") password: String, @Query("newpassword") newPassword: String): Call<Unit>
+
+    @GET("consensus")
+    fun getConsensus(): Call<ConsensusModel>
 }
 
 private var siaApi: SiaApiInterface = SiaApi.buildApi()
@@ -53,7 +73,13 @@ object SiaApi {
 
 object Wallet {
     fun wallet(callback: Callback<WalletModel>) = siaApi.getWallet().enqueue(callback)
+    fun address(callback: Callback<AddressModel>) = siaApi.getAddress().enqueue(callback)
+    fun addresses(callback: Callback<AddressesModel>) = siaApi.getAddresses().enqueue(callback)
+    fun seeds(dictionary: String = "english", callback: Callback<SeedsModel>) = siaApi.getSeeds(dictionary).enqueue(callback)
     fun transactions(callback: Callback<TransactionsModel>) = siaApi.getTransactions("0", "2000000000").enqueue(callback)
+    fun lock(callback: Callback<Unit>) = siaApi.lockWallet().enqueue(callback)
+    fun unlock(password: String, callback: Callback<Unit>) = siaApi.unlockWallet(password).enqueue(callback)
+    fun changePassword(password: String, newPassword: String, callback: Callback<Unit>) = siaApi.changeWalletPassword(password, newPassword).enqueue(callback)
 }
 
 object Consensus {

@@ -10,11 +10,9 @@ package vandyke.siamobile.wallet.dialogs
 import android.os.Bundle
 import android.view.View
 import kotlinx.android.synthetic.main.fragment_wallet_seeds.*
-import org.json.JSONException
-import org.json.JSONObject
 import vandyke.siamobile.R
-import vandyke.siamobile.api.SiaRequest
-import vandyke.siamobile.api.WalletApiJava
+import vandyke.siamobile.api.networking.SiaCallback
+import vandyke.siamobile.api.networking.Wallet
 import vandyke.siamobile.misc.TextTouchCopyListAdapter
 import java.util.*
 
@@ -22,26 +20,16 @@ class WalletSeedsDialog : BaseDialogFragment() {
     override val layout: Int = R.layout.fragment_wallet_seeds
 
     override fun create(view: View?, savedInstanceState: Bundle?) {
+        setCloseListener(walletSeedsClose)
+
         val seeds = ArrayList<String>()
         val adapter = TextTouchCopyListAdapter(activity, R.layout.text_touch_copy_list_item, seeds)
         seedsList.adapter = adapter
-        WalletApiJava.seeds("english", object : SiaRequest.VolleyCallback {
-            override fun onSuccess(response: JSONObject) {
-                try {
-                    val seedsJson = response.getJSONArray("allseeds")
-                    for (i in 0..seedsJson.length() - 1)
-                        seeds.add(seedsJson.getString(i))
-                } catch (e: JSONException) {
-                    e.printStackTrace()
-                }
-
-                adapter.notifyDataSetChanged()
-            }
-
-            override fun onError(error: SiaRequest.Error) {
-                error.snackbar(view)
-            }
-        })
-        setCloseListener(walletSeedsClose)
+        Wallet.seeds(SiaCallback({
+            seeds += it.allseeds
+            adapter.notifyDataSetChanged()
+        }, {
+            it.snackbar(view)
+        }))
     }
 }

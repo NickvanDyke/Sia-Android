@@ -11,10 +11,10 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.view.View
 import kotlinx.android.synthetic.main.fragment_wallet_unlock.*
-import org.json.JSONObject
 import vandyke.siamobile.R
-import vandyke.siamobile.api.SiaRequest
-import vandyke.siamobile.api.WalletApiJava
+import vandyke.siamobile.api.networking.SiaCallback
+import vandyke.siamobile.api.networking.SiaError
+import vandyke.siamobile.api.networking.Wallet
 import vandyke.siamobile.backend.wallet.WalletMonitorService
 import vandyke.siamobile.util.SnackbarUtil
 
@@ -23,22 +23,19 @@ class WalletUnlockDialog : BaseDialogFragment() {
 
     override fun create(view: View?, savedInstanceState: Bundle?) {
         walletUnlockConfirm.setOnClickListener {
-            WalletApiJava.unlock(walletPassword.text.toString(), object : SiaRequest.VolleyCallback {
-                override fun onSuccess(response: JSONObject) {
-                    SnackbarUtil.successSnackbar(view)
-                    close()
-                    WalletMonitorService.staticRefresh()
-                }
 
-                override fun onError(error: SiaRequest.Error) {
-                    if (error.reason == SiaRequest.Error.Reason.WALLET_SCAN_IN_PROGRESS) {
-                        SnackbarUtil.snackbar(container, "Scanning the blockchain, please wait. Your wallet will unlock when finished", Snackbar.LENGTH_LONG)
-                        close()
-                    } else {
-                        error.snackbar(view)
-                    }
+            Wallet.unlock(walletPassword.text.toString(), SiaCallback({
+                SnackbarUtil.successSnackbar(view)
+                close()
+                WalletMonitorService.singleAction(activity, { it.refresh() })
+            }, {
+                if (it.reason == SiaError.Reason.WALLET_SCAN_IN_PROGRESS) {
+                    SnackbarUtil.snackbar(container, "Scanning the blockchain, please wait. Your wallet will unlock when finished", Snackbar.LENGTH_LONG)
+                    close()
+                } else {
+                    it.snackbar(view)
                 }
-            })
+            }))
         }
         setCloseListener(walletUnlockCancel)
     }

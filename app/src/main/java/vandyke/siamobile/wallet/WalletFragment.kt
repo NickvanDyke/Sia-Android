@@ -20,16 +20,15 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.*
 import com.android.volley.VolleyError
 import kotlinx.android.synthetic.main.fragment_wallet.*
-import org.json.JSONObject
 import vandyke.siamobile.MainActivity
 import vandyke.siamobile.R
-import vandyke.siamobile.api.SiaRequest
-import vandyke.siamobile.api.WalletApiJava
 import vandyke.siamobile.api.models.ConsensusModel
 import vandyke.siamobile.api.models.TransactionModel
 import vandyke.siamobile.api.models.TransactionsModel
 import vandyke.siamobile.api.models.WalletModel
+import vandyke.siamobile.api.networking.SiaCallback
 import vandyke.siamobile.api.networking.SiaError
+import vandyke.siamobile.api.networking.Wallet
 import vandyke.siamobile.backend.BaseMonitorService
 import vandyke.siamobile.backend.coldstorage.ColdStorageHttpServer
 import vandyke.siamobile.backend.wallet.WalletMonitorService
@@ -185,29 +184,11 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
                 when (walletModel?.encrypted) {
                     false -> replaceExpandFrame(WalletCreateDialog())
                     true -> if (!walletModel!!.unlocked) replaceExpandFrame(WalletUnlockDialog())
-                    else WalletApiJava.lock(object : SiaRequest.VolleyCallback {
-                        override fun onSuccess(response: JSONObject) {
-                            refreshWalletService()
-                            SnackbarUtil.successSnackbar(view)
-                        }
-
-                        override fun onError(error: SiaRequest.Error) {
-                            error.snackbar(view)
-                        }
-                    })
+                    else lockWallet()
                 }
             }
             R.id.actionUnlock -> replaceExpandFrame(WalletUnlockDialog())
-            R.id.actionLock -> WalletApiJava.lock(object : SiaRequest.VolleyCallback {
-                override fun onSuccess(response: JSONObject) {
-                    refreshWalletService()
-                    SnackbarUtil.successSnackbar(view)
-                }
-
-                override fun onError(error: SiaRequest.Error) {
-                    error.snackbar(view)
-                }
-            })
+            R.id.actionLock -> lockWallet()
             R.id.actionChangePassword -> replaceExpandFrame(WalletChangePasswordDialog())
             R.id.actionViewSeeds -> replaceExpandFrame(WalletSeedsDialog())
             R.id.actionCreateWallet -> replaceExpandFrame(WalletCreateDialog())
@@ -271,5 +252,14 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
                 true -> if (!walletModel!!.unlocked) statusButton?.setIcon(R.drawable.ic_lock_outline)
                 else statusButton?.setIcon(R.drawable.ic_lock_open)
             }
+    }
+
+    fun lockWallet() {
+        Wallet.lock(SiaCallback({
+            refreshWalletService()
+            SnackbarUtil.successSnackbar(view)
+        }, {
+            it.snackbar(view)
+        }))
     }
 }

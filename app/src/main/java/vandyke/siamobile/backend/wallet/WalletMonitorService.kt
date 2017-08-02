@@ -7,6 +7,12 @@
 
 package vandyke.siamobile.backend.wallet
 
+import android.app.Activity
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
+import android.os.IBinder
 import com.android.volley.Response
 import com.android.volley.VolleyError
 import org.json.JSONException
@@ -163,6 +169,18 @@ class WalletMonitorService : BaseMonitorService() {
     }
 
     companion object {
+        fun singleAction(activity: Activity, action: (service: WalletMonitorService) -> Unit) {
+            val connection = object : ServiceConnection {
+                override fun onServiceConnected(name: ComponentName, service: IBinder) {
+                    action((service as LocalBinder).service as WalletMonitorService)
+                    activity.unbindService(this)
+                }
+
+                override fun onServiceDisconnected(name: ComponentName) {
+                }
+            }
+            activity.bindService(Intent(activity, WalletMonitorService::class.java), connection, Context.BIND_AUTO_CREATE)
+        }
         private var instance: WalletMonitorService? = null
 
         fun staticRefresh() {
