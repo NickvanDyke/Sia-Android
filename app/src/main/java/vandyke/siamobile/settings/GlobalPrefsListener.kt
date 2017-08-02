@@ -48,10 +48,10 @@ class GlobalPrefsListener(private val context: Context) : SharedPreferences.OnSh
                     } catch (e: InterruptedException) {
                         e.printStackTrace()
                     }
-                    WalletMonitorService.staticRefresh()
+                    WalletMonitorService.singleAction(context, { it.refresh() })
                 }.start()
             }
-            "refreshInterval" -> WalletMonitorService.staticPostRunnable()
+            "refreshInterval" -> WalletMonitorService.singleAction(context, { it.postRefreshRunnable() })
             "runLocalNodeOffWifi" -> {
                 if (prefs.operationMode == "local_full_node") {
                     val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -76,7 +76,7 @@ class GlobalPrefsListener(private val context: Context) : SharedPreferences.OnSh
             "address" -> SiaApi.rebuildApi()
             "remoteAddress" -> if (prefs.operationMode == "remote_full_node") {
                 prefs.address = prefs.remoteAddress
-                WalletMonitorService.staticRefresh()
+                WalletMonitorService.singleAction(context, { it.refresh() })
             }
         }
     }

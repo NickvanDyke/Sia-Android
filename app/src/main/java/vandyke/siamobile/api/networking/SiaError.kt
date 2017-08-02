@@ -1,7 +1,10 @@
 package vandyke.siamobile.api.networking
 
 import android.support.design.widget.Snackbar
+import android.support.v4.content.ContextCompat
 import android.view.View
+import vandyke.siamobile.R
+import vandyke.siamobile.backend.coldstorage.ColdStorageHttpServer
 import vandyke.siamobile.util.SnackbarUtil
 import java.net.SocketException
 import java.net.SocketTimeoutException
@@ -74,6 +77,14 @@ class SiaError {
     }
 
     fun snackbar(view: View?) {
-        SnackbarUtil.snackbar(view, reason.msg, Snackbar.LENGTH_SHORT)
+        if (view == null)
+            return
+        if (reason == Reason.UNSUPPORTED_ON_COLD_WALLET) {
+            val snackbar = Snackbar.make(view, reason.msg, Snackbar.LENGTH_LONG).setAction("Help") { v -> ColdStorageHttpServer.showColdStorageHelp(view.context) }
+            snackbar.view.setBackgroundColor(ContextCompat.getColor(view.context, R.color.colorAccent))
+            snackbar.setActionTextColor(ContextCompat.getColor(view.context, android.R.color.white))
+            snackbar.show()
+        } else
+            SnackbarUtil.snackbar(view, reason.msg, Snackbar.LENGTH_SHORT)
     }
 }

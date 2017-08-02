@@ -39,10 +39,10 @@
             android:title="View seeds"
             android:id="@+id/actionViewSeeds"
             app:showAsAction="never"/>
-    <item
-            android:title="Add seed"
-            android:id="@+id/actionAddSeed"
-            app:showAsAction="never"/>
+    <!--<item-->
+            <!--android:title="Add seed"-->
+            <!--android:id="@+id/actionAddSeed"-->
+            <!--app:showAsAction="never"/>-->
     <item
             android:title="Sweep seed"
             android:id="@+id/actionSweepSeed"

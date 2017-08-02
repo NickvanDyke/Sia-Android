@@ -18,14 +18,10 @@ import android.support.design.widget.Snackbar
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.view.*
-import com.android.volley.VolleyError
 import kotlinx.android.synthetic.main.fragment_wallet.*
 import vandyke.siamobile.MainActivity
 import vandyke.siamobile.R
-import vandyke.siamobile.api.models.ConsensusModel
-import vandyke.siamobile.api.models.TransactionModel
-import vandyke.siamobile.api.models.TransactionsModel
-import vandyke.siamobile.api.models.WalletModel
+import vandyke.siamobile.api.models.*
 import vandyke.siamobile.api.networking.SiaCallback
 import vandyke.siamobile.api.networking.SiaError
 import vandyke.siamobile.api.networking.Wallet
@@ -33,15 +29,11 @@ import vandyke.siamobile.backend.BaseMonitorService
 import vandyke.siamobile.backend.coldstorage.ColdStorageHttpServer
 import vandyke.siamobile.backend.wallet.WalletMonitorService
 import vandyke.siamobile.prefs
-import vandyke.siamobile.util.GenUtil
-import vandyke.siamobile.util.SnackbarUtil
-import vandyke.siamobile.util.round
-import vandyke.siamobile.util.toSC
+import vandyke.siamobile.util.*
 import vandyke.siamobile.wallet.dialogs.*
 import vandyke.siamobile.wallet.transactionslist.TransactionExpandableGroup
 import vandyke.siamobile.wallet.transactionslist.TransactionListAdapter
 import java.math.BigDecimal
-import java.util.*
 
 class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
 
@@ -53,6 +45,7 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
 
     private var statusButton: MenuItem? = null
     private var walletModel: WalletModel? = null // TODO: temp fix for tracking status to set icon
+    private var balanceHastings: BigDecimal = BigDecimal.ZERO
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View {
         setHasOptionsMenu(true)
@@ -83,7 +76,7 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
             } else {
                 GenUtil.getDialogBuilder(v.context)
                         .setTitle("Exact Balance")
-                        .setMessage("${walletMonitorService.balanceHastings.toSC().toPlainString()} Siacoins")
+                        .setMessage("${balanceHastings.toSC().toPlainString()} Siacoins")
                         .setPositiveButton("Close", null)
                         .show()
             }
@@ -110,6 +103,7 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
     }
 
     override fun onBalanceUpdate(walletModel: WalletModel) {
+        this.balanceHastings = walletModel.confirmedsiacoinbalance
         this.walletModel = walletModel
         balanceText.text = walletModel.confirmedsiacoinbalance.toSC().round().toPlainString()
         balanceUnconfirmed.text = "${if (walletModel.unconfirmedsiacoinbalance > BigDecimal.ZERO) "+" else ""}${walletModel.unconfirmedsiacoinbalance.toSC().round().toPlainString()} unconfirmed"
@@ -117,26 +111,14 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
 //        refreshButton.actionView = null
     }
 
-    override fun onUsdUpdate(service: WalletMonitorService) {
-        balanceUsdText.text = "${service.balanceUsd.round().toPlainString()} USD"
+    override fun onUsdUpdate(scPriceModel: ScPriceModel) {
+        balanceUsdText.text = "${BigDecimal(balanceText.text.toString()).toUsd(scPriceModel.usdPrice).round().toPlainString()} USD"
     }
 
     override fun onTransactionsUpdate(transactionsModel: TransactionsModel) {
-        val allTxs: List<TransactionModel>
-        if (transactionsModel.confirmedtransactions == null) {
-            if (transactionsModel.unconfirmedtransactions == null)
-                allTxs = ArrayList()
-            else
-                allTxs = transactionsModel.unconfirmedtransactions
-        } else if (transactionsModel.unconfirmedtransactions == null) {
-            allTxs = transactionsModel.confirmedtransactions
-        } else {
-            allTxs = transactionsModel.confirmedtransactions + transactionsModel.unconfirmedtransactions
-        }
-
         val hideZero = prefs.hideZero
         transactionExpandableGroups.clear()
-        for (tx in allTxs) {
+        for (tx in transactionsModel.alltransactions) {
             if (hideZero && tx.isNetZero)
                 continue
             transactionExpandableGroups.add(0, transactionToGroupWithChild(tx))
@@ -163,8 +145,8 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
 //        refreshButton.actionView = null
     }
 
-    override fun onUsdError(error: VolleyError) {
-        SnackbarUtil.snackbar(view, "Error retreiving USD value", Snackbar.LENGTH_SHORT)
+    override fun onUsdError(error: SiaError) {
+        SnackbarUtil.snackbar(view, "Error retrieving USD value", Snackbar.LENGTH_SHORT)
     }
 
     override fun onTransactionsError(error: SiaError) {
@@ -194,7 +176,7 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
             R.id.actionCreateWallet -> replaceExpandFrame(WalletCreateDialog())
             R.id.actionSweepSeed -> replaceExpandFrame(WalletSweepSeedDialog())
             R.id.actionViewAddresses -> replaceExpandFrame(WalletAddressesDialog())
-            R.id.actionAddSeed -> replaceExpandFrame(WalletAddSeedDialog())
+//            R.id.actionAddSeed -> replaceExpandFrame(WalletAddSeedDialog())
             R.id.actionGenPaperWallet -> (activity as MainActivity).displayFragmentClass(PaperWalletFragment::class.java, "Generated paper walletModel", null)
         }
 

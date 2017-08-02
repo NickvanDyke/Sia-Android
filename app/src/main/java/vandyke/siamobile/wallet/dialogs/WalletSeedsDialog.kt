@@ -25,7 +25,7 @@ class WalletSeedsDialog : BaseDialogFragment() {
         val seeds = ArrayList<String>()
         val adapter = TextTouchCopyListAdapter(activity, R.layout.text_touch_copy_list_item, seeds)
         seedsList.adapter = adapter
-        Wallet.seeds(SiaCallback({
+        Wallet.seeds("english", SiaCallback({
             seeds += it.allseeds
             adapter.notifyDataSetChanged()
         }, {

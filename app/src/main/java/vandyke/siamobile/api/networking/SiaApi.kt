@@ -10,12 +10,16 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
+import retrofit2.http.Url
 import vandyke.siamobile.api.models.*
 import vandyke.siamobile.prefs
 
 interface SiaApiInterface {
     @GET("wallet")
     fun getWallet(): Call<WalletModel>
+
+    @GET("wallet/siacoins")
+    fun sendSiacoins(@Query("amount") amount: String, @Query("destination") destination: String): Call<Unit>
 
     @GET("wallet/address")
     fun getAddress(): Call<AddressModel>
@@ -26,11 +30,17 @@ interface SiaApiInterface {
     @GET("wallet/seeds")
     fun getSeeds(@Query("dictionary") dictionary: String): Call<SeedsModel>
 
+    @POST("wallet/sweep/seed")
+    fun sweepSeed(@Query("dictionary") dictionary: String, @Query("seed") seed: String): Call<Unit>
+
     @GET("wallet/transactions")
     fun getTransactions(@Query("startheight") startHeight: String, @Query("endheight") endHeight: String): Call<TransactionsModel>
 
     @POST("wallet/init")
-    fun initWallet()
+    fun initWallet(@Query("encryptionpassword") password: String, @Query("dictionary") dictionary: String, @Query("force") force: Boolean): Call<Unit>
+
+    @POST("wallet/init/seed")
+    fun initWalletSeed(@Query("encryptionpassword") password: String, @Query("dictionary") dictionary: String, @Query("seed") seed: String, @Query("force") force: Boolean): Call<Unit>
 
     @POST("wallet/lock")
     fun lockWallet(): Call<Unit>
@@ -40,6 +50,9 @@ interface SiaApiInterface {
 
     @POST("wallet/changepassword")
     fun changeWalletPassword(@Query("encryptionpassword") password: String, @Query("newpassword") newPassword: String): Call<Unit>
+
+    @GET
+    fun getScPrice(@Url url: String): Call<ScPriceModel>
 
     @GET("consensus")
     fun getConsensus(): Call<ConsensusModel>
@@ -73,13 +86,18 @@ object SiaApi {
 
 object Wallet {
     fun wallet(callback: Callback<WalletModel>) = siaApi.getWallet().enqueue(callback)
+    fun send(amount: String, destination: String, callback: Callback<Unit>) = siaApi.sendSiacoins(amount, destination).enqueue(callback)
     fun address(callback: Callback<AddressModel>) = siaApi.getAddress().enqueue(callback)
     fun addresses(callback: Callback<AddressesModel>) = siaApi.getAddresses().enqueue(callback)
-    fun seeds(dictionary: String = "english", callback: Callback<SeedsModel>) = siaApi.getSeeds(dictionary).enqueue(callback)
+    fun seeds(dictionary: String, callback: Callback<SeedsModel>) = siaApi.getSeeds(dictionary).enqueue(callback)
+    fun sweep(dictionary: String, seed: String, callback: Callback<Unit>) = siaApi.sweepSeed(dictionary, seed).enqueue(callback)
     fun transactions(callback: Callback<TransactionsModel>) = siaApi.getTransactions("0", "2000000000").enqueue(callback)
+    fun init(password: String, dictionary: String, force: Boolean, callback: Callback<Unit>) = siaApi.initWallet(password, dictionary, force).enqueue(callback)
+    fun initSeed(password: String, dictionary: String, seed:String, force: Boolean, callback: Callback<Unit>) = siaApi.initWalletSeed(password, dictionary, seed, force).enqueue(callback)
     fun lock(callback: Callback<Unit>) = siaApi.lockWallet().enqueue(callback)
     fun unlock(password: String, callback: Callback<Unit>) = siaApi.unlockWallet(password).enqueue(callback)
     fun changePassword(password: String, newPassword: String, callback: Callback<Unit>) = siaApi.changeWalletPassword(password, newPassword).enqueue(callback)
+    fun scPrice(callback: Callback<ScPriceModel>) = siaApi.getScPrice("http://www.coincap.io/page/SC").enqueue(callback)
 }
 
 object Consensus {

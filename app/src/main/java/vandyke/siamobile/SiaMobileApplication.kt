@@ -9,8 +9,6 @@ package vandyke.siamobile
 
 import android.app.Application
 import android.os.Build
-import com.android.volley.RequestQueue
-import com.android.volley.toolbox.Volley
 import org.acra.ACRA
 import vandyke.siamobile.settings.Prefs
 import vandyke.siamobile.util.NotificationUtil
@@ -48,7 +46,6 @@ val prefs: Prefs by lazy {
 class SiaMobileApplication : Application() {
     companion object {
         lateinit var prefs: Prefs
-        lateinit var requestQueue: RequestQueue
         lateinit var abi: String
         lateinit var abi32: String
     }
@@ -56,7 +53,6 @@ class SiaMobileApplication : Application() {
     override fun onCreate() {
         ACRA.init(this)
         prefs = Prefs(applicationContext)
-        requestQueue = Volley.newRequestQueue(this)
         NotificationUtil.createSiaNotificationChannel(this)
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
             abi = Build.CPU_ABI

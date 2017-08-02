@@ -14,64 +14,34 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import kotlinx.android.synthetic.main.fragment_wallet_send.*
-import org.json.JSONObject
 import vandyke.siamobile.R
-import vandyke.siamobile.api.SiaRequest
-import vandyke.siamobile.api.WalletApiJava
-import vandyke.siamobile.prefs
-import vandyke.siamobile.util.GenUtil
+import vandyke.siamobile.api.networking.SiaCallback
+import vandyke.siamobile.api.networking.Wallet
 import vandyke.siamobile.util.SnackbarUtil
 import vandyke.siamobile.util.toSC
 import vandyke.siamobile.wallet.ScannerActivity
-import java.math.BigDecimal
-import java.math.RoundingMode
 
 class WalletSendDialog : BaseDialogFragment() {
     override val layout: Int = R.layout.fragment_wallet_send
 
     override fun create(view: View?, savedInstanceState: Bundle?) {
-        if (!prefs.feesEnabled)
-            walletSendFee.visibility = View.GONE
+        setCloseListener(walletSendCancel)
         sendAmount.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                if (sendAmount.text.toString() == "")
-                    walletSendFee.text = "0.5% App fee: 0.000"
-                else
-                    walletSendFee.text = "0.5% App fee: ${BigDecimal(s.toString()).multiply(GenUtil.devFee).setScale(3, RoundingMode.FLOOR).toPlainString()} SC"
+                // change miner fee text
             }
             override fun afterTextChanged(s: Editable) {}
         })
         walletSend.setOnClickListener {
-            val sendAmount = sendAmount.text.toString().toSC()
-            if (prefs.feesEnabled)
-                WalletApiJava.sendSiacoinsWithDevFee(sendAmount,
-                        sendRecipient.text.toString(),
-                        object : SiaRequest.VolleyCallback {
-                            override fun onSuccess(response: JSONObject) {
-                                SnackbarUtil.successSnackbar(view)
-                                close()
-                            }
-
-                            override fun onError(error: SiaRequest.Error) {
-                                error.snackbar(view)
-                            }
-                        })
-            else
-                WalletApiJava.sendSiacoins(sendAmount,
-                        sendRecipient.text.toString(),
-                        object : SiaRequest.VolleyCallback {
-                            override fun onSuccess(response: JSONObject) {
-                                SnackbarUtil.successSnackbar(view)
-                                close()
-                            }
-
-                            override fun onError(error: SiaRequest.Error) {
-                                error.snackbar(view)
-                            }
-                        })
+            val sendAmount = sendAmount.text.toString().toSC().toPlainString()
+            Wallet.send(sendAmount, sendRecipient.text.toString(), SiaCallback({
+                SnackbarUtil.successSnackbar(view)
+                close()
+            }, {
+                it.snackbar(view)
+            }))
         }
-        setCloseListener(walletSendCancel)
 
         walletScan.setOnClickListener { startScannerActivity() }
     }

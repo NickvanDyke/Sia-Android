@@ -60,7 +60,7 @@ class Siad : Service() {
                             while (line != null) {
                                 siadNotification(line)
                                 if (line.contains("Finished loading") || line.contains("Done!"))
-                                    WalletMonitorService.staticRefresh()
+                                    WalletMonitorService.singleAction(applicationContext, { it.refresh() })
                                 line = inputReader.readLine()
                             }
                             inputReader.close()

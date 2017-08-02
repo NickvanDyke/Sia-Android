@@ -7,18 +7,14 @@
 
 package vandyke.siamobile.backend.wallet
 
-import android.app.Activity
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
-import com.android.volley.Response
-import com.android.volley.VolleyError
-import org.json.JSONException
-import org.json.JSONObject
-import vandyke.siamobile.api.WalletApiJava
+import vandyke.siamobile.R
 import vandyke.siamobile.api.models.ConsensusModel
+import vandyke.siamobile.api.models.ScPriceModel
 import vandyke.siamobile.api.models.TransactionsModel
 import vandyke.siamobile.api.models.WalletModel
 import vandyke.siamobile.api.networking.Consensus
@@ -26,26 +22,25 @@ import vandyke.siamobile.api.networking.SiaCallback
 import vandyke.siamobile.api.networking.SiaError
 import vandyke.siamobile.api.networking.Wallet
 import vandyke.siamobile.backend.BaseMonitorService
+import vandyke.siamobile.prefs
+import vandyke.siamobile.util.NotificationUtil
+import vandyke.siamobile.util.round
 import vandyke.siamobile.util.toSC
 import java.math.BigDecimal
 
 class WalletMonitorService : BaseMonitorService() {
 
-    var balanceHastings: BigDecimal = BigDecimal("0")
-        private set
-    var balanceUsd: BigDecimal = BigDecimal("0")
-        private set
+    private val TRANSACTION_NOTIFICATION: Int = 3
+    private val SYNC_NOTIFICATION: Int = 2
 
     private var listeners: ArrayList<WalletUpdateListener> = ArrayList()
 
     override fun onCreate() {
-        instance = this
         super.onCreate()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        instance = null
     }
 
     override fun refresh() {
@@ -55,67 +50,59 @@ class WalletMonitorService : BaseMonitorService() {
     }
 
     fun refreshBalanceAndStatus() {
-        Wallet.wallet(SiaCallback({ sendBalanceUpdate(it) }, { sendBalanceError(it) }))
-
-        WalletApiJava.coincapSC(object : Response.Listener<String> {
-            override fun onResponse(response: String?) {
-                try {
-                    val json = JSONObject(response)
-                    val usdPrice = json.getDouble("usdPrice")
-                    balanceUsd = WalletApiJava.scToUsd(usdPrice, balanceHastings.toSC())
-                } catch (e: JSONException) {
-                    balanceUsd = BigDecimal("0")
-                }
-                sendUsdUpdate()
-            }
-        }, Response.ErrorListener { error -> sendUsdError(error) })
+        Wallet.wallet(SiaCallback({
+            sendBalanceUpdate(it)
+            Wallet.scPrice(SiaCallback({
+                sendUsdUpdate(it)
+            }, {
+                sendUsdError(it)
+            }))
+        }, { sendBalanceError(it) }))
     }
 
     fun refreshTransactions() {
-        Wallet.transactions(SiaCallback({ sendTransactionsUpdate(it) }, { sendTransactionsError(it) }))
-//        WalletApiJava.transactions(object : SiaRequest.VolleyCallback {
-//            override fun onSuccess(response: JSONObject) {
-//                val mostRecentTxId = prefs.mostRecentTxId // TODO: can give false positives when switching between wallets
-//                var newTxs = 0
-//                var foundMostRecent = false
-//                var netOfNewTxs = BigDecimal("0")
-//                transactions.clear()
-//                for (tx in Transaction.populateTransactions(response)) {
-//                    if (tx.transactionId == mostRecentTxId)
-//                        foundMostRecent = true
-//                    transactions.add(tx)
-//                    if (!foundMostRecent) {
-//                        newTxs++
-//                        netOfNewTxs = netOfNewTxs.add(tx.netValue)
-//                    }
-//                }
-//                if (newTxs > 0) {
-//                    prefs.mostRecentTxId = transactions[0].transactionId
-//                    NotificationUtil.notification(this@WalletMonitorService, TRANSACTION_NOTIFICATION,
-//                            R.drawable.ic_account_balance_white_48dp, newTxs.toString() + " new transaction" + if (newTxs > 1) "s" else "",
-//                            "Net value: " + (if (netOfNewTxs > BigDecimal.ZERO) "+" else "") + WalletApiJava.round(SCUtil.hastingsToSc(netOfNewTxs)) + " SC",
-//                            false)
-//                }
-//                sendTransactionsUpdate()
-//            }
-//
-//            override fun onError(error: SiaRequest.Error) {
-//                sendTransactionsError(error)
-//            }
-//        })
+        Wallet.transactions(SiaCallback({
+            sendTransactionsUpdate(it)
+            val mostRecentTxId = prefs.mostRecentTxId // TODO: can give false positives when switching between wallets
+            var newTxs = 0
+            var netOfNewTxs = BigDecimal.ZERO
+            for (tx in it.alltransactions) {
+                if (tx.transactionid == mostRecentTxId) {
+                    break
+                } else {
+                    newTxs++
+                    netOfNewTxs = netOfNewTxs.add(tx.netValue)
+                }
+            }
+            if (newTxs > 0) {
+                prefs.mostRecentTxId = it.alltransactions[0].transactionid
+                NotificationUtil.notification(this@WalletMonitorService, TRANSACTION_NOTIFICATION,
+                        R.drawable.ic_account_balance, newTxs.toString() + " new transaction" + if (newTxs > 1) "s" else "",
+                        "Net value: " + (if (netOfNewTxs > BigDecimal.ZERO) "+" else "") + netOfNewTxs.toSC().round().toPlainString() + " SC",
+                        false)
+            }
+        }, { sendTransactionsError(it) }))
     }
 
     fun refreshConsensus() {
-        Consensus.consensus(SiaCallback({ sendSyncUpdate(it) }, { sendSyncError(it) }))
+        Consensus.consensus(SiaCallback({
+            sendSyncUpdate(it)
+            if (it.syncprogress == 0.0 || it.synced) {
+                NotificationUtil.cancelNotification(this@WalletMonitorService, SYNC_NOTIFICATION)
+            } else {
+                NotificationUtil.notification(this@WalletMonitorService, SYNC_NOTIFICATION, R.drawable.ic_sync,
+                        "Syncing...", String.format("Progress (estimated): %.2f%%", it.syncprogress), false)
+            }
+        }, { sendSyncError(it) }))
     }
 
     interface WalletUpdateListener {
         fun onBalanceUpdate(walletModel: WalletModel)
-        fun onUsdUpdate(service: WalletMonitorService)
+        fun onUsdUpdate(scPriceModel: ScPriceModel)
         fun onTransactionsUpdate(transactionsModel: TransactionsModel)
         fun onSyncUpdate(consensusModel: ConsensusModel)
         fun onBalanceError(error: SiaError)
-        fun onUsdError(error: VolleyError)
+        fun onUsdError(error: SiaError)
         fun onTransactionsError(error: SiaError)
         fun onSyncError(error: SiaError)
     }
@@ -133,9 +120,9 @@ class WalletMonitorService : BaseMonitorService() {
             listener.onBalanceUpdate(walletModel)
     }
 
-    fun sendUsdUpdate() {
+    fun sendUsdUpdate(scPriceModel: ScPriceModel) {
         for (listener in listeners)
-            listener.onUsdUpdate(this)
+            listener.onUsdUpdate(scPriceModel)
     }
 
     fun sendTransactionsUpdate(transactionsModel: TransactionsModel) {
@@ -153,7 +140,7 @@ class WalletMonitorService : BaseMonitorService() {
             listener.onBalanceError(error)
     }
 
-    fun sendUsdError(error: VolleyError) {
+    fun sendUsdError(error: SiaError) {
         for (listener in listeners)
             listener.onUsdError(error)
     }
@@ -169,26 +156,17 @@ class WalletMonitorService : BaseMonitorService() {
     }
 
     companion object {
-        fun singleAction(activity: Activity, action: (service: WalletMonitorService) -> Unit) {
+        fun singleAction(context: Context, action: (service: WalletMonitorService) -> Unit) {
             val connection = object : ServiceConnection {
                 override fun onServiceConnected(name: ComponentName, service: IBinder) {
                     action((service as LocalBinder).service as WalletMonitorService)
-                    activity.unbindService(this)
+                    context.unbindService(this)
                 }
 
                 override fun onServiceDisconnected(name: ComponentName) {
                 }
             }
-            activity.bindService(Intent(activity, WalletMonitorService::class.java), connection, Context.BIND_AUTO_CREATE)
-        }
-        private var instance: WalletMonitorService? = null
-
-        fun staticRefresh() {
-            instance?.refresh()
-        }
-
-        fun staticPostRunnable() {
-            instance?.postRefreshRunnable()
+            context.bindService(Intent(context, WalletMonitorService::class.java), connection, Context.BIND_AUTO_CREATE)
         }
     }
 }

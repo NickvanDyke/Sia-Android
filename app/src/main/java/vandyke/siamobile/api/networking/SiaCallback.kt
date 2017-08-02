@@ -6,13 +6,10 @@ import retrofit2.Response
 
 class SiaCallback<T>(val onSuccess: (T) -> Unit, val onError: (SiaError) -> Unit) : Callback<T> {
     override fun onResponse(call: Call<T>, response: Response<T>) {
-        println("response code: ${response.code()}")
-        println("response body: ${response.body().toString()}")
-        println("response errorBody: ${response.errorBody().toString()}")
         if (response.isSuccessful)
             onSuccess(response.body()!!)
         else {
-            onError(SiaError(response.errorBody().toString()))
+            onError(SiaError(response.errorBody()?.string() ?: ""))
         }
     }
 

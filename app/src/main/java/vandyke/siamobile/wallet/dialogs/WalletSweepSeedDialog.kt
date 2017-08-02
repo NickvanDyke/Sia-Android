@@ -10,29 +10,23 @@ package vandyke.siamobile.wallet.dialogs
 import android.os.Bundle
 import android.view.View
 import kotlinx.android.synthetic.main.fragment_wallet_sweep.*
-import org.json.JSONObject
 import vandyke.siamobile.R
-import vandyke.siamobile.api.SiaRequest
-import vandyke.siamobile.api.WalletApiJava
+import vandyke.siamobile.api.networking.SiaCallback
+import vandyke.siamobile.api.networking.Wallet
 import vandyke.siamobile.util.SnackbarUtil
 
 class WalletSweepSeedDialog : BaseDialogFragment() {
     override val layout: Int = R.layout.fragment_wallet_sweep
 
     override fun create(view: View?, savedInstanceState: Bundle?) {
-        walletAddSeed.setOnClickListener {
-            WalletApiJava.sweepSeed("english", walletSweepSeed.text.toString(),
-                    object : SiaRequest.VolleyCallback {
-                        override fun onSuccess(response: JSONObject) {
-                            SnackbarUtil.successSnackbar(view)
-                            close()
-                        }
-
-                        override fun onError(error: SiaRequest.Error) {
-                            error.snackbar(view)
-                        }
-                    })
-        }
         setCloseListener(walletSweepCancel)
+        walletAddSeed.setOnClickListener {
+            Wallet.sweep("english", walletSweepSeed.text.toString(), SiaCallback({
+                SnackbarUtil.successSnackbar(view)
+                close()
+            }, {
+                it.snackbar(view)
+            }))
+        }
     }
 }

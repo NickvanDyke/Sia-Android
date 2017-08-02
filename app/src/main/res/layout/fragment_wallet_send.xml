@@ -44,16 +44,6 @@
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"/>
 
-    <TextView
-            android:text="0.5% App fee: 0.000 SC"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/walletSendFee"
-            app:layout_constraintTop_toBottomOf="@+id/textView17"
-            app:layout_constraintRight_toRightOf="@+id/textView17"
-            app:layout_constraintLeft_toLeftOf="@+id/textView17"
-            android:layout_marginTop="8dp"/>
-
     <Button
             android:text="Cancel"
             android:background="@null"

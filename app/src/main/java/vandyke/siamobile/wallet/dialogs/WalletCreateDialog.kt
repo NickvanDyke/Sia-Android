@@ -11,10 +11,10 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.view.View
 import kotlinx.android.synthetic.main.fragment_wallet_create.*
-import org.json.JSONObject
 import vandyke.siamobile.R
-import vandyke.siamobile.api.SiaRequest
-import vandyke.siamobile.api.WalletApiJava
+import vandyke.siamobile.api.networking.SiaCallback
+import vandyke.siamobile.api.networking.SiaError
+import vandyke.siamobile.api.networking.Wallet
 import vandyke.siamobile.backend.wallet.WalletMonitorService
 import vandyke.siamobile.prefs
 import vandyke.siamobile.util.GenUtil
@@ -24,6 +24,7 @@ class WalletCreateDialog : BaseDialogFragment() {
     override val layout: Int = R.layout.fragment_wallet_create
 
     override fun create(view: View?, savedInstanceState: Bundle?) {
+        setCloseListener(walletCreateCancel)
         walletCreateSeed.visibility = View.GONE
         walletCreateFromSeed.setOnClickListener {
             if (walletCreateFromSeed.isChecked)
@@ -48,42 +49,38 @@ class WalletCreateDialog : BaseDialogFragment() {
             }
             val force = walletCreateForce.isChecked
             val dictionary = "english"
-            if (walletCreateFromSeed.isChecked)
-                WalletApiJava.initSeed(password, force, dictionary, walletCreateSeed.text.toString(), object : SiaRequest.VolleyCallback {
-                    override fun onSuccess(response: JSONObject) {
-                        SnackbarUtil.successSnackbar(view)
+            if (!walletCreateFromSeed.isChecked) {
+                Wallet.init(password, dictionary, force, SiaCallback({
+                    SnackbarUtil.successSnackbar(view)
+                    close()
+                    WalletMonitorService.singleAction(activity, { it.refresh() })
+                    if (prefs.operationMode == "cold_storage")
+                        showDialog()
+                }, {
+                    if (it.reason == SiaError.Reason.WALLET_SCAN_IN_PROGRESS) {
+                        SnackbarUtil.snackbar(view, "Success. Scanning the blockchain for coins belonging to the given seed. Please wait", Snackbar.LENGTH_LONG)
                         close()
-                        WalletMonitorService.staticRefresh()
-                        if (prefs.operationMode == "cold_storage")
-                            showDialog()
+                    } else {
+                        it.snackbar(view)
                     }
-
-                    override fun onError(error: SiaRequest.Error) {
-                        if (error.reason == SiaRequest.Error.Reason.WALLET_SCAN_IN_PROGRESS) {
-                            SnackbarUtil.snackbar(view, "Success. Scanning the blockchain for coins belonging to the given seed. Please wait", Snackbar.LENGTH_LONG)
-                            close()
-                            WalletMonitorService.staticRefresh()
-                        } else {
-                            error.snackbar(view)
-                        }
-                    }
-                })
-            else
-                WalletApiJava.init(password, force, dictionary, object : SiaRequest.VolleyCallback {
-                    override fun onSuccess(response: JSONObject) {
-                        SnackbarUtil.successSnackbar(view)
+                }))
+            } else {
+                Wallet.initSeed(password, dictionary, walletCreateSeed.text.toString(), force, SiaCallback({
+                    SnackbarUtil.successSnackbar(view)
+                    close()
+                    WalletMonitorService.singleAction(activity, { it.refresh() })
+                    if (prefs.operationMode == "cold_storage")
+                        showDialog()
+                }, {
+                    if (it.reason == SiaError.Reason.WALLET_SCAN_IN_PROGRESS) {
+                        SnackbarUtil.snackbar(view, "Success. Scanning the blockchain for coins belonging to the given seed. Please wait", Snackbar.LENGTH_LONG)
                         close()
-                        WalletMonitorService.staticRefresh()
-                        if (prefs.operationMode == "cold_storage")
-                            showDialog()
+                    } else {
+                        it.snackbar(view)
                     }
-
-                    override fun onError(error: SiaRequest.Error) {
-                        error.snackbar(view)
-                    }
-                })
+                }))
+            }
         })
-        setCloseListener(walletCreateCancel)
     }
 
     private fun showDialog() {

@@ -10,30 +10,26 @@ package vandyke.siamobile.wallet.dialogs
 import android.os.Bundle
 import android.view.View
 import kotlinx.android.synthetic.main.fragment_wallet_add_seed.*
-import org.json.JSONObject
 import vandyke.siamobile.R
-import vandyke.siamobile.api.SiaRequest
-import vandyke.siamobile.api.WalletApiJava
-import vandyke.siamobile.util.SnackbarUtil
 
 class WalletAddSeedDialog : BaseDialogFragment() {
     override val layout: Int = R.layout.fragment_wallet_add_seed
 
     override fun create(view: View?, savedInstanceState: Bundle?) {
-        walletAddSeed.setOnClickListener {
-            WalletApiJava.seed(walletPassword.text.toString(), "english",
-                    walletAddSeed.text.toString(),
-                    object : SiaRequest.VolleyCallback {
-                        override fun onSuccess(response: JSONObject) {
-                            SnackbarUtil.successSnackbar(view)
-                            close()
-                        }
-
-                        override fun onError(error: SiaRequest.Error) {
-                            error.snackbar(view)
-                        }
-                    })
-        }
+//        walletAddSeed.setOnClickListener {
+//            WalletApiJava.seed(walletPassword.text.toString(), "english",
+//                    walletAddSeed.text.toString(),
+//                    object : SiaRequest.VolleyCallback {
+//                        override fun onSuccess(response: JSONObject) {
+//                            SnackbarUtil.successSnackbar(view)
+//                            close()
+//                        }
+//
+//                        override fun onError(error: SiaRequest.Error) {
+//                            error.snackbar(view)
+//                        }
+//                    })
+//        }
         setCloseListener(walletAddSeedCancel)
     }
 }
