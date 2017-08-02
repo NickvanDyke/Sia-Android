@@ -5,7 +5,7 @@
  * included in this source code package. All rights are reserved, with the exception of what is specified there.
  */
 
-package vandyke.siamobile.help;
+package vandyke.siamobile.about;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

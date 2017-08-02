@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import mehdi.sakout.aboutpage.AboutPage
 import mehdi.sakout.aboutpage.Element
 import vandyke.siamobile.R
-import vandyke.siamobile.dialogs.DonateDialog
 
 class AboutFragment : Fragment() {
 
