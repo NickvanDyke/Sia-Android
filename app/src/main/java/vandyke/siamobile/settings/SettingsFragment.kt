@@ -5,7 +5,7 @@
  * included in this source code package. All rights are reserved, with the exception of what is specified there.
  */
 
-package vandyke.siamobile.settings.fragments
+package vandyke.siamobile.settings
 
 import android.app.Activity.RESULT_OK
 import android.content.Intent
@@ -18,7 +18,7 @@ import android.preference.*
 import android.support.design.widget.Snackbar
 import android.util.Base64
 import vandyke.siamobile.*
-import vandyke.siamobile.help.ModesActivity
+import vandyke.siamobile.about.ModesActivity
 import vandyke.siamobile.misc.Utils
 import java.io.ByteArrayOutputStream
 import java.io.FileNotFoundException
