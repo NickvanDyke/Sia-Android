@@ -21,36 +21,37 @@ class SiaError {
     }
 
     fun getReasonFromMsg(errorMessage: String): SiaError.Reason {
-        when {
-            errorMessage.contains("wallet must be unlocked before it can be used") -> return SiaError.Reason.WALLET_LOCKED
-            errorMessage.contains("provided encryption key is incorrect") -> return SiaError.Reason.WALLET_PASSWORD_INCORRECT
-            errorMessage.contains("wallet has already been unlocked") -> return SiaError.Reason.WALLET_ALREADY_UNLOCKED
-            errorMessage.contains("could not read 'amount'") -> return SiaError.Reason.INVALID_AMOUNT
-            errorMessage.contains("a password must be provided to newpassword") -> return SiaError.Reason.NO_NEW_PASSWORD
-            errorMessage.contains("could not read address") -> return SiaError.Reason.COULD_NOT_READ_ADDRESS
-            errorMessage.contains("transaction cannot have an output or payout that has zero value") -> return SiaError.Reason.AMOUNT_ZERO
-            errorMessage.contains("unable to fund transaction") -> return SiaError.Reason.INSUFFICIENT_FUNDS
-            errorMessage.contains("wallet is already encrypted, cannot encrypt again") -> return SiaError.Reason.EXISTING_WALLET
-            errorMessage.contains("API authentication failed") -> return SiaError.Reason.INCORRECT_API_PASSWORD
-            errorMessage.contains("another wallet rescan is already underway") -> return SiaError.Reason.WALLET_SCAN_IN_PROGRESS
-            errorMessage.contains("wallet has not been encrypted yet") -> return SiaError.Reason.WALLET_NOT_ENCRYPTED
-            errorMessage.contains("cannot init from seed until blockchain is synced") -> return SiaError.Reason.CANNOT_INIT_FROM_SEED_UNTIL_SYNCED
-            errorMessage.contains("unsupported on cold storage wallet") -> return SiaError.Reason.UNSUPPORTED_ON_COLD_WALLET
-            errorMessage.contains("word not found in dictionary for given language") -> return SiaError.Reason.INVALID_WORD_IN_SEED
+        return when {
+            errorMessage.contains("wallet must be unlocked before it can be used") -> Reason.WALLET_LOCKED
+            errorMessage.contains("provided encryption key is incorrect") -> Reason.WALLET_PASSWORD_INCORRECT
+            errorMessage.contains("wallet has already been unlocked") -> Reason.WALLET_ALREADY_UNLOCKED
+            errorMessage.contains("could not read 'amount'") -> Reason.INVALID_AMOUNT
+            errorMessage.contains("a password must be provided to newpassword") -> Reason.NO_NEW_PASSWORD
+            errorMessage.contains("could not read address") -> Reason.COULD_NOT_READ_ADDRESS
+            errorMessage.contains("transaction cannot have an output or payout that has zero value") -> Reason.AMOUNT_ZERO
+            errorMessage.contains("unable to fund transaction") -> Reason.INSUFFICIENT_FUNDS
+            errorMessage.contains("wallet is already encrypted, cannot encrypt again") -> Reason.EXISTING_WALLET
+            errorMessage.contains("API authentication failed") -> Reason.INCORRECT_API_PASSWORD
+            errorMessage.contains("another wallet rescan is already underway") -> Reason.WALLET_SCAN_IN_PROGRESS
+            errorMessage.contains("wallet has not been encrypted yet") -> Reason.WALLET_NOT_ENCRYPTED
+            errorMessage.contains("cannot init from seed until blockchain is synced") -> Reason.CANNOT_INIT_FROM_SEED_UNTIL_SYNCED
+            errorMessage.contains("unsupported on cold storage wallet") -> Reason.UNSUPPORTED_ON_COLD_WALLET
+            errorMessage.contains("word not found in dictionary for given language") -> Reason.INVALID_WORD_IN_SEED
+            errorMessage.contains("seed failed checksum verification") -> Reason.INVALID_SEED
             else -> {
                 println("unaccounted for error message: $errorMessage")
-                return SiaError.Reason.UNACCOUNTED_FOR_ERROR
+                Reason.UNACCOUNTED_FOR_ERROR
             }
         }
     }
 
     fun getReasonFromThrowable(t: Throwable): Reason {
-        when (t) {
-            is SocketTimeoutException -> return Reason.TIMEOUT
-            is SocketException -> return Reason.NO_NETWORK_RESPONSE
+        return when (t) {
+            is SocketTimeoutException -> Reason.TIMEOUT
+            is SocketException -> Reason.NO_NETWORK_RESPONSE
             else -> {
                 println("unaccounted for throwable: $t")
-                return Reason.UNACCOUNTED_FOR_ERROR
+                Reason.UNACCOUNTED_FOR_ERROR
             }
         }
     }
@@ -72,6 +73,7 @@ class SiaError {
         WALLET_SCAN_IN_PROGRESS("Wallet scan in progress. Please wait"),
         WALLET_NOT_ENCRYPTED("Wallet has not been created yet"),
         INVALID_WORD_IN_SEED("Invalid word in seed"),
+        INVALID_SEED("Invalid seed"),
         CANNOT_INIT_FROM_SEED_UNTIL_SYNCED("Cannot create wallet from seed until blockchain is synced"),
         UNSUPPORTED_ON_COLD_WALLET("Unsupported on cold storage wallet")
     }
