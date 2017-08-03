@@ -30,7 +30,7 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:hint="Password"
-            android:textAlignment="center"
+            android:gravity="center"
             android:fontFamily="sans-serif"
             android:layout_marginTop="8dp"/>
     <Button

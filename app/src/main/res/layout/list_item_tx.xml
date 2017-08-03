@@ -48,7 +48,6 @@
             android:layout_height="0dp"
             android:id="@+id/transactionHeaderId"
             android:textSize="9sp"
-            android:textAlignment="center"
             android:gravity="center"
             app:layout_constraintRight_toLeftOf="@+id/transactionValue"
             app:layout_constraintLeft_toRightOf="@+id/transactionStatus"

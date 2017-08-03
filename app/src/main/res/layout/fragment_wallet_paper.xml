@@ -25,7 +25,7 @@
             android:layout_marginTop="8dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
-            android:textAlignment="center"/>
+            android:gravity="center"/>
 
     <TextView
             android:text="Seed"
@@ -48,7 +48,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/paperSeed"
-            android:textAlignment="center"
+            android:gravity="center"
             android:layout_marginStart="16dp"
             app:layout_constraintLeft_toLeftOf="parent"
             android:layout_marginLeft="16dp"

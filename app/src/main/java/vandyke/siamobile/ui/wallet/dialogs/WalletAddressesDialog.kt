@@ -21,7 +21,7 @@ class WalletAddressesDialog : BaseDialogFragment() {
 
     override fun create(view: View?, savedInstanceState: Bundle?) {
         val addresses = ArrayList<String>()
-        val adapter = TextTouchCopyListAdapter(activity, R.layout.text_touch_copy_list_item, addresses)
+        val adapter = TextTouchCopyListAdapter(activity, R.layout.list_item_text_touch_copy, addresses)
         addressesList.adapter = adapter
 
         Wallet.addresses(SiaCallback({

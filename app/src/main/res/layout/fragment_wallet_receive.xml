@@ -15,7 +15,7 @@
             android:id="@+id/receiveAddress"
             android:layout_height="wrap_content"
             android:text="Generating address..."
-            android:textAlignment="center"
+            android:gravity="center"
             app:layout_constraintTop_toTopOf="@+id/walletQrCode"
             android:layout_width="0dp"
             app:layout_constraintBottom_toBottomOf="@+id/walletQrCode"

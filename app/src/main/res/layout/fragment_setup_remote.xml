@@ -22,7 +22,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/textView3"
                 android:textSize="20sp"
-                android:textAlignment="center"
+                android:gravity="center"
                 android:textColor="?android:attr/textColorPrimary"
                 />
 

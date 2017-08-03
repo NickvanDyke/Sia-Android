@@ -56,7 +56,7 @@ class PaperWalletFragment : Fragment() {
         }
         paperSeed.text = seed
 
-        paperAddresses.adapter = TextTouchCopyListAdapter(activity, R.layout.text_touch_copy_list_item, addresses)
+        paperAddresses.adapter = TextTouchCopyListAdapter(activity, R.layout.list_item_text_touch_copy, addresses)
 
         paperCopy.setOnClickListener { v ->
             val result = StringBuilder()

@@ -25,7 +25,7 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:hint="Password"
-            android:textAlignment="center"
+            android:gravity="center"
             android:fontFamily="sans-serif"
             android:layout_marginTop="8dp"
             app:layout_constraintHorizontal_bias="1.0"/>
@@ -35,7 +35,7 @@
             android:inputType="textNoSuggestions"
             android:ems="10"
             android:id="@+id/walletAddSeed"
-            android:hint="Seed" android:textAlignment="center" android:layout_marginEnd="16dp"
+            android:hint="Seed" android:gravity="center" android:layout_marginEnd="16dp"
             app:layout_constraintRight_toRightOf="parent" android:layout_marginRight="16dp"
             android:layout_marginStart="16dp" app:layout_constraintLeft_toLeftOf="parent"
             android:layout_marginLeft="16dp" android:layout_marginTop="16dp"

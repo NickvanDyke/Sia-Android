@@ -23,7 +23,7 @@ class WalletSeedsDialog : BaseDialogFragment() {
         setCloseListener(walletSeedsClose)
 
         val seeds = ArrayList<String>()
-        val adapter = TextTouchCopyListAdapter(activity, R.layout.text_touch_copy_list_item, seeds)
+        val adapter = TextTouchCopyListAdapter(activity, R.layout.list_item_text_touch_copy, seeds)
         seedsList.adapter = adapter
         Wallet.seeds("english", SiaCallback({
             seeds += it.allseeds
