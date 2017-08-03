@@ -15,7 +15,7 @@ import vandyke.siamobile.R
 import vandyke.siamobile.api.networking.SiaCallback
 import vandyke.siamobile.api.networking.SiaError
 import vandyke.siamobile.api.networking.Wallet
-import vandyke.siamobile.backend.wallet.WalletMonitorService
+import vandyke.siamobile.backend.wallet.WalletService
 import vandyke.siamobile.prefs
 import vandyke.siamobile.util.GenUtil
 import vandyke.siamobile.util.SnackbarUtil
@@ -53,7 +53,7 @@ class WalletCreateDialog : BaseDialogFragment() {
                 Wallet.init(password, dictionary, force, SiaCallback({
                     SnackbarUtil.successSnackbar(view)
                     close()
-                    WalletMonitorService.singleAction(activity, { it.refresh() })
+                    WalletService.singleAction(activity, { it.refresh() })
                     if (prefs.operationMode == "cold_storage")
                         showDialog()
                 }, {
@@ -68,7 +68,7 @@ class WalletCreateDialog : BaseDialogFragment() {
                 Wallet.initSeed(password, dictionary, walletCreateSeed.text.toString(), force, SiaCallback({
                     SnackbarUtil.successSnackbar(view)
                     close()
-                    WalletMonitorService.singleAction(activity, { it.refresh() })
+                    WalletService.singleAction(activity, { it.refresh() })
                     if (prefs.operationMode == "cold_storage")
                         showDialog()
                 }, {

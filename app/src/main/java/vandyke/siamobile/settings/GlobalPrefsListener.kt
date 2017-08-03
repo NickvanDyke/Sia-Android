@@ -17,7 +17,7 @@ import vandyke.siamobile.api.networking.SiaApi
 import vandyke.siamobile.backend.coldstorage.ColdStorageService
 import vandyke.siamobile.backend.siad.Siad
 import vandyke.siamobile.backend.siad.SiadMonitorService
-import vandyke.siamobile.backend.wallet.WalletMonitorService
+import vandyke.siamobile.backend.wallet.WalletService
 import vandyke.siamobile.prefs
 
 class GlobalPrefsListener(private val context: Context) : SharedPreferences.OnSharedPreferenceChangeListener {
@@ -48,10 +48,10 @@ class GlobalPrefsListener(private val context: Context) : SharedPreferences.OnSh
                     } catch (e: InterruptedException) {
                         e.printStackTrace()
                     }
-                    WalletMonitorService.singleAction(context, { it.refresh() })
+                    WalletService.singleAction(context, { it.refresh() })
                 }.start()
             }
-            "refreshInterval" -> WalletMonitorService.singleAction(context, { it.postRefreshRunnable() })
+            "refreshInterval" -> WalletService.singleAction(context, { it.postRefreshRunnable() })
             "runLocalNodeOffWifi" -> {
                 if (prefs.operationMode == "local_full_node") {
                     val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -76,7 +76,7 @@ class GlobalPrefsListener(private val context: Context) : SharedPreferences.OnSh
             "address" -> SiaApi.rebuildApi()
             "remoteAddress" -> if (prefs.operationMode == "remote_full_node") {
                 prefs.address = prefs.remoteAddress
-                WalletMonitorService.singleAction(context, { it.refresh() })
+                WalletService.singleAction(context, { it.refresh() })
             }
         }
     }

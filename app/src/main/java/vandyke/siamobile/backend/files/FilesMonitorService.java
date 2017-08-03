@@ -8,7 +8,6 @@
 package vandyke.siamobile.backend.files;
 
 import vandyke.siamobile.backend.BaseMonitorService;
-import vandyke.siamobile.backend.wallet.WalletMonitorService;
 
 import java.util.ArrayList;
 

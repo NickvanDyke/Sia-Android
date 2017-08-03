@@ -12,7 +12,7 @@ import android.content.Context
 import android.content.Intent
 import vandyke.siamobile.backend.coldstorage.ColdStorageService
 import vandyke.siamobile.backend.siad.SiadMonitorService
-import vandyke.siamobile.backend.wallet.WalletMonitorService
+import vandyke.siamobile.backend.wallet.WalletService
 import vandyke.siamobile.prefs
 
 class BootReceiver : BroadcastReceiver() {
@@ -23,7 +23,7 @@ class BootReceiver : BroadcastReceiver() {
                 "cold_storage" -> context.startService(Intent(context, ColdStorageService::class.java))
                 "local_full_node" -> context.startService(Intent(context, SiadMonitorService::class.java))
             }
-            context.startService(Intent(context, WalletMonitorService::class.java))
+            context.startService(Intent(context, WalletService::class.java))
         }
     }
 }

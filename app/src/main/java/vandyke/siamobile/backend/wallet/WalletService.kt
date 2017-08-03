@@ -28,7 +28,7 @@ import vandyke.siamobile.util.round
 import vandyke.siamobile.util.toSC
 import java.math.BigDecimal
 
-class WalletMonitorService : BaseMonitorService() {
+class WalletService : BaseMonitorService() {
 
     private val TRANSACTION_NOTIFICATION: Int = 3
     private val SYNC_NOTIFICATION: Int = 2
@@ -50,14 +50,8 @@ class WalletMonitorService : BaseMonitorService() {
     }
 
     fun refreshBalanceAndStatus() {
-        Wallet.wallet(SiaCallback({
-            sendBalanceUpdate(it)
-            Wallet.scPrice(SiaCallback({
-                sendUsdUpdate(it)
-            }, {
-                sendUsdError(it)
-            }))
-        }, { sendBalanceError(it) }))
+        Wallet.wallet(SiaCallback({ sendBalanceUpdate(it) }, { sendBalanceError(it) }))
+        Wallet.scPrice(SiaCallback({ sendUsdUpdate(it) }, { sendUsdError(it) }))
     }
 
     fun refreshTransactions() {
@@ -76,7 +70,7 @@ class WalletMonitorService : BaseMonitorService() {
             }
             if (newTxs > 0) {
                 prefs.mostRecentTxId = it.alltransactions[0].transactionid
-                NotificationUtil.notification(this@WalletMonitorService, TRANSACTION_NOTIFICATION,
+                NotificationUtil.notification(this@WalletService, TRANSACTION_NOTIFICATION,
                         R.drawable.ic_account_balance, newTxs.toString() + " new transaction" + if (newTxs > 1) "s" else "",
                         "Net value: " + (if (netOfNewTxs > BigDecimal.ZERO) "+" else "") + netOfNewTxs.toSC().round().toPlainString() + " SC",
                         false)
@@ -88,9 +82,9 @@ class WalletMonitorService : BaseMonitorService() {
         Consensus.consensus(SiaCallback({
             sendSyncUpdate(it)
             if (it.syncprogress == 0.0 || it.synced) {
-                NotificationUtil.cancelNotification(this@WalletMonitorService, SYNC_NOTIFICATION)
+                NotificationUtil.cancelNotification(this@WalletService, SYNC_NOTIFICATION)
             } else {
-                NotificationUtil.notification(this@WalletMonitorService, SYNC_NOTIFICATION, R.drawable.ic_sync,
+                NotificationUtil.notification(this@WalletService, SYNC_NOTIFICATION, R.drawable.ic_sync,
                         "Syncing...", String.format("Progress (estimated): %.2f%%", it.syncprogress), false)
             }
         }, { sendSyncError(it) }))
@@ -156,17 +150,17 @@ class WalletMonitorService : BaseMonitorService() {
     }
 
     companion object {
-        fun singleAction(context: Context, action: (service: WalletMonitorService) -> Unit) {
+        fun singleAction(context: Context, action: (service: WalletService) -> Unit) {
             val connection = object : ServiceConnection {
                 override fun onServiceConnected(name: ComponentName, service: IBinder) {
-                    action((service as LocalBinder).service as WalletMonitorService)
+                    action((service as LocalBinder).service as WalletService)
                     context.unbindService(this)
                 }
 
                 override fun onServiceDisconnected(name: ComponentName) {
                 }
             }
-            context.bindService(Intent(context, WalletMonitorService::class.java), connection, Context.BIND_AUTO_CREATE)
+            context.bindService(Intent(context, WalletService::class.java), connection, Context.BIND_AUTO_CREATE)
         }
     }
 }

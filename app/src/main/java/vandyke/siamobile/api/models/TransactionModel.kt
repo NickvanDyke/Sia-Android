@@ -24,5 +24,5 @@ data class TransactionModel(val transactionid: String = "",
 
     val isNetZero: Boolean by lazy { netValue == BigDecimal.ZERO }
 
-    val confirmationDate: Date by lazy { if (confirmed) Date(confirmationtimestamp * 1000) else Date() }
+    val confirmationdate: Date by lazy { if (confirmed) Date(confirmationtimestamp * 1000) else Date() }
 }

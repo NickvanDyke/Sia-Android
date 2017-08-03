@@ -20,7 +20,7 @@ import android.os.IBinder
 import android.os.Looper
 import vandyke.siamobile.MainActivity
 import vandyke.siamobile.R
-import vandyke.siamobile.backend.wallet.WalletMonitorService
+import vandyke.siamobile.backend.wallet.WalletService
 import vandyke.siamobile.util.NotificationUtil
 import vandyke.siamobile.util.StorageUtil
 import java.io.BufferedReader
@@ -60,7 +60,7 @@ class Siad : Service() {
                             while (line != null) {
                                 siadNotification(line)
                                 if (line.contains("Finished loading") || line.contains("Done!"))
-                                    WalletMonitorService.singleAction(applicationContext, { it.refresh() })
+                                    WalletService.singleAction(applicationContext, { it.refresh() })
                                 line = inputReader.readLine()
                             }
                             inputReader.close()

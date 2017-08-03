@@ -40,7 +40,7 @@ import vandyke.siamobile.about.ModesActivity
 import vandyke.siamobile.backend.CleanupService
 import vandyke.siamobile.backend.coldstorage.ColdStorageService
 import vandyke.siamobile.backend.siad.SiadMonitorService
-import vandyke.siamobile.backend.wallet.WalletMonitorService
+import vandyke.siamobile.backend.wallet.WalletService
 import vandyke.siamobile.files.fragments.FilesFragment
 import vandyke.siamobile.hosting.fragments.HostingFragment
 import vandyke.siamobile.settings.GlobalPrefsListener
@@ -164,7 +164,7 @@ class MainActivity : AppCompatActivity() {
         else if (prefs.operationMode == "cold_storage")
             startService(Intent(this, ColdStorageService::class.java))
 
-        startService(Intent(this, WalletMonitorService::class.java))
+        startService(Intent(this, WalletService::class.java))
 
         when (prefs.startupPage) {
             "files" -> displayFragmentClass(FilesFragment::class.java, "Files", R.id.drawer_item_files)

@@ -27,20 +27,19 @@ import vandyke.siamobile.api.networking.SiaError
 import vandyke.siamobile.api.networking.Wallet
 import vandyke.siamobile.backend.BaseMonitorService
 import vandyke.siamobile.backend.coldstorage.ColdStorageHttpServer
-import vandyke.siamobile.backend.wallet.WalletMonitorService
+import vandyke.siamobile.backend.wallet.WalletService
 import vandyke.siamobile.prefs
 import vandyke.siamobile.util.*
 import vandyke.siamobile.wallet.dialogs.*
-import vandyke.siamobile.wallet.transactionslist.TransactionExpandableGroup
-import vandyke.siamobile.wallet.transactionslist.TransactionListAdapter
+import vandyke.siamobile.wallet.transactionslist.TransactionAdapter
 import java.math.BigDecimal
 
-class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
+class WalletFragment : Fragment(), WalletService.WalletUpdateListener {
 
-    private val transactionExpandableGroups = ArrayList<TransactionExpandableGroup>()
+    private val adapter = TransactionAdapter()
 
     private lateinit var connection: ServiceConnection
-    private lateinit var walletMonitorService: WalletMonitorService
+    private lateinit var walletService: WalletService
     private var bound = false
 
     private var statusButton: MenuItem? = null
@@ -66,6 +65,7 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
         val layoutManager = LinearLayoutManager(activity)
         transactionList.layoutManager = layoutManager
         transactionList.addItemDecoration(DividerItemDecoration(transactionList.context, layoutManager.orientation))
+        transactionList.adapter = adapter
 
         sendButton.setOnClickListener { replaceExpandFrame(WalletSendDialog()) }
         receiveButton.setOnClickListener { replaceExpandFrame(WalletReceiveDialog()) }
@@ -89,8 +89,8 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
         super.onActivityCreated(savedInstanceState)
         connection = object : ServiceConnection {
             override fun onServiceConnected(name: ComponentName, service: IBinder) {
-                walletMonitorService = (service as BaseMonitorService.LocalBinder).service as WalletMonitorService
-                walletMonitorService.registerListener(this@WalletFragment)
+                walletService = (service as BaseMonitorService.LocalBinder).service as WalletService
+                walletService.registerListener(this@WalletFragment)
                 bound = true
                 refreshWalletService()
             }
@@ -99,7 +99,7 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
                 bound = false
             }
         }
-        activity.bindService(Intent(activity, WalletMonitorService::class.java), connection, Context.BIND_AUTO_CREATE)
+        activity.bindService(Intent(activity, WalletService::class.java), connection, Context.BIND_AUTO_CREATE)
     }
 
     override fun onBalanceUpdate(walletModel: WalletModel) {
@@ -116,14 +116,13 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
     }
 
     override fun onTransactionsUpdate(transactionsModel: TransactionsModel) {
+        val list = ArrayList<TransactionModel>()
         val hideZero = prefs.hideZero
-        transactionExpandableGroups.clear()
-        for (tx in transactionsModel.alltransactions) {
-            if (hideZero && tx.isNetZero)
-                continue
-            transactionExpandableGroups.add(0, transactionToGroupWithChild(tx))
-        }
-        transactionList.adapter = TransactionListAdapter(transactionExpandableGroups)
+        transactionsModel.alltransactions
+                .filterNot { hideZero && it.isNetZero }
+                .forEach { list.add(0, it) }
+        adapter.setTransactions(list)
+        adapter.notifyDataSetChanged()
     }
 
     override fun onSyncUpdate(consensusModel: ConsensusModel) {
@@ -186,7 +185,7 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
     fun refreshWalletService() {
         if (bound) {
 //            refreshButton.setActionView(R.layout.refresh_progress)
-            walletMonitorService.refresh()
+            walletService.refresh()
         }
     }
 
@@ -195,16 +194,10 @@ class WalletFragment : Fragment(), WalletMonitorService.WalletUpdateListener {
         expandFrame.visibility = View.VISIBLE
     }
 
-    private fun transactionToGroupWithChild(tx: TransactionModel): TransactionExpandableGroup {
-        val child = ArrayList<TransactionModel>()
-        child.add(tx)
-        return TransactionExpandableGroup(tx.netValue.toSC().round().toPlainString(), tx.confirmationDate, child)
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         if (bound) {
-            walletMonitorService.unregisterListener(this)
+            walletService.unregisterListener(this)
             if (isAdded) {
                 activity.unbindService(connection)
                 bound = false
