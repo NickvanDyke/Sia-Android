@@ -38,7 +38,7 @@ interface SiaApiInterface {
     fun getTransactions(@Query("startheight") startHeight: String, @Query("endheight") endHeight: String): Call<TransactionsModel>
 
     @POST("wallet/init")
-    fun initWallet(@Query("encryptionpassword") password: String, @Query("dictionary") dictionary: String, @Query("force") force: Boolean): Call<Unit>
+    fun initWallet(@Query("encryptionpassword") password: String, @Query("dictionary") dictionary: String, @Query("force") force: Boolean): Call<WalletInitModel>
 
     @POST("wallet/init/seed")
     fun initWalletSeed(@Query("encryptionpassword") password: String, @Query("dictionary") dictionary: String, @Query("seed") seed: String, @Query("force") force: Boolean): Call<Unit>
@@ -96,7 +96,7 @@ object Wallet {
     fun seeds(dictionary: String, callback: Callback<SeedsModel>) = siaApi.getSeeds(dictionary).enqueue(callback)
     fun sweep(dictionary: String, seed: String, callback: Callback<Unit>) = siaApi.sweepSeed(dictionary, seed).enqueue(callback)
     fun transactions(callback: Callback<TransactionsModel>) = siaApi.getTransactions("0", "2000000000").enqueue(callback)
-    fun init(password: String, dictionary: String, force: Boolean, callback: Callback<Unit>) = siaApi.initWallet(password, dictionary, force).enqueue(callback)
+    fun init(password: String, dictionary: String, force: Boolean, callback: Callback<WalletInitModel>) = siaApi.initWallet(password, dictionary, force).enqueue(callback)
     fun initSeed(password: String, dictionary: String, seed:String, force: Boolean, callback: Callback<Unit>) = siaApi.initWalletSeed(password, dictionary, seed, force).enqueue(callback)
     fun lock(callback: Callback<Unit>) = siaApi.lockWallet().enqueue(callback)
     fun unlock(password: String, callback: Callback<Unit>) = siaApi.unlockWallet(password).enqueue(callback)

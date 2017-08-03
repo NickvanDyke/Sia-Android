@@ -26,10 +26,10 @@ class ColdStorageHttpServer : NanoHTTPD("localhost", 9990) {
     private var exists: Boolean = prefs.coldStorageExists
     private var unlocked: Boolean = false
 
-    private val unlockResponse by lazy { response(JSONObject().put("message","wallet must be unlocked before it can be used"),
-            Response.Status.BAD_REQUEST) }
-    private val createResponse by lazy { response(JSONObject().put("message", "wallet has not been encrypted yet"), 
-            Response.Status.BAD_REQUEST) }
+    private val unlockResponse
+        get() = response(JSONObject().put("message", "wallet must be unlocked before it can be used"), Response.Status.BAD_REQUEST)
+    private val createResponse
+        get() = response(JSONObject().put("message", "wallet has not been encrypted yet"), Response.Status.BAD_REQUEST)
 
     override fun serve(session: NanoHTTPD.IHTTPSession): NanoHTTPD.Response {
         val parms = session.parms
@@ -46,7 +46,7 @@ class ColdStorageHttpServer : NanoHTTPD("localhost", 9990) {
             "/wallet/addresses" -> addresses()
             "/wallet/seeds" -> seeds()
             "/wallet/init" -> init(parms["encryptionpassword"], parms["force"] == "true")
-            "/wallet/init/seed" -> initSeed(parms["encryptionpassword"], parms["seed"], parms["force"] == "true")
+//            "/wallet/init/seed" -> initSeed(parms["encryptionpassword"], parms["seed"], parms["force"] == "true") TODO: need to check given seed for validity
             "/wallet/unlock" -> unlock(parms["encryptionpassword"])
             "/wallet/lock" -> lock()
             "/wallet" -> wallet()
@@ -55,12 +55,12 @@ class ColdStorageHttpServer : NanoHTTPD("localhost", 9990) {
             else -> response(JSONObject().put("message", "unsupported on cold storage wallet"), Response.Status.NOT_IMPLEMENTED)
         }
     }
-    
+
     fun init(password: String?, force: Boolean): Response {
         if (exists && !force)
             return response(JSONObject().put("message", "wallet is already encrypted, cannot encrypt again"), Response.Status.BAD_REQUEST)
         initWallet(password ?: "")
-        return response()
+        return response(JSONObject().put("primaryseed", seed))
     }
 
     fun initSeed(password: String?, seed: String?, force: Boolean): Response {
@@ -78,13 +78,13 @@ class ColdStorageHttpServer : NanoHTTPD("localhost", 9990) {
             .put("unconfirmedincomingsiacoins", 0)
             .put("siafundbalance", 0)
             .put("siacoinclaimbalance", 0))
-    
+
     fun seeds(): Response = when {
         !exists -> createResponse
         !unlocked -> unlockResponse
         else -> response(JSONObject().put("allseeds", JSONArray().put(seed)))
     }
-    
+
     fun unlock(password: String?): Response {
         if (!exists)
             return createResponse
@@ -94,12 +94,15 @@ class ColdStorageHttpServer : NanoHTTPD("localhost", 9990) {
         }
         return response(JSONObject().put("message", "provided encryption key is incorrect"), Response.Status.BAD_REQUEST)
     }
-    
+
     fun lock(): Response = when {
         !exists -> createResponse
-        else -> response()
+        else -> {
+            unlocked = false
+            response()
+        }
     }
-    
+
     fun transactions(): Response {
         if (addresses.isEmpty())
             return response()
@@ -157,9 +160,9 @@ class ColdStorageHttpServer : NanoHTTPD("localhost", 9990) {
             response(JSONObject().put("addresses", addressArray))
         }
     }
-    
+
     fun consensus(): Response {
-        return response(JSONObject().put("synced", true))
+        return response(JSONObject().put("synced", false).put("height", 0))
     }
 
     fun response(json: JSONObject = JSONObject(), status: Response.Status = Response.Status.OK): Response {
@@ -170,15 +173,15 @@ class ColdStorageHttpServer : NanoHTTPD("localhost", 9990) {
 
     fun initWallet(password: String, seed: String = "generate new seed") {
         val wallet = Wallet()
-        if (seed == "generate new seed")
-        try {
-            wallet.generateSeed()
-            this.seed = wallet.seed
-        } catch (e: Exception) {
-            e.printStackTrace()
-            this.seed = "Failed to generate seed"
+        if (seed == "generate new seed") {
+            try {
+                wallet.generateSeed()
+                this.seed = wallet.seed
+            } catch (e: Exception) {
+                e.printStackTrace()
+                this.seed = "Failed to generate seed"
+            }
         } else {
-            this.seed = seed
             wallet.seed = seed
         }
 

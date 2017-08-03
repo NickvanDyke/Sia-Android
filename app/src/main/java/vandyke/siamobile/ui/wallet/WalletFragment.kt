@@ -105,14 +105,17 @@ class WalletFragment : Fragment(), WalletService.WalletUpdateListener {
     override fun onBalanceUpdate(walletModel: WalletModel) {
         this.balanceHastings = walletModel.confirmedsiacoinbalance
         this.walletModel = walletModel
-        balanceText.text = walletModel.confirmedsiacoinbalance.toSC().round().toPlainString()
         balanceUnconfirmed.text = "${if (walletModel.unconfirmedsiacoinbalance > BigDecimal.ZERO) "+" else ""}${walletModel.unconfirmedsiacoinbalance.toSC().round().toPlainString()} unconfirmed"
+        if (prefs.operationMode == "cold_storage")
+            balanceText.text = "N/A"
+        else
+            balanceText.text = walletModel.confirmedsiacoinbalance.toSC().round().toPlainString()
         setStatusIcon()
 //        refreshButton.actionView = null
     }
 
     override fun onUsdUpdate(scPriceModel: ScPriceModel) {
-        balanceUsdText.text = "${BigDecimal(balanceText.text.toString()).toUsd(scPriceModel.usdPrice).round().toPlainString()} USD"
+        balanceUsdText.text = "${balanceHastings.toUsd(scPriceModel.usdPrice).round().toPlainString()} USD"
     }
 
     override fun onTransactionsUpdate(transactionsModel: TransactionsModel) {

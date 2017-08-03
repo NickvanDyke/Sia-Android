@@ -8,6 +8,8 @@
 package vandyke.siamobile.util
 
 import android.app.Activity
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.support.v7.app.AlertDialog
 import android.view.inputmethod.InputMethodManager
@@ -35,5 +37,11 @@ object GenUtil {
                 Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(
                 activity.currentFocus.windowToken, 0)
+    }
+
+    fun copyToClipboard(context: Context, text: CharSequence) {
+        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clip = ClipData.newPlainText("Sia Mobile copy", text)
+        clipboard.primaryClip = clip
     }
 }

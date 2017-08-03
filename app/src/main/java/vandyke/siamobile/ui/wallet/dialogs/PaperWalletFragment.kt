@@ -8,9 +8,6 @@
 package vandyke.siamobile.ui.wallet.dialogs
 
 import android.app.Fragment
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.view.LayoutInflater
@@ -20,6 +17,7 @@ import kotlinx.android.synthetic.main.fragment_wallet_paper.*
 import siawallet.Wallet
 import vandyke.siamobile.R
 import vandyke.siamobile.ui.misc.TextTouchCopyListAdapter
+import vandyke.siamobile.util.GenUtil
 import vandyke.siamobile.util.SnackbarUtil
 import java.util.*
 
@@ -49,9 +47,7 @@ class PaperWalletFragment : Fragment() {
         }
 
         paperSeed.setOnClickListener { v ->
-            val clipboard = activity.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            val clip = ClipData.newPlainText("paper wallet info", seed)
-            clipboard.primaryClip = clip
+            GenUtil.copyToClipboard(activity, seed)
             SnackbarUtil.snackbar(v, "Copied seed to clipboard", Snackbar.LENGTH_SHORT)
         }
         paperSeed.text = seed
@@ -68,9 +64,8 @@ class PaperWalletFragment : Fragment() {
                 if (i < addresses.size - 1)
                     result.append(",\n")
             }
-            val clipboard = activity.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            val clip = ClipData.newPlainText("paper wallet info", result.toString())
-            clipboard.primaryClip = clip
+
+            GenUtil.copyToClipboard(activity, result.toString())
             SnackbarUtil.snackbar(v, "Copied seed and addresses to clipboard", Snackbar.LENGTH_SHORT)
         }
     }
