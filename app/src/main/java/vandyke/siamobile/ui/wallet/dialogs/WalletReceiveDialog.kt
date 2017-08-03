@@ -7,9 +7,6 @@
 
 package vandyke.siamobile.ui.wallet.dialogs
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.view.View
@@ -18,6 +15,7 @@ import net.glxn.qrgen.android.QRCode
 import vandyke.siamobile.R
 import vandyke.siamobile.backend.networking.SiaCallback
 import vandyke.siamobile.backend.networking.Wallet
+import vandyke.siamobile.util.GenUtil
 import vandyke.siamobile.util.SnackbarUtil
 
 class WalletReceiveDialog : BaseDialogFragment() {
@@ -36,9 +34,7 @@ class WalletReceiveDialog : BaseDialogFragment() {
         }))
 
         walletAddressCopy.setOnClickListener {
-            val clipboard = activity.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            val clip = ClipData.newPlainText("receive address", receiveAddress.text)
-            clipboard.primaryClip = clip
+            GenUtil.copyToClipboard(activity, receiveAddress.text)
             SnackbarUtil.snackbar(view, "Copied receive address", Snackbar.LENGTH_SHORT)
             close()
         }

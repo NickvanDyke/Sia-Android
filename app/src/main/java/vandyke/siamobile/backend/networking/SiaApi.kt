@@ -11,7 +11,6 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
 import retrofit2.http.Url
-import vandyke.siamobile.backend.coldstorage.ExplorerTransactionModel
 import vandyke.siamobile.backend.models.*
 import vandyke.siamobile.prefs
 
@@ -38,7 +37,7 @@ interface SiaApiInterface {
     fun getTransactions(@Query("startheight") startHeight: String, @Query("endheight") endHeight: String): Call<TransactionsModel>
 
     @POST("wallet/init")
-    fun initWallet(@Query("encryptionpassword") password: String, @Query("dictionary") dictionary: String, @Query("force") force: Boolean): Call<Unit>
+    fun initWallet(@Query("encryptionpassword") password: String, @Query("dictionary") dictionary: String, @Query("force") force: Boolean): Call<WalletInitModel>
 
     @POST("wallet/init/seed")
     fun initWalletSeed(@Query("encryptionpassword") password: String, @Query("dictionary") dictionary: String, @Query("seed") seed: String, @Query("force") force: Boolean): Call<Unit>
@@ -54,9 +53,6 @@ interface SiaApiInterface {
 
     @GET
     fun getScPrice(@Url url: String): Call<ScPriceModel>
-
-    @GET
-    fun getSiaTechExplorerTransaction(@Url url: String): Call<ExplorerTransactionModel>
 
     @GET("consensus")
     fun getConsensus(): Call<ConsensusModel>
@@ -96,7 +92,7 @@ object Wallet {
     fun seeds(dictionary: String, callback: Callback<SeedsModel>) = siaApi.getSeeds(dictionary).enqueue(callback)
     fun sweep(dictionary: String, seed: String, callback: Callback<Unit>) = siaApi.sweepSeed(dictionary, seed).enqueue(callback)
     fun transactions(callback: Callback<TransactionsModel>) = siaApi.getTransactions("0", "2000000000").enqueue(callback)
-    fun init(password: String, dictionary: String, force: Boolean, callback: Callback<Unit>) = siaApi.initWallet(password, dictionary, force).enqueue(callback)
+    fun init(password: String, dictionary: String, force: Boolean, callback: Callback<WalletInitModel>) = siaApi.initWallet(password, dictionary, force).enqueue(callback)
     fun initSeed(password: String, dictionary: String, seed:String, force: Boolean, callback: Callback<Unit>) = siaApi.initWalletSeed(password, dictionary, seed, force).enqueue(callback)
     fun lock(callback: Callback<Unit>) = siaApi.lockWallet().enqueue(callback)
     fun unlock(password: String, callback: Callback<Unit>) = siaApi.unlockWallet(password).enqueue(callback)
@@ -106,8 +102,4 @@ object Wallet {
 
 object Consensus {
     fun consensus(callback: Callback<ConsensusModel>) = siaApi.getConsensus().enqueue(callback)
-}
-
-object Explorer {
-    fun siaTechExplorerTransaction(transactionId: String, callback: Callback<ExplorerTransactionModel>) = siaApi.getSiaTechExplorerTransaction("http://explore.sia.tech/explorer/hashes/$transactionId").enqueue(callback)
 }

@@ -9,9 +9,6 @@ package vandyke.siamobile.ui
 
 import android.app.Fragment
 import android.app.FragmentTransaction
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.BitmapFactory
@@ -65,7 +62,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var titleBackstack: Stack<String>
     private lateinit var menuItemBackstack: Stack<Int>
     private lateinit var classBackstack: Stack<Class<*>>
-    private var currentlyVisibleFragment: Fragment? = null
+    var currentlyVisibleFragment: Fragment? = null
 
     enum class Theme {
         LIGHT, DARK, AMOLED, CUSTOM
@@ -271,9 +268,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun copyTextView(view: View) {
-        val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        val clip = ClipData.newPlainText("Sia text touch copy", (view as TextView).text)
-        clipboard.primaryClip = clip
+        GenUtil.copyToClipboard(this, (view as TextView).text)
         SnackbarUtil.snackbar(view, "Copied selection to clipboard", Snackbar.LENGTH_SHORT)
     }
 

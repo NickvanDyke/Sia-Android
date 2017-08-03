@@ -10,6 +10,7 @@ package vandyke.siamobile.ui.wallet.dialogs
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.view.View
+import android.widget.Toast
 import kotlinx.android.synthetic.main.fragment_wallet_create.*
 import vandyke.siamobile.R
 import vandyke.siamobile.backend.networking.SiaCallback
@@ -55,7 +56,8 @@ class WalletCreateDialog : BaseDialogFragment() {
                     close()
                     WalletService.singleAction(activity, { it.refresh() })
                     if (prefs.operationMode == "cold_storage")
-                        showDialog()
+                        showCsWarning()
+                    showSeed(it.primaryseed)
                 }, {
                     if (it.reason == SiaError.Reason.WALLET_SCAN_IN_PROGRESS) {
                         SnackbarUtil.snackbar(view, "Success. Scanning the blockchain for coins belonging to the given seed. Please wait", Snackbar.LENGTH_LONG)
@@ -70,7 +72,7 @@ class WalletCreateDialog : BaseDialogFragment() {
                     close()
                     WalletService.singleAction(activity, { it.refresh() })
                     if (prefs.operationMode == "cold_storage")
-                        showDialog()
+                        showCsWarning()
                 }, {
                     if (it.reason == SiaError.Reason.WALLET_SCAN_IN_PROGRESS) {
                         SnackbarUtil.snackbar(view, "Success. Scanning the blockchain for coins belonging to the given seed. Please wait", Snackbar.LENGTH_LONG)
@@ -83,7 +85,7 @@ class WalletCreateDialog : BaseDialogFragment() {
         })
     }
 
-    private fun showDialog() {
+    private fun showCsWarning() {
         GenUtil.getDialogBuilder(activity)
                 .setTitle("IMPORTANT")
                 .setMessage("You just created a wallet while in cold storage mode. While in cold storage mode," +
@@ -91,6 +93,21 @@ class WalletCreateDialog : BaseDialogFragment() {
                         " You can send coins to any of the addresses of your cold storage wallet, and at any time in the future, load your wallet seed" +
                         " on a full node (such as Sia-UI on your computer or Sia Mobile's full node mode), and have access to your previously sent coins.")
                 .setPositiveButton("I have read and understood this", null)
+                .show()
+    }
+
+    private fun showSeed(seed: String) {
+        val msg = "Below is your wallet seed. Your wallet's addresses are generated using this seed. Therefore, any coins you " +
+                "send to this wallet and its addresses will \"belong\" to this seed. It's what you will need" +
+                " in order to recover your coins if something happens to your wallet, or to load your wallet on another device. Keep it safe."
+        GenUtil.getDialogBuilder(activity)
+                .setTitle("Wallet seed")
+                .setMessage("$msg\n\n$seed")
+                .setPositiveButton("Copy seed", { _, _ ->
+                    GenUtil.copyToClipboard(activity, seed)
+                    Toast.makeText(activity, "Copied seed", Toast.LENGTH_SHORT).show()
+                })
+                .setNegativeButton("Close", null)
                 .show()
     }
 }
