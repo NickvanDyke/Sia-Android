@@ -35,7 +35,7 @@ class WalletSendDialog : BaseDialogFragment() {
         })
         walletSend.setOnClickListener {
             val sendAmount = sendAmount.text.toString().toSC().toPlainString()
-            Wallet.send(sendAmount, sendRecipient.text.toString(), SiaCallback({
+            Wallet.send(sendAmount, sendRecipient.text.toString(), SiaCallback({ ->
                 SnackbarUtil.successSnackbar(view)
                 close()
             }, {

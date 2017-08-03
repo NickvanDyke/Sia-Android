@@ -26,7 +26,7 @@ class WalletReceiveDialog : BaseDialogFragment() {
     override fun create(view: View?, savedInstanceState: Bundle?) {
         walletQrCode.visibility = View.INVISIBLE
 
-        Wallet.address(SiaCallback({
+        Wallet.address(SiaCallback({ it ->
             SnackbarUtil.successSnackbar(view)
             receiveAddress.text = it.address
             setQrCode(it.address)

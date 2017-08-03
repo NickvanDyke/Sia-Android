@@ -50,12 +50,12 @@ class WalletService : BaseMonitorService() {
     }
 
     fun refreshBalanceAndStatus() {
-        Wallet.wallet(SiaCallback({ sendBalanceUpdate(it) }, { sendBalanceError(it) }))
-        Wallet.scPrice(SiaCallback({ sendUsdUpdate(it) }, { sendUsdError(it) }))
+        Wallet.wallet(SiaCallback({ it -> sendBalanceUpdate(it) }, { sendBalanceError(it) }))
+        Wallet.scPrice(SiaCallback({ it -> sendUsdUpdate(it) }, { sendUsdError(it) }))
     }
 
     fun refreshTransactions() {
-        Wallet.transactions(SiaCallback({
+        Wallet.transactions(SiaCallback({ it ->
             sendTransactionsUpdate(it)
             val mostRecentTxId = prefs.mostRecentTxId // TODO: can give false positives when switching between wallets
             var newTxs = 0
@@ -79,7 +79,7 @@ class WalletService : BaseMonitorService() {
     }
 
     fun refreshConsensus() {
-        Consensus.consensus(SiaCallback({
+        Consensus.consensus(SiaCallback({ it ->
             sendSyncUpdate(it)
             if (it.syncprogress == 0.0 || it.synced) {
                 NotificationUtil.cancelNotification(this@WalletService, SYNC_NOTIFICATION)

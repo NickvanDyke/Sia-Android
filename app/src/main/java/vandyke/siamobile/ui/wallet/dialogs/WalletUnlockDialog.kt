@@ -24,7 +24,7 @@ class WalletUnlockDialog : BaseDialogFragment() {
     override fun create(view: View?, savedInstanceState: Bundle?) {
         walletUnlockConfirm.setOnClickListener {
 
-            Wallet.unlock(walletPassword.text.toString(), SiaCallback({
+            Wallet.unlock(walletPassword.text.toString(), SiaCallback({ ->
                 SnackbarUtil.successSnackbar(view)
                 close()
                 WalletService.singleAction(activity, { it.refresh() })

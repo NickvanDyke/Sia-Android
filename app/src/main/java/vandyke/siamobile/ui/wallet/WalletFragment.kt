@@ -230,7 +230,7 @@ class WalletFragment : Fragment(), WalletService.WalletUpdateListener {
     }
 
     fun lockWallet() {
-        Wallet.lock(SiaCallback({
+        Wallet.lock(SiaCallback({ ->
             refreshWalletService()
             SnackbarUtil.successSnackbar(view)
         }, {
