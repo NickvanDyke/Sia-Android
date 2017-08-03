@@ -12,11 +12,11 @@ import fi.iki.elonen.NanoHTTPD
 import org.json.JSONArray
 import org.json.JSONObject
 import siawallet.Wallet
+import vandyke.siamobile.backend.networking.Explorer
 import vandyke.siamobile.prefs
 import vandyke.siamobile.util.GenUtil
+import vandyke.siamobile.util.SCUtil
 import java.io.IOException
-import java.util.ArrayList
-import kotlin.collections.HashSet
 
 class ColdStorageHttpServer : NanoHTTPD("localhost", 9990) {
 
@@ -101,6 +101,43 @@ class ColdStorageHttpServer : NanoHTTPD("localhost", 9990) {
     }
     
     fun transactions(): Response {
+        if (addresses.isEmpty())
+            return response()
+        else {
+            println("making call with address: ${addresses[0]}")
+            val call = Explorer.siaTechExplorerHash("20c9ed0d1c70ab0d6f694b7795bae2190db6b31d97bc2fba8067a336ffef37aacbc0c826e5d3").execute()
+            if (call.isSuccessful) {
+                val confirmedTxs = JSONArray()
+                for (tx in call.body()?.transactions ?: ArrayList()) {
+                    val txJson = JSONObject()
+                    // put the basic tx info
+                    txJson.put("transactionid", tx.id)
+                    txJson.put("confirmationheight", tx.height)
+                    txJson.put("confirmationtimestamp", SCUtil.estimatedTimeAtHeight(tx.height))
+                    // put the tx inputs and outputs
+                    val inputs = JSONArray()
+                    for (input in tx.siacoininputoutputs) {
+                        val inputJson = JSONObject()
+                        inputJson.put("walletaddress", true)
+                        inputJson.put("relatedaddress", input.unlockhash)
+                        inputJson.put("value", input.value)
+                        inputs.put(inputJson)
+                    }
+                    val outputs = JSONArray()
+                    for (output in tx.rawtransaction.siacoinoutputs) {
+                        val outputJson = JSONObject()
+                        outputJson.put("walletaddress", true)
+                        outputJson.put("relatedaddress", output.unlockhash)
+                        outputJson.put("value", output.value)
+                        outputs.put(outputJson)
+                    }
+                    txJson.put("outputs", outputs)
+                    confirmedTxs.put(txJson)
+                }
+                println(confirmedTxs)
+                return response(JSONObject().put("confirmedtransactions", confirmedTxs))
+            }
+        }
         return response()
     }
 

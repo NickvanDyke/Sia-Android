@@ -35,7 +35,7 @@ class DonateDialog : DialogFragment() {
         val dialogView = activity.layoutInflater.inflate(R.layout.dialog_donate, null)
 
         dialogView.findViewById<Button>(R.id.donateButton).setOnClickListener {
-            Wallet.send(donateAmount.text.toString().toHastings().toPlainString(), paymentRecipient, SiaCallback({
+            Wallet.send(donateAmount.text.toString().toHastings().toPlainString(), paymentRecipient, SiaCallback({ ->
                 SnackbarUtil.snackbar(dialogView, "Donation successful. Thank you!", Snackbar.LENGTH_SHORT)
             }, {
                 SnackbarUtil.snackbar(dialogView, it.reason.msg + ". No donation made.", Snackbar.LENGTH_SHORT)

@@ -17,7 +17,6 @@ class SiaCallback<T> : Callback<T> {
     constructor(onSuccessNull: () -> Unit, onError: (SiaError) -> Unit) {
         this.onSuccessNull = onSuccessNull
         this.onError = onError
-        this.onSuccessNull = onError
     }
 
     override fun onResponse(call: Call<T>, response: Response<T>) {
