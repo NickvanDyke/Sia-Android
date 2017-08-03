@@ -17,7 +17,7 @@ class ColdStorageService : Service() {
     private lateinit var coldStorageHttpServer: ColdStorageHttpServer
 
     override fun onCreate() {
-        coldStorageHttpServer = ColdStorageHttpServer(this@ColdStorageService)
+        coldStorageHttpServer = ColdStorageHttpServer()
         coldStorageHttpServer.start()
     }
 

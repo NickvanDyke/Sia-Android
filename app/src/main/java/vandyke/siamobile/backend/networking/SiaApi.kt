@@ -11,6 +11,7 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
 import retrofit2.http.Url
+import vandyke.siamobile.backend.coldstorage.ExplorerTransactionModel
 import vandyke.siamobile.backend.models.*
 import vandyke.siamobile.prefs
 
@@ -53,6 +54,9 @@ interface SiaApiInterface {
 
     @GET
     fun getScPrice(@Url url: String): Call<ScPriceModel>
+
+    @GET
+    fun getSiaTechExplorerTransaction(@Url url: String): Call<ExplorerTransactionModel>
 
     @GET("consensus")
     fun getConsensus(): Call<ConsensusModel>
@@ -102,4 +106,8 @@ object Wallet {
 
 object Consensus {
     fun consensus(callback: Callback<ConsensusModel>) = siaApi.getConsensus().enqueue(callback)
+}
+
+object Explorer {
+    fun siaTechExplorerTransaction(transactionId: String, callback: Callback<ExplorerTransactionModel>) = siaApi.getSiaTechExplorerTransaction("http://explore.sia.tech/explorer/hashes/$transactionId").enqueue(callback)
 }

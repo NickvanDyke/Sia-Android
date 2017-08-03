@@ -10,7 +10,6 @@ package vandyke.siamobile.backend.coldstorage
 import android.content.Context
 import fi.iki.elonen.NanoHTTPD
 import org.json.JSONArray
-import org.json.JSONException
 import org.json.JSONObject
 import siawallet.Wallet
 import vandyke.siamobile.prefs
@@ -19,7 +18,7 @@ import java.io.IOException
 import java.util.ArrayList
 import kotlin.collections.HashSet
 
-class ColdStorageHttpServer(private val context: Context) : NanoHTTPD("localhost", 9990) {
+class ColdStorageHttpServer : NanoHTTPD("localhost", 9990) {
 
     private var seed: String = prefs.coldStorageSeed
     private var addresses: ArrayList<String> = ArrayList(prefs.coldStorageAddresses)
@@ -27,10 +26,12 @@ class ColdStorageHttpServer(private val context: Context) : NanoHTTPD("localhost
     private var exists: Boolean = prefs.coldStorageExists
     private var unlocked: Boolean = false
 
+    private val unlockResponse by lazy { response(JSONObject().put("message","wallet must be unlocked before it can be used"),
+            Response.Status.BAD_REQUEST) }
+    private val createResponse by lazy { response(JSONObject().put("message", "wallet has not been encrypted yet"), 
+            Response.Status.BAD_REQUEST) }
+
     override fun serve(session: NanoHTTPD.IHTTPSession): NanoHTTPD.Response {
-        val uri = session.uri
-        val response = JSONObject()
-        var status: Response.Status = NanoHTTPD.Response.Status.OK
         val parms = session.parms
         try {
             session.parseBody(parms)
@@ -40,96 +41,108 @@ class ColdStorageHttpServer(private val context: Context) : NanoHTTPD("localhost
             e.printStackTrace()
         }
 
-        try {
-            when (uri) {
-                "/wallet/addresses" -> if (checkExists(response) && checkUnlocked(response)) {
-                    val addressArray = JSONArray()
-                    for (address in addresses)
-                        addressArray.put(address)
-                    response.put("addresses", addressArray)
-                } else
-                    status = NanoHTTPD.Response.Status.BAD_REQUEST
-                "/wallet/address" -> if (checkExists(response) && checkUnlocked(response)) {
-                    response.put("address", addresses[(Math.random() * addresses.size).toInt()])
-                } else
-                    status = NanoHTTPD.Response.Status.BAD_REQUEST
-                "/wallet/seeds" -> if (checkExists(response) && checkUnlocked(response)) {
-                    val seedsArray = JSONArray()
-                    seedsArray.put(seed)
-                    response.put("allseeds", seedsArray)
-                } else
-                    status = NanoHTTPD.Response.Status.BAD_REQUEST
-                "/wallet/init" -> if (!exists || parms["force"] == "true") {
-                    newWallet(parms["encryptionpassword"]!!)
-                    response.put("primaryseed", seed)
-                } else {
-                    response.put("message", "wallet is already encrypted, cannot encrypt again")
-                    status = NanoHTTPD.Response.Status.BAD_REQUEST
-                }
-                "/wallet/unlock" -> if (checkExists(response) && parms["encryptionpassword"] == password) {
-                    unlocked = true
-                } else {
-                    status = NanoHTTPD.Response.Status.BAD_REQUEST
-                    response.put("message", "provided encryption key is incorrect")
-                }
-                "/wallet/lock" -> if (checkExists(response))
-                    unlocked = false
-                else
-                    status = NanoHTTPD.Response.Status.BAD_REQUEST
-                "/wallet" -> {
-                    response.put("encrypted", exists)
-                    response.put("unlocked", unlocked)
-                    response.put("rescanning", false)
-                    response.put("confirmedsiacoinbalance", 0)
-                    response.put("unconfirmedoutgoingsiacoins", 0)
-                    response.put("unconfirmedincomingsiacoins", 0)
-                    response.put("siafundbalance", 0)
-                    response.put("siacoinclaimbalance", 0)
-                }
-                "/wallet/transactions" -> {
-                }
-                "/consensus" -> {
-                    response.put("synced", false)
-                    response.put("height", 0)
-                }
-                else -> {
-                    response.put("message", "unsupported on cold storage wallet")
-                    status = NanoHTTPD.Response.Status.NOT_IMPLEMENTED
-                }
-            }
-        } catch (e: JSONException) {
-            e.printStackTrace()
+        return when (session.uri) {
+            "/wallet/address" -> address()
+            "/wallet/addresses" -> addresses()
+            "/wallet/seeds" -> seeds()
+            "/wallet/init" -> init(parms["encryptionpassword"], parms["force"] == "true")
+            "/wallet/init/seed" -> initSeed(parms["encryptionpassword"], parms["seed"], parms["force"] == "true")
+            "/wallet/unlock" -> unlock(parms["encryptionpassword"])
+            "/wallet/lock" -> lock()
+            "/wallet" -> wallet()
+            "/wallet/transactions" -> transactions()
+            "/consensus" -> consensus()
+            else -> response(JSONObject().put("message", "unsupported on cold storage wallet"), Response.Status.NOT_IMPLEMENTED)
         }
-
-        val httpResponse = NanoHTTPD.newFixedLengthResponse(response.toString())
-        httpResponse.status = status
-        return httpResponse
+    }
+    
+    fun init(password: String?, force: Boolean): Response {
+        if (exists && !force)
+            return response(JSONObject().put("message", "wallet is already encrypted, cannot encrypt again"), Response.Status.BAD_REQUEST)
+        initWallet(password ?: "")
+        return response()
     }
 
-    @Throws(JSONException::class)
-    private fun checkUnlocked(response: JSONObject): Boolean {
-        if (!unlocked) {
-            response.put("message", "wallet must be unlocked before it can be used")
-        }
-        return unlocked
+    fun initSeed(password: String?, seed: String?, force: Boolean): Response {
+        if (exists && !force)
+            return response(JSONObject().put("message", "wallet is already encrypted, cannot encrypt again"), Response.Status.BAD_REQUEST)
+        initWallet(password ?: "", seed ?: "")
+        return response()
     }
 
-    @Throws(JSONException::class)
-    private fun checkExists(response: JSONObject): Boolean {
-        if (!exists) {
-            response.put("message", "wallet has not been encrypted yet")
+    fun wallet(): Response = response(JSONObject().put("encrypted", exists)
+            .put("unlocked", unlocked)
+            .put("rescanning", false)
+            .put("confirmedsiacoinbalance", 0)
+            .put("unconfirmedoutgoingsiacoins", 0)
+            .put("unconfirmedincomingsiacoins", 0)
+            .put("siafundbalance", 0)
+            .put("siacoinclaimbalance", 0))
+    
+    fun seeds(): Response = when {
+        !exists -> createResponse
+        !unlocked -> unlockResponse
+        else -> response(JSONObject().put("allseeds", JSONArray().put(seed)))
+    }
+    
+    fun unlock(password: String?): Response {
+        if (!exists)
+            return createResponse
+        if (password == this.password) {
+            unlocked = true
+            return response()
         }
-        return exists
+        return response(JSONObject().put("message", "provided encryption key is incorrect"), Response.Status.BAD_REQUEST)
+    }
+    
+    fun lock(): Response = when {
+        !exists -> createResponse
+        else -> response()
+    }
+    
+    fun transactions(): Response {
+        return response()
     }
 
-    fun newWallet(password: String) {
+    fun address(): Response = when {
+        !exists -> createResponse
+        !unlocked -> unlockResponse
+        else -> response(JSONObject().put("address", addresses[(Math.random() * addresses.size).toInt()]))
+    }
+
+    fun addresses(): Response = when {
+        !exists -> createResponse
+        !unlocked -> unlockResponse
+        else -> {
+            val addressArray = JSONArray()
+            for (address in addresses)
+                addressArray.put(address)
+            response(JSONObject().put("addresses", addressArray))
+        }
+    }
+    
+    fun consensus(): Response {
+        return response(JSONObject().put("synced", true))
+    }
+
+    fun response(json: JSONObject = JSONObject(), status: Response.Status = Response.Status.OK): Response {
+        val response = NanoHTTPD.newFixedLengthResponse(json.toString())
+        response.status = status
+        return response
+    }
+
+    fun initWallet(password: String, seed: String = "generate new seed") {
         val wallet = Wallet()
+        if (seed == "generate new seed")
         try {
             wallet.generateSeed()
-            seed = wallet.seed
+            this.seed = wallet.seed
         } catch (e: Exception) {
             e.printStackTrace()
-            seed = "Failed to generate seed"
+            this.seed = "Failed to generate seed"
+        } else {
+            this.seed = seed
+            wallet.seed = seed
         }
 
         addresses.clear()
@@ -146,7 +159,6 @@ class ColdStorageHttpServer(private val context: Context) : NanoHTTPD("localhost
     }
 
     companion object {
-
         fun showColdStorageHelp(context: Context) {
             GenUtil.getDialogBuilder(context)
                     .setTitle("Cold storage help")
