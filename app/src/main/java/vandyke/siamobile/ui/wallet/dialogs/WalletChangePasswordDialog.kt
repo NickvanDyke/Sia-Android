@@ -28,7 +28,7 @@ class WalletChangePasswordDialog : BaseDialogFragment() {
                 return@OnClickListener
             }
 
-            Wallet.changePassword(currentPassword.text.toString(), newPassword, SiaCallback({
+            Wallet.changePassword(currentPassword.text.toString(), newPassword, SiaCallback({ ->
                 SnackbarUtil.successSnackbar(view)
                 close()
             }, {

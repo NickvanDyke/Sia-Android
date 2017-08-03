@@ -50,7 +50,7 @@ class WalletCreateDialog : BaseDialogFragment() {
             val force = walletCreateForce.isChecked
             val dictionary = "english"
             if (!walletCreateFromSeed.isChecked) {
-                Wallet.init(password, dictionary, force, SiaCallback({
+                Wallet.init(password, dictionary, force, SiaCallback({ it ->
                     SnackbarUtil.successSnackbar(view)
                     close()
                     WalletService.singleAction(activity, { it.refresh() })
@@ -65,7 +65,7 @@ class WalletCreateDialog : BaseDialogFragment() {
                     }
                 }))
             } else {
-                Wallet.initSeed(password, dictionary, walletCreateSeed.text.toString(), force, SiaCallback({
+                Wallet.initSeed(password, dictionary, walletCreateSeed.text.toString(), force, SiaCallback({ ->
                     SnackbarUtil.successSnackbar(view)
                     close()
                     WalletService.singleAction(activity, { it.refresh() })

@@ -21,7 +21,7 @@ class WalletSweepSeedDialog : BaseDialogFragment() {
     override fun create(view: View?, savedInstanceState: Bundle?) {
         setCloseListener(walletSweepCancel)
         walletAddSeed.setOnClickListener {
-            Wallet.sweep("english", walletSweepSeed.text.toString(), SiaCallback({
+            Wallet.sweep("english", walletSweepSeed.text.toString(), SiaCallback({ ->
                 SnackbarUtil.successSnackbar(view)
                 close()
             }, {

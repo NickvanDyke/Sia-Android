@@ -24,7 +24,7 @@ class WalletAddressesDialog : BaseDialogFragment() {
         val adapter = TextTouchCopyListAdapter(activity, R.layout.list_item_text_touch_copy, addresses)
         addressesList.adapter = adapter
 
-        Wallet.addresses(SiaCallback({
+        Wallet.addresses(SiaCallback({ it ->
             addresses += it.addresses
             adapter.notifyDataSetChanged()
         }, {

@@ -4,13 +4,27 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class SiaCallback<T>(val onSuccess: (T) -> Unit, val onError: (SiaError) -> Unit) : Callback<T> {
+class SiaCallback<T> : Callback<T> {
+    private var onSuccess: ((T) -> Unit)? = null
+    private var onSuccessNull: (() -> Unit)? = null
+    private var onError: (SiaError) -> Unit
+
+    constructor(onSuccess: (T) -> Unit, onError: (SiaError) -> Unit) {
+        this.onSuccess = onSuccess
+        this.onError = onError
+    }
+
+    constructor(onSuccessNull: () -> Unit, onError: (SiaError) -> Unit) {
+        this.onSuccessNull = onSuccessNull
+        this.onError = onError
+        this.onSuccessNull = onError
+    }
+
     override fun onResponse(call: Call<T>, response: Response<T>) {
         if (response.isSuccessful)
-            onSuccess(response.body()!!)
-        else {
+                onSuccess?.invoke(response.body()!!) ?: onSuccessNull?.invoke()
+        else
             onError(SiaError(response.errorBody()?.string() ?: ""))
-        }
     }
 
     override fun onFailure(call: Call<T>, t: Throwable) {
