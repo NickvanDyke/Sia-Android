@@ -10,7 +10,7 @@ package vandyke.siamobile
 import android.app.Application
 import android.os.Build
 import org.acra.ACRA
-import vandyke.siamobile.settings.Prefs
+import vandyke.siamobile.ui.settings.Prefs
 import vandyke.siamobile.util.NotificationUtil
 
 //object prefs: KotprefModel() {
@@ -62,6 +62,8 @@ class SiaMobileApplication : Application() {
             abi32 = "arm32"
         else if ("x86" in abi)
             abi32 = "x86"
+        else
+            abi32 = "idk"
         if (abi == "arm64-v8a")
             abi = "arm64"
         // TODO: maybe add mips binaries

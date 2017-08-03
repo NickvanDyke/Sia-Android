@@ -39,7 +39,7 @@
         </receiver>
 
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.MainActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/splashScreenTheme">
@@ -50,15 +50,15 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".about.AboutSiaActivity"
+            android:name=".ui.about.AboutSiaActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".about.ModesActivity"
+            android:name=".ui.about.ModesActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".wallet.ScannerActivity"
+            android:name=".ui.wallet.ScannerActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
         <activity android:name=".wallet.WebActivity">

@@ -8,8 +8,8 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Build
-import vandyke.siamobile.MainActivity
 import vandyke.siamobile.R
+import vandyke.siamobile.ui.MainActivity
 
 object NotificationUtil {
     val NOTIFICATION_CHANNEL = "sia"

@@ -11,8 +11,8 @@ import android.app.Activity
 import android.content.Context
 import android.support.v7.app.AlertDialog
 import android.view.inputmethod.InputMethodManager
-import vandyke.siamobile.MainActivity
 import vandyke.siamobile.R
+import vandyke.siamobile.ui.MainActivity
 import java.math.BigDecimal
 
 object GenUtil {

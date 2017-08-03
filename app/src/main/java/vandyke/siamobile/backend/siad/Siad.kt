@@ -18,9 +18,9 @@ import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
-import vandyke.siamobile.MainActivity
 import vandyke.siamobile.R
 import vandyke.siamobile.backend.wallet.WalletService
+import vandyke.siamobile.ui.MainActivity
 import vandyke.siamobile.util.NotificationUtil
 import vandyke.siamobile.util.StorageUtil
 import java.io.BufferedReader
