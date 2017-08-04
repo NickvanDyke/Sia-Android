@@ -21,7 +21,7 @@ class SiaCallback<T> : Callback<T> {
 
     override fun onResponse(call: Call<T>, response: Response<T>) {
         if (response.isSuccessful)
-                onSuccess?.invoke(response.body()!!) ?: onSuccessNull?.invoke()
+            onSuccess?.invoke(response.body()!!) ?: onSuccessNull?.invoke()
         else
             onError(SiaError(response.errorBody()?.string() ?: ""))
     }

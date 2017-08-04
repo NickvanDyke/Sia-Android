@@ -9,9 +9,6 @@ package vandyke.siamobile.backend.coldstorage
 
 import android.content.Context
 import fi.iki.elonen.NanoHTTPD
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.runBlocking
 import org.json.JSONArray
 import org.json.JSONObject
 import siawallet.Wallet
@@ -110,25 +107,21 @@ class ColdStorageHttpServer : NanoHTTPD("localhost", 9990) {
         addresses = arrayListOf("20c9ed0d1c70ab0d6f694b7795bae2190db6b31d97bc2fba8067a336ffef37aacbc0c826e5d3", "4c06e08c8689625ddf9831415706529673077325d08e9c16be401d348270937c2db7e284a57f")
         if (addresses.isEmpty())
             return response()
+        val txs: ArrayList<ExplorerTransactionModel> = ArrayList()
         val confirmedTxs = JSONArray()
         val testHash = "20c9ed0d1c70ab0d6f694b7795bae2190db6b31d97bc2fba8067a336ffef37aacbc0c826e5d3"
         var addressesDone = 0
-        return runBlocking {
-            async(CommonPool) {
-                for (address in addresses) {
-                    val response = Explorer.siaTechExplorerHash(address).execute()
-                    if (response.isSuccessful) {
-                        val it = response.body()!!
-                        for (tx in it.transactions)
-                            confirmedTxs.put(createJsonFromExplorerTx(address, tx))
-                    }
-                }
-                response(JSONObject().put("confirmedtransactions", confirmedTxs))
-            }.await()
+        for (address in addresses) {
+            val response = Explorer.siaTechHashBlocking(address).execute()
+            if (response.isSuccessful)
+                txs += response.body()!!.transactions
         }
+        txs.sortWith(Comparator<ExplorerTransactionModel> { p0, p1 -> (p1.height - p0.height).toInt() })
+        for (tx in txs) confirmedTxs.put(createJsonFromExplorerTx(tx))
+        return response(JSONObject().put("confirmedtransactions", confirmedTxs))
     }
 
-    fun createJsonFromExplorerTx(address: String, tx: ExplorerTransactionModel): JSONObject {
+    fun createJsonFromExplorerTx(tx: ExplorerTransactionModel): JSONObject {
         val txJson = JSONObject()
         // put the basic tx info
         txJson.put("transactionid", tx.id)
