@@ -17,7 +17,7 @@ android {
         applicationId "vandyke.siamobile"
         minSdkVersion 16
         targetSdkVersion 26
-        versionCode 202000
+        versionCode 20200
         versionName "2.2.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
@@ -63,7 +63,7 @@ dependencies {
     compile 'com.daimajia.numberprogressbar:library:1.4@aar'
 
     compile 'com.github.apl-devs:appintro:v4.2.0'
-    compile 'com.github.jrvansuita:MaterialAbout:+'
+    compile 'com.github.jrvansuita:MaterialAbout:0.1.6'
     compile 'com.github.gabrielemariotti.changeloglib:changelog:2.1.0'
 
     compile 'com.github.kenglxn.QRGen:android:2.3.0'

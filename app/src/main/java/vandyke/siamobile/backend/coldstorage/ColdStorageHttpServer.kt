@@ -15,10 +15,10 @@ import kotlinx.coroutines.experimental.runBlocking
 import org.json.JSONArray
 import org.json.JSONObject
 import siawallet.Wallet
+import vandyke.siamobile.backend.models.explorer.ExplorerTransactionModel
 import vandyke.siamobile.backend.models.wallet.TransactionInputModel
 import vandyke.siamobile.backend.models.wallet.TransactionModel
 import vandyke.siamobile.backend.models.wallet.TransactionOutputModel
-import vandyke.siamobile.backend.models.explorer.ExplorerTransactionModel
 import vandyke.siamobile.backend.networking.Explorer
 import vandyke.siamobile.backend.networking.SiaCallback
 import vandyke.siamobile.prefs

@@ -38,8 +38,8 @@ import vandyke.siamobile.backend.wallet.WalletService
 import vandyke.siamobile.prefs
 import vandyke.siamobile.ui.about.AboutFragment
 import vandyke.siamobile.ui.about.AboutSiaActivity
-import vandyke.siamobile.ui.about.SetupRemoteFragment
 import vandyke.siamobile.ui.about.ModesActivity
+import vandyke.siamobile.ui.about.SetupRemoteFragment
 import vandyke.siamobile.ui.files.fragments.FilesFragment
 import vandyke.siamobile.ui.hosting.fragments.HostingFragment
 import vandyke.siamobile.ui.settings.GlobalPrefsListener
