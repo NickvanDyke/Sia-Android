@@ -32,7 +32,7 @@ class ChangelogDialog : DialogFragment() {
 
     companion object {
         fun createAndShow(fragmentManager: FragmentManager) {
-            DonateDialog().show(fragmentManager, "donate dialog")
+            ChangelogDialog().show(fragmentManager, "changelog dialog")
         }
     }
 }

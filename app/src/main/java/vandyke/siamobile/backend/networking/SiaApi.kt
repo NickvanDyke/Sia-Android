@@ -56,7 +56,10 @@ interface SiaApiInterface {
     fun getScPrice(@Url url: String): Call<ScPriceModel>
 
     @GET
-    fun getSiaTechExplorerTransaction(@Url url: String): Call<ExplorerHashModel>
+    fun getSiaTechExplorerHash(@Url url: String): Call<ExplorerHashModel>
+
+    @GET
+    fun getSiaTechExplorer(@Url url: String): Call<ExplorerModel>
 
     @GET("consensus")
     fun getConsensus(): Call<ConsensusModel>
@@ -109,6 +112,7 @@ object Consensus {
 }
 
 object Explorer {
-    fun siaTechHash(hash: String, callback: Callback<ExplorerHashModel>) = siaApi.getSiaTechExplorerTransaction("http://explore.sia.tech/explorer/hashes/$hash").enqueue(callback)
-    fun siaTechHashBlocking(hash: String) = siaApi.getSiaTechExplorerTransaction("http://explore.sia.tech/explorer/hashes/$hash")
+    fun siaTech(callback: Callback<ExplorerModel>) = siaApi.getSiaTechExplorer("http://explore.sia.tech/explorer").enqueue(callback)
+    fun siaTechHash(hash: String, callback: Callback<ExplorerHashModel>) = siaApi.getSiaTechExplorerHash("http://explore.sia.tech/explorer/hashes/$hash").enqueue(callback)
+    fun siaTechHashBlocking(hash: String) = siaApi.getSiaTechExplorerHash("http://explore.sia.tech/explorer/hashes/$hash")
 }

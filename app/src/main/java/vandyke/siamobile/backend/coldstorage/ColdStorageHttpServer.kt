@@ -9,8 +9,9 @@ package vandyke.siamobile.backend.coldstorage
 
 import android.content.Context
 import android.os.Handler
-import com.google.gson.Gson
 import fi.iki.elonen.NanoHTTPD
+import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.experimental.runBlocking
 import org.json.JSONArray
 import org.json.JSONObject
 import siawallet.Wallet
@@ -26,6 +27,9 @@ import java.io.IOException
 import java.math.BigDecimal
 
 class ColdStorageHttpServer : NanoHTTPD("localhost", 9990) {
+    private var handler: Handler = Handler()
+    private val UNCACHED_DELAY: Long = 1000
+
     init {
         postRefreshRunnable()
     }
@@ -38,8 +42,9 @@ class ColdStorageHttpServer : NanoHTTPD("localhost", 9990) {
 
     private var balanceHastings: BigDecimal = BigDecimal.ZERO
     private var transactions: ArrayList<TransactionModel> = ArrayList()
+    private var height: Long = 0
+    private var synced: Boolean = false
 
-    private var handler: Handler = Handler()
     private var refreshRunnable: Runnable? = null
 
     private val unlockResponse
@@ -72,7 +77,7 @@ class ColdStorageHttpServer : NanoHTTPD("localhost", 9990) {
         }
     }
 
-    fun postRefreshRunnable() {
+    fun postRefreshRunnable() { // TODO: if it's not synced and receives wallet, transaction, or consensus call, it should make blocking calls to sync and then respond after
         if (refreshRunnable != null)
             handler.removeCallbacks(refreshRunnable)
         val refreshInterval = 60000 * 1
@@ -86,20 +91,29 @@ class ColdStorageHttpServer : NanoHTTPD("localhost", 9990) {
     }
 
     fun refresh() {
-//        addresses = arrayListOf("20c9ed0d1c70ab0d6f694b7795bae2190db6b31d97bc2fba8067a336ffef37aacbc0c826e5d3", "4c06e08c8689625ddf9831415706529673077325d08e9c16be401d348270937c2db7e284a57f")
-        balanceHastings = BigDecimal.ZERO
-        transactions.clear()
-        for (address in addresses) {
-            Explorer.siaTechHash(address, SiaCallback({ it ->
-                val txModels: ArrayList<TransactionModel> = ArrayList()
-                for (tx in it.transactions) txModels += tx.toTransactionModel()
-                for (tx in txModels) balanceHastings += tx.netValue
-                txModels.sortWith(Comparator<TransactionModel> { p0, p1 -> (p1.confirmationheight - p0.confirmationheight).toInt() })
-                transactions.addAll(txModels)
-            }, {
+        Explorer.siaTech(SiaCallback({ it ->
+            if (height != it.height) {
+                height = it.height
+                synced = true
+                addresses = arrayListOf("20c9ed0d1c70ab0d6f694b7795bae2190db6b31d97bc2fba8067a336ffef37aacbc0c826e5d3", "4c06e08c8689625ddf9831415706529673077325d08e9c16be401d348270937c2db7e284a57f")
+                for (address in addresses) {
+                    Explorer.siaTechHash(address, SiaCallback({ it ->
+                        val txModels: ArrayList<TransactionModel> = ArrayList()
+                        for (tx in it.transactions) txModels += tx.toTransactionModel()
+                        for (tx in txModels) {
+                            if (tx !in transactions) {
+                                transactions.add(tx)
+                                balanceHastings += tx.netValue
+                            }
+                        }
+                    }, {
 
-            }))
-        }
+                    }))
+                }
+            }
+        }, {
+            synced = false
+        }))
     }
 
     fun init(password: String?, force: Boolean): Response {
@@ -116,14 +130,17 @@ class ColdStorageHttpServer : NanoHTTPD("localhost", 9990) {
         return response()
     }
 
-    fun wallet(): Response = response(JSONObject().put("encrypted", exists)
-            .put("unlocked", unlocked)
-            .put("rescanning", false)
-            .put("confirmedsiacoinbalance", balanceHastings)
-            .put("unconfirmedoutgoingsiacoins", 0)
-            .put("unconfirmedincomingsiacoins", 0)
-            .put("siafundbalance", 0)
-            .put("siacoinclaimbalance", 0))
+    fun wallet(): Response {
+        if (!synced) runBlocking { delay(UNCACHED_DELAY) }
+        return response(JSONObject().put("encrypted", exists)
+                .put("unlocked", unlocked)
+                .put("rescanning", false)
+                .put("confirmedsiacoinbalance", balanceHastings)
+                .put("unconfirmedoutgoingsiacoins", 0)
+                .put("unconfirmedincomingsiacoins", 0)
+                .put("siafundbalance", 0)
+                .put("siacoinclaimbalance", 0))
+    }
 
     fun seeds(): Response = when {
         !exists -> createResponse
@@ -149,7 +166,14 @@ class ColdStorageHttpServer : NanoHTTPD("localhost", 9990) {
         }
     }
 
-    fun transactions(): Response = response(JSONObject().put("confirmedtransactions", Gson().toJson(transactions)))
+    fun transactions(): Response {
+        if (!synced) runBlocking { delay(UNCACHED_DELAY) }
+        val array = JSONArray()
+        for (tx in transactions.sortedWith(Comparator<TransactionModel> { p0, p1 -> (p0.confirmationheight - p1.confirmationheight).toInt() })) {
+            array.put(createJsonFromTx(tx))
+        }
+        return response(JSONObject().put("confirmedtransactions", array))
+    }
 
     fun ExplorerTransactionModel.toTransactionModel(): TransactionModel {
         val inputsList = ArrayList<TransactionInputModel>()
@@ -161,27 +185,27 @@ class ColdStorageHttpServer : NanoHTTPD("localhost", 9990) {
         return TransactionModel(id, height, SCUtil.estimatedTimeAtHeight(height), inputsList, outputsList)
     }
 
-    fun createJsonFromExplorerTx(tx: ExplorerTransactionModel): JSONObject {
+    fun createJsonFromTx(tx: TransactionModel): JSONObject {
         val txJson = JSONObject()
         // put the basic tx info
-        txJson.put("transactionid", tx.id)
-        txJson.put("confirmationheight", tx.height)
-        txJson.put("confirmationtimestamp", SCUtil.estimatedTimeAtHeight(tx.height))
+        txJson.put("transactionid", tx.transactionid)
+        txJson.put("confirmationheight", tx.confirmationheight)
+        txJson.put("confirmationtimestamp", tx.confirmationtimestamp)
         // put the tx inputs and outputs
         val inputs = JSONArray()
-        for (input in tx.siacoininputoutputs) {
+        for (input in tx.inputs) {
             val inputJson = JSONObject()
-            inputJson.put("walletaddress", addresses.contains(input.unlockhash))
-            inputJson.put("relatedaddress", input.unlockhash)
+            inputJson.put("walletaddress", input.walletaddress)
+            inputJson.put("relatedaddress", input.relatedaddress)
             inputJson.put("value", input.value)
             inputs.put(inputJson)
         }
         txJson.put("inputs", inputs)
         val outputs = JSONArray()
-        for (output in tx.rawtransaction.siacoinoutputs) {
+        for (output in tx.outputs) {
             val outputJson = JSONObject()
-            outputJson.put("walletaddress", addresses.contains(output.unlockhash))
-            outputJson.put("relatedaddress", output.unlockhash)
+            outputJson.put("walletaddress", output.walletaddress)
+            outputJson.put("relatedaddress", output.relatedaddress)
             outputJson.put("value", output.value)
             outputs.put(outputJson)
         }
@@ -207,7 +231,8 @@ class ColdStorageHttpServer : NanoHTTPD("localhost", 9990) {
     }
 
     fun consensus(): Response {
-        return response(JSONObject().put("synced", false).put("height", 0))
+        if (!synced) runBlocking { delay(UNCACHED_DELAY) }
+        return response(JSONObject().put("synced", synced).put("height", height))
     }
 
     fun response(json: JSONObject = JSONObject(), status: Response.Status = Response.Status.OK): Response {
