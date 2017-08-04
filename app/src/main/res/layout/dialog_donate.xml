@@ -43,7 +43,7 @@
         android:layout_width="wrap_content"/>
 
     <TextView
-        android:text="Sia Mobile is kept free and ad-free solely through donations. Any amount is appreciated. Thank you!"
+        android:text="I develop Sia Mobile in my spare time for free. As you've noticed, it's also 100% free and ad-free. Any amount is appreciated and supports development. Thank you!"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:id="@+id/textView20"

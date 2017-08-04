@@ -1,16 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog bulletedList="true">
 
-    <changelogversion versionName="1.0" changeDate="Aug 26,2013">
-        <changelogtext>Initial release.</changelogtext>
-    </changelogversion>
-
-    <changelogversion versionName="0.9" changeDate="Aug 11,2013">
-        <changelogtext>[b]New![/b] Add new attrs to customize header and row layout</changelogtext>
-        <changelogtext>Fixed log while parsing </changelogtext>
-        <changelogtext>Add support for html markup</changelogtext>
-        <changelogtext>Add bullet point in </changelogtext>
-        <changelogtext>Support for customized xml filename</changelogtext>
+    <changelogversion versionName="2.2.0" changeDate="Aug 4,2017">
+        <changelogtext>Cold storage wallet can now estimate your confirmed balance and transactions (experimental)</changelogtext>
+        <changelogtext>Higher resolution images in About slideshow</changelogtext>
+        <changelogtext>Make the about page better and cooler</changelogtext>
+        <changelogtext>Improve a lot of backend code</changelogtext>
+        <changelogtext>Wallet seed is shown immediately upon creating a wallet</changelogtext>
+        <changelogtext>Disallow setting empty/blank values for settings input fields</changelogtext>
     </changelogversion>
 
 </changelog>

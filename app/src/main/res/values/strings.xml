@@ -7,7 +7,6 @@
 
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <string name="ad_app_id">ca-app-pub-4153236763863764~2579442338</string>
     <string name="app_name">Sia Mobile</string>
     <string name="drawer_open">open</string>
     <string name="drawer_close">close</string>
