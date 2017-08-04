@@ -8,23 +8,39 @@
 package vandyke.siamobile.backend.coldstorage
 
 import android.content.Context
+import android.os.Handler
+import com.google.gson.Gson
 import fi.iki.elonen.NanoHTTPD
 import org.json.JSONArray
 import org.json.JSONObject
 import siawallet.Wallet
+import vandyke.siamobile.backend.models.TransactionInputModel
+import vandyke.siamobile.backend.models.TransactionModel
+import vandyke.siamobile.backend.models.TransactionOutputModel
 import vandyke.siamobile.backend.networking.Explorer
+import vandyke.siamobile.backend.networking.SiaCallback
 import vandyke.siamobile.prefs
 import vandyke.siamobile.util.GenUtil
 import vandyke.siamobile.util.SCUtil
 import java.io.IOException
+import java.math.BigDecimal
 
 class ColdStorageHttpServer : NanoHTTPD("localhost", 9990) {
+    init {
+        postRefreshRunnable()
+    }
 
     private var seed: String = prefs.coldStorageSeed
     private var addresses: ArrayList<String> = ArrayList(prefs.coldStorageAddresses)
     private var password: String = prefs.coldStoragePassword
     private var exists: Boolean = prefs.coldStorageExists
     private var unlocked: Boolean = false
+
+    private var balanceHastings: BigDecimal = BigDecimal.ZERO
+    private var transactions: ArrayList<TransactionModel> = ArrayList()
+
+    private var handler: Handler = Handler()
+    private var refreshRunnable: Runnable? = null
 
     private val unlockResponse
         get() = response(JSONObject().put("message", "wallet must be unlocked before it can be used"), Response.Status.BAD_REQUEST)
@@ -56,6 +72,36 @@ class ColdStorageHttpServer : NanoHTTPD("localhost", 9990) {
         }
     }
 
+    fun postRefreshRunnable() {
+        if (refreshRunnable != null)
+            handler.removeCallbacks(refreshRunnable)
+        val refreshInterval = 60000 * 1
+        if (refreshInterval == 0)
+            return
+        refreshRunnable = Runnable {
+            refresh()
+            handler.postDelayed(refreshRunnable, refreshInterval.toLong())
+        }
+        handler.post(refreshRunnable)
+    }
+
+    fun refresh() {
+//        addresses = arrayListOf("20c9ed0d1c70ab0d6f694b7795bae2190db6b31d97bc2fba8067a336ffef37aacbc0c826e5d3", "4c06e08c8689625ddf9831415706529673077325d08e9c16be401d348270937c2db7e284a57f")
+        balanceHastings = BigDecimal.ZERO
+        transactions.clear()
+        for (address in addresses) {
+            Explorer.siaTechHash(address, SiaCallback({ it ->
+                val txModels: ArrayList<TransactionModel> = ArrayList()
+                for (tx in it.transactions) txModels += tx.toTransactionModel()
+                for (tx in txModels) balanceHastings += tx.netValue
+                txModels.sortWith(Comparator<TransactionModel> { p0, p1 -> (p1.confirmationheight - p0.confirmationheight).toInt() })
+                transactions.addAll(txModels)
+            }, {
+
+            }))
+        }
+    }
+
     fun init(password: String?, force: Boolean): Response {
         if (exists && !force)
             return response(JSONObject().put("message", "wallet is already encrypted, cannot encrypt again"), Response.Status.BAD_REQUEST)
@@ -73,7 +119,7 @@ class ColdStorageHttpServer : NanoHTTPD("localhost", 9990) {
     fun wallet(): Response = response(JSONObject().put("encrypted", exists)
             .put("unlocked", unlocked)
             .put("rescanning", false)
-            .put("confirmedsiacoinbalance", 0)
+            .put("confirmedsiacoinbalance", balanceHastings)
             .put("unconfirmedoutgoingsiacoins", 0)
             .put("unconfirmedincomingsiacoins", 0)
             .put("siafundbalance", 0)
@@ -103,22 +149,16 @@ class ColdStorageHttpServer : NanoHTTPD("localhost", 9990) {
         }
     }
 
-    fun transactions(): Response {
-        addresses = arrayListOf("20c9ed0d1c70ab0d6f694b7795bae2190db6b31d97bc2fba8067a336ffef37aacbc0c826e5d3", "4c06e08c8689625ddf9831415706529673077325d08e9c16be401d348270937c2db7e284a57f")
-        if (addresses.isEmpty())
-            return response()
-        val txs: ArrayList<ExplorerTransactionModel> = ArrayList()
-        val confirmedTxs = JSONArray()
-        val testHash = "20c9ed0d1c70ab0d6f694b7795bae2190db6b31d97bc2fba8067a336ffef37aacbc0c826e5d3"
-        var addressesDone = 0
-        for (address in addresses) {
-            val response = Explorer.siaTechHashBlocking(address).execute()
-            if (response.isSuccessful)
-                txs += response.body()!!.transactions
-        }
-        txs.sortWith(Comparator<ExplorerTransactionModel> { p0, p1 -> (p1.height - p0.height).toInt() })
-        for (tx in txs) confirmedTxs.put(createJsonFromExplorerTx(tx))
-        return response(JSONObject().put("confirmedtransactions", confirmedTxs))
+    fun transactions(): Response = response(JSONObject().put("confirmedtransactions", Gson().toJson(transactions)))
+
+    fun ExplorerTransactionModel.toTransactionModel(): TransactionModel {
+        val inputsList = ArrayList<TransactionInputModel>()
+        for (input in siacoininputoutputs)
+            inputsList.add(TransactionInputModel(walletaddress = addresses.contains(input.unlockhash), value = input.value))
+        val outputsList = ArrayList<TransactionOutputModel>()
+        for (output in rawtransaction.siacoinoutputs)
+            outputsList.add(TransactionOutputModel(walletaddress = addresses.contains(output.unlockhash), value = output.value))
+        return TransactionModel(id, height, SCUtil.estimatedTimeAtHeight(height), inputsList, outputsList)
     }
 
     fun createJsonFromExplorerTx(tx: ExplorerTransactionModel): JSONObject {

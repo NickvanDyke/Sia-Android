@@ -18,22 +18,22 @@ abstract class BaseMonitorService : Service() {
 
     private val binder = LocalBinder()
 
-    private var handler: Handler? = null
+    private var handler: Handler = Handler()
     private var refreshRunnable: Runnable? = null
 
     abstract fun refresh()
 
     fun postRefreshRunnable() {
         if (refreshRunnable != null)
-            handler!!.removeCallbacks(refreshRunnable)
+            handler.removeCallbacks(refreshRunnable)
         val refreshInterval = 60000 * prefs.refreshInterval
         if (refreshInterval == 0)
             return
         refreshRunnable = Runnable {
             refresh()
-            handler!!.postDelayed(refreshRunnable, refreshInterval.toLong())
+            handler.postDelayed(refreshRunnable, refreshInterval.toLong())
         }
-        handler!!.post(refreshRunnable)
+        handler.post(refreshRunnable)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -41,13 +41,12 @@ abstract class BaseMonitorService : Service() {
     }
 
     override fun onCreate() {
-        handler = Handler()
         postRefreshRunnable()
     }
 
     override fun onDestroy() {
-        if (handler != null && refreshRunnable != null)
-            handler!!.removeCallbacks(refreshRunnable)
+        if (refreshRunnable != null)
+            handler.removeCallbacks(refreshRunnable)
     }
 
     override fun onTaskRemoved(rootIntent: Intent?) {
