@@ -12,9 +12,6 @@ import android.app.DialogFragment
 import android.app.FragmentManager
 import android.os.Bundle
 import android.support.design.widget.Snackbar
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Button
 import kotlinx.android.synthetic.main.dialog_donate.*
@@ -47,9 +44,9 @@ class DonateDialog : DialogFragment() {
         return builder.create()
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        return inflater.inflate(R.layout.dialog_donate, null)
-    }
+//    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+//        return inflater.inflate(R.layout.dialog_donate, null)
+//    }
 
     override fun onActivityCreated(bundle: Bundle?) {
         super.onActivityCreated(bundle)
