@@ -109,5 +109,6 @@ object Consensus {
 }
 
 object Explorer {
+    fun siaTechExplorerHash(hash: String, callback: Callback<ExplorerHashModel>) = siaApi.getSiaTechExplorerTransaction("http://explore.sia.tech/explorer/hashes/$hash").enqueue(callback)
     fun siaTechExplorerHash(hash: String) = siaApi.getSiaTechExplorerTransaction("http://explore.sia.tech/explorer/hashes/$hash")
 }

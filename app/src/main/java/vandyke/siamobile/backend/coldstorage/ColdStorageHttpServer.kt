@@ -9,6 +9,9 @@ package vandyke.siamobile.backend.coldstorage
 
 import android.content.Context
 import fi.iki.elonen.NanoHTTPD
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.runBlocking
 import org.json.JSONArray
 import org.json.JSONObject
 import siawallet.Wallet
@@ -104,44 +107,53 @@ class ColdStorageHttpServer : NanoHTTPD("localhost", 9990) {
     }
 
     fun transactions(): Response {
+        addresses = arrayListOf("20c9ed0d1c70ab0d6f694b7795bae2190db6b31d97bc2fba8067a336ffef37aacbc0c826e5d3", "4c06e08c8689625ddf9831415706529673077325d08e9c16be401d348270937c2db7e284a57f")
         if (addresses.isEmpty())
             return response()
-        else {
-            println("making call with address: ${addresses[0]}")
-            val call = Explorer.siaTechExplorerHash("20c9ed0d1c70ab0d6f694b7795bae2190db6b31d97bc2fba8067a336ffef37aacbc0c826e5d3").execute()
-            if (call.isSuccessful) {
-                val confirmedTxs = JSONArray()
-                for (tx in call.body()?.transactions ?: ArrayList()) {
-                    val txJson = JSONObject()
-                    // put the basic tx info
-                    txJson.put("transactionid", tx.id)
-                    txJson.put("confirmationheight", tx.height)
-                    txJson.put("confirmationtimestamp", SCUtil.estimatedTimeAtHeight(tx.height))
-                    // put the tx inputs and outputs
-                    val inputs = JSONArray()
-                    for (input in tx.siacoininputoutputs) {
-                        val inputJson = JSONObject()
-                        inputJson.put("walletaddress", true)
-                        inputJson.put("relatedaddress", input.unlockhash)
-                        inputJson.put("value", input.value)
-                        inputs.put(inputJson)
+        val confirmedTxs = JSONArray()
+        val testHash = "20c9ed0d1c70ab0d6f694b7795bae2190db6b31d97bc2fba8067a336ffef37aacbc0c826e5d3"
+        var addressesDone = 0
+        return runBlocking {
+            async(CommonPool) {
+                for (address in addresses) {
+                    val response = Explorer.siaTechExplorerHash(address).execute()
+                    if (response.isSuccessful) {
+                        val it = response.body()!!
+                        for (tx in it.transactions)
+                            confirmedTxs.put(createJsonFromExplorerTx(address, tx))
                     }
-                    val outputs = JSONArray()
-                    for (output in tx.rawtransaction.siacoinoutputs) {
-                        val outputJson = JSONObject()
-                        outputJson.put("walletaddress", true)
-                        outputJson.put("relatedaddress", output.unlockhash)
-                        outputJson.put("value", output.value)
-                        outputs.put(outputJson)
-                    }
-                    txJson.put("outputs", outputs)
-                    confirmedTxs.put(txJson)
                 }
-                println(confirmedTxs)
-                return response(JSONObject().put("confirmedtransactions", confirmedTxs))
-            }
+                response(JSONObject().put("confirmedtransactions", confirmedTxs))
+            }.await()
         }
-        return response()
+    }
+
+    fun createJsonFromExplorerTx(address: String, tx: ExplorerTransactionModel): JSONObject {
+        val txJson = JSONObject()
+        // put the basic tx info
+        txJson.put("transactionid", tx.id)
+        txJson.put("confirmationheight", tx.height)
+        txJson.put("confirmationtimestamp", SCUtil.estimatedTimeAtHeight(tx.height))
+        // put the tx inputs and outputs
+        val inputs = JSONArray()
+        for (input in tx.siacoininputoutputs) {
+            val inputJson = JSONObject()
+            inputJson.put("walletaddress", addresses.contains(input.unlockhash))
+            inputJson.put("relatedaddress", input.unlockhash)
+            inputJson.put("value", input.value)
+            inputs.put(inputJson)
+        }
+        txJson.put("inputs", inputs)
+        val outputs = JSONArray()
+        for (output in tx.rawtransaction.siacoinoutputs) {
+            val outputJson = JSONObject()
+            outputJson.put("walletaddress", addresses.contains(output.unlockhash))
+            outputJson.put("relatedaddress", output.unlockhash)
+            outputJson.put("value", output.value)
+            outputs.put(outputJson)
+        }
+        txJson.put("outputs", outputs)
+        return txJson
     }
 
     fun address(): Response = when {

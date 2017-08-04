@@ -19,6 +19,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import kotlinx.android.synthetic.main.fragment_terminal.*
 import vandyke.siamobile.R
+import vandyke.siamobile.ui.MainActivity
 import vandyke.siamobile.util.StorageUtil
 import java.io.BufferedReader
 import java.io.File
@@ -35,6 +36,12 @@ class TerminalFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        if (MainActivity.appTheme === MainActivity.Theme.AMOLED || MainActivity.appTheme === MainActivity.Theme.CUSTOM) {
+            bot_shadow.visibility = View.GONE
+        } else if (MainActivity.appTheme === MainActivity.Theme.DARK) {
+            bot_shadow.setBackgroundResource(R.drawable.bot_shadow_dark)
+        }
+
         siacFile = StorageUtil.copyBinary("siac", activity, true)
 
         input.setOnEditorActionListener(TextView.OnEditorActionListener { v, actionId, event ->

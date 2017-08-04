@@ -6,6 +6,7 @@ import android.view.View
 import vandyke.siamobile.R
 import vandyke.siamobile.backend.coldstorage.ColdStorageHttpServer
 import vandyke.siamobile.util.SnackbarUtil
+import java.io.IOException
 import java.net.SocketException
 import java.net.SocketTimeoutException
 
@@ -49,6 +50,7 @@ class SiaError {
         return when (t) {
             is SocketTimeoutException -> Reason.TIMEOUT
             is SocketException -> Reason.NO_NETWORK_RESPONSE
+            is IOException -> Reason.UNEXPECTED_END_OF_STREAM
             else -> {
                 println("unaccounted for throwable: $t")
                 Reason.UNACCOUNTED_FOR_ERROR
@@ -75,7 +77,8 @@ class SiaError {
         INVALID_WORD_IN_SEED("Invalid word in seed"),
         INVALID_SEED("Invalid seed"),
         CANNOT_INIT_FROM_SEED_UNTIL_SYNCED("Cannot create wallet from seed until blockchain is synced"),
-        UNSUPPORTED_ON_COLD_WALLET("Unsupported on cold storage wallet")
+        UNSUPPORTED_ON_COLD_WALLET("Unsupported on cold storage wallet"),
+        UNEXPECTED_END_OF_STREAM("Unexpected end of stream")
     }
 
     fun snackbar(view: View?) {
