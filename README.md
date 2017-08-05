@@ -1,4 +1,8 @@
+[![forthebadge](http://forthebadge.com/images/badges/built-with-love.svg)](http://forthebadge.com)
 # Sia Mobile
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/1778b20c2658433eb26603ae88b3fde6)](https://www.codacy.com/app/NickvanDyke/Sia-Mobile?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=NickvanDyke/Sia-Mobile&amp;utm_campaign=Badge_Grade)
+[![Awesome Kotlin Badge](https://kotlin.link/awesome-kotlin.svg)](https://github.com/KotlinBy/awesome-kotlin)
+
 Sia Mobile serves as an Android client for the decentralized cloud storage platform [Sia](https://github.com/NebulousLabs/Sia). Sia has the potential to disrupt the cloud storage industry, and a successful mobile app for Sia will greatly help in making this a reality. Sia Mobile aims to be that.
 
 Sia Mobile can:
