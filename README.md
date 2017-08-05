@@ -1,6 +1,4 @@
-# Sia Mobile
-[![Google Play Badge](https://developer.android.com/images/brand/en_generic_rgb_wo_45.png)](https://play.google.com/store/apps/details?id=vandyke.siamobile)
-[![forthebadge](http://forthebadge.com/images/badges/built-with-love.svg)](http://forthebadge.com)
+# Sia Mobile  [![forthebadge](http://forthebadge.com/images/badges/built-with-love.svg)](http://forthebadge.com)  [![Google Play Badge](https://developer.android.com/images/brand/en_generic_rgb_wo_45.png)](https://play.google.com/store/apps/details?id=vandyke.siamobile)
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/1778b20c2658433eb26603ae88b3fde6)](https://www.codacy.com/app/NickvanDyke/Sia-Mobile?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=NickvanDyke/Sia-Mobile&amp;utm_campaign=Badge_Grade)
 [![Awesome Kotlin Badge](https://kotlin.link/awesome-kotlin.svg)](https://github.com/KotlinBy/awesome-kotlin)
