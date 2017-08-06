@@ -71,7 +71,7 @@ class WalletService : BaseMonitorService() {
             if (newTxs > 0) {
                 prefs.mostRecentTxId = it.alltransactions[0].transactionid
                 NotificationUtil.notification(this@WalletService, TRANSACTION_NOTIFICATION,
-                        R.drawable.ic_account_balance, newTxs.toString() + " new transaction" + if (newTxs > 1) "s" else "",
+                        R.drawable.ic_new_transactions, newTxs.toString() + " new transaction" + if (newTxs > 1) "s" else "",
                         "Net value: " + (if (netOfNewTxs > BigDecimal.ZERO) "+" else "") + netOfNewTxs.toSC().round().toPlainString() + " SC",
                         false)
             }

@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog bulletedList="true">
 
-    <changelogversion versionName="2.2.1" changeDate="Aug 4, 2017">
+    <changelogversion versionName="2.2.2" changeDate="Aug 6, 2017">
+        <changelogtext>Fix notification icon colors</changelogtext>
+    </changelogversion>
+
+    <changelogversion versionName="2.2.1" changeDate="Aug 5, 2017">
         <changelogtext>Disallow certain invalid urls from remote node address that would cause crashes</changelogtext>
     </changelogversion>
 
