@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog bulletedList="true">
 
-    <changelogversion versionName="2.2.0" changeDate="Aug 4,2017">
+    <changelogversion versionName="2.2.1" changeDate="Aug 4, 2017">
+        <changelogtext>Disallow certain invalid urls from remote node address that would cause crashes</changelogtext>
+    </changelogversion>
+
+    <changelogversion versionName="2.2.0" changeDate="Aug 4, 2017">
         <changelogtext>Cold storage wallet can now estimate your confirmed balance and transactions (experimental)</changelogtext>
         <changelogtext>Higher resolution images in About slideshow</changelogtext>
         <changelogtext>Make the about page better and cooler</changelogtext>

@@ -70,6 +70,10 @@ class SettingsFragment : PreferenceFragment() {
             return@OnPreferenceChangeListener true
         }
 
+        remoteAddress.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, newValue ->
+            (newValue != "/" && newValue != "." && newValue != "@" && newValue != "%" && newValue != "#")
+        }
+
         minBattery.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, newValue -> (newValue as String).isNotBlank() }
 
         useExternal.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, o ->
