@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog bulletedList="true">
 
-    <changelogversion versionName="2.2.3" changeDate="Aug 6, 2017">
+    <changelogversion versionName="2.2.4" changeDate="Aug 6, 2017">
         <changelogtext>Fix USD price estimation (mostly - might have to manual refresh since coincap seems to take a while to respond to requests)</changelogtext>
     </changelogversion>
 
