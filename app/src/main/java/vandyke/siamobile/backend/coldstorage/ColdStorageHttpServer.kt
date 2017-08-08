@@ -92,12 +92,11 @@ class ColdStorageHttpServer : NanoHTTPD("localhost", 9990) {
     }
 
     fun refresh() {
-        println("cold storage refreshing")
         Explorer.siaTech(SiaCallback({ it ->
             synced = true
             if (height != it.height) {
                 height = it.height
-//                addresses = arrayListOf("20c9ed0d1c70ab0d6f694b7795bae2190db6b31d97bc2fba8067a336ffef37aacbc0c826e5d3", "4c06e08c8689625ddf9831415706529673077325d08e9c16be401d348270937c2db7e284a57f")
+                addresses = arrayListOf("20c9ed0d1c70ab0d6f694b7795bae2190db6b31d97bc2fba8067a336ffef37aacbc0c826e5d3", "4c06e08c8689625ddf9831415706529673077325d08e9c16be401d348270937c2db7e284a57f")
                 for (address in addresses) {
                     Explorer.siaTechHash(address, SiaCallback({ it ->
                         val txModels: ArrayList<TransactionModel> = ArrayList()

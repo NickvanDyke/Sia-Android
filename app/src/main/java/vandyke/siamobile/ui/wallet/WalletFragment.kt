@@ -116,7 +116,7 @@ class WalletFragment : Fragment(), WalletService.WalletUpdateListener {
     }
 
     override fun onUsdUpdate(scPriceModel: ScPriceModel) {
-        balanceUsdText.text = "${balanceHastings.toSC().toUsd(scPriceModel.usdPrice).round().toPlainString()} USD"
+        balanceUsdText.text = "${balanceHastings.toSC().toUsd(scPriceModel.price_usd).round().toPlainString()} USD"
     }
 
     override fun onTransactionsUpdate(transactionsModel: TransactionsModel) {
