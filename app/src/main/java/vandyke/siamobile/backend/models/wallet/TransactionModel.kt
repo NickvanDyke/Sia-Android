@@ -4,12 +4,12 @@ import java.math.BigDecimal
 import java.util.*
 
 data class TransactionModel(val transactionid: String = "",
-                            val confirmationheight: Long = 0,
-                            val confirmationtimestamp: Long = 0,
+                            val confirmationheight: BigDecimal = BigDecimal.ZERO,
+                            val confirmationtimestamp: BigDecimal = BigDecimal.ZERO,
                             val inputs: ArrayList<TransactionInputModel> = ArrayList(),
                             val outputs: ArrayList<TransactionOutputModel> = ArrayList()) {
 
-    val confirmed: Boolean by lazy { confirmationtimestamp != 9223372036854775807 }
+    val confirmed: Boolean by lazy { confirmationtimestamp != BigDecimal("18446744073709551615") }
 
     val netValue: BigDecimal by lazy {
         var net = BigDecimal.ZERO
@@ -24,5 +24,5 @@ data class TransactionModel(val transactionid: String = "",
 
     val isNetZero: Boolean by lazy { netValue == BigDecimal.ZERO }
 
-    val confirmationdate: Date by lazy { if (confirmed) Date(confirmationtimestamp * 1000) else Date() }
+    val confirmationdate: Date by lazy { if (confirmed) Date((confirmationtimestamp * BigDecimal("1000")).toLong()) else Date() }
 }

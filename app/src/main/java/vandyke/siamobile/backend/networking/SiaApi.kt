@@ -20,7 +20,7 @@ interface SiaApiInterface {
     @GET("wallet")
     fun getWallet(): Call<WalletModel>
 
-    @GET("wallet/siacoins")
+    @POST("wallet/siacoins")
     fun sendSiacoins(@Query("amount") amount: String, @Query("destination") destination: String): Call<Unit>
 
     @GET("wallet/address")

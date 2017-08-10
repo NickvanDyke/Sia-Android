@@ -19,7 +19,7 @@ import vandyke.siamobile.backend.networking.SiaCallback
 import vandyke.siamobile.backend.networking.Wallet
 import vandyke.siamobile.ui.wallet.ScannerActivity
 import vandyke.siamobile.util.SnackbarUtil
-import vandyke.siamobile.util.toSC
+import vandyke.siamobile.util.toHastings
 
 class WalletSendDialog : BaseDialogFragment() {
     override val layout: Int = R.layout.fragment_wallet_send
@@ -34,7 +34,7 @@ class WalletSendDialog : BaseDialogFragment() {
             override fun afterTextChanged(s: Editable) {}
         })
         walletSend.setOnClickListener {
-            val sendAmount = sendAmount.text.toString().toSC().toPlainString()
+            val sendAmount = sendAmount.text.toString().toHastings().toPlainString()
             Wallet.send(sendAmount, sendRecipient.text.toString(), SiaCallback({ ->
                 SnackbarUtil.successSnackbar(view)
                 close()
