@@ -32,7 +32,7 @@ object SCUtil {
         return (100000 + diff / 60 / blockTime.toLong())
     }
 
-    fun estimatedTimeAtHeight(height: Long): Long {
+    fun estimatedTimeAtBlock(height: Long): Long {
         val blockTime = 10
         val heightDiff = height - 100000
         val timeDiff = heightDiff * blockTime

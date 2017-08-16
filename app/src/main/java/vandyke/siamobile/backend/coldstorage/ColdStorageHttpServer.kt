@@ -182,7 +182,7 @@ class ColdStorageHttpServer : NanoHTTPD("localhost", 9990) {
         val outputsList = ArrayList<TransactionOutputModel>()
         for (output in rawtransaction.siacoinoutputs)
             outputsList.add(TransactionOutputModel(walletaddress = addresses.contains(output.unlockhash), value = output.value))
-        return TransactionModel(id, BigDecimal(height), BigDecimal(SCUtil.estimatedTimeAtHeight(height)), inputsList, outputsList)
+        return TransactionModel(id, BigDecimal(height), BigDecimal(SCUtil.estimatedTimeAtBlock(height)), inputsList, outputsList)
     }
 
     fun createJsonFromTx(tx: TransactionModel): JSONObject {

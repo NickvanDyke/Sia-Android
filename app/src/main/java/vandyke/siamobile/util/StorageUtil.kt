@@ -68,25 +68,22 @@ object StorageUtil {
     }
 
     val isExternalStorageWritable: Boolean
-        get() {
-            val state = Environment.getExternalStorageState()
-            return Environment.MEDIA_MOUNTED == state
-        }
+        get() = Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED
 
     fun externalStorageStateDescription(): String {
-        when (Environment.getExternalStorageState()) {
-            Environment.MEDIA_BAD_REMOVAL -> return "external storage was previously removed before being unmounted"
-            Environment.MEDIA_CHECKING -> return "external storage is present but being disk-checked"
-            Environment.MEDIA_EJECTING -> return "external storage is in the process of ejecting"
-            Environment.MEDIA_MOUNTED -> return "external storage is present and mounted with read/write access"
-            Environment.MEDIA_MOUNTED_READ_ONLY -> return "external storage is present but mounted as read-only"
-            Environment.MEDIA_NOFS -> return "external storage is present but is blank or using an unsupported filesystem"
-            Environment.MEDIA_REMOVED -> return "external storage is not present"
-            Environment.MEDIA_SHARED -> return "external storage is present but being shared via USB"
-            Environment.MEDIA_UNKNOWN -> return "external storage is in an unknown state"
-            Environment.MEDIA_UNMOUNTABLE -> return "external storage is present but cannot be mounted. May be corrupted"
-            Environment.MEDIA_UNMOUNTED -> return "external storage is present but unmounted"
-            else -> return "external storage state missed all cases"
+        return when (Environment.getExternalStorageState()) {
+            Environment.MEDIA_BAD_REMOVAL -> "external storage was previously removed before being unmounted"
+            Environment.MEDIA_CHECKING -> "external storage is present but being disk-checked"
+            Environment.MEDIA_EJECTING -> "external storage is in the process of ejecting"
+            Environment.MEDIA_MOUNTED -> "external storage is present and mounted with read/write access"
+            Environment.MEDIA_MOUNTED_READ_ONLY -> "external storage is present but mounted as read-only"
+            Environment.MEDIA_NOFS -> "external storage is present but is blank or using an unsupported filesystem"
+            Environment.MEDIA_REMOVED -> "external storage is not present"
+            Environment.MEDIA_SHARED -> "external storage is present but being shared via USB"
+            Environment.MEDIA_UNKNOWN -> "external storage is in an unknown state"
+            Environment.MEDIA_UNMOUNTABLE -> "external storage is present but cannot be mounted. May be corrupted"
+            Environment.MEDIA_UNMOUNTED -> "external storage is present but unmounted"
+            else -> "external storage state missed all cases"
         }
     }
 }
