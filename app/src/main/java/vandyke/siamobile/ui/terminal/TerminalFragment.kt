@@ -20,6 +20,7 @@ import kotlinx.android.synthetic.main.fragment_terminal.*
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.async
 import vandyke.siamobile.R
+import vandyke.siamobile.backend.siad.Siad
 import vandyke.siamobile.ui.MainActivity
 import vandyke.siamobile.util.StorageUtil
 import java.io.BufferedReader
@@ -28,7 +29,7 @@ import java.io.IOException
 import java.io.InputStreamReader
 import java.util.*
 
-class TerminalFragment : Fragment() {
+class TerminalFragment : Fragment(), Siad.SiadListener {
 
     private var siacFile: File? = null
 
@@ -48,7 +49,7 @@ class TerminalFragment : Fragment() {
         input.setOnEditorActionListener(TextView.OnEditorActionListener { v, actionId, event ->
             try {
                 if (siacFile == null) {
-                    output.append("\nYour device's CPU architecture is not supported by siac. Sorry! There's nothing Sia Mobile can do about this\n")
+                    output.append("\nYour device's CPU architecture is not supported by siac. Sorry!\n")
                     return@OnEditorActionListener true
                 }
                 val enteredCommand = v.text.toString()
@@ -85,7 +86,16 @@ class TerminalFragment : Fragment() {
 
             true
         })
-
         output.movementMethod = ScrollingMovementMethod()
+        Siad.addListener(this)
+    }
+
+    override fun onSiadOutput(line: String) {
+        output.append("Siad: $line\n")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Siad.removeListener(this)
     }
 }

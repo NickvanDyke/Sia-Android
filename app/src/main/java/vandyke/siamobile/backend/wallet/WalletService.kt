@@ -21,13 +21,14 @@ import vandyke.siamobile.backend.networking.Consensus
 import vandyke.siamobile.backend.networking.SiaCallback
 import vandyke.siamobile.backend.networking.SiaError
 import vandyke.siamobile.backend.networking.Wallet
+import vandyke.siamobile.backend.siad.Siad
 import vandyke.siamobile.prefs
 import vandyke.siamobile.util.NotificationUtil
 import vandyke.siamobile.util.round
 import vandyke.siamobile.util.toSC
 import java.math.BigDecimal
 
-class WalletService : BaseMonitorService() {
+class WalletService : BaseMonitorService(), Siad.SiadListener {
 
     private val TRANSACTION_NOTIFICATION: Int = 3
     private val SYNC_NOTIFICATION: Int = 2
@@ -36,10 +37,12 @@ class WalletService : BaseMonitorService() {
 
     override fun onCreate() {
         super.onCreate()
+        Siad.addListener(this)
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        Siad.removeListener(this)
     }
 
     override fun refresh() {
@@ -89,6 +92,11 @@ class WalletService : BaseMonitorService() {
         }, { sendSyncError(it) }))
     }
 
+    override fun onSiadOutput(line: String) {
+        if (line.contains("Finished loading") || line.contains("Done!"))
+            refresh()
+    }
+
     interface WalletUpdateListener {
         fun onBalanceUpdate(walletModel: WalletModel)
         fun onUsdUpdate(scPriceModel: ScPriceModel)
@@ -100,53 +108,25 @@ class WalletService : BaseMonitorService() {
         fun onSyncError(error: SiaError)
     }
 
-    fun registerListener(listener: WalletUpdateListener) {
-        listeners.add(listener)
-    }
+    fun registerListener(listener: WalletUpdateListener) = listeners.add(listener)
 
-    fun unregisterListener(listener: WalletUpdateListener) {
-        listeners.remove(listener)
-    }
+    fun unregisterListener(listener: WalletUpdateListener) = listeners.remove(listener)
 
-    fun sendBalanceUpdate(walletModel: WalletModel) {
-        for (listener in listeners)
-            listener.onBalanceUpdate(walletModel)
-    }
+    fun sendBalanceUpdate(walletModel: WalletModel) = listeners.forEach { it.onBalanceUpdate(walletModel) }
 
-    fun sendUsdUpdate(scPriceModel: ScPriceModel) {
-        for (listener in listeners)
-            listener.onUsdUpdate(scPriceModel)
-    }
+    fun sendUsdUpdate(scPriceModel: ScPriceModel) = listeners.forEach { it.onUsdUpdate(scPriceModel) }
 
-    fun sendTransactionsUpdate(transactionsModel: TransactionsModel) {
-        for (listener in listeners)
-            listener.onTransactionsUpdate(transactionsModel)
-    }
+    fun sendTransactionsUpdate(transactionsModel: TransactionsModel) = listeners.forEach { it.onTransactionsUpdate(transactionsModel) }
 
-    fun sendSyncUpdate(consensusModel: ConsensusModel) {
-        for (listener in listeners)
-            listener.onSyncUpdate(consensusModel)
-    }
+    fun sendSyncUpdate(consensusModel: ConsensusModel) = listeners.forEach { it.onSyncUpdate(consensusModel) }
 
-    fun sendBalanceError(error: SiaError) {
-        for (listener in listeners)
-            listener.onBalanceError(error)
-    }
+    fun sendBalanceError(error: SiaError) = listeners.forEach { it.onBalanceError(error) }
 
-    fun sendUsdError(error: SiaError) {
-        for (listener in listeners)
-            listener.onUsdError(error)
-    }
+    fun sendUsdError(error: SiaError) = listeners.forEach { it.onUsdError(error) }
 
-    fun sendTransactionsError(error: SiaError) {
-        for (listener in listeners)
-            listener.onTransactionsError(error)
-    }
+    fun sendTransactionsError(error: SiaError) = listeners.forEach { it.onTransactionsError(error) }
 
-    fun sendSyncError(error: SiaError) {
-        for (listener in listeners)
-            listener.onSyncError(error)
-    }
+    fun sendSyncError(error: SiaError) = listeners.forEach { it.onSyncError(error) }
 
     companion object {
         fun singleAction(context: Context, action: (service: WalletService) -> Unit) {

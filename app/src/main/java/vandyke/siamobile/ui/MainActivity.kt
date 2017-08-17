@@ -100,7 +100,7 @@ class MainActivity : AppCompatActivity() {
             window.setBackgroundDrawable(BitmapDrawable(resources, bitmap))
         }
 
-        val toolbar = findViewById(R.id.toolbar) as Toolbar
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         if (prefs.transparentBars) {
             toolbar.setBackgroundColor(android.R.color.transparent)

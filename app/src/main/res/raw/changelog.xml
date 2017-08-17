@@ -7,6 +7,14 @@
 
 <changelog bulletedList="true">
 
+    <changelogversion versionName="2.2.7" changeDate="Aug 17, 2017">
+        <changelogtext>Siad (Sia node) output now also appears in the terminal page</changelogtext>
+    </changelogversion>
+
+    <changelogversion versionName="2.2.6" changeDate="Aug 17, 2017">
+        <changelogtext>Update Android support libraries. This should hopefully fix some infrequent crashes some users were having</changelogtext>
+    </changelogversion>
+
     <changelogversion versionName="2.2.5" changeDate="Aug 10, 2017">
         <changelogtext>Fix error when trying to send</changelogtext>
         <changelogtext>Fix unconfirmed transactions not appearing in transactions list</changelogtext>

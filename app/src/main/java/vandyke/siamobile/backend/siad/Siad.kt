@@ -20,7 +20,6 @@ import android.os.Looper
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.async
 import vandyke.siamobile.R
-import vandyke.siamobile.backend.wallet.WalletService
 import vandyke.siamobile.ui.MainActivity
 import vandyke.siamobile.util.NotificationUtil
 import vandyke.siamobile.util.StorageUtil
@@ -59,9 +58,8 @@ class Siad : Service() {
                             val inputReader = BufferedReader(InputStreamReader(siadProcess?.inputStream))
                             var line: String? = inputReader.readLine()
                             while (line != null) {
+                                listeners.forEach { it.onSiadOutput(line!!) }
                                 siadNotification(line)
-                                if (line.contains("Finished loading") || line.contains("Done!"))
-                                    WalletService.singleAction(applicationContext, { it.refresh() })
                                 line = inputReader.readLine()
                             }
                             inputReader.close()
@@ -110,5 +108,15 @@ class Siad : Service() {
         val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
         builder.setContentIntent(pendingIntent)
         return builder.build()
+    }
+
+    interface SiadListener {
+        fun onSiadOutput(line: String)
+    }
+
+    companion object {
+        val listeners = ArrayList<SiadListener>()
+        fun addListener(listener: SiadListener) = listeners.add(listener)
+        fun removeListener(listener: SiadListener) = listeners.remove(listener)
     }
 }
