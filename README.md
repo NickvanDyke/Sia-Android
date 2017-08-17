@@ -22,7 +22,7 @@ siamobiledev@gmail.com or @nicktz on the [Sia Slack](https://siatalk.slack.com)
 Sia Mobile is still in heavy development, and contributions to the Sia Mobile codebase through this repository (pull requests, issue reporting, feature ideas, etc.) are welcomed, encouraged, and appreciated. I am happy to help with implementations and answer any questions you might have.
 
 # Acknowledgements
-Huge thanks to [SiaPulse](siapulse.com) for a donation that made the time spent on Sia Mobile many times more possible.
+Huge thanks to [SiaPulse](http://siapulse.com) for a donation that made the time spent on Sia Mobile many times more possible.
 
 [JGall1](https://github.com/JGall1) for implementing QR code generation and scanning.
 
