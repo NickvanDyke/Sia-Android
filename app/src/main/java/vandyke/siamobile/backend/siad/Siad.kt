@@ -58,7 +58,9 @@ class Siad : Service() {
                             val inputReader = BufferedReader(InputStreamReader(siadProcess?.inputStream))
                             var line: String? = inputReader.readLine()
                             while (line != null) {
+                                println("LINE: $line")
                                 listeners.forEach { it.onSiadOutput(line!!) }
+                                bufferedOutput += line
                                 siadNotification(line)
                                 line = inputReader.readLine()
                             }
@@ -69,7 +71,6 @@ class Siad : Service() {
                     }
                 } catch (e: IOException) {
                     e.printStackTrace()
-                    siadNotification("Failed to start")
                 }
 
             }
@@ -118,5 +119,6 @@ class Siad : Service() {
         val listeners = ArrayList<SiadListener>()
         fun addListener(listener: SiadListener) = listeners.add(listener)
         fun removeListener(listener: SiadListener) = listeners.remove(listener)
+        var bufferedOutput: String = ""
     }
 }

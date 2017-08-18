@@ -16,7 +16,6 @@ import vandyke.siamobile.prefs
 
 class BootReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
-
         if (prefs.runInBackground) {
             when (prefs.operationMode) {
                 "cold_storage" -> context.startService(Intent(context, ColdStorageService::class.java))

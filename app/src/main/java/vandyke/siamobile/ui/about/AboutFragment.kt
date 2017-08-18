@@ -21,7 +21,7 @@ class AboutFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return AboutBuilder.with(activity)
                 .setName("Nick van Dyke")
-                .setBrief("Passionate Android freelancer. Email me with an app you want developed and an offer!")
+                .setBrief("Sia supporter and Android developer")
                 .setLinksColumnsCount(2)
                 .addEmailLink("siamobiledev@gmail.com")
                 .addGitHubLink("NickvanDyke/Sia-Mobile")

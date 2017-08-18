@@ -33,6 +33,8 @@ class TerminalFragment : Fragment(), Siad.SiadListener {
 
     private var siacFile: File? = null
 
+    private var outputBuffer: String = ""
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View {
         return inflater.inflate(R.layout.fragment_terminal, container, false)
     }
@@ -70,7 +72,7 @@ class TerminalFragment : Fragment(), Siad.SiadListener {
                         var line: String? = inputReader.readLine()
                         while (line != null) {
                             val toBeAppended = line.replace(siacFile!!.absolutePath, "siac")
-                            stdOut.append(toBeAppended + "\n")
+                            stdOut.append(toBeAppended)
                             line = inputReader.readLine()
                         }
                         inputReader.close()
@@ -91,7 +93,18 @@ class TerminalFragment : Fragment(), Siad.SiadListener {
     }
 
     override fun onSiadOutput(line: String) {
-        output.append("Siad: $line\n")
+        if (isHidden)
+            outputBuffer += "$line\n"
+        else
+            output.append("$line\n")
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden) {
+            output.append(outputBuffer)
+            outputBuffer = ""
+        }
     }
 
     override fun onDestroy() {

@@ -7,7 +7,7 @@
 
 <changelog bulletedList="true">
 
-    <changelogversion versionName="2.2.7" changeDate="Aug 17, 2017">
+    <changelogversion versionName="2.2.8" changeDate="Aug 18, 2017">
         <changelogtext>Siad (Sia node) output now also appears in the terminal page</changelogtext>
     </changelogversion>
 
