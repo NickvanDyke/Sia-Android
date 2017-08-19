@@ -25,11 +25,14 @@ class WalletReceiveDialog : BaseDialogFragment() {
 
         Wallet.address(SiaCallback({ it ->
             SnackbarUtil.successSnackbar(view)
-            receiveAddress.text = it.address
-            setQrCode(it.address)
+            if (isVisible) {
+                receiveAddress.text = it.address
+                setQrCode(it.address)
+            }
         }, {
             it.snackbar(view)
-            receiveAddress.text = "${it.reason.msg}\n"
+            if (isVisible)
+                receiveAddress.text = "${it.reason.msg}\n"
         }))
 
         walletAddressCopy.setOnClickListener {

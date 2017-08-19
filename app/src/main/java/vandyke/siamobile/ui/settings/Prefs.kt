@@ -14,7 +14,7 @@ class Prefs(context: Context) {
     val prefs = PreferenceManager.getDefaultSharedPreferences(context)
 
     var theme: String
-        get() = prefs.getString("theme", "light")
+        get() = prefs.getString("theme", "dark")
         set(value) = prefs.edit().putString("theme", value).apply()
 
     var operationMode: String

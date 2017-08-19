@@ -7,6 +7,12 @@
 
 <changelog bulletedList="true">
 
+    <changelogversion versionName="2.2.9" changeDate="Aug 19, 2017">
+        <changelogtext>Fix crash that occurred when pressing Receive and then replacing the Receive window before it finished retrieving an address</changelogtext>
+        <changelogtext>Change the About page</changelogtext>
+        <changelogtext>Default theme is now dark</changelogtext>
+    </changelogversion>
+
     <changelogversion versionName="2.2.8" changeDate="Aug 18, 2017">
         <changelogtext>Siad (Sia node) output now also appears in the terminal page</changelogtext>
     </changelogversion>

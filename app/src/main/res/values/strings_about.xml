@@ -6,7 +6,7 @@
   -->
 
 <resources>
-    <string name="feedback_app">Give feedback</string>
+    <string name="feedback_app">Contact</string>
     <string name="changelog">Changelog</string>
     <string name="rate_five_stars">Rate 5 stars</string>
     <string name="update_app">Update</string>
