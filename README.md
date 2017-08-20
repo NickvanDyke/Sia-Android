@@ -13,10 +13,8 @@ Sia Mobile can:
 * Coming soon: upload to and download from the Sia cloud storage network (check the "files" branch)
 * Coming soon: SPV functionality (a.k.a. "lite wallet") once Sia implements this feature (check the "spv" branch)
 
-[Sia Mobile on the Play Store](https://play.google.com/store/apps/details?id=vandyke.siamobile)
-
 # Contact me
-siamobiledev@gmail.com or @nicktz on the [Sia Slack](https://siatalk.slack.com)
+siamobiledev@gmail.com or Nick#6026 on the [Sia Discord](https://discord.gg/sFCT3Ar)
 
 # Contributing
 Sia Mobile is still in heavy development, and contributions to the Sia Mobile codebase through this repository (pull requests, issue reporting, feature ideas, etc.) are welcomed, encouraged, and appreciated. I am happy to help with implementations and answer any questions you might have.
