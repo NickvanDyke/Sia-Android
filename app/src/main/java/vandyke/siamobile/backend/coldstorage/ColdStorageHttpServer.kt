@@ -15,11 +15,11 @@ import org.json.JSONArray
 import org.json.JSONObject
 import siawallet.Wallet
 import vandyke.siamobile.backend.models.explorer.ExplorerTransactionModel
-import vandyke.siamobile.backend.models.wallet.TransactionInputModel
-import vandyke.siamobile.backend.models.wallet.TransactionModel
-import vandyke.siamobile.backend.models.wallet.TransactionOutputModel
 import vandyke.siamobile.backend.networking.Explorer
 import vandyke.siamobile.backend.networking.SiaCallback
+import vandyke.siamobile.backend.wallet.models.TransactionInputModel
+import vandyke.siamobile.backend.wallet.models.TransactionModel
+import vandyke.siamobile.backend.wallet.models.TransactionOutputModel
 import vandyke.siamobile.prefs
 import vandyke.siamobile.util.GenUtil
 import vandyke.siamobile.util.SCUtil

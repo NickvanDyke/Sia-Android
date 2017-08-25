@@ -39,8 +39,8 @@ import vandyke.siamobile.ui.about.AboutFragment
 import vandyke.siamobile.ui.about.AboutSiaActivity
 import vandyke.siamobile.ui.about.ModesActivity
 import vandyke.siamobile.ui.about.SetupRemoteFragment
-import vandyke.siamobile.ui.files.fragments.FilesFragment
 import vandyke.siamobile.ui.hosting.fragments.HostingFragment
+import vandyke.siamobile.ui.renter.files.RenterFragment
 import vandyke.siamobile.ui.settings.GlobalPrefsListener
 import vandyke.siamobile.ui.settings.SettingsFragment
 import vandyke.siamobile.ui.terminal.TerminalFragment
@@ -126,7 +126,7 @@ class MainActivity : AppCompatActivity() {
             val menuItemId = item.itemId
             when (menuItemId) {
                 R.id.drawer_item_files -> {
-                    displayFragmentClass(FilesFragment::class.java, "Files", menuItemId)
+                    displayFragmentClass(RenterFragment::class.java, "Files", menuItemId)
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.drawer_item_hosting -> {
@@ -165,7 +165,7 @@ class MainActivity : AppCompatActivity() {
         startService(Intent(this, WalletService::class.java))
 
         when (prefs.startupPage) {
-            "files" -> displayFragmentClass(FilesFragment::class.java, "Files", R.id.drawer_item_files)
+            "files" -> displayFragmentClass(RenterFragment::class.java, "Files", R.id.drawer_item_files)
             "hosting" -> displayFragmentClass(HostingFragment::class.java, "Hosting", R.id.drawer_item_hosting)
             "wallet" -> displayFragmentClass(WalletFragment::class.java, "Wallet", R.id.drawer_item_wallet)
             "terminal" -> displayFragmentClass(TerminalFragment::class.java, "Terminal", R.id.drawer_item_terminal)

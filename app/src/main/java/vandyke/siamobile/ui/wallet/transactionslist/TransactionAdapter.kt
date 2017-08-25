@@ -13,7 +13,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import vandyke.siamobile.R
-import vandyke.siamobile.backend.models.wallet.TransactionModel
+import vandyke.siamobile.backend.wallet.models.TransactionModel
 import vandyke.siamobile.ui.MainActivity
 import vandyke.siamobile.util.round
 import vandyke.siamobile.util.toSC

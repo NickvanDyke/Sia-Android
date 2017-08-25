@@ -14,14 +14,14 @@ import android.os.IBinder
 import vandyke.siamobile.R
 import vandyke.siamobile.backend.BaseMonitorService
 import vandyke.siamobile.backend.models.consensus.ConsensusModel
-import vandyke.siamobile.backend.models.wallet.ScPriceModel
-import vandyke.siamobile.backend.models.wallet.TransactionsModel
-import vandyke.siamobile.backend.models.wallet.WalletModel
 import vandyke.siamobile.backend.networking.Consensus
 import vandyke.siamobile.backend.networking.SiaCallback
 import vandyke.siamobile.backend.networking.SiaError
 import vandyke.siamobile.backend.networking.Wallet
 import vandyke.siamobile.backend.siad.Siad
+import vandyke.siamobile.backend.wallet.models.ScPriceModel
+import vandyke.siamobile.backend.wallet.models.TransactionsModel
+import vandyke.siamobile.backend.wallet.models.WalletModel
 import vandyke.siamobile.prefs
 import vandyke.siamobile.util.NotificationUtil
 import vandyke.siamobile.util.round
@@ -33,7 +33,7 @@ class WalletService : BaseMonitorService(), Siad.SiadListener {
     private val TRANSACTION_NOTIFICATION: Int = 3
     private val SYNC_NOTIFICATION: Int = 2
 
-    private var listeners: ArrayList<WalletUpdateListener> = ArrayList()
+    private var listeners = ArrayList<WalletUpdateListener>()
 
     override fun onCreate() {
         super.onCreate()

@@ -22,14 +22,14 @@ import vandyke.siamobile.R
 import vandyke.siamobile.backend.BaseMonitorService
 import vandyke.siamobile.backend.coldstorage.ColdStorageHttpServer
 import vandyke.siamobile.backend.models.consensus.ConsensusModel
-import vandyke.siamobile.backend.models.wallet.ScPriceModel
-import vandyke.siamobile.backend.models.wallet.TransactionModel
-import vandyke.siamobile.backend.models.wallet.TransactionsModel
-import vandyke.siamobile.backend.models.wallet.WalletModel
 import vandyke.siamobile.backend.networking.SiaCallback
 import vandyke.siamobile.backend.networking.SiaError
 import vandyke.siamobile.backend.networking.Wallet
 import vandyke.siamobile.backend.wallet.WalletService
+import vandyke.siamobile.backend.wallet.models.ScPriceModel
+import vandyke.siamobile.backend.wallet.models.TransactionModel
+import vandyke.siamobile.backend.wallet.models.TransactionsModel
+import vandyke.siamobile.backend.wallet.models.WalletModel
 import vandyke.siamobile.prefs
 import vandyke.siamobile.ui.MainActivity
 import vandyke.siamobile.ui.wallet.dialogs.*
@@ -130,15 +130,19 @@ class WalletFragment : Fragment(), WalletService.WalletUpdateListener {
 
     override fun onSyncUpdate(consensusModel: ConsensusModel) {
         val height = consensusModel.height
-        if (consensusModel.synced) {
-            syncText.text = "Synced: $height"
-            syncBar.progress = 100
-        } else if (consensusModel.syncprogress == 0.0) {
-            syncText.text = "Not synced"
-            syncBar.progress = 0
-        } else {
-            syncText.text = "Syncing: $height"
-            syncBar.progress = consensusModel.syncprogress.toInt()
+        when {
+            consensusModel.synced -> {
+                syncText.text = "Synced: $height"
+                syncBar.progress = 100
+            }
+            consensusModel.syncprogress == 0.0 -> {
+                syncText.text = "Not synced"
+                syncBar.progress = 0
+            }
+            else -> {
+                syncText.text = "Syncing: $height"
+                syncBar.progress = consensusModel.syncprogress.toInt()
+            }
         }
     }
 

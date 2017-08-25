@@ -19,10 +19,12 @@ import retrofit2.http.Query
 import retrofit2.http.Url
 import vandyke.siamobile.backend.models.consensus.ConsensusModel
 import vandyke.siamobile.backend.models.explorer.ExplorerHashModel
-import vandyke.siamobile.backend.models.wallet.*
+import vandyke.siamobile.backend.renter.models.SiaFilesModel
+import vandyke.siamobile.backend.wallet.models.*
 import vandyke.siamobile.prefs
 
 interface SiaApiInterface {
+    /* wallet API */
     @GET("wallet")
     fun getWallet(): Call<WalletModel>
 
@@ -68,6 +70,11 @@ interface SiaApiInterface {
     @GET
     fun getSiaTechExplorer(@Url url: String): Call<ExplorerModel>
 
+    /* renter API */
+    @GET("renter/files")
+    fun getFiles(): Call<SiaFilesModel>
+
+    /* consensus API */
     @GET("consensus")
     fun getConsensus(): Call<ConsensusModel>
 }
@@ -112,6 +119,10 @@ object Wallet {
     fun unlock(password: String, callback: Callback<Unit>) = siaApi.unlockWallet(password).enqueue(callback)
     fun changePassword(password: String, newPassword: String, callback: Callback<Unit>) = siaApi.changeWalletPassword(password, newPassword).enqueue(callback)
     fun scPrice(callback: Callback<ScPriceModel>) = siaApi.getScPrice("http://www.coincap.io/page/SC").enqueue(callback)
+}
+
+object Renter {
+    fun files(callback: Callback<SiaFilesModel>) = siaApi.getFiles().enqueue(callback)
 }
 
 object Consensus {

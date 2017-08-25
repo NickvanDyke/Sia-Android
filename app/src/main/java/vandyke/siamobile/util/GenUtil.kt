@@ -13,8 +13,10 @@ import android.content.Context
 import android.support.v7.app.AlertDialog
 import android.view.inputmethod.InputMethodManager
 import vandyke.siamobile.R
+import vandyke.siamobile.prefs
 import vandyke.siamobile.ui.MainActivity
 import java.math.BigDecimal
+
 
 object GenUtil {
     val devAddresses = arrayOf("20c9ed0d1c70ab0d6f694b7795bae2190db6b31d97bc2fba8067a336ffef37aacbc0c826e5d3",
@@ -52,5 +54,24 @@ object GenUtil {
         val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clip = ClipData.newPlainText("Sia Mobile copy", text)
         clipboard.primaryClip = clip
+    }
+
+    fun readableFilesizeString(filesize: Long): String {
+        var size = filesize.toDouble()
+        var i = 0
+        while (size > 1024) {
+            size /= 1024.0
+            i++
+        }
+        var sizeString = ""
+        when (i) {
+            0 -> sizeString += "B"
+            1 -> sizeString += "KB"
+            2 -> sizeString += "MB"
+            3 -> sizeString += "GB"
+            4 -> sizeString += "TB"
+            5 -> sizeString += "PB"
+        }
+        return String.format("%.${prefs.displayedDecimalPrecision}f %s", size, sizeString)
     }
 }

@@ -4,7 +4,7 @@
  * This file is subject to the terms and conditions defined in 'LICENSE.md'
  */
 
-package vandyke.siamobile.backend.models.wallet
+package vandyke.siamobile.backend.wallet.models
 
 data class TransactionsModel(val confirmedtransactions: ArrayList<TransactionModel>? = ArrayList(),
                              val unconfirmedtransactions: ArrayList<TransactionModel>? = ArrayList()) {

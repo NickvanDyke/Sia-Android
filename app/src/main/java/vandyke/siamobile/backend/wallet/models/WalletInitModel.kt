@@ -4,6 +4,6 @@
  * This file is subject to the terms and conditions defined in 'LICENSE.md'
  */
 
-package vandyke.siamobile.backend.models.wallet
+package vandyke.siamobile.backend.wallet.models
 
-data class AddressesModel(val addresses: ArrayList<String> = ArrayList())
+data class WalletInitModel(val primaryseed: String = "")
