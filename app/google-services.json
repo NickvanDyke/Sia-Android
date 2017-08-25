@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "536954498289",
+    "firebase_url": "https://sia-mobile-7adc7.firebaseio.com",
+    "project_id": "sia-mobile-7adc7",
+    "storage_bucket": "sia-mobile-7adc7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:536954498289:android:fac0ef431661317f",
+        "android_client_info": {
+          "package_name": "vandyke.siamobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "536954498289-tscfrcer20uoakj238650lsf9kfpteis.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBoYOa1STke7eyz3q7D7P7J3QmYdpU_xVM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
