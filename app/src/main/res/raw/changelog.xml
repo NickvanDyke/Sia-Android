@@ -7,6 +7,14 @@
 
 <changelog bulletedList="true">
 
+    <changelogversion versionName="2.2.11" changeDate="Aug 24, 2017">
+        <changelogtext>Switch to Firebase crash reporting</changelogtext>
+    </changelogversion>
+
+    <changelogversion versionName="2.2.10" changeDate="Aug 24, 2017">
+        <changelogtext>Fix crash that occurred when pressing Send on the Donate dialog</changelogtext>
+    </changelogversion>
+
     <changelogversion versionName="2.2.9" changeDate="Aug 19, 2017">
         <changelogtext>Fix crash that occurred when pressing Receive and then replacing the Receive window before it finished retrieving an address</changelogtext>
         <changelogtext>Change the About page</changelogtext>
