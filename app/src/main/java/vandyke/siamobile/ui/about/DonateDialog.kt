@@ -13,7 +13,7 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.view.WindowManager
 import android.widget.Button
-import kotlinx.android.synthetic.main.dialog_donate.*
+import android.widget.EditText
 import vandyke.siamobile.R
 import vandyke.siamobile.backend.networking.SiaCallback
 import vandyke.siamobile.backend.networking.Wallet
@@ -31,7 +31,7 @@ class DonateDialog : DialogFragment() {
         val dialogView = activity.layoutInflater.inflate(R.layout.dialog_donate, null)
 
         dialogView.findViewById<Button>(R.id.donateButton).setOnClickListener {
-            Wallet.send(donateAmount.text.toString().toHastings().toPlainString(), paymentRecipient, SiaCallback({ ->
+            Wallet.send(dialogView.findViewById<EditText>(R.id.donateAmount).text.toString().toHastings().toPlainString(), paymentRecipient, SiaCallback({ ->
                 SnackbarUtil.snackbar(dialogView, "Donation successful. Thank you!", Snackbar.LENGTH_SHORT)
             }, {
                 SnackbarUtil.snackbar(dialogView, it.reason.msg + ". No donation made.", Snackbar.LENGTH_SHORT)
