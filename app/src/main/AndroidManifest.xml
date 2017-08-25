@@ -24,11 +24,12 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Light">
-        <renterService android:name=".backend.siad.Siad"/>
-        <renterService android:name=".backend.CleanupService"/>
-        <renterService android:name=".backend.siad.SiadMonitorService"/>
-        <renterService android:name=".backend.wallet.WalletService"/>
-        <renterService android:name=".backend.coldstorage.ColdStorageService"/>
+        <service android:name=".backend.siad.Siad"/>
+        <service android:name=".backend.CleanupService"/>
+        <service android:name=".backend.siad.SiadMonitorService"/>
+        <service android:name=".backend.wallet.WalletService"/>
+        <service android:name=".backend.renter.RenterService"/>
+        <service android:name=".backend.coldstorage.ColdStorageService"/>
 
         <receiver android:name=".backend.BootReceiver">
             <intent-filter>

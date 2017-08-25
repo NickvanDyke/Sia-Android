@@ -14,9 +14,7 @@ import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
 import android.support.v7.widget.LinearLayoutManager
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import kotlinx.android.synthetic.main.fragment_renter.*
 import vandyke.siamobile.R
 import vandyke.siamobile.backend.BaseMonitorService
@@ -69,6 +67,18 @@ class RenterFragment : Fragment(), RenterService.FilesListener {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
+    fun refreshService() {
+        if (bound)
+            renterService.refresh()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.actionRefresh -> refreshService()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         if (bound) {
@@ -78,5 +88,15 @@ class RenterFragment : Fragment(), RenterService.FilesListener {
                 bound = false
             }
         }
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden)
+            activity.invalidateOptionsMenu()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.toolbar_renter, menu)
     }
 }
