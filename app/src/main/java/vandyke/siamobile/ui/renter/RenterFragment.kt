@@ -13,6 +13,7 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
+import android.support.design.widget.TabLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.view.*
 import kotlinx.android.synthetic.main.fragment_renter.*
@@ -30,10 +31,29 @@ class RenterFragment : Fragment(), RenterService.FilesListener {
     private var bound = false
 
     private lateinit var adapter: FilesAdapter
+    private var programmaticallySelecting = true
 
-    var rootDir: SiaDir = SiaDir("root", null)
+    var rootDir: SiaDir = SiaDir("home", null)
+
     var currentDir: SiaDir = rootDir
-        set(value) { field = value; adapter.notifyDataSetChanged(); currentDirPath.text = currentDir.fullPath }
+        set(value) {
+            programmaticallySelecting = true
+            val oldPath = field.fullPath
+            val newPath = value.fullPath
+            val breakpoint = (0 until maxOf(newPath.size, oldPath.size)).firstOrNull {
+                it > oldPath.size - 1 || it > newPath.size - 1 || newPath[it] != oldPath[it]
+            } ?: renterFilepath.tabCount
+            if (newPath.size < oldPath.size)
+                renterFilepath.getTabAt(newPath.size - 1)?.select()
+            for (i in breakpoint until renterFilepath.tabCount)
+                renterFilepath.removeTabAt(breakpoint)
+            for (i in breakpoint until newPath.size)
+                renterFilepath.addTab(renterFilepath.newTab().setText(newPath[i].name), true)
+            renterFilepath.postDelayed({ renterFilepath.fullScroll(TabLayout.FOCUS_RIGHT) }, 5)
+            field = value
+            adapter.notifyDataSetChanged()
+            programmaticallySelecting = false
+        }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View {
         setHasOptionsMenu(true)
@@ -46,22 +66,15 @@ class RenterFragment : Fragment(), RenterService.FilesListener {
 //        filesList.addItemDecoration(new DividerItemDecoration(filesList.getContext(), layoutManager.getOrientation()));
         adapter = FilesAdapter(this)
         filesList.adapter = adapter
-    }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        connection = object : ServiceConnection {
-            override fun onServiceConnected(name: ComponentName, service: IBinder) {
-                renterService = (service as BaseMonitorService.LocalBinder).service as RenterService
-                renterService.registerListener(this@RenterFragment)
-                bound = true
+        renterFilepath.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabReselected(tab: TabLayout.Tab?) {}
+            override fun onTabUnselected(tab: TabLayout.Tab?) {}
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                if (!programmaticallySelecting)
+                    currentDir = currentDir.fullPath[renterFilepath.selectedTabPosition]
             }
-
-            override fun onServiceDisconnected(name: ComponentName) {
-                bound = false
-            }
-        }
-        activity.bindService(Intent(activity, RenterService::class.java), connection, Context.BIND_AUTO_CREATE)
+        })
     }
 
     override fun onFilesUpdate(rootDir: SiaDir) {
@@ -69,6 +82,7 @@ class RenterFragment : Fragment(), RenterService.FilesListener {
             currentDir = rootDir
         }
         this.rootDir = rootDir
+        // TODO: check if currentDir is still valid
     }
 
     override fun onFilesError(error: SiaError) {
@@ -113,5 +127,21 @@ class RenterFragment : Fragment(), RenterService.FilesListener {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.toolbar_renter, menu)
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        connection = object : ServiceConnection {
+            override fun onServiceConnected(name: ComponentName, service: IBinder) {
+                renterService = (service as BaseMonitorService.LocalBinder).service as RenterService
+                renterService.registerListener(this@RenterFragment)
+                bound = true
+            }
+
+            override fun onServiceDisconnected(name: ComponentName) {
+                bound = false
+            }
+        }
+        activity.bindService(Intent(activity, RenterService::class.java), connection, Context.BIND_AUTO_CREATE)
     }
 }

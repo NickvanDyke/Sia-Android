@@ -12,7 +12,7 @@ import vandyke.siamobile.backend.networking.SiaCallback
 import vandyke.siamobile.backend.networking.SiaError
 
 class RenterService : BaseMonitorService() {
-    var rootDir = SiaDir("root", null)
+    var rootDir = SiaDir("home", null)
 
     private val listeners = ArrayList<FilesListener>()
 
@@ -22,7 +22,7 @@ class RenterService : BaseMonitorService() {
 
     fun refreshFiles() {
         Renter.files(SiaCallback({ it ->
-            rootDir = SiaDir("root", null)
+            rootDir = SiaDir("home", null)
             it.files.forEach { rootDir.addSiaFile(it) }
             sendFilesUpdate(rootDir)
         }, {

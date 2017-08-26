@@ -81,7 +81,7 @@ class ColdStorageHttpServer : NanoHTTPD("localhost", 9990) {
 
     fun files(): Response {
         val files: JSONArray = JSONArray()
-        files.addFile("foo/bar/hi.txt", 4096, true, false, 3.0, 100, 123000)
+        files.addFile("foo/bar/kappa/anotha1/dj/khaled/we/da/best/hi.txt", 4096, true, false, 3.0, 100, 123000)
         files.addFile("bar/foo/hi.txt", 1024, true, false, 2.0, 100, 123000)
         files.addFile("bar/foo/hello.png", 1024, true, false, 2.0, 100, 123000)
         files.addFile("nick/yes.pptx", 2048, true, false, 1.0, 100, 123000)

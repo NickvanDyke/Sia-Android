@@ -29,8 +29,11 @@ class SiaDir(override val name: String, override val parent: SiaDir?) : SiaNode(
             return result
         }
 
-    val fullPath: String
-        get() = fullPathHelper("")
+    val fullPathString: String
+        get() = fullPathStringHelper("")
+
+    val fullPath: ArrayList<SiaDir>
+        get() = fullPathHelper(ArrayList<SiaDir>())
 
     fun addSiaFile(file: SiaFile) {
         addSiaFileHelper(file, file.siapath.split("/"), 0)
@@ -62,8 +65,13 @@ class SiaDir(override val name: String, override val parent: SiaDir?) : SiaNode(
         return null
     }
 
-    private fun fullPathHelper(pathSoFar: String): String {
-        return parent?.fullPathHelper("$name/$pathSoFar") ?: "$name/$pathSoFar"
+    private fun fullPathHelper(dirs: ArrayList<SiaDir>): ArrayList<SiaDir> {
+        dirs.add(0, this)
+        return parent?.fullPathHelper(dirs) ?: dirs
+    }
+
+    private fun fullPathStringHelper(pathSoFar: String): String {
+        return parent?.fullPathStringHelper("$name/$pathSoFar") ?: "$name/$pathSoFar"
     }
 
     fun printAll(p: PrintStream = System.out, indent: Int = 0) {
@@ -86,17 +94,17 @@ class SiaDir(override val name: String, override val parent: SiaDir?) : SiaNode(
         }
     }
 
-    override fun toString(): String {
-        val result = StringBuilder()
-        result.append("SiaDir: ").append(name)
-        result.append("\nFiles:\n")
-        for (file in files) {
-            result.append(file.name).append("\n")
-        }
-        result.append("Directories:\n")
-        for (dir in directories) {
-            result.append(dir.name).append("\n")
-        }
-        return result.toString()
-    }
+//    override fun toString(): String {
+//        val result = StringBuilder()
+//        result.append("SiaDir: ").append(name)
+//        result.append("\nFiles:\n")
+//        for (file in files) {
+//            result.append(file.name).append("\n")
+//        }
+//        result.append("Directories:\n")
+//        for (dir in directories) {
+//            result.append(dir.name).append("\n")
+//        }
+//        return result.toString()
+//    }
 }
