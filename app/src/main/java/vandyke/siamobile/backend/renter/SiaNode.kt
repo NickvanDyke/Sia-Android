@@ -6,8 +6,10 @@
 
 package vandyke.siamobile.backend.renter
 
+import java.math.BigDecimal
+
 abstract class SiaNode {
     abstract val parent: SiaDir?
     abstract val name: String
-    abstract val size: Long
+    abstract val size: BigDecimal
 }

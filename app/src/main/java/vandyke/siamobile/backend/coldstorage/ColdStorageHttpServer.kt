@@ -26,6 +26,7 @@ import vandyke.siamobile.util.SCUtil
 import java.io.IOException
 import java.math.BigDecimal
 
+
 class ColdStorageHttpServer : NanoHTTPD("localhost", 9990) {
     private var handler: Handler = Handler()
     private val UNCACHED_DELAY: Long = 1000
@@ -73,8 +74,30 @@ class ColdStorageHttpServer : NanoHTTPD("localhost", 9990) {
             "/wallet" -> wallet()
             "/wallet/transactions" -> transactions()
             "/consensus" -> consensus()
+            "/renter/files" -> files()
             else -> response(JSONObject().put("message", "unsupported on cold storage wallet"), Response.Status.NOT_IMPLEMENTED)
         }
+    }
+
+    fun files(): Response {
+        val files: JSONArray = JSONArray()
+        files.addFile("foo/bar/hi.txt", 4096, true, false, 3.0, 100, 123000)
+        files.addFile("bar/foo/hi.txt", 1024, true, false, 2.0, 100, 123000)
+        files.addFile("bar/foo/hello.png", 1024, true, false, 2.0, 100, 123000)
+        files.addFile("nick/yes.pptx", 2048, true, false, 1.0, 100, 123000)
+        return response(JSONObject().put("files", files))
+    }
+
+    fun JSONArray.addFile(siapath: String, filesize: Long, available: Boolean, renewing: Boolean, redundancy: Double, uploadprogress: Int, expiration: Long) {
+        val file = JSONObject()
+        file.put("siapath", siapath)
+        file.put("filesize", filesize)
+        file.put("available", available)
+        file.put("renewing", renewing)
+        file.put("redundancy", redundancy)
+        file.put("uploadprogress", uploadprogress)
+        file.put("expiration", expiration)
+        this.put(file)
     }
 
     fun postRefreshRunnable() { // TODO: if it's not synced and receives wallet, transaction, or consensus call, it should make blocking calls to sync and then respond after

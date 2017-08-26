@@ -36,6 +36,7 @@
 
         <ImageView
             android:id="@+id/fileImage"
+            android:tint="@android:color/darker_gray"
             android:layout_marginStart="16dp"
             app:layout_constraintLeft_toLeftOf="parent"
             android:layout_marginLeft="16dp"

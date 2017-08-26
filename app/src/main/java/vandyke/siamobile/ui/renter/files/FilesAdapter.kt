@@ -11,10 +11,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import vandyke.siamobile.R
 import vandyke.siamobile.backend.renter.SiaDir
+import vandyke.siamobile.ui.renter.RenterFragment
 import vandyke.siamobile.util.GenUtil
 
 class FilesAdapter(private val renterFragment: RenterFragment) : RecyclerView.Adapter<FileHolder>() {
-    private var currentDir: SiaDir? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FileHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.list_item_file, parent, false)
@@ -22,11 +22,11 @@ class FilesAdapter(private val renterFragment: RenterFragment) : RecyclerView.Ad
     }
 
     override fun onBindViewHolder(holder: FileHolder, position: Int) {
-        val node = currentDir!!.nodes[position]
+        val node = renterFragment.currentDir.nodes[position]
         holder.name.text = node.name
         holder.size.text = GenUtil.readableFilesizeString(node.size)
         if (node is SiaDir) {
-//            holder.layout.setOnClickListener({ v -> renterFragment.changeCurrentDir(node) })
+            holder.layout.setOnClickListener({ v -> renterFragment.currentDir = node })
             holder.image.setImageResource(R.drawable.ic_folder)
         } else {
             holder.layout.setOnClickListener(null)
@@ -35,6 +35,6 @@ class FilesAdapter(private val renterFragment: RenterFragment) : RecyclerView.Ad
     }
 
     override fun getItemCount(): Int {
-        return currentDir?.nodes?.size ?: 0
+        return renterFragment.currentDir.nodes.size
     }
 }

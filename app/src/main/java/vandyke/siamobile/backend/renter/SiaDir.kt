@@ -7,17 +7,12 @@
 package vandyke.siamobile.backend.renter
 
 import java.io.PrintStream
+import java.math.BigDecimal
 
 class SiaDir(override val name: String, override val parent: SiaDir?) : SiaNode() {
     private val files: ArrayList<SiaFile> = ArrayList()
     private val directories: ArrayList<SiaDir> = ArrayList()
-    override val size: Long
-        get() {
-            var result: Long = 0
-            files.forEach { result += it.size }
-            directories.forEach { result += it.size }
-            return result
-        }
+
     val nodes: ArrayList<SiaNode>
         get() {
             val result = ArrayList<SiaNode>()
@@ -25,6 +20,17 @@ class SiaDir(override val name: String, override val parent: SiaDir?) : SiaNode(
             result.addAll(files)
             return result
         }
+
+    override val size: BigDecimal // bytes
+        get() {
+            var result: BigDecimal = BigDecimal.ZERO
+            files.forEach { result += it.size }
+            directories.forEach { result += it.size }
+            return result
+        }
+
+    val fullPath: String
+        get() = fullPathHelper("")
 
     fun addSiaFile(file: SiaFile) {
         addSiaFileHelper(file, file.siapath.split("/"), 0)
@@ -56,11 +62,11 @@ class SiaDir(override val name: String, override val parent: SiaDir?) : SiaNode(
         return null
     }
 
-    fun getFullPath(pathSoFar: String): String {
-        return parent?.getFullPath(name + "/" + pathSoFar) ?: pathSoFar
+    private fun fullPathHelper(pathSoFar: String): String {
+        return parent?.fullPathHelper("$name/$pathSoFar") ?: "$name/$pathSoFar"
     }
 
-    fun printAll(p: PrintStream, indent: Int) {
+    fun printAll(p: PrintStream = System.out, indent: Int = 0) {
         indent(p, indent)
         p.println(name)
         for (file in files) {

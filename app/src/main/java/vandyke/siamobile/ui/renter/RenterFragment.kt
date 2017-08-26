@@ -4,7 +4,7 @@
  * This file is subject to the terms and conditions defined in 'LICENSE.md'
  */
 
-package vandyke.siamobile.ui.renter.files
+package vandyke.siamobile.ui.renter
 
 import android.app.Fragment
 import android.content.ComponentName
@@ -21,6 +21,7 @@ import vandyke.siamobile.backend.BaseMonitorService
 import vandyke.siamobile.backend.networking.SiaError
 import vandyke.siamobile.backend.renter.RenterService
 import vandyke.siamobile.backend.renter.SiaDir
+import vandyke.siamobile.ui.renter.files.FilesAdapter
 
 
 class RenterFragment : Fragment(), RenterService.FilesListener {
@@ -29,6 +30,10 @@ class RenterFragment : Fragment(), RenterService.FilesListener {
     private var bound = false
 
     private lateinit var adapter: FilesAdapter
+
+    var rootDir: SiaDir = SiaDir("root", null)
+    var currentDir: SiaDir = rootDir
+        set(value) { field = value; adapter.notifyDataSetChanged(); currentDirPath.text = currentDir.fullPath }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View {
         setHasOptionsMenu(true)
@@ -60,11 +65,21 @@ class RenterFragment : Fragment(), RenterService.FilesListener {
     }
 
     override fun onFilesUpdate(rootDir: SiaDir) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        if (this.currentDir == this.rootDir) {
+            currentDir = rootDir
+        }
+        this.rootDir = rootDir
     }
 
     override fun onFilesError(error: SiaError) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        error.snackbar(view)
+    }
+
+    fun goUpDir(): Boolean {
+        if (currentDir.parent == null)
+            return false
+        currentDir = currentDir.parent!!
+        return true
     }
 
     fun refreshService() {

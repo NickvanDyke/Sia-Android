@@ -6,16 +6,18 @@
 
 package vandyke.siamobile.backend.renter
 
+import java.math.BigDecimal
+
 
 data class SiaFile(val siapath: String = "",
-                   val filesize: Long = 0,
+                   val filesize: BigDecimal = BigDecimal.ZERO, // bytes
                    val available: Boolean = false,
                    val renewing: Boolean = false,
                    val redundancy: Int = 0,
                    val uploadprogress: Int = 0,
                    val expiration: Long = 0) : SiaNode() {
     override lateinit var parent: SiaDir
-    override val name by lazy { siapath.substring(siapath.lastIndexOf("/")) }
-    override val size: Long
+    override val name by lazy { siapath.substring(siapath.lastIndexOf("/") + 1) }
+    override val size: BigDecimal
         get() = filesize
 }

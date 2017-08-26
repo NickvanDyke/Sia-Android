@@ -56,22 +56,25 @@ object GenUtil {
         clipboard.primaryClip = clip
     }
 
-    fun readableFilesizeString(filesize: Long): String {
-        var size = filesize.toDouble()
+    fun readableFilesizeString(filesize: BigDecimal): String {
+        var size = filesize
         var i = 0
-        while (size > 1024) {
-            size /= 1024.0
+        val kilo = BigDecimal("1024")
+        while (size > kilo) {
+            size /= kilo
             i++
         }
-        var sizeString = ""
+        val sizeString: String
         when (i) {
-            0 -> sizeString += "B"
-            1 -> sizeString += "KB"
-            2 -> sizeString += "MB"
-            3 -> sizeString += "GB"
-            4 -> sizeString += "TB"
-            5 -> sizeString += "PB"
+            0 -> sizeString = "B"
+            1 -> sizeString = "KB"
+            2 -> sizeString = "MB"
+            3 -> sizeString = "GB"
+            4 -> sizeString = "TB"
+            5 -> sizeString = "PB"
+            else -> sizeString = "really big"
         }
+
         return String.format("%.${prefs.displayedDecimalPrecision}f %s", size, sizeString)
     }
 }

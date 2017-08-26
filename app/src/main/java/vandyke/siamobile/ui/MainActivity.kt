@@ -40,7 +40,7 @@ import vandyke.siamobile.ui.about.AboutSiaActivity
 import vandyke.siamobile.ui.about.ModesActivity
 import vandyke.siamobile.ui.about.SetupRemoteFragment
 import vandyke.siamobile.ui.hosting.fragments.HostingFragment
-import vandyke.siamobile.ui.renter.files.RenterFragment
+import vandyke.siamobile.ui.renter.RenterFragment
 import vandyke.siamobile.ui.settings.GlobalPrefsListener
 import vandyke.siamobile.ui.settings.SettingsFragment
 import vandyke.siamobile.ui.terminal.TerminalFragment
@@ -244,9 +244,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (drawerLayout.isDrawerVisible(GravityCompat.START))
+        if (drawerLayout.isDrawerVisible(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START)
-        else if (titleBackstack.size <= 1) {
+        } else if (currentlyVisibleFragment is RenterFragment && (currentlyVisibleFragment as RenterFragment).goUpDir()) {
+
+        } else if (titleBackstack.size <= 1) {
             GenUtil.getDialogBuilder(this)
                     .setTitle("Quit?")
                     .setPositiveButton("Yes") { dialogInterface, i -> finish() }

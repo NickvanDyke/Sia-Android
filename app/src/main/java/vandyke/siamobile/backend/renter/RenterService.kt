@@ -17,7 +17,7 @@ class RenterService : BaseMonitorService() {
     private val listeners = ArrayList<FilesListener>()
 
     override fun refresh() {
-
+        refreshFiles()
     }
 
     fun refreshFiles() {
