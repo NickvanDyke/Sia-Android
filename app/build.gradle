@@ -15,8 +15,8 @@ android {
         applicationId "vandyke.siamobile"
         minSdkVersion 16
         targetSdkVersion 26
-        versionCode 20211
-        versionName "2.2.11"
+        versionCode 20212
+        versionName "2.2.12"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }

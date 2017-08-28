@@ -7,6 +7,11 @@
 
 <changelog bulletedList="true">
 
+    <changelogversion versionName="2.2.12" changeDate="Aug 27, 2017">
+        <changelogtext>Improve how Siad is started, stopped, and monitored</changelogtext>
+        <changelogtext>Services won't attempt to start in the background on Android O, since it has tighter restrictions on background services</changelogtext>
+    </changelogversion>
+
     <changelogversion versionName="2.2.11" changeDate="Aug 24, 2017">
         <changelogtext>Switch to Firebase crash reporting</changelogtext>
     </changelogversion>
