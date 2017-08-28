@@ -53,7 +53,6 @@ class SettingsFragment : PreferenceFragment() {
         useExternal = findPreference("useExternal") as SwitchPreference
         minBattery = findPreference("localNodeMinBattery") as EditTextPreference
         runInBackground = findPreference("runInBackground") as SwitchPreference
-        setColdStorageSettingsVisibility()
         setRemoteSettingsVisibility()
         setLocalSettingsVisibility()
 
@@ -106,7 +105,6 @@ class SettingsFragment : PreferenceFragment() {
         prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
             when (key) {
                 "operationMode" -> {
-                    setColdStorageSettingsVisibility()
                     setRemoteSettingsVisibility()
                     setLocalSettingsVisibility()
                     when (prefs.operationMode) {
@@ -157,10 +155,6 @@ class SettingsFragment : PreferenceFragment() {
                 prefs.customBgBase64 = Base64.encodeToString(b, Base64.DEFAULT)
             }
         }
-    }
-
-    private fun setColdStorageSettingsVisibility() {
-
     }
 
     private fun setRemoteSettingsVisibility() {

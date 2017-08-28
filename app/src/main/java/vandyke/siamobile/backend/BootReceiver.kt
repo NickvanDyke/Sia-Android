@@ -22,12 +22,12 @@ class BootReceiver : BroadcastReceiver() {
         if (prefs.runInBackground) {
             when (prefs.operationMode) {
                 "cold_storage" -> {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
                         context.startService(Intent(context, ColdStorageService::class.java))
                 }
                 "local_full_node" -> context.startService(Intent(context, SiadService::class.java))
             }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
                 context.startService(Intent(context, WalletService::class.java))
         }
     }

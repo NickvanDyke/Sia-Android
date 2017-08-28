@@ -10,13 +10,14 @@ import android.app.Notification
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.graphics.BitmapFactory
 import android.net.ConnectivityManager
+import android.os.BatteryManager
+import android.os.Binder
 import android.os.Build
 import android.os.IBinder
+import android.support.v4.content.LocalBroadcastManager
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.async
 import vandyke.siamobile.R
@@ -30,6 +31,8 @@ import java.io.InputStreamReader
 
 class SiadService : Service() {
 
+    private val binder = LocalBinder()
+
     private val statusReceiver: StatusReceiver = StatusReceiver(this)
     private var siadFile: File? = null
     private var siadProcess: java.lang.Process? = null
@@ -42,6 +45,7 @@ class SiadService : Service() {
         val intentFilter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
         intentFilter.addAction(Intent.ACTION_BATTERY_CHANGED)
         applicationContext.registerReceiver(statusReceiver, intentFilter)
+        LocalBroadcastManager.getInstance(applicationContext).registerReceiver(statusReceiver, intentFilter)
         siadFile = StorageUtil.copyBinary("siad", this@SiadService, false)
     }
 
@@ -104,10 +108,6 @@ class SiadService : Service() {
             stopSelf()
     }
 
-    override fun onBind(intent: Intent): IBinder? {
-        return null
-    }
-
     fun siadNotification(text: String) {
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(SIAD_NOTIFICATION, buildSiadNotification(text))
@@ -136,8 +136,46 @@ class SiadService : Service() {
     companion object {
         // TODO: might cause memory leaks? I think it should be fine as long as the listeners properly unregister themselves
         val listeners = ArrayList<SiadListener>()
+
         fun addListener(listener: SiadListener) = listeners.add(listener)
         fun removeListener(listener: SiadListener) = listeners.remove(listener)
         var bufferedOutput: String = ""
+
+        fun isBatteryGood(intent: Intent): Boolean {
+            if (intent.action != Intent.ACTION_BATTERY_CHANGED)
+                return false
+            val level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0)
+            val scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, 0)
+            println("$level, $scale, ${level * 100 / scale}")
+            return (level * 100 / scale) >= prefs.localNodeMinBattery
+        }
+
+        fun isConnectionGood(context: Context): Boolean {
+            val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            val activeNetInfo = connectivityManager.activeNetworkInfo
+            return activeNetInfo != null && activeNetInfo.type == ConnectivityManager.TYPE_WIFI || prefs.runLocalNodeOffWifi
+        }
+
+        fun singleAction(context: Context, action: (service: SiadService) -> Unit) {
+            val connection = object : ServiceConnection {
+                override fun onServiceConnected(name: ComponentName, service: IBinder) {
+                    action((service as SiadService.LocalBinder).service)
+                    context.unbindService(this)
+                }
+
+                override fun onServiceDisconnected(name: ComponentName) {
+                }
+            }
+            context.bindService(Intent(context, SiadService::class.java), connection, Context.BIND_AUTO_CREATE)
+        }
+    }
+
+    override fun onBind(intent: Intent): IBinder {
+        return binder
+    }
+
+    inner class LocalBinder : Binder() {
+        val service: SiadService
+            get() = this@SiadService
     }
 }

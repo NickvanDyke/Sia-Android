@@ -13,7 +13,7 @@
             android:title="Theme"
             android:entries="@array/theme_entries"
             android:entryValues="@array/theme_values"
-            android:defaultValue="light"/>
+            android:defaultValue="dark"/>
         <SwitchPreference
             android:summary="Changes will apply on next restart."
             android:key="transparentBars"
@@ -64,7 +64,7 @@
             android:defaultValue="false"/>
         <EditTextPreference
             android:key="localNodeMinBattery"
-            android:title="Minimum battery level to run local node"
+            android:title="Minimum battery percentage to run local node"
             android:numeric="integer"
             android:gravity="center"
             android:defaultValue="20"/>

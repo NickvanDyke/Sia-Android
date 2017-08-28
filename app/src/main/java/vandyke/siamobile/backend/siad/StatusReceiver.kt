@@ -10,7 +10,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
-import android.os.BatteryManager
 import vandyke.siamobile.prefs
 
 class StatusReceiver(val siadService: SiadService) : BroadcastReceiver() {
@@ -20,12 +19,9 @@ class StatusReceiver(val siadService: SiadService) : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action == Intent.ACTION_BATTERY_CHANGED) {
-            val level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0)
-            batteryGood = level >= prefs.localNodeMinBattery
+            batteryGood = SiadService.isBatteryGood(intent)
         } else if (intent.action == ConnectivityManager.CONNECTIVITY_ACTION) {
-            val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-            val activeNetInfo = connectivityManager.activeNetworkInfo
-            networkGood = activeNetInfo != null && activeNetInfo.type == ConnectivityManager.TYPE_WIFI || prefs.runLocalNodeOffWifi
+            networkGood = SiadService.isConnectionGood(context)
         }
 
         if (!batteryGood) {
