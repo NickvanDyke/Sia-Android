@@ -81,7 +81,7 @@ object SiaApi {
                     val original: Request = it.request()
                     val request: Request = original.newBuilder()
                             .header("User-agent", "Sia-Agent")
-                            .header("Authorization", "Basic " + Base64.encodeToString(":${prefs.apiPass}".toByteArray(), 0).trim())
+                            .header("Authorization", "Basic " + Base64.encodeToString(":${prefs.apiPass}".toByteArray(), Base64.NO_WRAP))
 //                            .url(original.url().toString().replace(Regex("""http://(\d+\.\d+\.\d+\.\d+|localhost):\d+/"""), "http://${prefs.address}/"))
                             .method(original.method(), original.body())
                             .build()

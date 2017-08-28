@@ -21,14 +21,14 @@ import vandyke.siamobile.backend.networking.Consensus
 import vandyke.siamobile.backend.networking.SiaCallback
 import vandyke.siamobile.backend.networking.SiaError
 import vandyke.siamobile.backend.networking.Wallet
-import vandyke.siamobile.backend.siad.Siad
+import vandyke.siamobile.backend.siad.SiadService
 import vandyke.siamobile.prefs
 import vandyke.siamobile.util.NotificationUtil
 import vandyke.siamobile.util.round
 import vandyke.siamobile.util.toSC
 import java.math.BigDecimal
 
-class WalletService : BaseMonitorService(), Siad.SiadListener {
+class WalletService : BaseMonitorService(), SiadService.SiadListener {
 
     private val TRANSACTION_NOTIFICATION: Int = 3
     private val SYNC_NOTIFICATION: Int = 2
@@ -37,12 +37,12 @@ class WalletService : BaseMonitorService(), Siad.SiadListener {
 
     override fun onCreate() {
         super.onCreate()
-        Siad.addListener(this)
+        SiadService.addListener(this)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        Siad.removeListener(this)
+        SiadService.removeListener(this)
     }
 
     override fun refresh() {

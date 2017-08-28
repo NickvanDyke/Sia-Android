@@ -32,7 +32,7 @@ import kotlinx.android.synthetic.main.activity_main_layout.*
 import vandyke.siamobile.R
 import vandyke.siamobile.backend.CleanupService
 import vandyke.siamobile.backend.coldstorage.ColdStorageService
-import vandyke.siamobile.backend.siad.SiadMonitorService
+import vandyke.siamobile.backend.siad.SiadService
 import vandyke.siamobile.backend.wallet.WalletService
 import vandyke.siamobile.prefs
 import vandyke.siamobile.ui.about.AboutFragment
@@ -158,7 +158,7 @@ class MainActivity : AppCompatActivity() {
 
         startService(Intent(this, CleanupService::class.java))
         if (prefs.operationMode == "local_full_node")
-            startService(Intent(this, SiadMonitorService::class.java))
+            startService(Intent(this, SiadService::class.java))
         else if (prefs.operationMode == "cold_storage")
             startService(Intent(this, ColdStorageService::class.java))
 

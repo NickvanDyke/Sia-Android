@@ -13,7 +13,7 @@ import android.net.ConnectivityManager
 import android.os.BatteryManager
 import vandyke.siamobile.prefs
 
-class StatusReceiver : BroadcastReceiver() {
+class StatusReceiver(val siadService: SiadService) : BroadcastReceiver() {
 
     private var batteryGood: Boolean = false
     private var networkGood: Boolean = false
@@ -28,10 +28,14 @@ class StatusReceiver : BroadcastReceiver() {
             networkGood = activeNetInfo != null && activeNetInfo.type == ConnectivityManager.TYPE_WIFI || prefs.runLocalNodeOffWifi
         }
 
-        if (batteryGood && networkGood) {
-            context.startService(Intent(context, Siad::class.java))
-        } else {
-            context.stopService(Intent(context, Siad::class.java))
+        if (!batteryGood) {
+            siadService.siadNotification("Stopped - battery is below ${prefs.localNodeMinBattery}%")
+            siadService.stopSiad()
+        } else if (!networkGood) {
+            siadService.siadNotification("Stopped - not connected to WiFi")
+            siadService.stopSiad()
+        } else if (!siadService.isSiadRunning) {
+            siadService.startSiad()
         }
     }
 }

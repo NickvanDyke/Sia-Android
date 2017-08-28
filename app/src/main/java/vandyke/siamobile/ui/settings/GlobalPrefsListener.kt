@@ -18,8 +18,7 @@ import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.runBlocking
 import vandyke.siamobile.backend.coldstorage.ColdStorageService
 import vandyke.siamobile.backend.networking.SiaApi
-import vandyke.siamobile.backend.siad.Siad
-import vandyke.siamobile.backend.siad.SiadMonitorService
+import vandyke.siamobile.backend.siad.SiadService
 import vandyke.siamobile.backend.wallet.WalletService
 import vandyke.siamobile.prefs
 
@@ -31,18 +30,18 @@ class GlobalPrefsListener(private val context: Context) : SharedPreferences.OnSh
                 when (prefs.operationMode) {
                     "cold_storage" -> {
                         prefs.address = "localhost:9990"
-                        context.stopService(Intent(context, SiadMonitorService::class.java))
+                        context.stopService(Intent(context, SiadService::class.java))
                         context.startService(Intent(context, ColdStorageService::class.java))
                     }
                     "remote_full_node" -> {
                         prefs.address = prefs.remoteAddress
                         context.stopService(Intent(context, ColdStorageService::class.java))
-                        context.stopService(Intent(context, SiadMonitorService::class.java))
+                        context.stopService(Intent(context, SiadService::class.java))
                     }
                     "local_full_node" -> {
                         prefs.address = "localhost:9980"
                         context.stopService(Intent(context, ColdStorageService::class.java))
-                        context.startService(Intent(context, SiadMonitorService::class.java))
+                        context.startService(Intent(context, SiadService::class.java))
                     }
                 }
                 async(CommonPool) {
@@ -56,9 +55,9 @@ class GlobalPrefsListener(private val context: Context) : SharedPreferences.OnSh
                     val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
                     val activeNetInfo = connectivityManager.activeNetworkInfo
                     if (activeNetInfo != null && activeNetInfo.type == ConnectivityManager.TYPE_WIFI || prefs.runLocalNodeOffWifi) {
-                        context.startService(Intent(context, Siad::class.java))
+                        context.startService(Intent(context, SiadService::class.java))
                     } else {
-                        context.stopService(Intent(context, Siad::class.java))
+                        context.stopService(Intent(context, SiadService::class.java))
                     }
                 }
             }
@@ -67,9 +66,9 @@ class GlobalPrefsListener(private val context: Context) : SharedPreferences.OnSh
                     val batteryStatus = context.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
                     val level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
                     if (level >= prefs.localNodeMinBattery)
-                        context.startService(Intent(context, Siad::class.java))
+                        context.startService(Intent(context, SiadService::class.java))
                     else
-                        context.stopService(Intent(context, Siad::class.java))
+                        context.stopService(Intent(context, SiadService::class.java))
                 }
             }
             "address" -> SiaApi.rebuildApi()
