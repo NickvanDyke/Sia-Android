@@ -15,12 +15,11 @@ import vandyke.siamobile.R
 import vandyke.siamobile.backend.networking.SiaCallback
 import vandyke.siamobile.backend.networking.SiaError
 import vandyke.siamobile.backend.networking.Wallet
-import vandyke.siamobile.backend.wallet.WalletService
 import vandyke.siamobile.prefs
 import vandyke.siamobile.util.GenUtil
 import vandyke.siamobile.util.SnackbarUtil
 
-class WalletCreateDialog : BaseDialogFragment() {
+class WalletCreateDialog(private val successCallback: (() -> Unit)? = null) : BaseDialogFragment() {
     override val layout: Int = R.layout.fragment_wallet_create
 
     override fun create(view: View?, savedInstanceState: Bundle?) {
@@ -53,7 +52,7 @@ class WalletCreateDialog : BaseDialogFragment() {
                 Wallet.init(password, dictionary, force, SiaCallback({ it ->
                     SnackbarUtil.successSnackbar(view)
                     close()
-                    WalletService.singleAction(activity, { it.refresh() })
+                    successCallback?.invoke()
                     if (prefs.operationMode == "cold_storage")
                         showCsWarning()
                     showSeed(it.primaryseed)
@@ -69,7 +68,7 @@ class WalletCreateDialog : BaseDialogFragment() {
                 Wallet.initSeed(password, dictionary, walletCreateSeed.text.toString(), force, SiaCallback({ ->
                     SnackbarUtil.successSnackbar(view)
                     close()
-                    WalletService.singleAction(activity, { it.refresh() })
+                    successCallback?.invoke()
                     if (prefs.operationMode == "cold_storage")
                         showCsWarning()
                 }, {

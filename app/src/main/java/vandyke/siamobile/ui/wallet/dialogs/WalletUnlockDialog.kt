@@ -14,10 +14,9 @@ import vandyke.siamobile.R
 import vandyke.siamobile.backend.networking.SiaCallback
 import vandyke.siamobile.backend.networking.SiaError
 import vandyke.siamobile.backend.networking.Wallet
-import vandyke.siamobile.backend.wallet.WalletService
 import vandyke.siamobile.util.SnackbarUtil
 
-class WalletUnlockDialog : BaseDialogFragment() {
+class WalletUnlockDialog(private val successCallback: (() -> Unit)? = null) : BaseDialogFragment() {
     override val layout: Int = R.layout.fragment_wallet_unlock
 
     override fun create(view: View?, savedInstanceState: Bundle?) {
@@ -26,7 +25,7 @@ class WalletUnlockDialog : BaseDialogFragment() {
             Wallet.unlock(walletPassword.text.toString(), SiaCallback({ ->
                 SnackbarUtil.successSnackbar(view)
                 close()
-                WalletService.singleAction(activity, { it.refresh() })
+                successCallback?.invoke()
             }, {
                 if (it.reason == SiaError.Reason.WALLET_SCAN_IN_PROGRESS) {
                     SnackbarUtil.snackbar(container, "Scanning the blockchain, please wait. Your wallet will unlock when finished", Snackbar.LENGTH_LONG)

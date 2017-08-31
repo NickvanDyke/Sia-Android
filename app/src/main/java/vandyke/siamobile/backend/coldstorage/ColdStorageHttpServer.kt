@@ -14,10 +14,10 @@ import kotlinx.coroutines.experimental.runBlocking
 import org.json.JSONArray
 import org.json.JSONObject
 import siawallet.Wallet
-import vandyke.siamobile.backend.models.explorer.ExplorerTransactionModel
-import vandyke.siamobile.backend.models.wallet.TransactionInputModel
-import vandyke.siamobile.backend.models.wallet.TransactionModel
-import vandyke.siamobile.backend.models.wallet.TransactionOutputModel
+import vandyke.siamobile.backend.data.explorer.ExplorerTransactionData
+import vandyke.siamobile.backend.data.wallet.TransactionData
+import vandyke.siamobile.backend.data.wallet.TransactionInputData
+import vandyke.siamobile.backend.data.wallet.TransactionOutputData
 import vandyke.siamobile.backend.networking.Explorer
 import vandyke.siamobile.backend.networking.SiaCallback
 import vandyke.siamobile.prefs
@@ -41,7 +41,7 @@ class ColdStorageHttpServer : NanoHTTPD("localhost", 9990) {
     private var unlocked: Boolean = false
 
     private var balanceHastings: BigDecimal = BigDecimal.ZERO
-    private var transactions: ArrayList<TransactionModel> = ArrayList()
+    private var transactions: ArrayList<TransactionData> = ArrayList()
     private var height: Long = 0
     private var synced: Boolean = false
 
@@ -98,9 +98,9 @@ class ColdStorageHttpServer : NanoHTTPD("localhost", 9990) {
 //                addresses = arrayListOf("20c9ed0d1c70ab0d6f694b7795bae2190db6b31d97bc2fba8067a336ffef37aacbc0c826e5d3", "4c06e08c8689625ddf9831415706529673077325d08e9c16be401d348270937c2db7e284a57f")
                 for (address in addresses) {
                     Explorer.siaTechHash(address, SiaCallback({ it ->
-                        val txModels: ArrayList<TransactionModel> = ArrayList()
-                        for (tx in it.transactions) txModels += tx.toTransactionModel()
-                        for (tx in txModels) {
+                        val txData: ArrayList<TransactionData> = ArrayList()
+                        for (tx in it.transactions) txData += tx.toTransactionModel()
+                        for (tx in txData) {
                             if (tx !in transactions) {
                                 transactions.add(tx)
                                 balanceHastings += tx.netValue
@@ -169,23 +169,23 @@ class ColdStorageHttpServer : NanoHTTPD("localhost", 9990) {
     fun transactions(): Response {
         if (!synced) runBlocking { delay(UNCACHED_DELAY) }
         val array = JSONArray()
-        for (tx in transactions.sortedWith(Comparator<TransactionModel> { p0, p1 -> (p0.confirmationheight - p1.confirmationheight).toInt() })) {
+        for (tx in transactions.sortedWith(Comparator<TransactionData> { p0, p1 -> (p0.confirmationheight - p1.confirmationheight).toInt() })) {
             array.put(createJsonFromTx(tx))
         }
         return response(JSONObject().put("confirmedtransactions", array))
     }
 
-    fun ExplorerTransactionModel.toTransactionModel(): TransactionModel {
-        val inputsList = ArrayList<TransactionInputModel>()
+    fun ExplorerTransactionData.toTransactionModel(): TransactionData {
+        val inputsList = ArrayList<TransactionInputData>()
         for (input in siacoininputoutputs)
-            inputsList.add(TransactionInputModel(walletaddress = addresses.contains(input.unlockhash), value = input.value))
-        val outputsList = ArrayList<TransactionOutputModel>()
+            inputsList.add(TransactionInputData(walletaddress = addresses.contains(input.unlockhash), value = input.value))
+        val outputsList = ArrayList<TransactionOutputData>()
         for (output in rawtransaction.siacoinoutputs)
-            outputsList.add(TransactionOutputModel(walletaddress = addresses.contains(output.unlockhash), value = output.value))
-        return TransactionModel(id, BigDecimal(height), BigDecimal(SCUtil.estimatedTimeAtBlock(height)), inputsList, outputsList)
+            outputsList.add(TransactionOutputData(walletaddress = addresses.contains(output.unlockhash), value = output.value))
+        return TransactionData(id, BigDecimal(height), BigDecimal(SCUtil.estimatedTimeAtBlock(height)), inputsList, outputsList)
     }
 
-    fun createJsonFromTx(tx: TransactionModel): JSONObject {
+    fun createJsonFromTx(tx: TransactionData): JSONObject {
         val txJson = JSONObject()
         // put the basic tx info
         txJson.put("transactionid", tx.transactionid)

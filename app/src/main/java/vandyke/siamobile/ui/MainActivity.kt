@@ -33,7 +33,6 @@ import vandyke.siamobile.R
 import vandyke.siamobile.backend.CleanupService
 import vandyke.siamobile.backend.coldstorage.ColdStorageService
 import vandyke.siamobile.backend.siad.SiadService
-import vandyke.siamobile.backend.wallet.WalletService
 import vandyke.siamobile.prefs
 import vandyke.siamobile.ui.about.AboutFragment
 import vandyke.siamobile.ui.about.AboutSiaActivity
@@ -161,8 +160,6 @@ class MainActivity : AppCompatActivity() {
             startService(Intent(this, SiadService::class.java))
         else if (prefs.operationMode == "cold_storage")
             startService(Intent(this, ColdStorageService::class.java))
-
-        startService(Intent(this, WalletService::class.java))
 
         when (prefs.startupPage) {
             "files" -> displayFragmentClass(FilesFragment::class.java, "Files", R.id.drawer_item_files)

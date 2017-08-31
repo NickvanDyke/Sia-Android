@@ -13,7 +13,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import vandyke.siamobile.R
-import vandyke.siamobile.backend.models.wallet.TransactionModel
+import vandyke.siamobile.backend.data.wallet.TransactionData
 import vandyke.siamobile.ui.MainActivity
 import vandyke.siamobile.util.round
 import vandyke.siamobile.util.toSC
@@ -22,7 +22,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 class TransactionAdapter : RecyclerView.Adapter<TransactionHolder>() {
-    private var transactions: ArrayList<TransactionModel> = ArrayList()
+    private var transactions: ArrayList<TransactionData> = ArrayList()
     private val df = SimpleDateFormat("MMM dd\nh:mm a", Locale.getDefault())
     private val red = Color.rgb(186, 63, 63) // TODO: choose better colors maybe
     private val green = Color.rgb(0, 114, 11)
@@ -67,5 +67,5 @@ class TransactionAdapter : RecyclerView.Adapter<TransactionHolder>() {
 
     override fun getItemCount(): Int = transactions.size
 
-    fun setTransactions(transactions: ArrayList<TransactionModel>) { this.transactions = transactions }
+    fun setTransactions(transactions: ArrayList<TransactionData>) { this.transactions = transactions }
 }

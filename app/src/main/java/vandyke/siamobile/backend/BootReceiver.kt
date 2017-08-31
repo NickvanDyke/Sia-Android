@@ -12,7 +12,6 @@ import android.content.Intent
 import android.os.Build
 import vandyke.siamobile.backend.coldstorage.ColdStorageService
 import vandyke.siamobile.backend.siad.SiadService
-import vandyke.siamobile.backend.wallet.WalletService
 import vandyke.siamobile.prefs
 
 class BootReceiver : BroadcastReceiver() {
@@ -27,8 +26,6 @@ class BootReceiver : BroadcastReceiver() {
                 }
                 "local_full_node" -> context.startService(Intent(context, SiadService::class.java))
             }
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
-                context.startService(Intent(context, WalletService::class.java))
         }
     }
 }

@@ -26,7 +26,6 @@
         android:theme="@style/AppTheme.Light">
         <service android:name=".backend.siad.SiadService"/>
         <service android:name=".backend.CleanupService"/>
-        <service android:name=".backend.wallet.WalletService"/>
         <service android:name=".backend.coldstorage.ColdStorageService"/>
 
         <receiver android:name=".backend.BootReceiver">

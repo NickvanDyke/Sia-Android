@@ -10,14 +10,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.SharedPreferences
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.delay
-import kotlinx.coroutines.experimental.runBlocking
 import vandyke.siamobile.backend.coldstorage.ColdStorageService
 import vandyke.siamobile.backend.networking.SiaApi
 import vandyke.siamobile.backend.siad.SiadService
-import vandyke.siamobile.backend.wallet.WalletService
 import vandyke.siamobile.prefs
 
 class GlobalPrefsListener(private val context: Context) : SharedPreferences.OnSharedPreferenceChangeListener {
@@ -42,12 +37,8 @@ class GlobalPrefsListener(private val context: Context) : SharedPreferences.OnSh
                         context.startService(Intent(context, SiadService::class.java))
                     }
                 }
-                async(CommonPool) {
-                    runBlocking { delay(1000) } // sleep for 1 second to give whatever service/server was started time to start before querying it
-                    WalletService.singleAction(this@GlobalPrefsListener.context, { it.refresh() })
-                }.start()
             }
-            "refreshInterval" -> WalletService.singleAction(context, { it.postRefreshRunnable() })
+            "refreshInterval" -> TODO("change job interval")
             "runLocalNodeOffWifi" -> {
                 if (prefs.operationMode == "local_full_node") {
                     if (SiadService.isConnectionGood(context))
@@ -78,7 +69,6 @@ class GlobalPrefsListener(private val context: Context) : SharedPreferences.OnSh
             "address" -> SiaApi.rebuildApi()
             "remoteAddress" -> if (prefs.operationMode == "remote_full_node") {
                 prefs.address = prefs.remoteAddress
-                WalletService.singleAction(context, { it.refresh() })
             }
         }
     }
