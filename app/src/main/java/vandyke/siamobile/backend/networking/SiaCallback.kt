@@ -11,9 +11,9 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class SiaCallback<T> : Callback<T> {
-    private var onSuccess: ((T) -> Unit)? = null
-    private var onSuccessNull: (() -> Unit)? = null
-    private var onError: (SiaError) -> Unit
+    var onSuccess: ((T) -> Unit)? = null
+    var onSuccessNull: (() -> Unit)? = null
+    var onError: (SiaError) -> Unit
 
     constructor(onSuccess: (T) -> Unit, onError: (SiaError) -> Unit) {
         this.onSuccess = onSuccess

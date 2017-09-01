@@ -52,7 +52,6 @@ class SettingsFragment : PreferenceFragment() {
         runLocalNodeOffWifi = findPreference("runLocalNodeOffWifi") as SwitchPreference
         useExternal = findPreference("useExternal") as SwitchPreference
         minBattery = findPreference("localNodeMinBattery") as EditTextPreference
-        runInBackground = findPreference("runInBackground") as SwitchPreference
         setRemoteSettingsVisibility()
         setLocalSettingsVisibility()
 
@@ -122,10 +121,6 @@ class SettingsFragment : PreferenceFragment() {
                         }
                     }
                 }
-                "monitorRefreshInterval" -> if (prefs.refreshInterval == 0)
-                    operation.removePreference(runInBackground)
-                else
-                    operation.addPreference(runInBackground)
                 "theme" -> if (prefs.theme == "custom") {
                     val intent = Intent(Intent.ACTION_GET_CONTENT)
                     intent.type = "image/*"

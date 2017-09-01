@@ -14,7 +14,6 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.*
 import kotlinx.android.synthetic.main.fragment_wallet.*
 import vandyke.siamobile.R
-import vandyke.siamobile.backend.coldstorage.ColdStorageHttpServer
 import vandyke.siamobile.backend.data.consensus.ConsensusData
 import vandyke.siamobile.backend.data.wallet.ScPriceData
 import vandyke.siamobile.backend.data.wallet.TransactionData
@@ -25,6 +24,7 @@ import vandyke.siamobile.backend.siad.SiadService
 import vandyke.siamobile.prefs
 import vandyke.siamobile.ui.MainActivity
 import vandyke.siamobile.ui.wallet.model.IWalletModel
+import vandyke.siamobile.ui.wallet.model.WalletModelColdStorage
 import vandyke.siamobile.ui.wallet.model.WalletModelHttp
 import vandyke.siamobile.ui.wallet.presenter.IWalletPresenter
 import vandyke.siamobile.ui.wallet.presenter.WalletPresenter
@@ -35,8 +35,9 @@ import java.math.BigDecimal
 
 class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
 
-    private val model: IWalletModel = WalletModelHttp()
-    private val presenter: IWalletPresenter = WalletPresenter(this, model)
+    private lateinit var model: IWalletModel
+    private lateinit var presenter: IWalletPresenter
+    private var mode: String = "none"
 
     private val adapter = TransactionAdapter()
 
@@ -50,6 +51,7 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        /* color stuff depending on theme */
         if (MainActivity.appTheme === MainActivity.Theme.AMOLED || MainActivity.appTheme === MainActivity.Theme.CUSTOM) {
             top_shadow.visibility = View.GONE
         } else if (MainActivity.appTheme === MainActivity.Theme.DARK) {
@@ -59,29 +61,29 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
             receiveButton.setBackgroundColor(android.R.color.transparent)
             sendButton.setBackgroundColor(android.R.color.transparent)
         }
+        syncBar.setProgressTextColor(MainActivity.defaultTextColor)
 
+        /* set up recyclerview for transactions */
         val layoutManager = LinearLayoutManager(activity)
         transactionList.layoutManager = layoutManager
         transactionList.addItemDecoration(DividerItemDecoration(transactionList.context, layoutManager.orientation))
         transactionList.adapter = adapter
 
+        /* set up click listeners for the big stuff */
         sendButton.setOnClickListener { replaceExpandFrame(WalletSendDialog(presenter)) }
         receiveButton.setOnClickListener { replaceExpandFrame(WalletReceiveDialog(model)) }
-
         balanceText.setOnClickListener { v ->
-            if (prefs.operationMode == "cold_storage") {
-                ColdStorageHttpServer.showColdStorageHelp(v.context)
-            } else {
-                GenUtil.getDialogBuilder(v.context)
-                        .setTitle("Exact Balance")
-                        .setMessage("${balanceHastings.toSC().toPlainString()} Siacoins")
-                        .setPositiveButton("Close", null)
-                        .show()
-            }
+            GenUtil.getDialogBuilder(v.context)
+                    .setTitle("Exact Balance")
+                    .setMessage("${balanceHastings.toSC().toPlainString()} Siacoins")
+                    .setPositiveButton("Close", null)
+                    .show()
         }
 
-        syncBar.setProgressTextColor(MainActivity.defaultTextColor)
+        /* set listener to refresh the presenter when the swipelayout is triggered */
+        transactionListSwipe.setOnRefreshListener { presenter.refresh() }
 
+        /* listen to siad output, so that we can refresh the presenter at appropriate times */
         SiadService.addListener(this)
     }
 
@@ -95,6 +97,7 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
         balanceUnconfirmed.text = "${if (walletData.unconfirmedsiacoinbalance > BigDecimal.ZERO) "+" else ""}${walletData.unconfirmedsiacoinbalance.toSC().round().toPlainString()} unconfirmed"
         balanceText.text = walletData.confirmedsiacoinbalance.toSC().round().toPlainString()
         setStatusIcon()
+        transactionListSwipe.isRefreshing = false
 //        refreshButton.actionView = null
     }
 
@@ -117,9 +120,6 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
         if (consensusData.synced) {
             syncText.text = "Synced: $height"
             syncBar.progress = 100
-        } else if (consensusData.syncprogress == 0.0) {
-            syncText.text = "Not synced"
-            syncBar.progress = 0
         } else {
             syncText.text = "Syncing: $height"
             syncBar.progress = consensusData.syncprogress.toInt()
@@ -127,15 +127,12 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
     }
 
     override fun onError(error: SiaError) {
-        when {
-            error.reason == SiaError.Reason.WALLET_SCAN_IN_PROGRESS ->
-                SnackbarUtil.snackbar(view, "Scanning the blockchain, please wait. This can take a while.", Snackbar.LENGTH_LONG)
-            else -> error.snackbar(view)
-        }
+        error.snackbar(view)
     }
 
     override fun onWalletError(error: SiaError) {
         error.snackbar(view)
+        transactionListSwipe.isRefreshing = false
 //        refreshButton.actionView = null
     }
 
@@ -199,6 +196,12 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
 
     override fun onResume() {
         super.onResume()
+        if (prefs.operationMode != mode) {
+            mode = prefs.operationMode
+            model = if (mode == "cold_storage") WalletModelColdStorage() else WalletModelHttp()
+            println("$mode $model")
+            presenter = WalletPresenter(this, model)
+        }
         presenter.refresh()
     }
 
@@ -206,6 +209,12 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
         super.onHiddenChanged(hidden)
         if (!hidden) {
             activity.invalidateOptionsMenu()
+            if (prefs.operationMode != mode) {
+                mode = prefs.operationMode
+                model = if (mode == "cold_storage") WalletModelColdStorage() else WalletModelHttp()
+                println("$mode $model")
+                presenter = WalletPresenter(this, model)
+            }
             presenter.refresh()
         }
     }

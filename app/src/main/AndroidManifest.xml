@@ -26,14 +26,6 @@
         android:theme="@style/AppTheme.Light">
         <service android:name=".backend.siad.SiadService"/>
         <service android:name=".backend.CleanupService"/>
-        <service android:name=".backend.coldstorage.ColdStorageService"/>
-
-        <receiver android:name=".backend.BootReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
-                <action android:name="android.intent.action.PACKAGE_REPLACED"/>
-            </intent-filter>
-        </receiver>
 
         <activity
             android:name=".ui.MainActivity"

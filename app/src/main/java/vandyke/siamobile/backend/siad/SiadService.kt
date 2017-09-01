@@ -47,10 +47,11 @@ class SiadService : Service() {
         applicationContext.registerReceiver(statusReceiver, intentFilter)
         LocalBroadcastManager.getInstance(applicationContext).registerReceiver(statusReceiver, intentFilter)
         siadFile = StorageUtil.copyBinary("siad", this@SiadService, false)
+        startSiad()
     }
 
     /**
-     * should only be called from the SiadService's BroadcastReceiver
+     * should only be called from the SiadService's BroadcastReceiver or from onCreate of this service
      */
     fun startSiad() {
         if (siadProcess != null) {
@@ -86,7 +87,7 @@ class SiadService : Service() {
     }
 
     /**
-     * should only be called from the SiadService's BroadcastReceiver
+     * should only be called from the SiadService's BroadcastReceiver or from onDestroy of this service
      */
     fun stopSiad() {
         siadProcess?.destroy()
@@ -104,8 +105,7 @@ class SiadService : Service() {
     }
 
     override fun onTaskRemoved(rootIntent: Intent?) {
-        if (!prefs.runInBackground)
-            stopSelf()
+        stopSelf()
     }
 
     fun siadNotification(text: String) {
