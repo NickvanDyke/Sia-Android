@@ -4,7 +4,7 @@
  * This file is subject to the terms and conditions defined in 'LICENSE.md'
  */
 
-package vandyke.siamobile.ui.wallet
+package vandyke.siamobile.ui.wallet.view
 
 import android.Manifest
 import android.app.Activity
@@ -16,7 +16,7 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import com.google.zxing.Result
 import me.dm7.barcodescanner.zxing.ZXingScannerView
-import vandyke.siamobile.ui.wallet.dialogs.WalletSendDialog
+import vandyke.siamobile.ui.wallet.view.dialogs.WalletSendDialog
 
 class ScannerActivity : AppCompatActivity(), ZXingScannerView.ResultHandler {
 

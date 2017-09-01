@@ -4,7 +4,7 @@
  * This file is subject to the terms and conditions defined in 'LICENSE.md'
  */
 
-package vandyke.siamobile.ui.wallet.dialogs
+package vandyke.siamobile.ui.wallet.view.dialogs
 
 import android.app.Dialog
 import android.app.DialogFragment
@@ -30,7 +30,7 @@ abstract class BaseDialogFragment : DialogFragment() {
         create(view, savedInstanceState)
     }
 
-    fun setCloseListener(view: View) {
+    fun setCloseButton(view: View) {
         view.setOnClickListener { close() }
     }
 

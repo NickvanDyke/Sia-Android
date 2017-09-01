@@ -4,7 +4,7 @@
  * This file is subject to the terms and conditions defined in 'LICENSE.md'
  */
 
-package vandyke.siamobile.ui.wallet
+package vandyke.siamobile.ui.wallet.view
 
 import vandyke.siamobile.backend.data.consensus.ConsensusData
 import vandyke.siamobile.backend.data.wallet.ScPriceData
@@ -13,6 +13,9 @@ import vandyke.siamobile.backend.data.wallet.WalletData
 import vandyke.siamobile.backend.networking.SiaError
 
 interface IWalletView {
+    fun onSuccess()
+    fun onError(error: SiaError)
+    fun closeExpandableFrame()
     fun onWalletUpdate(walletData: WalletData)
     fun onUsdUpdate(scPriceData: ScPriceData)
     fun onTransactionsUpdate(transactionsData: TransactionsData)
@@ -21,4 +24,5 @@ interface IWalletView {
     fun onUsdError(error: SiaError)
     fun onTransactionsError(error: SiaError)
     fun onConsensusError(error: SiaError)
+    fun onWalletCreated(seed: String)
 }

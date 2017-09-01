@@ -4,7 +4,7 @@
  * This file is subject to the terms and conditions defined in 'LICENSE.md'
  */
 
-package vandyke.siamobile.ui.wallet
+package vandyke.siamobile.ui.wallet.view
 
 import android.app.Fragment
 import android.os.Bundle
@@ -20,20 +20,23 @@ import vandyke.siamobile.backend.data.wallet.ScPriceData
 import vandyke.siamobile.backend.data.wallet.TransactionData
 import vandyke.siamobile.backend.data.wallet.TransactionsData
 import vandyke.siamobile.backend.data.wallet.WalletData
-import vandyke.siamobile.backend.networking.SiaCallback
 import vandyke.siamobile.backend.networking.SiaError
-import vandyke.siamobile.backend.networking.Wallet
 import vandyke.siamobile.backend.siad.SiadService
 import vandyke.siamobile.prefs
 import vandyke.siamobile.ui.MainActivity
-import vandyke.siamobile.ui.wallet.dialogs.*
-import vandyke.siamobile.ui.wallet.transactionslist.TransactionAdapter
+import vandyke.siamobile.ui.wallet.model.IWalletModel
+import vandyke.siamobile.ui.wallet.model.WalletModelHttp
+import vandyke.siamobile.ui.wallet.presenter.IWalletPresenter
+import vandyke.siamobile.ui.wallet.presenter.WalletPresenter
+import vandyke.siamobile.ui.wallet.view.dialogs.*
+import vandyke.siamobile.ui.wallet.view.transactionslist.TransactionAdapter
 import vandyke.siamobile.util.*
 import java.math.BigDecimal
 
 class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
 
-    private val presenter: IWalletPresenter = WalletPresenter(this)
+    private val model: IWalletModel = WalletModelHttp()
+    private val presenter: IWalletPresenter = WalletPresenter(this, model)
 
     private val adapter = TransactionAdapter()
 
@@ -62,8 +65,8 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
         transactionList.addItemDecoration(DividerItemDecoration(transactionList.context, layoutManager.orientation))
         transactionList.adapter = adapter
 
-        sendButton.setOnClickListener { replaceExpandFrame(WalletSendDialog()) }
-        receiveButton.setOnClickListener { replaceExpandFrame(WalletReceiveDialog()) }
+        sendButton.setOnClickListener { replaceExpandFrame(WalletSendDialog(presenter)) }
+        receiveButton.setOnClickListener { replaceExpandFrame(WalletReceiveDialog(model)) }
 
         balanceText.setOnClickListener { v ->
             if (prefs.operationMode == "cold_storage") {
@@ -80,6 +83,10 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
         syncBar.setProgressTextColor(MainActivity.defaultTextColor)
 
         SiadService.addListener(this)
+    }
+
+    override fun onSuccess() {
+        SnackbarUtil.successSnackbar(view)
     }
 
     override fun onWalletUpdate(walletData: WalletData) {
@@ -119,6 +126,14 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
         }
     }
 
+    override fun onError(error: SiaError) {
+        when {
+            error.reason == SiaError.Reason.WALLET_SCAN_IN_PROGRESS ->
+                SnackbarUtil.snackbar(view, "Scanning the blockchain, please wait. This can take a while.", Snackbar.LENGTH_LONG)
+            else -> error.snackbar(view)
+        }
+    }
+
     override fun onWalletError(error: SiaError) {
         error.snackbar(view)
 //        refreshButton.actionView = null
@@ -143,24 +158,29 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
             presenter.refresh()
     }
 
+    override fun onWalletCreated(seed: String) {
+        if (prefs.operationMode == "cold_storage")
+            WalletCreateDialog.showCsWarning(activity)
+        WalletCreateDialog.showSeed(seed, activity)
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.actionRefresh -> presenter.refresh()
             R.id.actionStatus -> {
                 when (walletData?.encrypted) {
-                    false -> replaceExpandFrame(WalletCreateDialog({ presenter.refresh() }))
-                    true -> if (!walletData!!.unlocked) replaceExpandFrame(WalletUnlockDialog({ presenter.refresh() }))
-                    else lockWallet()
+                    false -> replaceExpandFrame(WalletCreateDialog(presenter))
+                    true -> if (!walletData!!.unlocked) replaceExpandFrame(WalletUnlockDialog(presenter))
+                    else presenter.lock()
                 }
             }
-            R.id.actionUnlock -> replaceExpandFrame(WalletUnlockDialog({ presenter.refresh() }))
-            R.id.actionLock -> lockWallet()
-            R.id.actionChangePassword -> replaceExpandFrame(WalletChangePasswordDialog())
-            R.id.actionViewSeeds -> replaceExpandFrame(WalletSeedsDialog())
-            R.id.actionCreateWallet -> replaceExpandFrame(WalletCreateDialog({ presenter.refresh() }))
-            R.id.actionSweepSeed -> replaceExpandFrame(WalletSweepSeedDialog())
-            R.id.actionViewAddresses -> replaceExpandFrame(WalletAddressesDialog())
-//            R.id.actionAddSeed -> replaceExpandFrame(WalletAddSeedDialog())
+            R.id.actionUnlock -> replaceExpandFrame(WalletUnlockDialog(presenter))
+            R.id.actionLock -> presenter.lock()
+            R.id.actionChangePassword -> replaceExpandFrame(WalletChangePasswordDialog(presenter))
+            R.id.actionViewSeeds -> replaceExpandFrame(WalletSeedsDialog(model))
+            R.id.actionCreateWallet -> replaceExpandFrame(WalletCreateDialog(presenter))
+            R.id.actionSweepSeed -> replaceExpandFrame(WalletSweepSeedDialog(presenter))
+            R.id.actionViewAddresses -> replaceExpandFrame(WalletAddressesDialog(model))
             R.id.actionGenPaperWallet -> (activity as MainActivity).displayFragmentClass(PaperWalletFragment::class.java, "Generated paper wallet", null)
         }
 
@@ -170,6 +190,11 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
     fun replaceExpandFrame(fragment: Fragment) {
         fragmentManager.beginTransaction().replace(R.id.expandFrame, fragment).commit()
         expandFrame.visibility = View.VISIBLE
+    }
+
+    override fun closeExpandableFrame() {
+        expandFrame.visibility = View.GONE
+        GenUtil.hideSoftKeyboard(activity)
     }
 
     override fun onResume() {
@@ -204,14 +229,5 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
                 true -> if (!walletData!!.unlocked) statusButton?.setIcon(R.drawable.ic_lock_outline)
                 else statusButton?.setIcon(R.drawable.ic_lock_open)
             }
-    }
-
-    fun lockWallet() {
-        Wallet.lock(SiaCallback({ ->
-            presenter.refresh()
-            SnackbarUtil.successSnackbar(view)
-        }, {
-            it.snackbar(view)
-        }))
     }
 }

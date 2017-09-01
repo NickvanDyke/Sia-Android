@@ -72,7 +72,7 @@ interface SiaApiInterface {
     fun getConsensus(): Call<ConsensusData>
 }
 
-private var siaApi: SiaApiInterface = SiaApi.buildApi()
+var siaApi: SiaApiInterface = SiaApi.buildApi()
 
 object SiaApi {
     fun buildApi(): SiaApiInterface {
@@ -82,7 +82,6 @@ object SiaApi {
                     val request: Request = original.newBuilder()
                             .header("User-agent", "Sia-Agent")
                             .header("Authorization", "Basic " + Base64.encodeToString(":${prefs.apiPass}".toByteArray(), Base64.NO_WRAP))
-//                            .url(original.url().toString().replace(Regex("""http://(\d+\.\d+\.\d+\.\d+|localhost):\d+/"""), "http://${prefs.address}/"))
                             .method(original.method(), original.body())
                             .build()
                     return@addInterceptor it.proceed(request)

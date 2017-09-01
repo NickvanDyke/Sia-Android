@@ -4,7 +4,7 @@
  * This file is subject to the terms and conditions defined in 'LICENSE.md'
  */
 
-package vandyke.siamobile.ui.wallet.dialogs
+package vandyke.siamobile.ui.wallet.view.dialogs
 
 import android.app.Activity
 import android.content.Intent
@@ -14,17 +14,16 @@ import android.text.TextWatcher
 import android.view.View
 import kotlinx.android.synthetic.main.fragment_wallet_send.*
 import vandyke.siamobile.R
-import vandyke.siamobile.backend.networking.SiaCallback
-import vandyke.siamobile.backend.networking.Wallet
-import vandyke.siamobile.ui.wallet.ScannerActivity
-import vandyke.siamobile.util.SnackbarUtil
+import vandyke.siamobile.ui.wallet.presenter.IWalletPresenter
+import vandyke.siamobile.ui.wallet.view.ScannerActivity
 import vandyke.siamobile.util.toHastings
 
-class WalletSendDialog : BaseDialogFragment() {
+class WalletSendDialog(private val presenter: IWalletPresenter? = null) : BaseDialogFragment() {
     override val layout: Int = R.layout.fragment_wallet_send
 
     override fun create(view: View?, savedInstanceState: Bundle?) {
-        setCloseListener(walletSendCancel)
+        setCloseButton(walletSendCancel)
+
         sendAmount.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
@@ -32,14 +31,10 @@ class WalletSendDialog : BaseDialogFragment() {
             }
             override fun afterTextChanged(s: Editable) {}
         })
+
         walletSend.setOnClickListener {
             val sendAmount = sendAmount.text.toString().toHastings().toPlainString()
-            Wallet.send(sendAmount, sendRecipient.text.toString(), SiaCallback({ ->
-                SnackbarUtil.successSnackbar(view)
-                close()
-            }, {
-                it.snackbar(view)
-            }))
+            presenter?.send(sendAmount, sendRecipient.text.toString())
         }
 
         walletScan.setOnClickListener { startScannerActivity() }

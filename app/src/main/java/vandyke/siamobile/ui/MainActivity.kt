@@ -43,9 +43,9 @@ import vandyke.siamobile.ui.hosting.fragments.HostingFragment
 import vandyke.siamobile.ui.settings.GlobalPrefsListener
 import vandyke.siamobile.ui.settings.SettingsFragment
 import vandyke.siamobile.ui.terminal.TerminalFragment
-import vandyke.siamobile.ui.wallet.WalletFragment
-import vandyke.siamobile.ui.wallet.dialogs.PaperWalletFragment
-import vandyke.siamobile.ui.wallet.dialogs.WalletCreateDialog
+import vandyke.siamobile.ui.wallet.view.WalletFragment
+import vandyke.siamobile.ui.wallet.view.dialogs.PaperWalletFragment
+import vandyke.siamobile.ui.wallet.view.dialogs.WalletCreateDialog
 import vandyke.siamobile.util.GenUtil
 import vandyke.siamobile.util.SnackbarUtil
 import vandyke.siamobile.util.StorageUtil

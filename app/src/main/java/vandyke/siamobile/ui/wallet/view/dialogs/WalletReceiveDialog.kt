@@ -4,7 +4,7 @@
  * This file is subject to the terms and conditions defined in 'LICENSE.md'
  */
 
-package vandyke.siamobile.ui.wallet.dialogs
+package vandyke.siamobile.ui.wallet.view.dialogs
 
 import android.os.Bundle
 import android.support.design.widget.Snackbar
@@ -13,17 +13,18 @@ import kotlinx.android.synthetic.main.fragment_wallet_receive.*
 import net.glxn.qrgen.android.QRCode
 import vandyke.siamobile.R
 import vandyke.siamobile.backend.networking.SiaCallback
-import vandyke.siamobile.backend.networking.Wallet
+import vandyke.siamobile.ui.wallet.model.IWalletModel
 import vandyke.siamobile.util.GenUtil
 import vandyke.siamobile.util.SnackbarUtil
 
-class WalletReceiveDialog : BaseDialogFragment() {
+class WalletReceiveDialog(private val model: IWalletModel? = null) : BaseDialogFragment() {
     override val layout: Int = R.layout.fragment_wallet_receive
 
     override fun create(view: View?, savedInstanceState: Bundle?) {
         walletQrCode.visibility = View.INVISIBLE
+        setCloseButton(walletReceiveClose)
 
-        Wallet.address(SiaCallback({ it ->
+        model?.getAddress(SiaCallback({ it ->
             SnackbarUtil.successSnackbar(view)
             if (isVisible) {
                 receiveAddress.text = it.address
@@ -40,7 +41,6 @@ class WalletReceiveDialog : BaseDialogFragment() {
             SnackbarUtil.snackbar(view, "Copied receive address", Snackbar.LENGTH_SHORT)
             close()
         }
-        setCloseListener(walletReceiveClose)
     }
 
     fun setQrCode(walletAddress: String) {

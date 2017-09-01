@@ -27,6 +27,10 @@ class SiaError {
         reason = getReasonFromThrowable(t)
     }
 
+    constructor(reason: Reason) {
+        this.reason = reason
+    }
+
     fun getReasonFromMsg(errorMessage: String): SiaError.Reason {
         return when {
             errorMessage.contains("wallet must be unlocked before it can be used") -> Reason.WALLET_LOCKED
@@ -83,7 +87,7 @@ class SiaError {
         WALLET_NOT_ENCRYPTED("Wallet has not been created yet"),
         INVALID_WORD_IN_SEED("Invalid word in seed"),
         INVALID_SEED("Invalid seed"),
-        CANNOT_INIT_FROM_SEED_UNTIL_SYNCED("Cannot create wallet from seed until blockchain is synced"),
+        CANNOT_INIT_FROM_SEED_UNTIL_SYNCED("Cannot init wallet from seed until blockchain is synced"),
         UNSUPPORTED_ON_COLD_WALLET("Unsupported on cold storage wallet"),
         UNEXPECTED_END_OF_STREAM("Unexpected end of stream"),
         UNRECOGNIZED_HASH("Unrecognized hash given to /explorer/hash")

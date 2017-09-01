@@ -4,7 +4,7 @@
  * This file is subject to the terms and conditions defined in 'LICENSE.md'
  */
 
-package vandyke.siamobile.ui.wallet.transactionslist
+package vandyke.siamobile.ui.wallet.view.transactionslist
 
 import android.content.Intent
 import android.graphics.Color

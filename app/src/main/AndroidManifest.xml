@@ -55,7 +55,7 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".ui.wallet.ScannerActivity"
+            android:name=".ui.wallet.view.ScannerActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
     </application>
