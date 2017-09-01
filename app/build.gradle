@@ -13,12 +13,11 @@ android {
     buildToolsVersion '26.0.0'
     defaultConfig {
         applicationId "vandyke.siamobile"
-        minSdkVersion 16
+        minSdkVersion 21
         targetSdkVersion 26
         versionCode 20213
         versionName "2.2.13"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         release {

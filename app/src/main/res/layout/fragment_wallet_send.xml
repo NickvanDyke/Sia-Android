@@ -22,10 +22,8 @@
             android:hint="Recipient address"
             android:gravity="center"
             android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
             app:layout_constraintRight_toLeftOf="@+id/walletScan"
             android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
             android:layout_marginTop="16dp"/>
 
     <EditText
@@ -40,8 +38,7 @@
             android:hint="Amount (SC)"
             android:gravity="center"
             android:inputType="numberDecimal"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"/>
+            android:layout_marginEnd="16dp"/>
 
     <Button
             android:text="Cancel"
@@ -53,8 +50,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toLeftOf="@+id/walletSend"
             app:layout_constraintBottom_toBottomOf="@+id/walletSend"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"/>
+            android:layout_marginStart="16dp"/>
 
     <Button
             android:text="Send"
@@ -66,8 +62,7 @@
             app:layout_constraintTop_toBottomOf="@+id/sendAmount"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintLeft_toRightOf="@+id/walletSendCancel"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"/>
+            android:layout_marginEnd="16dp"/>
 
     <TextView
             android:text="Miner Fee: 0.75 SC"
@@ -78,9 +73,7 @@
             app:layout_constraintRight_toRightOf="@+id/sendAmount"
             app:layout_constraintLeft_toLeftOf="@+id/sendAmount"
             android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"/>
+            android:layout_marginEnd="8dp"/>
 
     <ImageButton
             android:contentDescription="Scan QR code"
@@ -95,6 +88,5 @@
             app:layout_constraintTop_toTopOf="@+id/sendRecipient"
             android:layout_marginEnd="16dp"
             app:layout_constraintRight_toRightOf="parent"
-            android:layout_marginRight="16dp"
             app:layout_constraintBottom_toBottomOf="@+id/sendRecipient"/>
 </android.support.constraint.ConstraintLayout>

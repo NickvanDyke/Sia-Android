@@ -21,10 +21,8 @@
         android:textColor="#FFFFFF"
         android:layout_marginStart="16dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginLeft="16dp"
         app:layout_constraintRight_toLeftOf="@+id/receiveButton"
         android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
         android:layout_marginTop="32dp"
         app:layout_constraintTop_toBottomOf="@+id/balanceText"/>
 
@@ -38,9 +36,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toRightOf="@+id/sendButton"
         android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
         android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
         app:layout_constraintTop_toTopOf="@+id/sendButton"/>
 
     <TextView
@@ -52,7 +48,6 @@
         android:textSize="48sp"
         android:layout_marginStart="16dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginLeft="16dp"
         app:layout_constraintTop_toTopOf="parent"
         />
 
@@ -63,7 +58,6 @@
         android:id="@+id/scNote"
         android:layout_marginStart="8dp"
         app:layout_constraintLeft_toRightOf="@+id/balanceText"
-        android:layout_marginLeft="8dp"
         app:layout_constraintBaseline_toBaselineOf="@+id/balanceText"
         android:textColor="@color/colorPrimary"
         android:textSize="18sp"/>
@@ -107,8 +101,7 @@
         app:layout_constraintTop_toBottomOf="@+id/scNote"
         app:layout_constraintLeft_toLeftOf="@+id/balanceText"
         android:textColor="@color/colorPrimary"
-        android:layout_marginStart="2dp"
-        android:layout_marginLeft="2dp"/>
+        android:layout_marginStart="2dp"/>
 
     <TextView
         android:text="Loading..."

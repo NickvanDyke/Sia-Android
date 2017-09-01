@@ -199,7 +199,6 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
         if (prefs.operationMode != mode) {
             mode = prefs.operationMode
             model = if (mode == "cold_storage") WalletModelColdStorage() else WalletModelHttp()
-            println("$mode $model")
             presenter = WalletPresenter(this, model)
         }
         presenter.refresh()
@@ -212,7 +211,6 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
             if (prefs.operationMode != mode) {
                 mode = prefs.operationMode
                 model = if (mode == "cold_storage") WalletModelColdStorage() else WalletModelHttp()
-                println("$mode $model")
                 presenter = WalletPresenter(this, model)
             }
             presenter.refresh()

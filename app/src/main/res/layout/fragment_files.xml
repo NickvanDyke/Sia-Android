@@ -21,7 +21,5 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginEnd="32dp"
-            android:layout_marginRight="32dp"
-            android:layout_marginStart="32dp"
-            android:layout_marginLeft="32dp"/>
+            android:layout_marginStart="32dp"/>
 </android.support.constraint.ConstraintLayout>

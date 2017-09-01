@@ -115,7 +115,7 @@ class SiadService : Service() {
 
     private fun buildSiadNotification(text: String): Notification {
         val builder = Notification.Builder(this)
-        builder.setSmallIcon(R.drawable.ic_dns)
+        builder.setSmallIcon(R.drawable.ic_local_full_node)
         val largeIcon = BitmapFactory.decodeResource(resources, R.drawable.sia_logo_transparent)
         builder.setLargeIcon(largeIcon)
         builder.setContentTitle("Local full node")
@@ -146,7 +146,6 @@ class SiadService : Service() {
                 return false
             val level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0)
             val scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, 0)
-            println("$level, $scale, ${level * 100 / scale}")
             return (level * 100 / scale) >= prefs.localNodeMinBattery
         }
 

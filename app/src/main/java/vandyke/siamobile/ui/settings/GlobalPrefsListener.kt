@@ -34,7 +34,7 @@ class GlobalPrefsListener(private val context: Context) : SharedPreferences.OnSh
                     }
                 }
             }
-            "refreshInterval" -> TODO("change job interval")
+            // TODO: change job interval "refreshInterval" ->
             "runLocalNodeOffWifi" -> {
                 if (prefs.operationMode == "local_full_node") {
                     if (SiadService.isConnectionGood(context))

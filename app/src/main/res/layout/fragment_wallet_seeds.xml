@@ -17,9 +17,7 @@
             android:id="@+id/seedsList"
             app:layout_constraintTop_toBottomOf="@+id/seedsWarning"
             android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
             android:layout_marginTop="8dp"
             android:layout_height="96dp"/>
 
@@ -31,10 +29,8 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
             android:layout_marginEnd="16dp"
             app:layout_constraintRight_toRightOf="parent"
-            android:layout_marginRight="16dp"
             android:layout_marginTop="8dp"
             android:layout_height="72dp"/>
 
