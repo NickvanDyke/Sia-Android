@@ -7,51 +7,41 @@
 
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
       xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <item
-            android:title="Refresh"
-            app:showAsAction="always"
-            android:icon="@drawable/ic_refresh"
-            android:id="@+id/actionRefresh"/>
     <item
         android:title="Status"
         app:showAsAction="always"
         android:icon="@drawable/ic_add"
         android:id="@+id/actionStatus"/>
     <item
-            android:title="Unlock wallet"
-            android:id="@+id/actionUnlock"
-            app:showAsAction="never"/>
+        android:title="Unlock wallet"
+        android:id="@+id/actionUnlock"
+        app:showAsAction="never"/>
     <item
-            android:title="Lock wallet"
-            android:id="@+id/actionLock"
-            app:showAsAction="never"/>
+        android:title="Lock wallet"
+        android:id="@+id/actionLock"
+        app:showAsAction="never"/>
     <item
-            android:title="Create wallet"
-            android:id="@+id/actionCreateWallet"
-            app:showAsAction="never"/>
+        android:title="Create wallet"
+        android:id="@+id/actionCreateWallet"
+        app:showAsAction="never"/>
     <item
-            android:title="View addresses"
-            android:id="@+id/actionViewAddresses"
-            app:showAsAction="never"/>
+        android:title="View addresses"
+        android:id="@+id/actionViewAddresses"
+        app:showAsAction="never"/>
     <item
-            android:title="View seeds"
-            android:id="@+id/actionViewSeeds"
-            app:showAsAction="never"/>
-    <!--<item-->
-            <!--android:title="Add seed"-->
-            <!--android:id="@+id/actionAddSeed"-->
-            <!--app:showAsAction="never"/>-->
+        android:title="View seeds"
+        android:id="@+id/actionViewSeeds"
+        app:showAsAction="never"/>
     <item
-            android:title="Sweep seed"
-            android:id="@+id/actionSweepSeed"
-            app:showAsAction="never"/>
+        android:title="Sweep seed"
+        android:id="@+id/actionSweepSeed"
+        app:showAsAction="never"/>
     <item
-            android:title="Change password"
-            android:id="@+id/actionChangePassword"
-            app:showAsAction="never"/>
+        android:title="Change password"
+        android:id="@+id/actionChangePassword"
+        app:showAsAction="never"/>
     <item
-            android:title="Generate paper wallet"
-            android:id="@+id/actionGenPaperWallet"
-            app:showAsAction="never"/>
+        android:title="Generate paper wallet"
+        android:id="@+id/actionGenPaperWallet"
+        app:showAsAction="never"/>
 </menu>

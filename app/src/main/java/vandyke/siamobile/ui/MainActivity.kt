@@ -177,7 +177,7 @@ class MainActivity : AppCompatActivity() {
                 prefs.operationMode = "cold_storage"
                 displayFragmentClass(WalletFragment::class.java, "Wallet", R.id.drawer_item_wallet)
                 if (currentlyVisibleFragment is WalletFragment)
-                    (currentlyVisibleFragment as WalletFragment).replaceExpandFrame(WalletCreateDialog())
+                    (currentlyVisibleFragment as WalletFragment).fillExpandableFrame(WalletCreateDialog())
             } else if (resultCode == ModesActivity.REMOTE_FULL_NODE) {
                 prefs.operationMode = "remote_full_node"
                 displayFragmentClass(SetupRemoteFragment::class.java, "Remote setup", null)
@@ -235,9 +235,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (drawerLayout.isDrawerVisible(GravityCompat.START))
+        if (drawerLayout.isDrawerVisible(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START)
-        else if (titleBackstack.size <= 1) {
+        } else if (titleBackstack.size <= 1) {
             GenUtil.getDialogBuilder(this)
                     .setTitle("Quit?")
                     .setPositiveButton("Yes") { dialogInterface, i -> finish() }
