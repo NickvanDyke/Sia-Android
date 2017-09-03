@@ -4,7 +4,7 @@
  * This file is subject to the terms and conditions defined in 'LICENSE.md'
  */
 
-package vandyke.siamobile.backend.renter
+package vandyke.siamobile.backend.data.renter
 
 import java.io.PrintStream
 import java.math.BigDecimal

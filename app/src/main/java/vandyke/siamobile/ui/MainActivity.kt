@@ -28,7 +28,6 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.TextView
 import android.widget.Toast
-import kotlinx.android.synthetic.main.activity_main_layout.*
 import vandyke.siamobile.R
 import vandyke.siamobile.backend.siad.SiadService
 import vandyke.siamobile.prefs
@@ -37,7 +36,7 @@ import vandyke.siamobile.ui.about.AboutSiaActivity
 import vandyke.siamobile.ui.about.ModesActivity
 import vandyke.siamobile.ui.about.SetupRemoteFragment
 import vandyke.siamobile.ui.hosting.fragments.HostingFragment
-import vandyke.siamobile.ui.renter.RenterFragment
+import vandyke.siamobile.ui.renter.view.RenterFragment
 import vandyke.siamobile.ui.settings.GlobalPrefsListener
 import vandyke.siamobile.ui.settings.SettingsFragment
 import vandyke.siamobile.ui.terminal.TerminalFragment

@@ -4,7 +4,7 @@
  * This file is subject to the terms and conditions defined in 'LICENSE.md'
  */
 
-package vandyke.siamobile.ui.renter.files
+package vandyke.siamobile.ui.renter.view.files
 
 import android.support.constraint.ConstraintLayout
 import android.support.v7.widget.RecyclerView

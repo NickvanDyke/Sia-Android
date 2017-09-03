@@ -6,7 +6,7 @@
 
 package vandyke.siamobile.backend.renter
 
-import vandyke.siamobile.backend.BaseMonitorService
+import vandyke.siamobile.backend.data.renter.SiaDir
 import vandyke.siamobile.backend.networking.Renter
 import vandyke.siamobile.backend.networking.SiaCallback
 import vandyke.siamobile.backend.networking.SiaError

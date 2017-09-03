@@ -4,14 +4,14 @@
  * This file is subject to the terms and conditions defined in 'LICENSE.md'
  */
 
-package vandyke.siamobile.ui.renter.files
+package vandyke.siamobile.ui.renter.view.files
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import vandyke.siamobile.R
-import vandyke.siamobile.backend.renter.SiaDir
-import vandyke.siamobile.ui.renter.RenterFragment
+import vandyke.siamobile.backend.data.renter.SiaDir
+import vandyke.siamobile.ui.renter.view.RenterFragment
 import vandyke.siamobile.util.GenUtil
 
 class FilesAdapter(private val renterFragment: RenterFragment) : RecyclerView.Adapter<FileHolder>() {

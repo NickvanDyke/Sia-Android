@@ -4,31 +4,25 @@
  * This file is subject to the terms and conditions defined in 'LICENSE.md'
  */
 
-package vandyke.siamobile.ui.renter
+package vandyke.siamobile.ui.renter.view
 
 import android.app.Fragment
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
-import android.content.ServiceConnection
 import android.os.Bundle
-import android.os.IBinder
 import android.support.design.widget.TabLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.view.*
-import kotlinx.android.synthetic.main.fragment_renter.*
 import vandyke.siamobile.R
-import vandyke.siamobile.backend.BaseMonitorService
+import vandyke.siamobile.backend.data.renter.SiaDir
 import vandyke.siamobile.backend.networking.SiaError
-import vandyke.siamobile.backend.renter.RenterService
-import vandyke.siamobile.backend.renter.SiaDir
-import vandyke.siamobile.ui.renter.files.FilesAdapter
+import vandyke.siamobile.ui.renter.model.RenterModelHttp
+import vandyke.siamobile.ui.renter.presenter.IRenterPresenter
+import vandyke.siamobile.ui.renter.presenter.RenterPresenter
+import vandyke.siamobile.ui.renter.view.files.FilesAdapter
 
 
-class RenterFragment : Fragment(), RenterService.FilesListener {
-    private lateinit var connection: ServiceConnection
-    private lateinit var renterService: RenterService
-    private var bound = false
+class RenterFragment : Fragment(), IRenterView {
+
+    private val presenter: IRenterPresenter = RenterPresenter(this, RenterModelHttp())
 
     private lateinit var adapter: FilesAdapter
     private var programmaticallySelecting = true
@@ -36,7 +30,7 @@ class RenterFragment : Fragment(), RenterService.FilesListener {
     var rootDir: SiaDir = SiaDir("home", null)
 
     var currentDir: SiaDir = rootDir
-        set(value) {
+        set(value) { // TODO: should move this logic to the presenter
             programmaticallySelecting = true
             val oldPath = field.fullPath
             val newPath = value.fullPath
@@ -77,46 +71,31 @@ class RenterFragment : Fragment(), RenterService.FilesListener {
         })
     }
 
-    override fun onFilesUpdate(rootDir: SiaDir) {
-        if (this.currentDir == this.rootDir) {
-            currentDir = rootDir
-        }
-        this.rootDir = rootDir
-        // TODO: check if currentDir is still valid
+    override fun onRootDirUpdate(dir: SiaDir) {
+        this.rootDir = dir
     }
 
-    override fun onFilesError(error: SiaError) {
+    override fun onCurrentDirUpdate(dir: SiaDir) {
+        // TODO: check if currentDir is still valid
+        currentDir = dir
+    }
+
+    override fun onError(error: SiaError) {
         error.snackbar(view)
     }
 
-    fun goUpDir(): Boolean {
+    override fun goUpDir(): Boolean {
         if (currentDir.parent == null)
             return false
         currentDir = currentDir.parent!!
         return true
     }
 
-    fun refreshService() {
-        if (bound)
-            renterService.refresh()
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.actionRefresh -> refreshService()
+            R.id.actionRefresh -> presenter.refresh()
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        if (bound) {
-            renterService.unregisterListener(this)
-            if (isAdded) {
-                activity.unbindService(connection)
-                bound = false
-            }
-        }
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
@@ -127,21 +106,5 @@ class RenterFragment : Fragment(), RenterService.FilesListener {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.toolbar_renter, menu)
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        connection = object : ServiceConnection {
-            override fun onServiceConnected(name: ComponentName, service: IBinder) {
-                renterService = (service as BaseMonitorService.LocalBinder).service as RenterService
-                renterService.registerListener(this@RenterFragment)
-                bound = true
-            }
-
-            override fun onServiceDisconnected(name: ComponentName) {
-                bound = false
-            }
-        }
-        activity.bindService(Intent(activity, RenterService::class.java), connection, Context.BIND_AUTO_CREATE)
     }
 }
