@@ -39,7 +39,6 @@ class SettingsFragment : PreferenceFragment() {
     private lateinit var runLocalNodeOffWifi: SwitchPreference
     private lateinit var useExternal: SwitchPreference
     private lateinit var minBattery: EditTextPreference
-    private lateinit var runInBackground: SwitchPreference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,8 +51,6 @@ class SettingsFragment : PreferenceFragment() {
         runLocalNodeOffWifi = findPreference("runLocalNodeOffWifi") as SwitchPreference
         useExternal = findPreference("useExternal") as SwitchPreference
         minBattery = findPreference("localNodeMinBattery") as EditTextPreference
-        runInBackground = findPreference("runInBackground") as SwitchPreference
-        setColdStorageSettingsVisibility()
         setRemoteSettingsVisibility()
         setLocalSettingsVisibility()
 
@@ -106,7 +103,6 @@ class SettingsFragment : PreferenceFragment() {
         prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
             when (key) {
                 "operationMode" -> {
-                    setColdStorageSettingsVisibility()
                     setRemoteSettingsVisibility()
                     setLocalSettingsVisibility()
                     when (prefs.operationMode) {
@@ -124,10 +120,6 @@ class SettingsFragment : PreferenceFragment() {
                         }
                     }
                 }
-                "monitorRefreshInterval" -> if (prefs.refreshInterval == 0)
-                    operation.removePreference(runInBackground)
-                else
-                    operation.addPreference(runInBackground)
                 "theme" -> if (prefs.theme == "custom") {
                     val intent = Intent(Intent.ACTION_GET_CONTENT)
                     intent.type = "image/*"
@@ -157,10 +149,6 @@ class SettingsFragment : PreferenceFragment() {
                 prefs.customBgBase64 = Base64.encodeToString(b, Base64.DEFAULT)
             }
         }
-    }
-
-    private fun setColdStorageSettingsVisibility() {
-
     }
 
     private fun setRemoteSettingsVisibility() {

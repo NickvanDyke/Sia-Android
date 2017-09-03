@@ -41,10 +41,6 @@ class Prefs(context: Context) {
         get() = prefs.getString("localNodeMinBattery", "20").toInt()
         set(value) = prefs.edit().putString("localNodeMinBattery", value.toString()).apply()
 
-    var runInBackground: Boolean
-        get() = prefs.getBoolean("runInBackground", false)
-        set(value) = prefs.edit().putBoolean("runInBackground", value).apply()
-
     var firstTime: Boolean
         get() = prefs.getBoolean("firstTime", true)
         set(value) = prefs.edit().putBoolean("firstTime", value).apply()

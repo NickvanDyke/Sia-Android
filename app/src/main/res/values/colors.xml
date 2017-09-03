@@ -6,7 +6,6 @@
   -->
 
 <resources>
-    <!--NorappThemeheme stuff-->
     <color name="colorPrimary">#00cb9e</color>
     <color name="colorPrimaryDark">#00a882</color>
     <color name="colorAccent">#00cb9e</color>
@@ -15,8 +14,5 @@
 
     <!--dark mode stuff-->
     <color name="shadowStartDark">#222222</color>
-    <color name="shadowEndDark">#303030</color>
-
-    <!--amoled stuff-->
-    <color name="grey">#ffffff</color>
+    <color name="darkModeBg">#303030</color>
 </resources>

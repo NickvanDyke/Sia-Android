@@ -30,10 +30,7 @@ import android.widget.TextView
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main_layout.*
 import vandyke.siamobile.R
-import vandyke.siamobile.backend.CleanupService
-import vandyke.siamobile.backend.coldstorage.ColdStorageService
-import vandyke.siamobile.backend.siad.SiadMonitorService
-import vandyke.siamobile.backend.wallet.WalletService
+import vandyke.siamobile.backend.siad.SiadService
 import vandyke.siamobile.prefs
 import vandyke.siamobile.ui.about.AboutFragment
 import vandyke.siamobile.ui.about.AboutSiaActivity
@@ -44,9 +41,9 @@ import vandyke.siamobile.ui.renter.RenterFragment
 import vandyke.siamobile.ui.settings.GlobalPrefsListener
 import vandyke.siamobile.ui.settings.SettingsFragment
 import vandyke.siamobile.ui.terminal.TerminalFragment
-import vandyke.siamobile.ui.wallet.WalletFragment
-import vandyke.siamobile.ui.wallet.dialogs.PaperWalletFragment
-import vandyke.siamobile.ui.wallet.dialogs.WalletCreateDialog
+import vandyke.siamobile.ui.wallet.view.WalletFragment
+import vandyke.siamobile.ui.wallet.view.dialogs.PaperWalletFragment
+import vandyke.siamobile.ui.wallet.view.dialogs.WalletCreateDialog
 import vandyke.siamobile.util.GenUtil
 import vandyke.siamobile.util.SnackbarUtil
 import vandyke.siamobile.util.StorageUtil
@@ -68,7 +65,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
         globalPrefsListener = GlobalPrefsListener(this)
         prefs.registerOnSharedPreferenceChangeListener(globalPrefsListener)
         when (prefs.theme) {
@@ -156,13 +152,8 @@ class MainActivity : AppCompatActivity() {
         drawerToggle = ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close)
         drawerLayout.addDrawerListener(drawerToggle)
 
-        startService(Intent(this, CleanupService::class.java))
         if (prefs.operationMode == "local_full_node")
-            startService(Intent(this, SiadMonitorService::class.java))
-        else if (prefs.operationMode == "cold_storage")
-            startService(Intent(this, ColdStorageService::class.java))
-
-        startService(Intent(this, WalletService::class.java))
+            startService(Intent(this, SiadService::class.java))
 
         when (prefs.startupPage) {
             "files" -> displayFragmentClass(RenterFragment::class.java, "Files", R.id.drawer_item_files)

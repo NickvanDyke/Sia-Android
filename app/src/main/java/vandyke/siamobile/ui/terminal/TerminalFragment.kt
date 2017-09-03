@@ -20,7 +20,7 @@ import kotlinx.android.synthetic.main.fragment_terminal.*
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.async
 import vandyke.siamobile.R
-import vandyke.siamobile.backend.siad.Siad
+import vandyke.siamobile.backend.siad.SiadService
 import vandyke.siamobile.ui.MainActivity
 import vandyke.siamobile.util.StorageUtil
 import java.io.BufferedReader
@@ -29,7 +29,7 @@ import java.io.IOException
 import java.io.InputStreamReader
 import java.util.*
 
-class TerminalFragment : Fragment(), Siad.SiadListener {
+class TerminalFragment : Fragment(), SiadService.SiadListener {
 
     private var siacFile: File? = null
 
@@ -89,7 +89,8 @@ class TerminalFragment : Fragment(), Siad.SiadListener {
             true
         })
         output.movementMethod = ScrollingMovementMethod()
-        Siad.addListener(this)
+        output.append(SiadService.bufferedOutput)
+        SiadService.addListener(this)
     }
 
     override fun onSiadOutput(line: String) {
@@ -109,6 +110,6 @@ class TerminalFragment : Fragment(), Siad.SiadListener {
 
     override fun onDestroy() {
         super.onDestroy()
-        Siad.removeListener(this)
+        SiadService.removeListener(this)
     }
 }

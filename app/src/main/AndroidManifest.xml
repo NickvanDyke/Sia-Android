@@ -24,19 +24,8 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Light">
-        <service android:name=".backend.siad.Siad"/>
-        <service android:name=".backend.CleanupService"/>
-        <service android:name=".backend.siad.SiadMonitorService"/>
-        <service android:name=".backend.wallet.WalletService"/>
-        <service android:name=".backend.renter.RenterService"/>
-        <service android:name=".backend.coldstorage.ColdStorageService"/>
 
-        <receiver android:name=".backend.BootReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
-                <action android:name="android.intent.action.PACKAGE_REPLACED"/>
-            </intent-filter>
-        </receiver>
+        <service android:name=".backend.siad.SiadService"/>
 
         <activity
             android:name=".ui.MainActivity"
@@ -58,7 +47,7 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".ui.wallet.ScannerActivity"
+            android:name=".ui.wallet.view.ScannerActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
     </application>

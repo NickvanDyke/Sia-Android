@@ -7,6 +7,23 @@
 
 <changelog bulletedList="true">
 
+    <changelogversion versionName="2.3.0" changeDate="Sep 2, 2017">
+        <changelogtext>Increase minSdk to 21 (Android 5.0). Very few users were on Android versions older than that, and it allows me to use some better, newer Android features</changelogtext>
+        <changelogtext>Add pull-down-to-refresh to the wallet page transactions list</changelogtext>
+        <changelogtext>Greatly improve the backend workings of the wallet page, particularly of cold storage mode</changelogtext>
+        <changelogtext>Remove background services and the option to run in the background - this should reduce battery usage (although it wasn't high in the first place)</changelogtext>
+        <changelogtext>Remove sync and transaction notifications - these were done using background services that, as mentioned above, were removed</changelogtext>
+        <changelogtext>Rearrange settings page, as well as remove settings that are no longer relevant due to the removal of a majority of background tasks</changelogtext>
+        <changelogtext>Change splash screen to a dark background</changelogtext>
+        <changelogtext>Improve height of view addresses and seeds fragments</changelogtext>
+        <changelogtext>Fix siad loading twice</changelogtext>
+    </changelogversion>
+
+    <changelogversion versionName="2.2.13" changeDate="Aug 28, 2017">
+        <changelogtext>Improve how Siad is started, stopped, and monitored</changelogtext>
+        <changelogtext>Services won't attempt to start in the background on Android O, since it has tighter restrictions on background services</changelogtext>
+    </changelogversion>
+
     <changelogversion versionName="2.2.11" changeDate="Aug 24, 2017">
         <changelogtext>Switch to Firebase crash reporting</changelogtext>
     </changelogversion>

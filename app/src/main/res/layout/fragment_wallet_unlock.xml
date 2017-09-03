@@ -26,8 +26,6 @@
             tools:layout_constraintLeft_creator="1"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
             android:hint="Password"
             android:gravity="center"
             android:fontFamily="sans-serif"
@@ -42,7 +40,6 @@
             app:layout_constraintTop_toBottomOf="@+id/walletPassword"
             android:layout_marginStart="16dp"
             app:layout_constraintLeft_toLeftOf="parent"
-            android:layout_marginLeft="16dp"
             app:layout_constraintRight_toLeftOf="@+id/walletUnlockConfirm"/>
 
     <Button
@@ -54,7 +51,6 @@
             android:id="@+id/walletUnlockConfirm"
             android:layout_marginEnd="16dp"
             app:layout_constraintRight_toRightOf="parent"
-            android:layout_marginRight="16dp"
             app:layout_constraintHorizontal_bias="0.47"
             app:layout_constraintLeft_toRightOf="@id/walletUnlockCancel"
             app:layout_constraintBottom_toBottomOf="@+id/walletUnlockCancel"/>

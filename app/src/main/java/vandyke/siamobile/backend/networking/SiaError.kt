@@ -10,7 +10,7 @@ import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
 import android.view.View
 import vandyke.siamobile.R
-import vandyke.siamobile.backend.coldstorage.ColdStorageHttpServer
+import vandyke.siamobile.ui.wallet.model.WalletModelColdStorage
 import vandyke.siamobile.util.SnackbarUtil
 import java.io.IOException
 import java.net.SocketException
@@ -25,6 +25,10 @@ class SiaError {
 
     constructor(t: Throwable) {
         reason = getReasonFromThrowable(t)
+    }
+
+    constructor(reason: Reason) {
+        this.reason = reason
     }
 
     fun getReasonFromMsg(errorMessage: String): SiaError.Reason {
@@ -79,23 +83,23 @@ class SiaError {
         EXISTING_WALLET("A wallet already exists. Use force option to overwrite"),
         INCORRECT_API_PASSWORD("Incorrect API password"),
         UNACCOUNTED_FOR_ERROR("Unexpected error"),
-        WALLET_SCAN_IN_PROGRESS("Wallet scan in progress. Please wait"),
+        WALLET_SCAN_IN_PROGRESS("Scanning the blockchain. Please wait, this can take a while"),
         WALLET_NOT_ENCRYPTED("Wallet has not been created yet"),
         INVALID_WORD_IN_SEED("Invalid word in seed"),
         INVALID_SEED("Invalid seed"),
-        CANNOT_INIT_FROM_SEED_UNTIL_SYNCED("Cannot create wallet from seed until blockchain is synced"),
+        CANNOT_INIT_FROM_SEED_UNTIL_SYNCED("Cannot create wallet from seed until fully synced"),
         UNSUPPORTED_ON_COLD_WALLET("Unsupported on cold storage wallet"),
         UNEXPECTED_END_OF_STREAM("Unexpected end of stream"),
-        UNRECOGNIZED_HASH("Unrecognized hash given to /explorer/hash")
+        UNRECOGNIZED_HASH("Unrecognized hash")
     }
 
     fun snackbar(view: View?) {
         if (view == null)
             return
         if (reason == Reason.UNSUPPORTED_ON_COLD_WALLET) {
-            val snackbar = Snackbar.make(view, reason.msg, Snackbar.LENGTH_LONG).setAction("Help") { v -> ColdStorageHttpServer.showColdStorageHelp(view.context) }
+            val snackbar = Snackbar.make(view, reason.msg, Snackbar.LENGTH_LONG).setAction("Help") { v -> WalletModelColdStorage.showColdStorageHelp(view.context) }
             snackbar.view.setBackgroundColor(ContextCompat.getColor(view.context, R.color.colorAccent))
-            snackbar.setActionTextColor(ContextCompat.getColor(view.context, android.R.color.white))
+            snackbar.setActionTextColor(ContextCompat.getColor(view.context, android.R.color.black))
             snackbar.show()
         } else
             SnackbarUtil.snackbar(view, reason.msg, Snackbar.LENGTH_SHORT)

@@ -18,12 +18,10 @@ class TextCopyAdapter(val data: ArrayList<String>) : RecyclerView.Adapter<TextHo
     }
 
     override fun onBindViewHolder(holder: TextHolder?, position: Int) {
-        println(holder?.text)
         holder?.text?.text = data[position]
     }
 
     override fun getItemCount(): Int {
-        println(data.size)
         return data.size
     }
 }

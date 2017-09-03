@@ -6,20 +6,6 @@
   -->
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory android:title="Appearance">
-        <ListPreference
-            android:summary="Changes will apply on next restart."
-            android:key="theme"
-            android:title="Theme"
-            android:entries="@array/theme_entries"
-            android:entryValues="@array/theme_values"
-            android:defaultValue="light"/>
-        <SwitchPreference
-            android:summary="Changes will apply on next restart."
-            android:key="transparentBars"
-            android:title="Transparent bars"
-            android:defaultValue="false"/>
-    </PreferenceCategory>
     <PreferenceCategory
         android:title="Operation"
         android:key="operationCategory">
@@ -29,18 +15,13 @@
             android:entries="@array/operation_modes_entries"
             android:entryValues="@array/operation_modes_values"
             android:defaultValue="cold_storage"/>
-        <ListPreference
-            android:key="refreshInterval"
-            android:title="Automatic refresh interval"
-            android:summary="Refreshes balance, transactions, and sync progress."
-            android:entries="@array/refresh_interval_entries"
-            android:entryValues="@array/refresh_interval_values"
-            android:defaultValue="1"/>
-        <SwitchPreference
-            android:key="runInBackground"
-            android:title="Run in background"
-            android:summary="Continue running and refreshing when Sia Mobile isn't open."
-            android:defaultValue="false"/>
+        <!--<ListPreference-->
+        <!--android:key="refreshInterval"-->
+        <!--android:title="Automatic refresh interval"-->
+        <!--android:summary="Refreshes balance, transactions, and sync progress."-->
+        <!--android:entries="@array/refresh_interval_entries"-->
+        <!--android:entryValues="@array/refresh_interval_values"-->
+        <!--android:defaultValue="1"/>-->
         <EditTextPreference
             android:key="remoteAddress"
             android:title="Remote node address"
@@ -59,12 +40,12 @@
             android:fontFamily="sans-serif"/>
         <SwitchPreference
             android:key="runLocalNodeOffWifi"
-            android:title="Run local node off WiFi"
+            android:title="Run node when off WiFi"
             android:summary="Run the local node in the background even when not connected to WiFi. WARNING: Syncing the blockchain can involve a lot of downloading."
             android:defaultValue="false"/>
         <EditTextPreference
             android:key="localNodeMinBattery"
-            android:title="Minimum battery level to run local node"
+            android:title="Minimum battery percentage to run node"
             android:numeric="integer"
             android:gravity="center"
             android:defaultValue="20"/>
@@ -74,14 +55,19 @@
             android:summary="Will use whatever your phone returns as its external storage - this will not necessarily be your SD card. Restart Sia Mobile after changing this. It's recommended you clear existing data using the button at the bottom of settings after changing this."
             android:defaultValue="false"/>
     </PreferenceCategory>
-    <PreferenceCategory android:title="Misc">
+    <PreferenceCategory android:title="Appearance">
         <ListPreference
-            android:key="startupPage"
-            android:title="Launch screen"
-            android:summary="The screen to load to when Sia Mobile launches."
-            android:entries="@array/startup_entries"
-            android:entryValues="@array/startup_values"
-            android:defaultValue="wallet"/>
+            android:summary="Changes will apply on next restart."
+            android:key="theme"
+            android:title="Theme"
+            android:entries="@array/theme_entries"
+            android:entryValues="@array/theme_values"
+            android:defaultValue="dark"/>
+        <SwitchPreference
+            android:summary="Changes will apply on next restart."
+            android:key="transparentBars"
+            android:title="Transparent bars"
+            android:defaultValue="false"/>
         <SwitchPreference
             android:key="hideZero"
             android:title="Hide net-zero transactions"
@@ -95,6 +81,15 @@
             android:gravity="center"
             android:defaultValue="2"
             android:maxLength="1"/>
+        <ListPreference
+            android:key="startupPage"
+            android:title="Launch screen"
+            android:summary="The screen to load to when Sia Mobile launches."
+            android:entries="@array/startup_entries"
+            android:entryValues="@array/startup_values"
+            android:defaultValue="wallet"/>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="Misc">
         <Preference
             android:key="openAppSettings"
             android:title="Open Application Info page for Sia Mobile"
