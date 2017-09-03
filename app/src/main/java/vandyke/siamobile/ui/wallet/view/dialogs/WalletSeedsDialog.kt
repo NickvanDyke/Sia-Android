@@ -31,7 +31,7 @@ class WalletSeedsDialog(private val walletModel: IWalletModel? = null) : BaseDia
         seedsList.addItemDecoration(DividerItemDecoration(seedsList.context, layoutManager.orientation))
         seedsList.adapter = adapter
 
-        walletModel?.getSeeds(SiaCallback({ it ->
+        walletModel?.getSeeds("english", SiaCallback({ it ->
             seeds += it.allseeds
             adapter.notifyDataSetChanged()
         }, {

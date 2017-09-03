@@ -23,6 +23,7 @@ import kotlinx.coroutines.experimental.async
 import vandyke.siamobile.R
 import vandyke.siamobile.prefs
 import vandyke.siamobile.ui.MainActivity
+import vandyke.siamobile.util.NotificationUtil
 import vandyke.siamobile.util.StorageUtil
 import java.io.BufferedReader
 import java.io.File
@@ -71,8 +72,8 @@ class SiadService : Service() {
                     val inputReader = BufferedReader(InputStreamReader(siadProcess?.inputStream))
                     var line: String? = inputReader.readLine()
                     while (line != null) {
-                        listeners.forEach { it.onSiadOutput(line!!) }
-                        bufferedOutput += line
+                        listeners.forEach { it.onSiadOutput("$line\n") }
+                        bufferedOutput += "$line\n"
                         siadNotification(line)
                         line = inputReader.readLine()
                     }
@@ -90,6 +91,7 @@ class SiadService : Service() {
      * should only be called from the SiadService's BroadcastReceiver or from onDestroy of this service
      */
     fun stopSiad() {
+        // TODO: maybe shut it down using stop http request instead? Takes ages sometimes. But might fix the (sometime) long startup times
         siadProcess?.destroy()
         siadProcess = null
     }
@@ -99,8 +101,8 @@ class SiadService : Service() {
     }
 
     override fun onDestroy() {
-        //        Daemon.stopSpecific("localhost:9980", new SiaRequest.VolleyCallback(null));
         applicationContext.unregisterReceiver(statusReceiver)
+        NotificationUtil.cancelNotification(applicationContext, SIAD_NOTIFICATION)
         stopSiad()
     }
 
@@ -135,8 +137,7 @@ class SiadService : Service() {
 
     companion object {
         // TODO: might cause memory leaks? I think it should be fine as long as the listeners properly unregister themselves
-        val listeners = ArrayList<SiadListener>()
-
+        private val listeners = ArrayList<SiadListener>()
         fun addListener(listener: SiadListener) = listeners.add(listener)
         fun removeListener(listener: SiadListener) = listeners.remove(listener)
         var bufferedOutput: String = ""

@@ -20,7 +20,7 @@ class WalletModelHttp : IWalletModel {
 
     override fun getAddresses(callback: SiaCallback<AddressesData>) = Wallet.addresses(callback)
 
-    override fun getSeeds(callback: SiaCallback<SeedsData>) = Wallet.seeds("english", callback)
+    override fun getSeeds(dictionary: String, callback: SiaCallback<SeedsData>) = Wallet.seeds(dictionary, callback)
 
     override fun getTransactions(callback: SiaCallback<TransactionsData>) = Wallet.transactions(callback)
 

@@ -30,7 +30,6 @@ import android.widget.TextView
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main_layout.*
 import vandyke.siamobile.R
-import vandyke.siamobile.backend.CleanupService
 import vandyke.siamobile.backend.siad.SiadService
 import vandyke.siamobile.prefs
 import vandyke.siamobile.ui.about.AboutFragment
@@ -153,7 +152,6 @@ class MainActivity : AppCompatActivity() {
         drawerToggle = ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close)
         drawerLayout.addDrawerListener(drawerToggle)
 
-        startService(Intent(this, CleanupService::class.java))
         if (prefs.operationMode == "local_full_node")
             startService(Intent(this, SiadService::class.java))
 

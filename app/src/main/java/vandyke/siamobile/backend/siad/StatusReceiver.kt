@@ -14,8 +14,8 @@ import vandyke.siamobile.prefs
 
 class StatusReceiver(val siadService: SiadService) : BroadcastReceiver() {
 
-    private var batteryGood: Boolean = false
-    private var networkGood: Boolean = false
+    private var batteryGood: Boolean = true
+    private var networkGood: Boolean = true
 
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action == Intent.ACTION_BATTERY_CHANGED) {

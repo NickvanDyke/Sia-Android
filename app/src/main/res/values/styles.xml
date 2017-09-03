@@ -53,6 +53,5 @@
     <!--startup splash scrappThemeheme-->
     <style name="splashScreenTheme" parent="AppTheme.Light">
         <item name="android:windowBackground">@drawable/splash_screen</item>
-        <!--TODO: idk if setting primarydark color is working-->
     </style>
 </resources>

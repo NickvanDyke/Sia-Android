@@ -89,6 +89,7 @@ class TerminalFragment : Fragment(), SiadService.SiadListener {
             true
         })
         output.movementMethod = ScrollingMovementMethod()
+        output.append(SiadService.bufferedOutput)
         SiadService.addListener(this)
     }
 

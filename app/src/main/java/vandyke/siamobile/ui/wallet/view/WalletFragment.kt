@@ -37,7 +37,7 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
 
     private lateinit var model: IWalletModel
     private lateinit var presenter: IWalletPresenter
-    private var mode: String = "none"
+    private var cachedMode: String = "none"
 
     private val adapter = TransactionAdapter()
 
@@ -111,7 +111,7 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
         transactionsData.alltransactions
                 .filterNot { hideZero && it.isNetZero }
                 .forEach { list.add(0, it) }
-        adapter.setTransactions(list)
+        adapter.transactions = list
         adapter.notifyDataSetChanged()
     }
 
@@ -196,9 +196,9 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
 
     override fun onResume() {
         super.onResume()
-        if (prefs.operationMode != mode) {
-            mode = prefs.operationMode
-            model = if (mode == "cold_storage") WalletModelColdStorage() else WalletModelHttp()
+        if (prefs.operationMode != cachedMode) {
+            cachedMode = prefs.operationMode
+            model = if (cachedMode == "cold_storage") WalletModelColdStorage() else WalletModelHttp()
             presenter = WalletPresenter(this, model)
         }
         presenter.refresh()
@@ -208,9 +208,9 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
         super.onHiddenChanged(hidden)
         if (!hidden) {
             activity.invalidateOptionsMenu()
-            if (prefs.operationMode != mode) {
-                mode = prefs.operationMode
-                model = if (mode == "cold_storage") WalletModelColdStorage() else WalletModelHttp()
+            if (prefs.operationMode != cachedMode) {
+                cachedMode = prefs.operationMode
+                model = if (cachedMode == "cold_storage") WalletModelColdStorage() else WalletModelHttp()
                 presenter = WalletPresenter(this, model)
             }
             presenter.refresh()

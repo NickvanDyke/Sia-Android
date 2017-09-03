@@ -22,7 +22,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 class TransactionAdapter : RecyclerView.Adapter<TransactionHolder>() {
-    private var transactions: ArrayList<TransactionData> = ArrayList()
+    var transactions: ArrayList<TransactionData> = ArrayList()
     private val df = SimpleDateFormat("MMM dd\nh:mm a", Locale.getDefault())
     private val red = Color.rgb(186, 63, 63) // TODO: choose better colors maybe
     private val green = Color.rgb(0, 114, 11)
@@ -67,5 +67,4 @@ class TransactionAdapter : RecyclerView.Adapter<TransactionHolder>() {
 
     override fun getItemCount(): Int = transactions.size
 
-    fun setTransactions(transactions: ArrayList<TransactionData>) { this.transactions = transactions }
 }

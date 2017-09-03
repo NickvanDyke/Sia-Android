@@ -19,7 +19,8 @@
         app:layout_constraintRight_toRightOf="parent"
         android:id="@+id/addressesList"
         android:layout_width="0dp"
-        android:layout_height="192dp"/>
+        android:layout_height="wrap_content"
+        android:maxHeight="192dp"/>
 
     <Button
         android:text="Close"

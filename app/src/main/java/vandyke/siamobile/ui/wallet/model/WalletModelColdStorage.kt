@@ -85,7 +85,7 @@ class WalletModelColdStorage : IWalletModel {
         }
     }
 
-    override fun getSeeds(callback: SiaCallback<SeedsData>) {
+    override fun getSeeds(dictionary: String, callback: SiaCallback<SeedsData>) {
         when {
             !exists -> callback.onError(SiaError(SiaError.Reason.WALLET_NOT_ENCRYPTED))
             !unlocked -> callback.onError(SiaError(SiaError.Reason.WALLET_LOCKED))

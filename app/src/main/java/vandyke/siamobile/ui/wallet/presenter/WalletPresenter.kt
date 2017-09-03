@@ -39,6 +39,8 @@ class WalletPresenter(private val walletView: IWalletView, val walletModel: IWal
             refreshWallet()
             walletView.closeExpandableFrame()
         }, {
+            if (it.reason == SiaError.Reason.WALLET_SCAN_IN_PROGRESS)
+                walletView.closeExpandableFrame()
             walletView.onError(it)
         }))
     }

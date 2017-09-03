@@ -39,7 +39,6 @@ class SettingsFragment : PreferenceFragment() {
     private lateinit var runLocalNodeOffWifi: SwitchPreference
     private lateinit var useExternal: SwitchPreference
     private lateinit var minBattery: EditTextPreference
-    private lateinit var runInBackground: SwitchPreference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

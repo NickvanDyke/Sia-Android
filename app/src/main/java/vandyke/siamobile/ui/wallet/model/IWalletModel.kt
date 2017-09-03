@@ -15,7 +15,7 @@ interface IWalletModel {
     fun getAddress(callback: SiaCallback<AddressData>)
     fun getAddresses(callback: SiaCallback<AddressesData>)
     fun getTransactions(callback: SiaCallback<TransactionsData>)
-    fun getSeeds(callback: SiaCallback<SeedsData>)
+    fun getSeeds(dictionary: String, callback: SiaCallback<SeedsData>)
     fun getConsensus(callback: SiaCallback<ConsensusData>)
     fun unlock(password: String, callback: SiaCallback<Unit>)
     fun lock(callback: SiaCallback<Unit>)
