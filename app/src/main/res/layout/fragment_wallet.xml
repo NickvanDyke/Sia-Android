@@ -13,7 +13,7 @@
                                              android:animateLayoutChanges="true">
 
     <Button
-        android:text="Send"
+        android:text="@string/send"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:id="@+id/sendButton"
@@ -27,7 +27,7 @@
         app:layout_constraintTop_toBottomOf="@+id/balanceText"/>
 
     <Button
-        android:text="Receive"
+        android:text="@string/receive"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:id="@+id/receiveButton"
@@ -40,7 +40,7 @@
         app:layout_constraintTop_toTopOf="@+id/sendButton"/>
 
     <TextView
-        android:text="Loading..."
+        android:text="@string/loading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/balanceText"
@@ -83,7 +83,7 @@
         custom:layout_constraintHorizontal_bias="1.0"/>
 
     <TextView
-        android:text="Not synced"
+        android:text="@string/not_synced"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/syncText"
@@ -94,7 +94,7 @@
         />
 
     <TextView
-        android:text="Loading..."
+        android:text="@string/loading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/balanceUnconfirmed"
@@ -104,7 +104,7 @@
         android:layout_marginStart="2dp"/>
 
     <TextView
-        android:text="Loading..."
+        android:text="@string/loading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/balanceUsdText"
@@ -127,7 +127,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/receiveButton"
-        android:id="@+id/expandFrame"
+        android:id="@+id/expandableFrame"
         android:visibility="gone"
         android:layout_height="wrap_content">
     </FrameLayout>
@@ -136,7 +136,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:id="@+id/transactionListSwipe"
-        app:layout_constraintTop_toBottomOf="@+id/expandFrame"
+        app:layout_constraintTop_toBottomOf="@+id/expandableFrame"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"

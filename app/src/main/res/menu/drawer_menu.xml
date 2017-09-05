@@ -17,15 +17,15 @@
         <item
                 android:id="@+id/drawer_item_hosting"
                 android:icon="@drawable/ic_folder_shared"
-                android:title="Hosting"/>
+                android:title="@string/hosting"/>
         <item
                 android:id="@+id/drawer_item_wallet"
                 android:icon="@drawable/ic_account_balance_wallet"
-                android:title="Wallet"/>
+                android:title="@string/wallet"/>
         <item
                 android:id="@+id/drawer_item_terminal"
                 android:icon="@drawable/icon_terminal"
-                android:title="Terminal"/>
+                android:title="@string/terminal"/>
     </group>
     <group
             android:id="@+id/extra_items"
@@ -33,10 +33,10 @@
         <item
                 android:id="@+id/drawer_item_settings"
                 android:icon="@drawable/ic_settings"
-                android:title="Settings"/>
+                android:title="@string/settings"/>
         <item
                 android:id="@+id/drawer_item_about"
                 android:icon="@drawable/ic_info"
-                android:title="About"/>
+                android:title="@string/about"/>
     </group>
 </menu>

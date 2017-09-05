@@ -15,8 +15,8 @@ android {
         applicationId "vandyke.siamobile"
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 20300
-        versionName "2.3.0"
+        versionCode 20301
+        versionName "2.3.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -50,7 +50,6 @@ dependencies {
     compile 'com.android.support:cardview-v7:26.0.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
 
-    compile 'com.nanohttpd:nanohttpd:2.2.0'
     compile 'com.daimajia.numberprogressbar:library:1.4@aar'
 
     compile 'com.github.apl-devs:appintro:v4.2.0'

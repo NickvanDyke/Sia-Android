@@ -61,7 +61,7 @@ class WalletCreateDialog(private val presenter: IWalletPresenter? = null) : Base
                     .setTitle("IMPORTANT")
                     .setMessage("You just created a wallet while in cold storage mode. While in cold storage mode," +
                             " Sia Mobile is not connected to the Sia network and does not have a copy of the Sia blockchain. Normally this would mean you can't " +
-                            "view your balance and transactions, but Sia Mobile ESTIMATES your CONFIRMED balance and transactions once per minute using explore.sia.tech." +
+                            "view your balance and transactions, but Sia Mobile ESTIMATES your CONFIRMED balance and transactions using explore.sia.tech." +
                             "\n\nIt also means certain functions that require the blockchain or a connection to the network will" +
                             " be unavailable - most importantly, you can't send coins from a cold storage wallet. If you wish to use these unavailable functions," +
                             " you can, AT ANY TIME, load your wallet seed on a full node (such as Sia-UI for desktop, or Sia Mobile in local full node mode)" +
@@ -73,7 +73,7 @@ class WalletCreateDialog(private val presenter: IWalletPresenter? = null) : Base
         fun showSeed(seed: String, activity: Activity) {
             val msg = "Below is your wallet seed. Your wallet's addresses are generated using this seed. Therefore, any coins you " +
                     "send to this wallet and its addresses will \"belong\" to this seed. It's what you will need" +
-                    " in order to recover your coins if something happens to your wallet, or to load your wallet on another device. Keep it safe."
+                    " in order to recover your coins if something happens to your wallet, or to load your wallet on another device. Record it elsewhere, and keep it safe."
             GenUtil.getDialogBuilder(activity)
                     .setTitle("Wallet seed")
                     .setMessage("$msg\n\n$seed")
@@ -81,7 +81,6 @@ class WalletCreateDialog(private val presenter: IWalletPresenter? = null) : Base
                         GenUtil.copyToClipboard(activity, seed)
                         Toast.makeText(activity, "Copied seed", Toast.LENGTH_SHORT).show()
                     })
-                    .setNegativeButton("Close", null)
                     .show()
         }
     }

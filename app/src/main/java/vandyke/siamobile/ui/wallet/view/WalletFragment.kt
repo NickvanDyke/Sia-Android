@@ -69,8 +69,8 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
         transactionList.adapter = adapter
 
         /* set up click listeners for the big stuff */
-        sendButton.setOnClickListener { replaceExpandFrame(WalletSendDialog(presenter)) }
-        receiveButton.setOnClickListener { replaceExpandFrame(WalletReceiveDialog(model)) }
+        sendButton.setOnClickListener { fillExpandableFrame(WalletSendDialog(presenter)) }
+        receiveButton.setOnClickListener { fillExpandableFrame(WalletReceiveDialog(model)) }
         balanceText.setOnClickListener { v ->
             GenUtil.getDialogBuilder(v.context)
                     .setTitle("Exact Balance")
@@ -93,15 +93,14 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
     override fun onWalletUpdate(walletData: WalletData) {
         this.balanceHastings = walletData.confirmedsiacoinbalance
         this.walletData = walletData
-        balanceUnconfirmed.text = "${if (walletData.unconfirmedsiacoinbalance > BigDecimal.ZERO) "+" else ""}${walletData.unconfirmedsiacoinbalance.toSC().round().toPlainString()} unconfirmed"
-        balanceText.text = walletData.confirmedsiacoinbalance.toSC().round().toPlainString()
+        balanceUnconfirmed?.text = "${if (walletData.unconfirmedsiacoinbalance > BigDecimal.ZERO) "+" else ""}${walletData.unconfirmedsiacoinbalance.toSC().round().toPlainString()} unconfirmed"
+        balanceText?.text = walletData.confirmedsiacoinbalance.toSC().round().toPlainString()
         setStatusIcon()
-        transactionListSwipe.isRefreshing = false
-//        refreshButton.actionView = null
+        transactionListSwipe?.isRefreshing = false
     }
 
     override fun onUsdUpdate(scPriceData: ScPriceData) {
-        balanceUsdText.text = "${balanceHastings.toSC().toUsd(scPriceData.price_usd).round().toPlainString()} USD"
+        balanceUsdText?.text = "${balanceHastings.toSC().toUsd(scPriceData.price_usd).round().toPlainString()} USD"
     }
 
     override fun onTransactionsUpdate(transactionsData: TransactionsData) {
@@ -115,13 +114,12 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
     }
 
     override fun onConsensusUpdate(consensusData: ConsensusData) {
-        val height = consensusData.height
         if (consensusData.synced) {
-            syncText.text = "Synced: $height"
-            syncBar.progress = 100
+            syncText?.text = "${getString(R.string.syncing)}: ${consensusData.height}"
+            syncBar?.progress = 100
         } else {
-            syncText.text = "Syncing: $height"
-            syncBar.progress = consensusData.syncprogress.toInt()
+            syncText?.text = "${getString(R.string.syncing)}: ${consensusData.height}"
+            syncBar?.progress = consensusData.syncprogress.toInt()
         }
     }
 
@@ -145,8 +143,8 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
 
     override fun onConsensusError(error: SiaError) {
         error.snackbar(view)
-        syncText.text = "Not synced"
-        syncBar.progress = 0
+        syncText?.text = getString(R.string.not_synced)
+        syncBar?.progress = 0
     }
 
     override fun onSiadOutput(line: String) {
@@ -162,34 +160,38 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.actionRefresh -> presenter.refresh()
             R.id.actionStatus -> {
+//                when (statusButton?.icon?.constantState) {
+//                    activity.resources.getDrawable(R.drawable.ic_add, null).constantState -> fillExpandableFrame(WalletCreateDialog(presenter))
+//                    activity.resources.getDrawable(R.drawable.ic_lock_outline, null).constantState -> fillExpandableFrame(WalletUnlockDialog(presenter))
+//                    activity.resources.getDrawable(R.drawable.ic_lock_open, null).constantState -> presenter.lock()
+//                }
                 when (walletData?.encrypted) {
-                    false -> replaceExpandFrame(WalletCreateDialog(presenter))
-                    true -> if (!walletData!!.unlocked) replaceExpandFrame(WalletUnlockDialog(presenter))
+                    false -> fillExpandableFrame(WalletCreateDialog(presenter))
+                    true -> if (!walletData!!.unlocked) fillExpandableFrame(WalletUnlockDialog(presenter))
                     else presenter.lock()
                 }
             }
-            R.id.actionUnlock -> replaceExpandFrame(WalletUnlockDialog(presenter))
+            R.id.actionUnlock -> fillExpandableFrame(WalletUnlockDialog(presenter))
             R.id.actionLock -> presenter.lock()
-            R.id.actionChangePassword -> replaceExpandFrame(WalletChangePasswordDialog(presenter))
-            R.id.actionViewSeeds -> replaceExpandFrame(WalletSeedsDialog(model))
-            R.id.actionCreateWallet -> replaceExpandFrame(WalletCreateDialog(presenter))
-            R.id.actionSweepSeed -> replaceExpandFrame(WalletSweepSeedDialog(presenter))
-            R.id.actionViewAddresses -> replaceExpandFrame(WalletAddressesDialog(model))
+            R.id.actionChangePassword -> fillExpandableFrame(WalletChangePasswordDialog(presenter))
+            R.id.actionViewSeeds -> fillExpandableFrame(WalletSeedsDialog(model))
+            R.id.actionCreateWallet -> fillExpandableFrame(WalletCreateDialog(presenter))
+            R.id.actionSweepSeed -> fillExpandableFrame(WalletSweepSeedDialog(presenter))
+            R.id.actionViewAddresses -> fillExpandableFrame(WalletAddressesDialog(model))
             R.id.actionGenPaperWallet -> (activity as MainActivity).displayFragmentClass(PaperWalletFragment::class.java, "Generated paper wallet", null)
         }
 
         return super.onOptionsItemSelected(item)
     }
 
-    fun replaceExpandFrame(fragment: Fragment) {
-        fragmentManager.beginTransaction().replace(R.id.expandFrame, fragment).commit()
-        expandFrame.visibility = View.VISIBLE
+    fun fillExpandableFrame(fragment: Fragment) {
+        fragmentManager.beginTransaction().replace(R.id.expandableFrame, fragment).commit()
+        expandableFrame.visibility = View.VISIBLE
     }
 
     override fun closeExpandableFrame() {
-        expandFrame.visibility = View.GONE
+        expandableFrame.visibility = View.GONE
         GenUtil.hideSoftKeyboard(activity)
     }
 
@@ -235,5 +237,14 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
                 true -> if (!walletData!!.unlocked) statusButton?.setIcon(R.drawable.ic_lock_outline)
                 else statusButton?.setIcon(R.drawable.ic_lock_open)
             }
+    }
+
+    fun onBackPressed(): Boolean {
+        if (expandableFrame.visibility == View.VISIBLE) {
+            closeExpandableFrame()
+            return true
+        } else {
+            return false
+        }
     }
 }

@@ -23,7 +23,7 @@
         android:maxHeight="192dp"/>
 
     <TextView
-        android:text="Keep your seed(s) safe! You will need them to recover your funds if something happens to your device or wallet. If someone gets your seed(s), they can take your funds!"
+        android:text="@string/seed_warning"
         android:textColor="@android:color/holo_red_light"
         android:layout_width="0dp"
         android:id="@+id/seedsWarning"
@@ -36,7 +36,7 @@
         android:layout_height="72dp"/>
 
     <Button
-        android:text="Close"
+        android:text="@android:string/cancel"
         android:background="@null"
         android:textColor="@color/colorAccent"
         android:layout_width="wrap_content"

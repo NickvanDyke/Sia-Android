@@ -31,6 +31,8 @@ class WalletSeedsDialog(private val walletModel: IWalletModel? = null) : BaseDia
         seedsList.adapter = adapter
 
         walletModel?.getSeeds("english", SiaCallback({ it ->
+            println(it)
+            seeds += it.primaryseed
             seeds += it.allseeds
             adapter.notifyDataSetChanged()
         }, {

@@ -19,7 +19,7 @@
         android:id="@+id/newPasswordCreate"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        android:hint="New password"
+        android:hint="@string/new_password"
         android:gravity="center"
         android:inputType="textPassword"
         android:fontFamily="sans-serif"
@@ -34,7 +34,7 @@
         android:layout_height="wrap_content"
         android:inputType="textPassword"
         android:ems="10"
-        android:hint="Confirm password"
+        android:hint="@string/confirm_password"
         android:id="@+id/confirmNewPasswordCreate"
         android:fontFamily="sans-serif"
         android:gravity="center"
@@ -66,7 +66,7 @@
         android:layout_height="wrap_content"
         android:inputType="textNoSuggestions|textVisiblePassword"
         android:ems="10"
-        android:hint="Seed"
+        android:hint="@string/seed"
         android:id="@+id/walletCreateSeed"
         app:layout_constraintRight_toRightOf="@+id/confirmNewPasswordCreate"
         android:gravity="center"
@@ -87,7 +87,7 @@
         android:textColor="@android:color/holo_red_light"/>
 
     <Button
-        android:text="Cancel"
+        android:text="@android:string/cancel"
         android:background="@null"
         android:textColor="@color/colorAccent"
         android:layout_width="wrap_content"
@@ -99,7 +99,7 @@
         android:layout_marginStart="16dp"/>
 
     <Button
-        android:text="Create"
+        android:text="@string/create"
         android:background="@null"
         android:textColor="@color/colorAccent"
         android:layout_width="wrap_content"
