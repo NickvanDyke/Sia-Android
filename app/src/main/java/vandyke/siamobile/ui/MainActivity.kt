@@ -237,6 +237,7 @@ class MainActivity : AppCompatActivity() {
     override fun onBackPressed() {
         if (drawerLayout.isDrawerVisible(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START)
+        } else if (currentlyVisibleFragment is WalletFragment && (currentlyVisibleFragment as WalletFragment).onBackPressed()) {
         } else if (titleBackstack.size <= 1) {
             GenUtil.getDialogBuilder(this)
                     .setTitle("Quit?")

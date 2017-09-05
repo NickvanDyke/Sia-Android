@@ -94,14 +94,14 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
     override fun onWalletUpdate(walletData: WalletData) {
         this.balanceHastings = walletData.confirmedsiacoinbalance
         this.walletData = walletData
-        balanceUnconfirmed.text = "${if (walletData.unconfirmedsiacoinbalance > BigDecimal.ZERO) "+" else ""}${walletData.unconfirmedsiacoinbalance.toSC().round().toPlainString()} unconfirmed"
-        balanceText.text = walletData.confirmedsiacoinbalance.toSC().round().toPlainString()
+        balanceUnconfirmed?.text = "${if (walletData.unconfirmedsiacoinbalance > BigDecimal.ZERO) "+" else ""}${walletData.unconfirmedsiacoinbalance.toSC().round().toPlainString()} unconfirmed"
+        balanceText?.text = walletData.confirmedsiacoinbalance.toSC().round().toPlainString()
         setStatusIcon()
-        transactionListSwipe.isRefreshing = false
+        transactionListSwipe?.isRefreshing = false
     }
 
     override fun onUsdUpdate(scPriceData: ScPriceData) {
-        balanceUsdText.text = "${balanceHastings.toSC().toUsd(scPriceData.price_usd).round().toPlainString()} USD"
+        balanceUsdText?.text = "${balanceHastings.toSC().toUsd(scPriceData.price_usd).round().toPlainString()} USD"
     }
 
     override fun onTransactionsUpdate(transactionsData: TransactionsData) {
@@ -115,13 +115,12 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
     }
 
     override fun onConsensusUpdate(consensusData: ConsensusData) {
-        val height = consensusData.height
         if (consensusData.synced) {
-            syncText.text = "Synced: $height"
-            syncBar.progress = 100
+            syncText?.text = "Synced: ${consensusData.height}"
+            syncBar?.progress = 100
         } else {
-            syncText.text = "Syncing: $height"
-            syncBar.progress = consensusData.syncprogress.toInt()
+            syncText?.text = "Syncing: ${consensusData.height}"
+            syncBar?.progress = consensusData.syncprogress.toInt()
         }
     }
 
@@ -145,8 +144,8 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
 
     override fun onConsensusError(error: SiaError) {
         error.snackbar(view)
-        syncText.text = "Not synced"
-        syncBar.progress = 0
+        syncText?.text = "Not synced"
+        syncBar?.progress = 0
     }
 
     override fun onSiadOutput(line: String) {
@@ -239,5 +238,14 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
                 true -> if (!walletData!!.unlocked) statusButton?.setIcon(R.drawable.ic_lock_outline)
                 else statusButton?.setIcon(R.drawable.ic_lock_open)
             }
+    }
+
+    fun onBackPressed(): Boolean {
+        if (expandableFrame.visibility == View.VISIBLE) {
+            closeExpandableFrame()
+            return true
+        } else {
+            return false
+        }
     }
 }
