@@ -13,31 +13,31 @@
         android:icon="@drawable/ic_add"
         android:id="@+id/actionStatus"/>
     <item
-        android:title="Unlock wallet"
+        android:title="@string/unlock_wallet"
         android:id="@+id/actionUnlock"
         app:showAsAction="never"/>
     <item
-        android:title="Lock wallet"
+        android:title="@string/lock_wallet"
         android:id="@+id/actionLock"
         app:showAsAction="never"/>
     <item
-        android:title="Create wallet"
+        android:title="@string/create_wallet"
         android:id="@+id/actionCreateWallet"
         app:showAsAction="never"/>
     <item
-        android:title="View addresses"
+        android:title="@string/view_addresses"
         android:id="@+id/actionViewAddresses"
         app:showAsAction="never"/>
     <item
-        android:title="View seeds"
+        android:title="@string/view_seeds"
         android:id="@+id/actionViewSeeds"
         app:showAsAction="never"/>
     <item
-        android:title="Sweep seed"
+        android:title="@string/sweep_seed"
         android:id="@+id/actionSweepSeed"
         app:showAsAction="never"/>
     <item
-        android:title="Change password"
+        android:title="@string/change_password"
         android:id="@+id/actionChangePassword"
         app:showAsAction="never"/>
     <item

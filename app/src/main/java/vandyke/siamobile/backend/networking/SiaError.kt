@@ -69,6 +69,7 @@ class SiaError {
         }
     }
 
+    // TODO: translate the msgs
     enum class Reason(val msg: String) {
         TIMEOUT("Response timed out"),
         NO_NETWORK_RESPONSE("No network response"),
@@ -101,7 +102,8 @@ class SiaError {
             snackbar.view.setBackgroundColor(ContextCompat.getColor(view.context, R.color.colorAccent))
             snackbar.setActionTextColor(ContextCompat.getColor(view.context, android.R.color.black))
             snackbar.show()
-        } else
+        } else {
             SnackbarUtil.snackbar(view, reason.msg, Snackbar.LENGTH_SHORT)
+        }
     }
 }

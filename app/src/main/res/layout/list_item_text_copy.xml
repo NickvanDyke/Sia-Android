@@ -6,7 +6,7 @@
   -->
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:app="http://schemas.android.com/apk/res-auto"
-          android:text="Loading..."
+          android:text="@string/loading"
           android:layout_height="wrap_content"
           android:id="@+id/textCopyView"
           app:layout_constraintLeft_toLeftOf="parent"

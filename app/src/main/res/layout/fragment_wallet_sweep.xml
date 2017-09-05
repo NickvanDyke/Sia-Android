@@ -16,7 +16,7 @@
         android:inputType="textNoSuggestions"
         android:ems="10"
         android:id="@+id/walletSweepSeed"
-        android:hint="Seed"
+        android:hint="@string/seed"
         android:gravity="center"
         android:layout_marginEnd="16dp"
         app:layout_constraintRight_toRightOf="parent"
@@ -26,7 +26,7 @@
         app:layout_constraintTop_toTopOf="parent"/>
 
     <Button
-        android:text="Cancel"
+        android:text="@android:string/cancel"
         android:background="@null"
         android:textColor="@color/colorAccent"
         android:layout_width="wrap_content"
@@ -38,7 +38,7 @@
         android:layout_marginStart="16dp"/>
 
     <Button
-        android:text="Sweep"
+        android:text="@string/sweep"
         android:background="@null"
         android:textColor="@color/colorAccent"
         android:layout_width="wrap_content"

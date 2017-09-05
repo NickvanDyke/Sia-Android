@@ -9,6 +9,35 @@
     <string name="app_name">Sia Mobile</string>
     <string name="drawer_open">open</string>
     <string name="drawer_close">close</string>
+    <string name="unlock_wallet">Unlock wallet</string>
+    <string name="lock_wallet">Lock wallet</string>
+    <string name="create_wallet">Create wallet</string>
+    <string name="view_addresses">View addresses</string>
+    <string name="view_seeds">View seeds</string>
+    <string name="sweep_seed">Sweep seed</string>
+    <string name="change_password">Change password</string>
+    <string name="hosting">Hosting</string>
+    <string name="wallet">Wallet</string>
+    <string name="terminal">Terminal</string>
+    <string name="settings">Settings</string>
+    <string name="about">About</string>
+    <string name="seed">Seed</string>
+    <string name="sweep">Sweep</string>
+    <string name="seed_warning">Keep your seed(s) safe! You will need them to recover your funds if something happens to your device or wallet. If someone gets your seed(s), they can take your funds!</string>
+    <string name="recipient_address">Recipient address</string>
+    <string name="amount_sc">Amount (SC)</string>
+    <string name="send">Send</string>
+    <string name="receive">Receive</string>
+    <string name="loading">Loading…</string>
+    <string name="not_synced">Not synced</string>
+    <string name="password">Password</string>
+    <string name="unlock">Unlock</string>
+    <string name="current_password">Current password</string>
+    <string name="new_password">New password</string>
+    <string name="confirm_new_password">Confirm new password</string>
+    <string name="change">Change</string>
+    <string name="create">Create</string>
+    <string name="confirm_password">Confirm password</string>
 
     <string name="terminal_warning" tools:ignore="TypographyDashes">ADVANCED:\nThis terminal uses siac as its backend. Siac is a command-line utility written by the
         Sia developers that can interface with all of Sia\'s API endpoints; you can type --help and press enter for a list
@@ -29,4 +58,8 @@ computer\'s Sia from your phone when your phone is on the same network as your c
 router on your chosen port to your computer\'s internal IP address. Many guides exist online detailing how to do this. Please note that the Sia API uses HTTP requests,
 which are NOT inherently secure. If you communicate with your full node from outside your local network, other people can potentially see the info you are sending
 and receiving. This is not a concern if you will not be port forwarding your node.]]></string>
+    <string name="synced">Synced</string>
+    <string name="syncing">Syncing</string>
+    <string name="close">Close</string>
+
 </resources>

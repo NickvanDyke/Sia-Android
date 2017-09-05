@@ -116,10 +116,10 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
 
     override fun onConsensusUpdate(consensusData: ConsensusData) {
         if (consensusData.synced) {
-            syncText?.text = "Synced: ${consensusData.height}"
+            syncText?.text = "${getString(R.string.syncing)}: ${consensusData.height}"
             syncBar?.progress = 100
         } else {
-            syncText?.text = "Syncing: ${consensusData.height}"
+            syncText?.text = "${getString(R.string.syncing)}: ${consensusData.height}"
             syncBar?.progress = consensusData.syncprogress.toInt()
         }
     }
@@ -144,7 +144,7 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
 
     override fun onConsensusError(error: SiaError) {
         error.snackbar(view)
-        syncText?.text = "Not synced"
+        syncText?.text = getString(R.string.not_synced)
         syncBar?.progress = 0
     }
 

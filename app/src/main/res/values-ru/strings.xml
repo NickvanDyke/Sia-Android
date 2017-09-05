@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2017 Nicholas van Dyke
+  ~
+  ~ This file is subject to the terms and conditions defined in 'LICENSE.md'
+  -->
+
+<resources>
+    <string name="app_name">Sia Mobile</string>
+    <string name="about">Около</string>
+    <string name="amount_sc">Количество (SC)</string>
+    <string name="change">Изменить</string>
+    <string name="change_password">Изменить пароль</string>
+    <string name="changelog">изменений</string>
+    <string name="confirm_new_password">Подтвердите новый пароль</string>
+    <string name="confirm_password">Подтвердите Пароль</string>
+    <string name="create">Создайте</string>
+    <string name="create_wallet">Создать кошелек</string>
+    <string name="current_password">Текущий пароль</string>
+    <string name="feedback_app">связаться</string>
+    <string name="hosting">Хостинг</string>
+    <string name="introduce_app">относительно</string>
+    <string name="loading">погрузка…</string>
+    <string name="lock_wallet">Замок кошелька</string>
+    <string name="new_password">новый пароль</string>
+    <string name="not_synced">Не синхронизирован</string>
+    <string name="password">пароль</string>
+    <string name="receive">Получать</string>
+    <string name="recipient_address">Адрес получателя</string>
+    <string name="seed">источник</string>
+    <string name="send">послать</string>
+    <string name="settings">настройки</string>
+    <string name="share_app">Поделиться</string>
+    <string name="sweep">Подметать</string>
+    <string name="sweep_seed">Подметание семян</string>
+    <string name="terminal">Терминал</string>
+    <string name="unlock">отпереть</string>
+    <string name="unlock_wallet">Разблокировать кошелек</string>
+    <string name="update_app">Обновить</string>
+    <string name="view_addresses">Просмотреть адреса</string>
+    <string name="view_seeds">Просмотреть семена</string>
+    <string name="wallet">бумажник</string>
+    <string name="synced">синхронизированные</string>
+    <string name="syncing">Синхронизации</string>
+    <string name="close">Закрыть</string>
+</resources>

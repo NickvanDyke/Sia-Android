@@ -23,7 +23,7 @@
         android:maxHeight="192dp"/>
 
     <Button
-        android:text="Close"
+        android:text="@android:string/cancel"
         android:background="@null"
         android:textColor="@color/colorAccent"
         android:layout_width="wrap_content"
