@@ -61,5 +61,6 @@ and receiving. This is not a concern if you will not be port forwarding your nod
     <string name="synced">Synced</string>
     <string name="syncing">Syncing</string>
     <string name="close">Close</string>
+    <string name="renter">Renter</string>
 
 </resources>

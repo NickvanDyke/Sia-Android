@@ -11,10 +11,11 @@ import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.view.*
+import kotlinx.android.synthetic.main.fragment_renter.*
 import vandyke.siamobile.R
 import vandyke.siamobile.backend.data.renter.SiaDir
 import vandyke.siamobile.backend.networking.SiaError
-import vandyke.siamobile.ui.renter.model.RenterModelHttp
+import vandyke.siamobile.ui.renter.model.RenterModelTest
 import vandyke.siamobile.ui.renter.presenter.IRenterPresenter
 import vandyke.siamobile.ui.renter.presenter.RenterPresenter
 import vandyke.siamobile.ui.renter.view.files.FilesAdapter
@@ -22,7 +23,7 @@ import vandyke.siamobile.ui.renter.view.files.FilesAdapter
 
 class RenterFragment : Fragment(), IRenterView {
 
-    private val presenter: IRenterPresenter = RenterPresenter(this, RenterModelHttp())
+    private val presenter: IRenterPresenter = RenterPresenter(this, RenterModelTest())
 
     private lateinit var adapter: FilesAdapter
     private var programmaticallySelecting = true
@@ -30,7 +31,7 @@ class RenterFragment : Fragment(), IRenterView {
     var rootDir: SiaDir = SiaDir("home", null)
 
     var currentDir: SiaDir = rootDir
-        set(value) { // TODO: should move this logic to the presenter
+        set(value) {
             programmaticallySelecting = true
             val oldPath = field.fullPath
             val newPath = value.fullPath
@@ -69,19 +70,24 @@ class RenterFragment : Fragment(), IRenterView {
                     currentDir = currentDir.fullPath[renterFilepath.selectedTabPosition]
             }
         })
+
+        renterSwipeRefresh.setOnRefreshListener { presenter.refresh() }
     }
 
     override fun onRootDirUpdate(dir: SiaDir) {
         this.rootDir = dir
+        currentDir = rootDir
+        // TODO: check if currentDir is still valid
+        renterSwipeRefresh.isRefreshing = false
     }
 
     override fun onCurrentDirUpdate(dir: SiaDir) {
-        // TODO: check if currentDir is still valid
         currentDir = dir
     }
 
     override fun onError(error: SiaError) {
         error.snackbar(view)
+        renterSwipeRefresh.isRefreshing = false
     }
 
     override fun goUpDir(): Boolean {
@@ -93,15 +99,22 @@ class RenterFragment : Fragment(), IRenterView {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.actionRefresh -> presenter.refresh()
+//            R.id.actionRefresh -> presenter.refresh()
         }
         return super.onOptionsItemSelected(item)
     }
 
+    override fun onResume() {
+        super.onResume()
+        presenter.refresh()
+    }
+
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
-        if (!hidden)
+        if (!hidden) {
             activity.invalidateOptionsMenu()
+            presenter.refresh()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

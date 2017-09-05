@@ -9,6 +9,7 @@ package vandyke.siamobile.ui.wallet.view.dialogs
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.view.View
+import kotlinx.android.synthetic.main.fragment_wallet_receive.*
 import net.glxn.qrgen.android.QRCode
 import vandyke.siamobile.R
 import vandyke.siamobile.backend.networking.SiaCallback

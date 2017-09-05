@@ -5,12 +5,12 @@
   ~ This file is subject to the terms and conditions defined in 'LICENSE.md'
   -->
 
-<menu xmlns:app="http://schemas.android.com/apk/res-auto"
-      xmlns:android="http://schemas.android.com/apk/res/android">
+<menu
+    >
 
-    <item
-        android:title="Refresh"
-        app:showAsAction="always"
-        android:icon="@drawable/ic_refresh"
-        android:id="@+id/actionRefresh"/>
+    <!--<item-->
+        <!--android:title="Refresh"-->
+        <!--app:showAsAction="always"-->
+        <!--android:icon="@drawable/ic_refresh"-->
+        <!--android:id="@+id/actionRefresh"/>-->
 </menu>

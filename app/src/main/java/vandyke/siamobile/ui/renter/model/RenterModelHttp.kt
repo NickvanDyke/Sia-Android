@@ -8,6 +8,7 @@ class RenterModelHttp : IRenterModel {
     override fun getRootDir(callback: SiaCallback<SiaDir>) = Renter.files(SiaCallback({ it ->
         val rootDir = SiaDir("root", null)
         it.files.forEach { rootDir.addSiaFile(it) }
+        callback.onSuccess?.invoke(rootDir)
     }, {
         callback.onError(it)
     }))

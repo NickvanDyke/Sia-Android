@@ -16,6 +16,7 @@ import vandyke.siamobile.R
 import vandyke.siamobile.prefs
 import vandyke.siamobile.ui.MainActivity
 import java.math.BigDecimal
+import java.math.RoundingMode
 
 
 object GenUtil {
@@ -61,7 +62,7 @@ object GenUtil {
         var i = 0
         val kilo = BigDecimal("1024")
         while (size > kilo) {
-            size /= kilo
+            size = size.divide(kilo, 10, RoundingMode.HALF_UP)
             i++
         }
         val sizeString: String

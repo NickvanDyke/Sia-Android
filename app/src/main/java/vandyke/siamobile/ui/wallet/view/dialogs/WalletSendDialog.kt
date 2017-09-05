@@ -12,9 +12,11 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import kotlinx.android.synthetic.main.fragment_wallet_send.*
 import vandyke.siamobile.R
 import vandyke.siamobile.ui.wallet.presenter.IWalletPresenter
 import vandyke.siamobile.ui.wallet.view.ScannerActivity
+import vandyke.siamobile.util.toHastings
 
 class WalletSendDialog(private val presenter: IWalletPresenter? = null) : BaseDialogFragment() {
     override val layout: Int = R.layout.fragment_wallet_send

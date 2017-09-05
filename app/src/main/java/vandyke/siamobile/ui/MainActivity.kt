@@ -28,6 +28,7 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.TextView
 import android.widget.Toast
+import kotlinx.android.synthetic.main.activity_main_layout.*
 import vandyke.siamobile.R
 import vandyke.siamobile.backend.siad.SiadService
 import vandyke.siamobile.prefs
@@ -120,7 +121,7 @@ class MainActivity : AppCompatActivity() {
             drawerLayout?.closeDrawers()
             val menuItemId = item.itemId
             when (menuItemId) {
-                R.id.drawer_item_files -> {
+                R.id.drawer_item_renter -> {
                     displayFragmentClass(RenterFragment::class.java, "Files", menuItemId)
                     return@OnNavigationItemSelectedListener true
                 }
@@ -155,9 +156,9 @@ class MainActivity : AppCompatActivity() {
             startService(Intent(this, SiadService::class.java))
 
         when (prefs.startupPage) {
-            "files" -> displayFragmentClass(RenterFragment::class.java, "Files", R.id.drawer_item_files)
+            "files" -> displayFragmentClass(RenterFragment::class.java, "Renter", R.id.drawer_item_renter)
             "hosting" -> displayFragmentClass(HostingFragment::class.java, "Hosting", R.id.drawer_item_hosting)
-            "wallet" -> displayFragmentClass(WalletFragment::class.java, "Wallet", R.id.drawer_item_wallet)
+            "wallet" -> displayFragmentClass(WalletFragment::class.java, getString(R.string.wallet), R.id.drawer_item_wallet)
             "terminal" -> displayFragmentClass(TerminalFragment::class.java, "Terminal", R.id.drawer_item_terminal)
         }
 
@@ -237,6 +238,7 @@ class MainActivity : AppCompatActivity() {
         if (drawerLayout.isDrawerVisible(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START)
         } else if (currentlyVisibleFragment is WalletFragment && (currentlyVisibleFragment as WalletFragment).onBackPressed()) {
+        } else if (currentlyVisibleFragment is RenterFragment && (currentlyVisibleFragment as RenterFragment).goUpDir()) {
         } else if (titleBackstack.size <= 1) {
             GenUtil.getDialogBuilder(this)
                     .setTitle("Quit?")

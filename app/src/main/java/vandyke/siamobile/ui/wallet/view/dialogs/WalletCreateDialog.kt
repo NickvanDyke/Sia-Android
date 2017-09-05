@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.view.View
 import android.widget.Toast
+import kotlinx.android.synthetic.main.fragment_wallet_create.*
 import vandyke.siamobile.R
 import vandyke.siamobile.ui.wallet.presenter.IWalletPresenter
 import vandyke.siamobile.util.GenUtil

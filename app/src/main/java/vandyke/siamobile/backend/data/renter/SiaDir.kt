@@ -13,7 +13,7 @@ class SiaDir(override val name: String, override val parent: SiaDir?) : SiaNode(
     private val files: ArrayList<SiaFile> = ArrayList()
     private val directories: ArrayList<SiaDir> = ArrayList()
 
-    val nodes: ArrayList<SiaNode>
+    val nodes: ArrayList<SiaNode> // TODO: these can probably be lazy instead of being computed each time. depends on how refreshing is handled
         get() {
             val result = ArrayList<SiaNode>()
             result.addAll(directories)
@@ -29,15 +29,19 @@ class SiaDir(override val name: String, override val parent: SiaDir?) : SiaNode(
             return result
         }
 
+    val fullPath: ArrayList<SiaDir>
+        get() = fullPathHelper(ArrayList())
+
     val fullPathString: String
         get() = fullPathStringHelper("")
 
-    val fullPath: ArrayList<SiaDir>
-        get() = fullPathHelper(ArrayList<SiaDir>())
-
-    fun addSiaFile(file: SiaFile) {
-        addSiaFileHelper(file, file.siapath.split("/"), 0)
+    fun contains(dir: SiaDir): Boolean {
+        if (directories.contains(dir)) return true
+        directories.forEach { if (it.contains(dir)) return true }
+        return false
     }
+
+    fun addSiaFile(file: SiaFile) = addSiaFileHelper(file, file.siapath.split("/"), 0)
 
     /**
      * @param file            the file being added
@@ -74,6 +78,16 @@ class SiaDir(override val name: String, override val parent: SiaDir?) : SiaNode(
         return parent?.fullPathStringHelper("$name/$pathSoFar") ?: "$name/$pathSoFar"
     }
 
+    override fun equals(other: Any?): Boolean { // this might not be the best way. might give false positives/negative sometimes
+        if (other is SiaDir) {
+            return this.fullPathString == other.fullPathString
+        } else {
+            return false
+        }
+    }
+
+
+    /* functions for printing this directory's contents in a file explorer-like format */
     fun printAll(p: PrintStream = System.out, indent: Int = 0) {
         indent(p, indent)
         p.println(name)
