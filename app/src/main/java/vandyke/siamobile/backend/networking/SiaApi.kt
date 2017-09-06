@@ -87,14 +87,25 @@ object SiaApi {
                     return@addInterceptor it.proceed(request)
                 }).build()
 
-        return Retrofit.Builder()
-                .baseUrl("http://${prefs.address}/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(client)
+        val builder = Retrofit.Builder()
+        builder.addConverterFactory(GsonConverterFactory.create())
+        builder.client(client)
+
+        /* try to set the baseUrl, catch the exception thrown on an illegal url and set a basic one instead */
+        try {
+            builder.baseUrl("http://${prefs.address}/")
+        } catch (e: IllegalArgumentException) {
+            builder.baseUrl("http://localhost:8080/")
+        }
+
+        return builder
                 .build()
                 .create(SiaApiInterface::class.java)
     }
-    fun rebuildApi() { siaApi = buildApi() }
+
+    fun rebuildApi() {
+        siaApi = buildApi()
+    }
 }
 
 object Wallet {
@@ -106,7 +117,7 @@ object Wallet {
     fun sweep(dictionary: String, seed: String, callback: Callback<Unit>) = siaApi.sweepSeed(dictionary, seed).enqueue(callback)
     fun transactions(callback: Callback<TransactionsData>) = siaApi.getTransactions("0", "2000000000").enqueue(callback)
     fun init(password: String, dictionary: String, force: Boolean, callback: Callback<WalletInitData>) = siaApi.initWallet(password, dictionary, force).enqueue(callback)
-    fun initSeed(password: String, dictionary: String, seed:String, force: Boolean, callback: Callback<Unit>) = siaApi.initWalletSeed(password, dictionary, seed, force).enqueue(callback)
+    fun initSeed(password: String, dictionary: String, seed: String, force: Boolean, callback: Callback<Unit>) = siaApi.initWalletSeed(password, dictionary, seed, force).enqueue(callback)
     fun lock(callback: Callback<Unit>) = siaApi.lockWallet().enqueue(callback)
     fun unlock(password: String, callback: Callback<Unit>) = siaApi.unlockWallet(password).enqueue(callback)
     fun changePassword(password: String, newPassword: String, callback: Callback<Unit>) = siaApi.changeWalletPassword(password, newPassword).enqueue(callback)
