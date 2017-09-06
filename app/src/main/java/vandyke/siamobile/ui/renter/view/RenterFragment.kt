@@ -18,14 +18,14 @@ import vandyke.siamobile.backend.networking.SiaError
 import vandyke.siamobile.ui.renter.model.RenterModelTest
 import vandyke.siamobile.ui.renter.presenter.IRenterPresenter
 import vandyke.siamobile.ui.renter.presenter.RenterPresenter
-import vandyke.siamobile.ui.renter.view.files.FilesAdapter
+import vandyke.siamobile.ui.renter.view.list.DirAdapter
 
 
 class RenterFragment : Fragment(), IRenterView {
 
     private val presenter: IRenterPresenter = RenterPresenter(this, RenterModelTest())
 
-    private lateinit var adapter: FilesAdapter
+    private lateinit var adapter: DirAdapter
     private var programmaticallySelecting = true
 
     var rootDir: SiaDir = SiaDir("home", null)
@@ -59,7 +59,7 @@ class RenterFragment : Fragment(), IRenterView {
         val layoutManager = LinearLayoutManager(activity)
         filesList.layoutManager = layoutManager
 //        filesList.addItemDecoration(new DividerItemDecoration(filesList.getContext(), layoutManager.getOrientation()));
-        adapter = FilesAdapter(this)
+        adapter = DirAdapter(this, activity)
         filesList.adapter = adapter
 
         renterFilepath.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {

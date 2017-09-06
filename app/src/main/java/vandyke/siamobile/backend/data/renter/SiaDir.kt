@@ -13,13 +13,12 @@ class SiaDir(override val name: String, override val parent: SiaDir?) : SiaNode(
     private val files: ArrayList<SiaFile> = ArrayList()
     private val directories: ArrayList<SiaDir> = ArrayList()
 
-    val nodes: ArrayList<SiaNode> // TODO: these can probably be lazy instead of being computed each time. depends on how refreshing is handled
-        get() {
-            val result = ArrayList<SiaNode>()
-            result.addAll(directories)
-            result.addAll(files)
-            return result
-        }
+    val nodes: ArrayList<SiaNode> by lazy { // maybe shouldn't be lazy. depends on how refreshing is handled
+        val result = ArrayList<SiaNode>()
+        result.addAll(directories)
+        result.addAll(files)
+        result
+    }
 
     override val size: BigDecimal // bytes
         get() {

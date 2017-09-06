@@ -61,7 +61,7 @@ object GenUtil {
         var size = filesize
         var i = 0
         val kilo = BigDecimal("1024")
-        while (size > kilo) {
+        while (size > kilo && i < 6) {
             size = size.divide(kilo, 10, RoundingMode.HALF_UP)
             i++
         }
@@ -73,7 +73,8 @@ object GenUtil {
             3 -> sizeString = "GB"
             4 -> sizeString = "TB"
             5 -> sizeString = "PB"
-            else -> sizeString = "really big"
+            6 -> sizeString = "EB"
+            else -> sizeString = "Super big"
         }
 
         return String.format("%.${prefs.displayedDecimalPrecision}f %s", size, sizeString)

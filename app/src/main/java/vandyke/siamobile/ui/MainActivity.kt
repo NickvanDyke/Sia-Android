@@ -122,7 +122,7 @@ class MainActivity : AppCompatActivity() {
             val menuItemId = item.itemId
             when (menuItemId) {
                 R.id.drawer_item_renter -> {
-                    displayFragmentClass(RenterFragment::class.java, "Files", menuItemId)
+                    displayFragmentClass(RenterFragment::class.java, "Renter", menuItemId)
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.drawer_item_hosting -> {
@@ -156,7 +156,7 @@ class MainActivity : AppCompatActivity() {
             startService(Intent(this, SiadService::class.java))
 
         when (prefs.startupPage) {
-            "files" -> displayFragmentClass(RenterFragment::class.java, "Renter", R.id.drawer_item_renter)
+            "renter" -> displayFragmentClass(RenterFragment::class.java, "Renter", R.id.drawer_item_renter)
             "hosting" -> displayFragmentClass(HostingFragment::class.java, "Hosting", R.id.drawer_item_hosting)
             "wallet" -> displayFragmentClass(WalletFragment::class.java, getString(R.string.wallet), R.id.drawer_item_wallet)
             "terminal" -> displayFragmentClass(TerminalFragment::class.java, "Terminal", R.id.drawer_item_terminal)

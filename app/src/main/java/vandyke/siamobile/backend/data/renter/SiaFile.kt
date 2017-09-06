@@ -20,12 +20,4 @@ data class SiaFile(val siapath: String = "",
     override val name by lazy { siapath.substring(siapath.lastIndexOf("/") + 1) }
     override val size: BigDecimal
         get() = filesize
-
-    override fun equals(other: Any?): Boolean {
-        if (other is SiaFile) {
-            return this.siapath == other.siapath
-        } else {
-            return false
-        }
-    }
 }
