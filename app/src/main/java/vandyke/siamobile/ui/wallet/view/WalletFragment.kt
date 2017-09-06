@@ -130,7 +130,7 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
 
     override fun onWalletError(error: SiaError) {
         error.snackbar(view)
-        transactionListSwipe.isRefreshing = false
+        transactionListSwipe?.isRefreshing = false
 //        refreshButton.actionView = null
     }
 
