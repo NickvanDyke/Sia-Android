@@ -13,7 +13,6 @@ import android.content.res.Configuration
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
-import android.support.design.widget.NavigationView
 import android.support.design.widget.Snackbar
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
@@ -33,7 +32,6 @@ import vandyke.siamobile.R
 import vandyke.siamobile.backend.siad.SiadService
 import vandyke.siamobile.prefs
 import vandyke.siamobile.ui.about.AboutFragment
-import vandyke.siamobile.ui.about.AboutSiaActivity
 import vandyke.siamobile.ui.about.ModesActivity
 import vandyke.siamobile.ui.about.SetupRemoteFragment
 import vandyke.siamobile.ui.hosting.fragments.HostingFragment
@@ -117,38 +115,37 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeButtonEnabled(true)
         // set action stuff for when drawer items are selected
-        val drawerListener = NavigationView.OnNavigationItemSelectedListener { item ->
+        navigationView.setNavigationItemSelectedListener({ it ->
             drawerLayout?.closeDrawers()
-            val menuItemId = item.itemId
+            val menuItemId = it.itemId
             when (menuItemId) {
                 R.id.drawer_item_renter -> {
                     displayFragmentClass(RenterFragment::class.java, "Renter", menuItemId)
-                    return@OnNavigationItemSelectedListener true
+                    return@setNavigationItemSelectedListener true
                 }
                 R.id.drawer_item_hosting -> {
                     displayFragmentClass(HostingFragment::class.java, "Hosting", menuItemId)
-                    return@OnNavigationItemSelectedListener true
+                    return@setNavigationItemSelectedListener true
                 }
                 R.id.drawer_item_wallet -> {
                     displayFragmentClass(WalletFragment::class.java, "Wallet", menuItemId)
-                    return@OnNavigationItemSelectedListener true
+                    return@setNavigationItemSelectedListener true
                 }
                 R.id.drawer_item_terminal -> {
                     displayFragmentClass(TerminalFragment::class.java, "Terminal", menuItemId)
-                    return@OnNavigationItemSelectedListener true
+                    return@setNavigationItemSelectedListener true
                 }
                 R.id.drawer_item_settings -> {
                     displayFragmentClass(SettingsFragment::class.java, "Settings", menuItemId)
-                    return@OnNavigationItemSelectedListener true
+                    return@setNavigationItemSelectedListener true
                 }
                 R.id.drawer_item_about -> {
                     displayFragmentClass(AboutFragment::class.java, "About", menuItemId)
-                    return@OnNavigationItemSelectedListener false
+                    return@setNavigationItemSelectedListener false
                 }
             }
-            true
-        }
-        navigationView.setNavigationItemSelectedListener(drawerListener)
+            return@setNavigationItemSelectedListener true
+        })
         drawerToggle = ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close)
         drawerLayout.addDrawerListener(drawerToggle)
 
@@ -164,30 +161,33 @@ class MainActivity : AppCompatActivity() {
 
         if (prefs.firstTime) {
             startActivityForResult(Intent(this, ModesActivity::class.java), REQUEST_MODE)
-            startActivity(Intent(this, AboutSiaActivity::class.java))
+//            startActivity(Intent(this, AboutSiaActivity::class.java))
             prefs.firstTime = false
         }
     }
 
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_MODE) {
-            if (resultCode == ModesActivity.PAPER_WALLET) {
-                displayFragmentClass(PaperWalletFragment::class.java, "Generated paper wallet", null)
-            } else if (resultCode == ModesActivity.COLD_STORAGE) {
-                prefs.operationMode = "cold_storage"
-                displayFragmentClass(WalletFragment::class.java, "Wallet", R.id.drawer_item_wallet)
-                if (currentlyVisibleFragment is WalletFragment)
-                    (currentlyVisibleFragment as WalletFragment).fillExpandableFrame(WalletCreateDialog())
-            } else if (resultCode == ModesActivity.REMOTE_FULL_NODE) {
-                prefs.operationMode = "remote_full_node"
-                displayFragmentClass(SetupRemoteFragment::class.java, "Remote setup", null)
-            } else if (resultCode == ModesActivity.LOCAL_FULL_NODE) {
-                displayFragmentClass(WalletFragment::class.java, "Wallet", R.id.drawer_item_wallet)
-                if (StorageUtil.isSiadSupported) {
-                    prefs.operationMode = "local_full_node"
-                } else
-                    Toast.makeText(this, "Sorry, but your device's CPU architecture is not supported by Sia's full node", Toast.LENGTH_LONG).show()
-                displayFragmentClass(WalletFragment::class.java, "Wallet", R.id.drawer_item_wallet)
+            when (resultCode) {
+                ModesActivity.PAPER_WALLET -> displayFragmentClass(PaperWalletFragment::class.java, "Generated paper wallet", null)
+                ModesActivity.COLD_STORAGE -> {
+                    prefs.operationMode = "cold_storage"
+                    displayFragmentClass(WalletFragment::class.java, "Wallet", R.id.drawer_item_wallet)
+                    if (currentlyVisibleFragment is WalletFragment)
+                        (currentlyVisibleFragment as WalletFragment).fillExpandableFrame(WalletCreateDialog())
+                }
+                ModesActivity.REMOTE_FULL_NODE -> {
+                    prefs.operationMode = "remote_full_node"
+                    displayFragmentClass(SetupRemoteFragment::class.java, "Remote setup", null)
+                }
+                ModesActivity.LOCAL_FULL_NODE -> {
+                    displayFragmentClass(WalletFragment::class.java, "Wallet", R.id.drawer_item_wallet)
+                    if (StorageUtil.isSiadSupported) {
+                        prefs.operationMode = "local_full_node"
+                    } else
+                        Toast.makeText(this, "Sorry, but your device's CPU architecture is not supported by Sia's full node", Toast.LENGTH_LONG).show()
+                    displayFragmentClass(WalletFragment::class.java, "Wallet", R.id.drawer_item_wallet)
+                }
             }
         }
     }
