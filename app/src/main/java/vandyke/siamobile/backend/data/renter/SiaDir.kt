@@ -34,13 +34,19 @@ class SiaDir(override val name: String, override val parent: SiaDir?) : SiaNode(
     val fullPathString: String
         get() = fullPathStringHelper("")
 
-    fun contains(dir: SiaDir): Boolean {
-        if (directories.contains(dir)) return true
-        directories.forEach { if (it.contains(dir)) return true }
-        return false
+    fun getParentDirAt(level: Int): SiaDir {
+        var current: SiaDir = this
+        var height = level
+        while (height > 0 && current.parent != null) {
+            current = current.parent!!
+            height--
+        }
+        return current
     }
 
-    fun addSiaFile(file: SiaFile) = addSiaFileHelper(file, file.siapath.split("/"), 0)
+    operator fun plus(file: SiaFile) = addSiaFileHelper(file, file.siapath.split("/"), 0)
+
+    operator fun plus(dir: SiaDir) = directories.add(dir)
 
     /**
      * @param file            the file being added
@@ -77,13 +83,20 @@ class SiaDir(override val name: String, override val parent: SiaDir?) : SiaNode(
         return parent?.fullPathStringHelper("$name/$pathSoFar") ?: "$name/$pathSoFar"
     }
 
-    override fun equals(other: Any?): Boolean { // this might not be the best way. might give false positives/negative sometimes
-        if (other is SiaDir) {
-            return this.fullPathString == other.fullPathString
-        } else {
-            return false
-        }
-    }
+
+//    fun contains(dir: SiaDir): Boolean {
+//        if (directories.contains(dir)) return true
+//        directories.forEach { if (it.contains(dir)) return true }
+//        return false
+//    }
+//
+//    override fun equals(other: Any?): Boolean { // TODO: this might not be the best way. might give false positives/negative sometimes
+//        if (other is SiaDir) {
+//            return this.fullPathString == other.fullPathString
+//        } else {
+//            return false
+//        }
+//    }
 
 
     /* functions for printing this directory's contents in a file explorer-like format */

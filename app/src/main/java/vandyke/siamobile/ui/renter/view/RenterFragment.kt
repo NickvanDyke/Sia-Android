@@ -25,30 +25,9 @@ class RenterFragment : Fragment(), IRenterView {
 
     private val presenter: IRenterPresenter = RenterPresenter(this, RenterModelTest())
 
+    private var depth = 0
     private lateinit var adapter: DirAdapter
     private var programmaticallySelecting = true
-
-    var rootDir: SiaDir = SiaDir("home", null)
-
-    var currentDir: SiaDir = rootDir
-        set(value) {
-            programmaticallySelecting = true
-            val oldPath = field.fullPath
-            val newPath = value.fullPath
-            val breakpoint = (0 until maxOf(newPath.size, oldPath.size)).firstOrNull {
-                it > oldPath.size - 1 || it > newPath.size - 1 || newPath[it] != oldPath[it]
-            } ?: renterFilepath.tabCount
-            if (newPath.size < oldPath.size)
-                renterFilepath.getTabAt(newPath.size - 1)?.select()
-            for (i in breakpoint until renterFilepath.tabCount)
-                renterFilepath.removeTabAt(breakpoint)
-            for (i in breakpoint until newPath.size)
-                renterFilepath.addTab(renterFilepath.newTab().setText(newPath[i].name), true)
-            renterFilepath.postDelayed({ renterFilepath.fullScroll(TabLayout.FOCUS_RIGHT) }, 5)
-            field = value
-            adapter.notifyDataSetChanged()
-            programmaticallySelecting = false
-        }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View {
         setHasOptionsMenu(true)
@@ -59,7 +38,7 @@ class RenterFragment : Fragment(), IRenterView {
         val layoutManager = LinearLayoutManager(activity)
         filesList.layoutManager = layoutManager
 //        filesList.addItemDecoration(new DividerItemDecoration(filesList.getContext(), layoutManager.getOrientation()));
-        adapter = DirAdapter(this, activity)
+        adapter = DirAdapter(presenter, activity)
         filesList.adapter = adapter
 
         renterFilepath.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
@@ -67,34 +46,35 @@ class RenterFragment : Fragment(), IRenterView {
             override fun onTabUnselected(tab: TabLayout.Tab?) {}
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 if (!programmaticallySelecting)
-                    currentDir = currentDir.fullPath[renterFilepath.selectedTabPosition]
+                    presenter.goUp(depth - renterFilepath.selectedTabPosition - 1)
             }
         })
 
         renterSwipeRefresh.setOnRefreshListener { presenter.refresh() }
     }
 
-    override fun onRootDirUpdate(dir: SiaDir) {
-        this.rootDir = dir
-        currentDir = rootDir
-        // TODO: check if currentDir is still valid
-        renterSwipeRefresh.isRefreshing = false
-    }
-
-    override fun onCurrentDirUpdate(dir: SiaDir) {
-        currentDir = dir
+    override fun changeDisplayedDir(oldDir: SiaDir, newDir: SiaDir) {
+        programmaticallySelecting = true
+        val oldPath = oldDir.fullPath
+        val newPath = newDir.fullPath
+        depth = newPath.size
+        val breakpoint = (0 until maxOf(newPath.size, oldPath.size)).firstOrNull {
+            it > oldPath.size - 1 || it > newPath.size - 1 || newPath[it] != oldPath[it]
+        } ?: renterFilepath.tabCount
+        if (newPath.size < oldPath.size)
+            renterFilepath.getTabAt(newPath.size - 1)?.select()
+        for (i in breakpoint until renterFilepath.tabCount)
+            renterFilepath.removeTabAt(breakpoint)
+        for (i in breakpoint until newPath.size)
+            renterFilepath.addTab(renterFilepath.newTab().setText(newPath[i].name), true)
+        renterFilepath.postDelayed({ renterFilepath.fullScroll(TabLayout.FOCUS_RIGHT) }, 5)
+        adapter.changeDir(newDir)
+        programmaticallySelecting = false
     }
 
     override fun onError(error: SiaError) {
         error.snackbar(view)
         renterSwipeRefresh.isRefreshing = false
-    }
-
-    override fun goUpDir(): Boolean {
-        if (currentDir.parent == null)
-            return false
-        currentDir = currentDir.parent!!
-        return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

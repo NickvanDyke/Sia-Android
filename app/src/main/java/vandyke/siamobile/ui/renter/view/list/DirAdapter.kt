@@ -13,13 +13,16 @@ import android.view.ViewGroup
 import android.widget.PopupMenu
 import vandyke.siamobile.R
 import vandyke.siamobile.backend.data.renter.SiaDir
-import vandyke.siamobile.ui.renter.view.RenterFragment
+import vandyke.siamobile.backend.data.renter.SiaNode
+import vandyke.siamobile.ui.renter.presenter.IRenterPresenter
 import vandyke.siamobile.util.GenUtil
 
-class DirAdapter(private val renterFragment: RenterFragment, private val context: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class DirAdapter(private val presenter: IRenterPresenter, private val context: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val DIR = 0
     private val FILE = 1
+
+    private var nodes = ArrayList<SiaNode>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         if (viewType == DIR) {
@@ -32,11 +35,11 @@ class DirAdapter(private val renterFragment: RenterFragment, private val context
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val node = renterFragment.currentDir.nodes[position]
+        val node = nodes[position]
         if (holder is DirHolder) {
             holder.name.text = node.name
             holder.size.text = GenUtil.readableFilesizeString(node.size)
-            holder.layout.setOnClickListener { v -> renterFragment.currentDir = node as SiaDir }
+            holder.layout.setOnClickListener { v -> presenter.changeDir(node as SiaDir) }
         } else if (holder is FileHolder) {
             holder.name.text = node.name
             holder.size.text = GenUtil.readableFilesizeString(node.size)
@@ -55,10 +58,15 @@ class DirAdapter(private val renterFragment: RenterFragment, private val context
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (renterFragment.currentDir.nodes[position] is SiaDir) DIR else FILE
+        return if (nodes[position] is SiaDir) DIR else FILE
     }
 
     override fun getItemCount(): Int {
-        return renterFragment.currentDir.nodes.size
+        return nodes.size
+    }
+
+    fun changeDir(dir: SiaDir) {
+        nodes = dir.nodes
+        notifyDataSetChanged()
     }
 }
