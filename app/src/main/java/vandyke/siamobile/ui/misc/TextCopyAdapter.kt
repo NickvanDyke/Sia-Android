@@ -11,7 +11,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import vandyke.siamobile.R
 
-class TextCopyAdapter(val data: ArrayList<String>) : RecyclerView.Adapter<TextHolder>() {
+class TextCopyAdapter(var data: List<String> = listOf()) : RecyclerView.Adapter<TextHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): TextHolder {
         return TextHolder(LayoutInflater.from(parent?.context).inflate(R.layout.list_item_text_copy, parent, false))

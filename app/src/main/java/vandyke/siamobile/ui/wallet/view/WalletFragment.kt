@@ -16,7 +16,6 @@ import kotlinx.android.synthetic.main.fragment_wallet.*
 import vandyke.siamobile.R
 import vandyke.siamobile.backend.data.consensus.ConsensusData
 import vandyke.siamobile.backend.data.wallet.ScPriceData
-import vandyke.siamobile.backend.data.wallet.TransactionData
 import vandyke.siamobile.backend.data.wallet.TransactionsData
 import vandyke.siamobile.backend.data.wallet.WalletData
 import vandyke.siamobile.backend.networking.SiaError
@@ -105,12 +104,8 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
     }
 
     override fun onTransactionsUpdate(transactionsData: TransactionsData) {
-        val list = ArrayList<TransactionData>()
         val hideZero = prefs.hideZero
-        transactionsData.alltransactions
-                .filterNot { hideZero && it.isNetZero }
-                .forEach { list.add(0, it) }
-        adapter.transactions = list
+        adapter.transactions = transactionsData.alltransactions.filterNot { hideZero && it.isNetZero }.reversed()
         adapter.notifyDataSetChanged()
     }
 
@@ -188,7 +183,7 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
 
     fun fillExpandableFrame(fragment: Fragment) {
         fragmentManager.beginTransaction().replace(R.id.expandableFrame, fragment).commit()
-        expandableFrame.visibility = View.VISIBLE
+        expandableFrame?.visibility = View.VISIBLE
     }
 
     override fun closeExpandableFrame() {

@@ -27,7 +27,6 @@ import java.io.BufferedReader
 import java.io.File
 import java.io.IOException
 import java.io.InputStreamReader
-import java.util.*
 
 class TerminalFragment : Fragment(), SiadService.SiadListener {
 
@@ -56,7 +55,7 @@ class TerminalFragment : Fragment(), SiadService.SiadListener {
                 }
                 val enteredCommand = v.text.toString()
                 v.text = ""
-                val fullCommand = ArrayList(Arrays.asList(*enteredCommand.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()))
+                val fullCommand = enteredCommand.split(" ".toRegex()).toMutableList()
                 fullCommand.add(0, siacFile!!.absolutePath)
                 val pb = ProcessBuilder(fullCommand)
                 pb.redirectErrorStream(true)

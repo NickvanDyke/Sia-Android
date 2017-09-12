@@ -19,10 +19,9 @@ import vandyke.siamobile.util.round
 import vandyke.siamobile.util.toSC
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 
 class TransactionAdapter : RecyclerView.Adapter<TransactionHolder>() {
-    var transactions: ArrayList<TransactionData> = ArrayList()
+    var transactions: List<TransactionData> = listOf()
     private val df = SimpleDateFormat("MMM dd\nh:mm a", Locale.getDefault())
     private val red = Color.rgb(186, 63, 63) // TODO: choose better colors maybe
     private val green = Color.rgb(0, 114, 11)

@@ -18,11 +18,12 @@ import vandyke.siamobile.prefs
 import vandyke.siamobile.util.GenUtil
 import vandyke.siamobile.util.SCUtil
 import java.math.BigDecimal
+import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 
 class WalletModelColdStorage : IWalletModel {
     private var seed: String = prefs.coldStorageSeed
-    private var addresses: ArrayList<String> = ArrayList(prefs.coldStorageAddresses)
+    private var addresses: List<String> = prefs.coldStorageAddresses.toList()
     private var password: String = prefs.coldStoragePassword
     private var exists: Boolean = prefs.coldStorageExists
     private var unlocked: Boolean = false
@@ -36,7 +37,7 @@ class WalletModelColdStorage : IWalletModel {
         }
         for (address in addresses) {
             Explorer.siaTechHash(address, SiaCallback({ it ->
-                it.transactions.map { it.toTransactionModel() }.forEach { balance += it.netValue }
+                it.transactions.map { it.toTransactionData() }.forEach { balance += it.netValue }
                 if (counter.decrementAndGet() == 0)
                     callback.onSuccess?.invoke(WalletData(exists, unlocked, false, balance))
             }, {
@@ -68,16 +69,16 @@ class WalletModelColdStorage : IWalletModel {
 
     override fun getTransactions(callback: SiaCallback<TransactionsData>) {
         val counter = AtomicInteger(addresses.size)
-        val txs = ArrayList<TransactionData>()
+        val txs = mutableListOf<TransactionData>()
         for (address in addresses) {
             Explorer.siaTechHash(address, SiaCallback({ it ->
-                txs += it.transactions.map { it.toTransactionModel() }
+                txs += it.transactions.map { it.toTransactionData() }
                 if (counter.decrementAndGet() == 0)
-                    callback.onSuccess?.invoke(TransactionsData(txs))
+                    callback.onSuccess?.invoke(TransactionsData(txs.sortedBy { it.confirmationtimestamp }))
             }, {
                 if (it.reason == SiaError.Reason.UNRECOGNIZED_HASH) {
                     if (counter.decrementAndGet() == 0)
-                        callback.onSuccess?.invoke(TransactionsData(txs))
+                        callback.onSuccess?.invoke(TransactionsData(txs.sortedBy { it.confirmationtimestamp }))
                 } else {
                     callback.onError(it)
                 }
@@ -138,9 +139,7 @@ class WalletModelColdStorage : IWalletModel {
             this.seed = "Failed to generate seed"
         }
 
-        addresses.clear()
-        for (i in 0..4)
-            addresses.add(wallet.getAddress(i.toLong()))
+        addresses = List(5, { wallet.getAddress(it.toLong()) })
 
         this.password = password
         exists = true
@@ -168,14 +167,10 @@ class WalletModelColdStorage : IWalletModel {
         callback.onError(SiaError(SiaError.Reason.UNSUPPORTED_ON_COLD_WALLET))
     }
 
-    fun ExplorerTransactionData.toTransactionModel(): TransactionData {
-        val inputsList = ArrayList<TransactionInputData>()
-        for (input in siacoininputoutputs)
-            inputsList.add(TransactionInputData(walletaddress = addresses.contains(input.unlockhash), value = input.value))
-        val outputsList = ArrayList<TransactionOutputData>()
-        for (output in rawtransaction.siacoinoutputs)
-            outputsList.add(TransactionOutputData(walletaddress = addresses.contains(output.unlockhash), value = output.value))
-        return TransactionData(id, BigDecimal(height), BigDecimal(SCUtil.estimatedTimeAtBlock(height)), inputsList, outputsList)
+    fun ExplorerTransactionData.toTransactionData(): TransactionData {
+        return TransactionData(id, BigDecimal(height), BigDecimal(SCUtil.estimatedTimeAtBlock(height)),
+                siacoininputoutputs.map { TransactionInputData(walletaddress = addresses.contains(it.unlockhash), value = it.value) }, // inputs
+                rawtransaction.siacoinoutputs.map { TransactionOutputData(walletaddress = addresses.contains(it.unlockhash), value = it.value) }) // outputs
     }
 
     companion object {

@@ -6,4 +6,4 @@
 
 package vandyke.siamobile.backend.data.explorer
 
-data class ExplorerHashData(val transactions: ArrayList<ExplorerTransactionData>)
+data class ExplorerHashData(val transactions: List<ExplorerTransactionData> = listOf())
