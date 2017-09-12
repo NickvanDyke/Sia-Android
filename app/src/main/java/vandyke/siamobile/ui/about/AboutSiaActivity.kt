@@ -18,8 +18,6 @@ class AboutSiaActivity : AppIntro() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // TODO: need to make this more memory efficient while still using sharp images
-
         val bgColor = ContextCompat.getColor(this, android.R.color.white)
         val titleColor = ContextCompat.getColor(this, android.R.color.black)
         val descColor = ContextCompat.getColor(this, android.R.color.darker_gray)
@@ -45,6 +43,7 @@ class AboutSiaActivity : AppIntro() {
                 R.drawable.siainfo5, bgColor, titleColor, descColor))
 
         setBarColor(ContextCompat.getColor(this, R.color.colorPrimary))
+        setSkipText("Close")
     }
 
     override fun onSkipPressed(currentFragment: Fragment?) {

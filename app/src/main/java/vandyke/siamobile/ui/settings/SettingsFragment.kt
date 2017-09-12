@@ -21,7 +21,6 @@ import vandyke.siamobile.R
 import vandyke.siamobile.SiaMobileApplication
 import vandyke.siamobile.prefs
 import vandyke.siamobile.ui.MainActivity
-import vandyke.siamobile.ui.about.ModesActivity
 import vandyke.siamobile.util.SnackbarUtil
 import vandyke.siamobile.util.StorageUtil
 import java.io.ByteArrayOutputStream
@@ -56,7 +55,7 @@ class SettingsFragment : PreferenceFragment() {
 
         operationMode.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, o ->
             if (o == "view_explanation") {
-                activity.startActivityForResult(Intent(activity, ModesActivity::class.java), MainActivity.REQUEST_MODE)
+                activity.startActivityForResult(Intent(activity, ModesActivity::class.java), MainActivity.REQUEST_OPERATION_MODE)
                 return@OnPreferenceChangeListener false
             }
             if (o == "local_full_node" && SiaMobileApplication.abi != "arm64") {

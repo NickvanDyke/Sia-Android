@@ -6,7 +6,7 @@
 
 package vandyke.siamobile.backend.data.wallet
 
-data class TransactionsData(val confirmedtransactions: ArrayList<TransactionData>? = ArrayList(),
-                            val unconfirmedtransactions: ArrayList<TransactionData>? = ArrayList()) {
-    val alltransactions by lazy { (confirmedtransactions?: ArrayList()) + (unconfirmedtransactions?: ArrayList()) }
+data class TransactionsData(val confirmedtransactions: List<TransactionData>? = listOf(),
+                            val unconfirmedtransactions: List<TransactionData>? = listOf()) {
+    val alltransactions by lazy { (confirmedtransactions?: listOf()) + (unconfirmedtransactions?: listOf()) }
 }

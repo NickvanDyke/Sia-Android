@@ -12,19 +12,15 @@ import java.util.*
 data class TransactionData(val transactionid: String = "",
                            val confirmationheight: BigDecimal = BigDecimal.ZERO,
                            val confirmationtimestamp: BigDecimal = BigDecimal.ZERO,
-                           val inputs: ArrayList<TransactionInputData> = ArrayList(),
-                           val outputs: ArrayList<TransactionOutputData> = ArrayList()) {
+                           val inputs: List<TransactionInputData> = listOf(),
+                           val outputs: List<TransactionOutputData> = listOf()) {
 
     val confirmed: Boolean by lazy { confirmationtimestamp != BigDecimal("18446744073709551615") }
 
     val netValue: BigDecimal by lazy {
         var net = BigDecimal.ZERO
-        for (input in inputs)
-            if (input.walletaddress)
-                net -= input.value
-        for (output in outputs)
-            if (output.walletaddress)
-                net += output.value
+        inputs.filter { it.walletaddress }.forEach { net -= it.value }
+        outputs.filter { it.walletaddress }.forEach { net += it.value }
         net
     }
 

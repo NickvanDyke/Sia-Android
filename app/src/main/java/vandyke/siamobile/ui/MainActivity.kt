@@ -32,16 +32,15 @@ import vandyke.siamobile.R
 import vandyke.siamobile.backend.siad.SiadService
 import vandyke.siamobile.prefs
 import vandyke.siamobile.ui.about.AboutFragment
-import vandyke.siamobile.ui.about.ModesActivity
 import vandyke.siamobile.ui.about.SetupRemoteFragment
 import vandyke.siamobile.ui.hosting.fragments.HostingFragment
 import vandyke.siamobile.ui.renter.view.RenterFragment
 import vandyke.siamobile.ui.settings.GlobalPrefsListener
+import vandyke.siamobile.ui.settings.ModesActivity
 import vandyke.siamobile.ui.settings.SettingsFragment
 import vandyke.siamobile.ui.terminal.TerminalFragment
 import vandyke.siamobile.ui.wallet.view.WalletFragment
 import vandyke.siamobile.ui.wallet.view.dialogs.PaperWalletFragment
-import vandyke.siamobile.ui.wallet.view.dialogs.WalletCreateDialog
 import vandyke.siamobile.util.GenUtil
 import vandyke.siamobile.util.SnackbarUtil
 import vandyke.siamobile.util.StorageUtil
@@ -160,21 +159,20 @@ class MainActivity : AppCompatActivity() {
         }
 
         if (prefs.firstTime) {
-            startActivityForResult(Intent(this, ModesActivity::class.java), REQUEST_MODE)
+            startActivityForResult(Intent(this, ModesActivity::class.java), REQUEST_OPERATION_MODE)
 //            startActivity(Intent(this, AboutSiaActivity::class.java))
             prefs.firstTime = false
         }
     }
 
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == REQUEST_MODE) {
+        if (requestCode == REQUEST_OPERATION_MODE) {
+            println(resultCode)
             when (resultCode) {
                 ModesActivity.PAPER_WALLET -> displayFragmentClass(PaperWalletFragment::class.java, "Generated paper wallet", null)
                 ModesActivity.COLD_STORAGE -> {
                     prefs.operationMode = "cold_storage"
                     displayFragmentClass(WalletFragment::class.java, "Wallet", R.id.drawer_item_wallet)
-                    if (currentlyVisibleFragment is WalletFragment)
-                        (currentlyVisibleFragment as WalletFragment).fillExpandableFrame(WalletCreateDialog())
                 }
                 ModesActivity.REMOTE_FULL_NODE -> {
                     prefs.operationMode = "remote_full_node"
@@ -292,7 +290,7 @@ class MainActivity : AppCompatActivity() {
     companion object {
         var backgroundColor: Int = 0
         var defaultTextColor: Int = 0
-        var REQUEST_MODE = 2
+        var REQUEST_OPERATION_MODE = 2
         var appTheme: Theme? = null
     }
 }

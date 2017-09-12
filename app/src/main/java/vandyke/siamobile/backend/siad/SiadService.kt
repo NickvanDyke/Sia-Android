@@ -137,7 +137,7 @@ class SiadService : Service() {
 
     companion object {
         // TODO: might cause memory leaks? I think it should be fine as long as the listeners properly unregister themselves
-        private val listeners = ArrayList<SiadListener>()
+        private val listeners = mutableListOf<SiadListener>()
         fun addListener(listener: SiadListener) = listeners.add(listener)
         fun removeListener(listener: SiadListener) = listeners.remove(listener)
         var bufferedOutput: String = ""

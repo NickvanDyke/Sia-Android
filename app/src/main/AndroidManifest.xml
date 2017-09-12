@@ -43,7 +43,7 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".ui.about.ModesActivity"
+            android:name=".ui.settings.ModesActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
         <activity

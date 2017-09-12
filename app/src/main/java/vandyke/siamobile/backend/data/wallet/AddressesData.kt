@@ -6,4 +6,4 @@
 
 package vandyke.siamobile.backend.data.wallet
 
-data class AddressesData(val addresses: ArrayList<String> = ArrayList())
+data class AddressesData(val addresses: List<String> = listOf())

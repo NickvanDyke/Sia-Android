@@ -6,4 +6,4 @@
 
 package vandyke.siamobile.backend.data.explorer
 
-data class RawTransactionData(val siacoinoutputs: ArrayList<SiacoinOutputData> = ArrayList())
+data class RawTransactionData(val siacoinoutputs: List<SiacoinOutputData> = listOf())

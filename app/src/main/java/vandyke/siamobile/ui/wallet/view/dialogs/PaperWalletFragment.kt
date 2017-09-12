@@ -20,7 +20,6 @@ import vandyke.siamobile.R
 import vandyke.siamobile.ui.misc.TextCopyAdapter
 import vandyke.siamobile.util.GenUtil
 import vandyke.siamobile.util.SnackbarUtil
-import java.util.*
 
 class PaperWalletFragment : Fragment() {
 
@@ -42,7 +41,7 @@ class PaperWalletFragment : Fragment() {
         }
 
         val seed = wallet.seed
-        val addresses = ArrayList<String>()
+        val addresses = mutableListOf<String>()
         for (i in 0..19) {
             addresses.add(wallet.getAddress(i.toLong()))
         }

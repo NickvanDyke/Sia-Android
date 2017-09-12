@@ -23,7 +23,7 @@
     <string name="about">About</string>
     <string name="seed">Seed</string>
     <string name="sweep">Sweep</string>
-    <string name="seed_warning">Keep your seed(s) safe! You will need them to recover your funds if something happens to your device or wallet. If someone gets your seed(s), they can take your funds!</string>
+    <string name="seed_warning">Keep your seed(s) safe, and record them elsewhere. Your wallet\'s funds are tied to its seed, and you\'ll need it to recover your funds or load your wallet on another device.</string>
     <string name="recipient_address">Recipient address</string>
     <string name="amount_sc">Amount (SC)</string>
     <string name="send">Send</string>

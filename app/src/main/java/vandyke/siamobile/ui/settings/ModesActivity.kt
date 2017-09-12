@@ -4,7 +4,7 @@
  * This file is subject to the terms and conditions defined in 'LICENSE.md'
  */
 
-package vandyke.siamobile.ui.about
+package vandyke.siamobile.ui.settings
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -30,15 +30,10 @@ class ModesActivity : AppIntro() {
                 "Sia Mobile can operate in multiple modes, explained in the following slides. The modes are independent - changes "
                         + "made while in one mode will not affect other modes. You can change mode and view this again at any time in Settings.",
                 R.drawable.sia_logo_svg, bgColor, titleColor, descColor))
-        addSlide(AppIntroFragment.newInstance("Paper wallet",
-                "Generates a fresh seed and addresses from it. You can send coins to any of the addresses, and later load" +
-                        " the seed on a full node to access the coins. Sia Mobile does not save any of this" +
-                        " info for you - record it elsewhere.",
-                R.drawable.paper_wallet, bgColor, titleColor, descColor))
-        addSlide(AppIntroFragment.newInstance("Cold storage",
-                "Similar to a paper wallet, except Sia Mobile will store the generated seed and addresses for you. Only for receiving and storing coins. " +
-                        "Completely offline the Sia network - like a paper wallet, to see your correct balance and transactions and access/send your coins, you'll" +
-                        " have to load your seed on a full node.",
+        addSlide(AppIntroFragment.newInstance("Cold storage (default)",
+                "Sia Mobile will generate a wallet and store its seed and addresses. Only for receiving and storing coins - " +
+                        "Sia Mobile will estimate your balance and transactions using explore.sia.tech, but to access/send your coins, you'll" +
+                        " have to load your wallet seed on a full node.",
                 R.drawable.safe_image, bgColor, titleColor, descColor))
         addSlide(AppIntroFragment.newInstance("Remote full node",
                 "Run a full node on your computer, and control it from Sia Mobile. Allows all Sia features. Some setup required.",
@@ -47,6 +42,11 @@ class ModesActivity : AppIntro() {
                 "Run a full node on your device. Completely independent. Allows all Sia features. Must "
                         + "sync Sia blockchain, which uses significant storage and bandwidth - about 5GB.",
                 R.drawable.local_node_graphic, bgColor, titleColor, descColor))
+        addSlide(AppIntroFragment.newInstance("Paper wallet",
+                "Generates a fresh seed and addresses from it. You can send coins to any of the addresses, and later load" +
+                        " the seed on a full node to access the coins. Sia Mobile does not save any of this" +
+                        " info for you - record it elsewhere.",
+                R.drawable.paper_wallet, bgColor, titleColor, descColor))
 
         setBarColor(ContextCompat.getColor(this, R.color.colorPrimary))
         setDoneText("Close")
@@ -57,15 +57,15 @@ class ModesActivity : AppIntro() {
     override fun onSkipPressed(currentFragment: Fragment?) {
         super.onSkipPressed(currentFragment)
         when (currentSlide) {
-            1 -> setResult(PAPER_WALLET)
-            2 -> setResult(COLD_STORAGE)
-            3 -> setResult(REMOTE_FULL_NODE)
-            4 -> if (StorageUtil.isSiadSupported) {
+            COLD_STORAGE -> setResult(COLD_STORAGE)
+            REMOTE_FULL_NODE -> setResult(REMOTE_FULL_NODE)
+            LOCAL_FULL_NODE -> if (StorageUtil.isSiadSupported) {
                 setResult(LOCAL_FULL_NODE)
             } else {
                 Toast.makeText(this, "Sorry, but your device's CPU architecture is not supported by Sia's full node", Toast.LENGTH_LONG).show()
                 return
             }
+            PAPER_WALLET -> setResult(PAPER_WALLET)
         }
         finish()
     }
@@ -85,20 +85,17 @@ class ModesActivity : AppIntro() {
         }
         showSkipButton(currentSlide != 0)
         when (currentSlide) {
-            1 -> setSkipText("Generate")
-            2 -> setSkipText("Create")
-            3 -> setSkipText("Setup")
-            4 -> {
-                setSkipText("Start")
-                showSkipButton(true)
-            }
+            COLD_STORAGE -> setSkipText("Create")
+            REMOTE_FULL_NODE -> setSkipText("Setup")
+            LOCAL_FULL_NODE -> setSkipText("Start")
+            PAPER_WALLET -> setSkipText("Generate")
         }
     }
 
     companion object {
-        var PAPER_WALLET = 1
-        var COLD_STORAGE = 2
-        var REMOTE_FULL_NODE = 3
-        var LOCAL_FULL_NODE = 4
+        var COLD_STORAGE = 1
+        var REMOTE_FULL_NODE = 2
+        var LOCAL_FULL_NODE = 3
+        var PAPER_WALLET = 4
     }
 }

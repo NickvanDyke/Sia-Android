@@ -94,16 +94,16 @@ class SiaError {
         UNRECOGNIZED_HASH("Unrecognized hash")
     }
 
-    fun snackbar(view: View?) {
+    fun snackbar(view: View?, length: Int = Snackbar.LENGTH_SHORT) {
         if (view == null)
             return
         if (reason == Reason.UNSUPPORTED_ON_COLD_WALLET) {
-            val snackbar = Snackbar.make(view, reason.msg, Snackbar.LENGTH_LONG).setAction("Help") { v -> WalletModelColdStorage.showColdStorageHelp(view.context) }
+            val snackbar = Snackbar.make(view, reason.msg, length).setAction("Help") { v -> WalletModelColdStorage.showColdStorageHelp(view.context) }
             snackbar.view.setBackgroundColor(ContextCompat.getColor(view.context, R.color.colorAccent))
-            snackbar.setActionTextColor(ContextCompat.getColor(view.context, android.R.color.black))
+            snackbar.setActionTextColor(ContextCompat.getColor(view.context, android.R.color.white))
             snackbar.show()
         } else {
-            SnackbarUtil.snackbar(view, reason.msg, Snackbar.LENGTH_SHORT)
+            SnackbarUtil.snackbar(view, reason.msg, length)
         }
     }
 }

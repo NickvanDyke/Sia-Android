@@ -16,7 +16,6 @@ import kotlinx.android.synthetic.main.fragment_wallet.*
 import vandyke.siamobile.R
 import vandyke.siamobile.backend.data.consensus.ConsensusData
 import vandyke.siamobile.backend.data.wallet.ScPriceData
-import vandyke.siamobile.backend.data.wallet.TransactionData
 import vandyke.siamobile.backend.data.wallet.TransactionsData
 import vandyke.siamobile.backend.data.wallet.WalletData
 import vandyke.siamobile.backend.networking.SiaError
@@ -105,18 +104,14 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
     }
 
     override fun onTransactionsUpdate(transactionsData: TransactionsData) {
-        val list = ArrayList<TransactionData>()
         val hideZero = prefs.hideZero
-        transactionsData.alltransactions
-                .filterNot { hideZero && it.isNetZero }
-                .forEach { list.add(0, it) }
-        adapter.transactions = list
+        adapter.transactions = transactionsData.alltransactions.filterNot { hideZero && it.isNetZero }.reversed()
         adapter.notifyDataSetChanged()
     }
 
     override fun onConsensusUpdate(consensusData: ConsensusData) {
         if (consensusData.synced) {
-            syncText?.text = "${getString(R.string.syncing)}: ${consensusData.height}"
+            syncText?.text = "${getString(R.string.synced)}: ${consensusData.height}"
             syncBar?.progress = 100
         } else {
             syncText?.text = "${getString(R.string.syncing)}: ${consensusData.height}"
@@ -131,7 +126,6 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
     override fun onWalletError(error: SiaError) {
         error.snackbar(view)
         transactionListSwipe?.isRefreshing = false
-//        refreshButton.actionView = null
     }
 
     override fun onUsdError(error: SiaError) {
@@ -188,7 +182,7 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
 
     fun fillExpandableFrame(fragment: Fragment) {
         fragmentManager.beginTransaction().replace(R.id.expandableFrame, fragment).commit()
-        expandableFrame.visibility = View.VISIBLE
+        expandableFrame?.visibility = View.VISIBLE
     }
 
     override fun closeExpandableFrame() {

@@ -15,7 +15,6 @@ import vandyke.siamobile.R
 import vandyke.siamobile.backend.networking.SiaCallback
 import vandyke.siamobile.ui.misc.TextCopyAdapter
 import vandyke.siamobile.ui.wallet.model.IWalletModel
-import java.util.*
 
 class WalletSeedsDialog(private val walletModel: IWalletModel? = null) : BaseDialogFragment() {
     override val layout: Int = R.layout.fragment_wallet_seeds
@@ -23,8 +22,7 @@ class WalletSeedsDialog(private val walletModel: IWalletModel? = null) : BaseDia
     override fun create(view: View?, savedInstanceState: Bundle?) {
         setCloseButton(walletSeedsClose)
 
-        val seeds = ArrayList<String>()
-        val adapter = TextCopyAdapter(seeds)
+        val adapter = TextCopyAdapter()
 
         val layoutManager = LinearLayoutManager(activity)
         seedsList.layoutManager = layoutManager
@@ -32,9 +30,9 @@ class WalletSeedsDialog(private val walletModel: IWalletModel? = null) : BaseDia
         seedsList.adapter = adapter
 
         walletModel?.getSeeds("english", SiaCallback({ it ->
-            println(it)
-            seeds += it.primaryseed
-            seeds += it.allseeds
+            val list = mutableListOf(it.primaryseed)
+            list.addAll(it.allseeds)
+            adapter.data = list
             adapter.notifyDataSetChanged()
         }, {
             it.snackbar(view)

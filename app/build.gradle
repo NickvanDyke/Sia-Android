@@ -15,8 +15,8 @@ android {
         applicationId "vandyke.siamobile"
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 20303
-        versionName "2.3.3"
+        versionCode 20304
+        versionName "2.3.4"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

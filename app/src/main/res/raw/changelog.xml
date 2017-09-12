@@ -7,6 +7,12 @@
 
 <changelog bulletedList="true">
 
+    <changelogversion versionName="2.3.4" changeDate="Sep 12, 2017">
+        <changelogtext>Fix sorting of cold storage mode transactions</changelogtext>
+        <changelogtext>Change ModesActivity a bit - rearrange slides and change some text</changelogtext>
+        <changelogtext>More idiomatic Kotlin</changelogtext>
+    </changelogversion>
+
     <changelogversion versionName="2.3.3" changeDate="Sep 6, 2017">
         <changelogtext>About Sia slideshow isn't shown on first startup</changelogtext>
         <changelogtext>Fix crash that occurred when entering an invalid URL for remote node address</changelogtext>
