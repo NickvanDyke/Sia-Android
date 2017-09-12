@@ -46,7 +46,6 @@ class WalletCreateDialog(private val presenter: IWalletPresenter? = null) : Base
                 return@OnClickListener
             }
             val force = walletCreateForce.isChecked
-            val dictionary = "english"
             if (!walletCreateFromSeed.isChecked) {
                 presenter?.create(password, force)
             } else {

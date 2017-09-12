@@ -111,7 +111,7 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
 
     override fun onConsensusUpdate(consensusData: ConsensusData) {
         if (consensusData.synced) {
-            syncText?.text = "${getString(R.string.syncing)}: ${consensusData.height}"
+            syncText?.text = "${getString(R.string.synced)}: ${consensusData.height}"
             syncBar?.progress = 100
         } else {
             syncText?.text = "${getString(R.string.syncing)}: ${consensusData.height}"
@@ -126,7 +126,6 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
     override fun onWalletError(error: SiaError) {
         error.snackbar(view)
         transactionListSwipe?.isRefreshing = false
-//        refreshButton.actionView = null
     }
 
     override fun onUsdError(error: SiaError) {

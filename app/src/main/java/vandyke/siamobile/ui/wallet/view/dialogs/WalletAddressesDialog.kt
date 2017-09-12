@@ -20,7 +20,7 @@ class WalletAddressesDialog(private val walletModel: IWalletModel? = null) : Bas
     override val layout: Int = R.layout.fragment_wallet_addresses
 
     override fun create(view: View?, savedInstanceState: Bundle?) {
-        setCloseButton(walletAddressesCancel)
+        setCloseButton(walletAddressesClose)
 
         val adapter = TextCopyAdapter()
 

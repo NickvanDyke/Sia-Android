@@ -8,7 +8,7 @@
 <resources>
     <string name="feedback_app">Contact</string>
     <string name="changelog">Changelog</string>
-    <string name="rate_five_stars">Rate 5 stars</string>
+    <string name="rate_five_stars">Rate</string>
     <string name="update_app">Update</string>
     <string name="share_app">Share</string>
     <string name="introduce_app">About</string>
