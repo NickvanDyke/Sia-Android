@@ -10,15 +10,10 @@ import java.io.PrintStream
 import java.math.BigDecimal
 
 class SiaDir(override val name: String, override val parent: SiaDir?) : SiaNode() {
-    private val files: ArrayList<SiaFile> = ArrayList()
-    private val directories: ArrayList<SiaDir> = ArrayList()
+    private val files: MutableList<SiaFile> = mutableListOf()
+    private val directories: MutableList<SiaDir> = mutableListOf()
 
-    val nodes: ArrayList<SiaNode> by lazy { // maybe shouldn't be lazy. depends on how refreshing is handled
-        val result = ArrayList<SiaNode>()
-        result.addAll(directories)
-        result.addAll(files)
-        result
-    }
+    val nodes: List<SiaNode> by lazy { directories + files }
 
     override val size: BigDecimal // bytes
         get() {
@@ -28,8 +23,8 @@ class SiaDir(override val name: String, override val parent: SiaDir?) : SiaNode(
             return result
         }
 
-    val fullPath: ArrayList<SiaDir>
-        get() = fullPathHelper(ArrayList())
+    val fullPath: List<SiaDir>
+        get() = fullPathHelper(mutableListOf())
 
     val fullPathString: String
         get() = fullPathStringHelper("")
@@ -67,14 +62,9 @@ class SiaDir(override val name: String, override val parent: SiaDir?) : SiaNode(
         }
     }
 
-    fun getImmediateDir(name: String): SiaDir? {
-        for (node in directories)
-            if (node.name == name)
-                return node
-        return null
-    }
+    fun getImmediateDir(name: String): SiaDir? = directories.firstOrNull { it.name == name }
 
-    private fun fullPathHelper(dirs: ArrayList<SiaDir>): ArrayList<SiaDir> {
+    private fun fullPathHelper(dirs: MutableList<SiaDir>): MutableList<SiaDir> {
         dirs.add(0, this)
         return parent?.fullPathHelper(dirs) ?: dirs
     }

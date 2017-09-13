@@ -162,9 +162,7 @@ class SiadService : Service() {
                     action((service as SiadService.LocalBinder).service)
                     context.unbindService(this)
                 }
-
-                override fun onServiceDisconnected(name: ComponentName) {
-                }
+                override fun onServiceDisconnected(name: ComponentName) {}
             }
             context.bindService(Intent(context, SiadService::class.java), connection, Context.BIND_AUTO_CREATE)
         }

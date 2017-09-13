@@ -6,4 +6,4 @@
 
 package vandyke.siamobile.backend.data.renter
 
-data class SiaFilesData(val files: ArrayList<SiaFile> = ArrayList())
+data class SiaFilesData(val files: List<SiaFile> = listOf())

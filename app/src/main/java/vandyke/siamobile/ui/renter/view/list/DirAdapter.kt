@@ -22,7 +22,7 @@ class DirAdapter(private val presenter: IRenterPresenter, private val context: C
     private val DIR = 0
     private val FILE = 1
 
-    private var nodes = ArrayList<SiaNode>()
+    private var nodes = listOf<SiaNode>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         if (viewType == DIR) {
