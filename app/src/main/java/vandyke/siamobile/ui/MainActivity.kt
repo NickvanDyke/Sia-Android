@@ -6,14 +6,13 @@
 
 package vandyke.siamobile.ui
 
-import android.app.Fragment
-import android.app.FragmentTransaction
 import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.support.design.widget.Snackbar
+import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
@@ -192,7 +191,7 @@ class MainActivity : AppCompatActivity() {
 
     fun displayFragmentClass(clazz: Class<*>, title: String, menuItemId: Int?) {
         val className = clazz.simpleName
-        val fragmentManager = fragmentManager
+        val fragmentManager = supportFragmentManager
         var fragmentToBeDisplayed: Fragment? = fragmentManager.findFragmentByTag(className)
         val transaction = fragmentManager.beginTransaction()
 
@@ -201,8 +200,6 @@ class MainActivity : AppCompatActivity() {
                 return
             transaction.hide(currentlyVisibleFragment)
         }
-
-        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
 
         if (currentlyVisibleFragment != null)
             transaction.hide(currentlyVisibleFragment)
@@ -236,7 +233,7 @@ class MainActivity : AppCompatActivity() {
         if (drawerLayout.isDrawerVisible(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START)
         } else if (currentlyVisibleFragment is WalletFragment && (currentlyVisibleFragment as WalletFragment).onBackPressed()) {
-//        } else if (currentlyVisibleFragment is RenterFragment && (currentlyVisibleFragment as RenterFragment).goUpDir()) {
+        } else if (currentlyVisibleFragment is RenterFragment && (currentlyVisibleFragment as RenterFragment).goUpDir()) {
         } else if (titleBackstack.size <= 1) {
             GenUtil.getDialogBuilder(this)
                     .setTitle("Quit?")

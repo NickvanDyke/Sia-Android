@@ -6,9 +6,9 @@
 
 package vandyke.siamobile.ui.terminal
 
-import android.app.Fragment
 import android.graphics.Typeface
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.text.SpannableStringBuilder
 import android.text.method.ScrollingMovementMethod
 import android.text.style.StyleSpan
@@ -34,7 +34,7 @@ class TerminalFragment : Fragment(), SiadService.SiadListener {
 
     private var outputBuffer: String = ""
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_terminal, container, false)
     }
 

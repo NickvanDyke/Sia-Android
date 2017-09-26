@@ -13,8 +13,8 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
-import android.preference.*
 import android.support.design.widget.Snackbar
+import android.support.v7.preference.*
 import android.util.Base64
 import vandyke.siamobile.BuildConfig
 import vandyke.siamobile.R
@@ -27,7 +27,7 @@ import java.io.ByteArrayOutputStream
 import java.io.FileNotFoundException
 import java.io.InputStream
 
-class SettingsFragment : PreferenceFragment() {
+class SettingsFragment : PreferenceFragmentCompat() {
     private val SELECT_PICTURE = 1
     private lateinit var prefsListener: SharedPreferences.OnSharedPreferenceChangeListener
 
@@ -35,20 +35,19 @@ class SettingsFragment : PreferenceFragment() {
     private lateinit var operationMode: ListPreference
     private lateinit var remoteAddress: EditTextPreference
     private lateinit var apiPass: EditTextPreference
-    private lateinit var runLocalNodeOffWifi: SwitchPreference
-    private lateinit var useExternal: SwitchPreference
+    private lateinit var runLocalNodeOffWifi: SwitchPreferenceCompat
+    private lateinit var useExternal: SwitchPreferenceCompat
     private lateinit var minBattery: EditTextPreference
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.settings)
 
         operation = findPreference("operationCategory") as PreferenceCategory
         operationMode = findPreference("operationMode") as ListPreference
         remoteAddress = findPreference("remoteAddress") as EditTextPreference
         apiPass = findPreference("apiPass") as EditTextPreference
-        runLocalNodeOffWifi = findPreference("runLocalNodeOffWifi") as SwitchPreference
-        useExternal = findPreference("useExternal") as SwitchPreference
+        runLocalNodeOffWifi = findPreference("runLocalNodeOffWifi") as SwitchPreferenceCompat
+        useExternal = findPreference("useExternal") as SwitchPreferenceCompat
         minBattery = findPreference("localNodeMinBattery") as EditTextPreference
         setRemoteSettingsVisibility()
         setLocalSettingsVisibility()

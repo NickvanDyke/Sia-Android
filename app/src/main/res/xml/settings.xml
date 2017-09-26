@@ -38,7 +38,7 @@
             android:inputType="textPassword"
             android:password="true"
             android:fontFamily="sans-serif"/>
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:key="runLocalNodeOffWifi"
             android:title="Run node when off WiFi"
             android:summary="Run the local node in the background even when not connected to WiFi. WARNING: Syncing the blockchain can involve a lot of downloading."
@@ -49,7 +49,7 @@
             android:numeric="integer"
             android:gravity="center"
             android:defaultValue="20"/>
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:key="useExternal"
             android:title="Use external storage"
             android:summary="Will use whatever your phone returns as its external storage - this will not necessarily be your SD card. Restart Sia Mobile after changing this. It's recommended you clear existing data using the button at the bottom of settings after changing this."
@@ -63,12 +63,12 @@
             android:entries="@array/theme_entries"
             android:entryValues="@array/theme_values"
             android:defaultValue="dark"/>
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:summary="Changes will apply on next restart."
             android:key="transparentBars"
             android:title="Transparent bars"
             android:defaultValue="false"/>
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:key="hideZero"
             android:title="Hide net-zero transactions"
             android:defaultValue="false"

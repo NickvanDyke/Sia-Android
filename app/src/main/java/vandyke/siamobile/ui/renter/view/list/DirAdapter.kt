@@ -14,10 +14,10 @@ import android.widget.PopupMenu
 import vandyke.siamobile.R
 import vandyke.siamobile.backend.data.renter.SiaDir
 import vandyke.siamobile.backend.data.renter.SiaNode
-import vandyke.siamobile.ui.renter.presenter.IRenterPresenter
+import vandyke.siamobile.ui.renter.view.RenterFragment
 import vandyke.siamobile.util.GenUtil
 
-class DirAdapter(private val presenter: IRenterPresenter, private val context: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class DirAdapter(private val renterFragment: RenterFragment, private val context: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val DIR = 0
     private val FILE = 1
@@ -39,7 +39,7 @@ class DirAdapter(private val presenter: IRenterPresenter, private val context: C
         if (holder is DirHolder) {
             holder.name.text = node.name
             holder.size.text = GenUtil.readableFilesizeString(node.size)
-            holder.layout.setOnClickListener { v -> presenter.changeDir(node as SiaDir) }
+            holder.layout.setOnClickListener { v -> renterFragment.displayedDir = node as SiaDir }
         } else if (holder is FileHolder) {
             holder.name.text = node.name
             holder.size.text = GenUtil.readableFilesizeString(node.size)

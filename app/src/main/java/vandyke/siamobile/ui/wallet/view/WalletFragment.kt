@@ -6,9 +6,9 @@
 
 package vandyke.siamobile.ui.wallet.view
 
-import android.app.Fragment
 import android.os.Bundle
 import android.support.design.widget.Snackbar
+import android.support.v4.app.Fragment
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.view.*
@@ -44,7 +44,7 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
     private var walletData: WalletData? = null // TODO: temp fix for tracking status to set icon
     private var balanceHastings: BigDecimal = BigDecimal.ZERO
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         setHasOptionsMenu(true)
         return inflater.inflate(R.layout.fragment_wallet, container, false)
     }

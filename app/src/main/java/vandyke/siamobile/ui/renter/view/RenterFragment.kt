@@ -6,39 +6,57 @@
 
 package vandyke.siamobile.ui.renter.view
 
-import android.app.Fragment
+import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.support.design.widget.TabLayout
-import android.support.v7.widget.LinearLayoutManager
+import android.support.v4.app.Fragment
 import android.view.*
 import kotlinx.android.synthetic.main.fragment_renter.*
 import vandyke.siamobile.R
 import vandyke.siamobile.backend.data.renter.SiaDir
-import vandyke.siamobile.backend.networking.SiaError
 import vandyke.siamobile.ui.renter.model.RenterModelTest
-import vandyke.siamobile.ui.renter.presenter.IRenterPresenter
-import vandyke.siamobile.ui.renter.presenter.RenterPresenter
 import vandyke.siamobile.ui.renter.view.list.DirAdapter
+import vandyke.siamobile.ui.renter.viewmodel.RenterViewModel
 
 
-class RenterFragment : Fragment(), IRenterView {
+class RenterFragment : Fragment() {
 
-    private val presenter: IRenterPresenter = RenterPresenter(this, RenterModelTest())
+    lateinit var viewModel: RenterViewModel
+
+    var displayedDir = SiaDir("home", null)
+        set(value) {
+            programmaticallySelecting = true
+            val oldPath = field.fullPath
+            val newPath = value.fullPath
+            depth = newPath.size
+            val breakpoint = (0 until maxOf(newPath.size, oldPath.size)).firstOrNull {
+                it > oldPath.size - 1 || it > newPath.size - 1 || newPath[it] != oldPath[it]
+            } ?: renterFilepath.tabCount
+            if (newPath.size < oldPath.size)
+                renterFilepath.getTabAt(newPath.size - 1)?.select()
+            for (i in breakpoint until renterFilepath.tabCount)
+                renterFilepath.removeTabAt(breakpoint)
+            for (i in breakpoint until newPath.size)
+                renterFilepath.addTab(renterFilepath.newTab().setText(newPath[i].name), true)
+            renterFilepath.postDelayed({ renterFilepath.fullScroll(TabLayout.FOCUS_RIGHT) }, 5)
+            adapter.changeDir(value)
+            programmaticallySelecting = false
+            field = value
+        }
 
     private var depth = 0
     private lateinit var adapter: DirAdapter
     private var programmaticallySelecting = true
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         setHasOptionsMenu(true)
         return inflater.inflate(R.layout.fragment_renter, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        val layoutManager = LinearLayoutManager(activity)
-        filesList.layoutManager = layoutManager
+        viewModel = RenterViewModel(activity.application, RenterModelTest())
 //        filesList.addItemDecoration(new DividerItemDecoration(filesList.getContext(), layoutManager.getOrientation()));
-        adapter = DirAdapter(presenter, activity)
+        adapter = DirAdapter(this, activity)
         filesList.adapter = adapter
 
         renterFilepath.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
@@ -46,54 +64,48 @@ class RenterFragment : Fragment(), IRenterView {
             override fun onTabUnselected(tab: TabLayout.Tab?) {}
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 if (!programmaticallySelecting)
-                    presenter.goUp(depth - renterFilepath.selectedTabPosition - 1)
+                    displayedDir = displayedDir.getParentDirAt(depth - renterFilepath.selectedTabPosition - 1)
             }
         })
 
-        renterSwipeRefresh.setOnRefreshListener { presenter.refresh() }
+        renterSwipeRefresh.setOnRefreshListener { viewModel.refreshFiles() }
+
+        viewModel.root.observe(this, Observer {
+            displayedDir = it!!
+            renterSwipeRefresh.isRefreshing = false
+        })
+
+        viewModel.error.observe(this, Observer {
+            it?.snackbar(view)
+            renterSwipeRefresh.isRefreshing = false
+        })
     }
 
-    override fun changeDisplayedDir(oldDir: SiaDir, newDir: SiaDir) {
-        programmaticallySelecting = true
-        val oldPath = oldDir.fullPath
-        val newPath = newDir.fullPath
-        depth = newPath.size
-        val breakpoint = (0 until maxOf(newPath.size, oldPath.size)).firstOrNull {
-            it > oldPath.size - 1 || it > newPath.size - 1 || newPath[it] != oldPath[it]
-        } ?: renterFilepath.tabCount
-        if (newPath.size < oldPath.size)
-            renterFilepath.getTabAt(newPath.size - 1)?.select()
-        for (i in breakpoint until renterFilepath.tabCount)
-            renterFilepath.removeTabAt(breakpoint)
-        for (i in breakpoint until newPath.size)
-            renterFilepath.addTab(renterFilepath.newTab().setText(newPath[i].name), true)
-        renterFilepath.postDelayed({ renterFilepath.fullScroll(TabLayout.FOCUS_RIGHT) }, 5)
-        adapter.changeDir(newDir)
-        programmaticallySelecting = false
-    }
-
-    override fun onError(error: SiaError) {
-        error.snackbar(view)
-        renterSwipeRefresh.isRefreshing = false
+    fun goUpDir(): Boolean {
+        if (displayedDir.parent != null) {
+            displayedDir = displayedDir.parent!!
+            return true
+        }
+        return false
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-//            R.id.actionRefresh -> presenter.refresh()
+//            R.id.actionRefresh -> viewModel.refresh()
         }
         return super.onOptionsItemSelected(item)
     }
 
     override fun onResume() {
         super.onResume()
-        presenter.refresh()
+        viewModel.refreshFiles()
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         if (!hidden) {
             activity.invalidateOptionsMenu()
-            presenter.refresh()
+            viewModel.refreshFiles()
         }
     }
 

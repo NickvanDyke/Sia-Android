@@ -44,11 +44,12 @@ dependencies {
 
     compile(name: 'siawallet', ext: 'aar')
 
-    compile 'com.android.support:appcompat-v7:26.0.1'
-    compile 'com.android.support:design:26.0.1'
-    compile 'com.android.support:recyclerview-v7:26.0.1'
-    compile 'com.android.support:cardview-v7:26.0.1'
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'com.android.support:appcompat-v7:26.1.0'
+    compile 'com.android.support:design:26.1.0'
+    compile 'com.android.support:recyclerview-v7:26.1.0'
+    compile 'com.android.support:cardview-v7:26.1.0'
+    compile 'com.android.support:preference-v14:26.1.0'
+    compile 'com.android.support.constraint:constraint-layout:1.1.0-beta1'
 
     compile 'com.daimajia.numberprogressbar:library:1.4@aar'
 
@@ -64,6 +65,11 @@ dependencies {
     compile 'com.google.code.gson:gson:2.8.1'
 
     compile "com.google.firebase:firebase-crash:11.2.0"
+
+    compile 'android.arch.lifecycle:runtime:1.0.0'
+    compile 'android.arch.lifecycle:extensions:1.0.0-alpha9-1'
+    annotationProcessor 'android.arch.lifecycle:compiler:1.0.0-alpha9-1'
+    kapt 'com.android.databinding:compiler:2.3.2'
 }
 
 repositories {
