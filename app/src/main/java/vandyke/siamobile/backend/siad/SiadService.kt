@@ -17,7 +17,6 @@ import android.os.BatteryManager
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
-import android.support.v4.content.LocalBroadcastManager
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.async
 import vandyke.siamobile.R
@@ -46,7 +45,6 @@ class SiadService : Service() {
         val intentFilter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
         intentFilter.addAction(Intent.ACTION_BATTERY_CHANGED)
         applicationContext.registerReceiver(statusReceiver, intentFilter)
-        LocalBroadcastManager.getInstance(applicationContext).registerReceiver(statusReceiver, intentFilter)
         siadFile = StorageUtil.copyBinary("siad", this@SiadService, false)
         startSiad()
     }
