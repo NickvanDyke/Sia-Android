@@ -20,8 +20,8 @@ import android.os.IBinder
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.async
 import vandyke.siamobile.R
-import vandyke.siamobile.prefs
 import vandyke.siamobile.ui.MainActivity
+import vandyke.siamobile.ui.settings.Prefs
 import vandyke.siamobile.util.NotificationUtil
 import vandyke.siamobile.util.StorageUtil
 import java.io.BufferedReader
@@ -145,13 +145,13 @@ class SiadService : Service() {
                 return false
             val level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0)
             val scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, 0)
-            return (level * 100 / scale) >= prefs.localNodeMinBattery
+            return (level * 100 / scale) >= Prefs.localNodeMinBattery
         }
 
         fun isConnectionGood(context: Context): Boolean {
             val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
             val activeNetInfo = connectivityManager.activeNetworkInfo
-            return activeNetInfo != null && activeNetInfo.type == ConnectivityManager.TYPE_WIFI || prefs.runLocalNodeOffWifi
+            return activeNetInfo != null && activeNetInfo.type == ConnectivityManager.TYPE_WIFI || Prefs.runLocalNodeOffWifi
         }
 
         fun singleAction(context: Context, action: (service: SiadService) -> Unit) {

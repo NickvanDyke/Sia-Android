@@ -21,7 +21,7 @@ import vandyke.siamobile.backend.data.consensus.ConsensusData
 import vandyke.siamobile.backend.data.explorer.ExplorerHashData
 import vandyke.siamobile.backend.data.renter.SiaFilesData
 import vandyke.siamobile.backend.data.wallet.*
-import vandyke.siamobile.prefs
+import vandyke.siamobile.ui.settings.Prefs
 
 interface SiaApiInterface {
     /* wallet API */
@@ -88,7 +88,7 @@ object SiaApi {
                     val original: Request = it.request()
                     val request: Request = original.newBuilder()
                             .header("User-agent", "Sia-Agent")
-                            .header("Authorization", "Basic " + Base64.encodeToString(":${prefs.apiPass}".toByteArray(), Base64.NO_WRAP))
+                            .header("Authorization", "Basic " + Base64.encodeToString(":${Prefs.apiPass}".toByteArray(), Base64.NO_WRAP))
                             .method(original.method(), original.body())
                             .build()
                     return@addInterceptor it.proceed(request)
@@ -100,7 +100,7 @@ object SiaApi {
 
         /* try to set the baseUrl, catch the exception thrown on an illegal url and set a basic one instead */
         try {
-            builder.baseUrl("http://${prefs.address}/")
+            builder.baseUrl("http://${Prefs.address}/")
         } catch (e: IllegalArgumentException) {
             builder.baseUrl("http://localhost:8080/")
         }

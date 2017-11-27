@@ -10,7 +10,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
-import vandyke.siamobile.prefs
+import vandyke.siamobile.ui.settings.Prefs
 
 class StatusReceiver(val siadService: SiadService) : BroadcastReceiver() {
 
@@ -25,7 +25,7 @@ class StatusReceiver(val siadService: SiadService) : BroadcastReceiver() {
         }
 
         if (!batteryGood) {
-            siadService.siadNotification("Stopped - battery is below ${prefs.localNodeMinBattery}%")
+            siadService.siadNotification("Stopped - battery is below ${Prefs.localNodeMinBattery}%")
             siadService.stopSiad()
         } else if (!networkGood) {
             siadService.siadNotification("Stopped - not connected to WiFi")

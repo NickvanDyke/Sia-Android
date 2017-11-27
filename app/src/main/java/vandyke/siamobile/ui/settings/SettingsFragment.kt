@@ -19,7 +19,6 @@ import android.util.Base64
 import vandyke.siamobile.BuildConfig
 import vandyke.siamobile.R
 import vandyke.siamobile.SiaMobileApplication
-import vandyke.siamobile.prefs
 import vandyke.siamobile.ui.MainActivity
 import vandyke.siamobile.util.SnackbarUtil
 import vandyke.siamobile.util.StorageUtil
@@ -85,7 +84,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val decimalPrecision = findPreference("displayedDecimalPrecision") as EditTextPreference
         decimalPrecision.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, newValue -> (newValue as String).isNotBlank() }
 
-        when (prefs.operationMode) {
+        when (Prefs.operationMode) {
             "cold_storage" -> operationMode.summary = "Cold storage"
             "remote_full_node" -> operationMode.summary = "Remote full node"
             "local_full_node" -> operationMode.summary = "Local full node"
@@ -99,7 +98,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 "operationMode" -> {
                     setRemoteSettingsVisibility()
                     setLocalSettingsVisibility()
-                    when (prefs.operationMode) {
+                    when (Prefs.operationMode) {
                         "cold_storage" -> {
                             operationMode.summary = "Cold storage"
                             operationMode.setValueIndex(1)
@@ -114,14 +113,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
                         }
                     }
                 }
-                "theme" -> if (prefs.theme == "custom") {
+                "theme" -> if (Prefs.theme == "custom") {
                     val intent = Intent(Intent.ACTION_GET_CONTENT)
                     intent.type = "image/*"
                     startActivityForResult(Intent.createChooser(intent, "Select Background"), SELECT_PICTURE)
                 }
             }
         }
-        prefs.registerOnSharedPreferenceChangeListener(prefsListener)
+        Prefs.preferences.registerOnSharedPreferenceChangeListener(prefsListener)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -140,13 +139,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 val baos = ByteArrayOutputStream()
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos)
                 val b = baos.toByteArray()
-                prefs.customBgBase64 = Base64.encodeToString(b, Base64.DEFAULT)
+                Prefs.customBgBase64 = Base64.encodeToString(b, Base64.DEFAULT)
             }
         }
     }
 
     private fun setRemoteSettingsVisibility() {
-        if (prefs.operationMode == "remote_full_node") {
+        if (Prefs.operationMode == "remote_full_node") {
             operation.addPreference(remoteAddress)
             operation.addPreference(apiPass)
         } else {
@@ -156,7 +155,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     private fun setLocalSettingsVisibility() {
-        if (prefs.operationMode == "local_full_node") {
+        if (Prefs.operationMode == "local_full_node") {
             operation.addPreference(runLocalNodeOffWifi)
             operation.addPreference(useExternal)
             operation.addPreference(minBattery)

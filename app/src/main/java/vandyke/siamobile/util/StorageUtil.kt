@@ -10,7 +10,7 @@ import android.content.Context
 import android.os.Environment
 import android.widget.Toast
 import vandyke.siamobile.SiaMobileApplication
-import vandyke.siamobile.prefs
+import vandyke.siamobile.ui.settings.Prefs
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -56,7 +56,7 @@ object StorageUtil {
         if (context == null)
             return null
         var result: File?
-        if (prefs.useExternal) {
+        if (Prefs.useExternal) {
             result = context.getExternalFilesDir(null)
             if (result == null) { // external storage not found
                 Toast.makeText(context, "No external storage found. Using internal", Toast.LENGTH_LONG).show()

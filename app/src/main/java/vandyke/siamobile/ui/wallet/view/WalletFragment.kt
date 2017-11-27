@@ -20,8 +20,8 @@ import vandyke.siamobile.backend.data.wallet.TransactionsData
 import vandyke.siamobile.backend.data.wallet.WalletData
 import vandyke.siamobile.backend.networking.SiaError
 import vandyke.siamobile.backend.siad.SiadService
-import vandyke.siamobile.prefs
 import vandyke.siamobile.ui.MainActivity
+import vandyke.siamobile.ui.settings.Prefs
 import vandyke.siamobile.ui.wallet.model.IWalletModel
 import vandyke.siamobile.ui.wallet.model.WalletModelColdStorage
 import vandyke.siamobile.ui.wallet.model.WalletModelHttp
@@ -104,7 +104,7 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
     }
 
     override fun onTransactionsUpdate(transactionsData: TransactionsData) {
-        val hideZero = prefs.hideZero
+        val hideZero = Prefs.hideZero
         adapter.transactions = transactionsData.alltransactions.filterNot { hideZero && it.isNetZero }.reversed()
         adapter.notifyDataSetChanged()
     }
@@ -148,7 +148,7 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
     }
 
     override fun onWalletCreated(seed: String) {
-        if (prefs.operationMode == "cold_storage")
+        if (Prefs.operationMode == "cold_storage")
             WalletCreateDialog.showCsWarning(context!!)
         WalletCreateDialog.showSeed(seed, context!!)
     }
@@ -192,8 +192,8 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
 
     override fun onResume() {
         super.onResume()
-        if (prefs.operationMode != cachedMode) {
-            cachedMode = prefs.operationMode
+        if (Prefs.operationMode != cachedMode) {
+            cachedMode = Prefs.operationMode
             model = if (cachedMode == "cold_storage") WalletModelColdStorage() else WalletModelHttp()
             presenter = WalletPresenter(this, model)
         }
@@ -204,8 +204,8 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
         super.onHiddenChanged(hidden)
         if (!hidden) {
             activity!!.invalidateOptionsMenu()
-            if (prefs.operationMode != cachedMode) {
-                cachedMode = prefs.operationMode
+            if (Prefs.operationMode != cachedMode) {
+                cachedMode = Prefs.operationMode
                 model = if (cachedMode == "cold_storage") WalletModelColdStorage() else WalletModelHttp()
                 presenter = WalletPresenter(this, model)
             }

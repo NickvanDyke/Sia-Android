@@ -12,30 +12,29 @@ import android.content.IntentFilter
 import android.content.SharedPreferences
 import vandyke.siamobile.backend.networking.SiaApi
 import vandyke.siamobile.backend.siad.SiadService
-import vandyke.siamobile.prefs
 
 class GlobalPrefsListener(private val context: Context) : SharedPreferences.OnSharedPreferenceChangeListener {
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
         when (key) {
             "operationMode" -> {
-                when (prefs.operationMode) {
+                when (Prefs.operationMode) {
                     "cold_storage" -> {
-                        prefs.address = "localhost:9990"
+                        Prefs.address = "localhost:9990"
                         context.stopService(Intent(context, SiadService::class.java))
                     }
                     "remote_full_node" -> {
-                        prefs.address = prefs.remoteAddress
+                        Prefs.address = Prefs.remoteAddress
                         context.stopService(Intent(context, SiadService::class.java))
                     }
                     "local_full_node" -> {
-                        prefs.address = "localhost:9980"
+                        Prefs.address = "localhost:9980"
                         context.startService(Intent(context, SiadService::class.java))
                     }
                 }
             }
             "runLocalNodeOffWifi" -> {
-                if (prefs.operationMode == "local_full_node") {
+                if (Prefs.operationMode == "local_full_node") {
                     if (SiadService.isConnectionGood(context))
                         SiadService.singleAction(context, {
                             it.startSiad()
@@ -48,7 +47,7 @@ class GlobalPrefsListener(private val context: Context) : SharedPreferences.OnSh
                 }
             }
             "localNodeMinBattery" -> {
-                if (prefs.operationMode == "local_full_node") {
+                if (Prefs.operationMode == "local_full_node") {
                     val batteryStatus = context.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
                     if (SiadService.isBatteryGood(batteryStatus))
                         SiadService.singleAction(context, {
@@ -56,14 +55,14 @@ class GlobalPrefsListener(private val context: Context) : SharedPreferences.OnSh
                         })
                     else
                         SiadService.singleAction(context, {
-                            it.siadNotification("Stopped - battery is below ${prefs.localNodeMinBattery}%")
+                            it.siadNotification("Stopped - battery is below ${Prefs.localNodeMinBattery}%")
                             it.stopSiad()
                         })
                 }
             }
             "address" -> SiaApi.rebuildApi()
-            "remoteAddress" -> if (prefs.operationMode == "remote_full_node") {
-                prefs.address = prefs.remoteAddress
+            "remoteAddress" -> if (Prefs.operationMode == "remote_full_node") {
+                Prefs.address = Prefs.remoteAddress
             }
         }
     }

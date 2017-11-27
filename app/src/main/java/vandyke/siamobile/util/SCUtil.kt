@@ -6,7 +6,7 @@
 
 package vandyke.siamobile.util
 
-import vandyke.siamobile.prefs
+import vandyke.siamobile.ui.settings.Prefs
 import java.math.BigDecimal
 
 val HASTINGS_PER_SC = "1000000000000000000000000"
@@ -21,7 +21,7 @@ fun BigDecimal.toHastings(): BigDecimal = multiply(BigDecimal(HASTINGS_PER_SC))
 
 fun String.toHastings(): BigDecimal = if (this.isBlank()) BigDecimal.ZERO else BigDecimal(this).multiply(BigDecimal(HASTINGS_PER_SC))
 
-fun BigDecimal.round(): BigDecimal = setScale(prefs.displayedDecimalPrecision, BigDecimal.ROUND_CEILING)
+fun BigDecimal.round(): BigDecimal = setScale(Prefs.displayedDecimalPrecision, BigDecimal.ROUND_CEILING)
 
 fun BigDecimal.toUsd(usdPrice: BigDecimal): BigDecimal = multiply(usdPrice)
 

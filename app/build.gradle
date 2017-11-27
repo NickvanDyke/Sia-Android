@@ -54,6 +54,7 @@ dependencies {
 
     compile 'com.daimajia.numberprogressbar:library:1.4@aar'
     compile 'com.github.StevenDXC:DxLoadingButton:1.9'
+    compile "com.chibatching.kotpref:kotpref:2.2.0"
 
     compile 'com.github.apl-devs:appintro:v4.2.0'
     compile 'com.github.jrvansuita:MaterialAbout:0.1.6'

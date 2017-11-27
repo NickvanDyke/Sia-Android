@@ -13,8 +13,8 @@ import android.content.Context
 import android.support.v7.app.AlertDialog
 import android.view.inputmethod.InputMethodManager
 import vandyke.siamobile.R
-import vandyke.siamobile.prefs
 import vandyke.siamobile.ui.MainActivity
+import vandyke.siamobile.ui.settings.Prefs
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -77,6 +77,6 @@ object GenUtil {
             else -> sizeString = "Super big"
         }
 
-        return String.format("%.${prefs.displayedDecimalPrecision}f %s", size, sizeString)
+        return String.format("%.${Prefs.displayedDecimalPrecision}f %s", size, sizeString)
     }
 }

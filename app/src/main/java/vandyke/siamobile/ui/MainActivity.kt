@@ -29,13 +29,13 @@ import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main_layout.*
 import vandyke.siamobile.R
 import vandyke.siamobile.backend.siad.SiadService
-import vandyke.siamobile.prefs
 import vandyke.siamobile.ui.about.AboutFragment
 import vandyke.siamobile.ui.about.SetupRemoteFragment
 import vandyke.siamobile.ui.hosting.fragments.HostingFragment
 import vandyke.siamobile.ui.renter.view.RenterFragment
 import vandyke.siamobile.ui.settings.GlobalPrefsListener
 import vandyke.siamobile.ui.settings.ModesActivity
+import vandyke.siamobile.ui.settings.Prefs
 import vandyke.siamobile.ui.settings.SettingsFragment
 import vandyke.siamobile.ui.terminal.TerminalFragment
 import vandyke.siamobile.ui.wallet.view.WalletFragment
@@ -62,8 +62,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         globalPrefsListener = GlobalPrefsListener(this)
-        prefs.registerOnSharedPreferenceChangeListener(globalPrefsListener)
-        when (prefs.theme) {
+        Prefs.preferences.registerOnSharedPreferenceChangeListener(globalPrefsListener)
+        when (Prefs.theme) {
             "light" -> {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
                 setTheme(R.style.AppTheme_Light)
@@ -87,14 +87,14 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_layout)
         if (appTheme == Theme.CUSTOM) {
-            val b = Base64.decode(prefs.customBgBase64, Base64.DEFAULT)
+            val b = Base64.decode(Prefs.customBgBase64, Base64.DEFAULT)
             val bitmap = BitmapFactory.decodeByteArray(b, 0, b.size)
             window.setBackgroundDrawable(BitmapDrawable(resources, bitmap))
         }
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
-        if (prefs.transparentBars) {
+        if (Prefs.transparentBars) {
             toolbar.setBackgroundColor(android.R.color.transparent)
             window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
             toolbar.setPadding(0, statusBarHeight, 0, 0)
@@ -147,20 +147,20 @@ class MainActivity : AppCompatActivity() {
         drawerToggle = ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close)
         drawerLayout.addDrawerListener(drawerToggle)
 
-        if (prefs.operationMode == "local_full_node")
+        if (Prefs.operationMode == "local_full_node")
             startService(Intent(this, SiadService::class.java))
 
-        when (prefs.startupPage) {
+        when (Prefs.startupPage) {
             "renter" -> displayFragmentClass(RenterFragment::class.java, "Renter", R.id.drawer_item_renter)
             "hosting" -> displayFragmentClass(HostingFragment::class.java, "Hosting", R.id.drawer_item_hosting)
             "wallet" -> displayFragmentClass(WalletFragment::class.java, getString(R.string.wallet), R.id.drawer_item_wallet)
             "terminal" -> displayFragmentClass(TerminalFragment::class.java, "Terminal", R.id.drawer_item_terminal)
         }
 
-        if (prefs.firstTime) {
+        if (Prefs.firstTime) {
             startActivityForResult(Intent(this, ModesActivity::class.java), REQUEST_OPERATION_MODE)
 //            startActivity(Intent(this, AboutSiaActivity::class.java))
-            prefs.firstTime = false
+            Prefs.firstTime = false
         }
     }
 
@@ -170,17 +170,17 @@ class MainActivity : AppCompatActivity() {
             when (resultCode) {
                 ModesActivity.PAPER_WALLET -> displayFragmentClass(PaperWalletFragment::class.java, "Generated paper wallet", null)
                 ModesActivity.COLD_STORAGE -> {
-                    prefs.operationMode = "cold_storage"
+                    Prefs.operationMode = "cold_storage"
                     displayFragmentClass(WalletFragment::class.java, "Wallet", R.id.drawer_item_wallet)
                 }
                 ModesActivity.REMOTE_FULL_NODE -> {
-                    prefs.operationMode = "remote_full_node"
+                    Prefs.operationMode = "remote_full_node"
                     displayFragmentClass(SetupRemoteFragment::class.java, "Remote setup", null)
                 }
                 ModesActivity.LOCAL_FULL_NODE -> {
                     displayFragmentClass(WalletFragment::class.java, "Wallet", R.id.drawer_item_wallet)
                     if (StorageUtil.isSiadSupported) {
-                        prefs.operationMode = "local_full_node"
+                        Prefs.operationMode = "local_full_node"
                     } else
                         Toast.makeText(this, "Sorry, but your device's CPU architecture is not supported by Sia's full node", Toast.LENGTH_LONG).show()
                     displayFragmentClass(WalletFragment::class.java, "Wallet", R.id.drawer_item_wallet)

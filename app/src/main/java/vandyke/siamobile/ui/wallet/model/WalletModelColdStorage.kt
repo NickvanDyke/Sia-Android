@@ -14,18 +14,17 @@ import vandyke.siamobile.backend.data.wallet.*
 import vandyke.siamobile.backend.networking.Explorer
 import vandyke.siamobile.backend.networking.SiaCallback
 import vandyke.siamobile.backend.networking.SiaError
-import vandyke.siamobile.prefs
+import vandyke.siamobile.ui.settings.Prefs
 import vandyke.siamobile.util.GenUtil
 import vandyke.siamobile.util.SCUtil
 import java.math.BigDecimal
-import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 
 class WalletModelColdStorage : IWalletModel {
-    private var seed: String = prefs.coldStorageSeed
-    private var addresses: List<String> = prefs.coldStorageAddresses.toList()
-    private var password: String = prefs.coldStoragePassword
-    private var exists: Boolean = prefs.coldStorageExists
+    private var seed: String = Prefs.coldStorageSeed
+    private var addresses: List<String> = Prefs.coldStorageAddresses.toList()
+    private var password: String = Prefs.coldStoragePassword
+    private var exists: Boolean = Prefs.coldStorageExists
     private var unlocked: Boolean = false
 
     override fun getWallet(callback: SiaCallback<WalletData>) {
@@ -144,10 +143,11 @@ class WalletModelColdStorage : IWalletModel {
         this.password = password
         exists = true
         unlocked = false
-        prefs.coldStorageSeed = this.seed
-        prefs.coldStorageAddresses = HashSet(addresses)
-        prefs.coldStoragePassword = password
-        prefs.coldStorageExists = exists
+        Prefs.coldStorageSeed = this.seed
+        Prefs.coldStorageAddresses.clear()
+        Prefs.coldStorageAddresses.addAll(addresses)
+        Prefs.coldStoragePassword = password
+        Prefs.coldStorageExists = exists
         callback.onSuccess?.invoke(WalletInitData(seed))
     }
 
