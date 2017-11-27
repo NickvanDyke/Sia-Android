@@ -63,8 +63,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
             return@OnPreferenceChangeListener true
         }
 
-        minBattery.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, newValue -> (newValue as String).isNotBlank() }
-
         useExternal.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, o ->
             if (StorageUtil.isExternalStorageWritable) {
                 return@OnPreferenceChangeListener true
@@ -81,8 +79,22 @@ class SettingsFragment : PreferenceFragmentCompat() {
             false
         }
 
+        minBattery.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, newValue ->
+            try {
+                return@OnPreferenceChangeListener Integer.parseInt(newValue as String) <= 100
+            } catch (e: Exception) {
+                return@OnPreferenceChangeListener false
+            }
+        }
+
         val decimalPrecision = findPreference("displayedDecimalPrecision") as EditTextPreference
-        decimalPrecision.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, newValue -> (newValue as String).isNotBlank() }
+        decimalPrecision.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, newValue ->
+            try {
+                return@OnPreferenceChangeListener Integer.parseInt(newValue as String) < 10
+            } catch (e: Exception) {
+                return@OnPreferenceChangeListener false
+            }
+        }
 
         when (Prefs.operationMode) {
             "cold_storage" -> operationMode.summary = "Cold storage"

@@ -33,5 +33,6 @@ class StatusReceiver(val siadService: SiadService) : BroadcastReceiver() {
         } else if (!siadService.isSiadRunning) {
             siadService.startSiad()
         }
+        // TODO: it can be started in one instance when it shouldn't be, I don't remember when, so check later
     }
 }

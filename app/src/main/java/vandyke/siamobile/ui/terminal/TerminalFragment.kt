@@ -64,7 +64,7 @@ class TerminalFragment : Fragment(), SiadService.SiadListener {
                         var line: String? = inputReader.readLine()
                         while (line != null) {
                             val toBeAppended = line.replace(siacFile!!.absolutePath, "siac")
-                            stdOut.append(toBeAppended)
+                            stdOut.append(toBeAppended + "\n")
                             line = inputReader.readLine()
                         }
                         inputReader.close()

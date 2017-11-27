@@ -39,11 +39,11 @@ class DirAdapter(private val renterFragment: RenterFragment, private val context
         if (holder is DirHolder) {
             holder.name.text = node.name
             holder.size.text = GenUtil.readableFilesizeString(node.size)
-            holder.layout.setOnClickListener { v -> renterFragment.displayedDir = node as SiaDir }
+            holder.itemView.setOnClickListener { v -> renterFragment.displayedDir = node as SiaDir }
         } else if (holder is FileHolder) {
             holder.name.text = node.name
             holder.size.text = GenUtil.readableFilesizeString(node.size)
-            holder.layout.setOnClickListener(null)
+            holder.itemView.setOnClickListener(null)
             holder.more.setOnClickListener {
                 val menu = PopupMenu(context, holder.more)
                 menu.inflate(R.menu.file_menu)

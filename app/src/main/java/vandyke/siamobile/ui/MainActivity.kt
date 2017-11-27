@@ -11,7 +11,6 @@ import android.content.res.Configuration
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
@@ -22,7 +21,6 @@ import android.util.Base64
 import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.view.WindowManager
 import android.widget.TextView
 import android.widget.Toast
@@ -38,10 +36,9 @@ import vandyke.siamobile.ui.settings.ModesActivity
 import vandyke.siamobile.ui.settings.Prefs
 import vandyke.siamobile.ui.settings.SettingsFragment
 import vandyke.siamobile.ui.terminal.TerminalFragment
+import vandyke.siamobile.ui.wallet.view.PaperWalletActivity
 import vandyke.siamobile.ui.wallet.view.WalletFragment
-import vandyke.siamobile.ui.wallet.view.dialogs.PaperWalletFragment
 import vandyke.siamobile.util.GenUtil
-import vandyke.siamobile.util.SnackbarUtil
 import vandyke.siamobile.util.StorageUtil
 import java.util.*
 
@@ -66,12 +63,12 @@ class MainActivity : AppCompatActivity() {
         when (Prefs.theme) {
             "light" -> {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                setTheme(R.style.AppTheme_Light)
+                setTheme(R.style.AppTheme_DayNight)
                 appTheme = Theme.LIGHT
             }
             "dark" -> {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                setTheme(R.style.AppTheme_Light)
+                setTheme(R.style.AppTheme_DayNight)
                 appTheme = Theme.DARK
             }
             "amoled" -> {
@@ -168,7 +165,7 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == REQUEST_OPERATION_MODE) {
             println(resultCode)
             when (resultCode) {
-                ModesActivity.PAPER_WALLET -> displayFragmentClass(PaperWalletFragment::class.java, "Generated paper wallet", null)
+                ModesActivity.PAPER_WALLET -> displayFragmentClass(PaperWalletActivity::class.java, "Generated paper wallet", null)
                 ModesActivity.COLD_STORAGE -> {
                     Prefs.operationMode = "cold_storage"
                     displayFragmentClass(WalletFragment::class.java, "Wallet", R.id.drawer_item_wallet)
@@ -252,11 +249,6 @@ class MainActivity : AppCompatActivity() {
         if (drawerToggle.onOptionsItemSelected(item))
             return true
         return super.onOptionsItemSelected(item)
-    }
-
-    fun copyTextView(view: View) {
-        GenUtil.copyToClipboard(this, (view as TextView).text)
-        SnackbarUtil.snackbar(view, "Copied selection to clipboard", Snackbar.LENGTH_SHORT)
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {

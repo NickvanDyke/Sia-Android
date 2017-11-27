@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 Nicholas van Dyke
+ *
+ * This file is subject to the terms and conditions defined in 'LICENSE.md'
+ */
+
 package vandyke.siamobile.ui.settings
 
 import android.content.Context
@@ -6,13 +12,13 @@ import android.util.AttributeSet
 
 class IntEditTextPreference : EditTextPreference {
 
-    constructor(context: Context) : super(context) {}
+    constructor(context: Context) : super(context)
 
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {}
+    constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
 
-    constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(context, attrs, defStyle) {}
+    constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(context, attrs, defStyle)
 
-    override fun getPersistedString(defaultReturnValue: String): String {
+    override fun getPersistedString(defaultReturnValue: String?): String {
         return Integer.toString(getPersistedInt(-1))
     }
 

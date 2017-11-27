@@ -17,8 +17,8 @@ class TextCopyAdapter(var data: List<String> = listOf()) : RecyclerView.Adapter<
         return TextHolder(LayoutInflater.from(parent?.context).inflate(R.layout.holder_text_copy, parent, false))
     }
 
-    override fun onBindViewHolder(holder: TextHolder?, position: Int) {
-        holder?.text?.text = data[position]
+    override fun onBindViewHolder(holder: TextHolder, position: Int) {
+        holder.text.text = data[position]
     }
 
     override fun getItemCount(): Int {

@@ -92,7 +92,7 @@ class SiaError {
         INVALID_SEED("Invalid seed"),
         CANNOT_INIT_FROM_SEED_UNTIL_SYNCED("Cannot create wallet from seed until fully synced"),
         UNSUPPORTED_ON_COLD_WALLET("Unsupported on cold storage wallet"),
-        UNEXPECTED_END_OF_STREAM("Unexpected end of stream"),
+        UNEXPECTED_END_OF_STREAM("Connection unexpectedly closed"),
         UNRECOGNIZED_HASH("Unrecognized hash")
     }
 

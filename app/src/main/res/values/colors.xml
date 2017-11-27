@@ -10,7 +10,7 @@
     <color name="colorPrimaryDark">#00a882</color>
     <color name="colorAccent">#00cb9e</color>
     <color name="shadowStart">#c5c5c5</color>
-    <color name="shadowEnd">@android:color/background_light</color>
+    <color name="shadowEnd">@android:color/transparent</color>
 
     <!--dark mode stuff-->
     <color name="shadowStartDark">#222222</color>
