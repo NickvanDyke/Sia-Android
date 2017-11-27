@@ -26,9 +26,9 @@ class DonateDialog : DialogFragment() {
     private val paymentRecipient = GenUtil.devAddresses[(Math.random() * GenUtil.devAddresses.size).toInt()]
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val builder = GenUtil.getDialogBuilder(activity)
+        val builder = GenUtil.getDialogBuilder(context!!)
 
-        val dialogView = activity.layoutInflater.inflate(R.layout.dialog_donate, null)
+        val dialogView = activity!!.layoutInflater.inflate(R.layout.dialog_donate, null)
 
         dialogView.findViewById<Button>(R.id.donateButton).setOnClickListener {
             Wallet.send(dialogView.findViewById<EditText>(R.id.donateAmount).text.toString().toHastings().toPlainString(), paymentRecipient, SiaCallback({ ->

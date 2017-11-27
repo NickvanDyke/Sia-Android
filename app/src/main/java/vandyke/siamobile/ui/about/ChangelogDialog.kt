@@ -17,9 +17,9 @@ import vandyke.siamobile.util.GenUtil
 class ChangelogDialog : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val builder = GenUtil.getDialogBuilder(activity)
+        val builder = GenUtil.getDialogBuilder(context!!)
 
-        val dialogView = activity.layoutInflater.inflate(R.layout.dialog_changelog, null)
+        val dialogView = activity!!.layoutInflater!!.inflate(R.layout.dialog_changelog, null)
 
         builder.setTitle("Change Log")
                 .setView(dialogView)

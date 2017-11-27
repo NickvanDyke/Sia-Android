@@ -49,7 +49,7 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
         return inflater.inflate(R.layout.fragment_wallet, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         /* color stuff depending on theme */
         if (MainActivity.appTheme === MainActivity.Theme.AMOLED || MainActivity.appTheme === MainActivity.Theme.CUSTOM) {
             top_shadow.visibility = View.GONE
@@ -149,8 +149,8 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
 
     override fun onWalletCreated(seed: String) {
         if (prefs.operationMode == "cold_storage")
-            WalletCreateDialog.showCsWarning(activity)
-        WalletCreateDialog.showSeed(seed, activity)
+            WalletCreateDialog.showCsWarning(context!!)
+        WalletCreateDialog.showSeed(seed, context!!)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -181,7 +181,7 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
     }
 
     fun fillExpandableFrame(fragment: Fragment) {
-        fragmentManager.beginTransaction().replace(R.id.expandableFrame, fragment).commit()
+        fragmentManager!!.beginTransaction().replace(R.id.expandableFrame, fragment).commit()
         expandableFrame?.visibility = View.VISIBLE
     }
 
@@ -203,7 +203,7 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         if (!hidden) {
-            activity.invalidateOptionsMenu()
+            activity!!.invalidateOptionsMenu()
             if (prefs.operationMode != cachedMode) {
                 cachedMode = prefs.operationMode
                 model = if (cachedMode == "cold_storage") WalletModelColdStorage() else WalletModelHttp()

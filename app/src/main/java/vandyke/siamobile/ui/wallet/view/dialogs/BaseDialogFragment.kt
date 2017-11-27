@@ -25,7 +25,7 @@ abstract class BaseDialogFragment : DialogFragment() {
         return inflater.inflate(layout, null)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         create(view, savedInstanceState)
     }

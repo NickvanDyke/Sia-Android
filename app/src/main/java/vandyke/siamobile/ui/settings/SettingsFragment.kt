@@ -54,7 +54,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         operationMode.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, o ->
             if (o == "view_explanation") {
-                activity.startActivityForResult(Intent(activity, ModesActivity::class.java), MainActivity.REQUEST_OPERATION_MODE)
+                activity!!.startActivityForResult(Intent(activity, ModesActivity::class.java), MainActivity.REQUEST_OPERATION_MODE)
                 return@OnPreferenceChangeListener false
             }
             if (o == "local_full_node" && SiaMobileApplication.abi != "arm64") {
@@ -131,7 +131,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 val selectedImageURI = data?.data
                 var input: InputStream? = null
                 try {
-                    input = activity.contentResolver.openInputStream(selectedImageURI)
+                    input = activity!!.contentResolver.openInputStream(selectedImageURI)
                 } catch (e: FileNotFoundException) {
                     e.printStackTrace()
                 }

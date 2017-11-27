@@ -37,7 +37,7 @@ class WalletReceiveDialog(private val model: IWalletModel? = null) : BaseDialogF
         }))
 
         walletAddressCopy.setOnClickListener {
-            GenUtil.copyToClipboard(activity, receiveAddress.text)
+            GenUtil.copyToClipboard(context!!, receiveAddress.text)
             SnackbarUtil.snackbar(view, "Copied receive address", Snackbar.LENGTH_SHORT)
             close()
         }

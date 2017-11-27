@@ -53,10 +53,10 @@ class RenterFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_renter, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        viewModel = RenterViewModel(activity.application, RenterModelTest())
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        viewModel = RenterViewModel(activity!!.application, RenterModelTest())
 //        filesList.addItemDecoration(new DividerItemDecoration(filesList.getContext(), layoutManager.getOrientation()));
-        adapter = DirAdapter(this, activity)
+        adapter = DirAdapter(this, context!!)
         filesList.adapter = adapter
 
         renterFilepath.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
@@ -104,7 +104,7 @@ class RenterFragment : Fragment() {
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         if (!hidden) {
-            activity.invalidateOptionsMenu()
+            activity!!.invalidateOptionsMenu()
             viewModel.refreshFiles()
         }
     }

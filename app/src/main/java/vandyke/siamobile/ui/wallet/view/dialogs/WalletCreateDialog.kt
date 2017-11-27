@@ -6,7 +6,7 @@
 
 package vandyke.siamobile.ui.wallet.view.dialogs
 
-import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.view.View
@@ -56,8 +56,8 @@ class WalletCreateDialog(private val presenter: IWalletPresenter? = null) : Base
 
 
     companion object {
-        fun showCsWarning(activity: Activity) {
-            GenUtil.getDialogBuilder(activity)
+        fun showCsWarning(context: Context) {
+            GenUtil.getDialogBuilder(context)
                     .setTitle("IMPORTANT")
                     .setMessage("You just created a wallet while in cold storage mode. While in cold storage mode," +
                             " Sia Mobile is not connected to the Sia network and does not have a copy of the Sia blockchain. Normally this would mean you can't " +
@@ -70,16 +70,16 @@ class WalletCreateDialog(private val presenter: IWalletPresenter? = null) : Base
                     .show()
         }
 
-        fun showSeed(seed: String, activity: Activity) {
+        fun showSeed(seed: String, context: Context) {
             val msg = "Below is your wallet seed. Your wallet's addresses are generated using this seed. Therefore, any coins you " +
                     "send to this wallet and its addresses will \"belong\" to this seed. It's what you will need" +
                     " in order to recover your coins if something happens to your wallet, or to load your wallet on another device. Record it elsewhere, and keep it safe."
-            GenUtil.getDialogBuilder(activity)
+            GenUtil.getDialogBuilder(context)
                     .setTitle("Wallet seed")
                     .setMessage("$msg\n\n$seed")
                     .setPositiveButton("Copy seed", { _, _ ->
-                        GenUtil.copyToClipboard(activity, seed)
-                        Toast.makeText(activity, "Copied seed", Toast.LENGTH_SHORT).show()
+                        GenUtil.copyToClipboard(context, seed)
+                        Toast.makeText(context, "Copied seed", Toast.LENGTH_SHORT).show()
                     })
                     .show()
         }

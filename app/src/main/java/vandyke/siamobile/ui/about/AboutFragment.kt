@@ -18,7 +18,7 @@ import vandyke.siamobile.R
 
 class AboutFragment : Fragment() {
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return AboutBuilder.with(activity)
 //                .setName("Nick van Dyke")
 //                .setBrief("Sia supporter and Android developer")
@@ -34,9 +34,9 @@ class AboutFragment : Fragment() {
                 .addFiveStarsAction()
                 .addShareAction("Store your Siacoins securely using Sia Mobile")
                 .addAction(R.drawable.github_logo, "Source code", Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/NickvanDyke/Sia-Mobile")))
-                .addChangeLogAction { ChangelogDialog.createAndShow(fragmentManager) }
+                .addChangeLogAction { ChangelogDialog.createAndShow(fragmentManager!!) }
                 .addFeedbackAction("siamobiledev@gmail.com")
-                .addDonateAction { DonateDialog.createAndShow(fragmentManager) }
+                .addDonateAction { DonateDialog.createAndShow(fragmentManager!!) }
                 .build()
     }
 }

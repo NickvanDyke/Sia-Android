@@ -38,14 +38,14 @@ class TerminalFragment : Fragment(), SiadService.SiadListener {
         return inflater.inflate(R.layout.fragment_terminal, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         if (MainActivity.appTheme === MainActivity.Theme.AMOLED || MainActivity.appTheme === MainActivity.Theme.CUSTOM) {
             bot_shadow.visibility = View.GONE
         } else if (MainActivity.appTheme === MainActivity.Theme.DARK) {
             bot_shadow.setBackgroundResource(R.drawable.bot_shadow_dark)
         }
 
-        siacFile = StorageUtil.copyBinary("siac", activity, true)
+        siacFile = StorageUtil.copyBinary("siac", context!!, true)
 
         input.setOnEditorActionListener(TextView.OnEditorActionListener { v, actionId, event ->
             try {
@@ -76,7 +76,7 @@ class TerminalFragment : Fragment(), SiadService.SiadListener {
                         }
                         inputReader.close()
 
-                        activity.runOnUiThread { output.append(stdOut) }
+                        activity!!.runOnUiThread { output.append(stdOut) }
                     } catch (e: IOException) {
                         e.printStackTrace()
                     }
