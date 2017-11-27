@@ -8,23 +8,19 @@ package vandyke.siamobile.ui
 
 import android.content.Intent
 import android.content.res.Configuration
-import android.graphics.BitmapFactory
-import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.app.AppCompatDelegate
-import android.support.v7.widget.Toolbar
-import android.util.Base64
-import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
 import android.widget.TextView
 import android.widget.Toast
-import kotlinx.android.synthetic.main.activity_main_layout.*
+import kotlinx.android.synthetic.main.activity_main.*
 import vandyke.siamobile.R
 import vandyke.siamobile.backend.siad.SiadService
 import vandyke.siamobile.ui.about.AboutFragment
@@ -38,12 +34,12 @@ import vandyke.siamobile.ui.settings.SettingsFragment
 import vandyke.siamobile.ui.terminal.TerminalFragment
 import vandyke.siamobile.ui.wallet.view.PaperWalletActivity
 import vandyke.siamobile.ui.wallet.view.WalletFragment
-import vandyke.siamobile.util.GenUtil
 import vandyke.siamobile.util.StorageUtil
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
+    /* need to keep reference to the listener, otherwise it disappears after some time */
     private lateinit var globalPrefsListener: GlobalPrefsListener
 
     private lateinit var drawerToggle: ActionBarDrawerToggle
@@ -51,45 +47,21 @@ class MainActivity : AppCompatActivity() {
     private lateinit var titleBackstack: Stack<String>
     private lateinit var menuItemBackstack: Stack<Int>
     private lateinit var classBackstack: Stack<Class<*>>
-    var currentlyVisibleFragment: Fragment? = null
-
-    enum class Theme {
-        LIGHT, DARK, AMOLED, CUSTOM
-    }
+    private var currentlyVisibleFragment: Fragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         globalPrefsListener = GlobalPrefsListener(this)
         Prefs.preferences.registerOnSharedPreferenceChangeListener(globalPrefsListener)
-        when (Prefs.theme) {
-            "light" -> {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                setTheme(R.style.AppTheme_DayNight)
-                appTheme = Theme.LIGHT
-            }
-            "dark" -> {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                setTheme(R.style.AppTheme_DayNight)
-                appTheme = Theme.DARK
-            }
-            "amoled" -> {
-                setTheme(R.style.AppTheme_Amoled)
-                appTheme = Theme.AMOLED
-            }
-            "custom" -> {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                setTheme(R.style.AppTheme_Custom)
-                appTheme = Theme.CUSTOM
-            }
-        }
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main_layout)
-        if (appTheme == Theme.CUSTOM) {
-            val b = Base64.decode(Prefs.customBgBase64, Base64.DEFAULT)
-            val bitmap = BitmapFactory.decodeByteArray(b, 0, b.size)
-            window.setBackgroundDrawable(BitmapDrawable(resources, bitmap))
-        }
+        if (Prefs.darkMode)
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        else
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setTheme(R.style.AppTheme_DayNight)
+
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
         setSupportActionBar(toolbar)
         if (Prefs.transparentBars) {
             toolbar.setBackgroundColor(android.R.color.transparent)
@@ -97,19 +69,15 @@ class MainActivity : AppCompatActivity() {
             toolbar.setPadding(0, statusBarHeight, 0, 0)
         }
 
-        val a = TypedValue()
-        theme.resolveAttribute(android.R.attr.windowBackground, a, true)
-        backgroundColor = a.data
-
         defaultTextColor = TextView(this).currentTextColor
 
         titleBackstack = Stack<String>()
         menuItemBackstack = Stack<Int>()
         classBackstack = Stack<Class<*>>()
 
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setHomeButtonEnabled(true)
-        // set action stuff for when drawer items are selected
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        supportActionBar!!.setHomeButtonEnabled(true)
+        /* set action stuff for when drawer items are selected */
         navigationView.setNavigationItemSelectedListener({ it ->
             drawerLayout?.closeDrawers()
             val menuItemId = it.itemId
@@ -232,7 +200,7 @@ class MainActivity : AppCompatActivity() {
         } else if (currentlyVisibleFragment is WalletFragment && (currentlyVisibleFragment as WalletFragment).onBackPressed()) {
         } else if (currentlyVisibleFragment is RenterFragment && (currentlyVisibleFragment as RenterFragment).goUpDir()) {
         } else if (titleBackstack.size <= 1) {
-            GenUtil.getDialogBuilder(this)
+            AlertDialog.Builder(this)
                     .setTitle("Quit?")
                     .setPositiveButton("Yes") { dialogInterface, i -> finish() }
                     .setNegativeButton("No", null)
@@ -277,9 +245,7 @@ class MainActivity : AppCompatActivity() {
         }
 
     companion object {
-        var backgroundColor: Int = 0
         var defaultTextColor: Int = 0
         var REQUEST_OPERATION_MODE = 2
-        var appTheme: Theme? = null
     }
 }

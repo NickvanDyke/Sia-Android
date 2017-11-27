@@ -25,6 +25,8 @@ class PaperWalletActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_wallet_paper)
 
+        setSupportActionBar(toolbar)
+
         supportActionBar!!.setDisplayShowHomeEnabled(true)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 

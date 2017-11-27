@@ -7,6 +7,7 @@
 package vandyke.siamobile.ui.wallet.model
 
 import android.content.Context
+import android.support.v7.app.AlertDialog
 import siawallet.Wallet
 import vandyke.siamobile.backend.data.consensus.ConsensusData
 import vandyke.siamobile.backend.data.explorer.ExplorerTransactionData
@@ -15,7 +16,6 @@ import vandyke.siamobile.backend.networking.Explorer
 import vandyke.siamobile.backend.networking.SiaCallback
 import vandyke.siamobile.backend.networking.SiaError
 import vandyke.siamobile.ui.settings.Prefs
-import vandyke.siamobile.util.GenUtil
 import vandyke.siamobile.util.SCUtil
 import java.math.BigDecimal
 import java.util.concurrent.atomic.AtomicInteger
@@ -175,7 +175,7 @@ class WalletModelColdStorage : IWalletModel {
 
     companion object {
         fun showColdStorageHelp(context: Context) {
-            GenUtil.getDialogBuilder(context)
+            AlertDialog.Builder(context)
                     .setTitle("Cold storage help")
                     .setMessage("Sia Mobile's cold storage wallet operates independently of the Sia network." +
                             " Since it doesn't have a copy of the Sia blockchain and is not connected to the " +

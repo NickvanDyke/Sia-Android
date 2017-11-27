@@ -9,6 +9,7 @@ package vandyke.siamobile.ui.wallet.view.dialogs
 import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.Snackbar
+import android.support.v7.app.AlertDialog
 import android.view.View
 import android.widget.Toast
 import kotlinx.android.synthetic.main.fragment_wallet_create.*
@@ -57,7 +58,7 @@ class WalletCreateDialog(private val viewModel: WalletViewModel? = null) : BaseD
 
     companion object {
         fun showCsWarning(context: Context) {
-            GenUtil.getDialogBuilder(context)
+            AlertDialog.Builder(context)
                     .setTitle("IMPORTANT")
                     .setMessage("You just created a wallet while in cold storage mode. While in cold storage mode," +
                             " Sia Mobile is not connected to the Sia network and does not have a copy of the Sia blockchain. Normally this would mean you can't " +
@@ -74,7 +75,7 @@ class WalletCreateDialog(private val viewModel: WalletViewModel? = null) : BaseD
             val msg = "Below is your wallet seed. Your wallet's addresses are generated using this seed. Therefore, any coins you " +
                     "send to this wallet and its addresses will \"belong\" to this seed. It's what you will need" +
                     " in order to recover your coins if something happens to your wallet, or to load your wallet on another device. Record it elsewhere, and keep it safe."
-            GenUtil.getDialogBuilder(context)
+            AlertDialog.Builder(context)
                     .setTitle("Wallet seed")
                     .setMessage("$msg\n\n$seed")
                     .setPositiveButton("Copy seed", { _, _ ->

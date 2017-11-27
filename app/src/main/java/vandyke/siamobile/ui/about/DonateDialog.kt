@@ -6,6 +6,7 @@
 
 package vandyke.siamobile.ui.about
 
+import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
 import android.support.design.widget.Snackbar
@@ -26,7 +27,7 @@ class DonateDialog : DialogFragment() {
     private val paymentRecipient = GenUtil.devAddresses[(Math.random() * GenUtil.devAddresses.size).toInt()]
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val builder = GenUtil.getDialogBuilder(context!!)
+        val builder = AlertDialog.Builder(context!!)
 
         val dialogView = activity!!.layoutInflater.inflate(R.layout.dialog_donate, null)
 

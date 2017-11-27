@@ -125,11 +125,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
                         }
                     }
                 }
-                "theme" -> if (Prefs.theme == "custom") {
-                    val intent = Intent(Intent.ACTION_GET_CONTENT)
-                    intent.type = "image/*"
-                    startActivityForResult(Intent.createChooser(intent, "Select Background"), SELECT_PICTURE)
-                }
+//                "darkMode" -> { // TODO: maybe eventually work on having it change in-app without having to restart
+//                    if (Prefs.darkMode)
+//                        (activity!! as AppCompatActivity).delegate.setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+//                    else
+//                        (activity!! as AppCompatActivity).delegate.setLocalNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+//                }
             }
         }
         Prefs.preferences.registerOnSharedPreferenceChangeListener(prefsListener)

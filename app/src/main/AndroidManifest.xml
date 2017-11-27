@@ -43,7 +43,7 @@
             android:name=".ui.wallet.view.PaperWalletActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.DayNight.ActionBar"/>
+            android:theme="@style/AppTheme.DayNight"/>
         <activity
             android:name=".ui.about.AboutSiaActivity"
             android:launchMode="singleTask"

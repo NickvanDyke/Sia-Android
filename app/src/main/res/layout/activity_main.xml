@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <!--The main contmyViewview-->
+    <!--The main contentview-->
     <android.support.constraint.ConstraintLayout
             android:id="@+id/activity_main"
             android:layout_width="match_parent"
@@ -27,10 +27,10 @@
                 android:background="@color/colorPrimary"
                 android:elevation="4dp"
                 android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                />
+                app:layout_constraintLeft_toLeftOf="parent"/>
 
         <!--The frame for the fragment-->
         <FrameLayout

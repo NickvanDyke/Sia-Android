@@ -56,13 +56,11 @@
             android:defaultValue="false"/>
     </PreferenceCategory>
     <PreferenceCategory android:title="Appearance">
-        <ListPreference
+        <SwitchPreferenceCompat
             android:summary="Changes will apply on next restart."
-            android:key="theme"
-            android:title="Theme"
-            android:entries="@array/theme_entries"
-            android:entryValues="@array/theme_values"
-            android:defaultValue="dark"/>
+            android:key="darkMode"
+            android:title="Dark mode"
+            android:defaultValue="false"/>
         <SwitchPreferenceCompat
             android:summary="Changes will apply on next restart."
             android:key="transparentBars"

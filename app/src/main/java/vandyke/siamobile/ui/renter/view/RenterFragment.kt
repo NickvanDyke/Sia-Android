@@ -6,7 +6,7 @@
 
 package vandyke.siamobile.ui.renter.view
 
-import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
@@ -14,15 +14,16 @@ import android.view.*
 import kotlinx.android.synthetic.main.fragment_renter.*
 import vandyke.siamobile.R
 import vandyke.siamobile.backend.data.renter.SiaDir
-import vandyke.siamobile.ui.renter.model.RenterModelTest
 import vandyke.siamobile.ui.renter.view.list.DirAdapter
 import vandyke.siamobile.ui.renter.viewmodel.RenterViewModel
+import vandyke.siamobile.util.observe
 
 
 class RenterFragment : Fragment() {
 
     lateinit var viewModel: RenterViewModel
 
+    // should maybe keep track of this is viewmodel as well
     var displayedDir = SiaDir("home", null)
         set(value) {
             programmaticallySelecting = true
@@ -54,7 +55,7 @@ class RenterFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        viewModel = RenterViewModel(activity!!.application, RenterModelTest())
+        viewModel = ViewModelProviders.of(this).get(RenterViewModel::class.java)
 //        filesList.addItemDecoration(new DividerItemDecoration(filesList.getContext(), layoutManager.getOrientation()));
         adapter = DirAdapter(this, context!!)
         filesList.adapter = adapter
@@ -69,13 +70,15 @@ class RenterFragment : Fragment() {
         })
 
         renterSwipeRefresh.setOnRefreshListener { viewModel.refreshFiles() }
+        renterSwipeRefresh.setColorSchemeResources(R.color.colorAccent)
 
-        viewModel.root.observe(this, Observer {
-            displayedDir = it!!
+        /* observe viewModel stuff */
+        viewModel.root.observe(this, {
+            displayedDir = it
             renterSwipeRefresh.isRefreshing = false
         })
 
-        viewModel.error.observe(this, Observer {
+        viewModel.error.observe(this, {
             it?.snackbar(view)
             renterSwipeRefresh.isRefreshing = false
         })

@@ -44,7 +44,7 @@ interface SiaApiInterface {
     fun sweepSeed(@Query("dictionary") dictionary: String, @Query("seed") seed: String): Call<Unit>
 
     @GET("wallet/transactions")
-    fun getTransactions(@Query("startheight") startHeight: String, @Query("endheight") endHeight: String): Call<TransactionsData>
+    fun getTransactions(@Query("startheight") startHeight: String = "0", @Query("endheight") endHeight: String = "2000000000"): Call<TransactionsData>
 
     @POST("wallet/init")
     fun initWallet(@Query("encryptionpassword") password: String, @Query("dictionary") dictionary: String, @Query("force") force: Boolean): Call<WalletInitData>
@@ -62,13 +62,13 @@ interface SiaApiInterface {
     fun changeWalletPassword(@Query("encryptionpassword") password: String, @Query("newpassword") newPassword: String): Call<Unit>
 
     @GET
-    fun getScPrice(@Url url: String): Call<ScPriceData>
+    fun getScPrice(@Url url: String = "http://www.coincap.io/page/SC"): Call<ScPriceData>
 
     @GET
     fun getSiaTechExplorerHash(@Url url: String): Call<ExplorerHashData>
 
     @GET
-    fun getSiaTechExplorer(@Url url: String): Call<ExplorerData>
+    fun getSiaTechExplorer(@Url url: String = "http://explore.sia.tech/explorer"): Call<ExplorerData>
 
     /* renter API */
     @GET("renter/files")

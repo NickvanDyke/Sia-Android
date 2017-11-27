@@ -33,6 +33,9 @@ class WalletViewModel : ViewModel() {
     val success = MutableLiveData<String>()
     val error = MutableLiveData<SiaError>()
 
+    /* for communicating the seed to the view when a new wallet is created */
+    val seed = MutableLiveData<String>()
+
     var model: IWalletModel = if (Prefs.operationMode == "cold_storage") WalletModelColdStorage()
         else WalletModelHttp()
     var cachedMode = Prefs.operationMode
@@ -91,13 +94,13 @@ class WalletViewModel : ViewModel() {
             model.init(password, "english", force, SiaCallback({ it ->
                 success.value = "Created wallet"
                 refreshWallet()
-//                walletView.onWalletCreated(it.primaryseed) TODO: need to show seeds
+                this.seed.value = it.primaryseed
             }, setError))
         } else {
             model.initSeed(password, "english", seed, force, SiaCallback({ ->
                 success.value = "Created wallet"
                 refreshWallet()
-//                walletView.onWalletCreated(seed)
+                this.seed.value = seed
             }, setError))
         }
     }

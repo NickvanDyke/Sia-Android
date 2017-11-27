@@ -6,18 +6,18 @@
 
 package vandyke.siamobile.ui.about
 
+import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.support.v4.app.FragmentManager
 import android.view.WindowManager
 import vandyke.siamobile.R
-import vandyke.siamobile.util.GenUtil
 
 class ChangelogDialog : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val builder = GenUtil.getDialogBuilder(context!!)
+        val builder = AlertDialog.Builder(context!!)
 
         val dialogView = activity!!.layoutInflater!!.inflate(R.layout.dialog_changelog, null)
 

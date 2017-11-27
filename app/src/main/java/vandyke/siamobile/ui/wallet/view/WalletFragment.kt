@@ -10,6 +10,7 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.app.AlertDialog
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.view.*
@@ -39,14 +40,8 @@ class WalletFragment : Fragment(), SiadService.SiadListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         /* color stuff depending on theme */
-        if (MainActivity.appTheme === MainActivity.Theme.AMOLED || MainActivity.appTheme === MainActivity.Theme.CUSTOM) {
-            top_shadow.visibility = View.GONE
-        } else if (MainActivity.appTheme === MainActivity.Theme.DARK) {
+        if (Prefs.darkMode) {
             top_shadow.setBackgroundResource(R.drawable.top_shadow_dark)
-        }
-        if (MainActivity.appTheme === MainActivity.Theme.AMOLED) {
-            receiveButton.setBackgroundColor(android.R.color.transparent)
-            sendButton.setBackgroundColor(android.R.color.transparent)
         }
         syncBar.setProgressTextColor(MainActivity.defaultTextColor)
 
@@ -62,7 +57,7 @@ class WalletFragment : Fragment(), SiadService.SiadListener {
         sendButton.setOnClickListener { expandFrame(WalletSendDialog(viewModel)) }
         receiveButton.setOnClickListener { expandFrame(WalletReceiveDialog(viewModel.model)) }
         balanceText.setOnClickListener { v ->
-            GenUtil.getDialogBuilder(v.context)
+            AlertDialog.Builder(v.context)
                     .setTitle("Exact Balance")
                     .setMessage("${viewModel.wallet.value!!.confirmedsiacoinbalance.toSC().toPlainString()} Siacoins")
                     .setPositiveButton("Close", null)
@@ -71,6 +66,7 @@ class WalletFragment : Fragment(), SiadService.SiadListener {
 
         /* set listener to refresh the viewModel when the swipelayout is triggered */
         transactionListSwipe.setOnRefreshListener { viewModel.refresh() }
+        transactionListSwipe.setColorSchemeResources(R.color.colorAccent)
 
         /* listen to siad output, so that we can refresh the viewModel at appropriate times */
         SiadService.addListener(this)
@@ -114,6 +110,12 @@ class WalletFragment : Fragment(), SiadService.SiadListener {
             it.snackbar(view)
         })
 
+        viewModel.seed.observe(this, {
+            if (Prefs.operationMode == "cold_storage")
+            WalletCreateDialog.showCsWarning(context!!)
+        WalletCreateDialog.showSeed(it, context!!)
+        })
+
         viewModel.refresh()
     }
 
@@ -127,12 +129,6 @@ class WalletFragment : Fragment(), SiadService.SiadListener {
         if (line.contains("Finished loading") || line.contains("Done!"))
             viewModel.refresh()
     }
-
-//    override fun onWalletCreated(seed: String) {
-//        if (Prefs.operationMode == "cold_storage")
-//            WalletCreateDialog.showCsWarning(context!!)
-//        WalletCreateDialog.showSeed(seed, context!!)
-//    }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {

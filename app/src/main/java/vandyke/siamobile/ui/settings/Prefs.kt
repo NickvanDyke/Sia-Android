@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 Nicholas van Dyke
+ *
+ * This file is subject to the terms and conditions defined in 'LICENSE.md'
+ */
+
 package vandyke.siamobile.ui.settings
 
 import com.chibatching.kotpref.KotprefModel
@@ -5,7 +11,7 @@ import com.chibatching.kotpref.KotprefModel
 object Prefs : KotprefModel() {
     override val kotprefName: String = "${context.packageName}_preferences"
 
-    var theme by stringPref("dark")
+    var darkMode by booleanPref(false)
     var operationMode by stringPref("cold_storage")
     var address by stringPref("localhost:9990")
     var remoteAddress by stringPref("192.168.1.100:9980")
