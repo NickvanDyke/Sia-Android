@@ -11,7 +11,7 @@ apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 27
-    buildToolsVersion '26.0.2'
+    buildToolsVersion '27.0.1'
     defaultConfig {
         applicationId "vandyke.siamobile"
         minSdkVersion 21
@@ -64,15 +64,15 @@ dependencies {
     compile 'me.dm7.barcodescanner:zxing:1.9.3'
 
     compile 'com.squareup.retrofit2:retrofit:2.3.0'
-    compile 'com.squareup.retrofit2:converter-gson:2.1.0'
-    compile 'com.google.code.gson:gson:2.8.1'
+    compile 'com.squareup.retrofit2:converter-gson:2.3.0'
+    compile 'com.google.code.gson:gson:2.8.2'
 
-    compile "com.google.firebase:firebase-crash:11.2.0"
+    compile "com.google.firebase:firebase-crash:11.6.2"
 
     compile 'android.arch.lifecycle:runtime:1.0.3'
     compile 'android.arch.lifecycle:extensions:1.0.0'
     annotationProcessor 'android.arch.lifecycle:compiler:1.0.0'
-    kapt 'com.android.databinding:compiler:2.3.2'
+    kapt 'com.android.databinding:compiler:3.0.1'
 }
 
 repositories {
