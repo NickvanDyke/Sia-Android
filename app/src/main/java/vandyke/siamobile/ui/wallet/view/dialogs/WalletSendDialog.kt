@@ -14,11 +14,11 @@ import android.text.TextWatcher
 import android.view.View
 import kotlinx.android.synthetic.main.fragment_wallet_send.*
 import vandyke.siamobile.R
-import vandyke.siamobile.ui.wallet.presenter.IWalletPresenter
 import vandyke.siamobile.ui.wallet.view.ScannerActivity
+import vandyke.siamobile.ui.wallet.viewmodel.WalletViewModel
 import vandyke.siamobile.util.toHastings
 
-class WalletSendDialog(private val presenter: IWalletPresenter? = null) : BaseDialogFragment() {
+class WalletSendDialog(private val viewModel: WalletViewModel? = null) : BaseDialogFragment() {
     override val layout: Int = R.layout.fragment_wallet_send
 
     override fun create(view: View?, savedInstanceState: Bundle?) {
@@ -34,7 +34,7 @@ class WalletSendDialog(private val presenter: IWalletPresenter? = null) : BaseDi
 
         walletSend.setOnClickListener {
             val sendAmount = sendAmount.text.toString().toHastings().toPlainString()
-            presenter?.send(sendAmount, sendRecipient.text.toString())
+            viewModel!!.send(sendAmount, sendRecipient.text.toString())
         }
 
         walletScan.setOnClickListener { startScannerActivity() }

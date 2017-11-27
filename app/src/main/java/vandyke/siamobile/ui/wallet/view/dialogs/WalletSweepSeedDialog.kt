@@ -10,15 +10,15 @@ import android.os.Bundle
 import android.view.View
 import kotlinx.android.synthetic.main.fragment_wallet_sweep.*
 import vandyke.siamobile.R
-import vandyke.siamobile.ui.wallet.presenter.IWalletPresenter
+import vandyke.siamobile.ui.wallet.viewmodel.WalletViewModel
 
-class WalletSweepSeedDialog(private val presenter: IWalletPresenter? = null) : BaseDialogFragment() {
+class WalletSweepSeedDialog(private val viewModel: WalletViewModel? = null) : BaseDialogFragment() {
     override val layout: Int = R.layout.fragment_wallet_sweep
 
     override fun create(view: View?, savedInstanceState: Bundle?) {
         setCloseButton(walletSweepCancel)
         walletAddSeed.setOnClickListener {
-            presenter?.sweep(walletSweepSeed.text.toString())
+            viewModel!!.sweep(walletSweepSeed.text.toString())
         }
     }
 }

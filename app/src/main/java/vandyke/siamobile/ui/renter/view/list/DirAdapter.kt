@@ -26,10 +26,10 @@ class DirAdapter(private val renterFragment: RenterFragment, private val context
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         if (viewType == DIR) {
-            val holder = DirHolder(LayoutInflater.from(parent.context).inflate(R.layout.list_item_dir, parent, false))
+            val holder = DirHolder(LayoutInflater.from(parent.context).inflate(R.layout.holder_renter_dir, parent, false))
             return holder
         } else {
-            val holder = FileHolder(LayoutInflater.from(parent.context).inflate(R.layout.list_item_file, parent, false))
+            val holder = FileHolder(LayoutInflater.from(parent.context).inflate(R.layout.holder_renter_file, parent, false))
             return holder
         }
     }

@@ -16,7 +16,7 @@ import vandyke.siamobile.backend.networking.SiaCallback
 import vandyke.siamobile.ui.misc.TextCopyAdapter
 import vandyke.siamobile.ui.wallet.model.IWalletModel
 
-class WalletAddressesDialog(private val walletModel: IWalletModel? = null) : BaseDialogFragment() {
+class WalletAddressesDialog(private val model: IWalletModel? = null) : BaseDialogFragment() {
     override val layout: Int = R.layout.fragment_wallet_addresses
 
     override fun create(view: View?, savedInstanceState: Bundle?) {
@@ -29,7 +29,7 @@ class WalletAddressesDialog(private val walletModel: IWalletModel? = null) : Bas
         addressesList.addItemDecoration(DividerItemDecoration(addressesList.context, layoutManager.orientation))
         addressesList.adapter = adapter
 
-        walletModel?.getAddresses(SiaCallback({ it ->
+        model!!.getAddresses(SiaCallback({ it ->
             adapter.data = it.addresses
             adapter.notifyDataSetChanged()
         }, {

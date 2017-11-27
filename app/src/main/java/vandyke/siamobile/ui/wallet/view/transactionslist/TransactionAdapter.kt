@@ -28,7 +28,7 @@ class TransactionAdapter : RecyclerView.Adapter<TransactionHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TransactionHolder {
         val context = parent.context
-        val view = LayoutInflater.from(context).inflate(R.layout.list_item_tx, parent, false)
+        val view = LayoutInflater.from(context).inflate(R.layout.holder_transaction, parent, false)
         val holder = TransactionHolder(view)
         view.setOnClickListener {
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://explorer.siahub.info/hash/${holder.transactionId.text.toString().replace("\n", "")}"))

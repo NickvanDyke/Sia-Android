@@ -7,6 +7,9 @@
 package vandyke.siamobile.util
 
 import android.app.Activity
+import android.arch.lifecycle.LifecycleOwner
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.Observer
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -31,7 +34,6 @@ object GenUtil {
             "b05b1603c8e640a6617107d3f8f90925c13d98213822afee0c481022ef236ee9bae778ea2971",
             "ca4e94a53e257fcac10d8890aa76d73bf6a6490686301232236f8d99c4dedc1158857cf6c558",
             "f39caefc5e7f5f92a3e13a04837524a8096bc3873f551e3bd1f6c6c4cff2d2c664ddf6cfa27f")}
-    val devFee = BigDecimal("0.005") // 0.5%
 
     fun getDialogBuilder(context: Context): AlertDialog.Builder {
         return when (MainActivity.appTheme) {
@@ -79,4 +81,11 @@ object GenUtil {
 
         return String.format("%.${Prefs.displayedDecimalPrecision}f %s", size, sizeString)
     }
+}
+
+fun <T> LiveData<T>.observe(owner: LifecycleOwner, onChanged: (T) -> Unit) {
+    this.observe(owner, Observer {
+        if (it != null)
+            onChanged(it)
+    })
 }

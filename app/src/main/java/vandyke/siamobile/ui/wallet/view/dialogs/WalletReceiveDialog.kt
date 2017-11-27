@@ -24,8 +24,7 @@ class WalletReceiveDialog(private val model: IWalletModel? = null) : BaseDialogF
         walletQrCode.visibility = View.INVISIBLE
         setCloseButton(walletReceiveClose)
 
-        model?.getAddress(SiaCallback({ it ->
-            SnackbarUtil.successSnackbar(view)
+        model!!.getAddress(SiaCallback({ it ->
             if (isVisible) {
                 receiveAddress.text = it.address
                 setQrCode(it.address)

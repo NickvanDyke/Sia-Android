@@ -18,6 +18,8 @@ import java.net.SocketTimeoutException
 
 class SiaError {
     val reason: Reason
+    val msg
+        get() = reason.msg
 
     constructor(errorMessage: String) {
         reason = getReasonFromMsg(errorMessage)
@@ -31,7 +33,7 @@ class SiaError {
         this.reason = reason
     }
 
-    fun getReasonFromMsg(errorMessage: String): SiaError.Reason {
+    private fun getReasonFromMsg(errorMessage: String): SiaError.Reason {
         return when {
             errorMessage.contains("wallet must be unlocked before it can be used") -> Reason.WALLET_LOCKED
             errorMessage.contains("provided encryption key is incorrect") -> Reason.WALLET_PASSWORD_INCORRECT
@@ -57,7 +59,7 @@ class SiaError {
         }
     }
 
-    fun getReasonFromThrowable(t: Throwable): Reason {
+    private fun getReasonFromThrowable(t: Throwable): Reason {
         return when (t) {
             is SocketTimeoutException -> Reason.TIMEOUT
             is SocketException -> Reason.NO_NETWORK_RESPONSE

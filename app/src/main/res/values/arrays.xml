@@ -44,21 +44,4 @@
         <item>wallet</item>
         <item>terminal</item>
     </string-array>
-
-    <string-array name="refresh_interval_entries">
-        <item>Never</item>
-        <item>1 minute</item>
-        <item>5 minutes</item>
-        <item>15 minutes</item>
-        <item>30 minutes</item>
-        <item>60 minutes</item>
-    </string-array>
-    <string-array name="refresh_interval_values">
-        <item>0</item>
-        <item>1</item>
-        <item>5</item>
-        <item>15</item>
-        <item>30</item>
-        <item>60</item>
-    </string-array>
 </resources>

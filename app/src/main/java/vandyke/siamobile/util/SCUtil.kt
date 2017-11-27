@@ -9,17 +9,17 @@ package vandyke.siamobile.util
 import vandyke.siamobile.ui.settings.Prefs
 import java.math.BigDecimal
 
-val HASTINGS_PER_SC = "1000000000000000000000000"
+val HASTINGS_PER_SC = BigDecimal("1000000000000000000000000")
 
 val BLOCK_100k_TIMESTAMP = 1492126789
 
-fun BigDecimal.toSC(): BigDecimal = divide(BigDecimal(HASTINGS_PER_SC))
+fun BigDecimal.toSC(): BigDecimal = divide(HASTINGS_PER_SC)
 
-fun String.toSC(): BigDecimal = if (this.isBlank()) BigDecimal.ZERO else BigDecimal(this).divide(BigDecimal(HASTINGS_PER_SC))
+fun String.toSC(): BigDecimal = if (this.isBlank()) BigDecimal.ZERO else BigDecimal(this).divide(HASTINGS_PER_SC)
 
-fun BigDecimal.toHastings(): BigDecimal = multiply(BigDecimal(HASTINGS_PER_SC))
+fun BigDecimal.toHastings(): BigDecimal = multiply(HASTINGS_PER_SC)
 
-fun String.toHastings(): BigDecimal = if (this.isBlank()) BigDecimal.ZERO else BigDecimal(this).multiply(BigDecimal(HASTINGS_PER_SC))
+fun String.toHastings(): BigDecimal = if (this.isBlank()) BigDecimal.ZERO else BigDecimal(this).multiply(HASTINGS_PER_SC)
 
 fun BigDecimal.round(): BigDecimal = setScale(Prefs.displayedDecimalPrecision, BigDecimal.ROUND_CEILING)
 

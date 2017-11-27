@@ -43,7 +43,7 @@
             android:title="Run node when off WiFi"
             android:summary="Run the local node in the background even when not connected to WiFi. WARNING: Syncing the blockchain can involve a lot of downloading."
             android:defaultValue="false"/>
-        <EditTextPreference
+        <vandyke.siamobile.ui.settings.IntEditTextPreference
             android:key="localNodeMinBattery"
             android:title="Minimum battery percentage to run node"
             android:numeric="integer"
@@ -73,11 +73,11 @@
             android:title="Hide net-zero transactions"
             android:defaultValue="false"
             android:summary="For each regular transaction, Sia also makes a setup transaction that does not affect your wallet balance."/>
-        <EditTextPreference
+        <vandyke.siamobile.ui.settings.IntEditTextPreference
             android:key="displayedDecimalPrecision"
             android:title="Displayed decimal precision"
             android:summary="The number of decimal places displayed. This does not affect actual precision of values in memory, which is exact. When displayed, they will be rounded up."
-            android:inputType="number"
+            android:numeric="integer"
             android:gravity="center"
             android:defaultValue="2"
             android:maxLength="1"/>

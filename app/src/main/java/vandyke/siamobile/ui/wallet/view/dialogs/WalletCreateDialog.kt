@@ -13,11 +13,11 @@ import android.view.View
 import android.widget.Toast
 import kotlinx.android.synthetic.main.fragment_wallet_create.*
 import vandyke.siamobile.R
-import vandyke.siamobile.ui.wallet.presenter.IWalletPresenter
+import vandyke.siamobile.ui.wallet.viewmodel.WalletViewModel
 import vandyke.siamobile.util.GenUtil
 import vandyke.siamobile.util.SnackbarUtil
 
-class WalletCreateDialog(private val presenter: IWalletPresenter? = null) : BaseDialogFragment() {
+class WalletCreateDialog(private val viewModel: WalletViewModel? = null) : BaseDialogFragment() {
     override val layout: Int = R.layout.fragment_wallet_create
 
     override fun create(view: View?, savedInstanceState: Bundle?) {
@@ -47,9 +47,9 @@ class WalletCreateDialog(private val presenter: IWalletPresenter? = null) : Base
             }
             val force = walletCreateForce.isChecked
             if (!walletCreateFromSeed.isChecked) {
-                presenter?.create(password, force)
+                viewModel!!.create(password, force)
             } else {
-                presenter?.create(password, force, walletCreateSeed.text.toString())
+                viewModel!!.create(password, force, walletCreateSeed.text.toString())
             }
         })
     }

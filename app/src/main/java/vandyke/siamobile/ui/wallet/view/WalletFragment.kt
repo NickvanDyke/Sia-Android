@@ -6,43 +6,30 @@
 
 package vandyke.siamobile.ui.wallet.view
 
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.view.*
 import kotlinx.android.synthetic.main.fragment_wallet.*
 import vandyke.siamobile.R
-import vandyke.siamobile.backend.data.consensus.ConsensusData
-import vandyke.siamobile.backend.data.wallet.ScPriceData
-import vandyke.siamobile.backend.data.wallet.TransactionsData
-import vandyke.siamobile.backend.data.wallet.WalletData
-import vandyke.siamobile.backend.networking.SiaError
 import vandyke.siamobile.backend.siad.SiadService
 import vandyke.siamobile.ui.MainActivity
 import vandyke.siamobile.ui.settings.Prefs
-import vandyke.siamobile.ui.wallet.model.IWalletModel
-import vandyke.siamobile.ui.wallet.model.WalletModelColdStorage
-import vandyke.siamobile.ui.wallet.model.WalletModelHttp
-import vandyke.siamobile.ui.wallet.presenter.IWalletPresenter
-import vandyke.siamobile.ui.wallet.presenter.WalletPresenter
 import vandyke.siamobile.ui.wallet.view.dialogs.*
 import vandyke.siamobile.ui.wallet.view.transactionslist.TransactionAdapter
+import vandyke.siamobile.ui.wallet.viewmodel.WalletViewModel
 import vandyke.siamobile.util.*
 import java.math.BigDecimal
 
-class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
+class WalletFragment : Fragment(), SiadService.SiadListener {
 
-    private lateinit var model: IWalletModel
-    private lateinit var presenter: IWalletPresenter
-    private var cachedMode: String = "none"
+    private lateinit var viewModel: WalletViewModel
 
     private val adapter = TransactionAdapter()
 
     private var statusButton: MenuItem? = null
-    private var walletData: WalletData? = null // TODO: temp fix for tracking status to set icon
-    private var balanceHastings: BigDecimal = BigDecimal.ZERO
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         setHasOptionsMenu(true)
@@ -62,6 +49,8 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
         }
         syncBar.setProgressTextColor(MainActivity.defaultTextColor)
 
+        viewModel = ViewModelProviders.of(this).get(WalletViewModel::class.java)
+
         /* set up recyclerview for transactions */
         val layoutManager = LinearLayoutManager(activity)
         transactionList.layoutManager = layoutManager
@@ -69,147 +58,130 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
         transactionList.adapter = adapter
 
         /* set up click listeners for the big stuff */
-        sendButton.setOnClickListener { fillExpandableFrame(WalletSendDialog(presenter)) }
-        receiveButton.setOnClickListener { fillExpandableFrame(WalletReceiveDialog(model)) }
+        sendButton.setOnClickListener { expandFrame(WalletSendDialog(viewModel)) }
+        receiveButton.setOnClickListener { expandFrame(WalletReceiveDialog(viewModel.model)) }
         balanceText.setOnClickListener { v ->
             GenUtil.getDialogBuilder(v.context)
                     .setTitle("Exact Balance")
-                    .setMessage("${balanceHastings.toSC().toPlainString()} Siacoins")
+                    .setMessage("${viewModel.wallet.value!!.confirmedsiacoinbalance.toSC().toPlainString()} Siacoins")
                     .setPositiveButton("Close", null)
                     .show()
         }
 
-        /* set listener to refresh the presenter when the swipelayout is triggered */
-        transactionListSwipe.setOnRefreshListener { presenter.refresh() }
+        /* set listener to refresh the viewModel when the swipelayout is triggered */
+        transactionListSwipe.setOnRefreshListener { viewModel.refresh() }
 
-        /* listen to siad output, so that we can refresh the presenter at appropriate times */
+        /* listen to siad output, so that we can refresh the viewModel at appropriate times */
         SiadService.addListener(this)
+
+        /* observe data in the viewModel */
+        viewModel.wallet.observe(this, {
+            balanceUnconfirmed?.text = "${if (it.unconfirmedsiacoinbalance > BigDecimal.ZERO) "+" else ""}${it.unconfirmedsiacoinbalance.toSC().round().toPlainString()} unconfirmed"
+            balanceText?.text = it.confirmedsiacoinbalance.toSC().round().toPlainString()
+            setStatusIcon()
+            transactionListSwipe?.isRefreshing = false // TODO: maybe I don't need null-safe calls anymore now that I'm using lifecycle stuff? Check later
+            updateUsdValue()
+        })
+
+        viewModel.usd.observe(this, {
+            updateUsdValue()
+        })
+
+        viewModel.transactions.observe(this, {
+            val hideZero = Prefs.hideZero
+            adapter.transactions = it.alltransactions.filterNot { hideZero && it.isNetZero }.reversed()
+            adapter.notifyDataSetChanged()
+        })
+
+        viewModel.consensus.observe(this, {
+            if (it.synced) {
+                syncText?.text = "${getString(R.string.synced)}: ${it.height}"
+                syncBar?.progress = 100
+            } else {
+                syncText?.text = "${getString(R.string.syncing)}: ${it.height}"
+                syncBar?.progress = it.syncprogress.toInt()
+            }
+        })
+
+        viewModel.success.observe(this, {
+            SnackbarUtil.snackbar(view, it)
+            collapseFrame()
+        })
+
+        viewModel.error.observe(this, {
+            transactionListSwipe?.isRefreshing = false
+            it.snackbar(view)
+        })
+
+        viewModel.refresh()
     }
 
-    override fun onSuccess() {
-        SnackbarUtil.successSnackbar(view)
-    }
-
-    override fun onWalletUpdate(walletData: WalletData) {
-        this.balanceHastings = walletData.confirmedsiacoinbalance
-        this.walletData = walletData
-        balanceUnconfirmed?.text = "${if (walletData.unconfirmedsiacoinbalance > BigDecimal.ZERO) "+" else ""}${walletData.unconfirmedsiacoinbalance.toSC().round().toPlainString()} unconfirmed"
-        balanceText?.text = walletData.confirmedsiacoinbalance.toSC().round().toPlainString()
-        setStatusIcon()
-        transactionListSwipe?.isRefreshing = false
-    }
-
-    override fun onUsdUpdate(scPriceData: ScPriceData) {
-        balanceUsdText?.text = "${balanceHastings.toSC().toUsd(scPriceData.price_usd).round().toPlainString()} USD"
-    }
-
-    override fun onTransactionsUpdate(transactionsData: TransactionsData) {
-        val hideZero = Prefs.hideZero
-        adapter.transactions = transactionsData.alltransactions.filterNot { hideZero && it.isNetZero }.reversed()
-        adapter.notifyDataSetChanged()
-    }
-
-    override fun onConsensusUpdate(consensusData: ConsensusData) {
-        if (consensusData.synced) {
-            syncText?.text = "${getString(R.string.synced)}: ${consensusData.height}"
-            syncBar?.progress = 100
-        } else {
-            syncText?.text = "${getString(R.string.syncing)}: ${consensusData.height}"
-            syncBar?.progress = consensusData.syncprogress.toInt()
-        }
-    }
-
-    override fun onError(error: SiaError) {
-        error.snackbar(view)
-    }
-
-    override fun onWalletError(error: SiaError) {
-        error.snackbar(view)
-        transactionListSwipe?.isRefreshing = false
-    }
-
-    override fun onUsdError(error: SiaError) {
-        SnackbarUtil.snackbar(view, "Error retrieving USD value", Snackbar.LENGTH_SHORT)
-    }
-
-    override fun onTransactionsError(error: SiaError) {
-        error.snackbar(view)
-    }
-
-    override fun onConsensusError(error: SiaError) {
-        error.snackbar(view)
-        syncText?.text = getString(R.string.not_synced)
-        syncBar?.progress = 0
+    private fun updateUsdValue() {
+        if (viewModel.wallet.value != null && viewModel.usd.value != null)
+            balanceUsdText.text = "${viewModel.wallet.value!!.confirmedsiacoinbalance.toSC()
+                    .toUsd(viewModel.usd.value!!.price_usd).round().toPlainString()} USD"
     }
 
     override fun onSiadOutput(line: String) {
         if (line.contains("Finished loading") || line.contains("Done!"))
-            presenter.refresh()
+            viewModel.refresh()
     }
 
-    override fun onWalletCreated(seed: String) {
-        if (Prefs.operationMode == "cold_storage")
-            WalletCreateDialog.showCsWarning(context!!)
-        WalletCreateDialog.showSeed(seed, context!!)
-    }
+//    override fun onWalletCreated(seed: String) {
+//        if (Prefs.operationMode == "cold_storage")
+//            WalletCreateDialog.showCsWarning(context!!)
+//        WalletCreateDialog.showSeed(seed, context!!)
+//    }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.actionStatus -> {
 //                when (statusButton?.icon?.constantState) {
-//                    activity.resources.getDrawable(R.drawable.ic_add, null).constantState -> fillExpandableFrame(WalletCreateDialog(presenter))
-//                    activity.resources.getDrawable(R.drawable.ic_lock_outline, null).constantState -> fillExpandableFrame(WalletUnlockDialog(presenter))
-//                    activity.resources.getDrawable(R.drawable.ic_lock_open, null).constantState -> presenter.lock()
+//                    activity.resources.getDrawable(R.drawable.ic_add, null).constantState -> expandFrame(WalletCreateDialog(viewModel))
+//                    activity.resources.getDrawable(R.drawable.ic_lock_outline, null).constantState -> expandFrame(WalletUnlockDialog(viewModel))
+//                    activity.resources.getDrawable(R.drawable.ic_lock_open, null).constantState -> viewModel.lock()
 //                }
-                when (walletData?.encrypted) {
-                    false -> fillExpandableFrame(WalletCreateDialog(presenter))
-                    true -> if (!walletData!!.unlocked) fillExpandableFrame(WalletUnlockDialog(presenter))
-                    else presenter.lock()
+                when (viewModel.wallet.value?.encrypted) {
+                    false -> expandFrame(WalletCreateDialog(viewModel))
+                    true -> if (!viewModel.wallet.value!!.unlocked) expandFrame(WalletUnlockDialog(viewModel))
+                    else viewModel.lock()
                 }
             }
-            R.id.actionUnlock -> fillExpandableFrame(WalletUnlockDialog(presenter))
-            R.id.actionLock -> presenter.lock()
-            R.id.actionChangePassword -> fillExpandableFrame(WalletChangePasswordDialog(presenter))
-            R.id.actionViewSeeds -> fillExpandableFrame(WalletSeedsDialog(model))
-            R.id.actionCreateWallet -> fillExpandableFrame(WalletCreateDialog(presenter))
-            R.id.actionSweepSeed -> fillExpandableFrame(WalletSweepSeedDialog(presenter))
-            R.id.actionViewAddresses -> fillExpandableFrame(WalletAddressesDialog(model))
+            R.id.actionUnlock -> expandFrame(WalletUnlockDialog(viewModel))
+            R.id.actionLock -> viewModel.lock()
+            R.id.actionChangePassword -> expandFrame(WalletChangePasswordDialog(viewModel))
+            R.id.actionViewSeeds -> expandFrame(WalletSeedsDialog(viewModel.model))
+            R.id.actionCreateWallet -> expandFrame(WalletCreateDialog(viewModel))
+            R.id.actionSweepSeed -> expandFrame(WalletSweepSeedDialog(viewModel))
+            R.id.actionViewAddresses -> expandFrame(WalletAddressesDialog(viewModel.model))
             R.id.actionGenPaperWallet -> (activity as MainActivity).displayFragmentClass(PaperWalletFragment::class.java, "Generated paper wallet", null)
         }
 
         return super.onOptionsItemSelected(item)
     }
 
-    fun fillExpandableFrame(fragment: Fragment) {
+    fun expandFrame(fragment: Fragment) {
         fragmentManager!!.beginTransaction().replace(R.id.expandableFrame, fragment).commit()
         expandableFrame?.visibility = View.VISIBLE
     }
 
-    override fun closeExpandableFrame() {
+    fun collapseFrame() {
         expandableFrame.visibility = View.GONE
         GenUtil.hideSoftKeyboard(activity)
     }
 
     override fun onResume() {
         super.onResume()
-        if (Prefs.operationMode != cachedMode) {
-            cachedMode = Prefs.operationMode
-            model = if (cachedMode == "cold_storage") WalletModelColdStorage() else WalletModelHttp()
-            presenter = WalletPresenter(this, model)
-        }
-        presenter.refresh()
+        viewModel.checkMode()
+        viewModel.refresh()
     }
 
-    override fun onHiddenChanged(hidden: Boolean) {
+    override fun onHiddenChanged(hidden: Boolean) { // TODO: should put the invalidate part in a basefragment class
         super.onHiddenChanged(hidden)
         if (!hidden) {
             activity!!.invalidateOptionsMenu()
-            if (Prefs.operationMode != cachedMode) {
-                cachedMode = Prefs.operationMode
-                model = if (cachedMode == "cold_storage") WalletModelColdStorage() else WalletModelHttp()
-                presenter = WalletPresenter(this, model)
-            }
-            presenter.refresh()
+            viewModel.checkMode()
+            viewModel.refresh()
         }
     }
 
@@ -221,22 +193,22 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.toolbar_wallet, menu)
         statusButton = menu.findItem(R.id.actionStatus)
-        if (walletData != null)
-            setStatusIcon()
+        setStatusIcon()
     }
 
     fun setStatusIcon() {
+        val walletData = viewModel.wallet.value
         if (walletData != null)
-            when (walletData!!.encrypted) {
+            when (walletData.encrypted) {
                 false -> statusButton?.setIcon(R.drawable.ic_add)
-                true -> if (!walletData!!.unlocked) statusButton?.setIcon(R.drawable.ic_lock_outline)
+                true -> if (!walletData.unlocked) statusButton?.setIcon(R.drawable.ic_lock_outline)
                 else statusButton?.setIcon(R.drawable.ic_lock_open)
             }
     }
 
-    fun onBackPressed(): Boolean {
+    fun onBackPressed(): Boolean { // TODO: put this in basefragment class
         if (expandableFrame.visibility == View.VISIBLE) {
-            closeExpandableFrame()
+            collapseFrame()
             return true
         } else {
             return false
