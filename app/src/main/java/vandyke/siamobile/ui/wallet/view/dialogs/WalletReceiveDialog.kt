@@ -13,18 +13,17 @@ import kotlinx.android.synthetic.main.fragment_wallet_receive.*
 import net.glxn.qrgen.android.QRCode
 import vandyke.siamobile.R
 import vandyke.siamobile.backend.networking.SiaCallback
-import vandyke.siamobile.ui.wallet.model.IWalletModel
 import vandyke.siamobile.util.GenUtil
 import vandyke.siamobile.util.SnackbarUtil
 
-class WalletReceiveDialog(private val model: IWalletModel? = null) : BaseDialogFragment() {
+class WalletReceiveDialog : BaseDialogFragment() {
     override val layout: Int = R.layout.fragment_wallet_receive
 
     override fun create(view: View?, savedInstanceState: Bundle?) {
         walletQrCode.visibility = View.INVISIBLE
         setCloseButton(walletReceiveClose)
 
-        model!!.getAddress(SiaCallback({ it ->
+        viewModel.model.getAddress(SiaCallback({ it ->
             if (isVisible) {
                 receiveAddress.text = it.address
                 setQrCode(it.address)

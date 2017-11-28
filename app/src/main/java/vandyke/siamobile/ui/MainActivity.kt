@@ -9,13 +9,11 @@ package vandyke.siamobile.ui
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.app.AppCompatDelegate
-import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
 import android.widget.TextView
@@ -24,10 +22,9 @@ import kotlinx.android.synthetic.main.activity_main.*
 import vandyke.siamobile.R
 import vandyke.siamobile.backend.siad.SiadService
 import vandyke.siamobile.ui.about.AboutFragment
-import vandyke.siamobile.ui.about.SetupRemoteFragment
+import vandyke.siamobile.ui.about.SetupRemoteActivity
 import vandyke.siamobile.ui.hosting.fragments.HostingFragment
 import vandyke.siamobile.ui.renter.view.RenterFragment
-import vandyke.siamobile.ui.settings.GlobalPrefsListener
 import vandyke.siamobile.ui.settings.ModesActivity
 import vandyke.siamobile.ui.settings.Prefs
 import vandyke.siamobile.ui.settings.SettingsFragment
@@ -35,77 +32,47 @@ import vandyke.siamobile.ui.terminal.TerminalFragment
 import vandyke.siamobile.ui.wallet.view.PaperWalletActivity
 import vandyke.siamobile.ui.wallet.view.WalletFragment
 import vandyke.siamobile.util.StorageUtil
-import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
-    /* need to keep reference to the listener, otherwise it disappears after some time */
-    private lateinit var globalPrefsListener: GlobalPrefsListener
-
     private lateinit var drawerToggle: ActionBarDrawerToggle
 
-    private lateinit var titleBackstack: Stack<String>
-    private lateinit var menuItemBackstack: Stack<Int>
-    private lateinit var classBackstack: Stack<Class<*>>
-    private var currentlyVisibleFragment: Fragment? = null
+    private var visibleFragment: BaseFragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        globalPrefsListener = GlobalPrefsListener(this)
-        Prefs.preferences.registerOnSharedPreferenceChangeListener(globalPrefsListener)
+        /* appearance stuff */
         if (Prefs.darkMode)
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         else
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-
         setTheme(R.style.AppTheme_DayNight)
 
+        /* pass super null so that it doesn't attempt to recreate fragments. I checked the source
+         * code of the super methods, and it seems it mostly just recreates fragments from the savedInstanceState,
+         * which is exactly what I don't want it to do, so this shouldn't have any weird side-effects */
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         setSupportActionBar(toolbar)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        supportActionBar!!.setHomeButtonEnabled(true)
         if (Prefs.transparentBars) {
-            toolbar.setBackgroundColor(android.R.color.transparent)
+            toolbar.setBackgroundColor(resources.getColor(android.R.color.transparent))
             window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
             toolbar.setPadding(0, statusBarHeight, 0, 0)
         }
 
         defaultTextColor = TextView(this).currentTextColor
-
-        titleBackstack = Stack<String>()
-        menuItemBackstack = Stack<Int>()
-        classBackstack = Stack<Class<*>>()
-
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        supportActionBar!!.setHomeButtonEnabled(true)
         /* set action stuff for when drawer items are selected */
-        navigationView.setNavigationItemSelectedListener({ it ->
-            drawerLayout?.closeDrawers()
-            val menuItemId = it.itemId
-            when (menuItemId) {
-                R.id.drawer_item_renter -> {
-                    displayFragmentClass(RenterFragment::class.java, "Renter", menuItemId)
-                    return@setNavigationItemSelectedListener true
-                }
-                R.id.drawer_item_hosting -> {
-                    displayFragmentClass(HostingFragment::class.java, "Hosting", menuItemId)
-                    return@setNavigationItemSelectedListener true
-                }
-                R.id.drawer_item_wallet -> {
-                    displayFragmentClass(WalletFragment::class.java, "Wallet", menuItemId)
-                    return@setNavigationItemSelectedListener true
-                }
-                R.id.drawer_item_terminal -> {
-                    displayFragmentClass(TerminalFragment::class.java, "Terminal", menuItemId)
-                    return@setNavigationItemSelectedListener true
-                }
-                R.id.drawer_item_settings -> {
-                    displayFragmentClass(SettingsFragment::class.java, "Settings", menuItemId)
-                    return@setNavigationItemSelectedListener true
-                }
-                R.id.drawer_item_about -> {
-                    displayFragmentClass(AboutFragment::class.java, "About", menuItemId)
-                    return@setNavigationItemSelectedListener false
-                }
+        navigationView.setNavigationItemSelectedListener({ item ->
+            drawerLayout.closeDrawers()
+            when (item.itemId) {
+                R.id.drawer_item_renter -> displayFragment(RenterFragment::class.java)
+                R.id.drawer_item_hosting -> displayFragment(HostingFragment::class.java)
+                R.id.drawer_item_wallet -> displayFragment(WalletFragment::class.java)
+                R.id.drawer_item_terminal -> displayFragment(TerminalFragment::class.java)
+                R.id.drawer_item_settings -> displayFragment(SettingsFragment::class.java)
+                R.id.drawer_item_about -> displayFragment(AboutFragment::class.java)
             }
             return@setNavigationItemSelectedListener true
         })
@@ -115,11 +82,17 @@ class MainActivity : AppCompatActivity() {
         if (Prefs.operationMode == "local_full_node")
             startService(Intent(this, SiadService::class.java))
 
-        when (Prefs.startupPage) {
-            "renter" -> displayFragmentClass(RenterFragment::class.java, "Renter", R.id.drawer_item_renter)
-            "hosting" -> displayFragmentClass(HostingFragment::class.java, "Hosting", R.id.drawer_item_hosting)
-            "wallet" -> displayFragmentClass(WalletFragment::class.java, getString(R.string.wallet), R.id.drawer_item_wallet)
-            "terminal" -> displayFragmentClass(TerminalFragment::class.java, "Terminal", R.id.drawer_item_terminal)
+        if (savedInstanceState == null) {
+            when (Prefs.startupPage) {
+                "renter" -> displayFragment(RenterFragment::class.java)
+                "hosting" -> displayFragment(HostingFragment::class.java)
+                "wallet" -> displayFragment(WalletFragment::class.java)
+                "terminal" -> displayFragment(TerminalFragment::class.java)
+            }
+        } else {
+            /* find the fragment currently visible stored in the savedInstanceState */
+            visibleFragment = supportFragmentManager.findFragmentByTag(savedInstanceState.getString("visibleFragment")) as BaseFragment
+            setTitleAndMenuFromVisibleFragment()
         }
 
         if (Prefs.firstTime) {
@@ -129,90 +102,86 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        /* save the visible fragment, to be retrieved in onCreate */
+        if (visibleFragment != null)
+            outState?.putString("visibleFragment", visibleFragment!!.javaClass.simpleName)
+    }
+
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_OPERATION_MODE) {
-            println(resultCode)
             when (resultCode) {
-                ModesActivity.PAPER_WALLET -> displayFragmentClass(PaperWalletActivity::class.java, "Generated paper wallet", null)
+                ModesActivity.PAPER_WALLET -> startActivity(Intent(this, PaperWalletActivity::class.java))
                 ModesActivity.COLD_STORAGE -> {
                     Prefs.operationMode = "cold_storage"
-                    displayFragmentClass(WalletFragment::class.java, "Wallet", R.id.drawer_item_wallet)
+                    displayFragment(WalletFragment::class.java)
                 }
                 ModesActivity.REMOTE_FULL_NODE -> {
                     Prefs.operationMode = "remote_full_node"
-                    displayFragmentClass(SetupRemoteFragment::class.java, "Remote setup", null)
+                    startActivity(Intent(this, SetupRemoteActivity::class.java))
                 }
                 ModesActivity.LOCAL_FULL_NODE -> {
-                    displayFragmentClass(WalletFragment::class.java, "Wallet", R.id.drawer_item_wallet)
+                    displayFragment(WalletFragment::class.java)
                     if (StorageUtil.isSiadSupported) {
                         Prefs.operationMode = "local_full_node"
                     } else
                         Toast.makeText(this, "Sorry, but your device's CPU architecture is not supported by Sia's full node", Toast.LENGTH_LONG).show()
-                    displayFragmentClass(WalletFragment::class.java, "Wallet", R.id.drawer_item_wallet)
                 }
             }
         }
     }
 
-    fun displayFragmentClass(clazz: Class<*>, title: String, menuItemId: Int?) {
-        val className = clazz.simpleName
-        val fragmentManager = supportFragmentManager
-        var fragmentToBeDisplayed: Fragment? = fragmentManager.findFragmentByTag(className)
-        val transaction = fragmentManager.beginTransaction()
-
-        if (currentlyVisibleFragment != null) {
-            if (currentlyVisibleFragment === fragmentToBeDisplayed)
-                return
-            transaction.hide(currentlyVisibleFragment)
-        }
-
-        if (currentlyVisibleFragment != null)
-            transaction.hide(currentlyVisibleFragment)
-
-        if (fragmentToBeDisplayed == null) {
-            try {
-                fragmentToBeDisplayed = clazz.newInstance() as Fragment
-                transaction.addToBackStack(className)
-                transaction.add(R.id.fragment_frame, fragmentToBeDisplayed, className)
-            } catch (e: InstantiationException) {
-                e.printStackTrace()
-            } catch (e: IllegalAccessException) {
-                e.printStackTrace()
-            }
-
+    private fun displayFragment(clazz: Class<*>) {
+        /* return if the currently visible fragment is the same class as the one we want to display */
+        if (clazz == visibleFragment?.javaClass)
+            return
+        val tx = supportFragmentManager.beginTransaction()
+        /* check if the to-be-displayed fragment already exists */
+        var newFragment = supportFragmentManager.findFragmentByTag(clazz.simpleName) as? BaseFragment
+        /* if not, create an instance of it and add it to the frame */
+        if (newFragment == null) {
+            println("NEWFRAGMENT WAS NULL")
+            newFragment = clazz.newInstance() as BaseFragment
+            tx.add(R.id.fragment_frame, newFragment, clazz.simpleName)
         } else {
-            transaction.show(fragmentToBeDisplayed)
+            tx.show(newFragment)
         }
-        setTitle(title)
-        transaction.commit()
-        currentlyVisibleFragment = fragmentToBeDisplayed
-        titleBackstack.push(title)
-        menuItemBackstack.push(menuItemId)
-        classBackstack.push(clazz)
-        if (menuItemId != null)
-            navigationView.setCheckedItem(menuItemId)
+        visibleFragment?.let { tx.hide(it) }
+        tx.commit()
+        visibleFragment = newFragment
 
+        setTitleAndMenuFromVisibleFragment()
+    }
+
+    private fun setTitleAndMenuFromVisibleFragment() {
+        if (visibleFragment == null)
+            return
+        supportActionBar!!.title = visibleFragment!!.javaClass.simpleName.replace("Fragment", "")
+        navigationView.setCheckedItem(when (visibleFragment!!.javaClass) {
+            RenterFragment::class.java -> R.id.drawer_item_renter
+            HostingFragment::class.java -> R.id.drawer_item_hosting
+            WalletFragment::class.java -> R.id.drawer_item_wallet
+            TerminalFragment::class.java -> R.id.drawer_item_terminal
+            SettingsFragment::class.java -> R.id.drawer_item_settings
+            AboutFragment::class.java -> R.id.drawer_item_about
+            else -> 0 /* not sure what this should actually be, if anything */
+        })
     }
 
     override fun onBackPressed() {
         if (drawerLayout.isDrawerVisible(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START)
-        } else if (currentlyVisibleFragment is WalletFragment && (currentlyVisibleFragment as WalletFragment).onBackPressed()) {
-        } else if (currentlyVisibleFragment is RenterFragment && (currentlyVisibleFragment as RenterFragment).goUpDir()) {
-        } else if (titleBackstack.size <= 1) {
+        } else if (visibleFragment?.onBackPressed() != true) {
             AlertDialog.Builder(this)
                     .setTitle("Quit?")
                     .setPositiveButton("Yes") { dialogInterface, i -> finish() }
                     .setNegativeButton("No", null)
                     .show()
-        } else {
-            titleBackstack.pop()
-            menuItemBackstack.pop()
-            classBackstack.pop()
-            displayFragmentClass(classBackstack.pop(), titleBackstack.pop(), menuItemBackstack.pop())
         }
     }
 
+    /* below methods are for drawer stuff */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (drawerToggle.onOptionsItemSelected(item))
             return true
@@ -227,11 +196,6 @@ class MainActivity : AppCompatActivity() {
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         drawerToggle.onConfigurationChanged(newConfig)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.toolbar_main, menu)
-        return true
     }
 
     val statusBarHeight: Int

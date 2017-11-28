@@ -9,17 +9,17 @@ package vandyke.siamobile.ui.about
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.vansuita.materialabout.builder.AboutBuilder
 import vandyke.siamobile.R
+import vandyke.siamobile.ui.BaseFragment
 
-class AboutFragment : Fragment() {
+class AboutFragment : BaseFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return AboutBuilder.with(activity)
+        return AboutBuilder.with(context)
 //                .setName("Nick van Dyke")
 //                .setBrief("Sia supporter and Android developer")
 //                .setLinksColumnsCount(2)

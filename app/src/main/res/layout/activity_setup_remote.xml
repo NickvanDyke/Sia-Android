@@ -4,8 +4,22 @@
   ~
   ~ This file is subject to the terms and conditions defined in 'LICENSE.md'
   -->
+<LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:orientation="vertical">
 
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -64,7 +78,7 @@
                 android:id="@+id/textView7" />
 
             <TextView
-                    android:text="@string/step_5"
+                android:text="@string/step_5"
                 android:layout_width="match_parent"
                 android:padding="8dp"
                 android:layout_height="wrap_content"
@@ -92,17 +106,19 @@
                 android:id="@+id/textView12" />
 
             <TextView
-                    android:text="Note that it might take a significant amount of time for Sia on your computer to sync with the rest of the Sia network. This is normal, and is not the fault of Sia Mobile."
-                    android:padding="8dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/textView13"/>
+                android:text="Note that it might take a significant amount of time for Sia on your computer to sync with the rest of the Sia network. This is normal, and is not the fault of Sia Mobile."
+                android:padding="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView13"/>
 
             <TextView
-                    android:text="@string/step_8"
-                    android:padding="8dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/textView"/>
+                android:text="@string/step_8"
+                android:padding="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView"/>
         </LinearLayout>
     </ScrollView>
+</LinearLayout>
+

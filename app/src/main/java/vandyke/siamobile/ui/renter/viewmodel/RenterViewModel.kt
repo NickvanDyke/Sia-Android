@@ -33,4 +33,12 @@ class RenterViewModel(application: Application) : AndroidViewModel(application) 
                 currentDir.value = it
         }, setError))
     }
+
+    fun goUpDir(): Boolean {
+        if (currentDir.value?.parent != null) {
+            currentDir.value = currentDir.value!!.parent!!
+            return true
+        }
+        return false
+    }
 }

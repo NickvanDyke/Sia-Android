@@ -17,6 +17,7 @@ import android.view.*
 import kotlinx.android.synthetic.main.fragment_wallet.*
 import vandyke.siamobile.R
 import vandyke.siamobile.backend.siad.SiadService
+import vandyke.siamobile.ui.BaseFragment
 import vandyke.siamobile.ui.MainActivity
 import vandyke.siamobile.ui.settings.Prefs
 import vandyke.siamobile.ui.wallet.view.dialogs.*
@@ -25,13 +26,16 @@ import vandyke.siamobile.ui.wallet.viewmodel.WalletViewModel
 import vandyke.siamobile.util.*
 import java.math.BigDecimal
 
-class WalletFragment : Fragment(), SiadService.SiadListener {
-
+class WalletFragment : BaseFragment(), SiadService.SiadListener {
     private lateinit var viewModel: WalletViewModel
 
     private val adapter = TransactionAdapter()
 
     private var statusButton: MenuItem? = null
+
+    init {
+        println("WALLET FRAGMENT CREATED")
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         setHasOptionsMenu(true)
@@ -39,6 +43,7 @@ class WalletFragment : Fragment(), SiadService.SiadListener {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        println("WALLET FRAGMENT ONVIEWCREATED")
         /* color stuff depending on theme */
         if (Prefs.darkMode) {
             top_shadow.setBackgroundResource(R.drawable.top_shadow_dark)
@@ -54,8 +59,8 @@ class WalletFragment : Fragment(), SiadService.SiadListener {
         transactionList.adapter = adapter
 
         /* set up click listeners for the big stuff */
-        sendButton.setOnClickListener { expandFrame(WalletSendDialog(viewModel)) }
-        receiveButton.setOnClickListener { expandFrame(WalletReceiveDialog(viewModel.model)) }
+        sendButton.setOnClickListener { expandFrame(WalletSendDialog()) }
+        receiveButton.setOnClickListener { expandFrame(WalletReceiveDialog()) }
         balanceText.setOnClickListener { v ->
             AlertDialog.Builder(v.context)
                     .setTitle("Exact Balance")
@@ -139,18 +144,18 @@ class WalletFragment : Fragment(), SiadService.SiadListener {
 //                    activity.resources.getDrawable(R.drawable.ic_lock_open, null).constantState -> viewModel.lock()
 //                }
                 when (viewModel.wallet.value?.encrypted) {
-                    false -> expandFrame(WalletCreateDialog(viewModel))
-                    true -> if (!viewModel.wallet.value!!.unlocked) expandFrame(WalletUnlockDialog(viewModel))
+                    false, null -> expandFrame(WalletCreateDialog())
+                    true -> if (!viewModel.wallet.value!!.unlocked) expandFrame(WalletUnlockDialog())
                     else viewModel.lock()
                 }
             }
-            R.id.actionUnlock -> expandFrame(WalletUnlockDialog(viewModel))
+            R.id.actionUnlock -> expandFrame(WalletUnlockDialog())
             R.id.actionLock -> viewModel.lock()
-            R.id.actionChangePassword -> expandFrame(WalletChangePasswordDialog(viewModel))
-            R.id.actionViewSeeds -> expandFrame(WalletSeedsDialog(viewModel.model))
-            R.id.actionCreateWallet -> expandFrame(WalletCreateDialog(viewModel))
-            R.id.actionSweepSeed -> expandFrame(WalletSweepSeedDialog(viewModel))
-            R.id.actionViewAddresses -> expandFrame(WalletAddressesDialog(viewModel.model))
+            R.id.actionChangePassword -> expandFrame(WalletChangePasswordDialog())
+            R.id.actionViewSeeds -> expandFrame(WalletSeedsDialog())
+            R.id.actionCreateWallet -> expandFrame(WalletCreateDialog())
+            R.id.actionSweepSeed -> expandFrame(WalletSweepSeedDialog())
+            R.id.actionViewAddresses -> expandFrame(WalletAddressesDialog())
             R.id.actionGenPaperWallet -> context!!.startActivity(Intent(context, PaperWalletActivity::class.java))
         }
 
@@ -158,7 +163,7 @@ class WalletFragment : Fragment(), SiadService.SiadListener {
     }
 
     fun expandFrame(fragment: Fragment) {
-        fragmentManager!!.beginTransaction().replace(R.id.expandableFrame, fragment).commit()
+        childFragmentManager.beginTransaction().replace(R.id.expandableFrame, fragment).commit()
         expandableFrame?.visibility = View.VISIBLE
     }
 
@@ -203,7 +208,7 @@ class WalletFragment : Fragment(), SiadService.SiadListener {
             }
     }
 
-    fun onBackPressed(): Boolean { // TODO: put this in basefragment class
+    override fun onBackPressed(): Boolean {
         if (expandableFrame.visibility == View.VISIBLE) {
             collapseFrame()
             return true

@@ -52,6 +52,7 @@ class SiaError {
             errorMessage.contains("word not found in dictionary for given language") -> Reason.INVALID_WORD_IN_SEED
             errorMessage.contains("seed failed checksum verification") -> Reason.INVALID_SEED
             errorMessage.contains("unrecognized hash used as input to /explorer/hash") -> Reason.UNRECOGNIZED_HASH
+            errorMessage.contains("Cloudflare") -> Reason.RATE_LIMITING
             else -> {
                 println("unaccounted for error message: $errorMessage")
                 Reason.UNACCOUNTED_FOR_ERROR
@@ -93,7 +94,8 @@ class SiaError {
         CANNOT_INIT_FROM_SEED_UNTIL_SYNCED("Cannot create wallet from seed until fully synced"),
         UNSUPPORTED_ON_COLD_WALLET("Unsupported on cold storage wallet"),
         UNEXPECTED_END_OF_STREAM("Connection unexpectedly closed"),
-        UNRECOGNIZED_HASH("Unrecognized hash")
+        UNRECOGNIZED_HASH("Unrecognized hash"),
+        RATE_LIMITING("Hit explore.sia.tech rate-limit")
     }
 
     fun snackbar(view: View?, length: Int = Snackbar.LENGTH_SHORT) {

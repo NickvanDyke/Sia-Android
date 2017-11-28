@@ -14,9 +14,8 @@ import kotlinx.android.synthetic.main.fragment_wallet_seeds.*
 import vandyke.siamobile.R
 import vandyke.siamobile.backend.networking.SiaCallback
 import vandyke.siamobile.ui.misc.TextCopyAdapter
-import vandyke.siamobile.ui.wallet.model.IWalletModel
 
-class WalletSeedsDialog(private val model: IWalletModel? = null) : BaseDialogFragment() {
+class WalletSeedsDialog : BaseDialogFragment() {
     override val layout: Int = R.layout.fragment_wallet_seeds
 
     override fun create(view: View?, savedInstanceState: Bundle?) {
@@ -29,7 +28,7 @@ class WalletSeedsDialog(private val model: IWalletModel? = null) : BaseDialogFra
         seedsList.addItemDecoration(DividerItemDecoration(seedsList.context, layoutManager.orientation))
         seedsList.adapter = adapter
 
-        model!!.getSeeds("english", SiaCallback({ it ->
+        viewModel.model.getSeeds("english", SiaCallback({ it ->
             val list = mutableListOf(it.primaryseed)
             list.addAll(it.allseeds)
             adapter.data = list

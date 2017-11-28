@@ -7,16 +7,19 @@
 package vandyke.siamobile.ui.wallet.view.dialogs
 
 import android.app.Dialog
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import vandyke.siamobile.ui.wallet.viewmodel.WalletViewModel
 import vandyke.siamobile.util.GenUtil
 
 abstract class BaseDialogFragment : DialogFragment() {
     protected abstract val layout: Int
     protected var container: ViewGroup? = null
+    protected lateinit var viewModel: WalletViewModel
 
     abstract fun create(view: View?, savedInstanceState: Bundle?)
 
@@ -27,6 +30,7 @@ abstract class BaseDialogFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel = ViewModelProviders.of(parentFragment!!).get(WalletViewModel::class.java)
         create(view, savedInstanceState)
     }
 

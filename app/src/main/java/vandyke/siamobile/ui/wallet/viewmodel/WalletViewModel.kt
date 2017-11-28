@@ -40,8 +40,14 @@ class WalletViewModel : ViewModel() {
         else WalletModelHttp()
     var cachedMode = Prefs.operationMode
 
+//    fun setSuccess(msg: String) {
+//        success.value = msg
+//        success.value = null
+//    }
+
     private val setError: (SiaError) -> Unit = {
         error.value = it
+//        error.value = null
     }
 
     fun checkMode() {

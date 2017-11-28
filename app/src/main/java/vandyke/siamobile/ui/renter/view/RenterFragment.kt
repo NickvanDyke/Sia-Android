@@ -9,17 +9,17 @@ package vandyke.siamobile.ui.renter.view
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.design.widget.TabLayout
-import android.support.v4.app.Fragment
 import android.view.*
 import kotlinx.android.synthetic.main.fragment_renter.*
 import vandyke.siamobile.R
 import vandyke.siamobile.backend.data.renter.SiaDir
+import vandyke.siamobile.ui.BaseFragment
 import vandyke.siamobile.ui.renter.view.list.RenterAdapter
 import vandyke.siamobile.ui.renter.viewmodel.RenterViewModel
 import vandyke.siamobile.util.observe
 
 
-class RenterFragment : Fragment() {
+class RenterFragment : BaseFragment() {
 
     lateinit var viewModel: RenterViewModel
 
@@ -87,10 +87,10 @@ class RenterFragment : Fragment() {
     }
 
     fun goUpDir(): Boolean {
-        if (currentDir.parent != null) {
-            currentDir = currentDir.parent!!
-            return true
-        }
+//        if (currentDir.parent != null) {
+//            currentDir = currentDir.parent!!
+//            return true
+//        }
         return false
     }
 
@@ -99,6 +99,10 @@ class RenterFragment : Fragment() {
 //            R.id.actionRefresh -> viewModel.refresh()
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onBackPressed(): Boolean {
+        return viewModel.goUpDir()
     }
 
     override fun onResume() {

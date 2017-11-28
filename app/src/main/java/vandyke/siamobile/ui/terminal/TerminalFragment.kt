@@ -8,7 +8,6 @@ package vandyke.siamobile.ui.terminal
 
 import android.graphics.Typeface
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.text.SpannableStringBuilder
 import android.text.method.ScrollingMovementMethod
 import android.text.style.StyleSpan
@@ -21,14 +20,14 @@ import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.async
 import vandyke.siamobile.R
 import vandyke.siamobile.backend.siad.SiadService
+import vandyke.siamobile.ui.BaseFragment
 import vandyke.siamobile.util.StorageUtil
 import java.io.BufferedReader
 import java.io.File
 import java.io.IOException
 import java.io.InputStreamReader
 
-class TerminalFragment : Fragment(), SiadService.SiadListener {
-
+class TerminalFragment : BaseFragment(), SiadService.SiadListener {
     private var siacFile: File? = null
 
     private var outputBuffer: String = ""
