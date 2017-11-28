@@ -16,7 +16,8 @@ import vandyke.siamobile.ui.renter.model.IRenterModel
 import vandyke.siamobile.ui.renter.model.RenterModelTest
 
 class RenterViewModel(application: Application) : AndroidViewModel(application) {
-    val root = MutableLiveData<SiaDir>()
+    val rootDir = MutableLiveData<SiaDir>()
+    val currentDir = MutableLiveData<SiaDir>()
     val error = MutableLiveData<SiaError>()
 
     private val model: IRenterModel = RenterModelTest()
@@ -27,9 +28,9 @@ class RenterViewModel(application: Application) : AndroidViewModel(application) 
 
     fun refreshFiles() {
         model.getRootDir(SiaCallback({ it ->
-            root.value = it
+            rootDir.value = it
+            if (currentDir.value == null)
+                currentDir.value = it
         }, setError))
     }
-
-
 }

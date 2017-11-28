@@ -14,7 +14,7 @@ import android.view.*
 import kotlinx.android.synthetic.main.fragment_renter.*
 import vandyke.siamobile.R
 import vandyke.siamobile.backend.data.renter.SiaDir
-import vandyke.siamobile.ui.renter.view.list.DirAdapter
+import vandyke.siamobile.ui.renter.view.list.RenterAdapter
 import vandyke.siamobile.ui.renter.viewmodel.RenterViewModel
 import vandyke.siamobile.util.observe
 
@@ -23,8 +23,7 @@ class RenterFragment : Fragment() {
 
     lateinit var viewModel: RenterViewModel
 
-    // should maybe keep track of this is viewmodel as well
-    var displayedDir = SiaDir("home", null)
+    var currentDir = SiaDir("home", null)
         set(value) {
             programmaticallySelecting = true
             val oldPath = field.fullPath
@@ -46,7 +45,7 @@ class RenterFragment : Fragment() {
         }
 
     private var depth = 0
-    private lateinit var adapter: DirAdapter
+    private lateinit var adapter: RenterAdapter
     private var programmaticallySelecting = true
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -57,7 +56,7 @@ class RenterFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewModel = ViewModelProviders.of(this).get(RenterViewModel::class.java)
 //        filesList.addItemDecoration(new DividerItemDecoration(filesList.getContext(), layoutManager.getOrientation()));
-        adapter = DirAdapter(this, context!!)
+        adapter = RenterAdapter(viewModel)
         filesList.adapter = adapter
 
         renterFilepath.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
@@ -65,7 +64,7 @@ class RenterFragment : Fragment() {
             override fun onTabUnselected(tab: TabLayout.Tab?) {}
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 if (!programmaticallySelecting)
-                    displayedDir = displayedDir.getParentDirAt(depth - renterFilepath.selectedTabPosition - 1)
+                    currentDir = currentDir.getParentDirAt(depth - renterFilepath.selectedTabPosition - 1)
             }
         })
 
@@ -73,20 +72,23 @@ class RenterFragment : Fragment() {
         renterSwipeRefresh.setColorSchemeResources(R.color.colorAccent)
 
         /* observe viewModel stuff */
-        viewModel.root.observe(this, {
-            displayedDir = it
-            renterSwipeRefresh.isRefreshing = false
-        })
+        viewModel.rootDir.observe(this) {
 
-        viewModel.error.observe(this, {
-            it?.snackbar(view)
+        }
+
+        viewModel.currentDir.observe(this) {
+            this.currentDir = it
+        }
+
+        viewModel.error.observe(this) {
+            it.snackbar(view)
             renterSwipeRefresh.isRefreshing = false
-        })
+        }
     }
 
     fun goUpDir(): Boolean {
-        if (displayedDir.parent != null) {
-            displayedDir = displayedDir.parent!!
+        if (currentDir.parent != null) {
+            currentDir = currentDir.parent!!
             return true
         }
         return false

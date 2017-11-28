@@ -91,6 +91,15 @@ class SiaDir(override val name: String, override val parent: SiaDir?) : SiaNode(
 
     /* functions for printing this directory's contents in a file explorer-like format */
     fun printAll(p: PrintStream = System.out, indent: Int = 0) {
+        fun indent(p: PrintStream, indent: Int) {
+            for (i in 0..indent - 1) {
+                if (i < indent - 1)
+                    p.print("   ")
+                else
+                    p.print(" |-")
+            }
+        }
+
         indent(p, indent)
         p.println(name)
         for (file in files) {
@@ -99,15 +108,6 @@ class SiaDir(override val name: String, override val parent: SiaDir?) : SiaNode(
         }
         for (dir in directories)
             dir.printAll(p, indent + 1)
-    }
-
-    private fun indent(p: PrintStream, indent: Int) {
-        for (i in 0..indent - 1) {
-            if (i < indent - 1)
-                p.print("   ")
-            else
-                p.print(" |-")
-        }
     }
 
 //    override fun toString(): String {

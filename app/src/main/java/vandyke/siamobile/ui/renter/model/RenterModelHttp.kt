@@ -12,7 +12,7 @@ import vandyke.siamobile.backend.networking.SiaCallback
 
 class RenterModelHttp : IRenterModel {
     override fun getRootDir(callback: SiaCallback<SiaDir>) = Renter.files(SiaCallback({ it ->
-        val rootDir = SiaDir("root", null)
+        val rootDir = SiaDir("rootDir", null)
         it.files.forEach { rootDir + it }
         callback.onSuccess?.invoke(rootDir)
     }, {
