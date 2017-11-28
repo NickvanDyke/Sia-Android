@@ -13,6 +13,6 @@ import vandyke.siamobile.R
 
 class TransactionHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val transactionStatus: TextView = itemView.findViewById(R.id.transactionStatus)
-    val transactionId: TextView = itemView.findViewById(R.id.transactionHeaderId)
+    val transactionId: TextView = itemView.findViewById(R.id.transactionId)
     val transactionValue: TextView = itemView.findViewById(R.id.transactionValue)
 }

@@ -4,7 +4,7 @@
  * This file is subject to the terms and conditions defined in 'LICENSE.md'
  */
 
-package vandyke.siamobile.ui.misc
+package vandyke.siamobile.util.ui
 
 import android.support.design.widget.Snackbar
 import android.support.v7.widget.RecyclerView
@@ -17,8 +17,10 @@ import vandyke.siamobile.util.SnackbarUtil
 class TextHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val text: TextView = itemView.findViewById(R.id.textCopyView)
 
-    fun copyTextView(view: View) {
-        GenUtil.copyToClipboard(text.context, (view as TextView).text)
-        SnackbarUtil.snackbar(view, "Copied selection to clipboard", Snackbar.LENGTH_SHORT)
+    init {
+        itemView.setOnClickListener {
+            GenUtil.copyToClipboard(text.context, text.text)
+            SnackbarUtil.snackbar(text, "Copied selection to clipboard", Snackbar.LENGTH_SHORT)
+        }
     }
 }

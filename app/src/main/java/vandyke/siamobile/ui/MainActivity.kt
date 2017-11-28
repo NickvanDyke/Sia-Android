@@ -47,9 +47,6 @@ class MainActivity : AppCompatActivity() {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         setTheme(R.style.AppTheme_DayNight)
 
-        /* pass super null so that it doesn't attempt to recreate fragments. I checked the source
-         * code of the super methods, and it seems it mostly just recreates fragments from the savedInstanceState,
-         * which is exactly what I don't want it to do, so this shouldn't have any weird side-effects */
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 

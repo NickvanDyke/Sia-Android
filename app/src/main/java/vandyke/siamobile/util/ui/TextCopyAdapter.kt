@@ -4,7 +4,7 @@
  * This file is subject to the terms and conditions defined in 'LICENSE.md'
  */
 
-package vandyke.siamobile.ui.misc
+package vandyke.siamobile.util.ui
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -13,8 +13,8 @@ import vandyke.siamobile.R
 
 class TextCopyAdapter(var data: List<String> = listOf()) : RecyclerView.Adapter<TextHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): TextHolder {
-        return TextHolder(LayoutInflater.from(parent?.context).inflate(R.layout.holder_text_copy, parent, false))
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TextHolder {
+        return TextHolder(LayoutInflater.from(parent.context).inflate(R.layout.holder_text_copy, parent, false))
     }
 
     override fun onBindViewHolder(holder: TextHolder, position: Int) {

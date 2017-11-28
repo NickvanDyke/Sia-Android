@@ -40,15 +40,18 @@
         />
 
     <TextView
-        android:text="Loading id..."
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:id="@+id/transactionId"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:id="@+id/transactionHeaderId"
-        android:textSize="9sp"
+        android:layout_height="wrap_content"
+        android:ellipsize="middle"
         android:gravity="center"
-        app:layout_constraintRight_toLeftOf="@+id/transactionValue"
-        app:layout_constraintLeft_toRightOf="@+id/transactionStatus"
-        app:layout_constraintTop_toTopOf="parent"
+        android:singleLine="true"
+        android:text="Loading id..."
+        android:textSize="10sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        />
+        app:layout_constraintLeft_toRightOf="@+id/transactionStatus"
+        app:layout_constraintRight_toLeftOf="@+id/transactionValue"
+        app:layout_constraintTop_toTopOf="parent" />
 </android.support.constraint.ConstraintLayout>
