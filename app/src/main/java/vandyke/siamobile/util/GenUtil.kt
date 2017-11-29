@@ -13,6 +13,7 @@ import android.arch.lifecycle.Observer
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.view.View
 import android.view.inputmethod.InputMethodManager
 import vandyke.siamobile.ui.settings.Prefs
 import java.math.BigDecimal
@@ -39,6 +40,15 @@ object GenUtil {
                 Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(
                 activity.currentFocus.windowToken, 0)
+    }
+
+    fun hideSoftKeyboard(view: View?) {
+        if (view == null)
+            return
+        val inputMethodManager = view.context.getSystemService(
+                Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(
+                view.applicationWindowToken, 0)
     }
 
     fun copyToClipboard(context: Context, text: CharSequence) {

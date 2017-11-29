@@ -33,17 +33,12 @@ class WalletFragment : BaseFragment(), SiadService.SiadListener {
 
     private var statusButton: MenuItem? = null
 
-    init {
-        println("WALLET FRAGMENT CREATED")
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         setHasOptionsMenu(true)
         return inflater.inflate(R.layout.fragment_wallet, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        println("WALLET FRAGMENT ONVIEWCREATED")
         /* color stuff depending on theme */
         if (Prefs.darkMode) {
             top_shadow.setBackgroundResource(R.drawable.top_shadow_dark)
@@ -58,7 +53,7 @@ class WalletFragment : BaseFragment(), SiadService.SiadListener {
         transactionList.addItemDecoration(DividerItemDecoration(transactionList.context, layoutManager.orientation))
         transactionList.adapter = adapter
 
-        /* set up click listeners for the big stuff */
+        /* set up click listeners for the big buttons */
         sendButton.setOnClickListener { expandFrame(WalletSendDialog()) }
         receiveButton.setOnClickListener { expandFrame(WalletReceiveDialog()) }
         balanceText.setOnClickListener { v ->
@@ -77,25 +72,25 @@ class WalletFragment : BaseFragment(), SiadService.SiadListener {
         SiadService.addListener(this)
 
         /* observe data in the viewModel */
-        viewModel.wallet.observe(this, {
+        viewModel.wallet.observe(this) {
             balanceUnconfirmed?.text = "${if (it.unconfirmedsiacoinbalance > BigDecimal.ZERO) "+" else ""}${it.unconfirmedsiacoinbalance.toSC().round().toPlainString()} unconfirmed"
             balanceText?.text = it.confirmedsiacoinbalance.toSC().round().toPlainString()
             setStatusIcon()
             transactionListSwipe?.isRefreshing = false // TODO: maybe I don't need null-safe calls anymore now that I'm using lifecycle stuff? Check later
             updateUsdValue()
-        })
+        }
 
-        viewModel.usd.observe(this, {
+        viewModel.usd.observe(this) {
             updateUsdValue()
-        })
+        }
 
-        viewModel.transactions.observe(this, {
+        viewModel.transactions.observe(this) {
             val hideZero = Prefs.hideZero
             adapter.transactions = it.alltransactions.filterNot { hideZero && it.isNetZero }.reversed()
             adapter.notifyDataSetChanged()
-        })
+        }
 
-        viewModel.consensus.observe(this, {
+        viewModel.consensus.observe(this) {
             if (it.synced) {
                 syncText?.text = "${getString(R.string.synced)}: ${it.height}"
                 syncBar?.progress = 100
@@ -103,23 +98,23 @@ class WalletFragment : BaseFragment(), SiadService.SiadListener {
                 syncText?.text = "${getString(R.string.syncing)}: ${it.height}"
                 syncBar?.progress = it.syncprogress.toInt()
             }
-        })
+        }
 
-        viewModel.success.observe(this, {
+        viewModel.success.observe(this) {
             SnackbarUtil.snackbar(view, it)
             collapseFrame()
-        })
+        }
 
-        viewModel.error.observe(this, {
+        viewModel.error.observe(this) {
             transactionListSwipe?.isRefreshing = false
             it.snackbar(view)
-        })
+        }
 
-        viewModel.seed.observe(this, {
+        viewModel.seed.observe(this) {
             if (Prefs.operationMode == "cold_storage")
             WalletCreateDialog.showCsWarning(context!!)
         WalletCreateDialog.showSeed(it, context!!)
-        })
+        }
 
         viewModel.refresh()
     }
@@ -164,7 +159,7 @@ class WalletFragment : BaseFragment(), SiadService.SiadListener {
 
     fun expandFrame(fragment: Fragment) {
         childFragmentManager.beginTransaction().replace(R.id.expandableFrame, fragment).commit()
-        expandableFrame?.visibility = View.VISIBLE
+        expandableFrame.visibility = View.VISIBLE
     }
 
     fun collapseFrame() {
@@ -178,7 +173,7 @@ class WalletFragment : BaseFragment(), SiadService.SiadListener {
         viewModel.refresh()
     }
 
-    override fun onHiddenChanged(hidden: Boolean) { // TODO: should put the invalidate part in a basefragment class
+    override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         if (!hidden) {
             activity!!.invalidateOptionsMenu()

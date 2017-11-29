@@ -4,7 +4,7 @@
  * This file is subject to the terms and conditions defined in 'LICENSE.md'
  */
 
-package vandyke.siamobile.util.ui
+package vandyke.siamobile.ui.custom
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater

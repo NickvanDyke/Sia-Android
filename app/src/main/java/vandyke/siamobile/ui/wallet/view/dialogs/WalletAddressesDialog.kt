@@ -13,7 +13,7 @@ import android.view.View
 import kotlinx.android.synthetic.main.fragment_wallet_addresses.*
 import vandyke.siamobile.R
 import vandyke.siamobile.backend.networking.SiaCallback
-import vandyke.siamobile.util.ui.TextCopyAdapter
+import vandyke.siamobile.ui.custom.TextCopyAdapter
 
 class WalletAddressesDialog : BaseDialogFragment() {
     override val layout: Int = R.layout.fragment_wallet_addresses

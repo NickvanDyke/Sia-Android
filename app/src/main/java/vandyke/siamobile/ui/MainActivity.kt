@@ -138,7 +138,6 @@ class MainActivity : AppCompatActivity() {
         var newFragment = supportFragmentManager.findFragmentByTag(clazz.simpleName) as? BaseFragment
         /* if not, create an instance of it and add it to the frame */
         if (newFragment == null) {
-            println("NEWFRAGMENT WAS NULL")
             newFragment = clazz.newInstance() as BaseFragment
             tx.add(R.id.fragment_frame, newFragment, clazz.simpleName)
         } else {

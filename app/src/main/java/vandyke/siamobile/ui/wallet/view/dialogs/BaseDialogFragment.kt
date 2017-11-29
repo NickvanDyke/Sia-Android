@@ -25,7 +25,13 @@ abstract class BaseDialogFragment : DialogFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         this.container = container
-        return inflater.inflate(layout, null)
+        val view = inflater.inflate(layout, null)
+        /* set this because the first touch listener to return true receives the rest of the touch events,
+           which we want so that the SwipeableFrameLayout can intercept them and determine swipes */
+        view.setOnTouchListener { v, event ->
+            true
+        }
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
