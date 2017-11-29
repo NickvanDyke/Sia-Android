@@ -22,10 +22,6 @@ import vandyke.siamobile.ui.wallet.model.WalletModelHttp
 import vandyke.siamobile.util.toSC
 
 class WalletViewModel : ViewModel() {
-    /* maybe it would be better to split up the Data classes into multiple, more fine-grained LiveDatas.
-       However, I'm deciding not to because that would result in a LOT of LiveDatas and observing. This way the
-       observer (the view) has access to all the important information and can choose what to display.
-       It's also sort of just aggregating a lot of data into fewer sources */
     val wallet = MutableLiveData<WalletData>()
     val usd = MutableLiveData<ScPriceData>()
     val consensus = MutableLiveData<ConsensusData>()
@@ -40,14 +36,18 @@ class WalletViewModel : ViewModel() {
         else WalletModelHttp()
     var cachedMode = Prefs.operationMode
 
-//    fun setSuccess(msg: String) {
-//        success.value = msg
-//        success.value = null
-//    }
+    /* success and error are immediately set back to null because the view only reacts on
+       non-null values of them, and if they're holding a non-null value and the
+       view is recreated, then it'll display the success/error even though it shouldn't.
+       There might be a better way around that */
+    fun setSuccess(msg: String) {
+        success.value = msg
+        success.value = null
+    }
 
     private val setError: (SiaError) -> Unit = {
         error.value = it
-//        error.value = null
+        error.value = null
     }
 
     fun checkMode() {
@@ -78,11 +78,11 @@ class WalletViewModel : ViewModel() {
 
     fun unlock(password: String) {
         model.unlock(password, SiaCallback({ ->
-            success.value = "Unlocked" // TODO: maybe have cool animations eventually, to indicate locking/unlocking/creating?
+            setSuccess("Unlocked") // TODO: maybe have cool animations eventually, to indicate locking/unlocking/creating?
             refreshWallet()
         }, {
             if (it.reason == SiaError.Reason.WALLET_SCAN_IN_PROGRESS)
-                success.value = "Blockchain scan in progress, please wait..."
+                setSuccess("Blockchain scan in progress, please wait...")
             else
                 error.value = it
         }))
@@ -90,7 +90,7 @@ class WalletViewModel : ViewModel() {
 
     fun lock() {
         model.lock(SiaCallback({ ->
-            success.value = "Locked"
+            setSuccess("Locked")
             refreshWallet()
         }, setError))
     }
@@ -98,13 +98,13 @@ class WalletViewModel : ViewModel() {
     fun create(password: String, force: Boolean, seed: String? = null) {
         if (seed == null) {
             model.init(password, "english", force, SiaCallback({ it ->
-                success.value = "Created wallet"
+                setSuccess("Created wallet")
                 refreshWallet()
                 this.seed.value = it.primaryseed
             }, setError))
         } else {
             model.initSeed(password, "english", seed, force, SiaCallback({ ->
-                success.value = "Created wallet"
+                setSuccess("Created wallet")
                 refreshWallet()
                 this.seed.value = seed
             }, setError))
@@ -113,20 +113,20 @@ class WalletViewModel : ViewModel() {
 
     fun send(amount: String, destination: String) {
         model.send(amount, destination, SiaCallback({ ->
-            success.value = "Sent ${amount.toSC()} SC to $destination"
+            setSuccess("Sent ${amount.toSC()} SC to $destination")
             refreshWallet()
         }, setError))
     }
 
     fun changePassword(currentPassword: String, newPassword: String) {
         model.changePassword(currentPassword, newPassword, SiaCallback({ ->
-            success.value = "Changed password"
+            setSuccess("Changed password")
         }, setError))
     }
 
     fun sweep(seed: String) {
         model.sweep("english", seed, SiaCallback({ ->
-            success.value = "Scanning blockchain, please wait..."
+            setSuccess("Scanning blockchain, please wait...")
         }, setError))
     }
 }

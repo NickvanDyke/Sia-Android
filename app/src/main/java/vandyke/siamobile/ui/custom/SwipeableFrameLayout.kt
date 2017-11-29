@@ -24,7 +24,7 @@ class SwipeableFrameLayout : FrameLayout {
 
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
         swipeListener.onTouchEvent(ev)
-        return false
+        return super.onInterceptTouchEvent(ev)
     }
 
     fun collapse() {
