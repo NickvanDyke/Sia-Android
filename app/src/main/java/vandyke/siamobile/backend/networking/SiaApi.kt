@@ -19,7 +19,7 @@ import retrofit2.http.Query
 import retrofit2.http.Url
 import vandyke.siamobile.backend.data.consensus.ConsensusData
 import vandyke.siamobile.backend.data.explorer.ExplorerHashData
-import vandyke.siamobile.backend.data.renter.SiaFilesData
+import vandyke.siamobile.backend.data.renter.RenterFilesData
 import vandyke.siamobile.backend.data.wallet.*
 import vandyke.siamobile.ui.settings.Prefs
 
@@ -72,7 +72,7 @@ interface SiaApiInterface {
 
     /* renter API */
     @GET("renter/files")
-    fun getFiles(): Call<SiaFilesData>
+    fun getFiles(): Call<RenterFilesData>
 
     /* consensus API */
     @GET("consensus")
@@ -132,7 +132,7 @@ object Wallet {
 }
 
 object Renter {
-    fun files(callback: Callback<SiaFilesData>) = siaApi.getFiles().enqueue(callback)
+    fun files(callback: Callback<RenterFilesData>) = siaApi.getFiles().enqueue(callback)
 }
 
 object Consensus {
