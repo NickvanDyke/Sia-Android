@@ -6,24 +6,14 @@
 
 package vandyke.siamobile.ui.settings
 
-import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.content.SharedPreferences
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v7.preference.*
-import android.util.Base64
 import vandyke.siamobile.BuildConfig
 import vandyke.siamobile.R
 import vandyke.siamobile.ui.MainActivity
-import vandyke.siamobile.util.SnackbarUtil
-import vandyke.siamobile.util.StorageUtil
-import java.io.ByteArrayOutputStream
-import java.io.FileNotFoundException
-import java.io.InputStream
 
 /* the actual settings fragment, contained within SettingsFragment */
 class SettingsFragmentActual : PreferenceFragmentCompat() {
@@ -46,7 +36,7 @@ class SettingsFragmentActual : PreferenceFragmentCompat() {
         remoteAddress = findPreference("remoteAddress") as EditTextPreference
         apiPass = findPreference("apiPass") as EditTextPreference
         runLocalNodeOffWifi = findPreference("runLocalNodeOffWifi") as SwitchPreferenceCompat
-        useExternal = findPreference("useExternal") as SwitchPreferenceCompat
+//        useExternal = findPreference("useExternal") as SwitchPreferenceCompat
         minBattery = findPreference("localNodeMinBattery") as EditTextPreference
         setRemoteSettingsVisibility()
         setLocalSettingsVisibility()
@@ -59,14 +49,14 @@ class SettingsFragmentActual : PreferenceFragmentCompat() {
             return@OnPreferenceChangeListener true
         }
 
-        useExternal.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, o ->
-            if (StorageUtil.isExternalStorageWritable) {
-                return@OnPreferenceChangeListener true
-            } else {
-                SnackbarUtil.snackbar(view, "Error: " + StorageUtil.externalStorageStateDescription(), Snackbar.LENGTH_LONG)
-                return@OnPreferenceChangeListener false
-            }
-        }
+//        useExternal.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, o ->
+//            if (StorageUtil.isExternalStorageWritable) {
+//                return@OnPreferenceChangeListener true
+//            } else {
+//                SnackbarUtil.snackbar(view, "Error: " + StorageUtil.externalStorageStateDescription(), Snackbar.LENGTH_LONG)
+//                return@OnPreferenceChangeListener false
+//            }
+//        }
 
         findPreference("openAppSettings").onPreferenceClickListener = Preference.OnPreferenceClickListener {
             val appSettings = Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + BuildConfig.APPLICATION_ID))
@@ -93,7 +83,6 @@ class SettingsFragmentActual : PreferenceFragmentCompat() {
         }
 
         when (Prefs.operationMode) {
-            "cold_storage" -> operationMode.summary = "Cold storage"
             "remote_full_node" -> operationMode.summary = "Remote full node"
             "local_full_node" -> operationMode.summary = "Local full node"
         }
@@ -107,17 +96,13 @@ class SettingsFragmentActual : PreferenceFragmentCompat() {
                     setRemoteSettingsVisibility()
                     setLocalSettingsVisibility()
                     when (Prefs.operationMode) {
-                        "cold_storage" -> {
-                            operationMode.summary = "Cold storage"
+                        "local_full_node" -> {
+                            operationMode.summary = "Local full node"
                             operationMode.setValueIndex(1)
                         }
                         "remote_full_node" -> {
                             operationMode.summary = "Remote full node"
                             operationMode.setValueIndex(2)
-                        }
-                        "local_full_node" -> {
-                            operationMode.summary = "Local full node"
-                            operationMode.setValueIndex(3)
                         }
                     }
                 }
@@ -130,27 +115,6 @@ class SettingsFragmentActual : PreferenceFragmentCompat() {
             }
         }
         Prefs.preferences.registerOnSharedPreferenceChangeListener(prefsListener)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == RESULT_OK) {
-            if (requestCode == SELECT_PICTURE) {
-                val selectedImageURI = data?.data
-                var input: InputStream? = null
-                try {
-                    input = activity!!.contentResolver.openInputStream(selectedImageURI)
-                } catch (e: FileNotFoundException) {
-                    e.printStackTrace()
-                }
-
-                val bitmap = BitmapFactory.decodeStream(input, null, null)
-                val baos = ByteArrayOutputStream()
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos)
-                val b = baos.toByteArray()
-                Prefs.customBgBase64 = Base64.encodeToString(b, Base64.DEFAULT)
-            }
-        }
     }
 
     private fun setRemoteSettingsVisibility() {
@@ -166,11 +130,11 @@ class SettingsFragmentActual : PreferenceFragmentCompat() {
     private fun setLocalSettingsVisibility() {
         if (Prefs.operationMode == "local_full_node") {
             operation.addPreference(runLocalNodeOffWifi)
-            operation.addPreference(useExternal)
+//            operation.addPreference(useExternal)
             operation.addPreference(minBattery)
         } else {
             operation.removePreference(runLocalNodeOffWifi)
-            operation.removePreference(useExternal)
+//            operation.removePreference(useExternal)
             operation.removePreference(minBattery)
         }
     }

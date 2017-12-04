@@ -12,7 +12,7 @@ import android.view.View
 import kotlinx.android.synthetic.main.fragment_wallet_receive.*
 import net.glxn.qrgen.android.QRCode
 import vandyke.siamobile.R
-import vandyke.siamobile.backend.networking.SiaCallback
+import vandyke.siamobile.backend.networking.sub
 import vandyke.siamobile.util.GenUtil
 import vandyke.siamobile.util.SnackbarUtil
 
@@ -23,7 +23,7 @@ class WalletReceiveDialog : BaseDialogFragment() {
         walletQrCode.visibility = View.INVISIBLE
         setCloseButton(walletReceiveClose)
 
-        viewModel.model.getAddress(SiaCallback({ it ->
+        viewModel.model.getAddress().sub({
             if (isVisible) {
                 receiveAddress.text = it.address
                 setQrCode(it.address)
@@ -32,7 +32,7 @@ class WalletReceiveDialog : BaseDialogFragment() {
             it.snackbar(view)
             if (isVisible)
                 receiveAddress.text = "${it.reason.msg}\n"
-        }))
+        })
 
         walletAddressCopy.setOnClickListener {
             GenUtil.copyToClipboard(context!!, receiveAddress.text)

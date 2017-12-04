@@ -23,6 +23,10 @@ class RenterFragment : BaseFragment() {
 
     lateinit var viewModel: RenterViewModel
 
+    private var depth = 0
+    private lateinit var adapter: RenterAdapter
+    private var programmaticallySelecting = true
+
     var currentDir = SiaDir("home", null)
         set(value) {
             programmaticallySelecting = true
@@ -44,9 +48,6 @@ class RenterFragment : BaseFragment() {
             field = value
         }
 
-    private var depth = 0
-    private lateinit var adapter: RenterAdapter
-    private var programmaticallySelecting = true
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         setHasOptionsMenu(true)
@@ -68,7 +69,10 @@ class RenterFragment : BaseFragment() {
             }
         })
 
-        renterSwipeRefresh.setOnRefreshListener { viewModel.refreshFiles() }
+        renterSwipeRefresh.setOnRefreshListener {
+            viewModel.refreshFiles()
+            renterSwipeRefresh.isRefreshing = false
+        }
         renterSwipeRefresh.setColorSchemeResources(R.color.colorAccent)
 
         /* observe viewModel stuff */
@@ -86,17 +90,8 @@ class RenterFragment : BaseFragment() {
         }
     }
 
-    fun goUpDir(): Boolean {
-//        if (currentDir.parent != null) {
-//            currentDir = currentDir.parent!!
-//            return true
-//        }
-        return false
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-//            R.id.actionRefresh -> viewModel.refresh()
         }
         return super.onOptionsItemSelected(item)
     }
@@ -113,7 +108,6 @@ class RenterFragment : BaseFragment() {
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         if (!hidden) {
-            activity!!.invalidateOptionsMenu()
             viewModel.refreshFiles()
         }
     }

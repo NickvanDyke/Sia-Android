@@ -118,7 +118,7 @@ class SiadService : Service() {
         builder.setSmallIcon(R.drawable.ic_local_full_node)
         val largeIcon = BitmapFactory.decodeResource(resources, R.drawable.sia_logo_transparent)
         builder.setLargeIcon(largeIcon)
-        builder.setContentTitle("Local full node")
+        builder.setContentTitle("Sia node")
         builder.setContentText(text)
         builder.setOngoing(false)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
@@ -152,6 +152,7 @@ class SiadService : Service() {
             val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
             val activeNetInfo = connectivityManager.activeNetworkInfo
             return activeNetInfo != null && activeNetInfo.type == ConnectivityManager.TYPE_WIFI || Prefs.runLocalNodeOffWifi
+            // TODO: maybe this should instead check that the type is not TYPE_DATA? Depends on the behavior I want
         }
 
         fun singleAction(context: Context, action: (service: SiadService) -> Unit) {

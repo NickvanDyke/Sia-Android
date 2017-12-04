@@ -14,7 +14,7 @@
             android:key="operationMode"
             android:entries="@array/operation_modes_entries"
             android:entryValues="@array/operation_modes_values"
-            android:defaultValue="cold_storage"/>
+            android:defaultValue="local_full_node"/>
         <!--<ListPreference-->
         <!--android:key="refreshInterval"-->
         <!--android:title="Automatic refresh interval"-->

@@ -7,15 +7,20 @@
 package vandyke.siamobile.ui.renter.model
 
 import vandyke.siamobile.backend.data.renter.SiaDir
-import vandyke.siamobile.backend.networking.Renter
-import vandyke.siamobile.backend.networking.SiaCallback
+import vandyke.siamobile.backend.networking.siaApi
 
 class RenterModelHttp : IRenterModel {
-    override fun getRootDir(callback: SiaCallback<SiaDir>) = Renter.files(SiaCallback({ it ->
+//    override fun getRootDir(callback: SiaCallback<SiaDir>) = Renter.files(SiaCallback({ it ->
+//        val rootDir = SiaDir("rootDir", null)
+//        it.files.forEach { rootDir + it }
+//        callback.onSuccess?.invoke(rootDir)
+//    }, {
+//        callback.onError(it)
+//    }))
+
+    override fun getRootDir() = siaApi.renterFiles().map {
         val rootDir = SiaDir("rootDir", null)
         it.files.forEach { rootDir + it }
-        callback.onSuccess?.invoke(rootDir)
-    }, {
-        callback.onError(it)
-    }))
+        rootDir
+    }
 }

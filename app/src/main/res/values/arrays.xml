@@ -8,28 +8,13 @@
 <resources>
     <string-array name="operation_modes_entries">
         <item>View explanation</item>
-        <item>Cold storage</item>
-        <item>Remote full node</item>
         <item>Local full node</item>
+        <item>Remote full node</item>
     </string-array>
     <string-array name="operation_modes_values">
         <item>view_explanation</item>
-        <item>cold_storage</item>
-        <item>remote_full_node</item>
         <item>local_full_node</item>
-    </string-array>
-
-    <string-array name="theme_entries">
-        <item>Light</item>
-        <item>Dark</item>
-        <item>Amoled</item>
-        <item>Custom Background</item>
-    </string-array>
-    <string-array name="theme_values">
-        <item>light</item>
-        <item>dark</item>
-        <item>amoled</item>
-        <item>custom</item>
+        <item>remote_full_node</item>
     </string-array>
 
     <string-array name="startup_entries">

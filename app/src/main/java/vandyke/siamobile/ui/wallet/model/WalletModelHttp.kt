@@ -6,40 +6,36 @@
 
 package vandyke.siamobile.ui.wallet.model
 
-import vandyke.siamobile.backend.data.consensus.ConsensusData
-import vandyke.siamobile.backend.data.wallet.*
-import vandyke.siamobile.backend.networking.Consensus
-import vandyke.siamobile.backend.networking.SiaCallback
-import vandyke.siamobile.backend.networking.Wallet
+import vandyke.siamobile.backend.networking.siaApi
 
 class WalletModelHttp : IWalletModel {
 
-    override fun getWallet(callback: SiaCallback<WalletData>) = Wallet.wallet(callback)
+    override fun getWallet() = siaApi.wallet()
 
-    override fun getAddress(callback: SiaCallback<AddressData>) = Wallet.address(callback)
+    override fun getAddress() = siaApi.walletAddress()
 
-    override fun getAddresses(callback: SiaCallback<AddressesData>) = Wallet.addresses(callback)
+    override fun getAddresses() = siaApi.walletAddresses()
 
-    override fun getSeeds(dictionary: String, callback: SiaCallback<SeedsData>) = Wallet.seeds(dictionary, callback)
+    override fun getSeeds(dictionary: String) = siaApi.walletSeeds(dictionary)
 
-    override fun getTransactions(callback: SiaCallback<TransactionsData>) = Wallet.transactions(callback)
+    override fun getTransactions() = siaApi.walletTransactions()
 
-    override fun getConsensus(callback: SiaCallback<ConsensusData>) = Consensus.consensus(callback)
+    override fun getConsensus() = siaApi.consensus()
 
-    override fun unlock(password: String, callback: SiaCallback<Unit>) = Wallet.unlock(password, callback)
+    override fun unlock(password: String) = siaApi.walletUnlock(password)
 
-    override fun lock(callback: SiaCallback<Unit>) = Wallet.lock(callback)
+    override fun lock() = siaApi.walletLock()
 
-    override fun init(password: String, dictionary: String, force: Boolean, callback: SiaCallback<WalletInitData>)
-        = Wallet.init(password, dictionary, force, callback)
+    override fun init(password: String, dictionary: String, force: Boolean)
+            = siaApi.walletInit(password, dictionary, force)
 
-    override fun initSeed(password: String, dictionary: String, seed: String, force: Boolean, callback: SiaCallback<Unit>)
-        = Wallet.initSeed(password, dictionary, seed, force, callback)
+    override fun initSeed(password: String, dictionary: String, seed: String, force: Boolean)
+            = siaApi.walletInitSeed(password, dictionary, seed, force)
 
-    override fun send(amount: String, destination: String, callback: SiaCallback<Unit>) = Wallet.send(amount, destination, callback)
+    override fun send(amount: String, destination: String) = siaApi.walletSiacoins(amount, destination)
 
-    override fun changePassword(currentPassword: String, newPassword: String, callback: SiaCallback<Unit>)
-        = Wallet.changePassword(currentPassword, newPassword, callback)
+    override fun changePassword(currentPassword: String, newPassword: String)
+            = siaApi.walletChangePassword(currentPassword, newPassword)
 
-    override fun sweep(dictionary: String, seed: String, callback: SiaCallback<Unit>) = Wallet.sweep(dictionary, seed, callback)
+    override fun sweep(dictionary: String, seed: String) = siaApi.walletSweepSeed(dictionary, seed)
 }

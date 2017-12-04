@@ -12,7 +12,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import kotlinx.android.synthetic.main.fragment_wallet_addresses.*
 import vandyke.siamobile.R
-import vandyke.siamobile.backend.networking.SiaCallback
+import vandyke.siamobile.backend.networking.sub
 import vandyke.siamobile.ui.custom.TextCopyAdapter
 
 class WalletAddressesDialog : BaseDialogFragment() {
@@ -28,11 +28,11 @@ class WalletAddressesDialog : BaseDialogFragment() {
         addressesList.addItemDecoration(DividerItemDecoration(addressesList.context, layoutManager.orientation))
         addressesList.adapter = adapter
 
-        viewModel.model.getAddresses(SiaCallback({ it ->
+        viewModel.model.getAddresses().sub({
             adapter.data = it.addresses
             adapter.notifyDataSetChanged()
         }, {
             it.snackbar(view)
-        }))
+        })
     }
 }

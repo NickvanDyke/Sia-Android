@@ -1,8 +1,8 @@
 package vandyke.siamobile.ui.renter.model
 
+import io.reactivex.Single
 import vandyke.siamobile.backend.data.renter.SiaDir
-import vandyke.siamobile.backend.networking.SiaCallback
 
 interface IRenterModel {
-    fun getRootDir(callback: SiaCallback<SiaDir>)
+    fun getRootDir(): Single<SiaDir>
 }

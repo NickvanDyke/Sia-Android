@@ -74,9 +74,6 @@ class MainActivity : AppCompatActivity() {
         drawerToggle = ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close)
         drawerLayout.addDrawerListener(drawerToggle)
 
-        if (Prefs.operationMode == "local_full_node")
-            startService(Intent(this, SiadService::class.java))
-
         if (savedInstanceState == null) {
             when (Prefs.startupPage) {
                 "renter" -> displayFragment(RenterFragment::class.java)
@@ -95,6 +92,9 @@ class MainActivity : AppCompatActivity() {
 //            startActivity(Intent(this, AboutSiaActivity::class.java))
             Prefs.firstTime = false
         }
+
+        if (Prefs.operationMode == "local_full_node")
+            startService(Intent(this, SiadService::class.java))
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
@@ -108,10 +108,6 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == REQUEST_OPERATION_MODE) {
             when (resultCode) {
                 ModesActivity.PAPER_WALLET -> startActivity(Intent(this, PaperWalletActivity::class.java))
-                ModesActivity.COLD_STORAGE -> {
-                    Prefs.operationMode = "cold_storage"
-                    displayFragment(WalletFragment::class.java)
-                }
                 ModesActivity.REMOTE_FULL_NODE -> {
                     Prefs.operationMode = "remote_full_node"
                     startActivity(Intent(this, SetupRemoteActivity::class.java))

@@ -7,11 +7,14 @@
 package vandyke.siamobile.backend.networking
 
 import android.util.Base64
+import io.reactivex.Completable
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import retrofit2.Call
-import retrofit2.Callback
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -24,59 +27,63 @@ import vandyke.siamobile.backend.data.wallet.*
 import vandyke.siamobile.ui.settings.Prefs
 
 interface SiaApiInterface {
+    /* daemon API */
+    @GET("daemon/stop")
+    fun daemonStop(): Completable
+
     /* wallet API */
     @GET("wallet")
-    fun getWallet(): Call<WalletData>
+    fun wallet(): Single<WalletData>
 
     @POST("wallet/siacoins")
-    fun sendSiacoins(@Query("amount") amount: String, @Query("destination") destination: String): Call<Unit>
+    fun walletSiacoins(@Query("amount") amount: String, @Query("destination") destination: String): Completable
 
     @GET("wallet/address")
-    fun getAddress(): Call<AddressData>
+    fun walletAddress(): Single<AddressData>
 
     @GET("wallet/addresses")
-    fun getAddresses(): Call<AddressesData>
+    fun walletAddresses(): Single<AddressesData>
 
     @GET("wallet/seeds")
-    fun getSeeds(@Query("dictionary") dictionary: String): Call<SeedsData>
+    fun walletSeeds(@Query("dictionary") dictionary: String): Single<SeedsData>
 
     @POST("wallet/sweep/seed")
-    fun sweepSeed(@Query("dictionary") dictionary: String, @Query("seed") seed: String): Call<Unit>
+    fun walletSweepSeed(@Query("dictionary") dictionary: String, @Query("seed") seed: String): Completable
 
     @GET("wallet/transactions")
-    fun getTransactions(@Query("startheight") startHeight: String = "0", @Query("endheight") endHeight: String = "2000000000"): Call<TransactionsData>
+    fun walletTransactions(@Query("startheight") startHeight: String = "0", @Query("endheight") endHeight: String = "2000000000"): Single<TransactionsData>
 
     @POST("wallet/init")
-    fun initWallet(@Query("encryptionpassword") password: String, @Query("dictionary") dictionary: String, @Query("force") force: Boolean): Call<WalletInitData>
+    fun walletInit(@Query("encryptionpassword") password: String, @Query("dictionary") dictionary: String, @Query("force") force: Boolean): Single<WalletInitData>
 
     @POST("wallet/init/seed")
-    fun initWalletSeed(@Query("encryptionpassword") password: String, @Query("dictionary") dictionary: String, @Query("seed") seed: String, @Query("force") force: Boolean): Call<Unit>
+    fun walletInitSeed(@Query("encryptionpassword") password: String, @Query("dictionary") dictionary: String, @Query("seed") seed: String, @Query("force") force: Boolean): Completable
 
     @POST("wallet/lock")
-    fun lockWallet(): Call<Unit>
+    fun walletLock(): Completable
 
     @POST("wallet/unlock")
-    fun unlockWallet(@Query("encryptionpassword") password: String): Call<Unit>
+    fun walletUnlock(@Query("encryptionpassword") password: String): Completable
 
     @POST("wallet/changepassword")
-    fun changeWalletPassword(@Query("encryptionpassword") password: String, @Query("newpassword") newPassword: String): Call<Unit>
+    fun walletChangePassword(@Query("encryptionpassword") password: String, @Query("newpassword") newPassword: String): Completable
 
     @GET
-    fun getScPrice(@Url url: String = "http://www.coincap.io/page/SC"): Call<ScPriceData>
+    fun getScPrice(@Url url: String = "http://www.coincap.io/page/SC"): Single<ScPriceData>
 
     @GET
-    fun getSiaTechExplorerHash(@Url url: String): Call<ExplorerHashData>
+    fun getSiaTechExplorerHash(@Url url: String): Single<ExplorerHashData>
 
     @GET
-    fun getSiaTechExplorer(@Url url: String = "http://explore.sia.tech/explorer"): Call<ExplorerData>
+    fun getSiaTechExplorer(@Url url: String = "http://explore.sia.tech/explorer"): Single<ExplorerData>
 
     /* renter API */
     @GET("renter/files")
-    fun getFiles(): Call<RenterFilesData>
+    fun renterFiles(): Single<RenterFilesData>
 
     /* consensus API */
     @GET("consensus")
-    fun getConsensus(): Call<ConsensusData>
+    fun consensus(): Single<ConsensusData>
 }
 
 var siaApi: SiaApiInterface = SiaApi.buildApi()
@@ -96,6 +103,7 @@ object SiaApi {
 
         val builder = Retrofit.Builder()
         builder.addConverterFactory(GsonConverterFactory.create())
+        builder.addCallAdapterFactory(RxJava2CallAdapterFactory.create())
         builder.client(client)
 
         /* try to set the baseUrl, catch the exception thrown on an illegal url and set a basic one instead */
@@ -115,31 +123,19 @@ object SiaApi {
     }
 }
 
-object Wallet {
-    fun wallet(callback: Callback<WalletData>) = siaApi.getWallet().enqueue(callback)
-    fun send(amount: String, destination: String, callback: Callback<Unit>) = siaApi.sendSiacoins(amount, destination).enqueue(callback)
-    fun address(callback: Callback<AddressData>) = siaApi.getAddress().enqueue(callback)
-    fun addresses(callback: Callback<AddressesData>) = siaApi.getAddresses().enqueue(callback)
-    fun seeds(dictionary: String, callback: Callback<SeedsData>) = siaApi.getSeeds(dictionary).enqueue(callback)
-    fun sweep(dictionary: String, seed: String, callback: Callback<Unit>) = siaApi.sweepSeed(dictionary, seed).enqueue(callback)
-    fun transactions(callback: Callback<TransactionsData>) = siaApi.getTransactions("0", "2000000000").enqueue(callback)
-    fun init(password: String, dictionary: String, force: Boolean, callback: Callback<WalletInitData>) = siaApi.initWallet(password, dictionary, force).enqueue(callback)
-    fun initSeed(password: String, dictionary: String, seed: String, force: Boolean, callback: Callback<Unit>) = siaApi.initWalletSeed(password, dictionary, seed, force).enqueue(callback)
-    fun lock(callback: Callback<Unit>) = siaApi.lockWallet().enqueue(callback)
-    fun unlock(password: String, callback: Callback<Unit>) = siaApi.unlockWallet(password).enqueue(callback)
-    fun changePassword(password: String, newPassword: String, callback: Callback<Unit>) = siaApi.changeWalletPassword(password, newPassword).enqueue(callback)
-    fun scPrice(callback: Callback<ScPriceData>) = siaApi.getScPrice("http://www.coincap.io/page/SC").enqueue(callback)
+/* the below extensions are used to simplify subscribing to Singles/Completables from the above sia api */
+fun <T> Single<T>.sub(onNext: (T) -> Unit, onError: (SiaError) -> Unit) {
+    this.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(onNext, {
+                onError(SiaError(it))
+            })
 }
 
-object Renter {
-    fun files(callback: Callback<RenterFilesData>) = siaApi.getFiles().enqueue(callback)
-}
-
-object Consensus {
-    fun consensus(callback: Callback<ConsensusData>) = siaApi.getConsensus().enqueue(callback)
-}
-
-object Explorer {
-    fun siaTech(callback: Callback<ExplorerData>) = siaApi.getSiaTechExplorer("http://explore.sia.tech/explorer").enqueue(callback)
-    fun siaTechHash(hash: String, callback: Callback<ExplorerHashData>) = siaApi.getSiaTechExplorerHash("http://explore.sia.tech/explorer/hashes/$hash").enqueue(callback)
+fun Completable.sub(onNext: () -> Unit, onError: (SiaError) -> Unit) {
+    this.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(onNext, {
+                onError(SiaError(it))
+            })
 }

@@ -12,9 +12,9 @@ import vandyke.siamobile.backend.data.consensus.ConsensusData
 import vandyke.siamobile.backend.data.wallet.ScPriceData
 import vandyke.siamobile.backend.data.wallet.TransactionsData
 import vandyke.siamobile.backend.data.wallet.WalletData
-import vandyke.siamobile.backend.networking.SiaCallback
 import vandyke.siamobile.backend.networking.SiaError
-import vandyke.siamobile.backend.networking.Wallet
+import vandyke.siamobile.backend.networking.siaApi
+import vandyke.siamobile.backend.networking.sub
 import vandyke.siamobile.ui.wallet.model.IWalletModel
 import vandyke.siamobile.ui.wallet.model.WalletModelHttp
 import vandyke.siamobile.util.toSC
@@ -53,20 +53,20 @@ class WalletViewModel : ViewModel() {
     }
 
     fun refreshWallet() {
-        model.getWallet(SiaCallback({ it -> wallet.value = it }, setError))
-        Wallet.scPrice(SiaCallback({ it -> usd.value = it }, setError))
+        model.getWallet().sub({ it -> wallet.value = it }, setError)
+        siaApi.getScPrice().sub({ it -> usd.value = it }, setError)
     }
 
     fun refreshTransactions() {
-        model.getTransactions(SiaCallback({ it -> transactions.value = it }, setError))
+        model.getTransactions().sub({ it -> transactions.value = it }, setError)
     }
 
     fun refreshConsensus() {
-        model.getConsensus(SiaCallback({ it -> consensus.value = it }, setError))
+        model.getConsensus().sub({ it -> consensus.value = it }, setError)
     }
 
     fun unlock(password: String) {
-        model.unlock(password, SiaCallback({ ->
+        model.unlock(password).sub({
             setSuccess("Unlocked") // TODO: maybe have cool animations eventually, to indicate locking/unlocking/creating?
             refreshWallet()
         }, {
@@ -74,48 +74,49 @@ class WalletViewModel : ViewModel() {
                 setSuccess("Blockchain scan in progress, please wait...")
             else
                 error.value = it
-        }))
+        })
     }
 
     fun lock() {
-        model.lock(SiaCallback({ ->
+        model.lock().sub({
             setSuccess("Locked")
             refreshWallet()
-        }, setError))
+        }, setError)
     }
 
     fun create(password: String, force: Boolean, seed: String? = null) {
         if (seed == null) {
-            model.init(password, "english", force, SiaCallback({ it ->
+            model.init(password, "english", force).sub({ it ->
                 setSuccess("Created wallet")
                 refreshWallet()
                 this.seed.value = it.primaryseed
-            }, setError))
+            }, setError)
         } else {
-            model.initSeed(password, "english", seed, force, SiaCallback({ ->
+            model.initSeed(password, "english", seed, force).sub({
                 setSuccess("Created wallet")
                 refreshWallet()
                 this.seed.value = seed
-            }, setError))
+            }, setError)
         }
     }
 
     fun send(amount: String, destination: String) {
-        model.send(amount, destination, SiaCallback({ ->
-            setSuccess("Sent ${amount.toSC()} SC to $destination")
-            refreshWallet()
-        }, setError))
+        model.send(amount, destination)
+                .sub({
+                    setSuccess("Sent ${amount.toSC()} SC to $destination")
+                    refreshWallet()
+                }, setError)
     }
 
     fun changePassword(currentPassword: String, newPassword: String) {
-        model.changePassword(currentPassword, newPassword, SiaCallback({ ->
+        model.changePassword(currentPassword, newPassword).sub({
             setSuccess("Changed password")
-        }, setError))
+        }, setError)
     }
 
     fun sweep(seed: String) {
-        model.sweep("english", seed, SiaCallback({ ->
+        model.sweep("english", seed).sub({
             setSuccess("Scanning blockchain, please wait...")
-        }, setError))
+        }, setError)
     }
 }

@@ -7,16 +7,14 @@
 package vandyke.siamobile.backend.networking
 
 import android.support.design.widget.Snackbar
-import android.support.v4.content.ContextCompat
 import android.view.View
-import vandyke.siamobile.R
-import vandyke.siamobile.ui.wallet.model.WalletModelColdStorage
+import retrofit2.HttpException
 import vandyke.siamobile.util.SnackbarUtil
 import java.io.IOException
 import java.net.SocketException
 import java.net.SocketTimeoutException
 
-class SiaError {
+class SiaError : Throwable {
     val reason: Reason
     val msg
         get() = reason.msg
@@ -61,7 +59,9 @@ class SiaError {
     }
 
     private fun getReasonFromThrowable(t: Throwable): Reason {
+        println(t)
         return when (t) {
+            is HttpException -> getReasonFromMsg(t.response().errorBody()!!.string())
             is SocketTimeoutException -> Reason.TIMEOUT
             is SocketException -> Reason.NO_NETWORK_RESPONSE
             is IOException -> Reason.UNEXPECTED_END_OF_STREAM
@@ -101,13 +101,6 @@ class SiaError {
     fun snackbar(view: View?, length: Int = Snackbar.LENGTH_SHORT) {
         if (view == null)
             return
-        if (reason == Reason.UNSUPPORTED_ON_COLD_WALLET) {
-            val snackbar = Snackbar.make(view, reason.msg, length).setAction("Help") { v -> WalletModelColdStorage.showColdStorageHelp(view.context) }
-            snackbar.view.setBackgroundColor(ContextCompat.getColor(view.context, R.color.colorAccent))
-            snackbar.setActionTextColor(ContextCompat.getColor(view.context, android.R.color.white))
-            snackbar.show()
-        } else {
-            SnackbarUtil.snackbar(view, reason.msg, length)
-        }
+        SnackbarUtil.snackbar(view, reason.msg, length)
     }
 }

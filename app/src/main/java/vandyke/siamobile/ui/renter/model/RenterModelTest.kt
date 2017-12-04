@@ -6,13 +6,13 @@
 
 package vandyke.siamobile.ui.renter.model
 
+import io.reactivex.Single
 import vandyke.siamobile.backend.data.renter.SiaDir
 import vandyke.siamobile.backend.data.renter.SiaFile
-import vandyke.siamobile.backend.networking.SiaCallback
 import java.math.BigDecimal
 
 class RenterModelTest : IRenterModel {
-    override fun getRootDir(callback: SiaCallback<SiaDir>) {
+    override fun getRootDir(): Single<SiaDir> {
         val rootDir = SiaDir("home", null)
         rootDir + SiaFile("really/long/file/path/because/testing/file.txt", BigDecimal("498259"))
         rootDir + SiaFile("people/kenzie/heart", BigDecimal("116160000000000000000"))
@@ -22,6 +22,6 @@ class RenterModelTest : IRenterModel {
         rootDir + SiaFile("colors/blue.jpg", BigDecimal("6949"))
         rootDir + SiaFile("colors/purple.pdf", BigDecimal("79"))
         rootDir + SiaFile("colors/bright/orange.rgb", BigDecimal("23583"))
-        callback.onSuccess?.invoke(rootDir)
+        return Single.just(rootDir)
     }
 }

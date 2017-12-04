@@ -16,13 +16,13 @@ import vandyke.siamobile.util.NotificationUtil
 
 class App : Application() {
 
-    lateinit var globalPrefsListener: SharedPreferences.OnSharedPreferenceChangeListener
+    private lateinit var globalPrefsListener: SharedPreferences.OnSharedPreferenceChangeListener
 
     override fun onCreate() {
         NotificationUtil.createSiaNotificationChannel(this)
         val abi = Build.SUPPORTED_ABIS[0]
-        if (abi != "arm64-v8a")
-            throw TODO("Running on non-arm64-v8a")
+//        if (abi != "arm64-v8a")
+//            throw TODO("Running on non-arm64-v8a")
 
         /* preferences stuff */
         Kotpref.init(this)
