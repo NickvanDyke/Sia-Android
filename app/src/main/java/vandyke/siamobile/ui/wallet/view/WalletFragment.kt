@@ -169,15 +169,12 @@ class WalletFragment : BaseFragment(), SiadService.SiadListener {
 
     override fun onResume() {
         super.onResume()
-        viewModel.checkMode()
         viewModel.refresh()
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         if (!hidden) {
-            activity!!.invalidateOptionsMenu()
-            viewModel.checkMode()
             viewModel.refresh()
         }
     }
@@ -193,7 +190,7 @@ class WalletFragment : BaseFragment(), SiadService.SiadListener {
         setStatusIcon()
     }
 
-    fun setStatusIcon() {
+    private fun setStatusIcon() {
         val walletData = viewModel.wallet.value
         if (walletData != null)
             when (walletData.encrypted) {

@@ -9,11 +9,9 @@ package vandyke.siamobile.ui.settings
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
-import android.widget.Toast
 import com.github.paolorotolo.appintro.AppIntro
 import com.github.paolorotolo.appintro.AppIntroFragment
 import vandyke.siamobile.R
-import vandyke.siamobile.util.StorageUtil
 
 class ModesActivity : AppIntro() {
 
@@ -59,12 +57,7 @@ class ModesActivity : AppIntro() {
         when (currentSlide) {
             COLD_STORAGE -> setResult(COLD_STORAGE)
             REMOTE_FULL_NODE -> setResult(REMOTE_FULL_NODE)
-            LOCAL_FULL_NODE -> if (StorageUtil.isSiadSupported) {
-                setResult(LOCAL_FULL_NODE)
-            } else {
-                Toast.makeText(this, "Sorry, but your device's CPU architecture is not supported by Sia's full node", Toast.LENGTH_LONG).show()
-                return
-            }
+            LOCAL_FULL_NODE -> setResult(LOCAL_FULL_NODE)
             PAPER_WALLET -> setResult(PAPER_WALLET)
         }
         finish()

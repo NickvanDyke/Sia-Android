@@ -15,9 +15,7 @@ import vandyke.siamobile.backend.data.wallet.WalletData
 import vandyke.siamobile.backend.networking.SiaCallback
 import vandyke.siamobile.backend.networking.SiaError
 import vandyke.siamobile.backend.networking.Wallet
-import vandyke.siamobile.ui.settings.Prefs
 import vandyke.siamobile.ui.wallet.model.IWalletModel
-import vandyke.siamobile.ui.wallet.model.WalletModelColdStorage
 import vandyke.siamobile.ui.wallet.model.WalletModelHttp
 import vandyke.siamobile.util.toSC
 
@@ -32,9 +30,7 @@ class WalletViewModel : ViewModel() {
     /* for communicating the seed to the view when a new wallet is created */
     val seed = MutableLiveData<String>()
 
-    var model: IWalletModel = if (Prefs.operationMode == "cold_storage") WalletModelColdStorage()
-        else WalletModelHttp()
-    var cachedMode = Prefs.operationMode
+    var model: IWalletModel = WalletModelHttp()
 
     /* success and error are immediately set back to null because the view only reacts on
        non-null values of them, and if they're holding a non-null value and the
@@ -48,13 +44,6 @@ class WalletViewModel : ViewModel() {
     private val setError: (SiaError) -> Unit = {
         error.value = it
         error.value = null
-    }
-
-    fun checkMode() {
-        if (Prefs.operationMode != cachedMode) {
-            cachedMode = Prefs.operationMode
-            model = if (cachedMode == "cold_storage") WalletModelColdStorage() else WalletModelHttp()
-        }
     }
 
     fun refresh() {

@@ -17,7 +17,6 @@ import android.support.v7.app.AppCompatDelegate
 import android.view.MenuItem
 import android.view.WindowManager
 import android.widget.TextView
-import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import vandyke.siamobile.R
 import vandyke.siamobile.backend.siad.SiadService
@@ -31,7 +30,6 @@ import vandyke.siamobile.ui.settings.SettingsFragment
 import vandyke.siamobile.ui.terminal.TerminalFragment
 import vandyke.siamobile.ui.wallet.view.PaperWalletActivity
 import vandyke.siamobile.ui.wallet.view.WalletFragment
-import vandyke.siamobile.util.StorageUtil
 
 class MainActivity : AppCompatActivity() {
 
@@ -120,10 +118,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 ModesActivity.LOCAL_FULL_NODE -> {
                     displayFragment(WalletFragment::class.java)
-                    if (StorageUtil.isSiadSupported) {
-                        Prefs.operationMode = "local_full_node"
-                    } else
-                        Toast.makeText(this, "Sorry, but your device's CPU architecture is not supported by Sia's full node", Toast.LENGTH_LONG).show()
+                    Prefs.operationMode = "local_full_node"
                 }
             }
         }

@@ -35,7 +35,7 @@ class SiadService : Service() {
 
     private val statusReceiver: StatusReceiver = StatusReceiver(this)
     private var siadFile: File? = null
-    private var siadProcess: java.lang.Process? = null
+    private var siadProcess: Process? = null
     private val SIAD_NOTIFICATION = 3
     var isSiadRunning: Boolean = false
         get() = siadProcess != null
@@ -44,8 +44,8 @@ class SiadService : Service() {
         startForeground(SIAD_NOTIFICATION, buildSiadNotification("Starting service..."))
         val intentFilter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
         intentFilter.addAction(Intent.ACTION_BATTERY_CHANGED)
-        applicationContext.registerReceiver(statusReceiver, intentFilter)
-        siadFile = StorageUtil.copyBinary("siad", this@SiadService, false)
+//        applicationContext.registerReceiver(statusReceiver, intentFilter)
+        siadFile = StorageUtil.copyBinary("siad", this@SiadService)
         startSiad()
     }
 
@@ -60,7 +60,7 @@ class SiadService : Service() {
             siadNotification("Unsupported CPU architecture")
             return
         }
-        val pb = ProcessBuilder(siadFile?.absolutePath, "-M", "gctw")
+        val pb = ProcessBuilder(siadFile!!.absolutePath, "-M", "gctw")
         pb.redirectErrorStream(true)
         pb.directory(StorageUtil.getWorkingDirectory(this@SiadService))
         try {
@@ -99,7 +99,7 @@ class SiadService : Service() {
     }
 
     override fun onDestroy() {
-        applicationContext.unregisterReceiver(statusReceiver)
+//        applicationContext.unregisterReceiver(statusReceiver)
         NotificationUtil.cancelNotification(applicationContext, SIAD_NOTIFICATION)
         stopSiad()
     }

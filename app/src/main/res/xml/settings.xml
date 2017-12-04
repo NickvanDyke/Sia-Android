@@ -49,11 +49,11 @@
             android:numeric="integer"
             android:gravity="center"
             android:defaultValue="20"/>
-        <SwitchPreferenceCompat
-            android:key="useExternal"
-            android:title="Use external storage"
-            android:summary="Will use whatever your phone returns as its external storage - this will not necessarily be your SD card. Restart Sia Mobile after changing this. It's recommended you clear existing data using the button at the bottom of settings after changing this."
-            android:defaultValue="false"/>
+        <!--<SwitchPreferenceCompat-->
+            <!--android:key="useExternal"-->
+            <!--android:title="Use external storage"-->
+            <!--android:summary="Will use whatever your phone returns as its external storage - this will not necessarily be your SD card. Restart Sia Mobile after changing this. It's recommended you clear existing data using the button at the bottom of settings after changing this."-->
+            <!--android:defaultValue="false"/>-->
     </PreferenceCategory>
     <PreferenceCategory android:title="Appearance">
         <SwitchPreferenceCompat

@@ -37,7 +37,7 @@ class TerminalFragment : BaseFragment(), SiadService.SiadListener {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        siacFile = StorageUtil.copyBinary("siac", context!!, true)
+        siacFile = StorageUtil.copyBinary("siac", context!!)
 
         input.setOnEditorActionListener(TextView.OnEditorActionListener { v, actionId, event ->
             try {

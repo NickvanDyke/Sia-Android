@@ -9,40 +9,28 @@ package vandyke.siamobile.util
 import android.content.Context
 import android.os.Environment
 import android.widget.Toast
-import vandyke.siamobile.SiaMobileApplication
 import vandyke.siamobile.ui.settings.Prefs
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-import java.io.InputStream
 
 object StorageUtil {
-    val isSiadSupported: Boolean
-        get() = SiaMobileApplication.abi == "arm64"
 
-    // will return null if the abi is an unsupported one and therefore there is not a binary for it
-    fun copyBinary(filename: String, context: Context, bit32: Boolean): File? {
+    fun copyBinary(filename: String, context: Context): File? {
         try {
-            val `in`: InputStream
-            val result: File
-            if (bit32) {
-                `in` = context.assets.open(filename + "-" + SiaMobileApplication.abi32)
-                result = File(context.filesDir, filename + "-" + SiaMobileApplication.abi32)
-            } else {
-                `in` = context.assets.open(filename + "-" + SiaMobileApplication.abi)
-                result = File(context.filesDir, filename + "-" + SiaMobileApplication.abi)
-            }
+            val inputStream = context.assets.open(filename)
+            val result = File(context.filesDir, filename)
             if (result.exists())
                 return result
             val out = FileOutputStream(result)
             val buf = ByteArray(1024)
-            var length: Int = `in`.read(buf)
+            var length: Int = inputStream.read(buf)
             while (length > 0) {
                 out.write(buf, 0, length)
-                length = `in`.read(buf)
+                length = inputStream.read(buf)
             }
             result.setExecutable(true)
-            `in`.close()
+            inputStream.close()
             out.close()
             return result
         } catch (e: IOException) {

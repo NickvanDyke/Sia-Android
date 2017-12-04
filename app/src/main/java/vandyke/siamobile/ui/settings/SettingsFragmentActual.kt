@@ -18,7 +18,6 @@ import android.support.v7.preference.*
 import android.util.Base64
 import vandyke.siamobile.BuildConfig
 import vandyke.siamobile.R
-import vandyke.siamobile.SiaMobileApplication
 import vandyke.siamobile.ui.MainActivity
 import vandyke.siamobile.util.SnackbarUtil
 import vandyke.siamobile.util.StorageUtil
@@ -55,10 +54,6 @@ class SettingsFragmentActual : PreferenceFragmentCompat() {
         operationMode.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, o ->
             if (o == "view_explanation") {
                 activity!!.startActivityForResult(Intent(activity, ModesActivity::class.java), MainActivity.REQUEST_OPERATION_MODE)
-                return@OnPreferenceChangeListener false
-            }
-            if (o == "local_full_node" && SiaMobileApplication.abi != "arm64") {
-                SnackbarUtil.snackbar(view, "Sorry, but your device's CPU architecture is not supported by Sia's full node", Snackbar.LENGTH_LONG)
                 return@OnPreferenceChangeListener false
             }
             return@OnPreferenceChangeListener true
