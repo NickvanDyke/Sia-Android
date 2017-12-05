@@ -17,8 +17,11 @@ import android.os.BatteryManager
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.subjects.ReplaySubject
 import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.launch
 import vandyke.siamobile.R
 import vandyke.siamobile.ui.MainActivity
 import vandyke.siamobile.ui.settings.Prefs
@@ -63,26 +66,25 @@ class SiadService : Service() {
         val pb = ProcessBuilder(siadFile!!.absolutePath, "-M", "gctw")
         pb.redirectErrorStream(true)
         pb.directory(StorageUtil.getWorkingDirectory(this@SiadService))
-        try {
-            siadProcess = pb.start()
-            async(CommonPool) {
-                try {
-                    val inputReader = BufferedReader(InputStreamReader(siadProcess?.inputStream))
-                    var line: String? = inputReader.readLine()
-                    while (line != null) {
-                        listeners.forEach { it.onSiadOutput("$line\n") }
-                        bufferedOutput += "$line\n"
-                        siadNotification(line)
-                        line = inputReader.readLine()
-                    }
-                    inputReader.close()
-                } catch (e: IOException) {
-                    e.printStackTrace()
+        siadProcess = pb.start()
+        launch(CommonPool) {
+            try {
+                val inputReader = BufferedReader(InputStreamReader(siadProcess?.inputStream))
+                var line: String? = inputReader.readLine()
+                while (line != null) {
+                    output.onNext(line)
+                    line = inputReader.readLine()
                 }
+                inputReader.close()
+                output.onComplete()
+            } catch (e: IOException) {
+                e.printStackTrace()
             }
-        } catch (e: IOException) {
-            e.printStackTrace()
         }
+        output.observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    siadNotification(it)
+                }
     }
 
     /**
@@ -129,16 +131,12 @@ class SiadService : Service() {
         return builder.build()
     }
 
-    interface SiadListener {
-        fun onSiadOutput(line: String)
-    }
-
     companion object {
-        // TODO: might cause memory leaks? I think it should be fine as long as the listeners properly unregister themselves
-        private val listeners = mutableListOf<SiadListener>()
-        fun addListener(listener: SiadListener) = listeners.add(listener)
-        fun removeListener(listener: SiadListener) = listeners.remove(listener)
-        var bufferedOutput: String = ""
+        /**
+         * HAVE to unsubscribe from this properly, or else crashes could occur when the app is restarted and
+         * the observable still has references to older observes
+         */
+        val output = ReplaySubject.create<String>()!!
 
         fun isBatteryGood(intent: Intent): Boolean {
             if (intent.action != Intent.ACTION_BATTERY_CHANGED)
@@ -161,10 +159,24 @@ class SiadService : Service() {
                     action((service as SiadService.LocalBinder).service)
                     context.unbindService(this)
                 }
+
                 override fun onServiceDisconnected(name: ComponentName) {}
             }
             context.bindService(Intent(context, SiadService::class.java), connection, Context.BIND_AUTO_CREATE)
         }
+
+        fun getService(context: Context) =
+                Single.create<SiadService> {
+                    val connection = object : ServiceConnection {
+                        override fun onServiceConnected(name: ComponentName, service: IBinder) {
+                            it.onSuccess((service as SiadService.LocalBinder).service)
+                            context.unbindService(this)
+                        }
+
+                        override fun onServiceDisconnected(name: ComponentName) {}
+                    }
+                    context.bindService(Intent(context, SiadService::class.java), connection, Context.BIND_AUTO_CREATE)
+                }
     }
 
     override fun onBind(intent: Intent): IBinder {

@@ -46,6 +46,7 @@ class GlobalPrefsListener(private val context: Context) : SharedPreferences.OnSh
                         })
                 }
             }
+            // TODO: this is the cause of siad starting when wifi + battery requirements aren't met I think
             "localNodeMinBattery" -> {
                 if (Prefs.operationMode == "local_full_node") {
                     val batteryStatus = context.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))

@@ -13,10 +13,12 @@ import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
-import android.view.*
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
 import kotlinx.android.synthetic.main.fragment_wallet.*
 import vandyke.siamobile.R
-import vandyke.siamobile.backend.siad.SiadService
 import vandyke.siamobile.ui.BaseFragment
 import vandyke.siamobile.ui.MainActivity
 import vandyke.siamobile.ui.settings.Prefs
@@ -26,17 +28,15 @@ import vandyke.siamobile.ui.wallet.viewmodel.WalletViewModel
 import vandyke.siamobile.util.*
 import java.math.BigDecimal
 
-class WalletFragment : BaseFragment(), SiadService.SiadListener {
+class WalletFragment : BaseFragment() {
+    override val layoutResId: Int = R.layout.fragment_wallet
+    override val hasOptionsMenu = true
+
     private lateinit var viewModel: WalletViewModel
 
     private val adapter = TransactionAdapter()
 
     private var statusButton: MenuItem? = null
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        setHasOptionsMenu(true)
-        return inflater.inflate(R.layout.fragment_wallet, container, false)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         /* color stuff depending on theme */
@@ -68,17 +68,14 @@ class WalletFragment : BaseFragment(), SiadService.SiadListener {
         transactionListSwipe.setOnRefreshListener { viewModel.refresh() }
         transactionListSwipe.setColorSchemeResources(R.color.colorAccent)
 
-        /* listen to siad output, so that we can refresh the viewModel at appropriate times */
-        SiadService.addListener(this)
-
         viewModel.activeTasks.observe(this) {
             progress.visibility = if (it > 0) View.VISIBLE else View.GONE
         }
 
         /* observe data in the viewModel */
         viewModel.wallet.observe(this) {
-            balanceUnconfirmed?.text = "${if (it.unconfirmedsiacoinbalance > BigDecimal.ZERO) "+" else ""}" +
-                    "${it.unconfirmedsiacoinbalance.toSC().round().toPlainString()} unconfirmed"
+            balanceUnconfirmed?.text = ((if (it.unconfirmedsiacoinbalance > BigDecimal.ZERO) "+" else "") +
+                    "${it.unconfirmedsiacoinbalance.toSC().round().toPlainString()} unconfirmed")
             balanceText?.text = it.confirmedsiacoinbalance.toSC().round().toPlainString()
             setStatusIcon()
             transactionListSwipe?.isRefreshing = false // TODO: maybe I don't need null-safe calls anymore now that I'm using lifecycle stuff? Check later
@@ -97,10 +94,10 @@ class WalletFragment : BaseFragment(), SiadService.SiadListener {
 
         viewModel.consensus.observe(this) {
             if (it.synced) {
-                syncText?.text = "${getString(R.string.synced)}: ${it.height}"
+                syncText?.text = ("${getString(R.string.synced)}: ${it.height}")
                 syncBar?.progress = 100
             } else {
-                syncText?.text = "${getString(R.string.syncing)}: ${it.height}"
+                syncText?.text = ("${getString(R.string.syncing)}: ${it.height}")
                 syncBar?.progress = it.syncprogress.toInt()
             }
         }
@@ -126,13 +123,8 @@ class WalletFragment : BaseFragment(), SiadService.SiadListener {
 
     private fun updateUsdValue() {
         if (viewModel.wallet.value != null && viewModel.usd.value != null)
-            balanceUsdText.text = "${viewModel.wallet.value!!.confirmedsiacoinbalance.toSC()
-                    .toUsd(viewModel.usd.value!!.price_usd).round().toPlainString()} USD"
-    }
-
-    override fun onSiadOutput(line: String) {
-        if (line.contains("Finished loading") || line.contains("Done!"))
-            viewModel.refresh()
+            balanceUsdText.text = ("${viewModel.wallet.value!!.confirmedsiacoinbalance.toSC()
+                    .toUsd(viewModel.usd.value!!.price_usd).round().toPlainString()} USD")
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -182,11 +174,6 @@ class WalletFragment : BaseFragment(), SiadService.SiadListener {
         if (!hidden) {
             viewModel.refresh()
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        SiadService.removeListener(this)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

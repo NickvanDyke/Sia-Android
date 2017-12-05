@@ -17,6 +17,7 @@ import vandyke.siamobile.R
 import vandyke.siamobile.ui.BaseFragment
 
 class AboutFragment : BaseFragment() {
+    override val layoutResId: Int = 0
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return AboutBuilder.with(context)

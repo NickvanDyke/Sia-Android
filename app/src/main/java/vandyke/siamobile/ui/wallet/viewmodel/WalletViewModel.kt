@@ -6,8 +6,11 @@
 
 package vandyke.siamobile.ui.wallet.viewmodel
 
+import android.app.Application
+import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.ViewModel
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import vandyke.siamobile.backend.data.consensus.ConsensusData
 import vandyke.siamobile.backend.data.wallet.ScPriceData
 import vandyke.siamobile.backend.data.wallet.TransactionsData
@@ -15,11 +18,12 @@ import vandyke.siamobile.backend.data.wallet.WalletData
 import vandyke.siamobile.backend.networking.SiaError
 import vandyke.siamobile.backend.networking.siaApi
 import vandyke.siamobile.backend.networking.sub
+import vandyke.siamobile.backend.siad.SiadService
 import vandyke.siamobile.ui.wallet.model.IWalletModel
 import vandyke.siamobile.ui.wallet.model.WalletModelHttp
 import vandyke.siamobile.util.toSC
 
-class WalletViewModel : ViewModel() {
+class WalletViewModel(application: Application) : AndroidViewModel(application) {
     val wallet = MutableLiveData<WalletData>()
     val usd = MutableLiveData<ScPriceData>()
     val consensus = MutableLiveData<ConsensusData>()
@@ -31,10 +35,21 @@ class WalletViewModel : ViewModel() {
     /* for communicating the seed to the view when a new wallet is created */
     val seed = MutableLiveData<String>()
 
-    var model: IWalletModel = WalletModelHttp()
+    val model: IWalletModel = WalletModelHttp()
+
+    private val subscription: Disposable
 
     init {
         activeTasks.value = 0
+        subscription = SiadService.output.observeOn(AndroidSchedulers.mainThread()).subscribe {
+            if (it.contains("Finished loading") || it.contains("Done!"))
+                refresh()
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        subscription.dispose()
     }
 
     /* success and error are immediately set back to null because the view only reacts on

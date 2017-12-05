@@ -6,17 +6,9 @@
 
 package vandyke.siamobile.ui.hosting.fragments
 
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import vandyke.siamobile.R
 import vandyke.siamobile.ui.BaseFragment
 
 class HostingFragment : BaseFragment() {
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val v = inflater.inflate(R.layout.fragment_hosting, container, false)
-        return v
-    }
+    override val layoutResId: Int = R.layout.fragment_hosting
 }

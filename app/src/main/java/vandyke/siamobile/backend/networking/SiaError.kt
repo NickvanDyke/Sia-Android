@@ -50,6 +50,7 @@ class SiaError : Throwable {
             errorMessage.contains("word not found in dictionary for given language") -> Reason.INVALID_WORD_IN_SEED
             errorMessage.contains("seed failed checksum verification") -> Reason.INVALID_SEED
             errorMessage.contains("unrecognized hash used as input to /explorer/hash") -> Reason.UNRECOGNIZED_HASH
+            errorMessage.contains("siad is not ready") -> Reason.SIAD_LOADING
             errorMessage.contains("Cloudflare") -> Reason.RATE_LIMITING
             else -> {
                 println("unaccounted for error message: $errorMessage")
@@ -59,7 +60,6 @@ class SiaError : Throwable {
     }
 
     private fun getReasonFromThrowable(t: Throwable): Reason {
-        println(t)
         return when (t) {
             is HttpException -> getReasonFromMsg(t.response().errorBody()!!.string())
             is SocketTimeoutException -> Reason.TIMEOUT
@@ -95,7 +95,8 @@ class SiaError : Throwable {
         UNSUPPORTED_ON_COLD_WALLET("Unsupported on cold storage wallet"),
         UNEXPECTED_END_OF_STREAM("Connection unexpectedly closed"),
         UNRECOGNIZED_HASH("Unrecognized hash"),
-        RATE_LIMITING("Hit explore.sia.tech rate-limit")
+        SIAD_LOADING("Sia is still loading"),
+        RATE_LIMITING("Hit request rate-limit")
     }
 
     fun snackbar(view: View?, length: Int = Snackbar.LENGTH_SHORT) {

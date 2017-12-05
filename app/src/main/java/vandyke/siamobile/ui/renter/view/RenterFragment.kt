@@ -9,7 +9,10 @@ package vandyke.siamobile.ui.renter.view
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.design.widget.TabLayout
-import android.view.*
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
 import kotlinx.android.synthetic.main.fragment_renter.*
 import vandyke.siamobile.R
 import vandyke.siamobile.backend.data.renter.SiaDir
@@ -20,6 +23,8 @@ import vandyke.siamobile.util.observe
 
 
 class RenterFragment : BaseFragment() {
+    override val layoutResId: Int = R.layout.fragment_renter
+    override val hasOptionsMenu = true
 
     lateinit var viewModel: RenterViewModel
 
@@ -47,12 +52,6 @@ class RenterFragment : BaseFragment() {
             programmaticallySelecting = false
             field = value
         }
-
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        setHasOptionsMenu(true)
-        return inflater.inflate(R.layout.fragment_renter, container, false)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewModel = ViewModelProviders.of(this).get(RenterViewModel::class.java)
