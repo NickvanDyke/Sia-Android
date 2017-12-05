@@ -18,6 +18,5 @@ class WalletUnlockDialog : BaseDialogFragment() {
         walletUnlockConfirm.setOnClickListener {
             viewModel.unlock(walletPassword.text.toString())
         }
-        setCloseButton(walletUnlockCancel)
     }
 }

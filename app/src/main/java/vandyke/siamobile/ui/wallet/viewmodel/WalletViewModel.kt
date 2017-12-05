@@ -24,6 +24,7 @@ class WalletViewModel : ViewModel() {
     val usd = MutableLiveData<ScPriceData>()
     val consensus = MutableLiveData<ConsensusData>()
     val transactions = MutableLiveData<TransactionsData>()
+    val activeTasks = MutableLiveData<Int>()
     val success = MutableLiveData<String>()
     val error = MutableLiveData<SiaError>()
 
@@ -32,18 +33,33 @@ class WalletViewModel : ViewModel() {
 
     var model: IWalletModel = WalletModelHttp()
 
+    init {
+        activeTasks.value = 0
+    }
+
     /* success and error are immediately set back to null because the view only reacts on
        non-null values of them, and if they're holding a non-null value and the
        view is recreated, then it'll display the success/error even though it shouldn't.
        There might be a better way around that */
-    fun setSuccess(msg: String) {
+    private fun setSuccess(msg: String) {
         success.value = msg
         success.value = null
+        decrementTasks()
     }
 
-    private val setError: (SiaError) -> Unit = {
+    private val onError: (SiaError) -> Unit = {
         error.value = it
         error.value = null
+        decrementTasks()
+    }
+
+    private fun incrementTasks() {
+        activeTasks.value = activeTasks.value!! + 1
+    }
+
+    private fun decrementTasks() {
+        if (activeTasks.value!! > 0)
+            activeTasks.value = activeTasks.value!! - 1
     }
 
     fun refresh() {
@@ -53,19 +69,35 @@ class WalletViewModel : ViewModel() {
     }
 
     fun refreshWallet() {
-        model.getWallet().sub({ it -> wallet.value = it }, setError)
-        siaApi.getScPrice().sub({ it -> usd.value = it }, setError)
+        incrementTasks()
+        model.getWallet().sub({
+            wallet.value = it
+            decrementTasks()
+        }, onError)
+        /* we don't track retrieving the usd price as a task since it tends to take a long time and is less reliable */
+        siaApi.getScPrice().sub({
+            usd.value = it
+        }, onError)
     }
 
     fun refreshTransactions() {
-        model.getTransactions().sub({ it -> transactions.value = it }, setError)
+        incrementTasks()
+        model.getTransactions().sub({
+            transactions.value = it
+            decrementTasks()
+        }, onError)
     }
 
     fun refreshConsensus() {
-        model.getConsensus().sub({ it -> consensus.value = it }, setError)
+        incrementTasks()
+        model.getConsensus().sub({
+            consensus.value = it
+            decrementTasks()
+        }, onError)
     }
 
     fun unlock(password: String) {
+        incrementTasks()
         model.unlock(password).sub({
             setSuccess("Unlocked") // TODO: maybe have cool animations eventually, to indicate locking/unlocking/creating?
             refreshWallet()
@@ -73,50 +105,55 @@ class WalletViewModel : ViewModel() {
             if (it.reason == SiaError.Reason.WALLET_SCAN_IN_PROGRESS)
                 setSuccess("Blockchain scan in progress, please wait...")
             else
-                error.value = it
+                onError(it)
         })
     }
 
     fun lock() {
+        incrementTasks()
         model.lock().sub({
             setSuccess("Locked")
             refreshWallet()
-        }, setError)
+        }, onError)
     }
 
     fun create(password: String, force: Boolean, seed: String? = null) {
+        incrementTasks()
         if (seed == null) {
             model.init(password, "english", force).sub({ it ->
                 setSuccess("Created wallet")
                 refreshWallet()
                 this.seed.value = it.primaryseed
-            }, setError)
+            }, onError)
         } else {
             model.initSeed(password, "english", seed, force).sub({
                 setSuccess("Created wallet")
                 refreshWallet()
                 this.seed.value = seed
-            }, setError)
+            }, onError)
         }
     }
 
     fun send(amount: String, destination: String) {
+        incrementTasks()
         model.send(amount, destination)
                 .sub({
                     setSuccess("Sent ${amount.toSC()} SC to $destination")
                     refreshWallet()
-                }, setError)
+                }, onError)
     }
 
     fun changePassword(currentPassword: String, newPassword: String) {
+        incrementTasks()
         model.changePassword(currentPassword, newPassword).sub({
             setSuccess("Changed password")
-        }, setError)
+        }, onError)
     }
 
     fun sweep(seed: String) {
+        incrementTasks()
         model.sweep("english", seed).sub({
             setSuccess("Scanning blockchain, please wait...")
-        }, setError)
+        }, onError)
     }
 }

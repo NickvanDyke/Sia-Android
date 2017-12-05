@@ -71,9 +71,14 @@ class WalletFragment : BaseFragment(), SiadService.SiadListener {
         /* listen to siad output, so that we can refresh the viewModel at appropriate times */
         SiadService.addListener(this)
 
+        viewModel.activeTasks.observe(this) {
+            progress.visibility = if (it > 0) View.VISIBLE else View.GONE
+        }
+
         /* observe data in the viewModel */
         viewModel.wallet.observe(this) {
-            balanceUnconfirmed?.text = "${if (it.unconfirmedsiacoinbalance > BigDecimal.ZERO) "+" else ""}${it.unconfirmedsiacoinbalance.toSC().round().toPlainString()} unconfirmed"
+            balanceUnconfirmed?.text = "${if (it.unconfirmedsiacoinbalance > BigDecimal.ZERO) "+" else ""}" +
+                    "${it.unconfirmedsiacoinbalance.toSC().round().toPlainString()} unconfirmed"
             balanceText?.text = it.confirmedsiacoinbalance.toSC().round().toPlainString()
             setStatusIcon()
             transactionListSwipe?.isRefreshing = false // TODO: maybe I don't need null-safe calls anymore now that I'm using lifecycle stuff? Check later
