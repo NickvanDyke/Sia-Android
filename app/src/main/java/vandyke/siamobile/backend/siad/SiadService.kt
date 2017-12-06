@@ -22,7 +22,6 @@ import kotlinx.coroutines.experimental.launch
 import vandyke.siamobile.R
 import vandyke.siamobile.ui.MainActivity
 import vandyke.siamobile.ui.settings.Prefs
-import vandyke.siamobile.util.NotificationUtil
 import vandyke.siamobile.util.StorageUtil
 import java.io.BufferedReader
 import java.io.File
@@ -32,11 +31,10 @@ import java.io.InputStreamReader
 class SiadService : Service() {
 
     private val binder = LocalBinder()
-
     private val statusReceiver: StatusReceiver = StatusReceiver(this)
     private var siadFile: File? = null
-    private var siadProcess: Process? = null
-    private var wakeLock: PowerManager.WakeLock? = null
+    private var siadProcess: java.lang.Process? = null
+    val wakeLock = (applicationContext.getSystemService(Context.POWER_SERVICE) as PowerManager).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Sia node")
     private val SIAD_NOTIFICATION = 3
     var isSiadRunning: Boolean = false
         get() = siadProcess != null
@@ -63,7 +61,7 @@ class SiadService : Service() {
         }
         /* acquire partial wake lock to keep device CPU awake and therefore keep the Sia node active */
         if (Prefs.SiaNodeWakeLock) {
-            createWakeLockAndAcquire()
+            wakeLock.acquire()
         }
         val pb = ProcessBuilder(siadFile!!.absolutePath, "-M", "gctw")
         pb.redirectErrorStream(true)
@@ -93,17 +91,10 @@ class SiadService : Service() {
      * should only be called from the SiadService's BroadcastReceiver or from onDestroy of this service
      */
     fun stopSiad() {
-        wakeLock?.release()
+        wakeLock.release()
         // TODO: maybe shut it down using stop http request instead? Takes ages sometimes. But might fix the (sometime) long startup times
         siadProcess?.destroy()
         siadProcess = null
-    }
-
-    fun createWakeLockAndAcquire() {
-        wakeLock?.release() /* first release the wakeLock in case we have one that's already active */
-        val powerManager = applicationContext.getSystemService(Context.POWER_SERVICE) as PowerManager
-        wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Sia node")
-        wakeLock!!.acquire()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -112,7 +103,7 @@ class SiadService : Service() {
 
     override fun onDestroy() {
 //        applicationContext.unregisterReceiver(statusReceiver)
-        NotificationUtil.cancelNotification(applicationContext, SIAD_NOTIFICATION)
+        stopForeground(true)
         stopSiad()
     }
 

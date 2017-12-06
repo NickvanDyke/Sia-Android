@@ -24,6 +24,7 @@ class SettingsFragmentActual : PreferenceFragmentCompat() {
     private lateinit var operationMode: ListPreference
     private lateinit var remoteAddress: EditTextPreference
     private lateinit var apiPass: EditTextPreference
+    private lateinit var siaNodeWakeLock: SwitchPreferenceCompat
     private lateinit var runLocalNodeOffWifi: SwitchPreferenceCompat
     private lateinit var useExternal: SwitchPreferenceCompat
     private lateinit var minBattery: EditTextPreference
@@ -36,6 +37,7 @@ class SettingsFragmentActual : PreferenceFragmentCompat() {
         remoteAddress = findPreference("remoteAddress") as EditTextPreference
         apiPass = findPreference("apiPass") as EditTextPreference
         runLocalNodeOffWifi = findPreference("runLocalNodeOffWifi") as SwitchPreferenceCompat
+        siaNodeWakeLock = findPreference("SiaNodeWakeLock") as SwitchPreferenceCompat
 //        useExternal = findPreference("useExternal") as SwitchPreferenceCompat
         minBattery = findPreference("localNodeMinBattery") as EditTextPreference
         setRemoteSettingsVisibility()
@@ -129,10 +131,12 @@ class SettingsFragmentActual : PreferenceFragmentCompat() {
 
     private fun setLocalSettingsVisibility() {
         if (Prefs.operationMode == "local_full_node") {
+            operation.addPreference(siaNodeWakeLock)
             operation.addPreference(runLocalNodeOffWifi)
 //            operation.addPreference(useExternal)
             operation.addPreference(minBattery)
         } else {
+            operation.removePreference(siaNodeWakeLock)
             operation.removePreference(runLocalNodeOffWifi)
 //            operation.removePreference(useExternal)
             operation.removePreference(minBattery)

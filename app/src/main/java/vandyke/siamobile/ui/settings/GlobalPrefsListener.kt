@@ -70,7 +70,7 @@ class GlobalPrefsListener(private val context: Context) : SharedPreferences.OnSh
                     /* If Siad is already running then we must tell the service to acquire a wake lock
                        because normally it acquires it in startSiad() */
                     if (Prefs.SiaNodeWakeLock && service.isSiadRunning)
-                        service.createWakeLockAndAcquire()
+                        service.wakeLock.acquire()
                 }
         }
     }
