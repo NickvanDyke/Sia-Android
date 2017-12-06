@@ -95,7 +95,8 @@ class SiadService : Service() {
      * should only be called from the SiadService's BroadcastReceiver or from onDestroy of this service
      */
     fun stopSiad() {
-        wakeLock.release()
+        if (wakeLock.isHeld)
+            wakeLock.release()
         // TODO: maybe shut it down using stop http request instead? Takes ages sometimes. But might fix the (sometime) long startup times
         siadProcess?.destroy()
         siadProcess = null

@@ -19,6 +19,7 @@ import android.view.MenuItem
 import android.view.View
 import kotlinx.android.synthetic.main.fragment_wallet.*
 import vandyke.siamobile.R
+import vandyke.siamobile.backend.networking.SiaError
 import vandyke.siamobile.ui.BaseFragment
 import vandyke.siamobile.ui.MainActivity
 import vandyke.siamobile.ui.settings.Prefs
@@ -70,6 +71,8 @@ class WalletFragment : BaseFragment() {
 
         viewModel.activeTasks.observe(this) {
             progress.visibility = if (it > 0) View.VISIBLE else View.GONE
+            if (it == 0)
+                transactionListSwipe?.isRefreshing = false
         }
 
         /* observe data in the viewModel */
@@ -78,7 +81,6 @@ class WalletFragment : BaseFragment() {
                     "${it.unconfirmedsiacoinbalance.toSC().round().toPlainString()} unconfirmed")
             balanceText?.text = it.confirmedsiacoinbalance.toSC().round().toPlainString()
             setStatusIcon()
-            transactionListSwipe?.isRefreshing = false // TODO: maybe I don't need null-safe calls anymore now that I'm using lifecycle stuff? Check later
             updateUsdValue()
         }
 
@@ -108,8 +110,10 @@ class WalletFragment : BaseFragment() {
         }
 
         viewModel.error.observe(this) {
-            transactionListSwipe?.isRefreshing = false
             it.snackbar(view)
+            // TODO: not all errors come through here due to the dialogs calling the model directly. Will fix when I improve that
+            if (it.reason == SiaError.Reason.WALLET_LOCKED)
+                expandFrame(WalletUnlockDialog())
         }
 
         viewModel.seed.observe(this) {

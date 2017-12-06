@@ -71,7 +71,7 @@ class GlobalPrefsListener(private val context: Context) : SharedPreferences.OnSh
                 if (service.isSiadRunning) {
                     if (Prefs.SiaNodeWakeLock)
                         service.wakeLock.acquire()
-                    else
+                    else if (service.wakeLock.isHeld)
                         service.wakeLock.release()
                 }
             }
