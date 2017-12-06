@@ -33,12 +33,12 @@
             android:fontFamily="sans-serif"/>
         <SwitchPreferenceCompat
             android:key="SiaNodeWakeLock"
-            android:title="Keep CPU awake when Sia node is running"
-            android:summary="If enabled, your phone's CPU will be kept on even when locked, so that the Sia node can continue operating (syncing, downloading, etc)."
+            android:title="Keep CPU awake for Sia"
+            android:summary="Keep your phone's CPU awake when the Sia node is running, even while your phone is locked, so that the Sia node can continue operating (syncing, downloading, etc)."
             android:defaultValue="false"/>
         <SwitchPreferenceCompat
             android:key="runLocalNodeOffWifi"
-            android:title="Run node when off WiFi"
+            android:title="Run Sia node when off WiFi"
             android:summary="Run the local node in the background even when not connected to WiFi. WARNING: Syncing the blockchain can involve a lot of downloading."
             android:defaultValue="false"/>
         <vandyke.siamobile.ui.settings.IntEditTextPreference

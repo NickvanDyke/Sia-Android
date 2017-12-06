@@ -10,7 +10,10 @@ import android.app.Notification
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
-import android.content.*
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.graphics.BitmapFactory
 import android.net.ConnectivityManager
 import android.os.*
@@ -34,17 +37,18 @@ class SiadService : Service() {
     private val statusReceiver: StatusReceiver = StatusReceiver(this)
     private var siadFile: File? = null
     private var siadProcess: java.lang.Process? = null
-    val wakeLock = (applicationContext.getSystemService(Context.POWER_SERVICE) as PowerManager).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Sia node")
+    lateinit var wakeLock: PowerManager.WakeLock
     private val SIAD_NOTIFICATION = 3
     var isSiadRunning: Boolean = false
         get() = siadProcess != null
 
     override fun onCreate() {
         startForeground(SIAD_NOTIFICATION, buildSiadNotification("Starting service..."))
-        val intentFilter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
-        intentFilter.addAction(Intent.ACTION_BATTERY_CHANGED)
+//        val intentFilter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
+//        intentFilter.addAction(Intent.ACTION_BATTERY_CHANGED)
 //        applicationContext.registerReceiver(statusReceiver, intentFilter)
-        siadFile = StorageUtil.copyBinary("siad", this@SiadService)
+        siadFile = StorageUtil.copyBinary("siad", this)
+        wakeLock = (getSystemService(Context.POWER_SERVICE) as PowerManager).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Sia node")
         startSiad()
     }
 

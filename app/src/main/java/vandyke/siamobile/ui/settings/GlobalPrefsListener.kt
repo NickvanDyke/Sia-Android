@@ -65,13 +65,16 @@ class GlobalPrefsListener(private val context: Context) : SharedPreferences.OnSh
             "remoteAddress" -> if (Prefs.operationMode == "remote_full_node") {
                 Prefs.address = Prefs.remoteAddress
             }
-            "SiaNodeWakeLock" -> if (Prefs.SiaNodeWakeLock)
-                SiadService.getService(context).subscribe { service ->
-                    /* If Siad is already running then we must tell the service to acquire a wake lock
-                       because normally it acquires it in startSiad() */
-                    if (Prefs.SiaNodeWakeLock && service.isSiadRunning)
+            "SiaNodeWakeLock" -> SiadService.getService(context).subscribe { service ->
+                /* If Siad is already running then we must tell the service to acquire/release its wake lock
+                   because normally it does so in start/stopSiad() */
+                if (service.isSiadRunning) {
+                    if (Prefs.SiaNodeWakeLock)
                         service.wakeLock.acquire()
+                    else
+                        service.wakeLock.release()
                 }
+            }
         }
     }
 }

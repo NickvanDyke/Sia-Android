@@ -10,7 +10,7 @@ import vandyke.siamobile.util.SCUtil
 
 data class ConsensusData(val synced: Boolean = false,
                          val height: Int = 0,
-                         val currentblock: Int = 0,
-                         val difficulty: Int = 0) {
+                         val currentblock: String = "",
+                         val difficulty: Long = 0) {
     val syncprogress: Double by lazy { height.toDouble() / SCUtil.estimatedBlockHeightAt(System.currentTimeMillis() / 1000) * 100 }
 }

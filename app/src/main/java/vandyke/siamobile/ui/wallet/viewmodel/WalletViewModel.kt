@@ -40,6 +40,7 @@ class WalletViewModel : ViewModel() {
 
     init {
         activeTasks.value = 0
+
         subscription = SiadService.output.observeOn(AndroidSchedulers.mainThread()).subscribe {
             if (it.contains("Finished loading") || it.contains("Done!"))
                 refresh()
@@ -91,7 +92,10 @@ class WalletViewModel : ViewModel() {
         /* we don't track retrieving the usd price as a task since it tends to take a long time and is less reliable */
         siaApi.getScPrice().sub({
             usd.value = it
-        }, onError)
+        }, {
+            error.value = it
+            error.value = null
+        })
     }
 
     fun refreshTransactions() {
