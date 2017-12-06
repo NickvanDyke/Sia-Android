@@ -21,6 +21,7 @@ import retrofit2.http.POST
 import retrofit2.http.Query
 import retrofit2.http.Url
 import vandyke.siamobile.backend.data.consensus.ConsensusData
+import vandyke.siamobile.backend.data.explorer.ExplorerData
 import vandyke.siamobile.backend.data.explorer.ExplorerHashData
 import vandyke.siamobile.backend.data.renter.RenterFilesData
 import vandyke.siamobile.backend.data.wallet.*

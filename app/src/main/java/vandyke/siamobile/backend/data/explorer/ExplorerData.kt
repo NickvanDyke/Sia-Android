@@ -4,6 +4,6 @@
  * This file is subject to the terms and conditions defined in 'LICENSE.md'
  */
 
-package vandyke.siamobile.backend.data.wallet
+package vandyke.siamobile.backend.data.explorer
 
-data class ExplorerData(val height: Long = 0)
+data class ExplorerData(val height: Int = 0)

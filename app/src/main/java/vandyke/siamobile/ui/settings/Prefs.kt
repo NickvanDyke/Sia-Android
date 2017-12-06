@@ -25,6 +25,7 @@ object Prefs : KotprefModel() {
     var useExternal by booleanPref(false)
     var apiPass by stringPref()
     var displayedDecimalPrecision by intPref(2)
+    var SiaNodeWakeLock by booleanPref(false)
     var coldStorageExists by booleanPref(false)
     var coldStorageSeed by stringPref()
     var coldStoragePassword by stringPref()

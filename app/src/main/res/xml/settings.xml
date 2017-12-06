@@ -15,13 +15,6 @@
             android:entries="@array/operation_modes_entries"
             android:entryValues="@array/operation_modes_values"
             android:defaultValue="local_full_node"/>
-        <!--<ListPreference-->
-        <!--android:key="refreshInterval"-->
-        <!--android:title="Automatic refresh interval"-->
-        <!--android:summary="Refreshes balance, transactions, and sync progress."-->
-        <!--android:entries="@array/refresh_interval_entries"-->
-        <!--android:entryValues="@array/refresh_interval_values"-->
-        <!--android:defaultValue="1"/>-->
         <EditTextPreference
             android:key="remoteAddress"
             android:title="Remote node address"
@@ -38,6 +31,11 @@
             android:inputType="textPassword"
             android:password="true"
             android:fontFamily="sans-serif"/>
+        <SwitchPreferenceCompat
+            android:key="SiaNodeWakeLock"
+            android:title="Keep CPU awake when Sia node is running"
+            android:summary="If enabled, your phone's CPU will be kept on even when locked, so that the Sia node can continue operating (syncing, downloading, etc)."
+            android:defaultValue="false"/>
         <SwitchPreferenceCompat
             android:key="runLocalNodeOffWifi"
             android:title="Run node when off WiFi"

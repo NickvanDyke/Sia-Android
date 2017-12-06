@@ -13,13 +13,10 @@ import android.app.Service
 import android.content.*
 import android.graphics.BitmapFactory
 import android.net.ConnectivityManager
-import android.os.BatteryManager
-import android.os.Binder
-import android.os.Build
-import android.os.IBinder
+import android.os.*
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.subjects.ReplaySubject
+import io.reactivex.subjects.PublishSubject
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.launch
 import vandyke.siamobile.R
@@ -39,6 +36,7 @@ class SiadService : Service() {
     private val statusReceiver: StatusReceiver = StatusReceiver(this)
     private var siadFile: File? = null
     private var siadProcess: Process? = null
+    private var wakeLock: PowerManager.WakeLock? = null
     private val SIAD_NOTIFICATION = 3
     var isSiadRunning: Boolean = false
         get() = siadProcess != null
@@ -60,8 +58,12 @@ class SiadService : Service() {
             return
         }
         if (siadFile == null) {
-            siadNotification("Unsupported CPU architecture")
+            siadNotification("Siad unsupported")
             return
+        }
+        /* acquire partial wake lock to keep device CPU awake and therefore keep the Sia node active */
+        if (Prefs.SiaNodeWakeLock) {
+            createWakeLockAndAcquire()
         }
         val pb = ProcessBuilder(siadFile!!.absolutePath, "-M", "gctw")
         pb.redirectErrorStream(true)
@@ -91,9 +93,17 @@ class SiadService : Service() {
      * should only be called from the SiadService's BroadcastReceiver or from onDestroy of this service
      */
     fun stopSiad() {
+        wakeLock?.release()
         // TODO: maybe shut it down using stop http request instead? Takes ages sometimes. But might fix the (sometime) long startup times
         siadProcess?.destroy()
         siadProcess = null
+    }
+
+    fun createWakeLockAndAcquire() {
+        wakeLock?.release() /* first release the wakeLock in case we have one that's already active */
+        val powerManager = applicationContext.getSystemService(Context.POWER_SERVICE) as PowerManager
+        wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Sia node")
+        wakeLock!!.acquire()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -133,10 +143,14 @@ class SiadService : Service() {
 
     companion object {
         /**
-         * HAVE to unsubscribe from this properly, or else crashes could occur when the app is restarted and
-         * the observable still has references to older observes
+         * HAVE to unsubscribe from this properly, or else crashes could occur when the app is killed and
+         * later restarted if the static variable hasn't been cleared, and therefore isn't recreated, and
+         * will still have references to old, now non-existent subscribers.
+         * Primary reason for using a static variable for it is because that way it exists independently of
+         * the service, and is not destroyed when the service is, meaning that subscribers will still receive updates
+         * when the service is restarted and causes the observable to emit.
          */
-        val output = ReplaySubject.create<String>()!!
+        val output = PublishSubject.create<String>()!!
 
         fun isBatteryGood(intent: Intent): Boolean {
             if (intent.action != Intent.ACTION_BATTERY_CHANGED)

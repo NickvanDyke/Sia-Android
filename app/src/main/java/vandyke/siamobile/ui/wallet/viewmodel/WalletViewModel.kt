@@ -6,9 +6,8 @@
 
 package vandyke.siamobile.ui.wallet.viewmodel
 
-import android.app.Application
-import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.MutableLiveData
+import android.arch.lifecycle.ViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import vandyke.siamobile.backend.data.consensus.ConsensusData
@@ -23,7 +22,7 @@ import vandyke.siamobile.ui.wallet.model.IWalletModel
 import vandyke.siamobile.ui.wallet.model.WalletModelHttp
 import vandyke.siamobile.util.toSC
 
-class WalletViewModel(application: Application) : AndroidViewModel(application) {
+class WalletViewModel : ViewModel() {
     val wallet = MutableLiveData<WalletData>()
     val usd = MutableLiveData<ScPriceData>()
     val consensus = MutableLiveData<ConsensusData>()

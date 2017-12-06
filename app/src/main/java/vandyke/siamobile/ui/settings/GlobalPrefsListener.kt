@@ -46,7 +46,7 @@ class GlobalPrefsListener(private val context: Context) : SharedPreferences.OnSh
                         })
                 }
             }
-            // TODO: this is the cause of siad starting when wifi + battery requirements aren't met I think
+        // TODO: this is the cause of siad starting when wifi + battery requirements aren't met I think
             "localNodeMinBattery" -> {
                 if (Prefs.operationMode == "local_full_node") {
                     val batteryStatus = context.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
@@ -65,6 +65,13 @@ class GlobalPrefsListener(private val context: Context) : SharedPreferences.OnSh
             "remoteAddress" -> if (Prefs.operationMode == "remote_full_node") {
                 Prefs.address = Prefs.remoteAddress
             }
+            "SiaNodeWakeLock" -> if (Prefs.SiaNodeWakeLock)
+                SiadService.getService(context).subscribe { service ->
+                    /* If Siad is already running then we must tell the service to acquire a wake lock
+                       because normally it acquires it in startSiad() */
+                    if (Prefs.SiaNodeWakeLock && service.isSiadRunning)
+                        service.createWakeLockAndAcquire()
+                }
         }
     }
 }

@@ -7,6 +7,6 @@
 package vandyke.siamobile.backend.data.explorer
 
 data class ExplorerTransactionData(val id: String = "",
-                                   val height: Long = 0,
+                                   val height: Int = 0,
                                    val rawtransaction: RawTransactionData = RawTransactionData(),
                                    val siacoininputoutputs: List<SiacoinOutputData> = listOf())

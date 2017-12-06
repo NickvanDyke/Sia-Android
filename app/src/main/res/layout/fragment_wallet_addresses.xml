@@ -20,7 +20,7 @@
         android:id="@+id/addressesList"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:maxHeight="192dp"/>
+        android:maxHeight="64dp"/>
 
     <Button
         android:text="@string/close"
