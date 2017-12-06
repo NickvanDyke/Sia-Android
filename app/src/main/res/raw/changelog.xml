@@ -6,6 +6,9 @@
   -->
 
 <changelog bulletedList="true">
+    <changelogversion versionName="2.3.5" changeDate="Dec 6, 2017">
+        <changelogtext>Add error message for not being able to reach explore.sia.tech/explorer</changelogtext>
+    </changelogversion>
 
     <changelogversion versionName="2.3.4" changeDate="Sep 12, 2017">
         <changelogtext>Fix sorting of cold storage mode transactions</changelogtext>
