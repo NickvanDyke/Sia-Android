@@ -17,12 +17,10 @@ import vandyke.siamobile.R
 import vandyke.siamobile.ui.wallet.view.ScannerActivity
 import vandyke.siamobile.util.toHastings
 
-class WalletSendDialog : BaseDialogFragment() {
+class WalletSendDialog : BaseWalletFragment() {
     override val layout: Int = R.layout.fragment_wallet_send
 
-    override fun create(view: View?, savedInstanceState: Bundle?) {
-        setCloseButton(walletSendCancel)
-
+    override fun create(view: View, savedInstanceState: Bundle?) {
         sendAmount.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {

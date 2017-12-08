@@ -12,15 +12,13 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import kotlinx.android.synthetic.main.fragment_wallet_addresses.*
 import vandyke.siamobile.R
-import vandyke.siamobile.backend.networking.sub
 import vandyke.siamobile.ui.custom.TextCopyAdapter
+import vandyke.siamobile.util.observe
 
-class WalletAddressesDialog : BaseDialogFragment() {
+class WalletAddressesDialog : BaseWalletFragment() {
     override val layout: Int = R.layout.fragment_wallet_addresses
 
-    override fun create(view: View?, savedInstanceState: Bundle?) {
-        setCloseButton(walletAddressesClose)
-
+    override fun create(view: View, savedInstanceState: Bundle?) {
         val adapter = TextCopyAdapter()
 
         val layoutManager = LinearLayoutManager(activity)
@@ -28,11 +26,11 @@ class WalletAddressesDialog : BaseDialogFragment() {
         addressesList.addItemDecoration(DividerItemDecoration(addressesList.context, layoutManager.orientation))
         addressesList.adapter = adapter
 
-        viewModel.model.getAddresses().sub({
+        viewModel.addresses.observe(this) {
             adapter.data = it.addresses
             adapter.notifyDataSetChanged()
-        }, {
-            it.snackbar(view)
-        })
+        }
+
+        viewModel.getAddresses()
     }
 }

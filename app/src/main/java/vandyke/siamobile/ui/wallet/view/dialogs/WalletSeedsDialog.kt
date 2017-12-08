@@ -12,15 +12,13 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import kotlinx.android.synthetic.main.fragment_wallet_seeds.*
 import vandyke.siamobile.R
-import vandyke.siamobile.backend.networking.sub
 import vandyke.siamobile.ui.custom.TextCopyAdapter
+import vandyke.siamobile.util.observe
 
-class WalletSeedsDialog : BaseDialogFragment() {
+class WalletSeedsDialog : BaseWalletFragment() {
     override val layout: Int = R.layout.fragment_wallet_seeds
 
-    override fun create(view: View?, savedInstanceState: Bundle?) {
-        setCloseButton(walletSeedsClose)
-
+    override fun create(view: View, savedInstanceState: Bundle?) {
         val adapter = TextCopyAdapter()
 
         val layoutManager = LinearLayoutManager(activity)
@@ -28,13 +26,13 @@ class WalletSeedsDialog : BaseDialogFragment() {
         seedsList.addItemDecoration(DividerItemDecoration(seedsList.context, layoutManager.orientation))
         seedsList.adapter = adapter
 
-        viewModel.model.getSeeds("english").sub({
+        viewModel.seeds.observe(this) {
             val list = mutableListOf<String>()
             list.addAll(it.allseeds)
             adapter.data = list
             adapter.notifyDataSetChanged()
-        }, {
-            it.snackbar(view)
-        })
+        }
+
+        viewModel.getSeeds()
     }
 }

@@ -9,7 +9,6 @@ package vandyke.siamobile.ui.wallet.view
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
@@ -158,14 +157,14 @@ class WalletFragment : BaseFragment() {
         return super.onOptionsItemSelected(item)
     }
 
-    fun expandFrame(fragment: Fragment) {
+    fun expandFrame(fragment: BaseWalletFragment) {
         childFragmentManager.beginTransaction().replace(R.id.expandableFrame, fragment).commit()
-        expandableFrame.visibility = View.VISIBLE
+        childFragmentManager.executePendingTransactions()
+        expandableFrame.expand(fragment.height)
     }
 
     fun collapseFrame() {
-        expandableFrame.visibility = View.GONE
-        GenUtil.hideSoftKeyboard(activity)
+        expandableFrame.collapse()
     }
 
     override fun onResume() {
@@ -197,7 +196,7 @@ class WalletFragment : BaseFragment() {
     }
 
     override fun onBackPressed(): Boolean {
-        if (expandableFrame.visibility == View.VISIBLE) {
+        if (expandableFrame.height != 0) {
             collapseFrame()
             return true
         } else {

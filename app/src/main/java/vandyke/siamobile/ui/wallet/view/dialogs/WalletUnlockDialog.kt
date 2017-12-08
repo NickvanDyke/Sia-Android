@@ -11,10 +11,10 @@ import android.view.View
 import kotlinx.android.synthetic.main.fragment_wallet_unlock.*
 import vandyke.siamobile.R
 
-class WalletUnlockDialog : BaseDialogFragment() {
+class WalletUnlockDialog : BaseWalletFragment() {
     override val layout: Int = R.layout.fragment_wallet_unlock
 
-    override fun create(view: View?, savedInstanceState: Bundle?) {
+    override fun create(view: View, savedInstanceState: Bundle?) {
         walletUnlockConfirm.setOnClickListener {
             viewModel.unlock(walletPassword.text.toString())
         }

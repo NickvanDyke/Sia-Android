@@ -125,7 +125,7 @@ object SiaApi {
 }
 
 /* the below extensions are used to simplify subscribing to Singles/Completables from the above sia api */
-fun <T> Single<T>.sub(onNext: (T) -> Unit, onError: (SiaError) -> Unit) {
+fun <T> Single<T>.subscribeApi(onNext: (T) -> Unit, onError: (SiaError) -> Unit) {
     this.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(onNext, {
@@ -133,7 +133,7 @@ fun <T> Single<T>.sub(onNext: (T) -> Unit, onError: (SiaError) -> Unit) {
             })
 }
 
-fun Completable.sub(onNext: () -> Unit, onError: (SiaError) -> Unit) {
+fun Completable.subscribeApi(onNext: () -> Unit, onError: (SiaError) -> Unit) {
     this.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(onNext, {

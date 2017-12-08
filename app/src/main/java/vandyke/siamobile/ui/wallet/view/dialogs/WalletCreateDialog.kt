@@ -17,12 +17,10 @@ import vandyke.siamobile.R
 import vandyke.siamobile.util.GenUtil
 import vandyke.siamobile.util.SnackbarUtil
 
-class WalletCreateDialog : BaseDialogFragment() {
+class WalletCreateDialog : BaseWalletFragment() {
     override val layout: Int = R.layout.fragment_wallet_create
 
-    override fun create(view: View?, savedInstanceState: Bundle?) {
-        setCloseButton(walletCreateCancel)
-
+    override fun create(view: View, savedInstanceState: Bundle?) {
         walletCreateSeed.visibility = View.GONE
         walletCreateFromSeed.setOnClickListener {
             if (walletCreateFromSeed.isChecked)

@@ -11,7 +11,7 @@ import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.MutableLiveData
 import vandyke.siamobile.backend.data.renter.SiaDir
 import vandyke.siamobile.backend.networking.SiaError
-import vandyke.siamobile.backend.networking.sub
+import vandyke.siamobile.backend.networking.subscribeApi
 import vandyke.siamobile.ui.renter.model.IRenterModel
 import vandyke.siamobile.ui.renter.model.RenterModelTest
 
@@ -28,7 +28,7 @@ class RenterViewModel(application: Application) : AndroidViewModel(application) 
 
     fun refreshFiles() {
         model.getRootDir()
-                .sub({
+                .subscribeApi({
                     rootDir.value = it
                     if (currentDir.value == null)
                         currentDir.value = it

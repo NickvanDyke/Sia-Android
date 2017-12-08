@@ -13,12 +13,10 @@ import kotlinx.android.synthetic.main.fragment_wallet_change_password.*
 import vandyke.siamobile.R
 import vandyke.siamobile.util.SnackbarUtil
 
-class WalletChangePasswordDialog : BaseDialogFragment() {
+class WalletChangePasswordDialog : BaseWalletFragment() {
     override val layout: Int = R.layout.fragment_wallet_change_password
 
-    override fun create(view: View?, savedInstanceState: Bundle?) {
-        setCloseButton(walletChangeCancel)
-
+    override fun create(view: View, savedInstanceState: Bundle?) {
         walletChange.setOnClickListener(View.OnClickListener {
             val newPassword = newPassword.text.toString()
             if (newPassword != confirmNewPassword.text.toString()) {
