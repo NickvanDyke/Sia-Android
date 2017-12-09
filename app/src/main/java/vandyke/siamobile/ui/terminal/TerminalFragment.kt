@@ -20,7 +20,6 @@ class TerminalFragment : BaseFragment() {
 
     private lateinit var viewModel: TerminalViewModel
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewModel = ViewModelProviders.of(this).get(TerminalViewModel::class.java)
 

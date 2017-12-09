@@ -116,11 +116,9 @@ class WalletFragment : BaseFragment() {
 
         viewModel.seed.observe(this) {
             if (Prefs.operationMode == "cold_storage")
-            WalletCreateDialog.showCsWarning(context!!)
-        WalletCreateDialog.showSeed(it, context!!)
+                WalletCreateDialog.showCsWarning(context!!)
+            WalletCreateDialog.showSeed(it, context!!)
         }
-
-        viewModel.refresh()
     }
 
     private fun updateUsdValue() {
@@ -166,16 +164,8 @@ class WalletFragment : BaseFragment() {
         expandableFrame.collapse()
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onShow() {
         viewModel.refresh()
-    }
-
-    override fun onHiddenChanged(hidden: Boolean) {
-        super.onHiddenChanged(hidden)
-        if (!hidden) {
-            viewModel.refresh()
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

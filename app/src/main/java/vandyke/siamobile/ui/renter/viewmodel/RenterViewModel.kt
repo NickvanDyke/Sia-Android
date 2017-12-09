@@ -27,12 +27,11 @@ class RenterViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun refreshFiles() {
-        model.getRootDir()
-                .subscribeApi({
-                    rootDir.value = it
-                    if (currentDir.value == null)
-                        currentDir.value = it
-                }, setError)
+        model.getRootDir().subscribeApi({
+            rootDir.value = it
+            if (currentDir.value == null)
+                currentDir.value = it
+        }, setError)
     }
 
     fun goUpDir(): Boolean {

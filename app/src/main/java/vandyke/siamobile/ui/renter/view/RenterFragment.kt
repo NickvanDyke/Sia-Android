@@ -99,16 +99,8 @@ class RenterFragment : BaseFragment() {
         return viewModel.goUpDir()
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onShow() {
         viewModel.refreshFiles()
-    }
-
-    override fun onHiddenChanged(hidden: Boolean) {
-        super.onHiddenChanged(hidden)
-        if (!hidden) {
-            viewModel.refreshFiles()
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
