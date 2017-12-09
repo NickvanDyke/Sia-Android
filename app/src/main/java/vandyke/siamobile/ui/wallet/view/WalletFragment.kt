@@ -22,7 +22,7 @@ import vandyke.siamobile.backend.networking.SiaError
 import vandyke.siamobile.ui.BaseFragment
 import vandyke.siamobile.ui.MainActivity
 import vandyke.siamobile.ui.settings.Prefs
-import vandyke.siamobile.ui.wallet.view.dialogs.*
+import vandyke.siamobile.ui.wallet.view.childfragments.*
 import vandyke.siamobile.ui.wallet.view.transactionslist.TransactionAdapter
 import vandyke.siamobile.ui.wallet.viewmodel.WalletViewModel
 import vandyke.siamobile.util.*
@@ -110,7 +110,6 @@ class WalletFragment : BaseFragment() {
 
         viewModel.error.observe(this) {
             it.snackbar(view)
-            // TODO: not all errors come through here due to the dialogs calling the model directly. Will fix when I improve that
             if (it.reason == SiaError.Reason.WALLET_LOCKED)
                 expandFrame(WalletUnlockDialog())
         }

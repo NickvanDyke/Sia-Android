@@ -16,7 +16,7 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import com.google.zxing.Result
 import me.dm7.barcodescanner.zxing.ZXingScannerView
-import vandyke.siamobile.ui.wallet.view.dialogs.WalletSendDialog
+import vandyke.siamobile.ui.wallet.view.childfragments.WalletSendDialog
 
 class ScannerActivity : AppCompatActivity(), ZXingScannerView.ResultHandler {
 

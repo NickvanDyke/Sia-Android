@@ -4,7 +4,7 @@
  * This file is subject to the terms and conditions defined in 'LICENSE.md'
  */
 
-package vandyke.siamobile.ui.wallet.view.dialogs
+package vandyke.siamobile.ui.wallet.view.childfragments
 
 import android.app.Activity
 import android.content.Intent

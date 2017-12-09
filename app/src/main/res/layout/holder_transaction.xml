@@ -12,7 +12,7 @@
                                              android:background="?android:attr/selectableItemBackground">
 
     <TextView
-        android:text="Loading date..."
+        android:text="Date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/transactionStatus"
@@ -24,7 +24,7 @@
         app:layout_constraintBottom_toBottomOf="parent"/>
     <!--TODO: when date is unconfirmed, id is off center compared to confirmed transactions-->
     <TextView
-        android:text="Loading value..."
+        android:text="Value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/transactionValue"
@@ -45,7 +45,7 @@
         android:ellipsize="middle"
         android:gravity="center"
         android:singleLine="true"
-        android:text="Loading id..."
+        android:text="Id"
         android:textSize="10sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@+id/transactionStatus"
