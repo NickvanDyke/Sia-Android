@@ -125,10 +125,9 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="12dp"
-        android:visibility="visible"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/receiveButton"></vandyke.siamobile.ui.custom.SwipeableFrameLayout>
+        app:layout_constraintTop_toBottomOf="@+id/receiveButton"/>
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/transactionListSwipe"
@@ -154,8 +153,7 @@
         android:scaleY="5"
         android:layout_width="0dp"
         android:layout_height="1dp"
-        android:layout_marginBottom="-2dp"
-        app:layout_constraintBottom_toTopOf="@+id/transactionListSwipe"
+        app:layout_constraintBottom_toBottomOf="@+id/expandableFrame"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
 

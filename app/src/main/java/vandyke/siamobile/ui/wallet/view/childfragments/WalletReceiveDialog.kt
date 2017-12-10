@@ -20,7 +20,6 @@ class WalletReceiveDialog : BaseWalletFragment() {
     override val layout: Int = R.layout.fragment_wallet_receive
 
     override fun create(view: View, savedInstanceState: Bundle?) {
-        walletQrCode.visibility = View.INVISIBLE
         viewModel.address.observe(this) {
             if (isVisible) {
                 receiveAddress.text = it.address

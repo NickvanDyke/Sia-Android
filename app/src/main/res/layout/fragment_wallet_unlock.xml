@@ -10,7 +10,7 @@
                                              xmlns:tools="http://schemas.android.com/tools"
                                              android:orientation="vertical"
                                              android:layout_width="match_parent"
-                                             android:layout_height="match_parent">
+                                             android:layout_height="wrap_content">
 
     <EditText
             android:layout_width="0dp"
@@ -28,8 +28,7 @@
             app:layout_constraintTop_toTopOf="parent"
             android:hint="@string/password"
             android:gravity="center"
-            android:fontFamily="sans-serif"
-            android:layout_marginTop="8dp"/>
+            android:fontFamily="sans-serif"/>
 
     <Button
         android:id="@+id/walletUnlockConfirm"

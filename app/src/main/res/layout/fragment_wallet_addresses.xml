@@ -1,17 +1,17 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2017 Nicholas van Dyke
   ~
   ~ This file is subject to the terms and conditions defined in 'LICENSE.md'
   -->
-<android.support.v7.widget.RecyclerView
-    android:layout_marginStart="16dp"
-    app:layout_constraintLeft_toLeftOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    android:layout_marginEnd="16dp"
-    app:layout_constraintRight_toRightOf="parent"
-    android:id="@+id/addressesList"
+<!--Needs a framelayout for the root otherwise it's height is measured incorrectly when expanding-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="128dp"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto" />
+    android:layout_height="wrap_content">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/addressesList"
+        android:layout_width="match_parent"
+        android:layout_height="128dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp" />
+</FrameLayout>
