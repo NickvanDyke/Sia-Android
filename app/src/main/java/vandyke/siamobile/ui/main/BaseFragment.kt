@@ -1,4 +1,4 @@
-package vandyke.siamobile.ui
+package vandyke.siamobile.ui.main
 
 import android.os.Bundle
 import android.support.v4.app.Fragment

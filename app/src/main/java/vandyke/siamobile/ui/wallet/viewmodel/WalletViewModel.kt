@@ -62,14 +62,14 @@ class WalletViewModel : ViewModel() {
        view is recreated, then it'll display the success/error even though it shouldn't.
        There might be a better way around that */
     private fun setSuccess(msg: String) {
+        decrementTasks()
         success.value = msg
         success.value = null
-        decrementTasks()
     }
-
-    private val onError: (SiaError) -> Unit = {
+    
+    private fun onError(err: SiaError) {
         decrementTasks()
-        error.value = it
+        error.value = err
         error.value = null
     }
 
@@ -93,7 +93,7 @@ class WalletViewModel : ViewModel() {
         model.getWallet().subscribeApi({
             wallet.value = it
             decrementTasks()
-        }, onError)
+        }, ::onError)
         /* we don't track retrieving the usd price as a task since it tends to take a long time and is less reliable */
         siaApi.getScPrice().subscribeApi({
             usd.value = it
@@ -108,7 +108,7 @@ class WalletViewModel : ViewModel() {
         model.getTransactions().subscribeApi({
             transactions.value = it
             decrementTasks()
-        }, onError)
+        }, ::onError)
     }
 
     fun refreshConsensus() {
@@ -116,7 +116,7 @@ class WalletViewModel : ViewModel() {
         model.getConsensus().subscribeApi({
             consensus.value = it
             decrementTasks()
-        }, onError)
+        }, ::onError)
     }
 
     fun unlock(password: String) {
@@ -137,7 +137,7 @@ class WalletViewModel : ViewModel() {
         model.lock().subscribeApi({
             setSuccess("Locked")
             refreshWallet()
-        }, onError)
+        }, ::onError)
     }
 
     fun getAddress() {
@@ -146,7 +146,7 @@ class WalletViewModel : ViewModel() {
             decrementTasks()
             address.value = it
             address.value = null
-        }, onError)
+        }, ::onError)
     }
 
     fun getAddresses() {
@@ -155,7 +155,7 @@ class WalletViewModel : ViewModel() {
             decrementTasks()
             addresses.value = it
             addresses.value = null
-        }, onError)
+        }, ::onError)
     }
 
     fun getSeeds() {
@@ -164,7 +164,7 @@ class WalletViewModel : ViewModel() {
             decrementTasks()
             seeds.value = it
             seeds.value = null
-        }, onError)
+        }, ::onError)
     }
 
     fun create(password: String, force: Boolean, seed: String? = null) {
@@ -174,13 +174,13 @@ class WalletViewModel : ViewModel() {
                 setSuccess("Created wallet")
                 refreshWallet()
                 this.seed.value = it.primaryseed
-            }, onError)
+            }, ::onError)
         } else {
             model.initSeed(password, "english", seed, force).subscribeApi({
                 setSuccess("Created wallet")
                 refreshWallet()
                 this.seed.value = seed
-            }, onError)
+            }, ::onError)
         }
     }
 
@@ -190,20 +190,20 @@ class WalletViewModel : ViewModel() {
                 .subscribeApi({
                     setSuccess("Sent ${amount.toSC()} SC to $destination")
                     refreshWallet()
-                }, onError)
+                }, ::onError)
     }
 
     fun changePassword(currentPassword: String, newPassword: String) {
         incrementTasks()
         model.changePassword(currentPassword, newPassword).subscribeApi({
             setSuccess("Changed password")
-        }, onError)
+        }, ::onError)
     }
 
     fun sweep(seed: String) {
         incrementTasks()
         model.sweep("english", seed).subscribeApi({
             setSuccess("Scanning blockchain, please wait...")
-        }, onError)
+        }, ::onError)
     }
 }

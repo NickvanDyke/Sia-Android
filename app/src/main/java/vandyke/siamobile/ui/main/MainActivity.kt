@@ -22,7 +22,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 import vandyke.siamobile.R
 import vandyke.siamobile.data.local.Prefs
 import vandyke.siamobile.data.siad.SiadService
-import vandyke.siamobile.ui.BaseFragment
 import vandyke.siamobile.ui.about.AboutFragment
 import vandyke.siamobile.ui.about.SetupRemoteActivity
 import vandyke.siamobile.ui.hosting.fragments.HostingFragment
@@ -76,8 +75,8 @@ class MainActivity : AppCompatActivity() {
 
         viewModel.siadIsLoading.observe(this) {
             if (it) {
-                loadingDialog = SiadLoadingDialog()
-                loadingDialog!!.show(supportFragmentManager, "loading dialog")
+//                loadingDialog = SiadLoadingDialog()
+//                loadingDialog!!.show(supportFragmentManager, "loading dialog")
             } else {
                 loadingDialog?.dismiss()
             }

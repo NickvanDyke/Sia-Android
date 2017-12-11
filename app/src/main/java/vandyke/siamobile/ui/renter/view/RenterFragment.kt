@@ -9,6 +9,8 @@ package vandyke.siamobile.ui.renter.view
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.design.widget.TabLayout
+import android.support.v7.widget.DividerItemDecoration
+import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -16,7 +18,7 @@ import android.view.View
 import kotlinx.android.synthetic.main.fragment_renter.*
 import vandyke.siamobile.R
 import vandyke.siamobile.data.data.renter.SiaDir
-import vandyke.siamobile.ui.BaseFragment
+import vandyke.siamobile.ui.main.BaseFragment
 import vandyke.siamobile.ui.renter.view.list.RenterAdapter
 import vandyke.siamobile.ui.renter.viewmodel.RenterViewModel
 import vandyke.siamobile.util.observe
@@ -34,19 +36,25 @@ class RenterFragment : BaseFragment() {
 
     var currentDir = SiaDir("home", null)
         set(value) {
+            /* set this flag so that programmatically selecting a tab doesn't trigger the onTabSelectedListener */
             programmaticallySelecting = true
             val oldPath = field.fullPath
             val newPath = value.fullPath
             depth = newPath.size
+            /* find the point at which the path differs */
             val breakpoint = (0 until maxOf(newPath.size, oldPath.size)).firstOrNull {
                 it > oldPath.size - 1 || it > newPath.size - 1 || newPath[it] != oldPath[it]
             } ?: renterFilepath.tabCount
+            /* select the appropriate tab if it already exists */
             if (newPath.size < oldPath.size)
                 renterFilepath.getTabAt(newPath.size - 1)?.select()
+            /* remove tabs that are past the breakpoint */
             for (i in breakpoint until renterFilepath.tabCount)
                 renterFilepath.removeTabAt(breakpoint)
+            /* add new tabs from the breakpoint to the end of the new path */
             for (i in breakpoint until newPath.size)
                 renterFilepath.addTab(renterFilepath.newTab().setText(newPath[i].name), true)
+            /* scroll the tabs all the way to the right */
             renterFilepath.postDelayed({ renterFilepath.fullScroll(TabLayout.FOCUS_RIGHT) }, 5)
             adapter.changeDir(value)
             programmaticallySelecting = false
@@ -55,7 +63,7 @@ class RenterFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewModel = ViewModelProviders.of(this).get(RenterViewModel::class.java)
-//        filesList.addItemDecoration(new DividerItemDecoration(filesList.getContext(), layoutManager.getOrientation()));
+        filesList.addItemDecoration(DividerItemDecoration(filesList.context, (filesList.layoutManager as LinearLayoutManager).orientation))
         adapter = RenterAdapter(viewModel)
         filesList.adapter = adapter
 
@@ -68,11 +76,16 @@ class RenterFragment : BaseFragment() {
             }
         })
 
+        renterSwipeRefresh.setColorSchemeResources(R.color.colorAccent)
         renterSwipeRefresh.setOnRefreshListener {
             viewModel.refreshFiles()
             renterSwipeRefresh.isRefreshing = false
         }
-        renterSwipeRefresh.setColorSchemeResources(R.color.colorAccent)
+
+        /* FAB stuff */
+        fabAddDir.setOnClickListener {
+
+        }
 
         /* observe viewModel stuff */
         viewModel.rootDir.observe(this) {

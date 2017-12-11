@@ -12,7 +12,7 @@ import android.text.method.ScrollingMovementMethod
 import android.view.View
 import kotlinx.android.synthetic.main.fragment_terminal.*
 import vandyke.siamobile.R
-import vandyke.siamobile.ui.BaseFragment
+import vandyke.siamobile.ui.main.BaseFragment
 import vandyke.siamobile.util.observe
 
 class TerminalFragment : BaseFragment() {

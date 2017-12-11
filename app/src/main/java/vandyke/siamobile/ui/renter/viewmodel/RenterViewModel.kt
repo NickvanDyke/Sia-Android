@@ -22,16 +22,12 @@ class RenterViewModel(application: Application) : AndroidViewModel(application) 
 
     private val model: IRenterModel = RenterModelTest()
 
-    private val setError: (SiaError) -> Unit = {
-        error.value = it
-    }
-
     fun refreshFiles() {
         model.getRootDir().subscribeApi({
             rootDir.value = it
             if (currentDir.value == null)
                 currentDir.value = it
-        }, setError)
+        }, ::setError)
     }
 
     fun goUpDir(): Boolean {
@@ -40,5 +36,10 @@ class RenterViewModel(application: Application) : AndroidViewModel(application) 
             return true
         }
         return false
+    }
+
+    private fun setError(err: SiaError) {
+        error.value = err
+        error.value = null
     }
 }

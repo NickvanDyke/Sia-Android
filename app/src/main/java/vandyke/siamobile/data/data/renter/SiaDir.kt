@@ -39,16 +39,16 @@ class SiaDir(override val name: String, override val parent: SiaDir?) : SiaNode(
         return current
     }
 
-    operator fun plus(file: SiaFile) = addSiaFileHelper(file, file.siapath.split("/"), 0)
+    fun addSiaFile(file: SiaFile) = addSiaFileHelper(file, file.siapath.split("/"), 0)
 
-    operator fun plus(dir: SiaDir) = directories.add(dir)
+    fun addSiaDir(dir: SiaDir) = directories.add(dir)
 
     /**
      * @param file            the file being added
      * @param path            should be relevant to the directory this method is being called on
      * @param currentLocation the index in path that we're currently at
      */
-    fun addSiaFileHelper(file: SiaFile, path: List<String>, currentLocation: Int) {
+    private fun addSiaFileHelper(file: SiaFile, path: List<String>, currentLocation: Int) {
         if (path.size == 1 || path.size == currentLocation + 1) { // the file belongs in this directory
             files.add(file)
         } else {

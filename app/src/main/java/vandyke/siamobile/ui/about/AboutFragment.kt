@@ -14,7 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.vansuita.materialabout.builder.AboutBuilder
 import vandyke.siamobile.R
-import vandyke.siamobile.ui.BaseFragment
+import vandyke.siamobile.ui.main.BaseFragment
 
 class AboutFragment : BaseFragment() {
     override val layoutResId: Int = 0
