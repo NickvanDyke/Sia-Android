@@ -6,6 +6,7 @@
 
 package vandyke.siamobile.ui
 
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
@@ -30,8 +31,13 @@ import vandyke.siamobile.ui.settings.SettingsFragment
 import vandyke.siamobile.ui.terminal.TerminalFragment
 import vandyke.siamobile.ui.wallet.view.PaperWalletActivity
 import vandyke.siamobile.ui.wallet.view.WalletFragment
+import vandyke.siamobile.util.observe
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var viewModel: MainViewModel
+
+    private var loadingDialog: SiadLoadingDialog? = null
 
     private lateinit var drawerToggle: ActionBarDrawerToggle
 
@@ -48,6 +54,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        /* actionbar setup stuff */
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setHomeButtonEnabled(true)
@@ -58,33 +65,45 @@ class MainActivity : AppCompatActivity() {
         }
 
         defaultTextColor = TextView(this).currentTextColor
-        /* set action stuff for when drawer items are selected */
+
+
+        viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
+
+        viewModel.visibleFragmentClass.observe(this) {
+            displayFragment(it)
+        }
+
+        viewModel.siadIsLoading.observe(this) {
+            if (it) {
+                loadingDialog = SiadLoadingDialog()
+                loadingDialog!!.show(supportFragmentManager, "loading dialog")
+            } else {
+                loadingDialog?.dismiss()
+            }
+        }
+
+        /* notify view model when navigation items are selected */
         navigationView.setNavigationItemSelectedListener({ item ->
             drawerLayout.closeDrawers()
-            when (item.itemId) {
-                R.id.drawer_item_renter -> displayFragment(RenterFragment::class.java)
-                R.id.drawer_item_hosting -> displayFragment(HostingFragment::class.java)
-                R.id.drawer_item_wallet -> displayFragment(WalletFragment::class.java)
-                R.id.drawer_item_terminal -> displayFragment(TerminalFragment::class.java)
-                R.id.drawer_item_settings -> displayFragment(SettingsFragment::class.java)
-                R.id.drawer_item_about -> displayFragment(AboutFragment::class.java)
-            }
+            viewModel.navigationItemSelected(item)
             return@setNavigationItemSelectedListener true
         })
         drawerToggle = ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close)
         drawerLayout.addDrawerListener(drawerToggle)
 
+        /* set the VM's visibleFragmentClass differently depending on whether the activity is being recreated */
         if (savedInstanceState == null) {
-            when (Prefs.startupPage) {
-                "renter" -> displayFragment(RenterFragment::class.java)
-                "hosting" -> displayFragment(HostingFragment::class.java)
-                "wallet" -> displayFragment(WalletFragment::class.java)
-                "terminal" -> displayFragment(TerminalFragment::class.java)
+            viewModel.visibleFragmentClass.value = when (Prefs.startupPage) {
+                "renter" -> RenterFragment::class.java
+                "hosting" -> HostingFragment::class.java
+                "wallet" -> WalletFragment::class.java
+                "terminal" -> TerminalFragment::class.java
+                else -> throw Exception()
             }
         } else {
             /* find the fragment currently visible stored in the savedInstanceState */
-            visibleFragment = supportFragmentManager.findFragmentByTag(savedInstanceState.getString("visibleFragment")) as BaseFragment
-            setTitleAndMenuFromVisibleFragment()
+            val storedFragmentClass = supportFragmentManager.findFragmentByTag(savedInstanceState.getString("visibleFragment")).javaClass
+            viewModel.visibleFragmentClass.value = storedFragmentClass
         }
 
         if (Prefs.firstTime) {
@@ -102,22 +121,6 @@ class MainActivity : AppCompatActivity() {
         /* save the visible fragment, to be retrieved in onCreate */
         if (visibleFragment != null)
             outState?.putString("visibleFragment", visibleFragment!!.javaClass.simpleName)
-    }
-
-    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == REQUEST_OPERATION_MODE) {
-            when (resultCode) {
-                ModesActivity.PAPER_WALLET -> startActivity(Intent(this, PaperWalletActivity::class.java))
-                ModesActivity.REMOTE_FULL_NODE -> {
-                    Prefs.operationMode = "remote_full_node"
-                    startActivity(Intent(this, SetupRemoteActivity::class.java))
-                }
-                ModesActivity.LOCAL_FULL_NODE -> {
-                    displayFragment(WalletFragment::class.java)
-                    Prefs.operationMode = "local_full_node"
-                }
-            }
-        }
     }
 
     private fun displayFragment(clazz: Class<*>) {
@@ -141,6 +144,22 @@ class MainActivity : AppCompatActivity() {
         setTitleAndMenuFromVisibleFragment()
     }
 
+    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == REQUEST_OPERATION_MODE) {
+            when (resultCode) {
+                ModesActivity.PAPER_WALLET -> startActivity(Intent(this, PaperWalletActivity::class.java))
+                ModesActivity.REMOTE_FULL_NODE -> {
+                    Prefs.operationMode = "remote_full_node"
+                    startActivity(Intent(this, SetupRemoteActivity::class.java))
+                }
+                ModesActivity.LOCAL_FULL_NODE -> {
+                    displayFragment(WalletFragment::class.java)
+                    Prefs.operationMode = "local_full_node"
+                }
+            }
+        }
+    }
+
     private fun setTitleAndMenuFromVisibleFragment() {
         if (visibleFragment == null)
             return
@@ -152,7 +171,7 @@ class MainActivity : AppCompatActivity() {
             TerminalFragment::class.java -> R.id.drawer_item_terminal
             SettingsFragment::class.java -> R.id.drawer_item_settings
             AboutFragment::class.java -> R.id.drawer_item_about
-            else -> 0 /* not sure what this should actually be, if anything */
+            else -> throw Exception() /* not sure what this should actually be, if anything */
         })
     }
 

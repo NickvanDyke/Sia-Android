@@ -20,9 +20,7 @@ import vandyke.siamobile.ui.MainActivity
 object NotificationUtil {
     val NOTIFICATION_CHANNEL = "sia"
 
-    fun notification(context: Context?, id: Int, icon: Int, title: String, text: String, ongoing: Boolean) {
-        if (context == null)
-            return
+    fun notification(context: Context, id: Int, icon: Int, title: String, text: String, ongoing: Boolean) {
         val builder = Notification.Builder(context)
         builder.setSmallIcon(icon)
         val largeIcon = BitmapFactory.decodeResource(context.resources, R.drawable.sia_logo_transparent)
@@ -31,7 +29,7 @@ object NotificationUtil {
         builder.setContentText(text)
         builder.setOngoing(ongoing)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-            builder.setChannelId("sia")
+            builder.setChannelId(NOTIFICATION_CHANNEL)
         val intent = Intent(context, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
         builder.setContentIntent(pendingIntent)

@@ -16,15 +16,21 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.graphics.BitmapFactory
 import android.net.ConnectivityManager
-import android.os.*
+import android.os.BatteryManager
+import android.os.Binder
+import android.os.IBinder
+import android.os.PowerManager
+import android.support.v4.app.NotificationCompat
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.launch
 import vandyke.siamobile.R
 import vandyke.siamobile.ui.MainActivity
 import vandyke.siamobile.ui.settings.Prefs
+import vandyke.siamobile.util.NotificationUtil
 import vandyke.siamobile.util.StorageUtil
 import java.io.BufferedReader
 import java.io.File
@@ -60,9 +66,10 @@ class SiadService : Service() {
             return
         }
         if (siadFile == null) {
-            siadNotification("Siad unsupported")
+            siadNotification("Couldn't start Siad")
             return
         }
+        siadIsLoaded.onNext(false)
         /* acquire partial wake lock to keep device CPU awake and therefore keep the Sia node active */
         if (Prefs.SiaNodeWakeLock) {
             wakeLock.acquire()
@@ -70,10 +77,10 @@ class SiadService : Service() {
         val pb = ProcessBuilder(siadFile!!.absolutePath, "-M", "gctw")
         pb.redirectErrorStream(true)
         pb.directory(StorageUtil.getWorkingDirectory(this@SiadService))
-        siadProcess = pb.start()
+        siadProcess = pb.start() // TODO: this causes the application to skip about a second of frames when starting
         launch(CommonPool) {
             try {
-                val inputReader = BufferedReader(InputStreamReader(siadProcess?.inputStream))
+                val inputReader = BufferedReader(InputStreamReader(siadProcess!!.inputStream))
                 var line: String? = inputReader.readLine()
                 while (line != null) {
                     output.onNext(line)
@@ -87,6 +94,8 @@ class SiadService : Service() {
         }
         output.observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
+                    if (it.contains("Finished loading"))
+                        siadIsLoaded.onNext(true)
                     siadNotification(it)
                 }
     }
@@ -95,6 +104,7 @@ class SiadService : Service() {
      * should only be called from the SiadService's BroadcastReceiver or from onDestroy of this service
      */
     fun stopSiad() {
+        siadIsLoaded.onNext(false)
         if (wakeLock.isHeld)
             wakeLock.release()
         // TODO: maybe shut it down using stop http request instead? Takes ages sometimes. But might fix the (sometime) long startup times
@@ -106,14 +116,14 @@ class SiadService : Service() {
         return Service.START_STICKY
     }
 
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        stopSelf()
+    }
+
     override fun onDestroy() {
 //        applicationContext.unregisterReceiver(statusReceiver)
         stopForeground(true)
         stopSiad()
-    }
-
-    override fun onTaskRemoved(rootIntent: Intent?) {
-        stopSelf()
     }
 
     fun siadNotification(text: String) {
@@ -122,15 +132,12 @@ class SiadService : Service() {
     }
 
     private fun buildSiadNotification(text: String): Notification {
-        val builder = Notification.Builder(this)
-        builder.setSmallIcon(R.drawable.ic_local_full_node)
-        val largeIcon = BitmapFactory.decodeResource(resources, R.drawable.sia_logo_transparent)
-        builder.setLargeIcon(largeIcon)
-        builder.setContentTitle("Sia node")
-        builder.setContentText(text)
-        builder.setOngoing(false)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-            builder.setChannelId("sia")
+        val builder = NotificationCompat.Builder(this, NotificationUtil.NOTIFICATION_CHANNEL)
+                .setSmallIcon(R.drawable.ic_local_full_node)
+                .setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.sia_logo_transparent))
+                .setContentTitle("Sia node")
+                .setStyle(NotificationCompat.BigTextStyle().bigText(text))
+
         val intent = Intent(this, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
         builder.setContentIntent(pendingIntent)
@@ -147,6 +154,8 @@ class SiadService : Service() {
          * when the service is restarted and causes the observable to emit.
          */
         val output = PublishSubject.create<String>()!!
+
+        val siadIsLoaded = BehaviorSubject.create<Boolean>()!!
 
         fun isBatteryGood(intent: Intent): Boolean {
             if (intent.action != Intent.ACTION_BATTERY_CHANGED)
