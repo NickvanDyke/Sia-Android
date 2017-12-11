@@ -16,8 +16,8 @@ import android.view.WindowManager
 import android.widget.Button
 import android.widget.EditText
 import vandyke.siamobile.R
-import vandyke.siamobile.backend.networking.siaApi
-import vandyke.siamobile.backend.networking.subscribeApi
+import vandyke.siamobile.data.remote.siaApi
+import vandyke.siamobile.data.remote.subscribeApi
 import vandyke.siamobile.util.GenUtil
 import vandyke.siamobile.util.SnackbarUtil
 import vandyke.siamobile.util.toHastings

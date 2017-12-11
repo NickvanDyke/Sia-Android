@@ -12,7 +12,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import kotlinx.android.synthetic.main.fragment_wallet_addresses.*
 import vandyke.siamobile.R
-import vandyke.siamobile.ui.custom.TextCopyAdapter
+import vandyke.siamobile.ui.common.TextCopyAdapter
 import vandyke.siamobile.util.observe
 
 class WalletAddressesDialog : BaseWalletFragment() {

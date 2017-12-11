@@ -12,7 +12,7 @@ import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
 import vandyke.siamobile.R
-import vandyke.siamobile.backend.data.renter.SiaFile
+import vandyke.siamobile.data.data.renter.SiaFile
 import vandyke.siamobile.util.GenUtil
 
 class FileHolder(itemView: View) : NodeHolder(itemView) {

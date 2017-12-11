@@ -10,8 +10,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.SharedPreferences
-import vandyke.siamobile.backend.networking.SiaApi
-import vandyke.siamobile.backend.siad.SiadService
+import vandyke.siamobile.data.local.Prefs
+import vandyke.siamobile.data.remote.SiaApi
+import vandyke.siamobile.data.siad.SiadService
 
 class GlobalPrefsListener(private val context: Context) : SharedPreferences.OnSharedPreferenceChangeListener {
 

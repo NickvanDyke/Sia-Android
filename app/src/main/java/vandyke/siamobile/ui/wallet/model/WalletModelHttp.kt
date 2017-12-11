@@ -6,7 +6,7 @@
 
 package vandyke.siamobile.ui.wallet.model
 
-import vandyke.siamobile.backend.networking.siaApi
+import vandyke.siamobile.data.remote.siaApi
 
 class WalletModelHttp : IWalletModel {
 

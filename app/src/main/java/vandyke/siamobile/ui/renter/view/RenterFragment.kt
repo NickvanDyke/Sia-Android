@@ -15,7 +15,7 @@ import android.view.MenuItem
 import android.view.View
 import kotlinx.android.synthetic.main.fragment_renter.*
 import vandyke.siamobile.R
-import vandyke.siamobile.backend.data.renter.SiaDir
+import vandyke.siamobile.data.data.renter.SiaDir
 import vandyke.siamobile.ui.BaseFragment
 import vandyke.siamobile.ui.renter.view.list.RenterAdapter
 import vandyke.siamobile.ui.renter.viewmodel.RenterViewModel

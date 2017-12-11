@@ -13,7 +13,8 @@ import android.os.Bundle
 import android.support.v7.preference.*
 import vandyke.siamobile.BuildConfig
 import vandyke.siamobile.R
-import vandyke.siamobile.ui.MainActivity
+import vandyke.siamobile.data.local.Prefs
+import vandyke.siamobile.ui.main.MainActivity
 
 /* the actual settings fragment, contained within SettingsFragment */
 class SettingsFragmentActual : PreferenceFragmentCompat() {

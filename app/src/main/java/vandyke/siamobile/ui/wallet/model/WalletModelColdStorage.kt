@@ -16,7 +16,7 @@
 //import vandyke.siamobile.backend.networking.Explorer
 //import vandyke.siamobile.backend.networking.SiaCallback
 //import vandyke.siamobile.backend.networking.SiaError
-//import vandyke.siamobile.ui.settings.Prefs
+//import vandyke.siamobile.data.local.Prefs
 //import vandyke.siamobile.util.SCUtil
 //import java.math.BigDecimal
 //import java.util.concurrent.atomic.AtomicInteger

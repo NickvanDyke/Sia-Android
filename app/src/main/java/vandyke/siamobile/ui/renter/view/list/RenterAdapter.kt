@@ -10,9 +10,9 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import vandyke.siamobile.R
-import vandyke.siamobile.backend.data.renter.SiaDir
-import vandyke.siamobile.backend.data.renter.SiaFile
-import vandyke.siamobile.backend.data.renter.SiaNode
+import vandyke.siamobile.data.data.renter.SiaDir
+import vandyke.siamobile.data.data.renter.SiaFile
+import vandyke.siamobile.data.data.renter.SiaNode
 import vandyke.siamobile.ui.renter.viewmodel.RenterViewModel
 
 class RenterAdapter(private val viewModel: RenterViewModel) : RecyclerView.Adapter<NodeHolder>() {

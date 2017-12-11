@@ -9,7 +9,7 @@ package vandyke.siamobile.util
 import android.content.Context
 import android.os.Environment
 import android.widget.Toast
-import vandyke.siamobile.ui.settings.Prefs
+import vandyke.siamobile.data.local.Prefs
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException

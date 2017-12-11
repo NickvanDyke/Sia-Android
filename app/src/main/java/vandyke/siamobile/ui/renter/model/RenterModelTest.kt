@@ -7,8 +7,8 @@
 package vandyke.siamobile.ui.renter.model
 
 import io.reactivex.Single
-import vandyke.siamobile.backend.data.renter.SiaDir
-import vandyke.siamobile.backend.data.renter.SiaFile
+import vandyke.siamobile.data.data.renter.SiaDir
+import vandyke.siamobile.data.data.renter.SiaFile
 import java.math.BigDecimal
 
 class RenterModelTest : IRenterModel {

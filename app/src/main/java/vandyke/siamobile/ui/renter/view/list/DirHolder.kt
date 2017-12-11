@@ -10,7 +10,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import vandyke.siamobile.R
-import vandyke.siamobile.backend.data.renter.SiaDir
+import vandyke.siamobile.data.data.renter.SiaDir
 import vandyke.siamobile.ui.renter.viewmodel.RenterViewModel
 import vandyke.siamobile.util.GenUtil
 

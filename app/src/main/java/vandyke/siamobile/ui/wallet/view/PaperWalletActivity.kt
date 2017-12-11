@@ -15,7 +15,7 @@ import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_wallet_paper.*
 import siawallet.Wallet
 import vandyke.siamobile.R
-import vandyke.siamobile.ui.custom.TextCopyAdapter
+import vandyke.siamobile.ui.common.TextCopyAdapter
 import vandyke.siamobile.util.GenUtil
 import vandyke.siamobile.util.SnackbarUtil
 

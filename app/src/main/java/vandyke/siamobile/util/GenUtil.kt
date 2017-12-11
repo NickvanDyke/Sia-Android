@@ -15,7 +15,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import vandyke.siamobile.ui.settings.Prefs
+import vandyke.siamobile.data.local.Prefs
 import java.math.BigDecimal
 import java.math.RoundingMode
 

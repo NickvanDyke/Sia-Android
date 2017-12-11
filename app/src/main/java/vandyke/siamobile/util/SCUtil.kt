@@ -6,7 +6,7 @@
 
 package vandyke.siamobile.util
 
-import vandyke.siamobile.ui.settings.Prefs
+import vandyke.siamobile.data.local.Prefs
 import java.math.BigDecimal
 
 val HASTINGS_PER_SC = BigDecimal("1000000000000000000000000")

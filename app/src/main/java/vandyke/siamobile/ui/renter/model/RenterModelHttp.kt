@@ -6,8 +6,8 @@
 
 package vandyke.siamobile.ui.renter.model
 
-import vandyke.siamobile.backend.data.renter.SiaDir
-import vandyke.siamobile.backend.networking.siaApi
+import vandyke.siamobile.data.data.renter.SiaDir
+import vandyke.siamobile.data.remote.siaApi
 
 class RenterModelHttp : IRenterModel {
 //    override fun getRootDir(callback: SiaCallback<SiaDir>) = Renter.files(SiaCallback({ it ->

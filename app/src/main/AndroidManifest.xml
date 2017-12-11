@@ -27,10 +27,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.DayNight">
 
-        <service android:name=".backend.siad.SiadService"/>
+        <service android:name=".data.siad.SiadService"/>
 
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".ui.main.MainActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/splashScreenTheme">

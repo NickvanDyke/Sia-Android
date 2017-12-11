@@ -18,10 +18,10 @@ import android.view.MenuItem
 import android.view.View
 import kotlinx.android.synthetic.main.fragment_wallet.*
 import vandyke.siamobile.R
-import vandyke.siamobile.backend.networking.SiaError
+import vandyke.siamobile.data.local.Prefs
+import vandyke.siamobile.data.remote.SiaError
 import vandyke.siamobile.ui.BaseFragment
-import vandyke.siamobile.ui.MainActivity
-import vandyke.siamobile.ui.settings.Prefs
+import vandyke.siamobile.ui.main.MainActivity
 import vandyke.siamobile.ui.wallet.view.childfragments.*
 import vandyke.siamobile.ui.wallet.view.transactionslist.TransactionAdapter
 import vandyke.siamobile.ui.wallet.viewmodel.WalletViewModel

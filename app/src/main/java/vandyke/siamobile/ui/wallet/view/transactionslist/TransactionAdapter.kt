@@ -12,7 +12,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import vandyke.siamobile.R
-import vandyke.siamobile.backend.data.wallet.TransactionData
+import vandyke.siamobile.data.data.wallet.TransactionData
 
 class TransactionAdapter : RecyclerView.Adapter<TransactionHolder>() {
     var transactions: List<TransactionData> = listOf()

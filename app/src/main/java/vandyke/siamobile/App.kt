@@ -10,8 +10,8 @@ import android.app.Application
 import android.content.SharedPreferences
 import android.os.Build
 import com.chibatching.kotpref.Kotpref
+import vandyke.siamobile.data.local.Prefs
 import vandyke.siamobile.ui.settings.GlobalPrefsListener
-import vandyke.siamobile.ui.settings.Prefs
 import vandyke.siamobile.util.NotificationUtil
 
 class App : Application() {
