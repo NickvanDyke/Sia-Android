@@ -5,4 +5,5 @@ import vandyke.siamobile.data.data.renter.SiaDir
 
 interface IRenterModel {
     fun getRootDir(): Single<SiaDir>
+    fun createNewDir(path: String)
 }

@@ -9,12 +9,14 @@ package vandyke.siamobile.ui.renter.view
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.design.widget.TabLayout
+import android.support.v7.app.AlertDialog
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import android.widget.EditText
 import kotlinx.android.synthetic.main.fragment_renter.*
 import vandyke.siamobile.R
 import vandyke.siamobile.data.data.renter.SiaDir
@@ -34,7 +36,7 @@ class RenterFragment : BaseFragment() {
     private lateinit var adapter: RenterAdapter
     private var programmaticallySelecting = true
 
-    var currentDir = SiaDir("home", null)
+    var currentDir: SiaDir = SiaDir(ROOT_DIR_NAME, null) /* this initialization is 100% temporary, and so that currentDir can be non-nullable */
         set(value) {
             /* set this flag so that programmatically selecting a tab doesn't trigger the onTabSelectedListener */
             programmaticallySelecting = true
@@ -72,7 +74,7 @@ class RenterFragment : BaseFragment() {
             override fun onTabUnselected(tab: TabLayout.Tab?) {}
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 if (!programmaticallySelecting)
-                    currentDir = currentDir.getParentDirAt(depth - renterFilepath.selectedTabPosition - 1)
+                    viewModel.currentDir.value = currentDir.getParentDirAt(depth - renterFilepath.selectedTabPosition - 1)
             }
         })
 
@@ -84,7 +86,17 @@ class RenterFragment : BaseFragment() {
 
         /* FAB stuff */
         fabAddDir.setOnClickListener {
-
+            fabMenu.collapse()
+            val dialogView = layoutInflater.inflate(R.layout.fragment_renter_add_dir, null, false)
+            AlertDialog.Builder(context!!)
+                    .setTitle("New directory")
+                    .setView(dialogView)
+                    .setPositiveButton("Create", { dialogInterface, i ->
+                        viewModel.createNewDir(dialogView.findViewById<EditText>(R.id.newDirName).text.toString())
+                        viewModel.refreshFiles()
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .show()
         }
 
         /* observe viewModel stuff */
@@ -118,5 +130,9 @@ class RenterFragment : BaseFragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.toolbar_renter, menu)
+    }
+
+    companion object {
+        val ROOT_DIR_NAME = "home"
     }
 }

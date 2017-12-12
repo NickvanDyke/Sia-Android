@@ -16,4 +16,8 @@ class RenterModelHttp : IRenterModel {
         it.files.forEach { rootDir.addSiaFile(it) }
         rootDir
     }!!
+
+    override fun createNewDir(path: String) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 }

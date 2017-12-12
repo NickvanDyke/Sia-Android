@@ -25,8 +25,8 @@ class RenterViewModel(application: Application) : AndroidViewModel(application) 
     fun refreshFiles() {
         model.getRootDir().subscribeApi({
             rootDir.value = it
-            if (currentDir.value == null)
-                currentDir.value = it
+//            if (currentDir.value == null)
+            currentDir.value = it // TODO: determine if currentDir should be changed, if the filepath leading to it has been affected
         }, ::setError)
     }
 
@@ -36,6 +36,11 @@ class RenterViewModel(application: Application) : AndroidViewModel(application) 
             return true
         }
         return false
+    }
+
+    fun createNewDir(name: String) {
+        /* passes the full path to the new directory's location, minus the root directory */
+        model.createNewDir("${currentDir.value?.fullPathString?.replace("home/", "") ?: ""}$name")
     }
 
     private fun setError(err: SiaError) {

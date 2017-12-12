@@ -13,7 +13,8 @@ class SiaDir(override val name: String, override val parent: SiaDir?) : SiaNode(
     private val files: MutableList<SiaFile> = mutableListOf()
     private val directories: MutableList<SiaDir> = mutableListOf()
 
-    val nodes: List<SiaNode> by lazy { directories + files }
+    val nodes: List<SiaNode>
+        get() = directories + files
 
     override val size: BigDecimal // bytes
         get() {
@@ -29,6 +30,12 @@ class SiaDir(override val name: String, override val parent: SiaDir?) : SiaNode(
     val fullPathString: String
         get() = fullPathStringHelper("")
 
+
+    /**
+     * Returns the directory that's the given number of levels above the current one.
+     * If it finds a null parent directory before reaching the desired height, it will
+     * return the most recent non-null directory in the path it followed up the tree
+     */
     fun getParentDirAt(level: Int): SiaDir {
         var current: SiaDir = this
         var height = level
@@ -39,16 +46,24 @@ class SiaDir(override val name: String, override val parent: SiaDir?) : SiaNode(
         return current
     }
 
-    fun addSiaFile(file: SiaFile) = addSiaFileHelper(file, file.siapath.split("/"), 0)
+    /**
+     * Adds the SiaFile at it's siapath (relative to the directory this is being called on).
+     * If the siapath has directories that don't exist, they will be created along the way.
+     */
+    fun addSiaFile(file: SiaFile) = addSiaFileHelper(file, 0)
 
-    fun addSiaDir(dir: SiaDir) = directories.add(dir)
+    fun addSiaDir(dir: SiaDir) = addSiaDirHelper(dir, 0)
 
     /**
-     * @param file            the file being added
-     * @param path            should be relevant to the directory this method is being called on
-     * @param currentLocation the index in path that we're currently at
+     * Adds an empty SiaDir at the given path (relative to the directory it's being called on).
+     * Will not replace existing SiaDirs at the given location.
      */
-    private fun addSiaFileHelper(file: SiaFile, path: List<String>, currentLocation: Int) {
+    fun addEmptySiaDirAtPath(path: List<String>) = addSiaDirAtPathHelper(path, 0)
+
+    fun addImmediateSiaDir(dir: SiaDir) = directories.add(dir)
+
+    private fun addSiaFileHelper(file: SiaFile, currentLocation: Int) {
+        val path = file.siapath.split("/")
         if (path.size == 1 || path.size == currentLocation + 1) { // the file belongs in this directory
             files.add(file)
         } else {
@@ -58,7 +73,43 @@ class SiaDir(override val name: String, override val parent: SiaDir?) : SiaNode(
                 nextDir = SiaDir(currentName, this)
                 directories += nextDir
             }
-            nextDir.addSiaFileHelper(file, path, currentLocation + 1)
+            nextDir.addSiaFileHelper(file, currentLocation + 1)
+        }
+    }
+
+    private fun addSiaDirHelper(dir: SiaDir, currentLocation: Int) {
+        val path = dir.fullPath
+        if (path.size == 1 || path.size == currentLocation + 1) {
+            directories.add(dir)
+        } else {
+            val currentDir = path[currentLocation]
+            var nextDir = getImmediateDir(currentDir.name)
+            if (nextDir == null) {
+                nextDir = SiaDir(currentDir.name, this)
+                directories.add(nextDir)
+            }
+            nextDir.addSiaDirHelper(dir, currentLocation + 1)
+        }
+    }
+
+    private fun addSiaDirAtPathHelper(path: List<String>, currentLocation: Int) {
+        println("at dir $name")
+        if (path.size == 1 || path.size == currentLocation + 1) {
+            println("reached the directory that the new dir belongs in")
+            if (directories.firstOrNull { it.name == path[path.size - 1] } == null) {
+                println("didn't find existing dir with same name - adding new one")
+                directories.add(SiaDir(path[path.size - 1], this))
+            }
+        } else {
+            println("searching for next dir in path")
+            val currentDir = path[currentLocation]
+            var nextDir = getImmediateDir(currentDir)
+            if (nextDir == null) {
+                println("next dir in path doesn't exist - creating it")
+                nextDir = SiaDir(currentDir, this)
+                directories.add(nextDir)
+            }
+            nextDir.addSiaDirAtPathHelper(path, currentLocation + 1)
         }
     }
 
