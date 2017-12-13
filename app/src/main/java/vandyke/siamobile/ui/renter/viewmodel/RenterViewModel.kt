@@ -11,6 +11,7 @@ import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.MutableLiveData
 import vandyke.siamobile.data.data.renter.SiaDir
 import vandyke.siamobile.data.data.renter.SiaFile
+import vandyke.siamobile.data.data.renter.SiaNode
 import vandyke.siamobile.data.remote.SiaError
 import vandyke.siamobile.data.remote.subscribeApi
 import vandyke.siamobile.ui.renter.model.IRenterModel
@@ -19,6 +20,7 @@ import vandyke.siamobile.ui.renter.model.RenterModelTest
 class RenterViewModel(application: Application) : AndroidViewModel(application) {
     val rootDir = MutableLiveData<SiaDir>()
     val currentDir = MutableLiveData<SiaDir>()
+    val detailsItem = MutableLiveData<SiaNode>()
     val error = MutableLiveData<SiaError>()
 
     private val model: IRenterModel = RenterModelTest()
@@ -43,6 +45,13 @@ class RenterViewModel(application: Application) : AndroidViewModel(application) 
         return false
     }
 
+    fun displayDetails(node: SiaNode) {
+        detailsItem.value = node
+    }
+
+    /**
+     * Creates a new directory with the given name in the current directory
+     */
     fun createNewDir(name: String) {
         /* passes the full path to the new directory's location, minus the root directory */
         model.createNewDir("${currentDir.value!!.pathStringWithoutRoot}$name").subscribeApi({
@@ -51,13 +60,15 @@ class RenterViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun deleteDir(dir: SiaDir) {
-        model.deleteDir(dir)
-        refreshFiles()
+        model.deleteDir(dir).subscribeApi({
+            refreshFiles()
+        }, ::setError)
     }
 
     fun deleteFile(file: SiaFile) {
-        model.deleteFile(file)
-        refreshFiles()
+        model.deleteFile(file).subscribeApi({
+            refreshFiles()
+        }, ::setError)
     }
 
     private fun setError(err: SiaError) {

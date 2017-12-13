@@ -15,7 +15,7 @@ import vandyke.siamobile.data.data.renter.SiaFile
 import vandyke.siamobile.data.data.renter.SiaNode
 import vandyke.siamobile.ui.renter.viewmodel.RenterViewModel
 
-class RenterAdapter(private val viewModel: RenterViewModel) : RecyclerView.Adapter<NodeHolder>() {
+class NodesAdapter(val viewModel: RenterViewModel) : RecyclerView.Adapter<NodeHolder>() {
 
     private val DIR = 0
     private val FILE = 1
@@ -39,13 +39,9 @@ class RenterAdapter(private val viewModel: RenterViewModel) : RecyclerView.Adapt
             holder.bind(nodes[position] as SiaFile, viewModel)
     }
 
-    override fun getItemViewType(position: Int): Int {
-        return if (nodes[position] is SiaDir) DIR else FILE
-    }
+    override fun getItemViewType(position: Int) = if (nodes[position] is SiaDir) DIR else FILE
 
-    override fun getItemCount(): Int {
-        return nodes.size
-    }
+    override fun getItemCount() = nodes.size
 
     fun displayDir(dir: SiaDir) {
         nodes = dir.nodes

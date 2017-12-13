@@ -36,7 +36,7 @@ class RenterModelHttp : IRenterModel {
         }
     }
 
-    override fun deleteDir(dir: SiaDir) {
+    override fun deleteDir(dir: SiaDir): Completable {
         Prefs.renterDirs.remove(dir.pathStringWithoutRoot)
         dir.dirs.forEach {
             deleteDir(it)
@@ -44,6 +44,9 @@ class RenterModelHttp : IRenterModel {
         dir.files.forEach {
             deleteFile(it)
         }
+        return Completable.complete()
+        // TODO: probably want to return a completable that completes when all file deletes have completed (as well as the recursive ones). Use zip,
+        // or use Completable.merge?
     }
 
     override fun addFile(siapath: String, source: String, dataPieces: Int, parityPieces: Int): Completable {

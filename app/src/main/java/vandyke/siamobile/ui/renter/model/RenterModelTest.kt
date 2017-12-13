@@ -30,8 +30,8 @@ class RenterModelTest : IRenterModel {
         // or by size (or even last modified date if I ever keep that locally). Should have filter setting in fragment
         val rootDir = SiaDir(ROOT_DIR_NAME, null)
         files.forEach {
-            /* add a local directory for the file, so that later if it's deleted, it's directory remains */
             rootDir.addSiaNode(it)
+            /* add a local directory for the file, so that later if it's deleted, it's directory remains */
             Prefs.renterDirs.add(it.parent.pathStringWithoutRoot)
         }
         Prefs.renterDirs.forEach {
@@ -49,7 +49,7 @@ class RenterModelTest : IRenterModel {
         }
     }
 
-    override fun deleteDir(dir: SiaDir) {
+    override fun deleteDir(dir: SiaDir): Completable {
         Prefs.renterDirs.remove(dir.pathStringWithoutRoot)
         dir.dirs.forEach {
             deleteDir(it)
@@ -57,10 +57,10 @@ class RenterModelTest : IRenterModel {
         dir.files.forEach {
             deleteFile(it)
         }
+        return Completable.complete()
     }
 
     override fun addFile(siapath: String, source: String, dataPieces: Int, parityPieces: Int): Completable {
-//        Prefs.renterDirs.add(siapath.substring(0, siapath.lastIndexOf("/")))
         files.add(SiaFile(siapath, filesize = BigDecimal("098123")))
         return Completable.complete()
     }

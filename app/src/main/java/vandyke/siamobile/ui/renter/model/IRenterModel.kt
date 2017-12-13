@@ -8,7 +8,7 @@ import vandyke.siamobile.data.data.renter.SiaFile
 interface IRenterModel {
     fun getRootDir(): Single<SiaDir>
     fun createNewDir(path: String): Completable
-    fun deleteDir(dir: SiaDir)
+    fun deleteDir(dir: SiaDir): Completable
     fun addFile(siapath: String, source: String, dataPieces: Int, parityPieces: Int): Completable
     fun deleteFile(file: SiaFile): Completable
 }

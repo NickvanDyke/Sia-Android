@@ -9,7 +9,6 @@ package vandyke.siamobile.ui.renter.view.list
 import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
-import android.widget.PopupMenu
 import android.widget.TextView
 import vandyke.siamobile.R
 import vandyke.siamobile.data.data.renter.SiaFile
@@ -27,15 +26,7 @@ class FileHolder(itemView: View) : NodeHolder(itemView) {
         size.text = GenUtil.readableFilesizeString(file.size)
         itemView.setOnClickListener(null)
         more.setOnClickListener {
-            val menu = PopupMenu(itemView.context, more)
-            menu.inflate(R.menu.file_menu)
-            menu.setOnMenuItemClickListener {
-                when (it.itemId) {
-                    R.id.fileDelete -> viewModel.deleteFile(file)
-                }
-                true
-            }
-            menu.show()
+            viewModel.displayDetails(file)
         }
     }
 }

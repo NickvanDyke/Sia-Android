@@ -12,16 +12,14 @@ import android.support.design.widget.TabLayout
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
+import android.view.*
 import android.widget.EditText
 import kotlinx.android.synthetic.main.fragment_renter.*
 import vandyke.siamobile.R
 import vandyke.siamobile.data.data.renter.SiaDir
+import vandyke.siamobile.data.data.renter.SiaFile
 import vandyke.siamobile.ui.main.BaseFragment
-import vandyke.siamobile.ui.renter.view.list.RenterAdapter
+import vandyke.siamobile.ui.renter.view.list.NodesAdapter
 import vandyke.siamobile.ui.renter.viewmodel.RenterViewModel
 import vandyke.siamobile.util.observe
 
@@ -33,7 +31,7 @@ class RenterFragment : BaseFragment() {
     lateinit var viewModel: RenterViewModel
 
     private var depth = 0
-    private lateinit var adapter: RenterAdapter
+    private lateinit var adapter: NodesAdapter
     private var programmaticallySelecting = true
 
     var currentDir: SiaDir = SiaDir(ROOT_DIR_NAME, null) /* this initialization is 100% temporary, and so that currentDir can be non-nullable */
@@ -66,7 +64,7 @@ class RenterFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewModel = ViewModelProviders.of(this).get(RenterViewModel::class.java)
         filesList.addItemDecoration(DividerItemDecoration(filesList.context, (filesList.layoutManager as LinearLayoutManager).orientation))
-        adapter = RenterAdapter(viewModel)
+        adapter = NodesAdapter(viewModel)
         filesList.adapter = adapter
 
         renterFilepath.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
@@ -88,14 +86,20 @@ class RenterFragment : BaseFragment() {
         fabAddDir.setOnClickListener {
             fabMenu.collapse()
             val dialogView = layoutInflater.inflate(R.layout.fragment_renter_add_dir, null, false)
-            AlertDialog.Builder(context!!)
+            val dialog = AlertDialog.Builder(context!!)
                     .setTitle("New directory")
                     .setView(dialogView)
                     .setPositiveButton("Create", { dialogInterface, i ->
                         viewModel.createNewDir(dialogView.findViewById<EditText>(R.id.newDirName).text.toString())
                     })
                     .setNegativeButton("Cancel", null)
-                    .show()
+                    .create()
+            dialog.show()
+            dialog.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+        }
+
+        fabAddFile.setOnClickListener {
+            // TODO
         }
 
         /* observe viewModel stuff */
@@ -110,6 +114,13 @@ class RenterFragment : BaseFragment() {
         viewModel.error.observe(this) {
             it.snackbar(coordinator) // TODO: make FAB move up when snackbar appears
             renterSwipeRefresh.isRefreshing = false
+        }
+
+        viewModel.detailsItem.observe(this) {
+            if (it is SiaDir)
+                DirBottomSheetFragment().show(childFragmentManager, null)
+            else if (it is SiaFile)
+                FileBottomSheetFragment().show(childFragmentManager, null)
         }
     }
 

@@ -3,19 +3,18 @@
   ~
   ~ This file is subject to the terms and conditions defined in 'LICENSE.md'
   -->
-<android.support.constraint.ConstraintLayout
-    android:background="?android:attr/selectableItemBackground"
-    android:layout_height="wrap_content"
-    android:layout_width="match_parent"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?android:attr/selectableItemBackground">
 
     <TextView
         android:id="@+id/dirName"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
-        android:layout_width="wrap_content"
         android:text="Name"
         android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/dirSize"
@@ -24,11 +23,11 @@
 
     <ImageView
         android:id="@+id/dirImage"
+        android:layout_width="36dp"
         android:layout_height="36dp"
         android:layout_marginBottom="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:layout_width="36dp"
         android:src="@drawable/ic_folder"
         android:tint="@android:color/darker_gray"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -37,12 +36,25 @@
 
     <TextView
         android:id="@+id/dirSize"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:layout_width="wrap_content"
         android:text="Size"
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="@+id/dirName"
         app:layout_constraintTop_toBottomOf="@+id/dirName" />
+
+    <ImageButton
+        android:id="@+id/dirMore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="8dp"
+        android:background="@null"
+        android:src="@drawable/ic_overflow"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </android.support.constraint.ConstraintLayout>

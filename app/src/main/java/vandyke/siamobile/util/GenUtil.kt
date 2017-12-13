@@ -36,24 +36,25 @@ object GenUtil {
     fun hideSoftKeyboard(activity: Activity?) {
         if (activity == null)
             return
-        val inputMethodManager = activity.getSystemService(
-                Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethodManager.hideSoftInputFromWindow(
-                activity.currentFocus.windowToken, 0)
+        val inputMethodManager = activity.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(activity.currentFocus.windowToken, 0)
     }
 
     fun hideSoftKeyboard(view: View?) {
         if (view == null)
             return
-        val inputMethodManager = view.context.getSystemService(
-                Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethodManager.hideSoftInputFromWindow(
-                view.applicationWindowToken, 0)
+        val inputMethodManager = view.context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(view.applicationWindowToken, 0)
+    }
+
+    fun showSoftKeyboard(context: Context) {
+        val inputMethodManager = context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
     }
 
     fun copyToClipboard(context: Context, text: CharSequence) {
         val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        val clip = ClipData.newPlainText("Sia Mobile copy", text)
+        val clip = ClipData.newPlainText("Sia Mobile copied text", text)
         clipboard.primaryClip = clip
     }
 
@@ -65,16 +66,15 @@ object GenUtil {
             size = size.divide(kilo, 10, RoundingMode.HALF_UP)
             i++
         }
-        val sizeString: String
-        when (i) {
-            0 -> sizeString = "B"
-            1 -> sizeString = "KB"
-            2 -> sizeString = "MB"
-            3 -> sizeString = "GB"
-            4 -> sizeString = "TB"
-            5 -> sizeString = "PB"
-            6 -> sizeString = "EB"
-            else -> sizeString = "Super big"
+        val sizeString = when (i) {
+            0 -> "B"
+            1 -> "KB"
+            2 -> "MB"
+            3 -> "GB"
+            4 -> "TB"
+            5 -> "PB"
+            6 -> "EB"
+            else -> "Super big"
         }
 
         return String.format("%.${Prefs.displayedDecimalPrecision}f %s", size, sizeString)

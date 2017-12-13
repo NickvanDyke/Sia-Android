@@ -52,11 +52,10 @@ class SiaDir(override val name: String, override val parent: SiaDir?) : SiaNode(
         get() = pathHelper(mutableListOf())
 
     val pathString: String
-        get() = pathStringHelper("")
+        get() = pathStringHelper("").replace("$name/", "$name")
 
     val pathStringWithoutRoot: String
-        get() = pathStringHelper("").replace("${RenterFragment.ROOT_DIR_NAME}/", "")
-
+        get() = pathStringHelper("").replace("${RenterFragment.ROOT_DIR_NAME}/", "").replace("$name/", "$name")
 
     /**
      * Returns the directory that's the given number of levels above the current one.
@@ -155,7 +154,7 @@ class SiaDir(override val name: String, override val parent: SiaDir?) : SiaNode(
     /* functions for printing this directory's contents in a file explorer-like format */
     fun printAll(p: PrintStream = System.out, indent: Int = 0) {
         fun indent(p: PrintStream, indent: Int) {
-            for (i in 0..indent - 1) {
+            for (i in 0 until indent) {
                 if (i < indent - 1)
                     p.print("   ")
                 else
