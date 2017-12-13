@@ -9,5 +9,6 @@ interface IRenterModel {
     fun getRootDir(): Single<SiaDir>
     fun createNewDir(path: String): Completable
     fun deleteDir(dir: SiaDir)
+    fun addFile(siapath: String, source: String, dataPieces: Int, parityPieces: Int): Completable
     fun deleteFile(file: SiaFile): Completable
 }

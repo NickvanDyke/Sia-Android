@@ -13,6 +13,7 @@ import android.widget.PopupMenu
 import android.widget.TextView
 import vandyke.siamobile.R
 import vandyke.siamobile.data.data.renter.SiaFile
+import vandyke.siamobile.ui.renter.viewmodel.RenterViewModel
 import vandyke.siamobile.util.GenUtil
 
 class FileHolder(itemView: View) : NodeHolder(itemView) {
@@ -21,18 +22,18 @@ class FileHolder(itemView: View) : NodeHolder(itemView) {
     val size: TextView = itemView.findViewById(R.id.fileSize)
     val more: ImageButton = itemView.findViewById(R.id.fileMore)
 
-    fun bind(node: SiaFile) {
-        name.text = node.name
-        size.text = GenUtil.readableFilesizeString(node.size)
+    fun bind(file: SiaFile, viewModel: RenterViewModel) {
+        name.text = file.name
+        size.text = GenUtil.readableFilesizeString(file.size)
         itemView.setOnClickListener(null)
         more.setOnClickListener {
             val menu = PopupMenu(itemView.context, more)
             menu.inflate(R.menu.file_menu)
-            // TODO: need to access renter's view model from here, to call delete/rename/etc methods on it
             menu.setOnMenuItemClickListener {
                 when (it.itemId) {
-//                        R.id.fileDownload ->
+                    R.id.fileDelete -> viewModel.deleteFile(file)
                 }
+                true
             }
             menu.show()
         }

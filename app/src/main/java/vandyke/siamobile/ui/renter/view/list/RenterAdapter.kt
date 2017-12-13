@@ -36,7 +36,7 @@ class RenterAdapter(private val viewModel: RenterViewModel) : RecyclerView.Adapt
         if (holder is DirHolder)
             holder.bind(nodes[position] as SiaDir, viewModel)
         else if (holder is FileHolder)
-            holder.bind(nodes[position] as SiaFile)
+            holder.bind(nodes[position] as SiaFile, viewModel)
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -47,7 +47,7 @@ class RenterAdapter(private val viewModel: RenterViewModel) : RecyclerView.Adapt
         return nodes.size
     }
 
-    fun changeDir(dir: SiaDir) {
+    fun displayDir(dir: SiaDir) {
         nodes = dir.nodes
         notifyDataSetChanged()
     }

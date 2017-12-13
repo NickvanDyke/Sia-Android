@@ -19,9 +19,9 @@ class DirHolder(itemView: View) : NodeHolder(itemView) {
     val name: TextView = itemView.findViewById(R.id.dirName)
     val size: TextView = itemView.findViewById(R.id.dirSize)
 
-    fun bind(node: SiaDir, viewModel: RenterViewModel) {
-        name.text = node.name
-        size.text = GenUtil.readableFilesizeString(node.size)
-        itemView.setOnClickListener { v -> viewModel.currentDir.value = node }
+    fun bind(dir: SiaDir, viewModel: RenterViewModel) {
+        name.text = dir.name
+        size.text = GenUtil.readableFilesizeString(dir.size)
+        itemView.setOnClickListener { v -> viewModel.changeDir(dir) }
     }
 }

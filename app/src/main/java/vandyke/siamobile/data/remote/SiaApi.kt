@@ -82,6 +82,9 @@ interface SiaApiInterface {
     @POST("renter/delete/{siapath}")
     fun renterDelete(@Path("siapath") siapath: String): Completable
 
+    @POST("renter/upload/{siapath}")
+    fun renterUpload(@Path("siapath") siapath: String, @Query("source") source: String, @Query("datapieces") dataPieces: Int, @Query("paritypieces") parityPieces: Int): Completable
+
     /* consensus API */
     @GET("consensus")
     fun consensus(): Single<ConsensusData>

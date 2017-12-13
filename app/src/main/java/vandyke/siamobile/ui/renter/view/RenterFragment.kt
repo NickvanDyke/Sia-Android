@@ -40,8 +40,8 @@ class RenterFragment : BaseFragment() {
         set(value) {
             /* set this flag so that programmatically selecting a tab doesn't trigger the onTabSelectedListener */
             programmaticallySelecting = true
-            val oldPath = field.fullPath
-            val newPath = value.fullPath
+            val oldPath = field.path
+            val newPath = value.path
             depth = newPath.size
             /* find the point at which the path differs */
             val breakpoint = (0 until maxOf(newPath.size, oldPath.size)).firstOrNull {
@@ -58,7 +58,7 @@ class RenterFragment : BaseFragment() {
                 renterFilepath.addTab(renterFilepath.newTab().setText(newPath[i].name), true)
             /* scroll the tabs all the way to the right */
             renterFilepath.postDelayed({ renterFilepath.fullScroll(TabLayout.FOCUS_RIGHT) }, 5)
-            adapter.changeDir(value)
+            adapter.displayDir(value)
             programmaticallySelecting = false
             field = value
         }
@@ -74,7 +74,7 @@ class RenterFragment : BaseFragment() {
             override fun onTabUnselected(tab: TabLayout.Tab?) {}
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 if (!programmaticallySelecting)
-                    viewModel.currentDir.value = currentDir.getParentDirAt(depth - renterFilepath.selectedTabPosition - 1)
+                    viewModel.changeDir(currentDir.getParentDirAt(depth - renterFilepath.selectedTabPosition - 1))
             }
         })
 
