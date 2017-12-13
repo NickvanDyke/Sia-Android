@@ -14,6 +14,7 @@ import vandyke.siamobile.data.remote.SiaError
 import vandyke.siamobile.data.remote.subscribeApi
 import vandyke.siamobile.ui.renter.model.IRenterModel
 import vandyke.siamobile.ui.renter.model.RenterModelTest
+import vandyke.siamobile.ui.renter.view.RenterFragment.Companion.ROOT_DIR_NAME
 
 class RenterViewModel(application: Application) : AndroidViewModel(application) {
     val rootDir = MutableLiveData<SiaDir>()
@@ -40,7 +41,14 @@ class RenterViewModel(application: Application) : AndroidViewModel(application) 
 
     fun createNewDir(name: String) {
         /* passes the full path to the new directory's location, minus the root directory */
-        model.createNewDir("${currentDir.value?.fullPathString?.replace("home/", "") ?: ""}$name")
+        model.createNewDir("${currentDir.value?.fullPathString?.replace("$ROOT_DIR_NAME/", "") ?: ""}$name").subscribeApi({
+            refreshFiles()
+        }, ::setError)
+    }
+
+    fun deleteDir(dir: SiaDir) {
+        model.deleteDir(dir)
+        refreshFiles()
     }
 
     private fun setError(err: SiaError) {

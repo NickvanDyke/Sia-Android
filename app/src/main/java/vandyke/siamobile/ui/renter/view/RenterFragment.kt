@@ -93,7 +93,6 @@ class RenterFragment : BaseFragment() {
                     .setView(dialogView)
                     .setPositiveButton("Create", { dialogInterface, i ->
                         viewModel.createNewDir(dialogView.findViewById<EditText>(R.id.newDirName).text.toString())
-                        viewModel.refreshFiles()
                     })
                     .setNegativeButton("Cancel", null)
                     .show()
@@ -109,7 +108,7 @@ class RenterFragment : BaseFragment() {
         }
 
         viewModel.error.observe(this) {
-            it.snackbar(view)
+            it.snackbar(coordinator) // TODO: make FAB move up when snackbar appears
             renterSwipeRefresh.isRefreshing = false
         }
     }

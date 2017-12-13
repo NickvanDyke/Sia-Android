@@ -28,6 +28,7 @@ class FileHolder(itemView: View) : NodeHolder(itemView) {
         more.setOnClickListener {
             val menu = PopupMenu(itemView.context, more)
             menu.inflate(R.menu.file_menu)
+            // TODO: need to access renter's view model from here, to call delete/rename/etc methods on it
             menu.setOnMenuItemClickListener {
                 when (it.itemId) {
 //                        R.id.fileDownload ->

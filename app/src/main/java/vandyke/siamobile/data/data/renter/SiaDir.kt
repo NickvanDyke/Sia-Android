@@ -10,8 +10,8 @@ import java.io.PrintStream
 import java.math.BigDecimal
 
 class SiaDir(override val name: String, override val parent: SiaDir?) : SiaNode() {
-    private val files: MutableList<SiaFile> = mutableListOf()
-    private val directories: MutableList<SiaDir> = mutableListOf()
+    val files: MutableList<SiaFile> = mutableListOf()
+    val directories: MutableList<SiaDir> = mutableListOf()
 
     val nodes: List<SiaNode>
         get() = directories + files
@@ -59,8 +59,6 @@ class SiaDir(override val name: String, override val parent: SiaDir?) : SiaNode(
      * Will not replace existing SiaDirs at the given location.
      */
     fun addEmptySiaDirAtPath(path: List<String>) = addSiaDirAtPathHelper(path, 0)
-
-    fun addImmediateSiaDir(dir: SiaDir) = directories.add(dir)
 
     private fun addSiaFileHelper(file: SiaFile, currentLocation: Int) {
         val path = file.siapath.split("/")

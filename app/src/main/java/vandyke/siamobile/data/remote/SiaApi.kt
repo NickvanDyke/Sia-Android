@@ -16,10 +16,7 @@ import okhttp3.Request
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Query
-import retrofit2.http.Url
+import retrofit2.http.*
 import vandyke.siamobile.data.data.consensus.ConsensusData
 import vandyke.siamobile.data.data.explorer.ExplorerData
 import vandyke.siamobile.data.data.explorer.ExplorerHashData
@@ -82,6 +79,9 @@ interface SiaApiInterface {
     @GET("renter/files")
     fun renterFiles(): Single<RenterFilesData>
 
+    @POST("renter/delete/{siapath}")
+    fun renterDelete(@Path("siapath") siapath: String): Completable
+
     /* consensus API */
     @GET("consensus")
     fun consensus(): Single<ConsensusData>
@@ -129,7 +129,10 @@ fun <T> Single<T>.subscribeApi(onNext: (T) -> Unit, onError: (SiaError) -> Unit)
     this.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(onNext, {
-                onError(SiaError(it))
+                if (it is SiaError)
+                    onError(it)
+                else
+                    onError(SiaError(it))
             })
 }
 
@@ -137,6 +140,9 @@ fun Completable.subscribeApi(onNext: () -> Unit, onError: (SiaError) -> Unit) {
     this.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(onNext, {
-                onError(SiaError(it))
+                if (it is SiaError)
+                    onError(it)
+                else
+                    onError(SiaError(it))
             })
 }
