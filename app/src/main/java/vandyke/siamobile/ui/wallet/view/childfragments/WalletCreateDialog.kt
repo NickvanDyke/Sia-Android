@@ -54,19 +54,6 @@ class WalletCreateDialog : BaseWalletFragment() {
 
 
     companion object {
-        fun showCsWarning(context: Context) {
-            AlertDialog.Builder(context)
-                    .setTitle("IMPORTANT")
-                    .setMessage("You just created a wallet while in cold storage mode. While in cold storage mode," +
-                            " Sia Mobile is not connected to the Sia network and does not have a copy of the Sia blockchain. Normally this would mean you can't " +
-                            "view your balance and transactions, but Sia Mobile ESTIMATES your CONFIRMED balance and transactions using explore.sia.tech." +
-                            "\n\nIt also means certain functions that require the blockchain or a connection to the network will" +
-                            " be unavailable - most importantly, you can't send coins from a cold storage wallet. If you wish to use these unavailable functions," +
-                            " you can, AT ANY TIME, load your wallet seed on a full node (such as Sia-UI for desktop, or Sia Mobile in local full node mode)" +
-                            " to access and interact with your previously received coins.")
-                    .setPositiveButton("I have read and understood this", null)
-                    .show()
-        }
 
         fun showSeed(seed: String, context: Context) {
             val msg = "Below is your wallet seed. Your wallet's addresses are generated using this seed. Therefore, any coins you " +

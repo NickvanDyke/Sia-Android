@@ -51,14 +51,7 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".ui.settings.ModesActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait"/>
-        <activity
             android:name=".ui.wallet.view.ScannerActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".ui.about.SetupRemoteActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
     </application>

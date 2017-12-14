@@ -14,43 +14,22 @@ import android.support.v7.preference.*
 import vandyke.siamobile.BuildConfig
 import vandyke.siamobile.R
 import vandyke.siamobile.data.local.Prefs
-import vandyke.siamobile.ui.main.MainActivity
+import vandyke.siamobile.data.siad.SiadService
 
 /* the actual settings fragment, contained within SettingsFragment */
 class SettingsFragmentActual : PreferenceFragmentCompat() {
-    private val SELECT_PICTURE = 1
+
     private lateinit var prefsListener: SharedPreferences.OnSharedPreferenceChangeListener
 
-    private lateinit var operation: PreferenceCategory
-    private lateinit var operationMode: ListPreference
-    private lateinit var remoteAddress: EditTextPreference
-    private lateinit var apiPass: EditTextPreference
+    private lateinit var siaNodeCategory: PreferenceCategory
     private lateinit var siaNodeWakeLock: SwitchPreferenceCompat
-    private lateinit var runLocalNodeOffWifi: SwitchPreferenceCompat
-    private lateinit var useExternal: SwitchPreferenceCompat
-    private lateinit var minBattery: EditTextPreference
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.settings)
 
-        operation = findPreference("operationCategory") as PreferenceCategory
-        operationMode = findPreference("operationMode") as ListPreference
-        remoteAddress = findPreference("remoteAddress") as EditTextPreference
-        apiPass = findPreference("apiPass") as EditTextPreference
-        runLocalNodeOffWifi = findPreference("runLocalNodeOffWifi") as SwitchPreferenceCompat
+        siaNodeCategory = findPreference("siaNodeCategory") as PreferenceCategory
         siaNodeWakeLock = findPreference("SiaNodeWakeLock") as SwitchPreferenceCompat
 //        useExternal = findPreference("useExternal") as SwitchPreferenceCompat
-        minBattery = findPreference("localNodeMinBattery") as EditTextPreference
-        setRemoteSettingsVisibility()
-        setLocalSettingsVisibility()
-
-        operationMode.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, o ->
-            if (o == "view_explanation") {
-                activity!!.startActivityForResult(Intent(activity, ModesActivity::class.java), MainActivity.REQUEST_OPERATION_MODE)
-                return@OnPreferenceChangeListener false
-            }
-            return@OnPreferenceChangeListener true
-        }
 
 //        useExternal.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, o ->
 //            if (StorageUtil.isExternalStorageWritable) {
@@ -68,14 +47,6 @@ class SettingsFragmentActual : PreferenceFragmentCompat() {
             false
         }
 
-        minBattery.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, newValue ->
-            try {
-                return@OnPreferenceChangeListener Integer.parseInt(newValue as String) <= 100
-            } catch (e: Exception) {
-                return@OnPreferenceChangeListener false
-            }
-        }
-
         val decimalPrecision = findPreference("displayedDecimalPrecision") as EditTextPreference
         decimalPrecision.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, newValue ->
             try {
@@ -84,63 +55,24 @@ class SettingsFragmentActual : PreferenceFragmentCompat() {
                 return@OnPreferenceChangeListener false
             }
         }
-
-        when (Prefs.operationMode) {
-            "remote_full_node" -> operationMode.summary = "Remote full node"
-            "local_full_node" -> operationMode.summary = "Local full node"
-        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
             when (key) {
-                "operationMode" -> {
-                    setRemoteSettingsVisibility()
-                    setLocalSettingsVisibility()
-                    when (Prefs.operationMode) {
-                        "local_full_node" -> {
-                            operationMode.summary = "Local full node"
-                            operationMode.setValueIndex(1)
-                        }
-                        "remote_full_node" -> {
-                            operationMode.summary = "Remote full node"
-                            operationMode.setValueIndex(2)
-                        }
+                "SiaNodeWakeLock" -> SiadService.getService(context!!).subscribe { service ->
+                    /* If Siad is already running then we must tell the service to acquire/release its wake lock
+                       because normally it does so in start/stopSiad() */
+                    if (service.isSiadRunning) {
+                        if (Prefs.SiaNodeWakeLock)
+                            service.wakeLock.acquire()
+                        else if (service.wakeLock.isHeld)
+                            service.wakeLock.release()
                     }
                 }
-//                "darkMode" -> { // TODO: maybe eventually work on having it change in-app without having to restart
-//                    if (Prefs.darkMode)
-//                        (activity!! as AppCompatActivity).delegate.setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-//                    else
-//                        (activity!! as AppCompatActivity).delegate.setLocalNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-//                }
             }
         }
         Prefs.preferences.registerOnSharedPreferenceChangeListener(prefsListener)
-    }
-
-    private fun setRemoteSettingsVisibility() {
-        if (Prefs.operationMode == "remote_full_node") {
-            operation.addPreference(remoteAddress)
-            operation.addPreference(apiPass)
-        } else {
-            operation.removePreference(remoteAddress)
-            operation.removePreference(apiPass)
-        }
-    }
-
-    private fun setLocalSettingsVisibility() {
-        if (Prefs.operationMode == "local_full_node") {
-            operation.addPreference(siaNodeWakeLock)
-            operation.addPreference(runLocalNodeOffWifi)
-//            operation.addPreference(useExternal)
-            operation.addPreference(minBattery)
-        } else {
-            operation.removePreference(siaNodeWakeLock)
-            operation.removePreference(runLocalNodeOffWifi)
-//            operation.removePreference(useExternal)
-            operation.removePreference(minBattery)
-        }
     }
 }

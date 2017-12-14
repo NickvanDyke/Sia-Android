@@ -6,17 +6,6 @@
   -->
 
 <resources>
-    <string-array name="operation_modes_entries">
-        <item>View explanation</item>
-        <item>Local full node</item>
-        <item>Remote full node</item>
-    </string-array>
-    <string-array name="operation_modes_values">
-        <item>view_explanation</item>
-        <item>local_full_node</item>
-        <item>remote_full_node</item>
-    </string-array>
-
     <string-array name="startup_entries">
         <item>Renter</item>
         <item>Hosting</item>

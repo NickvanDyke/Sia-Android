@@ -49,7 +49,6 @@ class SiaError : Throwable {
             errorMessage.contains("another wallet rescan is already underway") -> Reason.WALLET_SCAN_IN_PROGRESS
             errorMessage.contains("wallet has not been encrypted yet") -> Reason.WALLET_NOT_ENCRYPTED
             errorMessage.contains("cannot init from seed until blockchain is synced") -> Reason.CANNOT_INIT_FROM_SEED_UNTIL_SYNCED
-            errorMessage.contains("unsupported on cold storage wallet") -> Reason.UNSUPPORTED_ON_COLD_WALLET
             errorMessage.contains("word not found in dictionary for given language") -> Reason.INVALID_WORD_IN_SEED
             errorMessage.contains("seed failed checksum verification") -> Reason.INVALID_SEED
             /* explorer */
@@ -100,8 +99,7 @@ class SiaError : Throwable {
         INVALID_WORD_IN_SEED("Invalid word in seed"),
         INVALID_SEED("Invalid seed"),
         CANNOT_INIT_FROM_SEED_UNTIL_SYNCED("Cannot create wallet from seed until fully synced"),
-        UNSUPPORTED_ON_COLD_WALLET("Unsupported on cold storage wallet"),
-        UNEXPECTED_END_OF_STREAM("Connection unexpectedly closed"),
+        UNEXPECTED_END_OF_STREAM("Connection unexpectedly closed"), // This occurs every time if both data and wifi are turned off
         /* renter */
         DIRECTORY_ALREADY_EXISTS("Directory already exists"),
         /* explorer */

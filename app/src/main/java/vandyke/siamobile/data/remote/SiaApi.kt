@@ -6,7 +6,6 @@
 
 package vandyke.siamobile.data.remote
 
-import android.util.Base64
 import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -22,7 +21,7 @@ import vandyke.siamobile.data.data.explorer.ExplorerData
 import vandyke.siamobile.data.data.explorer.ExplorerHashData
 import vandyke.siamobile.data.data.renter.RenterFilesData
 import vandyke.siamobile.data.data.wallet.*
-import vandyke.siamobile.data.local.Prefs
+import java.util.concurrent.TimeUnit
 
 interface SiaApiInterface {
     /* daemon API */
@@ -94,30 +93,22 @@ var siaApi: SiaApiInterface = SiaApi.buildApi()
 
 object SiaApi {
     fun buildApi(): SiaApiInterface {
-        val client: OkHttpClient = OkHttpClient.Builder()
+        val clientBuilder = OkHttpClient.Builder()
+                .readTimeout(0, TimeUnit.MILLISECONDS)
                 .addInterceptor({
                     val original: Request = it.request()
                     val request: Request = original.newBuilder()
                             .header("User-agent", "Sia-Agent")
-                            .header("Authorization", "Basic " + Base64.encodeToString(":${Prefs.apiPass}".toByteArray(), Base64.NO_WRAP))
                             .method(original.method(), original.body())
                             .build()
                     return@addInterceptor it.proceed(request)
-                }).build()
+                })
 
-        val builder = Retrofit.Builder()
-        builder.addConverterFactory(GsonConverterFactory.create())
-        builder.addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-        builder.client(client)
-
-        /* try to set the baseUrl, catch the exception thrown on an illegal url and set a basic one instead */
-        try {
-            builder.baseUrl("http://${Prefs.address}/")
-        } catch (e: IllegalArgumentException) {
-            builder.baseUrl("http://localhost:8080/")
-        }
-
-        return builder
+        return Retrofit.Builder()
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .client(clientBuilder.build())
+                .baseUrl("http://localhost:9980/")
                 .build()
                 .create(SiaApiInterface::class.java)
     }

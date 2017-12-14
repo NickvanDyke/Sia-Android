@@ -16,20 +16,15 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.app.AppCompatDelegate
 import android.view.MenuItem
-import android.view.WindowManager
-import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_main.*
 import vandyke.siamobile.R
 import vandyke.siamobile.data.local.Prefs
 import vandyke.siamobile.data.siad.SiadService
 import vandyke.siamobile.ui.about.AboutFragment
-import vandyke.siamobile.ui.about.SetupRemoteActivity
 import vandyke.siamobile.ui.hosting.fragments.HostingFragment
 import vandyke.siamobile.ui.renter.view.RenterFragment
-import vandyke.siamobile.ui.settings.ModesActivity
 import vandyke.siamobile.ui.settings.SettingsFragment
 import vandyke.siamobile.ui.terminal.TerminalFragment
-import vandyke.siamobile.ui.wallet.view.PaperWalletActivity
 import vandyke.siamobile.ui.wallet.view.WalletFragment
 import vandyke.siamobile.util.observe
 
@@ -41,8 +36,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var drawerToggle: ActionBarDrawerToggle
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        if (Prefs.operationMode == "local_full_node")
-            startService(Intent(this, SiadService::class.java))
+        startService(Intent(this, SiadService::class.java))
 
         /* appearance stuff */
         if (Prefs.darkMode)
@@ -58,14 +52,6 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setHomeButtonEnabled(true)
-        if (Prefs.transparentBars) {
-            toolbar.setBackgroundColor(resources.getColor(android.R.color.transparent))
-            window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
-            toolbar.setPadding(0, statusBarHeight, 0, 0)
-        }
-
-        defaultTextColor = TextView(this).currentTextColor
-
 
         viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
 
@@ -105,12 +91,6 @@ class MainActivity : AppCompatActivity() {
             val storedFragmentClass = supportFragmentManager.findFragmentByTag(savedInstanceState.getString("visibleFragment")).javaClass
             viewModel.visibleFragmentClass.value = storedFragmentClass
         }
-
-        if (Prefs.firstTime) {
-            startActivityForResult(Intent(this, ModesActivity::class.java), REQUEST_OPERATION_MODE)
-//            startActivity(Intent(this, AboutSiaActivity::class.java))
-            Prefs.firstTime = false
-        }
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
@@ -139,22 +119,6 @@ class MainActivity : AppCompatActivity() {
         visibleFragment = newFragment
 
         setTitleAndMenuFromVisibleFragment()
-    }
-
-    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == REQUEST_OPERATION_MODE) {
-            when (resultCode) {
-                ModesActivity.PAPER_WALLET -> startActivity(Intent(this, PaperWalletActivity::class.java))
-                ModesActivity.REMOTE_FULL_NODE -> {
-                    Prefs.operationMode = "remote_full_node"
-                    startActivity(Intent(this, SetupRemoteActivity::class.java))
-                }
-                ModesActivity.LOCAL_FULL_NODE -> {
-                    viewModel.visibleFragmentClass.value = WalletFragment::class.java
-                    Prefs.operationMode = "local_full_node"
-                }
-            }
-        }
     }
 
     private fun setTitleAndMenuFromVisibleFragment() {
@@ -199,20 +163,5 @@ class MainActivity : AppCompatActivity() {
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         drawerToggle.onConfigurationChanged(newConfig)
-    }
-
-    val statusBarHeight: Int
-        get() {
-            var result = 0
-            val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
-            if (resourceId > 0) {
-                result = resources.getDimensionPixelSize(resourceId)
-            }
-            return result
-        }
-
-    companion object {
-        var defaultTextColor: Int = 0
-        var REQUEST_OPERATION_MODE = 2
     }
 }

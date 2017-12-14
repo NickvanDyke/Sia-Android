@@ -12,7 +12,6 @@ import android.view.View
 import android.widget.TextView
 import vandyke.siamobile.R
 import vandyke.siamobile.data.data.wallet.TransactionData
-import vandyke.siamobile.ui.main.MainActivity
 import vandyke.siamobile.util.round
 import vandyke.siamobile.util.toSC
 import java.text.SimpleDateFormat
@@ -30,7 +29,7 @@ class TransactionHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             transactionStatus.setTextColor(Color.RED)
         } else {
             timeString = df.format(transaction.confirmationdate)
-            transactionStatus.setTextColor(MainActivity.defaultTextColor)
+            transactionStatus.setTextColor(transactionId.currentTextColor)
         }
         transactionStatus.text = timeString
 
@@ -39,7 +38,7 @@ class TransactionHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         var valueText = transaction.netValue.toSC().round().toPlainString()
         if (transaction.isNetZero) {
-            transactionValue.setTextColor(MainActivity.defaultTextColor)
+            transactionValue.setTextColor(transactionId.currentTextColor)
         } else if (valueText.contains("-")) {
             transactionValue.setTextColor(red)
         } else {

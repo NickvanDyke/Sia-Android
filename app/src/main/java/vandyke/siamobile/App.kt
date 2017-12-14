@@ -7,16 +7,11 @@
 package vandyke.siamobile
 
 import android.app.Application
-import android.content.SharedPreferences
 import android.os.Build
 import com.chibatching.kotpref.Kotpref
-import vandyke.siamobile.data.local.Prefs
-import vandyke.siamobile.ui.settings.GlobalPrefsListener
 import vandyke.siamobile.util.NotificationUtil
 
 class App : Application() {
-
-    private lateinit var globalPrefsListener: SharedPreferences.OnSharedPreferenceChangeListener
 
     override fun onCreate() {
         NotificationUtil.createSiaNotificationChannel(this)
@@ -26,8 +21,6 @@ class App : Application() {
 
         /* preferences stuff */
         Kotpref.init(this)
-        globalPrefsListener = GlobalPrefsListener(this)
-        Prefs.preferences.registerOnSharedPreferenceChangeListener(globalPrefsListener)
         super.onCreate()
     }
 }

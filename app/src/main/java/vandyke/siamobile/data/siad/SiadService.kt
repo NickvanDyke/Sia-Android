@@ -15,8 +15,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.graphics.BitmapFactory
-import android.net.ConnectivityManager
-import android.os.BatteryManager
 import android.os.Binder
 import android.os.IBinder
 import android.os.PowerManager
@@ -40,7 +38,6 @@ import java.io.InputStreamReader
 class SiadService : Service() {
 
     private val binder = LocalBinder()
-    private val statusReceiver: StatusReceiver = StatusReceiver(this)
     private var siadFile: File? = null
     private var siadProcess: java.lang.Process? = null
     lateinit var wakeLock: PowerManager.WakeLock
@@ -50,17 +47,11 @@ class SiadService : Service() {
 
     override fun onCreate() {
         startForeground(SIAD_NOTIFICATION, buildSiadNotification("Starting service..."))
-//        val intentFilter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
-//        intentFilter.addAction(Intent.ACTION_BATTERY_CHANGED)
-//        applicationContext.registerReceiver(statusReceiver, intentFilter)
         siadFile = StorageUtil.copyBinary("siad", this)
         wakeLock = (getSystemService(Context.POWER_SERVICE) as PowerManager).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Sia node")
         startSiad()
     }
 
-    /**
-     * should only be called from the SiadService's BroadcastReceiver or from onCreate of this service
-     */
     fun startSiad() {
         if (siadProcess != null) {
             return
@@ -100,9 +91,6 @@ class SiadService : Service() {
                 }
     }
 
-    /**
-     * should only be called from the SiadService's BroadcastReceiver or from onDestroy of this service
-     */
     fun stopSiad() {
         if (wakeLock.isHeld)
             wakeLock.release()
@@ -133,7 +121,7 @@ class SiadService : Service() {
 
     private fun buildSiadNotification(text: String): Notification {
         val builder = NotificationCompat.Builder(this, NotificationUtil.NOTIFICATION_CHANNEL)
-                .setSmallIcon(R.drawable.ic_local_full_node)
+                .setSmallIcon(R.drawable.siacoin_logo_svg_white)
                 .setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.sia_logo_transparent))
                 .setContentTitle("Sia node")
                 .setStyle(NotificationCompat.BigTextStyle().bigText(text))
@@ -146,7 +134,7 @@ class SiadService : Service() {
 
     companion object {
         /**
-         * HAVE to unsubscribe from this properly, or else crashes could occur when the app is killed and
+         * HAVE to unsubscribe from these properly, or else crashes could occur when the app is killed and
          * later restarted if the static variable hasn't been cleared, and therefore isn't recreated, and
          * will still have references to old, now non-existent subscribers.
          * Primary reason for using a static variable for it is because that way it exists independently of
@@ -156,33 +144,6 @@ class SiadService : Service() {
         val output = PublishSubject.create<String>()!!
 
         val siadIsLoaded = BehaviorSubject.create<Boolean>()!!
-
-        fun isBatteryGood(intent: Intent): Boolean {
-            if (intent.action != Intent.ACTION_BATTERY_CHANGED)
-                return false
-            val level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0)
-            val scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, 0)
-            return (level * 100 / scale) >= Prefs.localNodeMinBattery
-        }
-
-        fun isConnectionGood(context: Context): Boolean {
-            val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-            val activeNetInfo = connectivityManager.activeNetworkInfo
-            return activeNetInfo != null && activeNetInfo.type == ConnectivityManager.TYPE_WIFI || Prefs.runLocalNodeOffWifi
-            // TODO: maybe this should instead check that the type is not TYPE_DATA? Depends on the behavior I want
-        }
-
-        fun singleAction(context: Context, action: (service: SiadService) -> Unit) {
-            val connection = object : ServiceConnection {
-                override fun onServiceConnected(name: ComponentName, service: IBinder) {
-                    action((service as SiadService.LocalBinder).service)
-                    context.unbindService(this)
-                }
-
-                override fun onServiceDisconnected(name: ComponentName) {}
-            }
-            context.bindService(Intent(context, SiadService::class.java), connection, Context.BIND_AUTO_CREATE)
-        }
 
         fun getService(context: Context) =
                 Single.create<SiadService> {
@@ -195,7 +156,7 @@ class SiadService : Service() {
                         override fun onServiceDisconnected(name: ComponentName) {}
                     }
                     context.bindService(Intent(context, SiadService::class.java), connection, Context.BIND_AUTO_CREATE)
-                }
+                }!!
     }
 
     override fun onBind(intent: Intent): IBinder {

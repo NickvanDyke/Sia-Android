@@ -7,46 +7,13 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory
-        android:title="Operation"
-        android:key="operationCategory">
-        <ListPreference
-            android:title="Mode"
-            android:key="operationMode"
-            android:entries="@array/operation_modes_entries"
-            android:entryValues="@array/operation_modes_values"
-            android:defaultValue="local_full_node"/>
-        <EditTextPreference
-            android:key="remoteAddress"
-            android:title="Remote node address"
-            android:summary="The IP address and port number of your remote full node. If your device is not on the same network as it, you will have to port forward."
-            android:dialogTitle="Remote node address"
-            android:gravity="center"
-            android:hint="ip:port"/>
-        <EditTextPreference
-            android:key="apiPass"
-            android:title="API password"
-            android:summary="The API password set on your remote full node."
-            android:dialogTitle="API password"
-            android:gravity="center"
-            android:inputType="textPassword"
-            android:password="true"
-            android:fontFamily="sans-serif"/>
+        android:title="Sia node"
+        android:key="siaNodeCategory">
         <SwitchPreferenceCompat
             android:key="SiaNodeWakeLock"
             android:title="Keep CPU awake for Sia"
             android:summary="Keep your phone's CPU awake when the Sia node is running, even while your phone is locked, so that the Sia node can continue operating (syncing, downloading, etc)."
             android:defaultValue="false"/>
-        <SwitchPreferenceCompat
-            android:key="runLocalNodeOffWifi"
-            android:title="Run Sia node when off WiFi"
-            android:summary="Run the local node in the background even when not connected to WiFi. WARNING: Syncing the blockchain can involve a lot of downloading."
-            android:defaultValue="false"/>
-        <vandyke.siamobile.ui.settings.IntEditTextPreference
-            android:key="localNodeMinBattery"
-            android:title="Minimum battery percentage to run node"
-            android:numeric="integer"
-            android:gravity="center"
-            android:defaultValue="20"/>
         <!--<SwitchPreferenceCompat-->
             <!--android:key="useExternal"-->
             <!--android:title="Use external storage"-->
@@ -60,14 +27,9 @@
             android:title="Dark mode"
             android:defaultValue="false"/>
         <SwitchPreferenceCompat
-            android:summary="Changes will apply on next restart."
-            android:key="transparentBars"
-            android:title="Transparent bars"
-            android:defaultValue="false"/>
-        <SwitchPreferenceCompat
             android:key="hideZero"
             android:title="Hide net-zero transactions"
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:summary="For each regular transaction, Sia also makes a setup transaction that does not affect your wallet balance."/>
         <vandyke.siamobile.ui.settings.IntEditTextPreference
             android:key="displayedDecimalPrecision"

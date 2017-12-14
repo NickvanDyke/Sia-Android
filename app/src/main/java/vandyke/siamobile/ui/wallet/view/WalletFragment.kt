@@ -21,7 +21,6 @@ import vandyke.siamobile.R
 import vandyke.siamobile.data.local.Prefs
 import vandyke.siamobile.data.remote.SiaError
 import vandyke.siamobile.ui.main.BaseFragment
-import vandyke.siamobile.ui.main.MainActivity
 import vandyke.siamobile.ui.wallet.view.childfragments.*
 import vandyke.siamobile.ui.wallet.view.transactionslist.TransactionAdapter
 import vandyke.siamobile.ui.wallet.viewmodel.WalletViewModel
@@ -43,7 +42,7 @@ class WalletFragment : BaseFragment() {
         if (Prefs.darkMode) {
             top_shadow.setBackgroundResource(R.drawable.top_shadow_dark)
         }
-        syncBar.setProgressTextColor(MainActivity.defaultTextColor)
+        syncBar.setProgressTextColor(balanceUsdText.currentTextColor)
 
         viewModel = ViewModelProviders.of(this).get(WalletViewModel::class.java)
 
@@ -115,8 +114,6 @@ class WalletFragment : BaseFragment() {
         }
 
         viewModel.seed.observe(this) {
-            if (Prefs.operationMode == "cold_storage")
-                WalletCreateDialog.showCsWarning(context!!)
             WalletCreateDialog.showSeed(it, context!!)
         }
     }
