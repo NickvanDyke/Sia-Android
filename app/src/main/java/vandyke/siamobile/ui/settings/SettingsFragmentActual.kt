@@ -64,7 +64,7 @@ class SettingsFragmentActual : PreferenceFragmentCompat() {
                 "SiaNodeWakeLock" -> SiadService.getService(context!!).subscribe { service ->
                     /* If Siad is already running then we must tell the service to acquire/release its wake lock
                        because normally it does so in start/stopSiad() */
-                    if (service.isSiadRunning) {
+                    if (service.isSiadProcessRunning) {
                         if (Prefs.SiaNodeWakeLock)
                             service.wakeLock.acquire()
                         else if (service.wakeLock.isHeld)

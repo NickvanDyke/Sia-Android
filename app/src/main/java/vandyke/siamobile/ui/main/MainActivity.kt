@@ -20,10 +20,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 import vandyke.siamobile.R
 import vandyke.siamobile.data.local.Prefs
 import vandyke.siamobile.data.siad.SiadService
-import vandyke.siamobile.ui.about.AboutFragment
 import vandyke.siamobile.ui.hosting.fragments.HostingFragment
 import vandyke.siamobile.ui.renter.view.RenterFragment
-import vandyke.siamobile.ui.settings.SettingsFragment
 import vandyke.siamobile.ui.terminal.TerminalFragment
 import vandyke.siamobile.ui.wallet.view.WalletFragment
 import vandyke.siamobile.util.observe
@@ -59,6 +57,14 @@ class MainActivity : AppCompatActivity() {
             displayFragment(it)
         }
 
+        viewModel.title.observe(this) {
+            supportActionBar!!.title = it
+        }
+
+        viewModel.selectedMenuItem.observe(this) {
+            navigationView.setCheckedItem(it)
+        }
+
         viewModel.siadIsLoading.observe(this) {
             if (it) {
 //                loadingDialog = SiadLoadingDialog()
@@ -79,17 +85,17 @@ class MainActivity : AppCompatActivity() {
 
         /* set the VM's visibleFragmentClass differently depending on whether the activity is being recreated */
         if (savedInstanceState == null) {
-            viewModel.visibleFragmentClass.value = when (Prefs.startupPage) {
+            viewModel.setDisplayedFragmentClass(when (Prefs.startupPage) {
                 "renter" -> RenterFragment::class.java
                 "hosting" -> HostingFragment::class.java
                 "wallet" -> WalletFragment::class.java
                 "terminal" -> TerminalFragment::class.java
                 else -> throw Exception()
-            }
+            })
         } else {
             /* find the fragment currently visible stored in the savedInstanceState */
             val storedFragmentClass = supportFragmentManager.findFragmentByTag(savedInstanceState.getString("visibleFragment")).javaClass
-            viewModel.visibleFragmentClass.value = storedFragmentClass
+            viewModel.setDisplayedFragmentClass(storedFragmentClass)
         }
     }
 
@@ -117,23 +123,6 @@ class MainActivity : AppCompatActivity() {
         visibleFragment?.let { tx.hide(it) }
         tx.commit()
         visibleFragment = newFragment
-
-        setTitleAndMenuFromVisibleFragment()
-    }
-
-    private fun setTitleAndMenuFromVisibleFragment() {
-        if (visibleFragment == null)
-            return
-        supportActionBar!!.title = visibleFragment!!.javaClass.simpleName.replace("Fragment", "")
-        navigationView.setCheckedItem(when (visibleFragment!!.javaClass) {
-            RenterFragment::class.java -> R.id.drawer_item_renter
-            HostingFragment::class.java -> R.id.drawer_item_hosting
-            WalletFragment::class.java -> R.id.drawer_item_wallet
-            TerminalFragment::class.java -> R.id.drawer_item_terminal
-            SettingsFragment::class.java -> R.id.drawer_item_settings
-            AboutFragment::class.java -> R.id.drawer_item_about
-            else -> throw Exception() /* not sure what this should actually be, if anything */
-        })
     }
 
     override fun onBackPressed() {

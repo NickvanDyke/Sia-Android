@@ -26,6 +26,7 @@ class WalletViewModel : ViewModel() {
     val consensus = MutableLiveData<ConsensusData>()
     val transactions = MutableLiveData<TransactionsData>()
     val activeTasks = MutableLiveData<Int>()
+    val numPeers = MutableLiveData<Int>()
     val success = MutableLiveData<String>()
     val error = MutableLiveData<SiaError>()
 
@@ -35,6 +36,7 @@ class WalletViewModel : ViewModel() {
     /* when you see a LiveData's value being set to null immediately after, it's so that an observer
        won't receive anything upon initial subscription to it (normally it still would, but generally
        an extension function is used that doesn't pass the value unless it's not null) */
+    /* the below LiveDatas are used by child fragments of the Wallet page */
     val address = MutableLiveData<AddressData>()
     val addresses = MutableLiveData<AddressesData>()
     val seeds = MutableLiveData<SeedsData>()
@@ -86,6 +88,7 @@ class WalletViewModel : ViewModel() {
         refreshWallet()
         refreshTransactions()
         refreshConsensus()
+        refreshPeers()
     }
 
     fun refreshWallet() {
@@ -115,6 +118,14 @@ class WalletViewModel : ViewModel() {
         incrementTasks()
         model.getConsensus().subscribeApi({
             consensus.value = it
+            decrementTasks()
+        }, ::onError)
+    }
+
+    fun refreshPeers() {
+        incrementTasks()
+        siaApi.gateway().subscribeApi({
+            numPeers.value = it.peers.size
             decrementTasks()
         }, ::onError)
     }

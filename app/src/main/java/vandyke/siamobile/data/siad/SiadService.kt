@@ -21,6 +21,7 @@ import android.os.PowerManager
 import android.support.v4.app.NotificationCompat
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import kotlinx.coroutines.experimental.CommonPool
@@ -42,8 +43,9 @@ class SiadService : Service() {
     private var siadProcess: java.lang.Process? = null
     lateinit var wakeLock: PowerManager.WakeLock
     private val SIAD_NOTIFICATION = 3
-    var isSiadRunning: Boolean = false
+    var isSiadProcessRunning: Boolean = false
         get() = siadProcess != null
+    lateinit var subscription: Disposable
 
     override fun onCreate() {
         startForeground(SIAD_NOTIFICATION, buildSiadNotification("Starting service..."))
@@ -60,7 +62,7 @@ class SiadService : Service() {
             siadNotification("Couldn't start Siad")
             return
         }
-        siadIsLoaded.onNext(false)
+        isSiadLoaded.onNext(false)
         /* acquire partial wake lock to keep device CPU awake and therefore keep the Sia node active */
         if (Prefs.SiaNodeWakeLock) {
             wakeLock.acquire()
@@ -83,10 +85,10 @@ class SiadService : Service() {
                 e.printStackTrace()
             }
         }
-        output.observeOn(AndroidSchedulers.mainThread())
+        subscription = output.observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     if (it.contains("Finished loading"))
-                        siadIsLoaded.onNext(true)
+                        isSiadLoaded.onNext(true)
                     siadNotification(it)
                 }
     }
@@ -95,7 +97,8 @@ class SiadService : Service() {
         if (wakeLock.isHeld)
             wakeLock.release()
         // TODO: maybe shut it down using stop http request instead? Takes ages sometimes. But might fix the (sometime) long startup times
-        siadIsLoaded.onNext(false)
+        isSiadLoaded.onNext(false)
+        subscription.dispose()
         siadProcess?.destroy()
         siadProcess = null
     }
@@ -136,14 +139,14 @@ class SiadService : Service() {
         /**
          * HAVE to unsubscribe from these properly, or else crashes could occur when the app is killed and
          * later restarted if the static variable hasn't been cleared, and therefore isn't recreated, and
-         * will still have references to old, now non-existent subscribers.
+         * will still have references to old, now non-existent subscribers and their closures.
          * Primary reason for using a static variable for it is because that way it exists independently of
          * the service, and is not destroyed when the service is, meaning that subscribers will still receive updates
          * when the service is restarted and causes the observable to emit.
          */
         val output = PublishSubject.create<String>()!!
 
-        val siadIsLoaded = BehaviorSubject.create<Boolean>()!!
+        val isSiadLoaded = BehaviorSubject.create<Boolean>()!!
 
         fun getService(context: Context) =
                 Single.create<SiadService> {

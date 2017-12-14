@@ -17,8 +17,7 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
 import vandyke.siamobile.data.data.consensus.ConsensusData
-import vandyke.siamobile.data.data.explorer.ExplorerData
-import vandyke.siamobile.data.data.explorer.ExplorerHashData
+import vandyke.siamobile.data.data.gateway.GatewayData
 import vandyke.siamobile.data.data.renter.RenterFilesData
 import vandyke.siamobile.data.data.wallet.*
 import java.util.concurrent.TimeUnit
@@ -68,12 +67,6 @@ interface SiaApiInterface {
     @GET
     fun getScPrice(@Url url: String = "http://www.coincap.io/page/SC"): Single<ScPriceData>
 
-    @GET
-    fun getSiaTechExplorerHash(@Url url: String): Single<ExplorerHashData>
-
-    @GET
-    fun getSiaTechExplorer(@Url url: String = "http://explore.sia.tech/explorer"): Single<ExplorerData>
-
     /* renter API */
     @GET("renter/files")
     fun renterFiles(): Single<RenterFilesData>
@@ -84,12 +77,16 @@ interface SiaApiInterface {
     @POST("renter/upload/{siapath}")
     fun renterUpload(@Path("siapath") siapath: String, @Query("source") source: String, @Query("datapieces") dataPieces: Int, @Query("paritypieces") parityPieces: Int): Completable
 
+    /* gateway API */
+    @GET("gateway")
+    fun gateway(): Single<GatewayData>
+
     /* consensus API */
     @GET("consensus")
     fun consensus(): Single<ConsensusData>
 }
 
-var siaApi: SiaApiInterface = SiaApi.buildApi()
+val siaApi: SiaApiInterface = SiaApi.buildApi()
 
 object SiaApi {
     fun buildApi(): SiaApiInterface {
@@ -111,10 +108,6 @@ object SiaApi {
                 .baseUrl("http://localhost:9980/")
                 .build()
                 .create(SiaApiInterface::class.java)
-    }
-
-    fun rebuildApi() {
-        siaApi = buildApi()
     }
 }
 

@@ -93,13 +93,22 @@ class WalletFragment : BaseFragment() {
         }
 
         viewModel.consensus.observe(this) {
-            if (it.synced) {
-                syncText?.text = ("${getString(R.string.synced)}: ${it.height}")
-                syncBar?.progress = 100
+            if (viewModel.numPeers.value == 0) {
+                syncText?.text = ("Not syncing: ${it.height}")
             } else {
-                syncText?.text = ("${getString(R.string.syncing)}: ${it.height}")
-                syncBar?.progress = it.syncprogress.toInt()
+                if (it.synced) {
+                    syncText?.text = ("${getString(R.string.synced)}: ${it.height}")
+                    syncBar?.progress = 100
+                } else {
+                    syncText?.text = ("${getString(R.string.syncing)}: ${it.height}")
+                    syncBar?.progress = it.syncprogress.toInt()
+                }
             }
+        }
+
+        viewModel.numPeers.observe(this) {
+            if (it == 0)
+                syncText?.text = ("Not syncing: ${viewModel.consensus.value?.height ?: 0}")
         }
 
         viewModel.success.observe(this) {
