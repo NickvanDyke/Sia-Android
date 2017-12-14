@@ -45,7 +45,7 @@ class SiadService : Service() {
     private val SIAD_NOTIFICATION = 3
     var isSiadProcessRunning: Boolean = false
         get() = siadProcess != null
-    lateinit var subscription: Disposable
+    private lateinit var subscription: Disposable
 
     override fun onCreate() {
         startForeground(SIAD_NOTIFICATION, buildSiadNotification("Starting service..."))

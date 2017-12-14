@@ -15,6 +15,7 @@ data class TransactionData(val transactionid: String = "",
                            val inputs: List<TransactionInputData> = listOf(),
                            val outputs: List<TransactionOutputData> = listOf()) {
 
+    /* the super big number is what the Sia api returns for the confirmation timestamp of an unconfirmed transaction */
     val confirmed: Boolean by lazy { confirmationtimestamp != BigDecimal("18446744073709551615") }
 
     val netValue: BigDecimal by lazy {

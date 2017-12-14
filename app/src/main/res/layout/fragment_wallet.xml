@@ -139,7 +139,8 @@
             android:id="@+id/transactionList"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:scrollbars="vertical" />
+            android:scrollbars="vertical"
+            app:layoutManager="LinearLayoutManager"/>
 
     </android.support.v4.widget.SwipeRefreshLayout>
 

@@ -47,9 +47,8 @@ class WalletFragment : BaseFragment() {
         viewModel = ViewModelProviders.of(this).get(WalletViewModel::class.java)
 
         /* set up recyclerview for transactions */
-        val layoutManager = LinearLayoutManager(activity)
-        transactionList.layoutManager = layoutManager
-        transactionList.addItemDecoration(DividerItemDecoration(transactionList.context, layoutManager.orientation))
+        transactionList.addItemDecoration(DividerItemDecoration(transactionList.context,
+                (transactionList.layoutManager as LinearLayoutManager).orientation))
         transactionList.adapter = adapter
 
         /* set up click listeners for the big buttons */
@@ -58,7 +57,7 @@ class WalletFragment : BaseFragment() {
         balanceText.setOnClickListener { v ->
             AlertDialog.Builder(v.context)
                     .setTitle("Exact Balance")
-                    .setMessage("${viewModel.wallet.value!!.confirmedsiacoinbalance.toSC().toPlainString()} Siacoins")
+                    .setMessage("${viewModel.wallet.value?.confirmedsiacoinbalance?.toSC()?.toPlainString() ?: 0} Siacoins")
                     .setPositiveButton("Close", null)
                     .show()
         }

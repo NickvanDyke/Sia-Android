@@ -9,7 +9,6 @@ import android.os.Looper
 import android.text.SpannableStringBuilder
 import android.text.style.StyleSpan
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.launch
 import vandyke.siamobile.App
@@ -27,16 +26,13 @@ class TerminalViewModel(application: Application) : AndroidViewModel(application
     private val handler = Handler(Looper.getMainLooper())
 
     private var siacFile: File? = null
-    private val subscription: Disposable
+    private val subscription = SiadService.output.observeOn(AndroidSchedulers.mainThread()).subscribe {
+        appendToOutput(it + "\n")
+    }
 
     init {
         output.value = getApplication<App>().getString(R.string.terminal_warning)
         siacFile = StorageUtil.copyBinary("siac", application)
-
-        subscription = SiadService.output.observeOn(AndroidSchedulers.mainThread()).subscribe {
-            println("FROM TERMINAL VM: $it")
-            appendToOutput(it + "\n")
-        }
     }
 
     override fun onCleared() {

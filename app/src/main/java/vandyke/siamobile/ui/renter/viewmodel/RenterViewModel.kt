@@ -14,6 +14,7 @@ import vandyke.siamobile.data.data.renter.SiaFile
 import vandyke.siamobile.data.data.renter.SiaNode
 import vandyke.siamobile.data.remote.SiaError
 import vandyke.siamobile.data.remote.subscribeApi
+import vandyke.siamobile.data.siad.SiadService
 import vandyke.siamobile.ui.renter.model.IRenterModel
 import vandyke.siamobile.ui.renter.model.RenterModelTest
 
@@ -24,6 +25,15 @@ class RenterViewModel(application: Application) : AndroidViewModel(application) 
     val error = MutableLiveData<SiaError>()
 
     private val model: IRenterModel = RenterModelTest()
+
+    val subscription = SiadService.isSiadLoaded.subscribe {
+        refreshFiles()
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        subscription.dispose()
+    }
 
     fun refreshFiles() {
         model.getRootDir().subscribeApi({
