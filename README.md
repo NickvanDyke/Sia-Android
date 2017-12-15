@@ -10,8 +10,8 @@ Sia Mobile can:
 * Interact with a full Sia node running on your computer
 * Set up and maintain a local cold-storage wallet, as well as estimate its balance and transactions without a copy of the blockchain
 * Generate a paper wallet
-* Coming soon: upload to and download from the Sia cloud storage network (in-progress on the "files-kotlin" branch)
-* Coming soon: SPV functionality (a.k.a. "lite wallet") once Sia implements this feature (in-progress on the "spv" branch)
+* Coming soon: upload to and download from the Sia cloud storage network (in-progress on the develop branch)
+* Coming soon: SPV functionality (a.k.a. "lite wallet") once Sia implements this feature
 
 # Contact me
 siamobiledev@gmail.com or Nick#6026 on the [Sia Discord](https://discord.gg/sFCT3Ar)
