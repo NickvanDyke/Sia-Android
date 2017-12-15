@@ -7,8 +7,7 @@ Sia Mobile serves as an Android client for the decentralized cloud storage platf
 
 Sia Mobile can:
 * Run a full Sia node on your device
-* Interact with a full Sia node running on your computer
-* Set up and maintain a local cold-storage wallet, as well as estimate its balance and transactions without a copy of the blockchain
+* Interact with all wallet functionalities of the running node - create, send, receive, etc.
 * Generate a paper wallet
 * Coming soon: upload to and download from the Sia cloud storage network (in-progress on the develop branch)
 * Coming soon: SPV functionality (a.k.a. "lite wallet") once Sia implements this feature
