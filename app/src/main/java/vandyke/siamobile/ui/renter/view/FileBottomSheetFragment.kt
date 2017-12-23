@@ -8,7 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_renter_file_more.*
 import vandyke.siamobile.R
-import vandyke.siamobile.data.data.renter.SiaFile
+import vandyke.siamobile.data.local.File
 import vandyke.siamobile.ui.renter.viewmodel.RenterViewModel
 import vandyke.siamobile.util.observe
 
@@ -20,7 +20,7 @@ class FileBottomSheetFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val viewModel = ViewModelProviders.of(parentFragment!!).get(RenterViewModel::class.java)
         viewModel.detailsItem.observe(this) { file ->
-            if (file !is SiaFile)
+            if (file !is File)
                 throw Exception()
             /* set the value to null, because it's been displayed and we don't want it displayed another time */
             viewModel.detailsItem.value = null

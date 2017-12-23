@@ -9,25 +9,28 @@ package vandyke.siamobile.ui.renter.viewmodel
 import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.MutableLiveData
-import vandyke.siamobile.data.data.renter.SiaDir
-import vandyke.siamobile.data.data.renter.SiaFile
-import vandyke.siamobile.data.data.renter.SiaNode
+import vandyke.siamobile.data.local.File
+import vandyke.siamobile.data.local.Node
 import vandyke.siamobile.data.remote.SiaError
-import vandyke.siamobile.data.remote.subscribeApi
 import vandyke.siamobile.data.siad.SiadService
-import vandyke.siamobile.ui.renter.model.IRenterModel
 import vandyke.siamobile.ui.renter.model.RenterModelTest
+import vandyke.siamobile.util.siaSubscribe
 
 class RenterViewModel(application: Application) : AndroidViewModel(application) {
-    val rootDir = MutableLiveData<SiaDir>()
-    val currentDir = MutableLiveData<SiaDir>()
-    val detailsItem = MutableLiveData<SiaNode>()
+    val displayedNodes = MutableLiveData<List<Node>>()
+    val path = MutableLiveData<String>()
+    val detailsItem = MutableLiveData<Node>()
     val error = MutableLiveData<SiaError>()
 
-    private val model: IRenterModel = RenterModelTest()
+    private val model = RenterModelTest()
 
-    val subscription = SiadService.isSiadLoaded.subscribe {
-        refreshFiles()
+    private val subscription = SiadService.isSiadLoaded.subscribe {
+        if (it)
+            refresh()
+    }
+
+    init {
+        changeDir("")
     }
 
     override fun onCleared() {
@@ -35,27 +38,42 @@ class RenterViewModel(application: Application) : AndroidViewModel(application) 
         subscription.dispose()
     }
 
-    fun refreshFiles() {
-        model.getRootDir().subscribeApi({
-            rootDir.value = it
-//            if (currentDir.value == null)
-            currentDir.value = it // TODO: determine if currentDir should be changed, if the filepath leading to it has been affected
+    fun refresh() {
+        model.refreshDatabase().siaSubscribe({
+            changeDir(path.value ?: "")
+        }, ::setError)
+        // TODO: check that current directory is still valid
+    }
+
+    fun changeDir(path: String) {
+        println("changing to dir $path")
+        model.getImmediateNodes(path).siaSubscribe({ dirs ->
+            displayedNodes.value = dirs
+            this.path.value = path
         }, ::setError)
     }
 
-    fun changeDir(dir: SiaDir) {
-        currentDir.value = dir
+    fun goToIndexInPath(index: Int) {
+        /* construct the path to go to */
+        var path = ""
+        val splitPath = this.path.value!!.split("/")
+        for (i in 1..index) {
+            path += "/${splitPath[i]}"
+        }
+        changeDir(path)
     }
 
     fun goUpDir(): Boolean {
-        if (currentDir.value?.parent != null) {
-            currentDir.value = currentDir.value!!.parent!!
-            return true
-        }
-        return false
+        val path = path.value!!
+        if (path.isEmpty())
+            return false
+
+        val parentPath = path.substring(0, path.lastIndexOf('/'))
+        changeDir(parentPath)
+        return true
     }
 
-    fun displayDetails(node: SiaNode) {
+    fun displayDetails(node: Node) {
         detailsItem.value = node
     }
 
@@ -63,21 +81,20 @@ class RenterViewModel(application: Application) : AndroidViewModel(application) 
      * Creates a new directory with the given name in the current directory
      */
     fun createNewDir(name: String) {
-        /* passes the full path to the new directory's location, minus the root directory */
-        model.createNewDir("${currentDir.value!!.pathStringWithoutRoot}$name").subscribeApi({
-            refreshFiles()
+        model.createNewDir("${path.value!!}/$name").siaSubscribe({
+            refresh()
         }, ::setError)
     }
 
-    fun deleteDir(dir: SiaDir) {
-        model.deleteDir(dir).subscribeApi({
-            refreshFiles()
+    fun deleteDir(path: String) {
+        model.deleteDir(path).siaSubscribe({
+            refresh()
         }, ::setError)
     }
 
-    fun deleteFile(file: SiaFile) {
-        model.deleteFile(file).subscribeApi({
-            refreshFiles()
+    fun deleteFile(file: File) {
+        model.deleteFile(file.path).siaSubscribe({
+            refresh()
         }, ::setError)
     }
 

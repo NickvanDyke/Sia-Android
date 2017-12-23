@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tabMode="scrollable" />
+            app:tabMode="scrollable"/>
 
         <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/renterSwipeRefresh"

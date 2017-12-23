@@ -8,65 +8,89 @@ package vandyke.siamobile.ui.renter.model
 
 import io.reactivex.Completable
 import io.reactivex.Single
-import vandyke.siamobile.data.data.renter.SiaDir
-import vandyke.siamobile.data.data.renter.SiaFile
-import vandyke.siamobile.data.local.Prefs
-import vandyke.siamobile.data.remote.SiaError
-import vandyke.siamobile.ui.renter.view.RenterFragment.Companion.ROOT_DIR_NAME
+import io.reactivex.functions.BiFunction
+import vandyke.siamobile.data.data.renter.RenterFileData
+import vandyke.siamobile.data.local.Dir
+import vandyke.siamobile.data.local.File
+import vandyke.siamobile.data.local.Node
+import vandyke.siamobile.db
 import java.math.BigDecimal
 
-class RenterModelTest : IRenterModel {
-    private val files = mutableListOf(SiaFile("really/long/file/path/because/testing/file.txt", filesize = BigDecimal("498259")),
-            SiaFile("people/jamison/bro", filesize = BigDecimal("116160000000000000000")),
-            SiaFile("people/nick/life.txt", filesize = BigDecimal("847")),
-            SiaFile("people/jeff/panda.png", filesize = BigDecimal("10567219")),
-            SiaFile("colors/red.png", filesize = BigDecimal("48182")),
-            SiaFile("colors/blue.jpg", filesize = BigDecimal("6949")),
-            SiaFile("colors/purple.pdf", filesize = BigDecimal("79")),
-            SiaFile("colors/bright/orange.rgb", filesize = BigDecimal("23583")))
+class RenterModelTest {
+    private val files = mutableListOf(RenterFileData("really/long/file/path/because/testing/file.txt", filesize = BigDecimal("498259")),
+            RenterFileData("people/jamison/bro", filesize = BigDecimal("116160000000000000000")),
+            RenterFileData("people/nick/life.txt", filesize = BigDecimal("847")),
+            RenterFileData("people/jeff/panda.png", filesize = BigDecimal("10567219")),
+            RenterFileData("colors/red.png", filesize = BigDecimal("48182")),
+            RenterFileData("colors/blue.jpg", filesize = BigDecimal("6949")),
+            RenterFileData("colors/purple.pdf", filesize = BigDecimal("79")),
+            RenterFileData("colors/bright/orange.rgb", filesize = BigDecimal("23583")))
 
-    override fun getRootDir(): Single<SiaDir> {
-        // TODO: sort somehow. particularly when integrating locally-created dirs with ones returned from the sia node. Probably by name
-        // or by size (or even last modified date if I ever keep that locally). Should have filter setting in fragment
-        val rootDir = SiaDir(ROOT_DIR_NAME, null)
+
+    /**
+     * Queries the list of files from the Sia node, and updates local database from it
+     */
+    fun refreshDatabase() = Completable.create {
+        /* first, insert all files, so that their data can be used to calculate dir values (such as size) */
         files.forEach {
-            rootDir.addSiaNode(it)
-            /* add a local directory for the file, so that later if it's deleted, it's directory remains */
-            Prefs.renterDirs.add(it.parent.pathStringWithoutRoot)
+            val newFile = File(it.siapath)
+//            println("inserting file ${newFile.path}")
+            db.fileDao().insert(newFile)
         }
-        Prefs.renterDirs.forEach {
-            rootDir.addEmptySiaDirAtPath(it.split("/"))
-        }
-        return Single.just(rootDir)
-    }
 
-    override fun createNewDir(path: String): Completable {
-        return Completable.create {
-            if (Prefs.renterDirs.add(path))
-                it.onComplete()
-            else
-                it.onError(SiaError(SiaError.Reason.DIRECTORY_ALREADY_EXISTS))
+        files.forEach {
+            /* insert directories for each directory in the path to the file */
+            var path = ""
+            it.siapath.substring(0, it.siapath.lastIndexOf('/')).split("/").forEach {
+                path += "/" + it
+                val newDir = Dir(path)
+//                println("inserting dir ${newDir.path}")
+                db.dirDao().insertIgnoreConflict(newDir)
+            }
         }
-    }
+        it.onComplete()
+    }!!
 
-    override fun deleteDir(dir: SiaDir): Completable {
-        Prefs.renterDirs.remove(dir.pathStringWithoutRoot)
-        dir.dirs.forEach {
-            deleteDir(it)
+    fun getImmediateNodes(path: String) = Single.zip(
+            db.dirDao().getImmediateDirs(path),
+            db.fileDao().getFilesInDir(path),
+            BiFunction<List<Dir>, List<File>, List<Node>> { dirs, files ->
+                return@BiFunction dirs + files
+            })!!
+
+
+    fun createNewDir(path: String) = Completable.create {
+        val newDir = Dir(path)
+        db.dirDao().insertAbortIfConflict(newDir)
+        it.onComplete()
+    }!!
+
+    fun deleteDir(path: String) = Completable.create {
+        db.fileDao().getFilesUnder(path).blockingGet().forEach {
+            deleteFile(it.path).subscribe()
         }
-        dir.files.forEach {
-            deleteFile(it)
+        db.dirDao().deleteDirsUnder(path)
+        db.dirDao().deleteDir(path)
+        it.onComplete()
+    }!!
+
+
+    fun addFile(siapath: String, source: String, dataPieces: Int, parityPieces: Int) = Completable.create {
+        val newFile = RenterFileData(siapath, filesize = BigDecimal("098123"))
+        files.add(newFile)
+        it.onComplete()
+    }!!
+
+    fun deleteFile(path: String) = Completable.create {
+        var removed: RenterFileData? = null
+        files.forEach {
+            if ("/" + it.siapath == path) {
+                removed = it
+                return@forEach
+            }
         }
-        return Completable.complete()
-    }
-
-    override fun addFile(siapath: String, source: String, dataPieces: Int, parityPieces: Int): Completable {
-        files.add(SiaFile(siapath, filesize = BigDecimal("098123")))
-        return Completable.complete()
-    }
-
-    override fun deleteFile(file: SiaFile): Completable {
-        files.remove(file)
-        return Completable.complete()
-    }
+        removed?.let { files.remove(it) }
+        db.fileDao().deleteFile(path)
+        it.onComplete()
+    }!!
 }

@@ -16,8 +16,8 @@ import android.view.*
 import android.widget.EditText
 import kotlinx.android.synthetic.main.fragment_renter.*
 import vandyke.siamobile.R
-import vandyke.siamobile.data.data.renter.SiaDir
-import vandyke.siamobile.data.data.renter.SiaFile
+import vandyke.siamobile.data.local.Dir
+import vandyke.siamobile.data.local.File
 import vandyke.siamobile.ui.main.BaseFragment
 import vandyke.siamobile.ui.renter.view.list.NodesAdapter
 import vandyke.siamobile.ui.renter.viewmodel.RenterViewModel
@@ -30,36 +30,10 @@ class RenterFragment : BaseFragment() {
 
     lateinit var viewModel: RenterViewModel
 
-    private var depth = 0
     private lateinit var adapter: NodesAdapter
     private var programmaticallySelecting = true
 
-    var currentDir: SiaDir = SiaDir(ROOT_DIR_NAME, null) /* this initialization is 100% temporary, and so that currentDir can be non-nullable */
-        set(value) {
-            /* set this flag so that programmatically selecting a tab doesn't trigger the onTabSelectedListener */
-            programmaticallySelecting = true
-            val oldPath = field.path
-            val newPath = value.path
-            depth = newPath.size
-            /* find the point at which the path differs */
-            val breakpoint = (0 until maxOf(newPath.size, oldPath.size)).firstOrNull {
-                it > oldPath.size - 1 || it > newPath.size - 1 || newPath[it] != oldPath[it]
-            } ?: renterFilepath.tabCount
-            /* select the appropriate tab if it already exists */
-            if (newPath.size < oldPath.size)
-                renterFilepath.getTabAt(newPath.size - 1)?.select()
-            /* remove tabs that are past the breakpoint */
-            for (i in breakpoint until renterFilepath.tabCount)
-                renterFilepath.removeTabAt(breakpoint)
-            /* add new tabs from the breakpoint to the end of the new path */
-            for (i in breakpoint until newPath.size)
-                renterFilepath.addTab(renterFilepath.newTab().setText(newPath[i].name), true)
-            /* scroll the tabs all the way to the right */
-            renterFilepath.postDelayed({ renterFilepath.fullScroll(TabLayout.FOCUS_RIGHT) }, 5)
-            adapter.displayDir(value)
-            programmaticallySelecting = false
-            field = value
-        }
+    private var oldPath: List<String> = listOf()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewModel = ViewModelProviders.of(this).get(RenterViewModel::class.java)
@@ -67,18 +41,21 @@ class RenterFragment : BaseFragment() {
         adapter = NodesAdapter(viewModel)
         filesList.adapter = adapter
 
+        renterFilepath.addTab(renterFilepath.newTab().setText("Home"))
+
         renterFilepath.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabReselected(tab: TabLayout.Tab?) {}
             override fun onTabUnselected(tab: TabLayout.Tab?) {}
-            override fun onTabSelected(tab: TabLayout.Tab?) {
-                if (!programmaticallySelecting)
-                    viewModel.changeDir(currentDir.getParentDirAt(depth - renterFilepath.selectedTabPosition - 1))
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                if (!programmaticallySelecting) {
+                    viewModel.goToIndexInPath(tab.position)
+                }
             }
         })
 
         renterSwipeRefresh.setColorSchemeResources(R.color.colorAccent)
         renterSwipeRefresh.setOnRefreshListener {
-            viewModel.refreshFiles()
+            viewModel.refresh()
             renterSwipeRefresh.isRefreshing = false
         }
 
@@ -103,12 +80,30 @@ class RenterFragment : BaseFragment() {
         }
 
         /* observe viewModel stuff */
-        viewModel.rootDir.observe(this) {
-
+        viewModel.displayedNodes.observe(this) {
+            adapter.display(it)
         }
 
-        viewModel.currentDir.observe(this) {
-            this.currentDir = it
+        viewModel.path.observe(this) {
+            programmaticallySelecting = true
+            val newPath = it.split("/")
+            /* find the point at which the path differs */
+            val breakpoint = (0 until maxOf(newPath.size, oldPath.size)).firstOrNull {
+                it > oldPath.size - 1 || it > newPath.size - 1 || newPath[it] != oldPath[it]
+            } ?: renterFilepath.tabCount
+            /* select the appropriate tab if it already exists */
+            if (newPath.size < oldPath.size)
+                renterFilepath.getTabAt(newPath.size - 1)?.select()
+            /* remove tabs that are past the breakpoint */
+            for (i in breakpoint until renterFilepath.tabCount)
+                renterFilepath.removeTabAt(breakpoint)
+            /* add new tabs from the breakpoint to the end of the new path */
+            for (i in breakpoint until newPath.size)
+                renterFilepath.addTab(renterFilepath.newTab().setText(newPath[i]), true)
+            /* scroll the tabs all the way to the right */
+            renterFilepath.postDelayed({ renterFilepath.fullScroll(TabLayout.FOCUS_RIGHT) }, 5)
+            programmaticallySelecting = false
+            oldPath = newPath
         }
 
         viewModel.error.observe(this) {
@@ -117,9 +112,9 @@ class RenterFragment : BaseFragment() {
         }
 
         viewModel.detailsItem.observe(this) {
-            if (it is SiaDir)
+            if (it is Dir)
                 DirBottomSheetFragment().show(childFragmentManager, null)
-            else if (it is SiaFile)
+            else if (it is File)
                 FileBottomSheetFragment().show(childFragmentManager, null)
         }
     }
@@ -135,7 +130,7 @@ class RenterFragment : BaseFragment() {
     }
 
     override fun onShow() {
-        viewModel.refreshFiles()
+        viewModel.refresh()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -143,6 +138,6 @@ class RenterFragment : BaseFragment() {
     }
 
     companion object {
-        val ROOT_DIR_NAME = "home"
+        val ROOT_DIR_NAME = "/"
     }
 }

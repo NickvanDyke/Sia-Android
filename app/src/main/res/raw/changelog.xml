@@ -24,14 +24,14 @@
 
     <changelogversion versionName="2.3.1" changeDate="Sep 4, 2017">
         <changelogtext>Fix View seed</changelogtext>
-        <changelogtext>Remove refresh button on the toolbar on the refresh page - swipe down instead</changelogtext>
+        <changelogtext>Remove refreshDatabase button on the toolbar on the refreshDatabase page - swipe down instead</changelogtext>
         <changelogtext>Fix some infrequent crashes on the wallet page</changelogtext>
         <changelogtext>Back button on the wallet page will first close any open fragment</changelogtext>
     </changelogversion>
 
     <changelogversion versionName="2.3.0" changeDate="Sep 2, 2017">
         <changelogtext>Increase minSdk to 21 (Android 5.0). Very few users were on Android versions older than that, and it allows me to use some better, newer Android features</changelogtext>
-        <changelogtext>Add pull-down-to-refresh to the wallet page transactions list</changelogtext>
+        <changelogtext>Add pull-down-to-refreshDatabase to the wallet page transactions list</changelogtext>
         <changelogtext>Greatly improve the backend workings of the wallet page, particularly of cold storage mode</changelogtext>
         <changelogtext>Remove background services and the option to run in the background - this should reduce battery usage (although it wasn't high in the first place)</changelogtext>
         <changelogtext>Remove sync and transaction notifications - these were done using background services that, as mentioned above, were removed</changelogtext>
@@ -74,7 +74,7 @@
     </changelogversion>
 
     <changelogversion versionName="2.2.4" changeDate="Aug 6, 2017">
-        <changelogtext>Fix USD price estimation (mostly - might have to manual refresh since coincap seems to take a while to respond to requests)</changelogtext>
+        <changelogtext>Fix USD price estimation (mostly - might have to manual refreshDatabase since coincap seems to take a while to respond to requests)</changelogtext>
     </changelogversion>
 
     <changelogversion versionName="2.2.2" changeDate="Aug 6, 2017">

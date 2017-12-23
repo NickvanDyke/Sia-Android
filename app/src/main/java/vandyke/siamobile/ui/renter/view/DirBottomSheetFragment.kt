@@ -8,7 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_renter_dir_more.*
 import vandyke.siamobile.R
-import vandyke.siamobile.data.data.renter.SiaDir
+import vandyke.siamobile.data.local.Dir
 import vandyke.siamobile.ui.renter.viewmodel.RenterViewModel
 import vandyke.siamobile.util.observe
 
@@ -21,12 +21,12 @@ class DirBottomSheetFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val viewModel = ViewModelProviders.of(parentFragment!!).get(RenterViewModel::class.java)
         viewModel.detailsItem.observe(this) { dir ->
-            if (dir !is SiaDir)
+            if (dir !is Dir)
                 throw Exception()
             /* set the value to null, because it's been displayed and we don't want it displayed another time */
             viewModel.detailsItem.value = null
             dirDelete.setOnClickListener {
-                viewModel.deleteDir(dir)
+                viewModel.deleteDir(dir.path)
                 dismiss()
             }
         }

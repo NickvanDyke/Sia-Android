@@ -13,10 +13,10 @@ import vandyke.siamobile.data.data.consensus.ConsensusData
 import vandyke.siamobile.data.data.wallet.*
 import vandyke.siamobile.data.remote.SiaError
 import vandyke.siamobile.data.remote.siaApi
-import vandyke.siamobile.data.remote.subscribeApi
 import vandyke.siamobile.data.siad.SiadService
 import vandyke.siamobile.ui.wallet.model.IWalletModel
 import vandyke.siamobile.ui.wallet.model.WalletModelHttp
+import vandyke.siamobile.util.siaSubscribe
 import vandyke.siamobile.util.toSC
 
 class WalletViewModel : ViewModel() {
@@ -90,12 +90,12 @@ class WalletViewModel : ViewModel() {
 
     fun refreshWallet() {
         incrementTasks()
-        model.getWallet().subscribeApi({
+        model.getWallet().siaSubscribe({
             wallet.value = it
             decrementTasks()
         }, ::onError)
         /* we don't track retrieving the usd price as a task since it tends to take a long time and is less reliable */
-        siaApi.getScPrice().subscribeApi({
+        siaApi.getScPrice().siaSubscribe({
             usd.value = it
         }, {
             error.value = it
@@ -105,7 +105,7 @@ class WalletViewModel : ViewModel() {
 
     fun refreshTransactions() {
         incrementTasks()
-        model.getTransactions().subscribeApi({
+        model.getTransactions().siaSubscribe({
             transactions.value = it
             decrementTasks()
         }, ::onError)
@@ -113,7 +113,7 @@ class WalletViewModel : ViewModel() {
 
     fun refreshConsensus() {
         incrementTasks()
-        model.getConsensus().subscribeApi({
+        model.getConsensus().siaSubscribe({
             consensus.value = it
             decrementTasks()
         }, ::onError)
@@ -121,7 +121,7 @@ class WalletViewModel : ViewModel() {
 
     fun refreshPeers() {
         incrementTasks()
-        siaApi.gateway().subscribeApi({
+        siaApi.gateway().siaSubscribe({
             numPeers.value = it.peers.size
             decrementTasks()
         }, ::onError)
@@ -129,7 +129,7 @@ class WalletViewModel : ViewModel() {
 
     fun unlock(password: String) {
         incrementTasks()
-        model.unlock(password).subscribeApi({
+        model.unlock(password).siaSubscribe({
             setSuccess("Unlocked") // TODO: maybe have cool animations eventually, to indicate locking/unlocking/creating?
             refreshWallet()
         }, {
@@ -142,7 +142,7 @@ class WalletViewModel : ViewModel() {
 
     fun lock() {
         incrementTasks()
-        model.lock().subscribeApi({
+        model.lock().siaSubscribe({
             setSuccess("Locked")
             refreshWallet()
         }, ::onError)
@@ -150,7 +150,7 @@ class WalletViewModel : ViewModel() {
 
     fun getAddress() {
         incrementTasks()
-        model.getAddress().subscribeApi({
+        model.getAddress().siaSubscribe({
             decrementTasks()
             address.value = it
             address.value = null
@@ -159,7 +159,7 @@ class WalletViewModel : ViewModel() {
 
     fun getAddresses() {
         incrementTasks()
-        model.getAddresses().subscribeApi({
+        model.getAddresses().siaSubscribe({
             decrementTasks()
             addresses.value = it
             addresses.value = null
@@ -168,7 +168,7 @@ class WalletViewModel : ViewModel() {
 
     fun getSeeds() {
         incrementTasks()
-        model.getSeeds("english").subscribeApi({
+        model.getSeeds("english").siaSubscribe({
             decrementTasks()
             seeds.value = it
             seeds.value = null
@@ -178,13 +178,13 @@ class WalletViewModel : ViewModel() {
     fun create(password: String, force: Boolean, seed: String? = null) {
         incrementTasks()
         if (seed == null) {
-            model.init(password, "english", force).subscribeApi({ it ->
+            model.init(password, "english", force).siaSubscribe({ it ->
                 setSuccess("Created wallet")
                 refreshWallet()
                 this.seed.value = it.primaryseed
             }, ::onError)
         } else {
-            model.initSeed(password, "english", seed, force).subscribeApi({
+            model.initSeed(password, "english", seed, force).siaSubscribe({
                 setSuccess("Created wallet")
                 refreshWallet()
                 this.seed.value = seed
@@ -195,7 +195,7 @@ class WalletViewModel : ViewModel() {
     fun send(amount: String, destination: String) {
         incrementTasks()
         model.send(amount, destination)
-                .subscribeApi({
+                .siaSubscribe({
                     setSuccess("Sent ${amount.toSC()} SC to $destination")
                     refreshWallet()
                 }, ::onError)
@@ -203,14 +203,14 @@ class WalletViewModel : ViewModel() {
 
     fun changePassword(currentPassword: String, newPassword: String) {
         incrementTasks()
-        model.changePassword(currentPassword, newPassword).subscribeApi({
+        model.changePassword(currentPassword, newPassword).siaSubscribe({
             setSuccess("Changed password")
         }, ::onError)
     }
 
     fun sweep(seed: String) {
         incrementTasks()
-        model.sweep("english", seed).subscribeApi({
+        model.sweep("english", seed).siaSubscribe({
             setSuccess("Scanning blockchain, please wait...")
         }, ::onError)
     }

@@ -11,9 +11,8 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import vandyke.siamobile.R
-import vandyke.siamobile.data.data.renter.SiaFile
+import vandyke.siamobile.data.local.File
 import vandyke.siamobile.ui.renter.viewmodel.RenterViewModel
-import vandyke.siamobile.util.GenUtil
 
 class FileHolder(itemView: View) : NodeHolder(itemView) {
     val image: ImageView = itemView.findViewById(R.id.fileImage)
@@ -21,9 +20,9 @@ class FileHolder(itemView: View) : NodeHolder(itemView) {
     val size: TextView = itemView.findViewById(R.id.fileSize)
     val more: ImageButton = itemView.findViewById(R.id.fileMore)
 
-    fun bind(file: SiaFile, viewModel: RenterViewModel) {
+    fun bind(file: File, viewModel: RenterViewModel) {
         name.text = file.name
-        size.text = GenUtil.readableFilesizeString(file.size)
+//        size.text = GenUtil.readableFilesizeString(file.size)
         itemView.setOnClickListener(null)
         more.setOnClickListener {
             viewModel.displayDetails(file)

@@ -6,6 +6,7 @@
 
 package vandyke.siamobile.data.remote
 
+import android.database.sqlite.SQLiteConstraintException
 import android.support.design.widget.Snackbar
 import android.view.View
 import retrofit2.HttpException
@@ -65,7 +66,8 @@ class SiaError : Throwable {
 
     private fun getReasonFromThrowable(t: Throwable): Reason {
         return when (t) {
-            is HttpException -> getReasonFromMsg(t.response().errorBody()!!.string())
+            is HttpException -> getReasonFromMsg(t.response().errorBody()!!.string()) // HTTPException is emitted by retrofit observables on HTTP non-2XX responses
+            is SQLiteConstraintException -> Reason.DIRECTORY_ALREADY_EXISTS
             is SocketTimeoutException -> Reason.TIMEOUT
             is SocketException -> Reason.NO_NETWORK_RESPONSE
             is IOException -> Reason.UNEXPECTED_END_OF_STREAM
@@ -100,6 +102,7 @@ class SiaError : Throwable {
         INVALID_SEED("Invalid seed"),
         CANNOT_INIT_FROM_SEED_UNTIL_SYNCED("Cannot create wallet from seed until fully synced"),
         UNEXPECTED_END_OF_STREAM("Connection unexpectedly closed"), // This occurs every time if both data and wifi are turned off
+        // TODO: maybe just ignore the above error? Because it seems like requests still work? I think? Will have to test more
         /* renter */
         DIRECTORY_ALREADY_EXISTS("Directory already exists"),
         /* explorer */

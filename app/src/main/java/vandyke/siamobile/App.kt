@@ -7,9 +7,13 @@
 package vandyke.siamobile
 
 import android.app.Application
+import android.arch.persistence.room.Room
 import android.os.Build
 import com.chibatching.kotpref.Kotpref
+import vandyke.siamobile.data.local.AppDatabase
 import vandyke.siamobile.util.NotificationUtil
+
+lateinit var db: AppDatabase
 
 class App : Application() {
 
@@ -21,6 +25,7 @@ class App : Application() {
 
         /* preferences stuff */
         Kotpref.init(this)
+        db = Room.databaseBuilder(this, AppDatabase::class.java, "db").build() // TODO: remove main thread queries
         super.onCreate()
     }
 }

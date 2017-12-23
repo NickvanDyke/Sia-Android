@@ -6,4 +6,4 @@
 
 package vandyke.siamobile.data.data.renter
 
-data class RenterFilesData(val files: List<SiaFile> = listOf())
+data class RenterFilesData(val files: List<RenterFileData> = listOf())

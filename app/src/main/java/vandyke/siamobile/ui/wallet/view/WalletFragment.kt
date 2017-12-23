@@ -62,7 +62,7 @@ class WalletFragment : BaseFragment() {
                     .show()
         }
 
-        /* set listener to refresh the viewModel when the swipelayout is triggered */
+        /* set listener to refreshDatabase the viewModel when the swipelayout is triggered */
         transactionListSwipe.setOnRefreshListener { viewModel.refresh() }
         transactionListSwipe.setColorSchemeResources(R.color.colorAccent)
 

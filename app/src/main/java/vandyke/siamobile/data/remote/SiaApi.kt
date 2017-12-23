@@ -8,8 +8,6 @@ package vandyke.siamobile.data.remote
 
 import io.reactivex.Completable
 import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import retrofit2.Retrofit
@@ -109,27 +107,4 @@ object SiaApi {
                 .build()
                 .create(SiaApiInterface::class.java)
     }
-}
-
-/* the below extensions are used to simplify subscribing to Singles/Completables from the above sia api */
-fun <T> Single<T>.subscribeApi(onNext: (T) -> Unit, onError: (SiaError) -> Unit) {
-    this.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(onNext, {
-                if (it is SiaError)
-                    onError(it)
-                else
-                    onError(SiaError(it))
-            })
-}
-
-fun Completable.subscribeApi(onNext: () -> Unit, onError: (SiaError) -> Unit) {
-    this.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(onNext, {
-                if (it is SiaError)
-                    onError(it)
-                else
-                    onError(SiaError(it))
-            })
 }

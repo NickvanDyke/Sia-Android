@@ -10,9 +10,9 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import vandyke.siamobile.R
-import vandyke.siamobile.data.data.renter.SiaDir
-import vandyke.siamobile.data.data.renter.SiaFile
-import vandyke.siamobile.data.data.renter.SiaNode
+import vandyke.siamobile.data.local.Dir
+import vandyke.siamobile.data.local.File
+import vandyke.siamobile.data.local.Node
 import vandyke.siamobile.ui.renter.viewmodel.RenterViewModel
 
 class NodesAdapter(val viewModel: RenterViewModel) : RecyclerView.Adapter<NodeHolder>() {
@@ -20,7 +20,7 @@ class NodesAdapter(val viewModel: RenterViewModel) : RecyclerView.Adapter<NodeHo
     private val DIR = 0
     private val FILE = 1
 
-    private var nodes = listOf<SiaNode>()
+    private var nodes = listOf<Node>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NodeHolder {
         if (viewType == DIR) {
@@ -34,17 +34,17 @@ class NodesAdapter(val viewModel: RenterViewModel) : RecyclerView.Adapter<NodeHo
 
     override fun onBindViewHolder(holder: NodeHolder, position: Int) {
         if (holder is DirHolder)
-            holder.bind(nodes[position] as SiaDir, viewModel)
+            holder.bind(nodes[position] as Dir, viewModel)
         else if (holder is FileHolder)
-            holder.bind(nodes[position] as SiaFile, viewModel)
+            holder.bind(nodes[position] as File, viewModel)
     }
 
-    override fun getItemViewType(position: Int) = if (nodes[position] is SiaDir) DIR else FILE
+    override fun getItemViewType(position: Int) = if (nodes[position] is Dir) DIR else FILE
 
     override fun getItemCount() = nodes.size
 
-    fun displayDir(dir: SiaDir) {
-        nodes = dir.nodes
+    fun display(nodes: List<Node>) {
+        this.nodes = nodes
         notifyDataSetChanged()
     }
 }

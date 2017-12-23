@@ -11,9 +11,8 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import vandyke.siamobile.R
-import vandyke.siamobile.data.data.renter.SiaDir
+import vandyke.siamobile.data.local.Dir
 import vandyke.siamobile.ui.renter.viewmodel.RenterViewModel
-import vandyke.siamobile.util.GenUtil
 
 class DirHolder(itemView: View) : NodeHolder(itemView) {
     val image: ImageView = itemView.findViewById(R.id.dirImage)
@@ -21,10 +20,10 @@ class DirHolder(itemView: View) : NodeHolder(itemView) {
     val size: TextView = itemView.findViewById(R.id.dirSize)
     val more: ImageButton = itemView.findViewById(R.id.dirMore)
 
-    fun bind(dir: SiaDir, viewModel: RenterViewModel) {
+    fun bind(dir: Dir, viewModel: RenterViewModel) {
         name.text = dir.name
-        size.text = GenUtil.readableFilesizeString(dir.size)
-        itemView.setOnClickListener { v -> viewModel.changeDir(dir) }
+//        size.text = GenUtil.readableFilesizeString(dir.size)
+        itemView.setOnClickListener { v -> viewModel.changeDir(dir.path) }
         more.setOnClickListener {
             viewModel.displayDetails(dir)
         }
