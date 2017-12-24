@@ -1,14 +1,13 @@
 /*
- * Copyright (c) 2017 Nicholas van Dyke
- *
- * This file is subject to the terms and conditions defined in 'LICENSE.md'
+ * Copyright (c) 2017 Nicholas van Dyke. All rights reserved.
  */
 
 package vandyke.siamobile.ui.renter.viewmodel
 
-import android.app.Application
-import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.MutableLiveData
+import android.arch.lifecycle.ViewModel
+import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 import vandyke.siamobile.data.local.File
 import vandyke.siamobile.data.local.Node
 import vandyke.siamobile.data.remote.SiaError
@@ -16,7 +15,7 @@ import vandyke.siamobile.data.siad.SiadService
 import vandyke.siamobile.ui.renter.model.RenterModelTest
 import vandyke.siamobile.util.siaSubscribe
 
-class RenterViewModel(application: Application) : AndroidViewModel(application) {
+class RenterViewModel : ViewModel() {
     val displayedNodes = MutableLiveData<List<Node>>()
     val path = MutableLiveData<String>()
     val detailsItem = MutableLiveData<Node>()
@@ -29,7 +28,11 @@ class RenterViewModel(application: Application) : AndroidViewModel(application) 
             refresh()
     }
 
+    private var currentDirSubscription: Disposable? = null
+
     init {
+        path.value = ""
+        displayedNodes.value = listOf()
         changeDir("")
     }
 
@@ -39,15 +42,14 @@ class RenterViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun refresh() {
-        model.refreshDatabase().siaSubscribe({
-            changeDir(path.value ?: "")
-        }, ::setError)
+        model.refreshDatabase().subscribeOn(Schedulers.io()).subscribe()
         // TODO: check that current directory is still valid
     }
 
     fun changeDir(path: String) {
         println("changing to dir $path")
-        model.getImmediateNodes(path).siaSubscribe({ dirs ->
+        currentDirSubscription?.dispose()
+        currentDirSubscription = model.getImmediateNodes(path).siaSubscribe({ dirs ->
             displayedNodes.value = dirs
             this.path.value = path
         }, ::setError)
@@ -55,8 +57,8 @@ class RenterViewModel(application: Application) : AndroidViewModel(application) 
 
     fun goToIndexInPath(index: Int) {
         /* construct the path to go to */
-        var path = ""
         val splitPath = this.path.value!!.split("/")
+        var path = ""
         for (i in 1..index) {
             path += "/${splitPath[i]}"
         }

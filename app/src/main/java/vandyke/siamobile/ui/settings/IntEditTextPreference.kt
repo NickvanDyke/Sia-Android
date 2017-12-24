@@ -1,7 +1,5 @@
 /*
- * Copyright (c) 2017 Nicholas van Dyke
- *
- * This file is subject to the terms and conditions defined in 'LICENSE.md'
+ * Copyright (c) 2017 Nicholas van Dyke. All rights reserved.
  */
 
 package vandyke.siamobile.ui.settings

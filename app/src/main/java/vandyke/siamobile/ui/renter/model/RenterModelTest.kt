@@ -1,13 +1,11 @@
 /*
- * Copyright (c) 2017 Nicholas van Dyke
- *
- * This file is subject to the terms and conditions defined in 'LICENSE.md'
+ * Copyright (c) 2017 Nicholas van Dyke. All rights reserved.
  */
 
 package vandyke.siamobile.ui.renter.model
 
 import io.reactivex.Completable
-import io.reactivex.Single
+import io.reactivex.Flowable
 import io.reactivex.functions.BiFunction
 import vandyke.siamobile.data.data.renter.RenterFileData
 import vandyke.siamobile.data.local.Dir
@@ -27,9 +25,7 @@ class RenterModelTest {
             RenterFileData("colors/bright/orange.rgb", filesize = BigDecimal("23583")))
 
 
-    /**
-     * Queries the list of files from the Sia node, and updates local database from it
-     */
+    /** Queries the list of files from the Sia node, and updates local database from it */
     fun refreshDatabase() = Completable.create {
         /* first, insert all files, so that their data can be used to calculate dir values (such as size) */
         files.forEach {
@@ -51,7 +47,7 @@ class RenterModelTest {
         it.onComplete()
     }!!
 
-    fun getImmediateNodes(path: String) = Single.zip(
+    fun getImmediateNodes(path: String) = Flowable.combineLatest(
             db.dirDao().getImmediateDirs(path),
             db.fileDao().getFilesInDir(path),
             BiFunction<List<Dir>, List<File>, List<Node>> { dirs, files ->

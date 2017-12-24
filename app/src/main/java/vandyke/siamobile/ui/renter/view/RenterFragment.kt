@@ -1,7 +1,5 @@
 /*
- * Copyright (c) 2017 Nicholas van Dyke
- *
- * This file is subject to the terms and conditions defined in 'LICENSE.md'
+ * Copyright (c) 2017 Nicholas van Dyke. All rights reserved.
  */
 
 package vandyke.siamobile.ui.renter.view
@@ -33,7 +31,8 @@ class RenterFragment : BaseFragment() {
     private lateinit var adapter: NodesAdapter
     private var programmaticallySelecting = true
 
-    private var oldPath: List<String> = listOf()
+    /** tracked in the view so that when the viewmodel's path updates, we can determine the differences for animating the path display */
+    private var currentPath: List<String> = listOf()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewModel = ViewModelProviders.of(this).get(RenterViewModel::class.java)
@@ -88,11 +87,11 @@ class RenterFragment : BaseFragment() {
             programmaticallySelecting = true
             val newPath = it.split("/")
             /* find the point at which the path differs */
-            val breakpoint = (0 until maxOf(newPath.size, oldPath.size)).firstOrNull {
-                it > oldPath.size - 1 || it > newPath.size - 1 || newPath[it] != oldPath[it]
+            val breakpoint = (0 until maxOf(newPath.size, currentPath.size)).firstOrNull {
+                it > currentPath.size - 1 || it > newPath.size - 1 || newPath[it] != currentPath[it]
             } ?: renterFilepath.tabCount
             /* select the appropriate tab if it already exists */
-            if (newPath.size < oldPath.size)
+            if (newPath.size < currentPath.size)
                 renterFilepath.getTabAt(newPath.size - 1)?.select()
             /* remove tabs that are past the breakpoint */
             for (i in breakpoint until renterFilepath.tabCount)
@@ -100,10 +99,12 @@ class RenterFragment : BaseFragment() {
             /* add new tabs from the breakpoint to the end of the new path */
             for (i in breakpoint until newPath.size)
                 renterFilepath.addTab(renterFilepath.newTab().setText(newPath[i]), true)
+            /* set the first tab's text to Home, since otherwise it will just be a space due to the paths of stuff starting with a slash */
+            renterFilepath.getTabAt(0)!!.text = "Home"
             /* scroll the tabs all the way to the right */
             renterFilepath.postDelayed({ renterFilepath.fullScroll(TabLayout.FOCUS_RIGHT) }, 5)
             programmaticallySelecting = false
-            oldPath = newPath
+            currentPath = newPath
         }
 
         viewModel.error.observe(this) {

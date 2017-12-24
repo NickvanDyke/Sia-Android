@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2017 Nicholas van Dyke. All rights reserved.
+ */
+
 package vandyke.siamobile.ui.main
 
 import android.app.Dialog

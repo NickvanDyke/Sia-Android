@@ -1,7 +1,5 @@
 /*
- * Copyright (c) 2017 Nicholas van Dyke
- *
- * This file is subject to the terms and conditions defined in 'LICENSE.md'
+ * Copyright (c) 2017 Nicholas van Dyke. All rights reserved.
  */
 
 package vandyke.siamobile.data.remote
@@ -16,8 +14,10 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
 import vandyke.siamobile.data.data.consensus.ConsensusData
 import vandyke.siamobile.data.data.gateway.GatewayData
+import vandyke.siamobile.data.data.renter.RenterData
 import vandyke.siamobile.data.data.renter.RenterFilesData
 import vandyke.siamobile.data.data.wallet.*
+import java.math.BigDecimal
 import java.util.concurrent.TimeUnit
 
 interface SiaApiInterface {
@@ -66,6 +66,12 @@ interface SiaApiInterface {
     fun getScPrice(@Url url: String = "http://www.coincap.io/page/SC"): Single<ScPriceData>
 
     /* renter API */
+    @GET("/renter")
+    fun renter(): Single<RenterData>
+
+    @POST("/renter")
+    fun renter(@Query("funds") funds: BigDecimal, @Query("hosts") hosts: Int, @Query("period") period: Int, @Query("renewwindow") renewwindow: Int): Completable
+
     @GET("renter/files")
     fun renterFiles(): Single<RenterFilesData>
 

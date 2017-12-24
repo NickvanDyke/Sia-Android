@@ -1,9 +1,14 @@
+/*
+ * Copyright (c) 2017 Nicholas van Dyke. All rights reserved.
+ */
+
 package vandyke.siamobile.data.local
 
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.Query
+import io.reactivex.Flowable
 import io.reactivex.Single
 import org.intellij.lang.annotations.Language
 
@@ -14,7 +19,7 @@ interface FileDao {
 
     @Language("RoomSql")
     @Query("SELECT * FROM files WHERE path LIKE :path || '/%' AND path NOT LIKE :path || '/%/%'")
-    fun getFilesInDir(path: String): Single<List<File>>
+    fun getFilesInDir(path: String): Flowable<List<File>>
 
     @Language("RoomSql")
     @Query("SELECT * FROM files WHERE path LIKE :path || '/%'")
