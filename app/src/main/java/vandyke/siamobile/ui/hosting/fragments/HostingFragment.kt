@@ -5,7 +5,7 @@
 package vandyke.siamobile.ui.hosting.fragments
 
 import vandyke.siamobile.R
-import vandyke.siamobile.ui.main.BaseFragment
+import vandyke.siamobile.ui.common.BaseFragment
 
 class HostingFragment : BaseFragment() {
     override val layoutResId: Int = R.layout.fragment_hosting

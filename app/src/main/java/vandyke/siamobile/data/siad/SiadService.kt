@@ -146,8 +146,7 @@ class SiadService : Service() {
 
         val isSiadLoaded = BehaviorSubject.create<Boolean>()!!
 
-        fun getService(context: Context) =
-                Single.create<SiadService> {
+        fun getService(context: Context) = Single.create<SiadService> {
                     val connection = object : ServiceConnection {
                         override fun onServiceConnected(name: ComponentName, service: IBinder) {
                             it.onSuccess((service as SiadService.LocalBinder).service)

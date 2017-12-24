@@ -14,9 +14,9 @@ import android.view.*
 import android.widget.EditText
 import kotlinx.android.synthetic.main.fragment_renter.*
 import vandyke.siamobile.R
-import vandyke.siamobile.data.local.Dir
-import vandyke.siamobile.data.local.File
-import vandyke.siamobile.ui.main.BaseFragment
+import vandyke.siamobile.data.local.data.Dir
+import vandyke.siamobile.data.local.data.File
+import vandyke.siamobile.ui.common.BaseFragment
 import vandyke.siamobile.ui.renter.view.list.NodesAdapter
 import vandyke.siamobile.ui.renter.viewmodel.RenterViewModel
 import vandyke.siamobile.util.observe
@@ -39,8 +39,6 @@ class RenterFragment : BaseFragment() {
         filesList.addItemDecoration(DividerItemDecoration(filesList.context, (filesList.layoutManager as LinearLayoutManager).orientation))
         adapter = NodesAdapter(viewModel)
         filesList.adapter = adapter
-
-        renterFilepath.addTab(renterFilepath.newTab().setText("Home"))
 
         renterFilepath.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabReselected(tab: TabLayout.Tab?) {}

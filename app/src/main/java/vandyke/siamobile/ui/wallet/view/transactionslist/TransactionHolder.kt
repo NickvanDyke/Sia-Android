@@ -9,7 +9,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.TextView
 import vandyke.siamobile.R
-import vandyke.siamobile.data.data.wallet.TransactionData
+import vandyke.siamobile.data.remote.data.wallet.TransactionData
 import vandyke.siamobile.util.round
 import vandyke.siamobile.util.toSC
 import java.text.SimpleDateFormat

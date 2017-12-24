@@ -12,11 +12,11 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
-import vandyke.siamobile.data.data.consensus.ConsensusData
-import vandyke.siamobile.data.data.gateway.GatewayData
-import vandyke.siamobile.data.data.renter.RenterData
-import vandyke.siamobile.data.data.renter.RenterFilesData
-import vandyke.siamobile.data.data.wallet.*
+import vandyke.siamobile.data.remote.data.consensus.ConsensusData
+import vandyke.siamobile.data.remote.data.gateway.GatewayData
+import vandyke.siamobile.data.remote.data.renter.RenterData
+import vandyke.siamobile.data.remote.data.renter.RenterFilesData
+import vandyke.siamobile.data.remote.data.wallet.*
 import java.math.BigDecimal
 import java.util.concurrent.TimeUnit
 

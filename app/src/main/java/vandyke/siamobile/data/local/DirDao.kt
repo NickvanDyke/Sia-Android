@@ -10,6 +10,7 @@ import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.Query
 import io.reactivex.Flowable
 import org.intellij.lang.annotations.Language
+import vandyke.siamobile.data.local.data.Dir
 
 @Dao
 interface DirDao {

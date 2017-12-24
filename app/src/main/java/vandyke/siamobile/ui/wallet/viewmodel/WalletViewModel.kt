@@ -6,10 +6,9 @@ package vandyke.siamobile.ui.wallet.viewmodel
 
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
-import io.reactivex.android.schedulers.AndroidSchedulers
-import vandyke.siamobile.data.data.consensus.ConsensusData
-import vandyke.siamobile.data.data.wallet.*
 import vandyke.siamobile.data.remote.SiaError
+import vandyke.siamobile.data.remote.data.consensus.ConsensusData
+import vandyke.siamobile.data.remote.data.wallet.*
 import vandyke.siamobile.data.remote.siaApi
 import vandyke.siamobile.data.siad.SiadService
 import vandyke.siamobile.ui.wallet.model.IWalletModel
@@ -40,7 +39,7 @@ class WalletViewModel : ViewModel() {
 
     val model: IWalletModel = WalletModelHttp()
 
-    private val subscription = SiadService.output.observeOn(AndroidSchedulers.mainThread()).subscribe {
+    private val subscription = SiadService.output.subscribe {
         if (it.contains("Finished loading") || it.contains("Done!"))
             refresh()
     }

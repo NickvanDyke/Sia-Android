@@ -11,6 +11,7 @@ import android.arch.persistence.room.Query
 import io.reactivex.Flowable
 import io.reactivex.Single
 import org.intellij.lang.annotations.Language
+import vandyke.siamobile.data.local.data.File
 
 @Dao
 interface FileDao {

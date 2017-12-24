@@ -18,7 +18,7 @@ import kotlinx.android.synthetic.main.fragment_wallet.*
 import vandyke.siamobile.R
 import vandyke.siamobile.data.local.Prefs
 import vandyke.siamobile.data.remote.SiaError
-import vandyke.siamobile.ui.main.BaseFragment
+import vandyke.siamobile.ui.common.BaseFragment
 import vandyke.siamobile.ui.wallet.view.childfragments.*
 import vandyke.siamobile.ui.wallet.view.transactionslist.TransactionAdapter
 import vandyke.siamobile.ui.wallet.viewmodel.WalletViewModel
@@ -84,14 +84,13 @@ class WalletFragment : BaseFragment() {
         }
 
         viewModel.transactions.observe(this) {
-            val hideZero = Prefs.hideZero
-            adapter.transactions = it.alltransactions.filterNot { hideZero && it.isNetZero }.reversed()
-            adapter.notifyDataSetChanged()
+            adapter.update(it.alltransactions.filterNot { Prefs.hideZero && it.isNetZero }.reversed())
         }
 
         viewModel.consensus.observe(this) {
             if (viewModel.numPeers.value == 0) {
                 syncText?.text = ("Not syncing: ${it.height}")
+                syncBar?.progress = it.syncprogress.toInt()
             } else {
                 if (it.synced) {
                     syncText?.text = ("${getString(R.string.synced)}: ${it.height}")

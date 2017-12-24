@@ -12,7 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_renter_file_more.*
 import vandyke.siamobile.R
-import vandyke.siamobile.data.local.File
+import vandyke.siamobile.data.local.data.File
 import vandyke.siamobile.ui.renter.viewmodel.RenterViewModel
 import vandyke.siamobile.util.observe
 

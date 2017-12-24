@@ -4,13 +4,14 @@
 
 package vandyke.siamobile.ui.renter.view.list
 
+import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import vandyke.siamobile.R
-import vandyke.siamobile.data.local.Dir
-import vandyke.siamobile.data.local.File
-import vandyke.siamobile.data.local.Node
+import vandyke.siamobile.data.local.data.Dir
+import vandyke.siamobile.data.local.data.File
+import vandyke.siamobile.data.local.data.Node
 import vandyke.siamobile.ui.renter.viewmodel.RenterViewModel
 
 class NodesAdapter(val viewModel: RenterViewModel) : RecyclerView.Adapter<NodeHolder>() {
@@ -42,7 +43,20 @@ class NodesAdapter(val viewModel: RenterViewModel) : RecyclerView.Adapter<NodeHo
     override fun getItemCount() = nodes.size
 
     fun display(nodes: List<Node>) {
+        val diffResult = DiffUtil.calculateDiff(NodesDiffUtil(this.nodes, nodes))
         this.nodes = nodes
-        notifyDataSetChanged()
+        diffResult.dispatchUpdatesTo(this) // TODO: causes delay when the entire list changes, as opposed to notifyDataSetChanged
+    }
+
+    inner class NodesDiffUtil(private val oldList: List<Node>, private val newList: List<Node>) : DiffUtil.Callback() {
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
+                oldList[oldItemPosition].path == newList[newItemPosition].path
+
+        override fun getOldListSize() = oldList.size
+
+        override fun getNewListSize() = newList.size
+
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int) =
+                oldList[oldItemPosition].name == newList[newItemPosition].name
     }
 }

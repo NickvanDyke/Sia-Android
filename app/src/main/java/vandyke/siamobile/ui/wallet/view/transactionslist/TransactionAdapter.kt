@@ -6,11 +6,12 @@ package vandyke.siamobile.ui.wallet.view.transactionslist
 
 import android.content.Intent
 import android.net.Uri
+import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import vandyke.siamobile.R
-import vandyke.siamobile.data.data.wallet.TransactionData
+import vandyke.siamobile.data.remote.data.wallet.TransactionData
 
 class TransactionAdapter : RecyclerView.Adapter<TransactionHolder>() {
     var transactions: List<TransactionData> = listOf()
@@ -32,4 +33,26 @@ class TransactionAdapter : RecyclerView.Adapter<TransactionHolder>() {
 
     override fun getItemCount(): Int = transactions.size
 
+    fun update(txs: List<TransactionData>) {
+        val diffResult = DiffUtil.calculateDiff(TxDiffUtil(transactions, txs))
+        transactions = txs
+        diffResult.dispatchUpdatesTo(this)
+    }
+
+    inner class TxDiffUtil(private val oldList: List<TransactionData>, private val newList: List<TransactionData>) : DiffUtil.Callback() {
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) =
+                oldList[oldItemPosition].transactionid == newList[newItemPosition].transactionid
+
+        override fun getOldListSize() = oldList.size
+
+        override fun getNewListSize() = newList.size
+
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            val old = oldList[oldItemPosition]
+            val new = newList[newItemPosition]
+            return old.transactionid == new.transactionid
+                    && old.confirmationdate == new.confirmationdate
+                    && old.netValue == new.netValue
+        }
+    }
 }

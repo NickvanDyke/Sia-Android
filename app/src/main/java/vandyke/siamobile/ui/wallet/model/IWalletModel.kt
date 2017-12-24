@@ -6,8 +6,8 @@ package vandyke.siamobile.ui.wallet.model
 
 import io.reactivex.Completable
 import io.reactivex.Single
-import vandyke.siamobile.data.data.consensus.ConsensusData
-import vandyke.siamobile.data.data.wallet.*
+import vandyke.siamobile.data.remote.data.consensus.ConsensusData
+import vandyke.siamobile.data.remote.data.wallet.*
 
 interface IWalletModel {
     fun getWallet(): Single<WalletData>

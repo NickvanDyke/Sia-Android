@@ -15,9 +15,4 @@ object Prefs : KotprefModel() {
     var useExternal by booleanPref(false)
     var displayedDecimalPrecision by intPref(2)
     var SiaNodeWakeLock by booleanPref(false)
-    val renterDirs by stringSetPref()
-    var coldStorageExists by booleanPref(false)
-    var coldStorageSeed by stringPref()
-    var coldStoragePassword by stringPref()
-    val coldStorageAddresses by stringSetPref()
 }

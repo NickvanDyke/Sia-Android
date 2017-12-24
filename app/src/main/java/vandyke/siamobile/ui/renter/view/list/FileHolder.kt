@@ -9,7 +9,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import vandyke.siamobile.R
-import vandyke.siamobile.data.local.File
+import vandyke.siamobile.data.local.data.File
 import vandyke.siamobile.ui.renter.viewmodel.RenterViewModel
 
 class FileHolder(itemView: View) : NodeHolder(itemView) {

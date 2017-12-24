@@ -7,7 +7,7 @@ package vandyke.siamobile.ui.settings
 import android.os.Bundle
 import android.view.View
 import vandyke.siamobile.R
-import vandyke.siamobile.ui.main.BaseFragment
+import vandyke.siamobile.ui.common.BaseFragment
 
 /* a fragment that contains SettingsFragmentActual, since the actual settings fragment cannot extend BaseFragment */
 class SettingsFragment : BaseFragment() {

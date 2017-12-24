@@ -7,10 +7,10 @@ package vandyke.siamobile.ui.renter.model
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.functions.BiFunction
-import vandyke.siamobile.data.data.renter.RenterFileData
-import vandyke.siamobile.data.local.Dir
-import vandyke.siamobile.data.local.File
-import vandyke.siamobile.data.local.Node
+import vandyke.siamobile.data.local.data.Dir
+import vandyke.siamobile.data.local.data.File
+import vandyke.siamobile.data.local.data.Node
+import vandyke.siamobile.data.remote.data.renter.RenterFileData
 import vandyke.siamobile.db
 import java.math.BigDecimal
 

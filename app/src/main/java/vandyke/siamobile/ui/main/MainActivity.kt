@@ -18,6 +18,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import vandyke.siamobile.R
 import vandyke.siamobile.data.local.Prefs
 import vandyke.siamobile.data.siad.SiadService
+import vandyke.siamobile.ui.common.BaseFragment
 import vandyke.siamobile.ui.hosting.fragments.HostingFragment
 import vandyke.siamobile.ui.renter.view.RenterFragment
 import vandyke.siamobile.ui.terminal.TerminalFragment
