@@ -26,7 +26,7 @@ Huge thanks to [SiaPulse](http://siapulse.com) for a donation that made the time
 [Gsora](https://github.com/gsora) for letting me use the AAR he created from [this](https://github.com/johnathanhowell/sia-coldstorage), which Sia Mobile uses to generate paper and cold storage wallets.
 
 # Donations
-I develop Sia Mobile in my spare time for free, and also strive to keep the app free and ad-free. Any donation amount is appreciated and supports development and keeping Sia Mobile free. Thanks!
+Any amount is appreciated and supports development. Thanks!
 
 Siacoin: 20c9ed0d1c70ab0d6f694b7795bae2190db6b31d97bc2fba8067a336ffef37aacbc0c826e5d3
 
