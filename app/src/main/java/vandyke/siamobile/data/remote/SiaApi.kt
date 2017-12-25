@@ -14,8 +14,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
 import vandyke.siamobile.data.remote.data.consensus.ConsensusData
 import vandyke.siamobile.data.remote.data.gateway.GatewayData
-import vandyke.siamobile.data.remote.data.renter.RenterData
-import vandyke.siamobile.data.remote.data.renter.RenterFilesData
+import vandyke.siamobile.data.remote.data.renter.*
 import vandyke.siamobile.data.remote.data.wallet.*
 import java.math.BigDecimal
 import java.util.concurrent.TimeUnit
@@ -66,20 +65,38 @@ interface SiaApiInterface {
     fun getScPrice(@Url url: String = "http://www.coincap.io/page/SC"): Single<ScPriceData>
 
     /* renter API */
-    @GET("/renter")
+    @GET("renter")
     fun renter(): Single<RenterData>
 
-    @POST("/renter")
+    @POST("renter")
     fun renter(@Query("funds") funds: BigDecimal, @Query("hosts") hosts: Int, @Query("period") period: Int, @Query("renewwindow") renewwindow: Int): Completable
+
+    @GET("renter/contracts")
+    fun renterContracts(): Single<ContractsData>
+
+    @GET("renter/downloads")
+    fun renterDownloads(): Single<DownloadsData>
 
     @GET("renter/files")
     fun renterFiles(): Single<RenterFilesData>
+
+    @GET("renter/prices")
+    fun renterPrices(): Single<PricesData>
+
+    @POST("renter/rename/{siapath}")
+    fun renterRename(@Path("siapath") siapath: String, @Query("newsiapath") newSiaPath: String): Completable
 
     @POST("renter/delete/{siapath}")
     fun renterDelete(@Path("siapath") siapath: String): Completable
 
     @POST("renter/upload/{siapath}")
     fun renterUpload(@Path("siapath") siapath: String, @Query("source") source: String, @Query("datapieces") dataPieces: Int, @Query("paritypieces") parityPieces: Int): Completable
+
+    @GET("renter/download/{siapath}")
+    fun renterDownload(@Path("siapath") siapath: String, @Query("destination") destination: String): Completable
+
+    @GET("renter/downloadasync/{siapath}")
+    fun renterDownloadAsync(@Path("siapath") siapath: String, @Query("destination") destination: String): Completable
 
     /* gateway API */
     @GET("gateway")
