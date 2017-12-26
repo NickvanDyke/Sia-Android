@@ -13,7 +13,7 @@ data class WalletData(
         val confirmedsiacoinbalance: BigDecimal = BigDecimal.ZERO,
         val unconfirmedoutgoingsiacoins: BigDecimal = BigDecimal.ZERO,
         val unconfirmedincomingsiacoins: BigDecimal = BigDecimal.ZERO,
-        val siafundbalance: BigDecimal = BigDecimal.ZERO,
+        val siafundbalance: Int = 0,
         val siacoinclaimbalance: BigDecimal = BigDecimal.ZERO) {
 
     val unconfirmedsiacoinbalance: BigDecimal by lazy { unconfirmedincomingsiacoins - unconfirmedoutgoingsiacoins }

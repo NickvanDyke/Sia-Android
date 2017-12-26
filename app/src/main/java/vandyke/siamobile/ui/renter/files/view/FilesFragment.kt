@@ -16,8 +16,8 @@ import android.view.WindowManager
 import android.widget.EditText
 import kotlinx.android.synthetic.main.fragment_renter_files.*
 import vandyke.siamobile.R
-import vandyke.siamobile.data.local.data.Dir
-import vandyke.siamobile.data.local.data.File
+import vandyke.siamobile.data.local.data.renter.Dir
+import vandyke.siamobile.data.local.data.renter.File
 import vandyke.siamobile.ui.common.BaseFragment
 import vandyke.siamobile.ui.renter.files.view.list.NodesAdapter
 import vandyke.siamobile.ui.renter.files.viewmodel.FilesViewModel

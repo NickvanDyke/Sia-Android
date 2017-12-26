@@ -9,9 +9,9 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import vandyke.siamobile.R
-import vandyke.siamobile.data.local.data.Dir
-import vandyke.siamobile.data.local.data.File
-import vandyke.siamobile.data.local.data.Node
+import vandyke.siamobile.data.local.data.renter.Dir
+import vandyke.siamobile.data.local.data.renter.File
+import vandyke.siamobile.data.local.data.renter.Node
 import vandyke.siamobile.ui.renter.files.viewmodel.FilesViewModel
 
 class NodesAdapter(val viewModel: FilesViewModel) : RecyclerView.Adapter<NodeHolder>() {

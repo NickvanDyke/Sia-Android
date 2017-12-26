@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        /* notify view model when navigation items are selected */
+        /* notify view walletRepo when navigation items are selected */
         navigationView.setNavigationItemSelectedListener({ item ->
             drawerLayout.closeDrawers()
             viewModel.navigationItemSelected(item)

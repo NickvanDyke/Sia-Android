@@ -55,12 +55,12 @@ class WalletFragment : BaseFragment() {
         balanceText.setOnClickListener { v ->
             AlertDialog.Builder(v.context)
                     .setTitle("Exact Balance")
-                    .setMessage("${viewModel.wallet.value?.confirmedsiacoinbalance?.toSC()?.toPlainString() ?: 0} Siacoins")
+                    .setMessage("${viewModel.wallet.value?.confirmedHastings?.toSC()?.toPlainString() ?: 0} Siacoins")
                     .setPositiveButton("Close", null)
                     .show()
         }
 
-        /* set listener to refreshDatabase the viewModel when the swipelayout is triggered */
+        /* set listener to updateDatabase the viewModel when the swipelayout is triggered */
         transactionListSwipe.setOnRefreshListener { viewModel.refresh() }
         transactionListSwipe.setColorSchemeResources(R.color.colorAccent)
 
@@ -72,9 +72,9 @@ class WalletFragment : BaseFragment() {
 
         /* observe data in the viewModel */
         viewModel.wallet.observe(this) {
-            balanceUnconfirmed?.text = ((if (it.unconfirmedsiacoinbalance > BigDecimal.ZERO) "+" else "") +
-                    "${it.unconfirmedsiacoinbalance.toSC().round().toPlainString()} unconfirmed")
-            balanceText?.text = it.confirmedsiacoinbalance.toSC().round().toPlainString()
+            balanceUnconfirmed?.text = ((if (it.unconfirmedHastings > BigDecimal.ZERO) "+" else "") +
+                    "${it.unconfirmedHastings.toSC().round().toPlainString()} unconfirmedHastings")
+            balanceText?.text = it.unconfirmedHastings.toSC().round().toPlainString()
             setStatusIcon()
             updateUsdValue()
         }
@@ -125,7 +125,7 @@ class WalletFragment : BaseFragment() {
 
     private fun updateUsdValue() {
         if (viewModel.wallet.value != null && viewModel.usd.value != null)
-            balanceUsdText.text = ("${viewModel.wallet.value!!.confirmedsiacoinbalance.toSC()
+            balanceUsdText.text = ("${viewModel.wallet.value!!.confirmedHastings.toSC()
                     .toUsd(viewModel.usd.value!!.price_usd).round().toPlainString()} USD")
     }
 
@@ -137,8 +137,8 @@ class WalletFragment : BaseFragment() {
 //                    activity.resources.getDrawable(R.drawable.ic_lock_outline, null).constantState -> expandFrame(WalletUnlockDialog(viewModel))
 //                    activity.resources.getDrawable(R.drawable.ic_lock_open, null).constantState -> viewModel.lock()
 //                }
-                when (viewModel.wallet.value?.encrypted) {
-                    false, null -> expandFrame(WalletCreateDialog())
+                when (viewModel.wallet.value?.encrypted ?: false || viewModel.wallet.value?.rescanning ?: false) {
+                    false -> expandFrame(WalletCreateDialog())
                     true -> if (!viewModel.wallet.value!!.unlocked) expandFrame(WalletUnlockDialog())
                     else viewModel.lock()
                 }
@@ -177,21 +177,19 @@ class WalletFragment : BaseFragment() {
     }
 
     private fun setStatusIcon() {
-        val walletData = viewModel.wallet.value
-        if (walletData != null)
-            when (walletData.encrypted) {
-                false -> statusButton?.setIcon(R.drawable.ic_add)
-                true -> if (!walletData.unlocked) statusButton?.setIcon(R.drawable.ic_lock_outline)
-                else statusButton?.setIcon(R.drawable.ic_lock_open)
-            }
+        when (viewModel.wallet.value?.encrypted ?: false || viewModel.wallet.value?.rescanning ?: false) {
+            false -> statusButton?.setIcon(R.drawable.ic_add)
+            true -> if (!viewModel.wallet.value!!.unlocked) statusButton?.setIcon(R.drawable.ic_lock_outline)
+            else statusButton?.setIcon(R.drawable.ic_lock_open)
+        }
     }
 
     override fun onBackPressed(): Boolean {
-        if (expandableFrame.height != 0) {
+        return if (expandableFrame.height != 0) {
             collapseFrame()
-            return true
+            true
         } else {
-            return false
+            false
         }
     }
 }

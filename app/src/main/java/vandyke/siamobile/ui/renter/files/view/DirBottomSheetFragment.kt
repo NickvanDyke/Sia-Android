@@ -12,7 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_renter_dir_more.*
 import vandyke.siamobile.R
-import vandyke.siamobile.data.local.data.Dir
+import vandyke.siamobile.data.local.data.renter.Dir
 import vandyke.siamobile.ui.renter.files.viewmodel.FilesViewModel
 import vandyke.siamobile.util.observe
 

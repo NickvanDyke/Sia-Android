@@ -11,6 +11,8 @@ val HASTINGS_PER_SC = BigDecimal("1000000000000000000000000")
 
 val BLOCK_100k_TIMESTAMP = 1492126789
 
+val UNCONFIRMED_TX_TIMESTAMP = "18446744073709551615"
+
 fun BigDecimal.toSC(): BigDecimal = divide(HASTINGS_PER_SC)
 
 fun String.toSC(): BigDecimal = if (this.isBlank()) BigDecimal.ZERO else BigDecimal(this).divide(HASTINGS_PER_SC)

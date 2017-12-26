@@ -32,7 +32,8 @@ class TransactionHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         transactionStatus.text = timeString
 
         val id = transaction.transactionid
-        transactionId.text = "${id.substring(0, id.length / 2)}\n${id.substring(id.length / 2)}"
+        transactionId.text = id
+//        transactionId.text = ("${id.substring(0, id.length / 2)}\n${id.substring(id.length / 2)}")
 
         var valueText = transaction.netValue.toSC().round().toPlainString()
         if (transaction.isNetZero) {

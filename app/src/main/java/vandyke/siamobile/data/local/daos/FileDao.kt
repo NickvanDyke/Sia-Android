@@ -2,7 +2,7 @@
  * Copyright (c) 2017 Nicholas van Dyke. All rights reserved.
  */
 
-package vandyke.siamobile.data.local
+package vandyke.siamobile.data.local.daos
 
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
@@ -11,12 +11,12 @@ import android.arch.persistence.room.Query
 import io.reactivex.Flowable
 import io.reactivex.Single
 import org.intellij.lang.annotations.Language
-import vandyke.siamobile.data.local.data.File
+import vandyke.siamobile.data.local.data.renter.File
 
 @Dao
 interface FileDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insert(vararg files: File)
+    fun insert(file: File)
 
     @Language("RoomSql")
     @Query("SELECT * FROM files WHERE path LIKE :path || '/%' AND path NOT LIKE :path || '/%/%'")

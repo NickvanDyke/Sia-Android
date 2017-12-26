@@ -38,7 +38,7 @@ interface SiaApiInterface {
     fun walletAddresses(): Single<AddressesData>
 
     @GET("wallet/seeds")
-    fun walletSeeds(@Query("dictionary") dictionary: String): Single<SeedsData>
+    fun walletSeeds(@Query("dictionary") dictionary: String = "english"): Single<SeedsData>
 
     @POST("wallet/sweep/seed")
     fun walletSweepSeed(@Query("dictionary") dictionary: String, @Query("seed") seed: String): Completable

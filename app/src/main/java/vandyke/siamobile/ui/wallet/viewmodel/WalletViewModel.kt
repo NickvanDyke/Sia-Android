@@ -7,21 +7,25 @@ package vandyke.siamobile.ui.wallet.viewmodel
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
+import vandyke.siamobile.data.local.data.wallet.Address
+import vandyke.siamobile.data.local.data.wallet.Transaction
+import vandyke.siamobile.data.local.data.wallet.Wallet
 import vandyke.siamobile.data.remote.SiaError
 import vandyke.siamobile.data.remote.data.consensus.ConsensusData
-import vandyke.siamobile.data.remote.data.wallet.*
+import vandyke.siamobile.data.remote.data.wallet.AddressesData
+import vandyke.siamobile.data.remote.data.wallet.ScPriceData
+import vandyke.siamobile.data.remote.data.wallet.SeedsData
 import vandyke.siamobile.data.remote.siaApi
+import vandyke.siamobile.data.repository.WalletRepository
 import vandyke.siamobile.data.siad.SiadService
-import vandyke.siamobile.ui.wallet.model.IWalletModel
-import vandyke.siamobile.ui.wallet.model.WalletModelHttp
 import vandyke.siamobile.util.siaSubscribe
 import vandyke.siamobile.util.toSC
 
 class WalletViewModel : ViewModel() {
-    val wallet = MutableLiveData<WalletData>()
+    val wallet = MutableLiveData<Wallet>()
     val usd = MutableLiveData<ScPriceData>()
     val consensus = MutableLiveData<ConsensusData>()
-    val transactions = MutableLiveData<TransactionsData>()
+    val transactions = MutableLiveData<List<Transaction>>()
     val activeTasks = MutableLiveData<Int>()
     val numPeers = MutableLiveData<Int>()
     val success = MutableLiveData<String>()
@@ -34,11 +38,11 @@ class WalletViewModel : ViewModel() {
        won't receive anything upon initial subscription to it (normally it still would, but generally
        an extension function is used that doesn't pass the value unless it's not null) */
     /* the below LiveDatas are used by child fragments of the Wallet page */
-    val address = MutableLiveData<AddressData>()
+    val address = MutableLiveData<Address>()
     val addresses = MutableLiveData<AddressesData>()
     val seeds = MutableLiveData<SeedsData>()
 
-    val model: IWalletModel = WalletModelHttp()
+    private val walletRepo = WalletRepository()
 
     private val subscription = SiadService.output.observeOn(AndroidSchedulers.mainThread()).subscribe {
         if (it.contains("Finished loading") || it.contains("Done!"))
@@ -47,6 +51,15 @@ class WalletViewModel : ViewModel() {
 
     init {
         activeTasks.value = 0
+        /* subscribe to flowables from the database. Note that since they're flowables, they'll update
+           when their results update, and therefore we don't need to do anything but subscribe this once */
+        walletRepo.getWallet().siaSubscribe({
+            wallet.value = it
+        }, ::onError)
+
+        walletRepo.getTransactions().siaSubscribe({
+            transactions.value = it
+        }, ::onError)
     }
 
     override fun onCleared() {
@@ -80,18 +93,19 @@ class WalletViewModel : ViewModel() {
     }
 
     fun refresh() {
-        refreshWallet()
-        refreshTransactions()
+        /* We tell the walletRepo to refresh it's database. This will trigger necessary updates elsewhere in the VM,
+           as a result of subscribing to flowables from the database. */
+        incrementTasks()
+        walletRepo.updateAllWalletStuff().siaSubscribe({
+            decrementTasks()
+        }, ::onError)
+
         refreshConsensus()
         refreshPeers()
     }
 
     fun refreshWallet() {
-        incrementTasks()
-        model.getWallet().siaSubscribe({
-            wallet.value = it
-            decrementTasks()
-        }, ::onError)
+        // TODO: also get sc usd price
         /* we don't track retrieving the usd price as a task since it tends to take a long time and is less reliable */
         siaApi.getScPrice().siaSubscribe({
             usd.value = it
@@ -101,17 +115,9 @@ class WalletViewModel : ViewModel() {
         })
     }
 
-    fun refreshTransactions() {
-        incrementTasks()
-        model.getTransactions().siaSubscribe({
-            transactions.value = it
-            decrementTasks()
-        }, ::onError)
-    }
-
     fun refreshConsensus() {
         incrementTasks()
-        model.getConsensus().siaSubscribe({
+        walletRepo.getConsensus().siaSubscribe({
             consensus.value = it
             decrementTasks()
         }, ::onError)
@@ -127,9 +133,8 @@ class WalletViewModel : ViewModel() {
 
     fun unlock(password: String) {
         incrementTasks()
-        model.unlock(password).siaSubscribe({
+        walletRepo.unlock(password).siaSubscribe({
             setSuccess("Unlocked") // TODO: maybe have cool animations eventually, to indicate locking/unlocking/creating?
-            refreshWallet()
         }, {
             if (it.reason == SiaError.Reason.WALLET_SCAN_IN_PROGRESS)
                 setSuccess("Blockchain scan in progress, please wait...")
@@ -140,15 +145,14 @@ class WalletViewModel : ViewModel() {
 
     fun lock() {
         incrementTasks()
-        model.lock().siaSubscribe({
+        walletRepo.lock().siaSubscribe({
             setSuccess("Locked")
-            refreshWallet()
         }, ::onError)
     }
 
     fun getAddress() {
         incrementTasks()
-        model.getAddress().siaSubscribe({
+        walletRepo.getAddress().siaSubscribe({
             decrementTasks()
             address.value = it
             address.value = null
@@ -157,7 +161,7 @@ class WalletViewModel : ViewModel() {
 
     fun getAddresses() {
         incrementTasks()
-        model.getAddresses().siaSubscribe({
+        walletRepo.getAddresses().siaSubscribe({
             decrementTasks()
             addresses.value = it
             addresses.value = null
@@ -166,7 +170,7 @@ class WalletViewModel : ViewModel() {
 
     fun getSeeds() {
         incrementTasks()
-        model.getSeeds("english").siaSubscribe({
+        walletRepo.getSeeds().siaSubscribe({
             decrementTasks()
             seeds.value = it
             seeds.value = null
@@ -176,15 +180,15 @@ class WalletViewModel : ViewModel() {
     fun create(password: String, force: Boolean, seed: String? = null) {
         incrementTasks()
         if (seed == null) {
-            model.init(password, "english", force).siaSubscribe({ it ->
+            walletRepo.init(password, "english", force).siaSubscribe({ it ->
                 setSuccess("Created wallet")
-                refreshWallet()
+                refresh()
                 this.seed.value = it.primaryseed
             }, ::onError)
         } else {
-            model.initSeed(password, "english", seed, force).siaSubscribe({
+            walletRepo.initSeed(password, "english", seed, force).siaSubscribe({
                 setSuccess("Created wallet")
-                refreshWallet()
+                refresh()
                 this.seed.value = seed
             }, ::onError)
         }
@@ -192,24 +196,27 @@ class WalletViewModel : ViewModel() {
 
     fun send(amount: String, destination: String) {
         incrementTasks()
-        model.send(amount, destination)
+        walletRepo.send(amount, destination)
                 .siaSubscribe({
                     setSuccess("Sent ${amount.toSC()} SC to $destination")
-                    refreshWallet()
+                    refresh()
                 }, ::onError)
     }
 
     fun changePassword(currentPassword: String, newPassword: String) {
         incrementTasks()
-        model.changePassword(currentPassword, newPassword).siaSubscribe({
+        walletRepo.changePassword(currentPassword, newPassword).siaSubscribe({
             setSuccess("Changed password")
         }, ::onError)
     }
 
     fun sweep(seed: String) {
         incrementTasks()
-        model.sweep("english", seed).siaSubscribe({
-            setSuccess("Scanning blockchain, please wait...")
+        walletRepo.sweep("english", seed).siaSubscribe({
+            /* the Sia node won't send a response until it's done sweeping, so we can refresh at the
+               time that we receive a response */
+            refresh()
+            decrementTasks()
         }, ::onError)
     }
 }

@@ -8,8 +8,8 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import vandyke.siamobile.data.local.data.File
-import vandyke.siamobile.data.local.data.Node
+import vandyke.siamobile.data.local.data.renter.File
+import vandyke.siamobile.data.local.data.renter.Node
 import vandyke.siamobile.data.remote.SiaError
 import vandyke.siamobile.data.siad.SiadService
 import vandyke.siamobile.ui.renter.files.model.FilesModelTest

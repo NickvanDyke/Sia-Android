@@ -2,7 +2,7 @@
  * Copyright (c) 2017 Nicholas van Dyke. All rights reserved.
  */
 
-package vandyke.siamobile.data.local
+package vandyke.siamobile.data.local.daos
 
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
@@ -10,15 +10,15 @@ import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.Query
 import io.reactivex.Flowable
 import org.intellij.lang.annotations.Language
-import vandyke.siamobile.data.local.data.Dir
+import vandyke.siamobile.data.local.data.renter.Dir
 
 @Dao
 interface DirDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insertIgnoreConflict(vararg dirs: Dir)
+    fun insertIgnoreConflict(dir: Dir)
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
-    fun insertAbortIfConflict(vararg dirs: Dir)
+    fun insertAbortIfConflict(dir: Dir)
 
     @Language("RoomSql")
     @Query("SELECT * FROM dirs WHERE path LIKE :path || '/%' AND path NOT LIKE :path || '/%/%'")

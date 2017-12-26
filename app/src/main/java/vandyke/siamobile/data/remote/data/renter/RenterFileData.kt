@@ -4,7 +4,7 @@
 
 package vandyke.siamobile.data.remote.data.renter
 
-import vandyke.siamobile.data.local.data.Node
+import vandyke.siamobile.data.local.data.renter.Node
 import java.math.BigDecimal
 
 data class RenterFileData(val siapath: String = "",
