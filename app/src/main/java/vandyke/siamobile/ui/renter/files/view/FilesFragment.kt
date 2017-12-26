@@ -2,7 +2,7 @@
  * Copyright (c) 2017 Nicholas van Dyke. All rights reserved.
  */
 
-package vandyke.siamobile.ui.renter.view
+package vandyke.siamobile.ui.renter.files.view
 
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
@@ -10,23 +10,24 @@ import android.support.design.widget.TabLayout
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
-import android.view.*
+import android.view.MenuItem
+import android.view.View
+import android.view.WindowManager
 import android.widget.EditText
-import kotlinx.android.synthetic.main.fragment_renter.*
+import kotlinx.android.synthetic.main.fragment_renter_files.*
 import vandyke.siamobile.R
 import vandyke.siamobile.data.local.data.Dir
 import vandyke.siamobile.data.local.data.File
 import vandyke.siamobile.ui.common.BaseFragment
-import vandyke.siamobile.ui.renter.view.list.NodesAdapter
-import vandyke.siamobile.ui.renter.viewmodel.RenterViewModel
+import vandyke.siamobile.ui.renter.files.view.list.NodesAdapter
+import vandyke.siamobile.ui.renter.files.viewmodel.FilesViewModel
 import vandyke.siamobile.util.observe
 
 
-class RenterFragment : BaseFragment() {
-    override val layoutResId: Int = R.layout.fragment_renter
-    override val hasOptionsMenu = true
+class FilesFragment : BaseFragment() {
+    override val layoutResId: Int = R.layout.fragment_renter_files
 
-    lateinit var viewModel: RenterViewModel
+    lateinit var viewModel: FilesViewModel
 
     private lateinit var adapter: NodesAdapter
     private var programmaticallySelecting = true
@@ -35,7 +36,7 @@ class RenterFragment : BaseFragment() {
     private var currentPath: List<String> = listOf()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        viewModel = ViewModelProviders.of(this).get(RenterViewModel::class.java)
+        viewModel = ViewModelProviders.of(this).get(FilesViewModel::class.java)
         filesList.addItemDecoration(DividerItemDecoration(filesList.context, (filesList.layoutManager as LinearLayoutManager).orientation))
         adapter = NodesAdapter(viewModel)
         filesList.adapter = adapter
@@ -130,10 +131,6 @@ class RenterFragment : BaseFragment() {
 
     override fun onShow() {
         viewModel.refresh()
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.toolbar_renter, menu)
     }
 
     companion object {

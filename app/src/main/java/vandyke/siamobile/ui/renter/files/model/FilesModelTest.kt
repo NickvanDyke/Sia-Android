@@ -2,7 +2,7 @@
  * Copyright (c) 2017 Nicholas van Dyke. All rights reserved.
  */
 
-package vandyke.siamobile.ui.renter.model
+package vandyke.siamobile.ui.renter.files.model
 
 import io.reactivex.Completable
 import io.reactivex.Flowable
@@ -14,7 +14,7 @@ import vandyke.siamobile.data.remote.data.renter.RenterFileData
 import vandyke.siamobile.db
 import java.math.BigDecimal
 
-class RenterModelTest {
+class FilesModelTest {
     private val files = mutableListOf(RenterFileData("really/long/file/path/because/testing/file.txt", filesize = BigDecimal("498259")),
             RenterFileData("people/jamison/bro", filesize = BigDecimal("116160000000000000000")),
             RenterFileData("people/nick/life.txt", filesize = BigDecimal("847")),

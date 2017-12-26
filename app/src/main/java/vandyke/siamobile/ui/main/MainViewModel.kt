@@ -13,7 +13,7 @@ import vandyke.siamobile.R
 import vandyke.siamobile.data.siad.SiadService
 import vandyke.siamobile.ui.about.AboutFragment
 import vandyke.siamobile.ui.hosting.fragments.HostingFragment
-import vandyke.siamobile.ui.renter.view.RenterFragment
+import vandyke.siamobile.ui.renter.main.RenterFragment
 import vandyke.siamobile.ui.settings.SettingsFragment
 import vandyke.siamobile.ui.terminal.TerminalFragment
 import vandyke.siamobile.ui.wallet.view.WalletFragment

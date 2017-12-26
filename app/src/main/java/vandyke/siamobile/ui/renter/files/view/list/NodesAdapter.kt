@@ -2,7 +2,7 @@
  * Copyright (c) 2017 Nicholas van Dyke. All rights reserved.
  */
 
-package vandyke.siamobile.ui.renter.view.list
+package vandyke.siamobile.ui.renter.files.view.list
 
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
@@ -12,9 +12,9 @@ import vandyke.siamobile.R
 import vandyke.siamobile.data.local.data.Dir
 import vandyke.siamobile.data.local.data.File
 import vandyke.siamobile.data.local.data.Node
-import vandyke.siamobile.ui.renter.viewmodel.RenterViewModel
+import vandyke.siamobile.ui.renter.files.viewmodel.FilesViewModel
 
-class NodesAdapter(val viewModel: RenterViewModel) : RecyclerView.Adapter<NodeHolder>() {
+class NodesAdapter(val viewModel: FilesViewModel) : RecyclerView.Adapter<NodeHolder>() {
 
     private val DIR = 0
     private val FILE = 1

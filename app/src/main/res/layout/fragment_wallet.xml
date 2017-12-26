@@ -49,15 +49,15 @@
         />
 
     <TextView
-        android:text="SC"
+        android:id="@+id/scNote"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/scNote"
-        android:layout_marginStart="8dp"
-        app:layout_constraintLeft_toRightOf="@+id/balanceText"
-        app:layout_constraintBaseline_toBaselineOf="@+id/balanceText"
+        android:layout_marginBottom="8dp"
+        android:text="SC"
         android:textColor="@color/colorPrimary"
-        android:textSize="18sp"/>
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/balanceText"
+        app:layout_constraintLeft_toRightOf="@+id/balanceText" />
 
     <com.daimajia.numberprogressbar.NumberProgressBar
         xmlns:custom="http://schemas.android.com/apk/res-auto"

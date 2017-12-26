@@ -15,8 +15,6 @@ class ResizeAnimation(private val view: View, private val startHeight: Int, priv
     }
 
     override fun applyTransformation(interpolatedTime: Float, t: Transformation) {
-        println("view current height: ${view.height}")
-        println("changing height to: ${(startHeight + (targetHeight - startHeight) * interpolatedTime).toInt()}")
         view.layoutParams.height = (startHeight + (targetHeight - startHeight) * interpolatedTime).toInt()
         if (!view.isInLayout)
             view.requestLayout()

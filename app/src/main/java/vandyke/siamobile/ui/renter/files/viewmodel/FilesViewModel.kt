@@ -2,7 +2,7 @@
  * Copyright (c) 2017 Nicholas van Dyke. All rights reserved.
  */
 
-package vandyke.siamobile.ui.renter.viewmodel
+package vandyke.siamobile.ui.renter.files.viewmodel
 
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
@@ -12,16 +12,16 @@ import vandyke.siamobile.data.local.data.File
 import vandyke.siamobile.data.local.data.Node
 import vandyke.siamobile.data.remote.SiaError
 import vandyke.siamobile.data.siad.SiadService
-import vandyke.siamobile.ui.renter.model.RenterModelTest
+import vandyke.siamobile.ui.renter.files.model.FilesModelTest
 import vandyke.siamobile.util.siaSubscribe
 
-class RenterViewModel : ViewModel() {
+class FilesViewModel : ViewModel() {
     val displayedNodes = MutableLiveData<List<Node>>()
     val path = MutableLiveData<String>()
     val detailsItem = MutableLiveData<Node>()
     val error = MutableLiveData<SiaError>()
 
-    private val model = RenterModelTest()
+    private val model = FilesModelTest()
 
     private val subscription = SiadService.isSiadLoaded.subscribe {
         if (it)
