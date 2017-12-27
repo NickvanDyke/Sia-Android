@@ -5,7 +5,6 @@
 package vandyke.siamobile.ui.wallet.view
 
 import android.arch.lifecycle.ViewModelProviders
-import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.DividerItemDecoration
@@ -151,7 +150,6 @@ class WalletFragment : BaseFragment() {
             R.id.actionCreateWallet -> expandFrame(WalletCreateDialog())
             R.id.actionSweepSeed -> expandFrame(WalletSweepSeedDialog())
             R.id.actionViewAddresses -> expandFrame(WalletAddressesDialog())
-            R.id.actionGenPaperWallet -> context!!.startActivity(Intent(context, PaperWalletActivity::class.java))
         }
 
         return super.onOptionsItemSelected(item)

@@ -38,8 +38,4 @@
         android:title="@string/change_password"
         android:id="@+id/actionChangePassword"
         app:showAsAction="never"/>
-    <item
-        android:title="Generate paper wallet"
-        android:id="@+id/actionGenPaperWallet"
-        app:showAsAction="never"/>
 </menu>
