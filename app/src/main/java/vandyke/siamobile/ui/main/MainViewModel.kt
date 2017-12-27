@@ -10,7 +10,7 @@ import android.view.MenuItem
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import vandyke.siamobile.R
-import vandyke.siamobile.data.siad.SiadService
+import vandyke.siamobile.isSiadLoaded
 import vandyke.siamobile.ui.about.AboutFragment
 import vandyke.siamobile.ui.hosting.fragments.HostingFragment
 import vandyke.siamobile.ui.renter.main.RenterFragment
@@ -26,7 +26,7 @@ class MainViewModel : ViewModel() {
 
     private val subscription: Disposable
     init {
-        subscription = SiadService.isSiadLoaded.observeOn(AndroidSchedulers.mainThread()).subscribe {
+        subscription = isSiadLoaded.observeOn(AndroidSchedulers.mainThread()).subscribe {
             siadIsLoading.value = !it
         }
     }

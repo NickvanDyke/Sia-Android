@@ -53,7 +53,7 @@ class SiaError : Throwable {
             /* explorer */
             errorMessage.contains("unrecognized hash used as input to /explorer/hash") -> Reason.UNRECOGNIZED_HASH
             errorMessage.contains("Cloudflare") -> Reason.RATE_LIMITING
-            /* renter errors */
+            /* renter */
 
             else -> {
                 println("unaccounted for error message: $errorMessage")
@@ -63,6 +63,7 @@ class SiaError : Throwable {
     }
 
     private fun getReasonFromThrowable(t: Throwable): Reason {
+        t.printStackTrace()
         return when (t) {
             is HttpException -> getReasonFromMsg(t.response().errorBody()!!.string()) // HTTPException is emitted by retrofit observables on HTTP non-2XX responses
             is SQLiteConstraintException -> Reason.DIRECTORY_ALREADY_EXISTS

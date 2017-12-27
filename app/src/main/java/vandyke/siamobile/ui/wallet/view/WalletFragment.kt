@@ -55,7 +55,7 @@ class WalletFragment : BaseFragment() {
         balanceText.setOnClickListener { v ->
             AlertDialog.Builder(v.context)
                     .setTitle("Exact Balance")
-                    .setMessage("${viewModel.wallet.value?.confirmedHastings?.toSC()?.toPlainString() ?: 0} Siacoins")
+                    .setMessage("${viewModel.wallet.value?.confirmedSiacoinBalance?.toSC()?.toPlainString() ?: 0} Siacoins")
                     .setPositiveButton("Close", null)
                     .show()
         }
@@ -72,9 +72,10 @@ class WalletFragment : BaseFragment() {
 
         /* observe data in the viewModel */
         viewModel.wallet.observe(this) {
-            balanceUnconfirmed?.text = ((if (it.unconfirmedHastings > BigDecimal.ZERO) "+" else "") +
-                    "${it.unconfirmedHastings.toSC().round().toPlainString()} unconfirmedHastings")
-            balanceText?.text = it.unconfirmedHastings.toSC().round().toPlainString()
+            println(it)
+            balanceUnconfirmed?.text = ((if (it.unconfirmedSiacoinBalance > BigDecimal.ZERO) "+" else "") +
+                    "${it.unconfirmedSiacoinBalance.toSC().round().toPlainString()} unconfirmed")
+            balanceText?.text = it.confirmedSiacoinBalance.toSC().round().toPlainString()
             setStatusIcon()
             updateUsdValue()
         }
@@ -84,7 +85,7 @@ class WalletFragment : BaseFragment() {
         }
 
         viewModel.transactions.observe(this) {
-            adapter.update(it.alltransactions.filterNot { Prefs.hideZero && it.isNetZero }.reversed())
+            adapter.update(it.filterNot { Prefs.hideZero && it.isNetZero }.reversed())
         }
 
         viewModel.consensus.observe(this) {
@@ -125,7 +126,7 @@ class WalletFragment : BaseFragment() {
 
     private fun updateUsdValue() {
         if (viewModel.wallet.value != null && viewModel.usd.value != null)
-            balanceUsdText.text = ("${viewModel.wallet.value!!.confirmedHastings.toSC()
+            balanceUsdText.text = ("${viewModel.wallet.value!!.confirmedSiacoinBalance.toSC()
                     .toUsd(viewModel.usd.value!!.price_usd).round().toPlainString()} USD")
     }
 

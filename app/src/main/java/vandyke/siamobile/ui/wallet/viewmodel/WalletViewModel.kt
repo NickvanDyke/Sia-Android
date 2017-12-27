@@ -7,25 +7,20 @@ package vandyke.siamobile.ui.wallet.viewmodel
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
-import vandyke.siamobile.data.local.data.wallet.Address
-import vandyke.siamobile.data.local.data.wallet.Transaction
-import vandyke.siamobile.data.local.data.wallet.Wallet
 import vandyke.siamobile.data.remote.SiaError
 import vandyke.siamobile.data.remote.data.consensus.ConsensusData
-import vandyke.siamobile.data.remote.data.wallet.AddressesData
-import vandyke.siamobile.data.remote.data.wallet.ScPriceData
-import vandyke.siamobile.data.remote.data.wallet.SeedsData
+import vandyke.siamobile.data.remote.data.wallet.*
 import vandyke.siamobile.data.remote.siaApi
 import vandyke.siamobile.data.repository.WalletRepository
-import vandyke.siamobile.data.siad.SiadService
+import vandyke.siamobile.siadOutput
 import vandyke.siamobile.util.siaSubscribe
 import vandyke.siamobile.util.toSC
 
 class WalletViewModel : ViewModel() {
-    val wallet = MutableLiveData<Wallet>()
+    val wallet = MutableLiveData<WalletData>()
     val usd = MutableLiveData<ScPriceData>()
     val consensus = MutableLiveData<ConsensusData>()
-    val transactions = MutableLiveData<List<Transaction>>()
+    val transactions = MutableLiveData<List<TransactionData>>()
     val activeTasks = MutableLiveData<Int>()
     val numPeers = MutableLiveData<Int>()
     val success = MutableLiveData<String>()
@@ -38,13 +33,14 @@ class WalletViewModel : ViewModel() {
        won't receive anything upon initial subscription to it (normally it still would, but generally
        an extension function is used that doesn't pass the value unless it's not null) */
     /* the below LiveDatas are used by child fragments of the Wallet page */
-    val address = MutableLiveData<Address>()
-    val addresses = MutableLiveData<AddressesData>()
+    val address = MutableLiveData<AddressData>()
+    val addresses = MutableLiveData<List<AddressData>>()
     val seeds = MutableLiveData<SeedsData>()
 
+    // TODO: inject this
     private val walletRepo = WalletRepository()
 
-    private val subscription = SiadService.output.observeOn(AndroidSchedulers.mainThread()).subscribe {
+    private val subscription = siadOutput.observeOn(AndroidSchedulers.mainThread()).subscribe {
         if (it.contains("Finished loading") || it.contains("Done!"))
             refresh()
     }
@@ -116,11 +112,12 @@ class WalletViewModel : ViewModel() {
     }
 
     fun refreshConsensus() {
-        incrementTasks()
-        walletRepo.getConsensus().siaSubscribe({
-            consensus.value = it
-            decrementTasks()
-        }, ::onError)
+        // TODO
+//        incrementTasks()
+//        walletRepo.getConsensus().siaSubscribe({
+//            consensus.value = it
+//            decrementTasks()
+//        }, ::onError)
     }
 
     fun refreshPeers() {

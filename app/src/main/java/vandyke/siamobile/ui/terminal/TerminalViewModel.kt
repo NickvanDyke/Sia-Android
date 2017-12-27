@@ -17,7 +17,7 @@ import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.launch
 import vandyke.siamobile.App
 import vandyke.siamobile.R
-import vandyke.siamobile.data.siad.SiadService
+import vandyke.siamobile.siadOutput
 import vandyke.siamobile.util.StorageUtil
 import java.io.BufferedReader
 import java.io.File
@@ -30,7 +30,7 @@ class TerminalViewModel(application: Application) : AndroidViewModel(application
     private val handler = Handler(Looper.getMainLooper())
 
     private var siacFile: File? = null
-    private val subscription = SiadService.output.observeOn(AndroidSchedulers.mainThread()).subscribe {
+    private val subscription = siadOutput.observeOn(AndroidSchedulers.mainThread()).subscribe {
         appendToOutput(it + "\n")
     }
 

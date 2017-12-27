@@ -4,27 +4,51 @@
 
 package vandyke.siamobile.data.remote.data.wallet
 
+import android.arch.persistence.room.Entity
+import android.arch.persistence.room.Ignore
+import android.arch.persistence.room.PrimaryKey
+import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.fasterxml.jackson.annotation.JsonProperty
 import vandyke.siamobile.util.UNCONFIRMED_TX_TIMESTAMP
 import java.math.BigDecimal
 import java.util.*
 
-data class TransactionData(val transactionid: String = "",
-                           val confirmationheight: BigDecimal = BigDecimal.ZERO,
-                           val confirmationtimestamp: BigDecimal = BigDecimal.ZERO,
-                           val inputs: List<TransactionInputData> = listOf(),
-                           val outputs: List<TransactionOutputData> = listOf()) {
+@Entity(tableName = "transactions")
+@JsonIgnoreProperties(ignoreUnknown = true)
+data class TransactionData @JsonCreator constructor(
+        @PrimaryKey
+        @JsonProperty(value = "transactionid")
+        val transactionId: String,
+        @JsonProperty(value = "confirmationheight")
+        val confirmationHeight: BigDecimal,
+        @JsonProperty(value = "confirmationtimestamp")
+        val confirmationTimestamp: BigDecimal,
+        @Ignore
+        @JsonProperty(value = "inputs")
+        val inputs: List<TransactionInputData>? = null,
+        @Ignore
+        @JsonProperty(value = "outputs")
+        val outputs: List<TransactionOutputData>? = null) {
 
-    /* the super big number is what the Sia api returns for the confirmation timestamp of an unconfirmed transaction */
-    val confirmed: Boolean by lazy { confirmationtimestamp != BigDecimal(UNCONFIRMED_TX_TIMESTAMP) }
 
-    val netValue: BigDecimal by lazy {
+    constructor(transactionId: String,
+                confirmationHeight: BigDecimal,
+                confirmationTimestamp: BigDecimal) :
+            this(transactionId, confirmationHeight, confirmationTimestamp, null, null)
+
+    var confirmed: Boolean = confirmationTimestamp != BigDecimal(UNCONFIRMED_TX_TIMESTAMP)
+
+    var netValue: BigDecimal = run {
         var net = BigDecimal.ZERO
-        inputs.filter { it.walletaddress }.forEach { net -= it.value }
-        outputs.filter { it.walletaddress }.forEach { net += it.value }
+        inputs?.filter { it.walletaddress }?.forEach { net -= it.value }
+        outputs?.filter { it.walletaddress }?.forEach { net += it.value }
         net
     }
 
-    val isNetZero: Boolean by lazy { netValue == BigDecimal.ZERO }
+    val isNetZero: Boolean
+        get() = netValue == BigDecimal.ZERO
 
-    val confirmationdate: Date by lazy { if (confirmed) Date((confirmationtimestamp * BigDecimal("1000")).toLong()) else Date() }
+    @Ignore
+    val confirmationDate: Date = if (confirmed) Date((confirmationTimestamp * BigDecimal("1000")).toLong()) else Date()
 }

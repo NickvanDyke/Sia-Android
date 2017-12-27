@@ -4,8 +4,6 @@
 
 package vandyke.siamobile.data.repository
 
-import io.reactivex.Flowable
-
 class ConsensusRepository {
-    fun getConsensus(): Flowable<>
+//    fun getConsensus(): Flowable<>
 }

@@ -10,14 +10,14 @@ import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.Query
 import io.reactivex.Flowable
 import org.intellij.lang.annotations.Language
-import vandyke.siamobile.data.local.data.wallet.Wallet
+import vandyke.siamobile.data.remote.data.wallet.WalletData
 
 @Dao
 interface WalletDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(wallet: Wallet)
+    fun insert(wallet: WalletData)
 
     @Language("RoomSql")
-    @Query("SELECT * FROM wallet SORT BY timestamp DESC LIMIT 1")
-    fun getMostRecent(): Flowable<Wallet>
+    @Query("SELECT a.* FROM wallet a LEFT OUTER JOIN wallet b ON a.timestamp < b.timestamp WHERE b.timestamp IS NULL")
+    fun getMostRecent(): Flowable<WalletData>
 }

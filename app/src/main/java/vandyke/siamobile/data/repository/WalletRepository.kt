@@ -5,9 +5,7 @@
 package vandyke.siamobile.data.repository
 
 import io.reactivex.Completable
-import vandyke.siamobile.data.local.data.wallet.Address
-import vandyke.siamobile.data.local.data.wallet.Transaction
-import vandyke.siamobile.data.local.data.wallet.Wallet
+import vandyke.siamobile.data.remote.data.wallet.AddressData
 import vandyke.siamobile.data.remote.siaApi
 import vandyke.siamobile.db
 
@@ -19,16 +17,15 @@ class WalletRepository {
     }
 
     private fun updateWallet() = siaApi.wallet().doAfterSuccess {
-        db.walletDao().insert(Wallet.fromWalletData(it))
+        db.walletDao().insert(it)
     }.toCompletable()
 
     private fun updateTransactions() = siaApi.walletTransactions().doAfterSuccess {
-        val mapped = it.alltransactions.map { Transaction.fromTransactionData(it) }
-        db.transactionDao().deleteAllAndInsert(mapped)
+        db.transactionDao().deleteAllAndInsert(it.alltransactions)
     }.toCompletable()
 
     private fun updateAddresses() = siaApi.walletAddresses().doAfterSuccess {
-        db.addressDao().insertAll(Address.fromAddressesData(it))
+        db.addressDao().insertAll(it.addresses.map { AddressData(it) })
     }.toCompletable()
 
     /* functions that return database flowables to be subscribed to */
@@ -36,7 +33,9 @@ class WalletRepository {
 
     fun getTransactions() = db.transactionDao().getAllByMostRecent()
 
-    fun getAddress() = db.addressDao().getAddress()
+    fun getAddress() = siaApi.walletAddress().doAfterSuccess {
+        db.addressDao().insert(it)
+    }.onErrorResumeNext(db.addressDao().getAddress())
 
     fun getAddresses() = db.addressDao().getAll()
 

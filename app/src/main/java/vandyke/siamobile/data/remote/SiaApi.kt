@@ -10,7 +10,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
-import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.jackson.JacksonConverterFactory
 import retrofit2.http.*
 import vandyke.siamobile.data.remote.data.consensus.ConsensusData
 import vandyke.siamobile.data.remote.data.gateway.GatewayData
@@ -111,8 +111,10 @@ val siaApi: SiaApiInterface = SiaApi.buildApi()
 
 object SiaApi {
     fun buildApi(): SiaApiInterface {
+
         val clientBuilder = OkHttpClient.Builder()
                 .readTimeout(0, TimeUnit.MILLISECONDS)
+//                .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
                 .addInterceptor({
                     val original: Request = it.request()
                     val request: Request = original.newBuilder()
@@ -123,7 +125,7 @@ object SiaApi {
                 })
 
         return Retrofit.Builder()
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(JacksonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .client(clientBuilder.build())
                 .baseUrl("http://localhost:9980/")

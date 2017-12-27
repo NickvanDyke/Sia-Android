@@ -20,12 +20,12 @@ import android.support.v4.app.NotificationCompat
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
-import io.reactivex.subjects.BehaviorSubject
-import io.reactivex.subjects.PublishSubject
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.launch
 import vandyke.siamobile.R
 import vandyke.siamobile.data.local.Prefs
+import vandyke.siamobile.isSiadLoaded
+import vandyke.siamobile.siadOutput
 import vandyke.siamobile.ui.main.MainActivity
 import vandyke.siamobile.util.NotificationUtil
 import vandyke.siamobile.util.StorageUtil
@@ -74,16 +74,16 @@ class SiadService : Service() {
                 val inputReader = BufferedReader(InputStreamReader(siadProcess!!.inputStream))
                 var line: String? = inputReader.readLine()
                 while (line != null) {
-                    output.onNext(line)
+                    siadOutput.onNext(line)
                     line = inputReader.readLine()
                 }
                 inputReader.close()
-                output.onComplete()
+                siadOutput.onComplete()
             } catch (e: IOException) {
                 e.printStackTrace()
             }
         }
-        subscription = output.observeOn(AndroidSchedulers.mainThread())
+        subscription = siadOutput.observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     if (it.contains("Finished loading"))
                         isSiadLoaded.onNext(true)
@@ -134,18 +134,6 @@ class SiadService : Service() {
     }
 
     companion object {
-        /**
-         * HAVE to unsubscribe from these properly, or else crashes could occur when the app is killed and
-         * later restarted if the static variable hasn't been cleared, and therefore isn't recreated, and
-         * will still have references to old, now non-existent subscribers and their closures.
-         * Primary reason for using a static variable for it is because that way it exists independently of
-         * the service, and is not destroyed when the service is, meaning that subscribers will still receive updates
-         * when the service is restarted and causes the observable to emit.
-         */
-        val output = PublishSubject.create<String>()!!
-
-        val isSiadLoaded = BehaviorSubject.create<Boolean>()!!
-
         fun getService(context: Context) = Single.create<SiadService> {
                     val connection = object : ServiceConnection {
                         override fun onServiceConnected(name: ComponentName, service: IBinder) {

@@ -11,7 +11,7 @@ import io.reactivex.schedulers.Schedulers
 import vandyke.siamobile.data.local.data.renter.File
 import vandyke.siamobile.data.local.data.renter.Node
 import vandyke.siamobile.data.remote.SiaError
-import vandyke.siamobile.data.siad.SiadService
+import vandyke.siamobile.isSiadLoaded
 import vandyke.siamobile.ui.renter.files.model.FilesModelTest
 import vandyke.siamobile.util.siaSubscribe
 
@@ -23,7 +23,7 @@ class FilesViewModel : ViewModel() {
 
     private val model = FilesModelTest()
 
-    private val subscription = SiadService.isSiadLoaded.subscribe {
+    private val subscription = isSiadLoaded.subscribe {
         if (it)
             refresh()
     }

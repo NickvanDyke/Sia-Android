@@ -15,7 +15,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.dialog_siad_loading.*
 import vandyke.siamobile.R
-import vandyke.siamobile.data.siad.SiadService
+import vandyke.siamobile.siadOutput
 
 
 class SiadLoadingDialog : DialogFragment() {
@@ -27,7 +27,7 @@ class SiadLoadingDialog : DialogFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        subscription = SiadService.output.subscribeOn(AndroidSchedulers.mainThread()).subscribe {
+        subscription = siadOutput.subscribeOn(AndroidSchedulers.mainThread()).subscribe {
             output.text = it
         }
     }

@@ -25,7 +25,7 @@ class WalletAddressesDialog : BaseWalletFragment() {
         addressesList.adapter = adapter
 
         viewModel.addresses.observe(this) {
-            adapter.data = it.addresses
+            adapter.data = it.map { it.address }
             adapter.notifyDataSetChanged()
         }
 

@@ -26,13 +26,12 @@ class TransactionHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             timeString = "Unconfirmed"
             transactionStatus.setTextColor(Color.RED)
         } else {
-            timeString = df.format(transaction.confirmationdate)
+            timeString = df.format(transaction.confirmationDate)
             transactionStatus.setTextColor(transactionId.currentTextColor)
         }
         transactionStatus.text = timeString
 
-        val id = transaction.transactionid
-        transactionId.text = id
+        transactionId.text = transaction.transactionId
 //        transactionId.text = ("${id.substring(0, id.length / 2)}\n${id.substring(id.length / 2)}")
 
         var valueText = transaction.netValue.toSC().round().toPlainString()
@@ -41,7 +40,7 @@ class TransactionHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         } else if (valueText.contains("-")) {
             transactionValue.setTextColor(red)
         } else {
-            valueText = "+" + valueText
+            valueText = ("+$valueText")
             transactionValue.setTextColor(green)
         }
         transactionValue.text = valueText
