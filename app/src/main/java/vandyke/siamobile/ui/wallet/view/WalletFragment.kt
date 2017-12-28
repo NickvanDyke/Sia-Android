@@ -63,6 +63,8 @@ class WalletFragment : BaseFragment() {
         transactionListSwipe.setOnRefreshListener { viewModel.refresh() }
         transactionListSwipe.setColorSchemeResources(R.color.colorAccent)
 
+        expandableFrame.onSwipeUp = ::collapseFrame
+
         viewModel.activeTasks.observe(this) {
             progress.visibility = if (it > 0) View.VISIBLE else View.GONE
             if (it == 0)
@@ -71,7 +73,6 @@ class WalletFragment : BaseFragment() {
 
         /* observe data in the viewModel */
         viewModel.wallet.observe(this) {
-            println(it)
             balanceUnconfirmed?.text = ((if (it.unconfirmedSiacoinBalance > BigDecimal.ZERO) "+" else "") +
                     "${it.unconfirmedSiacoinBalance.toSC().round().toPlainString()} unconfirmed")
             balanceText?.text = it.confirmedSiacoinBalance.toSC().round().toPlainString()
@@ -158,11 +159,14 @@ class WalletFragment : BaseFragment() {
     fun expandFrame(fragment: BaseWalletFragment) {
         childFragmentManager.beginTransaction().replace(R.id.expandableFrame, fragment).commit()
         childFragmentManager.executePendingTransactions()
-        expandableFrame.expand(fragment.height)
+        expandableFrame.expandVertically(fragment.height)
     }
 
     fun collapseFrame() {
-        expandableFrame.collapse()
+        expandableFrame.collapseVertically({
+            childFragmentManager.beginTransaction().remove(childFragmentManager.findFragmentById(R.id.expandableFrame)).commit()
+        })
+        GenUtil.hideSoftKeyboard(activity!!)
     }
 
     override fun onShow() {
