@@ -29,18 +29,18 @@ class WalletRepository {
     }.toCompletable()
 
     /* functions that return database flowables to be subscribed to */
-    fun getWallet() = db.walletDao().getMostRecent()
+    fun wallet() = db.walletDao().mostRecent()
 
-    fun getTransactions() = db.transactionDao().getAllByMostRecent()
+    fun transactions() = db.transactionDao().allByMostRecent()
 
     fun getAddress() = siaApi.walletAddress().doAfterSuccess {
         db.addressDao().insert(it)
     }.onErrorResumeNext(db.addressDao().getAddress())!!
 
-    fun getAddresses() = db.addressDao().getAll()
+    fun addresses() = db.addressDao().all()
 
-    fun getSeeds(dictionary: String = "english") = siaApi.walletSeeds(dictionary) // chose not to store these
-    // in a database for security reasons I guess
+    // chose not to store the seeds in a database for security reasons I guess? Maybe I should
+    fun getSeeds(dictionary: String = "english") = siaApi.walletSeeds(dictionary)
 
     /* Below are actions that affect the Sia node. The appropriate updates will be called upon completion of the actions. */
     fun unlock(password: String) = siaApi.walletUnlock(password).doOnComplete {

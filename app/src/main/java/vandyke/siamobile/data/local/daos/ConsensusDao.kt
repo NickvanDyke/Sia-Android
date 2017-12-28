@@ -19,5 +19,5 @@ interface ConsensusDao {
 
     @Language("RoomSql")
     @Query("SELECT a.* FROM consensus a LEFT OUTER JOIN consensus b ON a.timestamp < b.timestamp WHERE b.timestamp IS NULL")
-    fun getMostRecent(): Flowable<ConsensusData>
+    fun mostRecent(): Flowable<ConsensusData>
 }

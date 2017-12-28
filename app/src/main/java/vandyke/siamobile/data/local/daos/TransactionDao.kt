@@ -22,7 +22,7 @@ abstract class TransactionDao {
 
     @Language("RoomSql")
     @Query("SELECT * FROM transactions ORDER BY confirmationTimestamp DESC")
-    abstract fun getAllByMostRecent(): Flowable<List<TransactionData>>
+    abstract fun allByMostRecent(): Flowable<List<TransactionData>>
 
     @Language("RoomSql")
     @Query("DELETE FROM transactions")

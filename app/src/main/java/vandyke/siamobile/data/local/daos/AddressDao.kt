@@ -27,7 +27,7 @@ interface AddressDao {
 
     @Language("RoomSql")
     @Query("SELECT * FROM addresses")
-    fun getAll(): Flowable<List<AddressData>>
+    fun all(): Flowable<List<AddressData>>
 
     @Query("DELETE FROM addresses")
     fun deleteAll()

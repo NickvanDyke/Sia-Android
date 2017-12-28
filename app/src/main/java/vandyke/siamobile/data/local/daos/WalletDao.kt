@@ -19,7 +19,7 @@ interface WalletDao {
 
     @Language("RoomSql")
     @Query("SELECT a.* FROM wallet a LEFT OUTER JOIN wallet b ON a.timestamp < b.timestamp WHERE b.timestamp IS NULL")
-    fun getMostRecent(): Flowable<WalletData>
+    fun mostRecent(): Flowable<WalletData>
 
     @Query("DELETE FROM wallet")
     fun deleteAll()

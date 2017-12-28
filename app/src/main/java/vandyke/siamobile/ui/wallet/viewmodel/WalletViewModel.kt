@@ -53,15 +53,15 @@ class WalletViewModel : ViewModel() {
         activeTasks.value = 0
         /* subscribe to flowables from the database. Note that since they're flowables, they'll update
            when their results update, and therefore we don't need to do anything but subscribe this once */
-        walletRepo.getWallet().siaSubscribe({
+        walletRepo.wallet().siaSubscribe({
             wallet.value = it
         }, ::onError)
 
-        walletRepo.getTransactions().siaSubscribe({
+        walletRepo.transactions().siaSubscribe({
             transactions.value = it
         }, ::onError)
 
-        consensusRepo.getConsensus().siaSubscribe({
+        consensusRepo.consensus().siaSubscribe({
             consensus.value = it
         }, ::onError)
 
@@ -101,7 +101,7 @@ class WalletViewModel : ViewModel() {
     }
 
     fun refresh() {
-        /* We tell the releveant repositories to update their data from the Sia node. This will
+        /* We tell the relevant repositories to update their data from the Sia node. This will
            trigger necessary updates elsewhere in the VM, as a result of subscribing to flowables from the database. */
         incrementTasks()
         walletRepo.updateAllWalletStuff().siaSubscribe(::decrementTasks, ::onError)
@@ -147,7 +147,7 @@ class WalletViewModel : ViewModel() {
 
     fun getAddresses() {
         incrementTasks()
-        walletRepo.getAddresses().siaSubscribe({
+        walletRepo.addresses().siaSubscribe({
             decrementTasks()
             addresses.value = it
             addresses.value = null
@@ -198,11 +198,6 @@ class WalletViewModel : ViewModel() {
 
     fun sweep(seed: String) {
         incrementTasks()
-        walletRepo.sweep("english", seed).siaSubscribe({
-            /* the Sia node won't send a response until it's done sweeping, so we can refresh at the
-               time that we receive a response */
-            refresh()
-            decrementTasks()
-        }, ::onError)
+        walletRepo.sweep("english", seed).siaSubscribe(::decrementTasks, ::onError)
     }
 }

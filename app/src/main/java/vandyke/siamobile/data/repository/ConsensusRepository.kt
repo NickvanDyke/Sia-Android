@@ -12,5 +12,5 @@ class ConsensusRepository {
         db.consensusDao().insert(it)
     }.toCompletable()
 
-    fun getConsensus() = db.consensusDao().getMostRecent()
+    fun consensus() = db.consensusDao().mostRecent()
 }
