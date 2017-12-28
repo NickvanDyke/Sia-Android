@@ -10,7 +10,7 @@ import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.Query
 import io.reactivex.Flowable
 import org.intellij.lang.annotations.Language
-import vandyke.siamobile.data.remote.data.wallet.WalletData
+import vandyke.siamobile.data.models.wallet.WalletData
 
 @Dao
 interface WalletDao {
@@ -20,4 +20,7 @@ interface WalletDao {
     @Language("RoomSql")
     @Query("SELECT a.* FROM wallet a LEFT OUTER JOIN wallet b ON a.timestamp < b.timestamp WHERE b.timestamp IS NULL")
     fun getMostRecent(): Flowable<WalletData>
+
+    @Query("DELETE FROM wallet")
+    fun deleteAll()
 }

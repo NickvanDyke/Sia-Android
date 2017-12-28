@@ -85,20 +85,20 @@ class WalletFragment : BaseFragment() {
         }
 
         viewModel.transactions.observe(this) {
-            adapter.update(it.filterNot { Prefs.hideZero && it.isNetZero }.reversed())
+            adapter.update(it.filterNot { Prefs.hideZero && it.isNetZero })
         }
 
         viewModel.consensus.observe(this) {
-            if (viewModel.numPeers.value == 0) {
+            if (viewModel.numPeers.value ?: 0 == 0) {
                 syncText?.text = ("Not syncing: ${it.height}")
-                syncBar?.progress = it.syncprogress.toInt()
+                syncBar?.progress = it.syncProgress.toInt()
             } else {
                 if (it.synced) {
                     syncText?.text = ("${getString(R.string.synced)}: ${it.height}")
                     syncBar?.progress = 100
                 } else {
                     syncText?.text = ("${getString(R.string.syncing)}: ${it.height}")
-                    syncBar?.progress = it.syncprogress.toInt()
+                    syncBar?.progress = it.syncProgress.toInt()
                 }
             }
         }
@@ -127,7 +127,7 @@ class WalletFragment : BaseFragment() {
     private fun updateUsdValue() {
         if (viewModel.wallet.value != null && viewModel.usd.value != null)
             balanceUsdText.text = ("${viewModel.wallet.value!!.confirmedSiacoinBalance.toSC()
-                    .toUsd(viewModel.usd.value!!.price_usd).round().toPlainString()} USD")
+                    .toUsd(viewModel.usd.value!!.UsdPerSc).round().toPlainString()} USD")
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -164,7 +164,9 @@ class WalletFragment : BaseFragment() {
 
     fun collapseFrame() {
         expandableFrame.collapseVertically({
-            childFragmentManager.beginTransaction().remove(childFragmentManager.findFragmentById(R.id.expandableFrame)).commit()
+            val currentChildFragment = childFragmentManager.findFragmentById(R.id.expandableFrame)
+            if (currentChildFragment != null)
+                childFragmentManager.beginTransaction().remove(currentChildFragment).commit()
         })
         GenUtil.hideSoftKeyboard(activity!!)
     }

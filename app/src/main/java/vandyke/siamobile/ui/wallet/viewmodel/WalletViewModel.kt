@@ -7,10 +7,12 @@ package vandyke.siamobile.ui.wallet.viewmodel
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
+import vandyke.siamobile.data.models.consensus.ConsensusData
+import vandyke.siamobile.data.models.wallet.*
 import vandyke.siamobile.data.remote.SiaError
-import vandyke.siamobile.data.remote.data.consensus.ConsensusData
-import vandyke.siamobile.data.remote.data.wallet.*
 import vandyke.siamobile.data.remote.siaApi
+import vandyke.siamobile.data.repository.ConsensusRepository
+import vandyke.siamobile.data.repository.ScValueRepository
 import vandyke.siamobile.data.repository.WalletRepository
 import vandyke.siamobile.siadOutput
 import vandyke.siamobile.util.siaSubscribe
@@ -18,7 +20,7 @@ import vandyke.siamobile.util.toSC
 
 class WalletViewModel : ViewModel() {
     val wallet = MutableLiveData<WalletData>()
-    val usd = MutableLiveData<ScPriceData>()
+    val usd = MutableLiveData<ScValueData>()
     val consensus = MutableLiveData<ConsensusData>()
     val transactions = MutableLiveData<List<TransactionData>>()
     val activeTasks = MutableLiveData<Int>()
@@ -37,8 +39,10 @@ class WalletViewModel : ViewModel() {
     val addresses = MutableLiveData<List<AddressData>>()
     val seeds = MutableLiveData<SeedsData>()
 
-    // TODO: inject this
+    // TODO: inject these
     private val walletRepo = WalletRepository()
+    private val consensusRepo = ConsensusRepository()
+    private val scValueRepo = ScValueRepository()
 
     private val subscription = siadOutput.observeOn(AndroidSchedulers.mainThread()).subscribe {
         if (it.contains("Finished loading") || it.contains("Done!"))
@@ -55,6 +59,14 @@ class WalletViewModel : ViewModel() {
 
         walletRepo.getTransactions().siaSubscribe({
             transactions.value = it
+        }, ::onError)
+
+        consensusRepo.getConsensus().siaSubscribe({
+            consensus.value = it
+        }, ::onError)
+
+        scValueRepo.scValue().siaSubscribe({
+            usd.value = it
         }, ::onError)
     }
 
@@ -89,35 +101,17 @@ class WalletViewModel : ViewModel() {
     }
 
     fun refresh() {
-        /* We tell the walletRepo to refresh it's database. This will trigger necessary updates elsewhere in the VM,
-           as a result of subscribing to flowables from the database. */
+        /* We tell the releveant repositories to update their data from the Sia node. This will
+           trigger necessary updates elsewhere in the VM, as a result of subscribing to flowables from the database. */
         incrementTasks()
-        walletRepo.updateAllWalletStuff().siaSubscribe({
-            decrementTasks()
-        }, ::onError)
+        walletRepo.updateAllWalletStuff().siaSubscribe(::decrementTasks, ::onError)
 
-        refreshConsensus()
+        incrementTasks()
+        consensusRepo.updateConsensus().siaSubscribe(::decrementTasks, ::onError)
+
+        scValueRepo.updateScValue().siaSubscribe({}, ::onError)
+
         refreshPeers()
-    }
-
-    fun refreshWallet() {
-        // TODO: also get sc usd price
-        /* we don't track retrieving the usd price as a task since it tends to take a long time and is less reliable */
-        siaApi.getScPrice().siaSubscribe({
-            usd.value = it
-        }, {
-            error.value = it
-            error.value = null
-        })
-    }
-
-    fun refreshConsensus() {
-        // TODO
-//        incrementTasks()
-//        walletRepo.getConsensus().siaSubscribe({
-//            consensus.value = it
-//            decrementTasks()
-//        }, ::onError)
     }
 
     fun refreshPeers() {
@@ -132,12 +126,7 @@ class WalletViewModel : ViewModel() {
         incrementTasks()
         walletRepo.unlock(password).siaSubscribe({
             setSuccess("Unlocked") // TODO: maybe have cool animations eventually, to indicate locking/unlocking/creating?
-        }, {
-            if (it.reason == SiaError.Reason.WALLET_SCAN_IN_PROGRESS)
-                setSuccess("Blockchain scan in progress, please wait...")
-            else
-                onError(it)
-        })
+        }, ::onError)
     }
 
     fun lock() {

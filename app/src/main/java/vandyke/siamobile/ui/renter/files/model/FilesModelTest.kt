@@ -10,7 +10,7 @@ import io.reactivex.functions.BiFunction
 import vandyke.siamobile.data.local.data.renter.Dir
 import vandyke.siamobile.data.local.data.renter.File
 import vandyke.siamobile.data.local.data.renter.Node
-import vandyke.siamobile.data.remote.data.renter.RenterFileData
+import vandyke.siamobile.data.models.renter.RenterFileData
 import vandyke.siamobile.db
 import java.math.BigDecimal
 

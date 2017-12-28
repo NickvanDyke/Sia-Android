@@ -12,10 +12,10 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.jackson.JacksonConverterFactory
 import retrofit2.http.*
-import vandyke.siamobile.data.remote.data.consensus.ConsensusData
-import vandyke.siamobile.data.remote.data.gateway.GatewayData
-import vandyke.siamobile.data.remote.data.renter.*
-import vandyke.siamobile.data.remote.data.wallet.*
+import vandyke.siamobile.data.models.consensus.ConsensusData
+import vandyke.siamobile.data.models.gateway.GatewayData
+import vandyke.siamobile.data.models.renter.*
+import vandyke.siamobile.data.models.wallet.*
 import java.math.BigDecimal
 import java.util.concurrent.TimeUnit
 
@@ -62,7 +62,7 @@ interface SiaApiInterface {
     fun walletChangePassword(@Query("encryptionpassword") password: String, @Query("newpassword") newPassword: String): Completable
 
     @GET
-    fun getScPrice(@Url url: String = "http://www.coincap.io/page/SC"): Single<ScPriceData>
+    fun getScPrice(@Url url: String = "http://www.coincap.io/page/SC"): Single<ScValueData>
 
     /* renter API */
     @GET("renter")
@@ -113,7 +113,7 @@ object SiaApi {
     fun buildApi(): SiaApiInterface {
 
         val clientBuilder = OkHttpClient.Builder()
-                .readTimeout(0, TimeUnit.MILLISECONDS)
+                .readTimeout(0, TimeUnit.MILLISECONDS) // no timeout because some Sia API calls can take a long time to return
 //                .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
                 .addInterceptor({
                     val original: Request = it.request()

@@ -11,7 +11,7 @@ import android.arch.persistence.room.Query
 import io.reactivex.Flowable
 import io.reactivex.Single
 import org.intellij.lang.annotations.Language
-import vandyke.siamobile.data.remote.data.wallet.AddressData
+import vandyke.siamobile.data.models.wallet.AddressData
 
 @Dao
 interface AddressDao {
@@ -28,4 +28,7 @@ interface AddressDao {
     @Language("RoomSql")
     @Query("SELECT * FROM addresses")
     fun getAll(): Flowable<List<AddressData>>
+
+    @Query("DELETE FROM addresses")
+    fun deleteAll()
 }
