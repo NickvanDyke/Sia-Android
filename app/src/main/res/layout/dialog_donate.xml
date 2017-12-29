@@ -25,7 +25,7 @@
         app:layout_constraintLeft_toLeftOf="parent"/>
 
     <Button
-        android:text="@string/donate"
+        android:text="Donate"
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
         android:textColor="#FFFFFF"

@@ -48,6 +48,8 @@ class SiaError : Throwable {
             errorMessage.contains("another wallet rescan is already underway") -> Reason.WALLET_SCAN_IN_PROGRESS
             errorMessage.contains("wallet has not been encrypted yet") -> Reason.WALLET_NOT_ENCRYPTED
             errorMessage.contains("cannot init from seed until blockchain is synced") -> Reason.CANNOT_INIT_FROM_SEED_UNTIL_SYNCED
+            errorMessage.contains("cannot sweep until blockchain is synced") -> Reason.CANNOT_SWEEP_UNTIL_SYNCED
+            errorMessage.contains("nothing to sweep") -> Reason.NOTHING_TO_SWEEP
             errorMessage.contains("word not found in dictionary for given language") -> Reason.INVALID_WORD_IN_SEED
             errorMessage.contains("seed failed checksum verification") -> Reason.INVALID_SEED
             /* explorer */
@@ -63,7 +65,6 @@ class SiaError : Throwable {
     }
 
     private fun getReasonFromThrowable(t: Throwable): Reason {
-        t.printStackTrace()
         return when (t) {
             is HttpException -> getReasonFromMsg(t.response().errorBody()!!.string()) // HTTPException is emitted by retrofit observables on HTTP non-2XX responses
             is SQLiteConstraintException -> Reason.DIRECTORY_ALREADY_EXISTS
@@ -100,8 +101,9 @@ class SiaError : Throwable {
         INVALID_WORD_IN_SEED("Invalid word in seed"),
         INVALID_SEED("Invalid seed"),
         CANNOT_INIT_FROM_SEED_UNTIL_SYNCED("Cannot create wallet from seed until fully synced"),
-        UNEXPECTED_END_OF_STREAM("Connection unexpectedly closed"), // This occurs every time if both data and wifi are turned off
-        // TODO: maybe just ignore the above error? Because it seems like requests still work? I think? Will have to test more
+        CANNOT_SWEEP_UNTIL_SYNCED("Cannot sweep until fully synced"),
+        NOTHING_TO_SWEEP("Seed doesn't have anything to sweep"),
+        UNEXPECTED_END_OF_STREAM("Connection unexpectedly closed"),
         /* renter */
         DIRECTORY_ALREADY_EXISTS("Directory already exists"),
         /* explorer */

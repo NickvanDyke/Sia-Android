@@ -36,7 +36,7 @@ class TerminalViewModel(application: Application) : AndroidViewModel(application
 
     init {
         output.value = getApplication<App>().getString(R.string.terminal_warning)
-        siacFile = StorageUtil.copyBinary("siac", application)
+        siacFile = StorageUtil.copyFromAssetsToAppStorage("siac", application)
     }
 
     override fun onCleared() {

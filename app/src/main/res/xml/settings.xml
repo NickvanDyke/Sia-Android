@@ -8,6 +8,11 @@
         android:title="Sia node"
         android:key="siaNodeCategory">
         <SwitchPreferenceCompat
+            android:key="startSiaAutomatically"
+            android:title="Start Sia automatically"
+            android:summary="Start the Sia node automatically when Sia Mobile is started."
+            android:defaultValue="true"/>
+        <SwitchPreferenceCompat
             android:key="SiaNodeWakeLock"
             android:title="Keep CPU awake for Sia"
             android:summary="Keep your phone's CPU awake when the Sia node is running, even while your phone is locked, so that the Sia node can continue operating (syncing, downloading, etc)."

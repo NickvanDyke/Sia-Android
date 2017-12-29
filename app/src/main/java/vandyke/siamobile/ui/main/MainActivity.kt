@@ -10,10 +10,10 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
-import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.app.AppCompatDelegate
 import android.view.MenuItem
+import de.cketti.library.changelog.ChangeLog
 import kotlinx.android.synthetic.main.activity_main.*
 import vandyke.siamobile.R
 import vandyke.siamobile.data.local.Prefs
@@ -33,8 +33,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var drawerToggle: ActionBarDrawerToggle
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        startService(Intent(this, SiadService::class.java))
-
         /* appearance stuff */
         if (Prefs.darkMode)
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
@@ -64,16 +62,7 @@ class MainActivity : AppCompatActivity() {
             navigationView.setCheckedItem(it)
         }
 
-        viewModel.siadIsLoading.observe(this) {
-            if (it) {
-//                loadingDialog = SiadLoadingDialog()
-//                loadingDialog!!.show(supportFragmentManager, "loading dialog")
-            } else {
-                loadingDialog?.dismiss()
-            }
-        }
-
-        /* notify view walletRepo when navigation items are selected */
+        /* notify VM when navigation items are selected */
         navigationView.setNavigationItemSelectedListener({ item ->
             drawerLayout.closeDrawers()
             viewModel.navigationItemSelected(item)
@@ -96,6 +85,19 @@ class MainActivity : AppCompatActivity() {
             val storedFragmentClass = supportFragmentManager.findFragmentByTag(savedInstanceState.getString("visibleFragment")).javaClass
             viewModel.setDisplayedFragmentClass(storedFragmentClass)
         }
+
+        /* changelog stuff */
+        val changelog = ChangeLog(this)
+
+        /* if this is the user's first time ever running the app, there isn't much point to showing
+           them a changelog, so skip it until they update */
+        if (Prefs.firstRunEver) {
+            changelog.skipLogDialog()
+            Prefs.firstRunEver = false
+        }
+
+        if (changelog.isFirstRun)
+            changelog.logDialog.show()
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
@@ -128,12 +130,13 @@ class MainActivity : AppCompatActivity() {
         if (drawerLayout.isDrawerVisible(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START)
         } else if (visibleFragment?.onBackPressed() != true) {
-            AlertDialog.Builder(this)
-                    .setTitle("Quit?")
-                    .setPositiveButton("Yes") { dialogInterface, i -> finish() }
-                    .setNegativeButton("No", null)
-                    .show()
+            super.onBackPressed()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        startService(Intent(this, SiadService::class.java))
     }
 
     /* below methods are for drawer stuff */

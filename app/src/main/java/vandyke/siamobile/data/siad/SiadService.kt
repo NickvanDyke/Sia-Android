@@ -43,11 +43,13 @@ class SiadService : Service() {
     private val SIAD_NOTIFICATION = 3
     var isSiadProcessRunning: Boolean = false
         get() = siadProcess != null
-    private lateinit var subscription: Disposable
+    private var subscription: Disposable? = null
 
     override fun onCreate() {
         startForeground(SIAD_NOTIFICATION, buildSiadNotification("Starting service..."))
-        siadFile = StorageUtil.copyBinary("siad", this)
+        // TODO: need some way to do this such that if I push an update with a new version of siad, that it will overwrite the
+        // current one. Maybe just keep the version in sharedprefs and check against it?
+        siadFile = StorageUtil.copyFromAssetsToAppStorage("siad", this)
         wakeLock = (getSystemService(Context.POWER_SERVICE) as PowerManager).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Sia node")
         startSiad()
     }
@@ -83,20 +85,21 @@ class SiadService : Service() {
                 e.printStackTrace()
             }
         }
-        subscription = siadOutput.observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    if (it.contains("Finished loading"))
-                        isSiadLoaded.onNext(true)
-                    siadNotification(it)
-                }
+
+
+        subscription = siadOutput.observeOn(AndroidSchedulers.mainThread()).subscribe {
+            if (it.contains("Finished loading"))
+                isSiadLoaded.onNext(true)
+            siadNotification(it)
+        }
     }
 
     fun stopSiad() {
         if (wakeLock.isHeld)
             wakeLock.release()
-        // TODO: maybe shut it down using stop http request instead? Takes ages sometimes. But might fix the (sometime) long startup times
+        // TODO: maybe shut it down using stop http request instead? Takes ages sometimes
         isSiadLoaded.onNext(false)
-        subscription.dispose()
+        subscription?.dispose()
         siadProcess?.destroy()
         siadProcess = null
     }
@@ -111,8 +114,8 @@ class SiadService : Service() {
 
     override fun onDestroy() {
 //        applicationContext.unregisterReceiver(statusReceiver)
-        stopForeground(true)
         stopSiad()
+        stopForeground(true)
     }
 
     fun siadNotification(text: String) {
@@ -127,24 +130,28 @@ class SiadService : Service() {
                 .setContentTitle("Sia node")
                 .setStyle(NotificationCompat.BigTextStyle().bigText(text))
 
-        val intent = Intent(this, MainActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-        builder.setContentIntent(pendingIntent)
+        /* the intent that launches MainActivity when the notification is selected */
+        val contentIntent = Intent(this, MainActivity::class.java)
+        val contentPI = PendingIntent.getActivity(this, 0, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        builder.setContentIntent(contentPI)
+
+        /* the action that stops this service */
+
         return builder.build()
     }
 
     companion object {
         fun getService(context: Context) = Single.create<SiadService> {
-                    val connection = object : ServiceConnection {
-                        override fun onServiceConnected(name: ComponentName, service: IBinder) {
-                            it.onSuccess((service as SiadService.LocalBinder).service)
-                            context.unbindService(this)
-                        }
+            val connection = object : ServiceConnection {
+                override fun onServiceConnected(name: ComponentName, service: IBinder) {
+                    it.onSuccess((service as SiadService.LocalBinder).service)
+                    context.unbindService(this)
+                }
 
-                        override fun onServiceDisconnected(name: ComponentName) {}
-                    }
-                    context.bindService(Intent(context, SiadService::class.java), connection, Context.BIND_AUTO_CREATE)
-                }!!
+                override fun onServiceDisconnected(name: ComponentName) {}
+            }
+            context.bindService(Intent(context, SiadService::class.java), connection, Context.BIND_AUTO_CREATE)
+        }!!
     }
 
     override fun onBind(intent: Intent): IBinder {

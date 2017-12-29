@@ -14,7 +14,7 @@ import java.io.IOException
 
 object StorageUtil {
 
-    fun copyBinary(filename: String, context: Context): File? {
+    fun copyFromAssetsToAppStorage(filename: String, context: Context): File? {
         try {
             val inputStream = context.assets.open(filename)
             val result = File(context.filesDir, filename)
