@@ -34,7 +34,7 @@
             android:title="Hide net-zero transactions"
             android:defaultValue="true"
             android:summary="For each regular transaction, Sia also makes a setup transaction that does not affect your wallet balance."/>
-        <vandyke.siamobile.ui.settings.IntEditTextPreference
+        <com.vandyke.siamobile.ui.settings.IntEditTextPreference
             android:key="displayedDecimalPrecision"
             android:title="Displayed decimal precision"
             android:summary="The number of decimal places displayed. This does not affect actual precision of values in memory, which is exact. When displayed, they will be rounded up."

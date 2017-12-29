@@ -1,27 +1,27 @@
 {
   "project_info": {
-    "project_number": "536954498289",
-    "firebase_url": "https://sia-mobile-7adc7.firebaseio.com",
-    "project_id": "sia-mobile-7adc7",
-    "storage_bucket": "sia-mobile-7adc7.appspot.com"
+    "project_number": "301870416799",
+    "firebase_url": "https://sia-mobile-2f0e5.firebaseio.com",
+    "project_id": "sia-mobile-2f0e5",
+    "storage_bucket": "sia-mobile-2f0e5.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:536954498289:android:fac0ef431661317f",
+        "mobilesdk_app_id": "1:301870416799:android:2b6bfe3caa7d3e83",
         "android_client_info": {
-          "package_name": "vandyke.siamobile"
+          "package_name": "com.vandyke.siamobile"
         }
       },
       "oauth_client": [
         {
-          "client_id": "536954498289-tscfrcer20uoakj238650lsf9kfpteis.apps.googleusercontent.com",
+          "client_id": "301870416799-ban4vkv85d2c2pc24vpgfo7lr1utrcmd.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBoYOa1STke7eyz3q7D7P7J3QmYdpU_xVM"
+          "current_key": "AIzaSyBfPCdtiIwm5JLU9QgdNTZ0OODP-cYnqtU"
         }
       ],
       "services": {

@@ -11,11 +11,11 @@ android {
     compileSdkVersion 27
     buildToolsVersion '27.0.1'
     defaultConfig {
-        applicationId "vandyke.siamobile"
+        applicationId "com.vandyke.siamobile"
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 20305
-        versionName "2.3.4"
+        versionCode 10000
+        versionName "1.0.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

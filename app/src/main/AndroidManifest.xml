@@ -3,7 +3,7 @@
   ~ Copyright (c) 2017 Nicholas van Dyke. All rights reserved.
   -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="vandyke.siamobile">
+          package="com.vandyke.siamobile">
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.MANAGE_DOCUMENTS"/>

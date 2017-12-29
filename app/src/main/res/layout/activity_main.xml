@@ -16,7 +16,7 @@
             android:id="@+id/activity_main"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context="vandyke.siamobile.ui.main.MainActivity">
+            tools:context="com.vandyke.siamobile.ui.main.MainActivity">
 
         <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
