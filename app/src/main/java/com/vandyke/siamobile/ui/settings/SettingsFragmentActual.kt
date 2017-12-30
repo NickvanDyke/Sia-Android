@@ -8,35 +8,32 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
-import android.support.v7.preference.*
+import android.support.design.widget.Snackbar
+import android.support.v7.preference.Preference
+import android.support.v7.preference.PreferenceFragmentCompat
 import com.vandyke.siamobile.BuildConfig
 import com.vandyke.siamobile.R
 import com.vandyke.siamobile.data.local.Prefs
 import com.vandyke.siamobile.data.siad.SiadService
+import com.vandyke.siamobile.util.SnackbarUtil
+import com.vandyke.siamobile.util.StorageUtil
 
 /* the actual settings fragment, contained within SettingsFragment */
 class SettingsFragmentActual : PreferenceFragmentCompat() {
 
     private lateinit var prefsListener: SharedPreferences.OnSharedPreferenceChangeListener
 
-    private lateinit var siaNodeCategory: PreferenceCategory
-    private lateinit var siaNodeWakeLock: SwitchPreferenceCompat
-
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.settings)
 
-        siaNodeCategory = findPreference("siaNodeCategory") as PreferenceCategory
-        siaNodeWakeLock = findPreference("SiaNodeWakeLock") as SwitchPreferenceCompat
-//        useExternal = findPreference("useExternal") as SwitchPreferenceCompat
-
-//        useExternal.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, o ->
-//            if (StorageUtil.isExternalStorageWritable) {
-//                return@OnPreferenceChangeListener true
-//            } else {
-//                SnackbarUtil.snackbar(view, "Error: " + StorageUtil.externalStorageStateDescription(), Snackbar.LENGTH_LONG)
-//                return@OnPreferenceChangeListener false
-//            }
-//        }
+        findPreference("useExternal").onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, o ->
+            if (StorageUtil.isExternalStorageWritable) {
+                return@OnPreferenceChangeListener true
+            } else {
+                SnackbarUtil.snackbar(view, "Error: " + StorageUtil.externalStorageStateDescription(), Snackbar.LENGTH_LONG)
+                return@OnPreferenceChangeListener false
+            }
+        }
 
         findPreference("openAppSettings").onPreferenceClickListener = Preference.OnPreferenceClickListener {
             val appSettings = Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + BuildConfig.APPLICATION_ID))
@@ -45,8 +42,7 @@ class SettingsFragmentActual : PreferenceFragmentCompat() {
             false
         }
 
-        val decimalPrecision = findPreference("displayedDecimalPrecision") as EditTextPreference
-        decimalPrecision.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, newValue ->
+        findPreference("displayedDecimalPrecision").onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, newValue ->
             try {
                 return@OnPreferenceChangeListener Integer.parseInt(newValue as String) < 10
             } catch (e: Exception) {
@@ -57,17 +53,25 @@ class SettingsFragmentActual : PreferenceFragmentCompat() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        /* create and register a SharedPrefs PreferenceChangeListener that'll take appropriate action
+         * when certain settings are changed */
         prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
             when (key) {
                 "SiaNodeWakeLock" -> SiadService.getService(context!!).subscribe { service ->
                     /* If Siad is already running then we must tell the service to acquire/release its wake lock
                        because normally it does so in start/stopSiad() */
                     if (service.siadProcessIsRunning) {
-                        if (Prefs.SiaNodeWakeLock && !service.wakeLock.isHeld)
-                            service.wakeLock.acquire()
-                        else if (service.wakeLock.isHeld)
+                        if (service.wakeLock.isHeld)
                             service.wakeLock.release()
+                        else if (Prefs.SiaNodeWakeLock)
+                            service.wakeLock.acquire()
                     }
+                }
+
+                "useExternal" -> SiadService.getService(context!!).subscribe { service ->
+                    /* restart siad so that it'll switch storage directories */
+                    service.stopSiad()
+                    service.startSiad()
                 }
             }
         }

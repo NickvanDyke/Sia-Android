@@ -1,60 +1,56 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2017 Nicholas van Dyke. All rights reserved.
   -->
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory
-        android:title="Sia node"
-        android:key="siaNodeCategory">
+    <PreferenceCategory android:title="Sia node">
         <SwitchPreferenceCompat
+            android:defaultValue="true"
             android:key="startSiaAutomatically"
-            android:title="Start Sia automatically"
             android:summary="Start the Sia node automatically when Sia Mobile is started. Otherwise, you can use the 'Start' button on its notification."
-            android:defaultValue="true"/>
+            android:title="Start Sia automatically" />
         <SwitchPreferenceCompat
+            android:defaultValue="false"
             android:key="SiaNodeWakeLock"
-            android:title="Keep CPU awake for Sia"
             android:summary="Keep your phone's CPU awake when the Sia node is running, even while your phone is locked, so that the Sia node can continue operating (syncing, downloading, etc)."
-            android:defaultValue="false"/>
-        <!--<SwitchPreferenceCompat-->
-            <!--android:key="useExternal"-->
-            <!--android:title="Use external storage"-->
-            <!--android:summary="Will use whatever your phone returns as its external storage - this will not necessarily be your SD card. Restart Sia Mobile after changing this. It's recommended you clear existing data using the button at the bottom of settings after changing this."-->
-            <!--android:defaultValue="false"/>-->
+            android:title="Keep CPU awake for Sia" />
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="useExternal"
+            android:summary="Sia will store its data on whatever your phone returns as its external storage - this is manufacturer-dependent, and will not necessarily be an SD card."
+            android:title="Use external storage" />
     </PreferenceCategory>
     <PreferenceCategory android:title="Appearance">
         <SwitchPreferenceCompat
-            android:summary="Changes will apply on next restart."
+            android:defaultValue="false"
             android:key="darkMode"
-            android:title="Dark mode"
-            android:defaultValue="false"/>
+            android:summary="Changes will apply on next restart."
+            android:title="Dark mode" />
         <SwitchPreferenceCompat
-            android:key="hideZero"
-            android:title="Hide net-zero transactions"
             android:defaultValue="true"
-            android:summary="For each regular transaction, Sia also makes a setup transaction that does not affect your wallet balance."/>
+            android:key="hideZero"
+            android:title="Hide net-zero transactions" />
         <com.vandyke.siamobile.ui.settings.IntEditTextPreference
-            android:key="displayedDecimalPrecision"
-            android:title="Displayed decimal precision"
-            android:summary="The number of decimal places displayed. This does not affect actual precision of values in memory, which is exact. When displayed, they will be rounded up."
-            android:numeric="integer"
-            android:gravity="center"
             android:defaultValue="2"
-            android:maxLength="1"/>
+            android:gravity="center"
+            android:key="displayedDecimalPrecision"
+            android:maxLength="1"
+            android:numeric="integer"
+            android:summary="The number of decimal places displayed. This does not affect actual precision of values in memory, which is exact. When displayed, they will be rounded up."
+            android:title="Displayed decimal precision" />
         <ListPreference
-            android:key="startupPage"
-            android:title="Launch screen"
-            android:summary="The screen to load to when Sia Mobile launches."
+            android:defaultValue="wallet"
             android:entries="@array/startup_entries"
             android:entryValues="@array/startup_values"
-            android:defaultValue="wallet"/>
+            android:key="startupPage"
+            android:summary="The screen to load to when Sia Mobile launches."
+            android:title="Launch screen" />
     </PreferenceCategory>
     <PreferenceCategory android:title="Misc">
         <Preference
             android:key="openAppSettings"
-            android:title="Open Application Info page for Sia Mobile"
-            android:summary="You can clear all of Sia Mobile's data from here, such as the blockchain. WARNING: this will delete ALL of Sia Mobile's data, including any wallet files. Write down your seed(s) first."/>
+            android:summary="You can clear all of Sia Mobile's data from here, such as the blockchain. WARNING: this will delete ALL of Sia Mobile's data, including any wallet files. Write down your seed(s) first."
+            android:title="Open Application Info page for Sia Mobile" />
     </PreferenceCategory>
 
 </PreferenceScreen>

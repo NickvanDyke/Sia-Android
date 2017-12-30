@@ -28,22 +28,24 @@ class WalletRepository {
         db.addressDao().insertAll(it.addresses.map { AddressData(it) })
     }.toCompletable()
 
-    /* functions that return database flowables to be subscribed to */
+    /* database flowables to be subscribed to */
     fun wallet() = db.walletDao().mostRecent()
 
     fun transactions() = db.transactionDao().allByMostRecent()
 
+    fun addresses() = db.addressDao().all()
+
+    /* singles */
     fun getAddress() = siaApi.walletAddress().doAfterSuccess {
         db.addressDao().insert(it)
     }.onErrorResumeNext {
+        val siaError = SiaError(it)
         // don't attempt to get an address from the db if the reason the request to the API failed is that it doesn't have a wallet
-        if (it is SiaError && it.reason != SiaError.Reason.WALLET_NOT_ENCRYPTED)
-            db.addressDao().getAddress()
+        if (siaError.reason != SiaError.Reason.WALLET_NOT_ENCRYPTED)
+            db.addressDao().getAddress().onErrorResumeNext(Single.error(siaError))
         else
-            Single.error(it)
-    }
-
-    fun addresses() = db.addressDao().all()
+            Single.error(siaError)
+    }!!
 
     // chose not to store the seeds in a database for security reasons I guess? Maybe I should
     fun getSeeds(dictionary: String = "english") = siaApi.walletSeeds(dictionary)

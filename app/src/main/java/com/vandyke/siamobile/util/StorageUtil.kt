@@ -58,18 +58,18 @@ object StorageUtil {
 
     fun externalStorageStateDescription(): String {
         return when (Environment.getExternalStorageState()) {
-            Environment.MEDIA_BAD_REMOVAL -> "external storage was previously removed before being unmounted"
-            Environment.MEDIA_CHECKING -> "external storage is present but being disk-checked"
-            Environment.MEDIA_EJECTING -> "external storage is in the process of ejecting"
-            Environment.MEDIA_MOUNTED -> "external storage is present and mounted with read/write access"
-            Environment.MEDIA_MOUNTED_READ_ONLY -> "external storage is present but mounted as read-only"
-            Environment.MEDIA_NOFS -> "external storage is present but is blank or using an unsupported filesystem"
-            Environment.MEDIA_REMOVED -> "external storage is not present"
-            Environment.MEDIA_SHARED -> "external storage is present but being shared via USB"
-            Environment.MEDIA_UNKNOWN -> "external storage is in an unknown state"
-            Environment.MEDIA_UNMOUNTABLE -> "external storage is present but cannot be mounted. May be corrupted"
-            Environment.MEDIA_UNMOUNTED -> "external storage is present but unmounted"
-            else -> "external storage state missed all cases"
+            Environment.MEDIA_BAD_REMOVAL -> "External storage was previously removed before being unmounted"
+            Environment.MEDIA_CHECKING -> "External storage is present but being disk-checked"
+            Environment.MEDIA_EJECTING -> "External storage is in the process of ejecting"
+            Environment.MEDIA_MOUNTED -> "External storage is present and mounted with read/write access"
+            Environment.MEDIA_MOUNTED_READ_ONLY -> "External storage is present but mounted as read-only"
+            Environment.MEDIA_NOFS -> "External storage is present but is blank or using an unsupported filesystem"
+            Environment.MEDIA_REMOVED -> "External storage is not present"
+            Environment.MEDIA_SHARED -> "External storage is present but being shared via USB"
+            Environment.MEDIA_UNKNOWN -> "External storage is in an unknown state"
+            Environment.MEDIA_UNMOUNTABLE -> "External storage is present but cannot be mounted. May be corrupted"
+            Environment.MEDIA_UNMOUNTED -> "External storage is present but unmounted"
+            else -> "Error with external storage"
         }
     }
 }

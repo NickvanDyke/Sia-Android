@@ -64,14 +64,33 @@ class SiadService : Service() {
             return
         }
         isSiadLoaded.onNext(false)
+
         /* acquire partial wake lock to keep device CPU awake and therefore keep the Sia node active */
         if (Prefs.SiaNodeWakeLock) {
             wakeLock.acquire()
         }
-        val pb = ProcessBuilder(siadFile!!.absolutePath, "-M", "gctw")
+        val pb = ProcessBuilder(siadFile!!.absolutePath, "-M", "gctw") // TODO: maybe let user set which modules to load?
         pb.redirectErrorStream(true)
-        pb.directory(StorageUtil.getWorkingDirectory(this@SiadService))
-        siadProcess = pb.start() // TODO: this causes the application to skip about a second of frames when starting
+
+        /* determine what directory Sia should use. Display notification with errors if external storage is set and not working */
+        if (Prefs.useExternal) {
+            if (StorageUtil.isExternalStorageWritable) {
+                val dir = getExternalFilesDir(null)
+                if (dir != null) {
+                    pb.directory(dir)
+                } else {
+                    showSiadNotification("Error getting external storage")
+                    return
+                }
+            } else {
+                showSiadNotification(StorageUtil.externalStorageStateDescription())
+                return
+            }
+        } else {
+            pb.directory(filesDir)
+        }
+
+        siadProcess = pb.start() // TODO: this causes the application to skip about a second of frames when starting. Preventable?
         startForeground(SIAD_NOTIFICATION, siadNotification("Starting Sia node..."))
         launch(CommonPool) {
             try {
@@ -85,6 +104,7 @@ class SiadService : Service() {
                 siadOutput.onComplete()
             } catch (e: IOException) {
                 e.printStackTrace()
+                // will this exception ever be thrown other than when the process is programmatically destroyed by me?
             }
         }
 
@@ -105,7 +125,7 @@ class SiadService : Service() {
         siadProcess?.destroy()
         siadProcess = null
         stopForeground(false)
-        showSiadNotification("Manually stopped.")
+        showSiadNotification("Manually stopped")
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -118,7 +138,6 @@ class SiadService : Service() {
 
     override fun onDestroy() {
         unregisterReceiver(receiver)
-//        applicationContext.unregisterReceiver(statusReceiver)
         stopSiad()
         stopForeground(true)
         NotificationUtil.cancelNotification(this, SIAD_NOTIFICATION)
