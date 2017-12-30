@@ -72,6 +72,14 @@ class SiadService : Service() {
         val pb = ProcessBuilder(siadFile!!.absolutePath, "-M", "gctw") // TODO: maybe let user set which modules to load?
         pb.redirectErrorStream(true)
 
+        /* start the node with an api password if it's not set to something empty */
+        if (Prefs.apiPassword.isNotEmpty()) {
+            val args = pb.command()
+            args.add("--authenticate-api")
+            pb.environment().put("SIA_API_PASSWORD", Prefs.apiPassword)
+            pb.command(args)
+        }
+
         /* determine what directory Sia should use. Display notification with errors if external storage is set and not working */
         if (Prefs.useExternal) {
             if (StorageUtil.isExternalStorageWritable) {
@@ -90,29 +98,32 @@ class SiadService : Service() {
             pb.directory(filesDir)
         }
 
-        siadProcess = pb.start() // TODO: this causes the application to skip about a second of frames when starting. Preventable?
-        startForeground(SIAD_NOTIFICATION, siadNotification("Starting Sia node..."))
-        launch(CommonPool) {
-            try {
-                val inputReader = BufferedReader(InputStreamReader(siadProcess!!.inputStream))
-                var line: String? = inputReader.readLine()
-                while (line != null) {
-                    siadOutput.onNext(line)
-                    line = inputReader.readLine()
-                }
-                inputReader.close()
-                siadOutput.onComplete()
-            } catch (e: IOException) {
-                e.printStackTrace()
-                // will this exception ever be thrown other than when the process is programmatically destroyed by me?
+        try {
+            siadProcess = pb.start() // TODO: this causes the application to skip about a second of frames when starting. Preventable?
+            startForeground(SIAD_NOTIFICATION, siadNotification("Starting Sia node..."))
+            // should this be done directly in the spot that reads from output instead? Don't think it matters
+            subscription = siadOutput.observeOn(AndroidSchedulers.mainThread()).subscribe {
+                if (it.contains("Finished loading"))
+                    isSiadLoaded.onNext(true)
+                showSiadNotification(it)
             }
-        }
-
-        // should this be done directly in the spot that reads from output instead? Don't think it matters
-        subscription = siadOutput.observeOn(AndroidSchedulers.mainThread()).subscribe {
-            if (it.contains("Finished loading"))
-                isSiadLoaded.onNext(true)
-            showSiadNotification(it)
+            launch(CommonPool) {
+                /* need another try-catch block since this is inside a coroutine */
+                try {
+                    val inputReader = BufferedReader(InputStreamReader(siadProcess!!.inputStream))
+                    var line: String? = inputReader.readLine()
+                    while (line != null) {
+                        siadOutput.onNext(line)
+                        line = inputReader.readLine()
+                    }
+                    inputReader.close()
+                    siadOutput.onComplete()
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+            }
+        } catch (e: IOException) {
+            showSiadNotification(e.localizedMessage ?: "Error starting Sia node")
         }
     }
 
@@ -125,7 +136,7 @@ class SiadService : Service() {
         siadProcess?.destroy()
         siadProcess = null
         stopForeground(false)
-        showSiadNotification("Manually stopped")
+        showSiadNotification("Stopped")
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {

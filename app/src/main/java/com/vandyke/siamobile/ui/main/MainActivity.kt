@@ -88,14 +88,10 @@ class MainActivity : AppCompatActivity() {
 
         /* changelog stuff */
         val changelog = ChangeLog(this)
-
         /* if this is the user's first time ever running the app, there isn't much point to showing
-           them a changelog, so skip it until they update. Need to do it this sorta funky way due
-           to sorta bad design of skipLogDialog() - it doesn't take effect until you instantiate
-           a new ChangeLog, because version stuff is loaded on instantiation */
-        if (Prefs.firstRunEver) {
+           them a changelog, so skip it until they update */
+        if (changelog.isFirstRunEver) {
             changelog.skipLogDialog()
-            Prefs.firstRunEver = false
         } else if (changelog.isFirstRun) {
             changelog.logDialog.show()
         }

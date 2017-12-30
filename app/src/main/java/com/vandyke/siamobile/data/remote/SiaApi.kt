@@ -4,6 +4,8 @@
 
 package com.vandyke.siamobile.data.remote
 
+import android.util.Base64
+import com.vandyke.siamobile.data.local.Prefs
 import com.vandyke.siamobile.data.models.consensus.ConsensusData
 import com.vandyke.siamobile.data.models.gateway.GatewayData
 import com.vandyke.siamobile.data.models.renter.*
@@ -119,6 +121,7 @@ object SiaApi {
                     val original: Request = it.request()
                     val request: Request = original.newBuilder()
                             .header("User-agent", "Sia-Agent")
+                            .header("Authorization", "Basic " + Base64.encodeToString(":${Prefs.apiPassword}".toByteArray(), Base64.NO_WRAP))
                             .method(original.method(), original.body())
                             .build()
                     return@addInterceptor it.proceed(request)
