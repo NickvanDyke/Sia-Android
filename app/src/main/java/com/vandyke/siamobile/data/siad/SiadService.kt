@@ -51,7 +51,8 @@ class SiadService : Service() {
         // current one. Maybe just keep the version in sharedprefs and check against it?
         siadFile = StorageUtil.copyFromAssetsToAppStorage("siad", this)
         wakeLock = (getSystemService(Context.POWER_SERVICE) as PowerManager).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Sia node")
-        startSiad()
+        if (Prefs.startSiaAutomatically)
+            startSiad()
     }
 
     fun startSiad() {

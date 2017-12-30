@@ -137,6 +137,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        /* always attempt to start the siad service, in case it was dismissed and stopped while the app was closed */
         startService(Intent(this, SiadService::class.java))
     }
 

@@ -10,7 +10,7 @@
         <SwitchPreferenceCompat
             android:key="startSiaAutomatically"
             android:title="Start Sia automatically"
-            android:summary="Start the Sia node automatically when Sia Mobile is started."
+            android:summary="Start the Sia node automatically when Sia Mobile is started. Otherwise, you can use the 'Start' button on its notification."
             android:defaultValue="true"/>
         <SwitchPreferenceCompat
             android:key="SiaNodeWakeLock"
