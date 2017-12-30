@@ -49,3 +49,8 @@ object NotificationUtil {
         notificationManager.createNotificationChannel(channel)
     }
 }
+
+fun Notification.show(context: Context, id: Int) {
+    val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    notificationManager.notify(id, this)
+}

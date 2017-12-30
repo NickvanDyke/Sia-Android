@@ -46,6 +46,8 @@
             android:name=".ui.wallet.view.ScannerActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
+
+        <receiver android:name=".data.siad.SiadReceiver" />
     </application>
 
 </manifest>

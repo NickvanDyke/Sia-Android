@@ -8,10 +8,7 @@ import android.app.Notification
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
-import android.content.ServiceConnection
+import android.content.*
 import android.graphics.BitmapFactory
 import android.os.Binder
 import android.os.IBinder
@@ -36,17 +33,20 @@ import java.io.InputStreamReader
 
 class SiadService : Service() {
 
-    private val binder = LocalBinder()
     private var siadFile: File? = null
     private var siadProcess: java.lang.Process? = null
     lateinit var wakeLock: PowerManager.WakeLock
     private val SIAD_NOTIFICATION = 3
-    val isSiadProcessRunning: Boolean
+    val siadProcessIsRunning: Boolean
         get() = siadProcess != null
     private var subscription: Disposable? = null
+    private val receiver = SiadReceiver()
 
     override fun onCreate() {
-        startForeground(SIAD_NOTIFICATION, buildSiadNotification("Starting service..."))
+        val filter = IntentFilter(SiadReceiver.STOP_SERVICE)
+        filter.addAction(SiadReceiver.START_SIAD)
+        filter.addAction(SiadReceiver.STOP_SIAD)
+        registerReceiver(receiver, filter)
         // TODO: need some way to do this such that if I push an update with a new version of siad, that it will overwrite the
         // current one. Maybe just keep the version in sharedprefs and check against it?
         siadFile = StorageUtil.copyFromAssetsToAppStorage("siad", this)
@@ -55,11 +55,11 @@ class SiadService : Service() {
     }
 
     fun startSiad() {
-        if (siadProcess != null) {
+        if (siadProcessIsRunning) {
             return
         }
         if (siadFile == null) {
-            siadNotification("Couldn't start Siad")
+            showSiadNotification("Couldn't start Siad")
             return
         }
         isSiadLoaded.onNext(false)
@@ -71,12 +71,12 @@ class SiadService : Service() {
         pb.redirectErrorStream(true)
         pb.directory(StorageUtil.getWorkingDirectory(this@SiadService))
         siadProcess = pb.start() // TODO: this causes the application to skip about a second of frames when starting
+        startForeground(SIAD_NOTIFICATION, siadNotification("Starting Sia node..."))
         launch(CommonPool) {
             try {
                 val inputReader = BufferedReader(InputStreamReader(siadProcess!!.inputStream))
                 var line: String? = inputReader.readLine()
                 while (line != null) {
-                    println(line)
                     siadOutput.onNext(line)
                     line = inputReader.readLine()
                 }
@@ -87,11 +87,11 @@ class SiadService : Service() {
             }
         }
 
-
+        // should this be done directly in the spot that reads from output instead? Don't think it matters
         subscription = siadOutput.observeOn(AndroidSchedulers.mainThread()).subscribe {
             if (it.contains("Finished loading"))
                 isSiadLoaded.onNext(true)
-            siadNotification(it)
+            showSiadNotification(it)
         }
     }
 
@@ -103,6 +103,8 @@ class SiadService : Service() {
         subscription?.dispose()
         siadProcess?.destroy()
         siadProcess = null
+        stopForeground(false)
+        showSiadNotification("Manually stopped.")
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -114,21 +116,26 @@ class SiadService : Service() {
     }
 
     override fun onDestroy() {
+        unregisterReceiver(receiver)
 //        applicationContext.unregisterReceiver(statusReceiver)
         stopSiad()
         stopForeground(true)
+        NotificationUtil.cancelNotification(this, SIAD_NOTIFICATION)
+        if (wakeLock.isHeld)
+            wakeLock.release()
     }
 
-    fun siadNotification(text: String) {
+    fun showSiadNotification(text: String) {
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.notify(SIAD_NOTIFICATION, buildSiadNotification(text))
+        notificationManager.notify(SIAD_NOTIFICATION, siadNotification(text))
     }
 
-    private fun buildSiadNotification(text: String): Notification {
+    private fun siadNotification(text: String): Notification {
         val builder = NotificationCompat.Builder(this, NotificationUtil.NOTIFICATION_CHANNEL)
                 .setSmallIcon(R.drawable.siacoin_logo_svg_white)
                 .setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.sia_logo_transparent))
                 .setContentTitle("Sia node")
+                .setContentText(text)
                 .setStyle(NotificationCompat.BigTextStyle().bigText(text))
 
         /* the intent that launches MainActivity when the notification is selected */
@@ -136,12 +143,34 @@ class SiadService : Service() {
         val contentPI = PendingIntent.getActivity(this, 0, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT)
         builder.setContentIntent(contentPI)
 
-        /* the action that stops this service */
+        /* the action to stop/start the Sia node */
+        if (siadProcessIsRunning) {
+            val stopIntent = Intent(SiadReceiver.STOP_SIAD)
+            stopIntent.setClass(this, SiadReceiver::class.java)
+            val stopPI = PendingIntent.getBroadcast(this, 0, stopIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+            builder.addAction(R.drawable.siacoin_logo_svg_white, "Stop", stopPI)
+        } else {
+            val startIntent = Intent(SiadReceiver.START_SIAD)
+            startIntent.setClass(this, SiadReceiver::class.java)
+            val startPI = PendingIntent.getBroadcast(this, 0, startIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+            builder.addAction(R.drawable.siacoin_logo_svg_white, "Start", startPI)
+        }
+
+        /* swiping the notification stops the service - only want this when the Sia node isn't running, and the
+         * service has been set to not be foreground */
+        if (!siadProcessIsRunning) {
+            val stopIntent = Intent(SiadReceiver.STOP_SERVICE)
+            stopIntent.setClass(this, SiadReceiver::class.java)
+            val stopPI = PendingIntent.getBroadcast(this, 0, stopIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+            builder.setDeleteIntent(stopPI)
+        }
 
         return builder.build()
     }
 
     companion object {
+        // TODO: maybe emit an error from this if the service isn't already running, and don't attempt to bind?
+        // If I don't want to start it as a result of binding, that is. Not sure if that's what I'll want
         fun getService(context: Context) = Single.create<SiadService> {
             val connection = object : ServiceConnection {
                 override fun onServiceConnected(name: ComponentName, service: IBinder) {
@@ -154,6 +183,9 @@ class SiadService : Service() {
             context.bindService(Intent(context, SiadService::class.java), connection, Context.BIND_AUTO_CREATE)
         }!!
     }
+
+    /* binding stuff */
+    private val binder = LocalBinder()
 
     override fun onBind(intent: Intent): IBinder {
         return binder
