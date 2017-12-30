@@ -4,6 +4,7 @@
 
 package com.vandyke.siamobile.data.remote
 
+import android.arch.persistence.room.EmptyResultSetException
 import android.database.sqlite.SQLiteConstraintException
 import android.support.design.widget.Snackbar
 import android.view.View
@@ -67,6 +68,7 @@ class SiaError : Throwable {
     private fun getReasonFromThrowable(t: Throwable): Reason {
         return when (t) {
             is HttpException -> getReasonFromMsg(t.response().errorBody()!!.string()) // HTTPException is emitted by retrofit observables on HTTP non-2XX responses
+            is EmptyResultSetException -> Reason.ROOM_EMPTY_RESULT_SET
             is SQLiteConstraintException -> Reason.DIRECTORY_ALREADY_EXISTS
             is SocketTimeoutException -> Reason.TIMEOUT
             is SocketException -> Reason.NO_NETWORK_RESPONSE
@@ -85,6 +87,7 @@ class SiaError : Throwable {
         TIMEOUT("Response timed out"),
         NO_NETWORK_RESPONSE("No network response"),
         INCORRECT_API_PASSWORD("Incorrect API password"),
+        ROOM_EMPTY_RESULT_SET("Nothing to display"),
         /* wallet */
         WALLET_PASSWORD_INCORRECT("Wallet password incorrect"),
         WALLET_LOCKED("Wallet must be unlocked first"),

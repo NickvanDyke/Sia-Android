@@ -5,16 +5,16 @@
 package com.vandyke.siamobile.data.repository
 
 import com.vandyke.siamobile.data.models.wallet.AddressData
+import com.vandyke.siamobile.data.remote.SiaError
 import com.vandyke.siamobile.data.remote.siaApi
 import com.vandyke.siamobile.db
 import io.reactivex.Completable
+import io.reactivex.Single
 
 class WalletRepository {
 
     /* Functions that update the local database from the Sia node */
-    fun updateAllWalletStuff(): Completable {
-        return Completable.mergeArray(updateWallet(), updateTransactions(), updateAddresses())
-    }
+    fun updateAllWalletStuff() = Completable.mergeArray(updateWallet(), updateTransactions(), updateAddresses())!!
 
     private fun updateWallet() = siaApi.wallet().doAfterSuccess {
         db.walletDao().insert(it)
@@ -35,7 +35,13 @@ class WalletRepository {
 
     fun getAddress() = siaApi.walletAddress().doAfterSuccess {
         db.addressDao().insert(it)
-    }.onErrorResumeNext(db.addressDao().getAddress())!!
+    }.onErrorResumeNext {
+        // don't attempt to get an address from the db if the reason the request to the API failed is that it doesn't have a wallet
+        if (it is SiaError && it.reason != SiaError.Reason.WALLET_NOT_ENCRYPTED)
+            db.addressDao().getAddress()
+        else
+            Single.error(it)
+    }
 
     fun addresses() = db.addressDao().all()
 

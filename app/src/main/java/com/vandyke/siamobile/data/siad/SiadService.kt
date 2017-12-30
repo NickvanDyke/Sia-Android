@@ -41,7 +41,7 @@ class SiadService : Service() {
     private var siadProcess: java.lang.Process? = null
     lateinit var wakeLock: PowerManager.WakeLock
     private val SIAD_NOTIFICATION = 3
-    var isSiadProcessRunning: Boolean = false
+    val isSiadProcessRunning: Boolean
         get() = siadProcess != null
     private var subscription: Disposable? = null
 
@@ -76,6 +76,7 @@ class SiadService : Service() {
                 val inputReader = BufferedReader(InputStreamReader(siadProcess!!.inputStream))
                 var line: String? = inputReader.readLine()
                 while (line != null) {
+                    println(line)
                     siadOutput.onNext(line)
                     line = inputReader.readLine()
                 }
