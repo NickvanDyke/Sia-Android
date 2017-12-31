@@ -50,7 +50,7 @@ class SiadService : Service() {
         // current one. Maybe just keep the version in sharedprefs and check against it?
         siadFile = StorageUtil.copyFromAssetsToAppStorage("siad", this)
         wakeLock = (getSystemService(Context.POWER_SERVICE) as PowerManager).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Sia node")
-        startForeground(SIAD_NOTIFICATION, siadNotification("Stopped"))
+        startForeground(SIAD_NOTIFICATION, siadNotification("Not running"))
         if (Prefs.startSiaAutomatically)
             startSiad()
     }
@@ -155,9 +155,12 @@ class SiadService : Service() {
     override fun onDestroy() {
         unregisterReceiver(receiver)
         stopSiad()
-        stopForeground(true)
         if (wakeLock.isHeld)
             wakeLock.release()
+        stopForeground(true)
+        /* need to clear the notification this way too, otherwise the
+         * "Stopped" notification that stopSiad() displays will persist */
+        NotificationUtil.cancelNotification(this, SIAD_NOTIFICATION)
     }
 
     fun showSiadNotification(text: String) {
