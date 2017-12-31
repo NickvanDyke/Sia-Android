@@ -115,7 +115,7 @@
         android:alpha="0.8"
         android:layout_height="4dp"/>
 
-    <com.vandyke.siamobile.ui.common.SwipeableFrameLayout
+    <com.vandyke.sia.ui.common.SwipeableFrameLayout
         android:id="@+id/expandableFrame"
         android:layout_width="0dp"
         android:layout_height="0dp"

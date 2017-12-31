@@ -38,7 +38,7 @@
             android:defaultValue="true"
             android:key="hideZero"
             android:title="Hide net-zero transactions" />
-        <com.vandyke.siamobile.ui.settings.IntEditTextPreference
+        <com.vandyke.sia.ui.settings.IntEditTextPreference
             android:defaultValue="2"
             android:gravity="center"
             android:key="displayedDecimalPrecision"

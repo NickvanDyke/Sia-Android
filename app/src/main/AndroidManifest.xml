@@ -3,7 +3,7 @@
   ~ Copyright (c) 2017 Nicholas van Dyke. All rights reserved.
   -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.vandyke.siamobile">
+          package="com.vandyke.sia">
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.MANAGE_DOCUMENTS"/>
@@ -17,7 +17,7 @@
         android:maxSdkVersion="18"/>
 
     <application
-        android:name=".App"
+        android:name="com.vandyke.sia.App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
@@ -25,10 +25,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.DayNight">
 
-        <service android:name=".data.siad.SiadService"/>
+        <service android:name="com.vandyke.sia.data.siad.SiadService"/>
 
         <activity
-            android:name=".ui.main.MainActivity"
+            android:name="com.vandyke.sia.ui.main.MainActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/splashScreenTheme">
@@ -39,15 +39,15 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.about.AboutSiaActivity"
+            android:name="com.vandyke.sia.ui.about.AboutSiaActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".ui.wallet.view.ScannerActivity"
+            android:name="com.vandyke.sia.ui.wallet.view.ScannerActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
 
-        <receiver android:name=".data.siad.SiadReceiver" />
+        <receiver android:name="com.vandyke.sia.data.siad.SiadReceiver" />
     </application>
 
 </manifest>

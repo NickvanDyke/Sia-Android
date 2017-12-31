@@ -1,0 +1,80 @@
+/*
+ * Copyright (c) 2017 Nicholas van Dyke. All rights reserved.
+ */
+
+package com.vandyke.sia.ui.settings
+
+import android.content.Intent
+import android.content.SharedPreferences
+import android.net.Uri
+import android.os.Bundle
+import android.support.design.widget.Snackbar
+import android.support.v7.preference.Preference
+import android.support.v7.preference.PreferenceFragmentCompat
+import com.vandyke.sia.BuildConfig
+import com.vandyke.sia.R
+import com.vandyke.sia.data.local.Prefs
+import com.vandyke.sia.data.siad.SiadService
+import com.vandyke.sia.util.SnackbarUtil
+import com.vandyke.sia.util.StorageUtil
+
+/* the actual settings fragment, contained within SettingsFragment */
+class SettingsFragmentActual : PreferenceFragmentCompat() {
+
+    private lateinit var prefsListener: SharedPreferences.OnSharedPreferenceChangeListener
+
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        addPreferencesFromResource(R.xml.settings)
+
+        findPreference("useExternal").onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, o ->
+            if (StorageUtil.isExternalStorageWritable) {
+                return@OnPreferenceChangeListener true
+            } else {
+                SnackbarUtil.snackbar(view, "Error: " + StorageUtil.externalStorageStateDescription(), Snackbar.LENGTH_LONG)
+                return@OnPreferenceChangeListener false
+            }
+        }
+
+        findPreference("openAppSettings").onPreferenceClickListener = Preference.OnPreferenceClickListener {
+            val appSettings = Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + BuildConfig.APPLICATION_ID))
+            appSettings.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(appSettings)
+            false
+        }
+
+        findPreference("displayedDecimalPrecision").onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, newValue ->
+            try {
+                return@OnPreferenceChangeListener Integer.parseInt(newValue as String) < 10
+            } catch (e: Exception) {
+                return@OnPreferenceChangeListener false
+            }
+        }
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        /* create and register a SharedPrefs PreferenceChangeListener that'll take appropriate action
+         * when certain settings are changed */
+        prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
+            when (key) {
+                "SiaNodeWakeLock" -> SiadService.getService(context!!).subscribe { service ->
+                    /* If Siad is already running then we must tell the service to acquire/release its wake lock
+                       because normally it does so in start/stopSiad() */
+                    if (service.siadProcessIsRunning) {
+                        if (service.wakeLock.isHeld)
+                            service.wakeLock.release()
+                        else if (Prefs.SiaNodeWakeLock)
+                            service.wakeLock.acquire()
+                    }
+                }
+
+                "useExternal" -> SiadService.getService(context!!).subscribe { service ->
+                    /* restart siad so that it'll switch storage directories */
+                    service.stopSiad()
+                    service.startSiad()
+                }
+            }
+        }
+        Prefs.preferences.registerOnSharedPreferenceChangeListener(prefsListener)
+    }
+}
