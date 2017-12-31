@@ -16,6 +16,10 @@
             android:title="Keep CPU awake for Sia" />
         <SwitchPreferenceCompat
             android:defaultValue="false"
+            android:key="runSiaOnData"
+            android:title="Run Sia on mobile data"/>
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
             android:key="useExternal"
             android:summary="Sia will store its data on whatever your phone returns as its external storage - this is manufacturer-dependent, and will not necessarily be an SD card. Restart the Sia node after changing."
             android:title="Use external storage" />

@@ -10,6 +10,7 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.*
 import android.graphics.BitmapFactory
+import android.net.ConnectivityManager
 import android.os.Binder
 import android.os.IBinder
 import android.os.PowerManager
@@ -45,17 +46,23 @@ class SiadService : Service() {
     override fun onCreate() {
         val filter = IntentFilter(SiadReceiver.START_SIAD)
         filter.addAction(SiadReceiver.STOP_SIAD)
+        filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION)
         registerReceiver(receiver, filter)
         // TODO: need some way to do this such that if I push an update with a new version of siad, that it will overwrite the
         // current one. Maybe just keep the version in sharedprefs and check against it?
         siadFile = StorageUtil.copyFromAssetsToAppStorage("siad", this)
         wakeLock = (getSystemService(Context.POWER_SERVICE) as PowerManager).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Sia node")
         startForeground(SIAD_NOTIFICATION, siadNotification("Not running"))
-        if (Prefs.startSiaAutomatically)
+        if (Prefs.startSiaAutomatically) {
+            Prefs.siaStoppedManually = false
             startSiad()
+        } else {
+            Prefs.siaStoppedManually = true
+        }
     }
 
     fun startSiad() {
+        Prefs.siaStoppedManually = false
         if (siadProcessIsRunning) {
             return
         }

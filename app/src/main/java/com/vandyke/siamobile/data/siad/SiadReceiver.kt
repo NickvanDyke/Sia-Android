@@ -7,20 +7,54 @@ package com.vandyke.siamobile.data.siad
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import com.vandyke.siamobile.data.local.Prefs
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
+
 class SiadReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
-            SiadService.getService(context.applicationContext)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe { service ->
-                        when (intent.action) {
-                            START_SIAD -> service.startSiad()
-                            STOP_SIAD -> service.stopSiad()
-                        }
+        when (intent.action) {
+            START_SIAD -> startSiad(context)
+
+            STOP_SIAD -> {
+                stopSiad(context)
+                Prefs.siaStoppedManually = true
+            }
+
+            ConnectivityManager.CONNECTIVITY_ACTION -> {
+                val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+                val activeNetwork = cm.activeNetworkInfo
+                if (activeNetwork != null && activeNetwork.type == ConnectivityManager.TYPE_MOBILE) {
+                    if (Prefs.runSiaOnData) {
+                        startSiad(context)
+                    } else {
+                        stopSiad(context)
                     }
+                } else if (!Prefs.siaStoppedManually) {
+                    startSiad(context)
+                }
+            }
+        }
+    }
+
+    fun startSiad(context: Context) {
+        SiadService.getService(context.applicationContext)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { service ->
+                    service.startSiad()
+                }
+    }
+
+    fun stopSiad(context: Context) {
+        SiadService.getService(context.applicationContext)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { service ->
+                    service.stopSiad()
+                }
     }
 
     companion object {

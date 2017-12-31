@@ -17,4 +17,6 @@ object Prefs : KotprefModel() {
     var displayedDecimalPrecision by intPref(2)
     var SiaNodeWakeLock by booleanPref(false)
     var startSiaAutomatically by booleanPref(true)
+    var siaStoppedManually by booleanPref()
+    var runSiaOnData by booleanPref()
 }
