@@ -14,8 +14,8 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import com.vandyke.siamobile.R
+import com.vandyke.siamobile.data.SiaError
 import com.vandyke.siamobile.data.local.Prefs
-import com.vandyke.siamobile.data.remote.SiaError
 import com.vandyke.siamobile.ui.common.BaseFragment
 import com.vandyke.siamobile.ui.wallet.view.childfragments.*
 import com.vandyke.siamobile.ui.wallet.view.transactionslist.TransactionAdapter

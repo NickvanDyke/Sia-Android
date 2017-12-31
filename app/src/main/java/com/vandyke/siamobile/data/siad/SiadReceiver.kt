@@ -12,10 +12,6 @@ import io.reactivex.schedulers.Schedulers
 
 class SiadReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
-        println("received intent: $intent")
-        if (intent.action == STOP_SERVICE)
-            context.stopService(Intent(context, SiadService::class.java))
-        else
             SiadService.getService(context.applicationContext)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -29,7 +25,6 @@ class SiadReceiver : BroadcastReceiver() {
 
     companion object {
         /* intent actions meant for this receiver */
-        val STOP_SERVICE = "STOP_SERVICE"
         val STOP_SIAD = "STOP_SIAD"
         val START_SIAD = "START_SIAD"
     }

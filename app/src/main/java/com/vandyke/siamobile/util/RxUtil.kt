@@ -4,7 +4,7 @@
 
 package com.vandyke.siamobile.util
 
-import com.vandyke.siamobile.data.remote.SiaError
+import com.vandyke.siamobile.data.SiaError
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Single

@@ -4,7 +4,9 @@
 
 package com.vandyke.siamobile.ui.wallet.view.transactionslist
 
+import android.content.Intent
 import android.graphics.Color
+import android.net.Uri
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.TextView
@@ -44,6 +46,11 @@ class TransactionHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             transactionValue.setTextColor(green)
         }
         transactionValue.text = valueText
+
+        itemView.setOnClickListener {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://explorer.siahub.info/hash/${transaction.transactionId}"))
+            itemView.context.startActivity(intent)
+        }
     }
     
     companion object {

@@ -9,6 +9,7 @@ import com.vandyke.siamobile.data.local.Prefs
 import com.vandyke.siamobile.data.models.consensus.ConsensusData
 import com.vandyke.siamobile.data.models.gateway.GatewayData
 import com.vandyke.siamobile.data.models.renter.*
+import com.vandyke.siamobile.data.models.txpool.FeeData
 import com.vandyke.siamobile.data.models.wallet.*
 import io.reactivex.Completable
 import io.reactivex.Single
@@ -107,6 +108,10 @@ interface SiaApiInterface {
     /* consensus API */
     @GET("consensus")
     fun consensus(): Single<ConsensusData>
+
+    /* transactionpool API */
+    @GET("tpool/fee")
+    fun txPoolFee(): Single<FeeData>
 }
 
 val siaApi: SiaApiInterface = SiaApi.buildApi()

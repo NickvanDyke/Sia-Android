@@ -6,9 +6,9 @@ package com.vandyke.siamobile.ui.renter.files.viewmodel
 
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
+import com.vandyke.siamobile.data.SiaError
 import com.vandyke.siamobile.data.local.data.renter.File
 import com.vandyke.siamobile.data.local.data.renter.Node
-import com.vandyke.siamobile.data.remote.SiaError
 import com.vandyke.siamobile.isSiadLoaded
 import com.vandyke.siamobile.ui.renter.files.model.FilesModelTest
 import com.vandyke.siamobile.util.siaSubscribe

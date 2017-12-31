@@ -43,14 +43,14 @@ class SiadService : Service() {
     private val receiver = SiadReceiver()
 
     override fun onCreate() {
-        val filter = IntentFilter(SiadReceiver.STOP_SERVICE)
-        filter.addAction(SiadReceiver.START_SIAD)
+        val filter = IntentFilter(SiadReceiver.START_SIAD)
         filter.addAction(SiadReceiver.STOP_SIAD)
         registerReceiver(receiver, filter)
         // TODO: need some way to do this such that if I push an update with a new version of siad, that it will overwrite the
         // current one. Maybe just keep the version in sharedprefs and check against it?
         siadFile = StorageUtil.copyFromAssetsToAppStorage("siad", this)
         wakeLock = (getSystemService(Context.POWER_SERVICE) as PowerManager).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Sia node")
+        startForeground(SIAD_NOTIFICATION, siadNotification("Stopped"))
         if (Prefs.startSiaAutomatically)
             startSiad()
     }
@@ -66,7 +66,7 @@ class SiadService : Service() {
         isSiadLoaded.onNext(false)
 
         /* acquire partial wake lock to keep device CPU awake and therefore keep the Sia node active */
-        if (Prefs.SiaNodeWakeLock) {
+        if (Prefs.SiaNodeWakeLock && !wakeLock.isHeld) {
             wakeLock.acquire()
         }
         val pb = ProcessBuilder(siadFile!!.absolutePath, "-M", "gctw") // TODO: maybe let user set which modules to load?
@@ -100,13 +100,19 @@ class SiadService : Service() {
 
         try {
             siadProcess = pb.start() // TODO: this causes the application to skip about a second of frames when starting. Preventable?
-            startForeground(SIAD_NOTIFICATION, siadNotification("Starting Sia node..."))
+
+            showSiadNotification("Starting Sia node...")
             // should this be done directly in the spot that reads from output instead? Don't think it matters
             subscription = siadOutput.observeOn(AndroidSchedulers.mainThread()).subscribe {
                 if (it.contains("Finished loading"))
                     isSiadLoaded.onNext(true)
-                showSiadNotification(it)
+                /* sometimes the phone runs a portscan, and siad receives an HTTP request from it, and outputs a weird
+                 * error message thingy. It doesn't affect operation at all, and we don't want the user to see it since
+                 * it'd just be confusing */
+                if (!it.contains("Unsolicited response received on idle HTTP channel starting with"))
+                    showSiadNotification(it)
             }
+            /* launch a coroutine that will read output from the siad process */
             launch(CommonPool) {
                 /* need another try-catch block since this is inside a coroutine */
                 try {
@@ -135,7 +141,6 @@ class SiadService : Service() {
         subscription?.dispose()
         siadProcess?.destroy()
         siadProcess = null
-        stopForeground(false)
         showSiadNotification("Stopped")
     }
 
@@ -151,7 +156,6 @@ class SiadService : Service() {
         unregisterReceiver(receiver)
         stopSiad()
         stopForeground(true)
-        NotificationUtil.cancelNotification(this, SIAD_NOTIFICATION)
         if (wakeLock.isHeld)
             wakeLock.release()
     }
@@ -185,15 +189,6 @@ class SiadService : Service() {
             startIntent.setClass(this, SiadReceiver::class.java)
             val startPI = PendingIntent.getBroadcast(this, 0, startIntent, PendingIntent.FLAG_UPDATE_CURRENT)
             builder.addAction(R.drawable.siacoin_logo_svg_white, "Start", startPI)
-        }
-
-        /* swiping the notification stops the service - only want this when the Sia node isn't running, and the
-         * service has been set to not be foreground */
-        if (!siadProcessIsRunning) {
-            val stopIntent = Intent(SiadReceiver.STOP_SERVICE)
-            stopIntent.setClass(this, SiadReceiver::class.java)
-            val stopPI = PendingIntent.getBroadcast(this, 0, stopIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-            builder.setDeleteIntent(stopPI)
         }
 
         return builder.build()

@@ -29,10 +29,11 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var viewModel: MainViewModel
     private var visibleFragment: BaseFragment? = null
-    private var loadingDialog: SiadLoadingDialog? = null
     private lateinit var drawerToggle: ActionBarDrawerToggle
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        startService(Intent(this, SiadService::class.java))
+
         /* appearance stuff */
         if (Prefs.darkMode)
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
@@ -129,12 +130,6 @@ class MainActivity : AppCompatActivity() {
         } else if (visibleFragment?.onBackPressed() != true) {
             super.onBackPressed()
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        /* always attempt to start the siad service, in case it was dismissed and stopped while the app was closed */
-        startService(Intent(this, SiadService::class.java))
     }
 
     /* below methods are for drawer stuff */

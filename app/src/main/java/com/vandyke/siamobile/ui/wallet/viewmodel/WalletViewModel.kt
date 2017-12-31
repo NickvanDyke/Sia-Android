@@ -6,9 +6,9 @@ package com.vandyke.siamobile.ui.wallet.viewmodel
 
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
+import com.vandyke.siamobile.data.SiaError
 import com.vandyke.siamobile.data.models.consensus.ConsensusData
 import com.vandyke.siamobile.data.models.wallet.*
-import com.vandyke.siamobile.data.remote.SiaError
 import com.vandyke.siamobile.data.remote.siaApi
 import com.vandyke.siamobile.data.repository.ConsensusRepository
 import com.vandyke.siamobile.data.repository.ScValueRepository

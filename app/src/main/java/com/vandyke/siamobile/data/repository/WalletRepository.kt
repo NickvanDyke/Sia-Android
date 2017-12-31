@@ -4,8 +4,8 @@
 
 package com.vandyke.siamobile.data.repository
 
+import com.vandyke.siamobile.data.SiaError
 import com.vandyke.siamobile.data.models.wallet.AddressData
-import com.vandyke.siamobile.data.remote.SiaError
 import com.vandyke.siamobile.data.remote.siaApi
 import com.vandyke.siamobile.db
 import io.reactivex.Completable

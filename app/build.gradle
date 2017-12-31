@@ -28,6 +28,7 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
+    /* kotlin stdlib and coroutines */
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.18'
 
@@ -36,6 +37,7 @@ dependencies {
     })
     testImplementation 'junit:junit:4.12'
 
+    /* support library */
     implementation 'com.android.support:appcompat-v7:27.0.2'
     implementation 'com.android.support:design:27.0.2'
     implementation 'com.android.support:recyclerview-v7:27.0.2'
@@ -43,43 +45,47 @@ dependencies {
     implementation 'com.android.support:preference-v14:27.0.2'
     implementation 'com.android.support.constraint:constraint-layout:1.1.0-beta4'
 
+    /* UI */
     implementation 'com.daimajia.numberprogressbar:library:1.4@aar'
     implementation 'com.getbase:floatingactionbutton:1.10.1'
-
-    implementation "com.chibatching.kotpref:kotpref:2.2.0"
-    implementation "com.chibatching.kotpref:enum-support:2.2.0"
-
     implementation 'com.github.apl-devs:appintro:v4.2.0'
     implementation 'com.github.medyo:android-about-page:1.2.2'
     implementation 'de.cketti.library.changelog:ckchangelog:1.2.2'
-
     implementation 'com.github.kenglxn.QRGen:android:2.3.0'
     implementation 'me.dm7.barcodescanner:zxing:1.9.3'
 
-    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
+    /* simplified SharedPreferences */
+    implementation "com.chibatching.kotpref:kotpref:2.2.0"
+    implementation "com.chibatching.kotpref:enum-support:2.2.0"
 
+    /* networking */
+    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.9.0'
+
+    /* rxjava */
     implementation 'io.reactivex.rxjava2:rxjava:2.1.6'
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
     implementation 'io.reactivex.rxjava2:rxkotlin:2.2.0'
-    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
 
-    implementation "com.google.firebase:firebase-crash:11.8.0"
-
+    /* architecture components */
     implementation 'android.arch.lifecycle:runtime:1.0.3'
     implementation 'android.arch.lifecycle:extensions:1.0.0'
     kapt 'android.arch.lifecycle:compiler:1.0.0'
-    kapt 'com.android.databinding:compiler:3.0.1'
 
+    /* Room, for local data persistence */
     implementation "android.arch.persistence.room:runtime:1.0.0"
-    kapt "android.arch.persistence.room:compiler:1.0.0"
     implementation "android.arch.persistence.room:rxjava2:1.0.0"
+    kapt "android.arch.persistence.room:compiler:1.0.0"
 
+    /* jackson (JSON converter) */
     implementation 'com.fasterxml.jackson.core:jackson-core:2.8.11'
     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.8.11'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.8.11'
     implementation 'com.squareup.retrofit2:converter-jackson:2.3.0'
 
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.9.0'
+    /* for crash reporting/analytics */
+    implementation "com.google.firebase:firebase-crash:11.8.0"
 }
 
 repositories {

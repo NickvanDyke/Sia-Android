@@ -4,8 +4,6 @@
 
 package com.vandyke.siamobile.ui.wallet.view.transactionslist
 
-import android.content.Intent
-import android.net.Uri
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -17,14 +15,7 @@ class TransactionAdapter : RecyclerView.Adapter<TransactionHolder>() {
     var transactions: List<TransactionData> = listOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TransactionHolder {
-        val context = parent.context
-        val view = LayoutInflater.from(context).inflate(R.layout.holder_transaction, parent, false)
-        val holder = TransactionHolder(view)
-        view.setOnClickListener {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://explorer.siahub.info/hash/${holder.transactionId.text.toString().replace("\n", "")}"))
-            context?.startActivity(intent)
-        }
-        return holder
+        return TransactionHolder(LayoutInflater.from(parent.context).inflate(R.layout.holder_transaction, parent, false))
     }
 
     override fun onBindViewHolder(holder: TransactionHolder, position: Int) {

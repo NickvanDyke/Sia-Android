@@ -2,7 +2,7 @@
  * Copyright (c) 2017 Nicholas van Dyke. All rights reserved.
  */
 
-package com.vandyke.siamobile.data.remote
+package com.vandyke.siamobile.data
 
 import android.arch.persistence.room.EmptyResultSetException
 import android.database.sqlite.SQLiteConstraintException
@@ -31,7 +31,7 @@ class SiaError : Throwable {
         this.reason = reason
     }
 
-    private fun getReasonFromMsg(errorMessage: String): SiaError.Reason {
+    private fun getReasonFromMsg(errorMessage: String): Reason {
         return when {
             /* common */
             errorMessage.contains("siad is not ready") -> Reason.SIAD_LOADING
