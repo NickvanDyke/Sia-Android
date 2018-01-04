@@ -18,7 +18,7 @@ class WalletChangePasswordDialog : BaseWalletFragment() {
         walletChange.setOnClickListener(View.OnClickListener {
             val newPassword = newPassword.text.toString()
             if (newPassword != confirmNewPassword.text.toString()) {
-                SnackbarUtil.snackbar(view, "New passwords don't match", Snackbar.LENGTH_SHORT)
+                SnackbarUtil.showSnackbar(view, "New passwords don't match", Snackbar.LENGTH_SHORT)
                 return@OnClickListener
             }
 

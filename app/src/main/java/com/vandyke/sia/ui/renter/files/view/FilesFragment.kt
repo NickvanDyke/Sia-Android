@@ -67,7 +67,7 @@ class FilesFragment : BaseFragment() {
                     .setTitle("New directory")
                     .setView(dialogView)
                     .setPositiveButton("Create", { dialogInterface, i ->
-                        viewModel.createNewDir(dialogView.findViewById<EditText>(R.id.newDirName).text.toString())
+                        viewModel.createDir(dialogView.findViewById<EditText>(R.id.newDirName).text.toString())
                     })
                     .setNegativeButton("Cancel", null)
                     .create()
@@ -127,9 +127,10 @@ class FilesFragment : BaseFragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == FILE_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
-            val uri = data!!.data
+            val uri = data.data
             println(uri)
             println(uri.path)
+            // TODO: call uploadFile() or whatever on the VM using this info
         }
     }
 

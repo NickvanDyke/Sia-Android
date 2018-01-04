@@ -18,7 +18,7 @@ class TextHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     init {
         itemView.setOnClickListener {
             GenUtil.copyToClipboard(text.context, text.text)
-            SnackbarUtil.snackbar(text, "Copied selection to clipboard", Snackbar.LENGTH_SHORT)
+            SnackbarUtil.showSnackbar(text, "Copied selection to clipboard", Snackbar.LENGTH_SHORT)
         }
     }
 }

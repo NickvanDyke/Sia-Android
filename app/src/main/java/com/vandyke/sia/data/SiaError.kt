@@ -5,9 +5,13 @@
 package com.vandyke.sia.data
 
 import android.arch.persistence.room.EmptyResultSetException
+import android.content.Intent
 import android.database.sqlite.SQLiteConstraintException
 import android.support.design.widget.Snackbar
+import android.support.v4.content.ContextCompat
 import android.view.View
+import com.vandyke.sia.data.siad.SiadReceiver
+import com.vandyke.sia.isSiadServiceStarted
 import com.vandyke.sia.util.SnackbarUtil
 import retrofit2.HttpException
 import java.io.IOException
@@ -33,10 +37,10 @@ class SiaError : Throwable {
 
     private fun getReasonFromMsg(errorMessage: String): Reason {
         return when {
-            /* common */
+        /* common */
             errorMessage.contains("siad is not ready") -> Reason.SIAD_LOADING
             errorMessage.contains("API authentication failed") -> Reason.INCORRECT_API_PASSWORD
-            /* wallet */
+        /* wallet */
             errorMessage.contains("wallet must be unlocked before it can be used") -> Reason.WALLET_LOCKED
             errorMessage.contains("provided encryption key is incorrect") -> Reason.WALLET_PASSWORD_INCORRECT
             errorMessage.contains("wallet has already been unlocked") -> Reason.WALLET_ALREADY_UNLOCKED
@@ -53,10 +57,10 @@ class SiaError : Throwable {
             errorMessage.contains("nothing to sweep") -> Reason.NOTHING_TO_SWEEP
             errorMessage.contains("word not found in dictionary for given language") -> Reason.INVALID_WORD_IN_SEED
             errorMessage.contains("seed failed checksum verification") -> Reason.INVALID_SEED
-            /* explorer */
+        /* explorer */
             errorMessage.contains("unrecognized hash used as input to /explorer/hash") -> Reason.UNRECOGNIZED_HASH
             errorMessage.contains("Cloudflare") -> Reason.RATE_LIMITING
-            /* renter */
+        /* renter */
 
             else -> {
                 println("unaccounted for error message: $errorMessage")
@@ -85,7 +89,7 @@ class SiaError : Throwable {
         /* common */
         SIAD_LOADING("Sia is still loading"),
         TIMEOUT("Response timed out"),
-        NO_NETWORK_RESPONSE("No network response"),
+        NO_NETWORK_RESPONSE("Sia node isn't running"),
         INCORRECT_API_PASSWORD("Incorrect API password"),
         ROOM_EMPTY_RESULT_SET("Nothing to display"),
         /* wallet */
@@ -114,9 +118,22 @@ class SiaError : Throwable {
         RATE_LIMITING("Hit request rate-limit")
     }
 
-    fun snackbar(view: View?, length: Int = Snackbar.LENGTH_SHORT) {
-        if (view == null)
-            return
-        SnackbarUtil.snackbar(view, reason.msg, length)
+    fun snackbar(view: View, length: Int = Snackbar.LENGTH_SHORT) {
+        if (reason == Reason.NO_NETWORK_RESPONSE) {
+            /* don't want to display a confusing error if the only reason we got it is because the
+             * SiadService couldn't start before we made our first network request. */
+            if (isSiadServiceStarted.value == null) {
+                return
+            } else {
+                val snackbar = SnackbarUtil.buildSnackbar(view, reason.msg)
+                snackbar.setAction("Start") {
+                    snackbar.context.sendBroadcast(Intent(SiadReceiver.START_SIAD))
+                }
+                snackbar.setActionTextColor(ContextCompat.getColor(snackbar.context, android.R.color.white))
+                snackbar.show()
+            }
+        } else {
+            SnackbarUtil.showSnackbar(view, reason.msg, length)
+        }
     }
 }

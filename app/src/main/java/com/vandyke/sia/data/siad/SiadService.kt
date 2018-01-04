@@ -18,13 +18,12 @@ import android.support.v4.app.NotificationCompat
 import com.vandyke.sia.R
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.isSiadLoaded
+import com.vandyke.sia.isSiadServiceStarted
 import com.vandyke.sia.siadOutput
 import com.vandyke.sia.ui.main.MainActivity
 import com.vandyke.sia.util.NotificationUtil
 import com.vandyke.sia.util.StorageUtil
 import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.launch
 import java.io.BufferedReader
@@ -40,7 +39,6 @@ class SiadService : Service() {
     private val SIAD_NOTIFICATION = 3
     val siadProcessIsRunning: Boolean
         get() = siadProcess != null
-    private var subscription: Disposable? = null
     private val receiver = SiadReceiver()
 
     override fun onCreate() {
@@ -52,7 +50,11 @@ class SiadService : Service() {
         // current one. Maybe just keep the version in sharedprefs and check against it?
         siadFile = StorageUtil.copyFromAssetsToAppStorage("siad", this)
         wakeLock = (getSystemService(Context.POWER_SERVICE) as PowerManager).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Sia node")
+
         startForeground(SIAD_NOTIFICATION, siadNotification("Not running"))
+
+        isSiadServiceStarted.onNext(true)
+
         if (Prefs.startSiaAutomatically) {
             Prefs.siaStoppedManually = false
             startSiad()
@@ -106,26 +108,24 @@ class SiadService : Service() {
         }
 
         try {
-            siadProcess = pb.start() // TODO: this causes the application to skip about a second of frames when starting. Preventable?
+            siadProcess = pb.start() // TODO: this causes the application to skip about a second of frames when starting at the same time as the app. Preventable?
 
             showSiadNotification("Starting Sia node...")
-            // should this be done directly in the spot that reads from output instead? Don't think it matters
-            subscription = siadOutput.observeOn(AndroidSchedulers.mainThread()).subscribe {
-                if (it.contains("Finished loading"))
-                    isSiadLoaded.onNext(true)
-                /* sometimes the phone runs a portscan, and siad receives an HTTP request from it, and outputs a weird
-                 * error message thingy. It doesn't affect operation at all, and we don't want the user to see it since
-                 * it'd just be confusing */
-                if (!it.contains("Unsolicited response received on idle HTTP channel starting with"))
-                    showSiadNotification(it)
-            }
-            /* launch a coroutine that will read output from the siad process */
+
+            /* launch a coroutine that will read output from the siad process, and update siad observables from it's output */
             launch(CommonPool) {
                 /* need another try-catch block since this is inside a coroutine */
                 try {
                     val inputReader = BufferedReader(InputStreamReader(siadProcess!!.inputStream))
                     var line: String? = inputReader.readLine()
                     while (line != null) {
+                        if (line.contains("Finished loading"))
+                            isSiadLoaded.onNext(true)
+                        /* sometimes the phone runs a portscan, and siad receives an HTTP request from it, and outputs a weird
+                         * error message thingy. It doesn't affect operation at all, and we don't want the user to see it since
+                         * it'd just be confusing */
+                        if (!line.contains("Unsolicited response received on idle HTTP channel starting with"))
+                            showSiadNotification(line)
                         siadOutput.onNext(line)
                         line = inputReader.readLine()
                     }
@@ -144,10 +144,9 @@ class SiadService : Service() {
         if (wakeLock.isHeld)
             wakeLock.release()
         // TODO: maybe shut it down using stop http request instead? Takes ages sometimes
-        isSiadLoaded.onNext(false)
-        subscription?.dispose()
         siadProcess?.destroy()
         siadProcess = null
+        isSiadLoaded.onNext(false)
         showSiadNotification("Stopped")
     }
 
@@ -164,10 +163,10 @@ class SiadService : Service() {
         stopSiad()
         if (wakeLock.isHeld)
             wakeLock.release()
-        stopForeground(true)
-        /* need to clear the notification this way too, otherwise the
+        /* need to clear the notification, otherwise the
          * "Stopped" notification that stopSiad() displays will persist */
         NotificationUtil.cancelNotification(this, SIAD_NOTIFICATION)
+        isSiadServiceStarted.onNext(false)
     }
 
     fun showSiadNotification(text: String) {

@@ -32,9 +32,9 @@ class DonateDialog : DialogFragment() {
         dialogView.findViewById<Button>(R.id.donateButton).setOnClickListener {
             val amount = dialogView.findViewById<EditText>(R.id.donateAmount).text.toString().toHastings().toPlainString()
             siaApi.walletSiacoins(amount, paymentRecipient).siaSubscribe({
-                SnackbarUtil.snackbar(dialogView, "Donation successful. Thank you!", Snackbar.LENGTH_SHORT)
+                SnackbarUtil.showSnackbar(dialogView, "Donation successful. Thank you!", Snackbar.LENGTH_SHORT)
             }, {
-                SnackbarUtil.snackbar(dialogView, it.reason.msg + ". No donation made.", Snackbar.LENGTH_SHORT)
+                SnackbarUtil.showSnackbar(dialogView, it.reason.msg + ". No donation made.", Snackbar.LENGTH_SHORT)
             })
         }
         builder.setTitle("Donate")

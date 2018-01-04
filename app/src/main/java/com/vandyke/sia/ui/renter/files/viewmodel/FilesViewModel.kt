@@ -80,7 +80,7 @@ class FilesViewModel : ViewModel() {
     /**
      * Creates a new directory with the given name in the current directory
      */
-    fun createNewDir(name: String) {
+    fun createDir(name: String) {
         renterRepo.createNewDir("${path.value!!}/$name").siaSubscribe(::refresh, ::setError)
     }
 

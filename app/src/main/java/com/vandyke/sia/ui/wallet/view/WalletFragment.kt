@@ -109,7 +109,7 @@ class WalletFragment : BaseFragment() {
         }
 
         viewModel.success.observe(this) {
-            SnackbarUtil.snackbar(view, it)
+            SnackbarUtil.showSnackbar(view, it)
             collapseFrame()
         }
 

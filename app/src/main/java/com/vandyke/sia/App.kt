@@ -19,6 +19,8 @@ import kotlinx.coroutines.experimental.launch
 lateinit var db: AppDatabase
 val siadOutput = PublishSubject.create<String>()!!
 val isSiadLoaded = BehaviorSubject.create<Boolean>()!!
+val isSiadServiceStarted = BehaviorSubject.create<Boolean>()!!
+
 
 
 class App : Application() {

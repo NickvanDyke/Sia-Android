@@ -30,7 +30,7 @@ class SettingsFragmentActual : PreferenceFragmentCompat() {
             if (StorageUtil.isExternalStorageWritable) {
                 return@OnPreferenceChangeListener true
             } else {
-                SnackbarUtil.snackbar(view, "Error: " + StorageUtil.externalStorageStateDescription(), Snackbar.LENGTH_LONG)
+                SnackbarUtil.showSnackbar(view, "Error: " + StorageUtil.externalStorageStateDescription(), Snackbar.LENGTH_LONG)
                 return@OnPreferenceChangeListener false
             }
         }

@@ -29,7 +29,7 @@ class WalletReceiveDialog : BaseWalletFragment() {
 
         receiveAddress.setOnClickListener {
             GenUtil.copyToClipboard(context!!, receiveAddress.text)
-            SnackbarUtil.snackbar(view, "Copied receive address", Snackbar.LENGTH_SHORT)
+            SnackbarUtil.showSnackbar(view, "Copied receive address", Snackbar.LENGTH_SHORT)
         }
     }
 

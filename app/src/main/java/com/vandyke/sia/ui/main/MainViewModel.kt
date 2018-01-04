@@ -8,7 +8,6 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.view.MenuItem
 import com.vandyke.sia.R
-import com.vandyke.sia.isSiadLoaded
 import com.vandyke.sia.ui.about.AboutFragment
 import com.vandyke.sia.ui.hosting.fragments.HostingFragment
 import com.vandyke.sia.ui.renter.main.RenterFragment
@@ -19,21 +18,29 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 
 class MainViewModel : ViewModel() {
-    val siadIsLoading = MutableLiveData<Boolean>()
+    val isSiadLoaded = MutableLiveData<Boolean>()
+    val siadOutput = MutableLiveData<String>()
     val visibleFragmentClass = MutableLiveData<Class<*>>()
     val title = MutableLiveData<String>()
     val selectedMenuItem = MutableLiveData<Int>()
 
-    private val subscription: Disposable
+    private val loadedSubscription: Disposable
+    private val outputSubscription: Disposable
+
     init {
-        subscription = isSiadLoaded.observeOn(AndroidSchedulers.mainThread()).subscribe {
-            siadIsLoading.value = !it
+        loadedSubscription = com.vandyke.sia.isSiadLoaded.observeOn(AndroidSchedulers.mainThread()).subscribe {
+            isSiadLoaded.value = it
+        }
+
+        outputSubscription = com.vandyke.sia.siadOutput.observeOn(AndroidSchedulers.mainThread()).subscribe {
+            siadOutput.value = it
         }
     }
 
     override fun onCleared() {
         super.onCleared()
-        subscription.dispose()
+        loadedSubscription.dispose()
+        outputSubscription.dispose()
     }
     
     fun navigationItemSelected(item: MenuItem) {

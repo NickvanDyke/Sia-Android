@@ -38,7 +38,7 @@ class WalletCreateDialog : BaseWalletFragment() {
         walletCreateButton.setOnClickListener(View.OnClickListener {
             val password = newPasswordCreate.text.toString()
             if (password != confirmNewPasswordCreate.text.toString()) {
-                SnackbarUtil.snackbar(view, "New passwords don't match", Snackbar.LENGTH_SHORT)
+                SnackbarUtil.showSnackbar(view, "New passwords don't match", Snackbar.LENGTH_SHORT)
                 return@OnClickListener
             }
             val force = walletCreateForce.isChecked
