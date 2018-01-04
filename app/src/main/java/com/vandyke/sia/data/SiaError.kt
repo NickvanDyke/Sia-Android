@@ -11,7 +11,7 @@ import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
 import android.view.View
 import com.vandyke.sia.data.siad.SiadReceiver
-import com.vandyke.sia.isSiadServiceStarted
+import com.vandyke.sia.isSiadProcessStarting
 import com.vandyke.sia.util.SnackbarUtil
 import retrofit2.HttpException
 import java.io.IOException
@@ -120,17 +120,17 @@ class SiaError : Throwable {
 
     fun snackbar(view: View, length: Int = Snackbar.LENGTH_SHORT) {
         if (reason == Reason.NO_NETWORK_RESPONSE) {
-            /* don't want to display a confusing error if the only reason we got it is because the
-             * SiadService couldn't start before we made our first network request. */
-            if (isSiadServiceStarted.value == null) {
-                return
-            } else {
+            if (isSiadProcessStarting.value == false) {
                 val snackbar = SnackbarUtil.buildSnackbar(view, reason.msg)
                 snackbar.setAction("Start") {
                     snackbar.context.sendBroadcast(Intent(SiadReceiver.START_SIAD))
                 }
                 snackbar.setActionTextColor(ContextCompat.getColor(snackbar.context, android.R.color.white))
                 snackbar.show()
+            } else {
+                /* don't want to display a confusing error if the only reason we got it is because the
+                 * SiadService couldn't start before we made our first network request. */
+                return
             }
         } else {
             SnackbarUtil.showSnackbar(view, reason.msg, length)

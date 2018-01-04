@@ -4,7 +4,7 @@
 
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <string name="app_name">Sia Mobile</string>
+    <string name="app_name">Sia </string>
     <string name="drawer_open">open</string>
     <string name="drawer_close">close</string>
     <string name="unlock_wallet">Unlock wallet</string>
@@ -36,6 +36,10 @@
     <string name="change">Change</string>
     <string name="create">Create</string>
     <string name="confirm_password">Confirm password</string>
+    <string name="synced">Synced</string>
+    <string name="syncing">Syncing</string>
+    <string name="close">Close</string>
+    <string name="renter">Renter</string>
 
     <string name="terminal_warning" tools:ignore="TypographyDashes">ADVANCED:\nThis terminal uses siac as its backend. Siac is a command-line utility written by the
         Sia developers that can interface with all of Sia\'s API endpoints; you can type --help and press enter for a list
@@ -43,22 +47,5 @@
         yet be part of the mobile graphical interface. While siac is fully functional on a computer, very little testing of
         it has been done on a mobile device. Functionality is not guaranteed. Use at your own risk.\n\nIf you\'re running a local full node,
         it\'s output will also appear here.\n\n</string>
-
-    <!--Strings for explaining install-->
-    <string name="step_5" formatted="false" tools:ignore="TypographyDashes"><![CDATA[5. In the same command prompt, type\n\nsiad --disable-api-security --authenticate-api
-    --api-addr <ip>:<port>\n\nreplacing <ip> with your computer\'s internal IP address from step 4, and <port> with a port number
-    of your choosing; remember your port number for later. This step will launch Sia on your computer in a fashion that
-    allows Sia Mobile to interact with it. You will need to keep this command prompt open and running to use Sia Mobile with it. If you instead downloaded Sia-UI in step 1, also add\n\n
--d %APPDATA%\\Sia-UI\\sia\\\n\nto the command above, as this is the directory that Sia-UI stores its files in by default.]]></string>
-
-    <string name="step_8"><![CDATA[8. (optional) Following the steps above, you will only be able to access your
-computer\'s Sia from your phone when your phone is on the same network as your computer. In order to access it from anywhere, you will have to port forward on your
-router on your chosen port to your computer\'s internal IP address. Many guides exist online detailing how to do this. Please note that the Sia API uses HTTP requests,
-which are NOT inherently secure. If you communicate with your full node from outside your local network, other people can potentially see the info you are sending
-and receiving. This is not a concern if you will not be port forwarding your node.]]></string>
-    <string name="synced">Synced</string>
-    <string name="syncing">Syncing</string>
-    <string name="close">Close</string>
-    <string name="renter">Renter</string>
 
 </resources>

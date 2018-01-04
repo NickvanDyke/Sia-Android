@@ -1,12 +1,12 @@
-# Sia Mobile  [![forthebadge](http://forthebadge.com/images/badges/built-with-love.svg)](http://forthebadge.com)  [![Google Play Badge](https://developer.android.com/images/brand/en_generic_rgb_wo_45.png)](https://play.google.com/store/apps/details?id=com.vandyke.siamobile)
+# Sia for Android  [![forthebadge](http://forthebadge.com/images/badges/built-with-love.svg)](http://forthebadge.com)  [![Google Play Badge](https://developer.android.com/images/brand/en_generic_rgb_wo_45.png)](https://play.google.com/store/apps/details?id=com.vandyke.siamobile)
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/1778b20c2658433eb26603ae88b3fde6)](https://www.codacy.com/app/NickvanDyke/Sia-Mobile?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=NickvanDyke/Sia-Mobile&amp;utm_campaign=Badge_Grade)
 [![Awesome Kotlin Badge](https://kotlin.link/awesome-kotlin.svg)](https://github.com/KotlinBy/awesome-kotlin)
 
-Sia Mobile serves as an Android client for the decentralized cloud storage platform [Sia](https://github.com/NebulousLabs/Sia). Sia has the potential to disrupt the cloud storage industry, and a successful mobile app for Sia will greatly help in making this a reality. Sia Mobile aims to be that.
+Sia Android serves as an Android client for the decentralized cloud storage platform [Sia](https://github.com/NebulousLabs/Sia). Sia has the potential to disrupt the cloud storage industry, and a successful mobile app for Sia will greatly help in making this a reality. This app aims to be that.
 
-Sia Mobile can:
-* Run a full Sia node on your device
+This app can:
+* Run a Sia node on your device
 * Interact with all wallet functionalities of the running node - create, send, receive, etc.
 * Coming soon: upload to and download from the Sia cloud storage network (in-progress on the develop branch)
 * Coming soon: SPV functionality (a.k.a. "lite wallet") once Sia implements this feature
@@ -15,14 +15,12 @@ Sia Mobile can:
 siamobiledev@gmail.com or Nick#6026 on the [Sia Discord](https://discord.gg/sFCT3Ar)
 
 # Contributing
-Sia Mobile is still in heavy development, and contributions to the Sia Mobile codebase through this repository (pull requests, issue reporting, feature ideas, etc.) are welcomed, encouraged, and appreciated. I am happy to help with implementations and answer any questions you might have.
+This app is still in heavy development, and contributions to the its codebase through this repository (pull requests, issue reporting, feature ideas, etc.) are welcomed, encouraged, and appreciated. I am happy to help with implementations and answer any questions you might have.
 
 # Acknowledgements
-Huge thanks to [SiaPulse](http://siapulse.com) for a donation that made the time spent on Sia Mobile many times more possible.
+Huge thanks to [SiaPulse](http://siapulse.com) for a donation that made the time spent on this many times more possible.
 
 [JGall1](https://github.com/JGall1) for implementing QR code generation and scanning.
-
-[Gsora](https://github.com/gsora) for letting me use the AAR he created from [this](https://github.com/johnathanhowell/sia-coldstorage), which Sia Mobile uses to generate paper and cold storage wallets.
 
 # Donations
 Any amount is appreciated and supports development. Thanks!

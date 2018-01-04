@@ -15,11 +15,8 @@ import android.os.Binder
 import android.os.IBinder
 import android.os.PowerManager
 import android.support.v4.app.NotificationCompat
-import com.vandyke.sia.R
+import com.vandyke.sia.*
 import com.vandyke.sia.data.local.Prefs
-import com.vandyke.sia.isSiadLoaded
-import com.vandyke.sia.isSiadServiceStarted
-import com.vandyke.sia.siadOutput
 import com.vandyke.sia.ui.main.MainActivity
 import com.vandyke.sia.util.NotificationUtil
 import com.vandyke.sia.util.StorageUtil
@@ -73,6 +70,7 @@ class SiadService : Service() {
             return
         }
         isSiadLoaded.onNext(false)
+        isSiadProcessStarting.onNext(true)
 
         /* acquire partial wake lock to keep device CPU awake and therefore keep the Sia node active */
         if (Prefs.SiaNodeWakeLock && !wakeLock.isHeld) {
@@ -119,6 +117,7 @@ class SiadService : Service() {
                     val inputReader = BufferedReader(InputStreamReader(siadProcess!!.inputStream))
                     var line: String? = inputReader.readLine()
                     while (line != null) {
+                        siadOutput.onNext(line)
                         if (line.contains("Finished loading"))
                             isSiadLoaded.onNext(true)
                         /* sometimes the phone runs a portscan, and siad receives an HTTP request from it, and outputs a weird
@@ -126,7 +125,6 @@ class SiadService : Service() {
                          * it'd just be confusing */
                         if (!line.contains("Unsolicited response received on idle HTTP channel starting with"))
                             showSiadNotification(line)
-                        siadOutput.onNext(line)
                         line = inputReader.readLine()
                     }
                     inputReader.close()
@@ -134,6 +132,8 @@ class SiadService : Service() {
                 } catch (e: IOException) {
                     e.printStackTrace()
                 }
+
+                isSiadProcessStarting.onNext(false)
             }
         } catch (e: IOException) {
             showSiadNotification(e.localizedMessage ?: "Error starting Sia node")
@@ -175,7 +175,7 @@ class SiadService : Service() {
     }
 
     private fun siadNotification(text: String): Notification {
-        val builder = NotificationCompat.Builder(this, NotificationUtil.NOTIFICATION_CHANNEL)
+        val builder = NotificationCompat.Builder(this, NotificationUtil.SIA_NODE_CHANNEL)
                 .setSmallIcon(R.drawable.siacoin_logo_svg_white)
                 .setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.sia_logo_transparent))
                 .setContentTitle("Sia node")

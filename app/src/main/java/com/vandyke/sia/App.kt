@@ -15,29 +15,36 @@ import io.reactivex.subjects.PublishSubject
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.launch
 
-// TODO: proper stuff instead of this
+// TODO: proper stuff instead of this. They should probably be injected
 lateinit var db: AppDatabase
 val siadOutput = PublishSubject.create<String>()!!
 val isSiadLoaded = BehaviorSubject.create<Boolean>()!!
 val isSiadServiceStarted = BehaviorSubject.create<Boolean>()!!
+val isSiadProcessStarting = BehaviorSubject.create<Boolean>()!!
 
 
 
 class App : Application() {
 
-    override fun onCreate() {
-        NotificationUtil.createSiaNotificationChannel(this)
-        val abi = Build.SUPPORTED_ABIS[0]
-//        if (abi != "arm64-v8a")
-//            throw TODO("Running on non-arm64-v8a")
+    init {
+        isSiadLoaded.onNext(false)
+        isSiadServiceStarted.onNext(false)
+    }
 
-        /* preferences stuff */
+    override fun onCreate() {
+        NotificationUtil.createSiaNodeNotificationChannel(this)
+
+        /* init the Pref singleton */
         Kotpref.init(this)
-        db = Room.databaseBuilder(this, AppDatabase::class.java, "db").fallbackToDestructiveMigration().build() // TODO: remove main thread queries
+
+        // db stuff. TODO: some of this, like deleting all, is for testing. remove it eventually
+        db = Room.databaseBuilder(this, AppDatabase::class.java, "db").fallbackToDestructiveMigration().build()
         launch(CommonPool) {
             db.fileDao().deleteAll()
             db.dirDao().deleteAll()
         }
         super.onCreate()
+
+        println(Build.SUPPORTED_64_BIT_ABIS)
     }
 }

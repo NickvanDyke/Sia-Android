@@ -7,7 +7,7 @@
         <SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="startSiaAutomatically"
-            android:summary="Start the Sia node automatically when Sia Mobile is started. Otherwise, you can use the 'Start' button on its notification."
+            android:summary="Start the Sia node automatically when this app is started. Otherwise, you can use the 'Start' button on its notification."
             android:title="Start Sia automatically" />
         <SwitchPreferenceCompat
             android:defaultValue="false"
@@ -17,16 +17,16 @@
         <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="runSiaOnData"
-            android:title="Run Sia on mobile data"/>
+            android:title="Run the Sia node even on mobile data"/>
         <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="useExternal"
-            android:summary="Sia will store its data on whatever your phone returns as its external storage - this is manufacturer-dependent, and will not necessarily be an SD card. Restart the Sia node after changing."
+            android:summary="The Sia node will store its data on whatever your phone returns as its external storage - this is manufacturer-dependent, and will not necessarily be an SD card. Restart the Sia node after changing."
             android:title="Use external storage" />
         <EditTextPreference
             android:key="apiPassword"
             android:title="API password"
-            android:summary="API password to set on the Sia node, so that only Sia Mobile can interact with it. Optional, but recommended. Restart the Sia node after changing."/>
+            android:summary="API password to set on the Sia node, so that only this app can interact with it. Optional, but recommended. Restart the Sia node after changing."/>
     </PreferenceCategory>
     <PreferenceCategory android:title="Appearance">
         <SwitchPreferenceCompat
@@ -51,14 +51,14 @@
             android:entries="@array/startup_entries"
             android:entryValues="@array/startup_values"
             android:key="startupPage"
-            android:summary="The screen to load to when Sia Mobile launches."
+            android:summary="The screen to load to when Sia launches."
             android:title="Launch screen" />
     </PreferenceCategory>
     <PreferenceCategory android:title="Misc">
         <Preference
             android:key="openAppSettings"
-            android:summary="You can clear all of Sia Mobile's data from here, such as the blockchain. WARNING: this will delete ALL of Sia Mobile's data, including any wallet files. Write down your seed(s) first."
-            android:title="Open Application Info page for Sia Mobile" />
+            android:summary="You can clear all of Sia's data from here, such as the blockchain. WARNING: this will delete ALL of Sia's data, including any wallet files. Write down your seed(s) first."
+            android:title="Open Application Info page for Sia" />
     </PreferenceCategory>
 
 </PreferenceScreen>

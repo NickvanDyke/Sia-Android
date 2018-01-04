@@ -11,6 +11,7 @@ import android.arch.lifecycle.Observer
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.os.Build
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import com.vandyke.sia.data.local.Prefs
@@ -52,7 +53,7 @@ object GenUtil {
 
     fun copyToClipboard(context: Context, text: CharSequence) {
         val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        val clip = ClipData.newPlainText("Sia Mobile copied text", text)
+        val clip = ClipData.newPlainText("Sia copied text", text)
         clipboard.primaryClip = clip
     }
 
@@ -77,6 +78,8 @@ object GenUtil {
 
         return String.format("%.${Prefs.displayedDecimalPrecision}f %s", size, sizeString)
     }
+
+    val isArm64Supported = Build.SUPPORTED_64_BIT_ABIS.any { it.contains("arm64") }
 }
 
 fun <T> LiveData<T>.observe(owner: LifecycleOwner, onChanged: (T) -> Unit) {

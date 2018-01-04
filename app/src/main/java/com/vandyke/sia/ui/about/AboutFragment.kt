@@ -42,24 +42,5 @@ class AboutFragment : BaseFragment() {
                 .addGitHub("NickvanDyke/Sia-Mobile", "GitHub")
                 .addEmail("siamobiledev@gmail.com", "Email me")
                 .create()
-//        return AboutBuilder.with(context)
-////                .setName("Nick van Dyke")
-////                .setBrief("Sia supporter and Android developer")
-////                .setLinksColumnsCount(2)
-////                .addEmailLink("siamobiledev@gmail.com")
-////                .addGitHubLink("NickvanDyke/Sia-Mobile")
-//                .setShowDivider(false)
-//                .setAppIcon(R.mipmap.ic_launcher)
-//                .setAppName(R.string.app_name)
-//                .setVersionNameAsAppSubTitle()
-//                .addIntroduceAction(Intent(activity, AboutSiaActivity::class.java))
-//                .addHelpAction(Intent(Intent.ACTION_VIEW, Uri.parse("https://support.sia.tech/help_center")))
-//                .addFiveStarsAction()
-//                .addShareAction("Store your Siacoins securely using Sia Mobile")
-//                .addAction(R.drawable.github_logo, "Source code", Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/NickvanDyke/Sia-Mobile")))
-//                .addChangeLogAction { ChangelogDialog.createAndShow(fragmentManager!!) }
-//                .addFeedbackAction("siamobiledev@gmail.com")
-//                .addDonateAction { DonateDialog.createAndShow(fragmentManager!!) }
-//                .build()
     }
 }
