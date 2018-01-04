@@ -7,10 +7,9 @@ package com.vandyke.sia.ui.renter.files.viewmodel
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.vandyke.sia.data.SiaError
-import com.vandyke.sia.data.local.data.renter.File
-import com.vandyke.sia.data.local.data.renter.Node
+import com.vandyke.sia.data.local.models.renter.Node
+import com.vandyke.sia.data.repository.RenterRepositoryTest
 import com.vandyke.sia.isSiadLoaded
-import com.vandyke.sia.ui.renter.files.model.FilesModelTest
 import com.vandyke.sia.util.siaSubscribe
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
@@ -21,7 +20,7 @@ class FilesViewModel : ViewModel() {
     val detailsItem = MutableLiveData<Node>()
     val error = MutableLiveData<SiaError>()
 
-    private val model = FilesModelTest()
+    private val renterRepo = RenterRepositoryTest()
 
     private val subscription = isSiadLoaded.subscribe {
         if (it)
@@ -42,14 +41,14 @@ class FilesViewModel : ViewModel() {
     }
 
     fun refresh() {
-        model.refreshDatabase().subscribeOn(Schedulers.io()).subscribe()
-        // TODO: check that current directory is still valid
+        renterRepo.updateFilesAndDirs().subscribeOn(Schedulers.io()).subscribe()
+        // TODO: check that current directory is still valid. and track/display progress of update
     }
 
     fun changeDir(path: String) {
         currentDirSubscription?.dispose()
-        currentDirSubscription = model.getImmediateNodes(path).siaSubscribe({ dirs ->
-            displayedNodes.value = dirs
+        currentDirSubscription = renterRepo.immediateNodes(path).siaSubscribe({ nodes ->
+            displayedNodes.value = nodes
             this.path.value = path
         }, ::setError)
     }
@@ -82,21 +81,27 @@ class FilesViewModel : ViewModel() {
      * Creates a new directory with the given name in the current directory
      */
     fun createNewDir(name: String) {
-        model.createNewDir("${path.value!!}/$name").siaSubscribe({
-            refresh()
-        }, ::setError)
+        renterRepo.createNewDir("${path.value!!}/$name").siaSubscribe(::refresh, ::setError)
     }
 
     fun deleteDir(path: String) {
-        model.deleteDir(path).siaSubscribe({
-            refresh()
-        }, ::setError)
+        renterRepo.deleteDir(path).siaSubscribe({ println("deleteDir signaled complete"); refresh() }, ::setError)
     }
 
-    fun deleteFile(file: File) {
-        model.deleteFile(file.path).siaSubscribe({
-            refresh()
-        }, ::setError)
+    fun deleteFile(path: String) {
+        renterRepo.deleteFile(path).siaSubscribe(::refresh, ::setError)
+    }
+
+    fun addFile(path: String) {
+        renterRepo.addFile(path, "blah", 10, 20).siaSubscribe(::refresh, ::setError)
+    }
+
+    fun renameFile(currentName: String, newName: String) {
+
+    }
+
+    fun renameDir(currentName: String, newName: String) {
+
     }
 
     private fun setError(err: SiaError) {

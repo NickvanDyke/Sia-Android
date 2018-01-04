@@ -14,7 +14,7 @@ import io.reactivex.Single
 class WalletRepository {
 
     /* Functions that update the local database from the Sia node */
-    fun updateAllWalletStuff() = Completable.mergeArray(updateWallet(), updateTransactions(), updateAddresses())!!
+    fun updateAll() = Completable.mergeArray(updateWallet(), updateTransactions(), updateAddresses())!!
 
     private fun updateWallet() = siaApi.wallet().doAfterSuccess {
         db.walletDao().insert(it)
@@ -50,45 +50,32 @@ class WalletRepository {
     // chose not to store the seeds in a database for security reasons I guess? Maybe I should
     fun getSeeds(dictionary: String = "english") = siaApi.walletSeeds(dictionary)
 
-    /* Below are actions that affect the Sia node. The appropriate updates will be called upon completion of the actions. */
-    fun unlock(password: String) = siaApi.walletUnlock(password).doOnComplete {
-        updateWallet().subscribe()
-    }!!
+    /* Below are actions that affect the Sia node. Previously, it would call the appropriate updates upon completion of the actions.
+     * I changed it because then errors with updating will propagate up these observables, and these observables won't
+     * complete until the updates they call also complete, which isn't the behavior I want when using them. Is there a way
+     * to subscribe to the update observables within these observables without that behavior? */
+    fun unlock(password: String) = siaApi.walletUnlock(password)
 
-    fun lock() = siaApi.walletLock().doOnComplete {
-        updateWallet().subscribe()
-    }!!
+    fun lock() = siaApi.walletLock()
 
-    fun init(password: String, dictionary: String, force: Boolean)
-            = siaApi.walletInit(password, dictionary, force).doAfterSuccess {
+    fun init(password: String, dictionary: String, force: Boolean) = siaApi.walletInit(password, dictionary, force).doAfterSuccess {
         clearWalletDb().subscribe()
-        updateWallet().subscribe()
-        updateTransactions().subscribe()
     }!!
 
-    fun initSeed(password: String, dictionary: String, seed: String, force: Boolean)
-            = siaApi.walletInitSeed(password, dictionary, seed, force).doOnComplete {
-        clearWalletDb().subscribe()
-        updateWallet().subscribe()
-        updateTransactions().subscribe()
-    }!!
+    fun initSeed(password: String, dictionary: String, seed: String, force: Boolean) = siaApi.walletInitSeed(password, dictionary, seed, force)
+            .doOnComplete {
+                clearWalletDb().subscribe()
+            }
 
-    fun send(amount: String, destination: String) = siaApi.walletSiacoins(amount, destination).doOnComplete {
-        updateWallet().subscribe()
-        updateTransactions().subscribe()
-    }!!
+    fun send(amount: String, destination: String) = siaApi.walletSiacoins(amount, destination)
 
     fun changePassword(currentPassword: String, newPassword: String) = siaApi.walletChangePassword(currentPassword, newPassword)
 
-    fun sweep(dictionary: String, seed: String) = siaApi.walletSweepSeed(dictionary, seed).doOnComplete {
-        updateWallet().subscribe()
-        updateTransactions().subscribe()
-    }!!
+    fun sweep(dictionary: String, seed: String) = siaApi.walletSweepSeed(dictionary, seed)
 
-    fun clearWalletDb() = Completable.create {
+    fun clearWalletDb() = Completable.fromCallable {
         db.walletDao().deleteAll()
         db.transactionDao().deleteAll()
         db.addressDao().deleteAll()
-        it.onComplete()
     }!!
 }

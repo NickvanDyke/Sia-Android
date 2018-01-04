@@ -11,7 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.vandyke.sia.R
-import com.vandyke.sia.data.local.data.renter.File
+import com.vandyke.sia.data.models.renter.RenterFileData
 import com.vandyke.sia.ui.renter.files.viewmodel.FilesViewModel
 import com.vandyke.sia.util.observe
 import kotlinx.android.synthetic.main.fragment_renter_file_more.*
@@ -24,12 +24,12 @@ class FileBottomSheetFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val viewModel = ViewModelProviders.of(parentFragment!!).get(FilesViewModel::class.java)
         viewModel.detailsItem.observe(this) { file ->
-            if (file !is File)
+            if (file !is RenterFileData)
                 throw Exception()
             /* set the value to null, because it's been displayed and we don't want it displayed another time */
             viewModel.detailsItem.value = null
             fileDelete.setOnClickListener {
-                viewModel.deleteFile(file)
+                viewModel.deleteFile(file.siapath)
                 dismiss()
             }
         }

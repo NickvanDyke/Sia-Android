@@ -60,7 +60,7 @@ class WalletFragment : BaseFragment() {
         }
 
         /* set listener to updateDatabase the viewModel when the swipelayout is triggered */
-        transactionListSwipe.setOnRefreshListener { viewModel.refresh() }
+        transactionListSwipe.setOnRefreshListener { viewModel.refreshAll() }
         transactionListSwipe.setColorSchemeResources(R.color.colorAccent)
 
         expandableFrame.onSwipeUp = ::collapseFrame
@@ -172,7 +172,7 @@ class WalletFragment : BaseFragment() {
     }
 
     override fun onShow() {
-        viewModel.refresh()
+        viewModel.refreshAll()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

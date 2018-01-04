@@ -12,6 +12,8 @@ import com.vandyke.sia.data.local.AppDatabase
 import com.vandyke.sia.util.NotificationUtil
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.launch
 
 // TODO: proper stuff instead of this
 lateinit var db: AppDatabase
@@ -30,6 +32,10 @@ class App : Application() {
         /* preferences stuff */
         Kotpref.init(this)
         db = Room.databaseBuilder(this, AppDatabase::class.java, "db").fallbackToDestructiveMigration().build() // TODO: remove main thread queries
+        launch(CommonPool) {
+            db.fileDao().deleteAll()
+            db.dirDao().deleteAll()
+        }
         super.onCreate()
     }
 }

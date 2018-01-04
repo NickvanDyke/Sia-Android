@@ -11,7 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.vandyke.sia.R
-import com.vandyke.sia.data.local.data.renter.Dir
+import com.vandyke.sia.data.local.models.renter.Dir
 import com.vandyke.sia.ui.renter.files.viewmodel.FilesViewModel
 import com.vandyke.sia.util.observe
 import kotlinx.android.synthetic.main.fragment_renter_dir_more.*

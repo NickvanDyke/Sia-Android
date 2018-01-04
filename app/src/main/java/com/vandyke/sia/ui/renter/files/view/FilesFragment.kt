@@ -4,7 +4,9 @@
 
 package com.vandyke.sia.ui.renter.files.view
 
+import android.app.Activity.RESULT_OK
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.support.v7.app.AlertDialog
@@ -15,8 +17,8 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.EditText
 import com.vandyke.sia.R
-import com.vandyke.sia.data.local.data.renter.Dir
-import com.vandyke.sia.data.local.data.renter.File
+import com.vandyke.sia.data.local.models.renter.Dir
+import com.vandyke.sia.data.models.renter.RenterFileData
 import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.ui.renter.files.view.list.NodesAdapter
 import com.vandyke.sia.ui.renter.files.viewmodel.FilesViewModel
@@ -74,7 +76,11 @@ class FilesFragment : BaseFragment() {
         }
 
         fabAddFile.setOnClickListener {
-            // TODO
+            val intent = Intent(Intent.ACTION_GET_CONTENT)
+            intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true)
+            intent.putExtra(Intent.CATEGORY_OPENABLE, true) // should I have this set?
+            intent.type = "*/*"
+            startActivityForResult(Intent.createChooser(intent, "Upload a file"), FILE_REQUEST_CODE)
         }
 
         /* observe viewModel stuff */
@@ -114,8 +120,16 @@ class FilesFragment : BaseFragment() {
         viewModel.detailsItem.observe(this) {
             if (it is Dir)
                 DirBottomSheetFragment().show(childFragmentManager, null)
-            else if (it is File)
+            else if (it is RenterFileData)
                 FileBottomSheetFragment().show(childFragmentManager, null)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == FILE_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
+            val uri = data!!.data
+            println(uri)
+            println(uri.path)
         }
     }
 
@@ -135,5 +149,6 @@ class FilesFragment : BaseFragment() {
 
     companion object {
         val ROOT_DIR_NAME = "/"
+        val FILE_REQUEST_CODE = 5424
     }
 }

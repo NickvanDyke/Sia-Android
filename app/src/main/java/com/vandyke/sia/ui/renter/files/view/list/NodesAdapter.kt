@@ -9,9 +9,9 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.vandyke.sia.R
-import com.vandyke.sia.data.local.data.renter.Dir
-import com.vandyke.sia.data.local.data.renter.File
-import com.vandyke.sia.data.local.data.renter.Node
+import com.vandyke.sia.data.local.models.renter.Dir
+import com.vandyke.sia.data.local.models.renter.Node
+import com.vandyke.sia.data.models.renter.RenterFileData
 import com.vandyke.sia.ui.renter.files.viewmodel.FilesViewModel
 
 class NodesAdapter(val viewModel: FilesViewModel) : RecyclerView.Adapter<NodeHolder>() {
@@ -35,7 +35,7 @@ class NodesAdapter(val viewModel: FilesViewModel) : RecyclerView.Adapter<NodeHol
         if (holder is DirHolder)
             holder.bind(nodes[position] as Dir, viewModel)
         else if (holder is FileHolder)
-            holder.bind(nodes[position] as File, viewModel)
+            holder.bind(nodes[position] as RenterFileData, viewModel)
     }
 
     override fun getItemViewType(position: Int) = if (nodes[position] is Dir) DIR else FILE

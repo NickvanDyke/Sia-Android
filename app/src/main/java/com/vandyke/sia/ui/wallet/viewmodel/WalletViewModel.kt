@@ -46,7 +46,7 @@ class WalletViewModel : ViewModel() {
 
     private val subscription = siadOutput.observeOn(AndroidSchedulers.mainThread()).subscribe {
         if (it.contains("Finished loading") || it.contains("Done!"))
-            refresh()
+            refreshAll()
     }
 
     init {
@@ -84,7 +84,7 @@ class WalletViewModel : ViewModel() {
         success.value = msg
         success.value = null
     }
-    
+
     private fun onError(err: SiaError) {
         decrementTasks()
         error.value = err
@@ -100,18 +100,24 @@ class WalletViewModel : ViewModel() {
             activeTasks.value = activeTasks.value!! - 1
     }
 
-    fun refresh() {
+    fun refreshAll() {
         /* We tell the relevant repositories to update their data from the Sia node. This will
            trigger necessary updates elsewhere in the VM, as a result of subscribing to flowables from the database. */
         incrementTasks()
-        walletRepo.updateAllWalletStuff().siaSubscribe(::decrementTasks, ::onError)
+        walletRepo.updateAll().siaSubscribe(::decrementTasks, ::onError)
 
         incrementTasks()
         consensusRepo.updateConsensus().siaSubscribe(::decrementTasks, ::onError)
 
-        scValueRepo.updateScValue().siaSubscribe({}, ::onError)
+        incrementTasks()
+        scValueRepo.updateScValue().siaSubscribe(::decrementTasks, ::onError)
 
         refreshPeers()
+    }
+
+    fun refreshWallet() {
+        incrementTasks()
+        walletRepo.updateAll().siaSubscribe(::decrementTasks, ::onError)
     }
 
     fun refreshPeers() {
@@ -133,6 +139,7 @@ class WalletViewModel : ViewModel() {
         incrementTasks()
         walletRepo.lock().siaSubscribe({
             setSuccess("Locked")
+            refreshWallet()
         }, ::onError)
     }
 
@@ -168,13 +175,13 @@ class WalletViewModel : ViewModel() {
         if (seed == null) {
             walletRepo.init(password, "english", force).siaSubscribe({ it ->
                 setSuccess("Created wallet")
-                refresh()
+                refreshWallet()
                 this.seed.value = it.primaryseed
             }, ::onError)
         } else {
             walletRepo.initSeed(password, "english", seed, force).siaSubscribe({
                 setSuccess("Created wallet")
-                refresh()
+                refreshWallet()
                 this.seed.value = seed
             }, ::onError)
         }
@@ -182,22 +189,25 @@ class WalletViewModel : ViewModel() {
 
     fun send(amount: String, destination: String) {
         incrementTasks()
-        walletRepo.send(amount, destination)
-                .siaSubscribe({
-                    setSuccess("Sent ${amount.toSC()} SC to $destination")
-                    refresh()
-                }, ::onError)
+        walletRepo.send(amount, destination).siaSubscribe({
+            setSuccess("Sent ${amount.toSC()} SC to $destination")
+            refreshWallet()
+        }, ::onError)
     }
 
     fun changePassword(currentPassword: String, newPassword: String) {
         incrementTasks()
         walletRepo.changePassword(currentPassword, newPassword).siaSubscribe({
             setSuccess("Changed password")
+            refreshWallet()
         }, ::onError)
     }
 
     fun sweep(seed: String) {
         incrementTasks()
-        walletRepo.sweep("english", seed).siaSubscribe(::decrementTasks, ::onError)
+        walletRepo.sweep("english", seed).siaSubscribe({
+            decrementTasks()
+            refreshWallet()
+        }, ::onError)
     }
 }

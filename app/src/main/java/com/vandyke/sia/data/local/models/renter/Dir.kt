@@ -2,9 +2,10 @@
  * Copyright (c) 2017 Nicholas van Dyke. All rights reserved.
  */
 
-package com.vandyke.sia.data.local.data.renter
+package com.vandyke.sia.data.local.models.renter
 
 import android.arch.persistence.room.Entity
+import java.math.BigDecimal
 
 @Entity(tableName = "dirs")
-class Dir(path: String) : Node(path)
+class Dir(path: String, val size: BigDecimal) : Node(path)
