@@ -7,6 +7,7 @@ package com.vandyke.sia.ui.renter.files.viewmodel
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.vandyke.sia.data.SiaError
+import com.vandyke.sia.data.local.models.renter.Dir
 import com.vandyke.sia.data.local.models.renter.Node
 import com.vandyke.sia.data.repository.RenterRepositoryTest
 import com.vandyke.sia.isSiadLoaded
@@ -16,9 +17,13 @@ import io.reactivex.schedulers.Schedulers
 
 class FilesViewModel : ViewModel() {
     val displayedNodes = MutableLiveData<List<Node>>()
-    val path = MutableLiveData<String>()
+    val currentDir = MutableLiveData<Dir>()
+    val searchTerm = MutableLiveData<String>()
     val detailsItem = MutableLiveData<Node>()
     val error = MutableLiveData<SiaError>()
+
+    val currentDirPath
+        get() = currentDir.value?.path ?: ""
 
     private val renterRepo = RenterRepositoryTest()
 
@@ -27,12 +32,15 @@ class FilesViewModel : ViewModel() {
             refresh()
     }
 
-    private var currentDirSubscription: Disposable? = null
+    private var nodesSubscription: Disposable? = null
+        set(value) {
+            field?.dispose()
+            field = value
+        }
 
     init {
-        path.value = ""
         displayedNodes.value = listOf()
-        changeDir("")
+        changeDir("/")
     }
 
     override fun onCleared() {
@@ -46,16 +54,23 @@ class FilesViewModel : ViewModel() {
     }
 
     fun changeDir(path: String) {
-        currentDirSubscription?.dispose()
-        currentDirSubscription = renterRepo.immediateNodes(path).siaSubscribe({ nodes ->
-            displayedNodes.value = nodes
-            this.path.value = path
-        }, ::setError)
+        if (searchTerm.value != null) {
+            search(searchTerm.value!!)
+        } else {
+            nodesSubscription = renterRepo.immediateNodes(path).siaSubscribe({ nodes ->
+                displayedNodes.value = nodes
+            }, ::onError)
+        }
+
+
+        renterRepo.getDir(path).siaSubscribe({
+            currentDir.value = it
+        }, ::onError)
     }
 
     fun goToIndexInPath(index: Int) {
         /* construct the path to go to */
-        val splitPath = this.path.value!!.split("/")
+        val splitPath = currentDirPath.split("/")
         var path = ""
         for (i in 1..index) {
             path += "/${splitPath[i]}"
@@ -64,12 +79,9 @@ class FilesViewModel : ViewModel() {
     }
 
     fun goUpDir(): Boolean {
-        val path = path.value!!
-        if (path.isEmpty())
+        if (currentDirPath.isEmpty())
             return false
-
-        val parentPath = path.substring(0, path.lastIndexOf('/'))
-        changeDir(parentPath)
+        changeDir(currentDir.value!!.parent)
         return true
     }
 
@@ -81,19 +93,19 @@ class FilesViewModel : ViewModel() {
      * Creates a new directory with the given name in the current directory
      */
     fun createDir(name: String) {
-        renterRepo.createNewDir("${path.value!!}/$name").siaSubscribe(::refresh, ::setError)
+        renterRepo.createNewDir("$currentDirPath/$name").siaSubscribe(::refresh, ::onError)
     }
 
     fun deleteDir(path: String) {
-        renterRepo.deleteDir(path).siaSubscribe({ println("deleteDir signaled complete"); refresh() }, ::setError)
+        renterRepo.deleteDir(path).siaSubscribe({ println("deleteDir signaled complete"); refresh() }, ::onError)
     }
 
     fun deleteFile(path: String) {
-        renterRepo.deleteFile(path).siaSubscribe(::refresh, ::setError)
+        renterRepo.deleteFile(path).siaSubscribe(::refresh, ::onError)
     }
 
     fun addFile(path: String) {
-        renterRepo.addFile(path, "blah", 10, 20).siaSubscribe(::refresh, ::setError)
+        renterRepo.addFile(path, "blah", 10, 20).siaSubscribe(::refresh, ::onError)
     }
 
     fun renameFile(currentName: String, newName: String) {
@@ -104,7 +116,24 @@ class FilesViewModel : ViewModel() {
 
     }
 
-    private fun setError(err: SiaError) {
+    fun search(name: String) {
+        println("SEARCHING FOR $name")
+        searchTerm.value = name
+        nodesSubscription = renterRepo.search(name, currentDirPath).siaSubscribe({
+            println("GOT SEARCH RESULTS $it")
+            displayedNodes.value = it
+        }, ::onError)
+    }
+
+    fun cancelSearch() {
+        searchTerm.value = null
+        println("SEARCH CANCELED, DISPLAYING $currentDirPath")
+        nodesSubscription = renterRepo.immediateNodes(currentDirPath).siaSubscribe({ nodes ->
+            displayedNodes.value = nodes
+        }, ::onError)
+    }
+
+    private fun onError(err: SiaError) {
         error.value = err
         error.value = null
     }

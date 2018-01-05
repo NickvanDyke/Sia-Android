@@ -12,9 +12,8 @@ import android.support.design.widget.TabLayout
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
-import android.view.MenuItem
-import android.view.View
-import android.view.WindowManager
+import android.support.v7.widget.SearchView
+import android.view.*
 import android.widget.EditText
 import com.vandyke.sia.R
 import com.vandyke.sia.data.local.models.renter.Dir
@@ -22,15 +21,18 @@ import com.vandyke.sia.data.models.renter.RenterFileData
 import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.ui.renter.files.view.list.NodesAdapter
 import com.vandyke.sia.ui.renter.files.viewmodel.FilesViewModel
+import com.vandyke.sia.util.GenUtil
 import com.vandyke.sia.util.observe
 import kotlinx.android.synthetic.main.fragment_renter_files.*
 
 
 class FilesFragment : BaseFragment() {
     override val layoutResId: Int = R.layout.fragment_renter_files
+    override val hasOptionsMenu: Boolean = true
 
     lateinit var viewModel: FilesViewModel
 
+    private var searchView: SearchView? = null
     private lateinit var adapter: NodesAdapter
     private var programmaticallySelecting = true
 
@@ -88,9 +90,9 @@ class FilesFragment : BaseFragment() {
             adapter.display(it)
         }
 
-        viewModel.path.observe(this) {
+        viewModel.currentDir.observe(this) {
             programmaticallySelecting = true
-            val newPath = it.split("/")
+            val newPath = if (it.path == "/") listOf("/") else it.path.split("/")
             /* find the point at which the path differs */
             val breakpoint = (0 until maxOf(newPath.size, currentPath.size)).firstOrNull {
                 it > currentPath.size - 1 || it > newPath.size - 1 || newPath[it] != currentPath[it]
@@ -110,6 +112,8 @@ class FilesFragment : BaseFragment() {
             renterFilepath.postDelayed({ renterFilepath.fullScroll(TabLayout.FOCUS_RIGHT) }, 5)
             programmaticallySelecting = false
             currentPath = newPath
+
+            setSearchHint()
         }
 
         viewModel.error.observe(this) {
@@ -134,10 +138,41 @@ class FilesFragment : BaseFragment() {
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-        }
-        return super.onOptionsItemSelected(item)
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.toolbar_files, menu)
+
+        val searchItem = menu.findItem(R.id.search)
+        searchView = searchItem.actionView as SearchView
+        setSearchHint()
+
+        /* have to use this to listen for it being closed, because closelistener doesn't work for whatever reason */
+        searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+            override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
+                viewModel.cancelSearch()
+                return true
+            }
+
+            override fun onMenuItemActionExpand(item: MenuItem) = true
+        })
+        searchView!!.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextChange(newText: String): Boolean {
+                if (newText.isNotEmpty())
+                    viewModel.search(newText)
+                return true
+            }
+
+            override fun onQueryTextSubmit(query: String): Boolean {
+                GenUtil.hideSoftKeyboard(activity)
+                return true
+            }
+        })
+    }
+
+    fun setSearchHint() {
+        if (viewModel.currentDirPath == "/" || viewModel.currentDir.value == null)
+            searchView?.queryHint = "Search..."
+        else
+            searchView?.queryHint = "Search ${viewModel.currentDir.value!!.name}..."
     }
 
     override fun onBackPressed(): Boolean {

@@ -6,12 +6,13 @@ package com.vandyke.sia.data.local.models.renter
 
 import android.arch.persistence.room.Ignore
 import android.arch.persistence.room.PrimaryKey
+import com.vandyke.sia.util.slashStart
 
 open class Node(path: String) {
 
     /* ensure that the path always starts with a / */
     @PrimaryKey
-    var path = if (path.startsWith('/')) path else "/" + path
+    var path = path.slashStart()
 
     @Ignore
     val name = this.path.substring(this.path.lastIndexOf('/') + 1)

@@ -17,8 +17,11 @@ import kotlinx.android.synthetic.main.fragment_renter.*
 class RenterFragment : BaseFragment() {
     override val layoutResId: Int = R.layout.fragment_renter
 
+    lateinit var adapter: Adapter
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        pager.adapter = Adapter(fragmentManager!!)
+        adapter = Adapter(fragmentManager!!)
+        pager.adapter = adapter
 
         /* update pager when navigation bar item is selected */
         renterNavigation.setOnNavigationItemSelectedListener {
@@ -40,21 +43,23 @@ class RenterFragment : BaseFragment() {
                     }
                 }
             }
-
-            override fun onPageScrollStateChanged(state: Int) {
-            }
-
-            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-            }
+            override fun onPageScrollStateChanged(state: Int) {}
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
         })
+    }
+
+    override fun onBackPressed(): Boolean {
+        return adapter.getActiveFragment().onBackPressed()
     }
 
     inner class Adapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
 
-        val fragments = listOf(FilesFragment())
+        val fragments = listOf<BaseFragment>(FilesFragment())
 
         override fun getItem(position: Int) = fragments[position]
 
         override fun getCount() = fragments.size
+
+        fun getActiveFragment() = fragments[pager.currentItem]
     }
 }

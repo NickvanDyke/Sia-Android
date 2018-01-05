@@ -10,6 +10,13 @@
 // separate APKs for each ABI, and upload only the arm64-v8a one to the play store.
 // This way, the app will only be visible and available for phones that can run
 // arm64 code, which is what the siad binary is compiled as.
+//
+// TODO: I think it might be possible to compile siad (written using Goland) as a shared C library,
+// and then write C code here that will make calls to that .so, and then write
+// some JNI stuff so we can call the C code from Java/Kotlin. That will take a
+// lot of work though. But maybe down the road. It might also enable running
+// siad from within an iOS app, which isn't possible using an executable
+// due to tighter restrictions.
 
 int main() {
     return 0;

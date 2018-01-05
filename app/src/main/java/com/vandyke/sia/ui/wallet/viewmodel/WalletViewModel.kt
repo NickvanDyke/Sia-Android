@@ -125,7 +125,10 @@ class WalletViewModel : ViewModel() {
         siaApi.gateway().siaSubscribe({
             numPeers.value = it.peers.size
             decrementTasks()
-        }, ::onError)
+        }, {
+            numPeers.value = 0
+            onError(it)
+        })
     }
 
     fun unlock(password: String) {

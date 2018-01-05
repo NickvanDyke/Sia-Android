@@ -65,7 +65,6 @@ class SiaError : Throwable {
     }
 
     private fun getReasonFromThrowable(t: Throwable): Reason {
-        t.printStackTrace()
         return when (t) {
             /* HTTPException is emitted by retrofit observables on HTTP non-2XX responses */
             is HttpException -> getReasonFromMsg(t.response().errorBody()!!.string())

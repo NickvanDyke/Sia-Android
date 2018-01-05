@@ -9,13 +9,24 @@ import com.vandyke.sia.data.local.models.renter.Node
 import com.vandyke.sia.data.models.renter.RenterFileData
 import com.vandyke.sia.data.models.renter.RenterFilesData
 import com.vandyke.sia.db
+import com.vandyke.sia.util.emptyIfJustSlash
+import com.vandyke.sia.util.slashStart
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.launch
 import java.math.BigDecimal
 
 class RenterRepositoryTest {
+
+    init {
+        launch(CommonPool) {
+            db.dirDao().insertIgnoreIfConflict(Dir("/", BigDecimal.ZERO))
+        }
+    }
+
     private val files = mutableListOf(
             RenterFileData("legos/brick/picture.jpg", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534),
             RenterFileData("legos/brick/manual", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534),
@@ -82,16 +93,29 @@ class RenterRepositoryTest {
                     }
                 }
             }
+
+            /* also add the root dir, /  */
+            db.fileDao().getFilesUnder("/").subscribe { filesInNewDir ->
+                var size = BigDecimal.ZERO
+                filesInNewDir.forEach {
+                    size += it.filesize
+                }
+                val newDir = Dir("/", size)
+                db.dirDao().insertReplaceIfConflict(newDir)
+            }
         }.toCompletable()
     }
 
     fun immediateNodes(path: String) = Flowable.combineLatest(
-            db.dirDao().immediateChildren(path),
-            db.fileDao().filesInDir(path),
+            db.dirDao().immediateChildren(path.emptyIfJustSlash()),
+            db.fileDao().filesInDir(path.emptyIfJustSlash()),
             BiFunction<List<Dir>, List<RenterFileData>, List<Node>> { dirs, files ->
                 return@BiFunction dirs + files
             })!!
 
+    fun getDir(path: String) = db.dirDao().getDir(path.slashStart())
+
+    fun search(name: String, path: String) = db.fileDao().filesWithNameUnderDir(name, path.emptyIfJustSlash())
 
     fun createNewDir(path: String) = db.fileDao().getFilesUnder(path).doAfterSuccess { filesInNewDir ->
         var size = BigDecimal.ZERO
@@ -120,6 +144,4 @@ class RenterRepositoryTest {
     fun addFile(siapath: String, source: String, dataPieces: Int, parityPieces: Int) = addFileOp(siapath, source, dataPieces, parityPieces)
 
     fun deleteFile(path: String) = deleteFileOp(path)
-
-
 }
