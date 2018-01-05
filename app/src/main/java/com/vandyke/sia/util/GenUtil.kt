@@ -79,7 +79,7 @@ object GenUtil {
         return String.format("%.${Prefs.displayedDecimalPrecision}f %s", size, sizeString)
     }
 
-    val isArm64Supported = Build.SUPPORTED_64_BIT_ABIS.any { it.contains("arm64") }
+    val isSiadSupported = Build.SUPPORTED_64_BIT_ABIS.any { it == "arm64-v8a" }
 }
 
 fun <T> LiveData<T>.observe(owner: LifecycleOwner, onChanged: (T) -> Unit) {

@@ -20,9 +20,32 @@ android {
     }
     buildTypes {
         release {
+            lintOptions {
+                checkReleaseBuilds false
+            }
+            /* using this combination of the following two options lets us minify (remove unused methods + classes)
+             * using the Android Gradle Plugin's minifier, which doesn't obfuscate and can also be used in incremental builds */
             minifyEnabled true
             useProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            minifyEnabled true
+            useProguard false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    splits {
+        abi {
+            enable true
+            reset()
+            include 'arm64-v8a', 'x86'
+            universalApk false
+        }
+    }
+    externalNativeBuild {
+        cmake {
+            path 'CMakeLists.txt'
         }
     }
 }

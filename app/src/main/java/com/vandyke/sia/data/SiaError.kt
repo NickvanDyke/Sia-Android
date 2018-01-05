@@ -65,6 +65,7 @@ class SiaError : Throwable {
     }
 
     private fun getReasonFromThrowable(t: Throwable): Reason {
+        t.printStackTrace()
         return when (t) {
             /* HTTPException is emitted by retrofit observables on HTTP non-2XX responses */
             is HttpException -> getReasonFromMsg(t.response().errorBody()!!.string())
@@ -89,8 +90,9 @@ class SiaError : Throwable {
         INCORRECT_API_PASSWORD("Incorrect API password"),
         ROOM_EMPTY_RESULT_SET("Nothing to display"),
         UNACCOUNTED_FOR_ERROR("Unexpected error"),
-        /** this error will ALWAYS occur when making network requests if neither WiFi nor mobile data is turned on */
-        UNEXPECTED_END_OF_STREAM("Cannot make HTTP request to the Sia node. Please turn on WiFi or mobile data"),
+        /** this error will ALWAYS occur when making network requests to the Sia node if neither WiFi nor mobile data is turned on.
+         *  It also occurs if an exception is thrown when parsing the network request (often due to Jackson, print stack trace to see the problem) */
+        UNEXPECTED_END_OF_STREAM("Unexpected end of stream"),
         /* wallet */
         WALLET_PASSWORD_INCORRECT("Wallet password incorrect"),
         WALLET_LOCKED("Please unlock the wallet first"),
