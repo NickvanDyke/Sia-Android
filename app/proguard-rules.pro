@@ -16,3 +16,5 @@
 #   public *;
 #}
 -dontobfuscate
+-dontoptimize
+-dontwarn

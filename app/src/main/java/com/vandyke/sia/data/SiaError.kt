@@ -20,8 +20,6 @@ import java.net.SocketTimeoutException
 
 class SiaError : Throwable {
     val reason: Reason
-    val msg
-        get() = reason.msg
 
     constructor(errorMessage: String) {
         reason = getReasonFromMsg(errorMessage)
@@ -35,43 +33,41 @@ class SiaError : Throwable {
         this.reason = reason
     }
 
-    private fun getReasonFromMsg(errorMessage: String): Reason {
-        return when {
+    private fun getReasonFromMsg(errorMessage: String) = when {
         /* common */
-            errorMessage.contains("siad is not ready") -> Reason.SIAD_LOADING
-            errorMessage.contains("API authentication failed") -> Reason.INCORRECT_API_PASSWORD
+        errorMessage.contains("siad is not ready") -> Reason.SIAD_LOADING
+        errorMessage.contains("API authentication failed") -> Reason.INCORRECT_API_PASSWORD
         /* wallet */
-            errorMessage.contains("wallet must be unlocked before it can be used") -> Reason.WALLET_LOCKED
-            errorMessage.contains("provided encryption key is incorrect") -> Reason.WALLET_PASSWORD_INCORRECT
-            errorMessage.contains("wallet has already been unlocked") -> Reason.WALLET_ALREADY_UNLOCKED
-            errorMessage.contains("could not read 'amount'") -> Reason.INVALID_AMOUNT
-            errorMessage.contains("a password must be provided to newpassword") -> Reason.NO_NEW_PASSWORD
-            errorMessage.contains("could not read address") -> Reason.COULD_NOT_READ_ADDRESS
-            errorMessage.contains("transaction cannot have an output or payout that has zero value") -> Reason.AMOUNT_ZERO
-            errorMessage.contains("unable to fund transaction") -> Reason.INSUFFICIENT_FUNDS
-            errorMessage.contains("wallet is already encrypted, cannot encrypt again") -> Reason.EXISTING_WALLET
-            errorMessage.contains("another wallet rescan is already underway") -> Reason.WALLET_SCAN_IN_PROGRESS
-            errorMessage.contains("wallet has not been encrypted yet") -> Reason.WALLET_NOT_ENCRYPTED
-            errorMessage.contains("cannot init from seed until blockchain is synced") -> Reason.CANNOT_INIT_FROM_SEED_UNTIL_SYNCED
-            errorMessage.contains("cannot sweep until blockchain is synced") -> Reason.CANNOT_SWEEP_UNTIL_SYNCED
-            errorMessage.contains("nothing to sweep") -> Reason.NOTHING_TO_SWEEP
-            errorMessage.contains("word not found in dictionary for given language") -> Reason.INVALID_WORD_IN_SEED
-            errorMessage.contains("seed failed checksum verification") -> Reason.INVALID_SEED
+        errorMessage.contains("wallet must be unlocked before it can be used") -> Reason.WALLET_LOCKED
+        errorMessage.contains("provided encryption key is incorrect") -> Reason.WALLET_PASSWORD_INCORRECT
+        errorMessage.contains("wallet has already been unlocked") -> Reason.WALLET_ALREADY_UNLOCKED
+        errorMessage.contains("could not read 'amount'") -> Reason.INVALID_AMOUNT
+        errorMessage.contains("a password must be provided to newpassword") -> Reason.NO_NEW_PASSWORD
+        errorMessage.contains("could not read address") -> Reason.COULD_NOT_READ_ADDRESS
+        errorMessage.contains("transaction cannot have an output or payout that has zero value") -> Reason.AMOUNT_ZERO
+        errorMessage.contains("unable to fund transaction") -> Reason.INSUFFICIENT_FUNDS
+        errorMessage.contains("wallet is already encrypted, cannot encrypt again") -> Reason.EXISTING_WALLET
+        errorMessage.contains("another wallet rescan is already underway") -> Reason.WALLET_SCAN_IN_PROGRESS
+        errorMessage.contains("wallet has not been encrypted yet") -> Reason.WALLET_NOT_ENCRYPTED
+        errorMessage.contains("cannot init from seed until blockchain is synced") -> Reason.CANNOT_INIT_FROM_SEED_UNTIL_SYNCED
+        errorMessage.contains("cannot sweep until blockchain is synced") -> Reason.CANNOT_SWEEP_UNTIL_SYNCED
+        errorMessage.contains("nothing to sweep") -> Reason.NOTHING_TO_SWEEP
+        errorMessage.contains("word not found in dictionary for given language") -> Reason.INVALID_WORD_IN_SEED
+        errorMessage.contains("seed failed checksum verification") -> Reason.INVALID_SEED
         /* explorer */
-            errorMessage.contains("unrecognized hash used as input to /explorer/hash") -> Reason.UNRECOGNIZED_HASH
-            errorMessage.contains("Cloudflare") -> Reason.RATE_LIMITING
+        errorMessage.contains("unrecognized hash used as input to /explorer/hash") -> Reason.UNRECOGNIZED_HASH
         /* renter */
 
-            else -> {
-                println("unaccounted for error message: $errorMessage")
-                Reason.UNACCOUNTED_FOR_ERROR
-            }
+        else -> {
+            println("unaccounted for error message: $errorMessage")
+            Reason.UNACCOUNTED_FOR_ERROR
         }
     }
 
     private fun getReasonFromThrowable(t: Throwable): Reason {
         return when (t) {
-            is HttpException -> getReasonFromMsg(t.response().errorBody()!!.string()) // HTTPException is emitted by retrofit observables on HTTP non-2XX responses
+            /* HTTPException is emitted by retrofit observables on HTTP non-2XX responses */
+            is HttpException -> getReasonFromMsg(t.response().errorBody()!!.string())
             is EmptyResultSetException -> Reason.ROOM_EMPTY_RESULT_SET
             is SQLiteConstraintException -> Reason.DIRECTORY_ALREADY_EXISTS
             is SocketTimeoutException -> Reason.TIMEOUT
@@ -92,17 +88,19 @@ class SiaError : Throwable {
         NO_NETWORK_RESPONSE("Sia node isn't running"),
         INCORRECT_API_PASSWORD("Incorrect API password"),
         ROOM_EMPTY_RESULT_SET("Nothing to display"),
+        UNACCOUNTED_FOR_ERROR("Unexpected error"),
+        /** this error will ALWAYS occur when making network requests if neither WiFi nor mobile data is turned on */
+        UNEXPECTED_END_OF_STREAM("Cannot make HTTP request to the Sia node. Please turn on WiFi or mobile data"),
         /* wallet */
         WALLET_PASSWORD_INCORRECT("Wallet password incorrect"),
-        WALLET_LOCKED("Wallet must be unlocked first"),
+        WALLET_LOCKED("Please unlock the wallet first"),
         WALLET_ALREADY_UNLOCKED("Wallet already unlocked"),
         INVALID_AMOUNT("Invalid amount"),
-        NO_NEW_PASSWORD("Must provide new password"),
-        COULD_NOT_READ_ADDRESS("Could not read address"),
+        NO_NEW_PASSWORD("Please provide a new password"),
+        COULD_NOT_READ_ADDRESS("Invalid address"),
         AMOUNT_ZERO("Amount cannot be zero"),
         INSUFFICIENT_FUNDS("Insufficient funds"),
         EXISTING_WALLET("A wallet already exists. Use force option to overwrite"),
-        UNACCOUNTED_FOR_ERROR("Unexpected error"),
         WALLET_SCAN_IN_PROGRESS("Scanning the blockchain. Please wait, this can take a while"),
         WALLET_NOT_ENCRYPTED("Wallet has not been created yet"),
         INVALID_WORD_IN_SEED("Invalid word in seed"),
@@ -110,12 +108,10 @@ class SiaError : Throwable {
         CANNOT_INIT_FROM_SEED_UNTIL_SYNCED("Cannot create wallet from seed until fully synced"),
         CANNOT_SWEEP_UNTIL_SYNCED("Cannot sweep until fully synced"),
         NOTHING_TO_SWEEP("Seed doesn't have anything to sweep"),
-        UNEXPECTED_END_OF_STREAM("Connection unexpectedly closed"),
         /* renter */
         DIRECTORY_ALREADY_EXISTS("Directory already exists"),
         /* explorer */
         UNRECOGNIZED_HASH("Unrecognized hash"),
-        RATE_LIMITING("Hit request rate-limit")
     }
 
     fun snackbar(view: View, length: Int = Snackbar.LENGTH_SHORT) {
@@ -128,8 +124,6 @@ class SiaError : Throwable {
                 snackbar.setActionTextColor(ContextCompat.getColor(snackbar.context, android.R.color.white))
                 snackbar.show()
             } else {
-                /* don't want to display a confusing error if the only reason we got it is because the
-                 * SiadService couldn't start before we made our first network request. */
                 return
             }
         } else {
