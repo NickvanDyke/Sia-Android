@@ -9,8 +9,7 @@ import android.arch.persistence.room.PrimaryKey
 
 open class Node(@PrimaryKey var path: String) {
 
-    @Ignore
-    val name = this.path.substring(this.path.lastIndexOf('/') + 1)
+    var name = this.path.substring(this.path.lastIndexOf('/') + 1)
 
     @Ignore
     val parent = run {

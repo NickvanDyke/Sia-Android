@@ -33,13 +33,13 @@ class SwipeableFrameLayout : FrameLayout {
     }
 
     fun expandVertically(endHeight: Int) {
-        val animation = ResizeAnimation(this, height, endHeight)
+        val animation = ResizeAnimation(this, endHeight)
         animation.duration = 300
         startAnimation(animation)
     }
 
     fun collapseVertically(onCollapseFinished: (() -> Unit)? = null) {
-        val animation = ResizeAnimation(this, height, 0)
+        val animation = ResizeAnimation(this, 0)
         animation.duration = 300
         animation.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationStart(p0: Animation?) {

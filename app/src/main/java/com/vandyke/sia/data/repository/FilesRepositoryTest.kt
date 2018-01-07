@@ -25,6 +25,7 @@ class FilesRepositoryTest {
 
     init {
         launch(CommonPool) {
+            /* want to always have at least a root directory */
             db.dirDao().insertIgnoreIfConflict(Dir(ROOT_DIR_NAME, BigDecimal.ZERO))
         }
     }
@@ -71,12 +72,12 @@ class FilesRepositoryTest {
     /** Queries the list of files from the Sia node, and updates local database from it */
     fun updateFilesAndDirs(): Completable {
         // changing to an observable and then a list is so we have a Single with a list of files, similar to the actual API response
-        return files().doAfterSuccess {
+        return files().doOnSuccess {
             /* insert each file to the db and also every dir that leads up to it */
             for (file in it.files) {
                 db.fileDao().insert(file)
 //                println("inserted file: ${file.path}")
-                // also add all the dirs leading up to the file
+                /* also add all the dirs leading up to the file */
                 var pathSoFar = ""
                 val dirPath = file.parent?.split("/") ?: continue
                 dirPath.forEachIndexed { index, pathElement ->
@@ -84,7 +85,6 @@ class FilesRepositoryTest {
                         pathSoFar += "/"
                     pathSoFar += pathElement
                     db.dirDao().insertIgnoreIfConflict(Dir(pathSoFar, BigDecimal.ZERO))
-//                    println("inserted empty dir: $pathSoFar")
                 }
             }
 
@@ -106,9 +106,8 @@ class FilesRepositoryTest {
                     size += file.filesize
                 }
                 db.dirDao().insertReplaceIfConflict(Dir(dirAndItsFiles.first.path, size))
-//                println("inserted dir with info: ${dirAndItsFiles.first.path}")
             }
-        }.toCompletable()
+        }.toCompletable()!!
     }
 
     fun immediateNodes(path: String) = Flowable.combineLatest(
@@ -127,7 +126,7 @@ class FilesRepositoryTest {
                 return@BiFunction dirs + files
             })!!
 
-    fun createNewDir(path: String) = db.fileDao().getFilesUnder(path).doAfterSuccess { filesInNewDir ->
+    fun createDir(path: String) = db.fileDao().getFilesUnder(path).doOnSuccess { filesInNewDir ->
         var size = BigDecimal.ZERO
         filesInNewDir.forEach {
             size += it.filesize
@@ -136,7 +135,7 @@ class FilesRepositoryTest {
         db.dirDao().insertAbortIfConflict(newDir)
     }.toCompletable()!!
 
-    fun deleteDir(path: String) = db.fileDao().getFilesUnder(path).doAfterSuccess { files ->
+    fun deleteDir(path: String) = db.fileDao().getFilesUnder(path).doOnSuccess { files ->
         files.forEach {
             deleteFile(it.path).subscribe {
                 println("deleted file: ${it.path}")

@@ -19,14 +19,14 @@ interface FileDao {
     fun insert(file: RenterFileData)
 
     @Language("RoomSql")
-    @Query("SELECT * FROM files WHERE path LIKE :path || '/%' AND path NOT LIKE :path || '/%/%'")
+    @Query("SELECT * FROM files WHERE path LIKE :path || '/%' AND path NOT LIKE :path || '/%/%' ORDER BY name")
     fun filesInDir(path: String): Flowable<List<RenterFileData>>
 
     @Language("RoomSql")
     @Query("SELECT * FROM files WHERE path LIKE :path || '/%'")
     fun getFilesUnder(path: String): Single<List<RenterFileData>>
 
-    @Query("SELECT * FROM files WHERE path LIKE :path || '/%' || :name || '%' AND path NOT LIKE :path || '/%' || :name || '%/%' ORDER BY path")
+    @Query("SELECT * FROM files WHERE path LIKE :path || '/%' AND name LIKE '%' || :name || '%' ORDER BY name")
     fun filesWithNameUnderDir(name: String, path: String): Flowable<List<RenterFileData>>
 
     @Language("RoomSql")

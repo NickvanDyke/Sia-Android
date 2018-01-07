@@ -9,8 +9,11 @@ import android.view.View
 import android.view.animation.Animation
 import android.view.animation.Transformation
 
-class ResizeAnimation(private val view: View, private val startHeight: Int, private val targetHeight: Int) : Animation() {
+class ResizeAnimation(private val view: View, private val targetHeight: Int) : Animation() {
+    private val startHeight = view.height
+
     init {
+        println("start height: $startHeight  target height: $targetHeight")
         interpolator = FastOutSlowInInterpolator()
     }
 

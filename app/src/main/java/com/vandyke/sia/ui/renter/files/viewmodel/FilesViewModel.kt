@@ -6,7 +6,6 @@ package com.vandyke.sia.ui.renter.files.viewmodel
 
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
-import android.util.Log
 import com.vandyke.sia.data.SiaError
 import com.vandyke.sia.data.local.models.renter.Dir
 import com.vandyke.sia.data.local.models.renter.Node
@@ -14,7 +13,6 @@ import com.vandyke.sia.data.repository.FilesRepositoryTest
 import com.vandyke.sia.isSiadLoaded
 import com.vandyke.sia.util.siaSubscribe
 import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
 
 class FilesViewModel : ViewModel() {
     val displayedNodes = MutableLiveData<List<Node>>()
@@ -33,6 +31,7 @@ class FilesViewModel : ViewModel() {
             refresh()
     }
 
+    /** the subscription to the database flowable that emits items in the current path */
     private var nodesSubscription: Disposable? = null
         set(value) {
             field?.dispose()
@@ -50,7 +49,7 @@ class FilesViewModel : ViewModel() {
     }
 
     fun refresh() {
-        filesRepo.updateFilesAndDirs().subscribeOn(Schedulers.io()).subscribe()
+        filesRepo.updateFilesAndDirs().siaSubscribe({}, ::onError)
         // TODO: check that current directory is still valid. and track/display progress of update
     }
 
@@ -89,9 +88,9 @@ class FilesViewModel : ViewModel() {
     /**
      * Creates a new directory with the given name in the current directory
      */
-    fun createDir(name: String) = filesRepo.createNewDir("$currentDirPath/$name").siaSubscribe(::refresh, ::onError)
+    fun createDir(name: String) = filesRepo.createDir("$currentDirPath/$name").siaSubscribe({}, ::onError)
 
-    fun deleteDir(path: String) = filesRepo.deleteDir(path).siaSubscribe(::refresh, ::onError)
+    fun deleteDir(path: String) = filesRepo.deleteDir(path).siaSubscribe({}, ::onError)
 
     fun deleteFile(path: String) = filesRepo.deleteFile(path).siaSubscribe(::refresh, ::onError)
 
@@ -100,15 +99,14 @@ class FilesViewModel : ViewModel() {
     }
 
     fun renameFile(currentName: String, newName: String) {
-
+        // TODO
     }
 
     fun renameDir(currentName: String, newName: String) {
-
+        // TODO
     }
 
     fun search(name: String) {
-        Log.d("DEBUG", "SEARCHING FOR $name IN $currentDirPath")
         searching.value = true
         nodesSubscription = filesRepo.search(name, currentDirPath).siaSubscribe({
             println("GOT SEARCH RESULTS $it")
@@ -118,7 +116,6 @@ class FilesViewModel : ViewModel() {
 
     fun cancelSearch() {
         searching.value = false
-        Log.d("DEBUG", "SEARCH CANCELED, DISPLAYING $currentDirPath")
         nodesSubscription = filesRepo.immediateNodes(currentDirPath).siaSubscribe({
             displayedNodes.value = it
         }, ::onError)

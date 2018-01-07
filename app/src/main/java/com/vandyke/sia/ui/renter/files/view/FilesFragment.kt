@@ -13,7 +13,6 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.SearchView
-import android.util.Log
 import android.view.*
 import android.widget.EditText
 import com.vandyke.sia.R
@@ -35,7 +34,10 @@ class FilesFragment : BaseFragment() {
 
     private var searchItem: MenuItem? = null
     private var searchView: SearchView? = null
+    /** searchItem.isActionViewExpanded() doesn't always return the correct value, so need to keep track ourselves and use that */
     private var searchIsExpanded = false
+
+    private var tabsHeight: Int = 0
 
     private lateinit var adapter: NodesAdapter
     private var programmatic = true
@@ -49,7 +51,7 @@ class FilesFragment : BaseFragment() {
         adapter = NodesAdapter(viewModel)
         filesList.adapter = adapter
 
-        renterFilepath.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+        filepathTabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabReselected(tab: TabLayout.Tab?) {}
             override fun onTabUnselected(tab: TabLayout.Tab?) {}
             override fun onTabSelected(tab: TabLayout.Tab) {
@@ -66,6 +68,15 @@ class FilesFragment : BaseFragment() {
         }
 
         /* FAB stuff */
+        fabAddFile.setOnClickListener {
+            fabMenu.collapse()
+            val intent = Intent(Intent.ACTION_GET_CONTENT)
+            intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true)
+            intent.putExtra(Intent.CATEGORY_OPENABLE, true) // should I have this set?
+            intent.type = "*/*"
+            startActivityForResult(Intent.createChooser(intent, "Upload a file"), FILE_REQUEST_CODE)
+        }
+
         fabAddDir.setOnClickListener {
             fabMenu.collapse()
             val dialogView = layoutInflater.inflate(R.layout.fragment_renter_add_dir, null, false)
@@ -81,13 +92,6 @@ class FilesFragment : BaseFragment() {
             dialog.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
         }
 
-        fabAddFile.setOnClickListener {
-            val intent = Intent(Intent.ACTION_GET_CONTENT)
-            intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true)
-            intent.putExtra(Intent.CATEGORY_OPENABLE, true) // should I have this set?
-            intent.type = "*/*"
-            startActivityForResult(Intent.createChooser(intent, "Upload a file"), FILE_REQUEST_CODE)
-        }
 
         /* observe viewModel stuff */
         viewModel.displayedNodes.observe(this) {
@@ -95,33 +99,43 @@ class FilesFragment : BaseFragment() {
         }
 
         viewModel.searching.observe(this) {
-            Log.d("DEBUG", "searching = $it")
-            /* searchItem.isActionViewExpanded() doesn't always return the correct value, so need to keep track ourselves and use that */
             if (it && !searchIsExpanded)
                 searchItem?.expandActionView()
             else if (!it && searchIsExpanded)
                 searchItem?.collapseActionView()
+
+            if (it) {
+                // when using resize animation, the tab resets its height after the animation if finished for whatever reason
+                filepathTabs.visibility = View.GONE
+                top_shadow.visibility = View.GONE
+            } else {
+                filepathTabs.visibility = View.VISIBLE
+                top_shadow.visibility = View.VISIBLE
+            }
         }
 
         viewModel.currentDir.observe(this) {
             programmatic = true
             val newPath = it.path.split("/")
-            /* find the point at which the path differs */
-            val breakpoint = (0 until maxOf(newPath.size, currentPath.size)).firstOrNull {
+            /* find the last point at which the path is the same */
+            val breakpoint = ((0 until maxOf(newPath.size, currentPath.size)).firstOrNull {
                 it > currentPath.size - 1 || it > newPath.size - 1 || newPath[it] != currentPath[it]
-            } ?: renterFilepath.tabCount
+            } ?: 0) - 1
             /* select the appropriate tab if it already exists */
-            if (newPath.size < currentPath.size)
-                renterFilepath.getTabAt(newPath.size - 1)?.select()
+            if (breakpoint >= 0)
+                filepathTabs.getTabAt(breakpoint)?.select()
             /* remove tabs that are past the breakpoint */
-            for (i in breakpoint until renterFilepath.tabCount)
-                renterFilepath.removeTabAt(breakpoint)
+            for (i in breakpoint + 1 until filepathTabs.tabCount)
+                filepathTabs.removeTabAt(breakpoint + 1)
             /* add new tabs from the breakpoint to the end of the new path */
-            for (i in breakpoint until newPath.size)
-                renterFilepath.addTab(renterFilepath.newTab().setText(newPath[i]), true)
-            /* set the first tab's text to Home, since otherwise it will just be a space due to the paths of stuff starting with a slash */
+            for (i in breakpoint + 1 until newPath.size)
+                filepathTabs.addTab(filepathTabs.newTab().setText(newPath[i]), true)
+            /* select the rightmost tab */
             /* scroll the tabs all the way to the right */
-            renterFilepath.postDelayed({ renterFilepath.fullScroll(TabLayout.FOCUS_RIGHT) }, 5)
+            filepathTabs.postDelayed({
+                filepathTabs.getTabAt(newPath.size - 1)!!.select()
+                filepathTabs.fullScroll(TabLayout.FOCUS_RIGHT)
+            }, 20)
             currentPath = newPath
             setSearchHint()
             programmatic = false
@@ -159,7 +173,6 @@ class FilesFragment : BaseFragment() {
         /* have to use this to listen for it being closed, because closelistener doesn't work for whatever reason */
         searchItem!!.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
             override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
-                Log.d("DEBUG", "onCollapse")
                 searchIsExpanded = false
                 if (viewModel.searching.value == true)
                     viewModel.cancelSearch()
@@ -167,15 +180,15 @@ class FilesFragment : BaseFragment() {
             }
 
             override fun onMenuItemActionExpand(item: MenuItem): Boolean {
-                Log.d("DEBUG", "onExpand")
                 searchIsExpanded = true
                 viewModel.searching.value = true
+                    viewModel.search(searchView?.query?.toString() ?: "")
                 return true
             }
         })
         searchView!!.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextChange(newText: String): Boolean {
-                Log.d("DEBUG", "SearchView text changed to: $newText")
+                println("onQueryTextChange")
                 /* need to check because collapsing the SearchView will clear it's text and trigger this after it's collapsed */
                 if (viewModel.searching.value == true)
                     viewModel.search(newText)
@@ -194,7 +207,7 @@ class FilesFragment : BaseFragment() {
         else -> super.onOptionsItemSelected(item)
     }
 
-    fun setSearchHint() {
+    private fun setSearchHint() {
         if (viewModel.currentDirPath == "root" || viewModel.currentDir.value == null)
             searchView?.queryHint = "Search..."
         else
@@ -202,7 +215,12 @@ class FilesFragment : BaseFragment() {
     }
 
     override fun onBackPressed(): Boolean {
-        return viewModel.goUpDir()
+        return if (viewModel.searching.value == true) {
+            viewModel.cancelSearch()
+            true
+        } else {
+            viewModel.goUpDir()
+        }
     }
 
     override fun onShow() {

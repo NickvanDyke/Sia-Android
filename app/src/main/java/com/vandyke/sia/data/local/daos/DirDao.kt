@@ -32,12 +32,12 @@ interface DirDao {
     @Query("SELECT * FROM dirs WHERE path = :path")
     fun getDir(path: String): Single<Dir>
 
-    /* ordered by path because otherwise the order of the list emitted by the flowable can swap for whatever reason,
+    /* ordered by name because otherwise the order of the list emitted by the flowable can swap for whatever reason,
      * causing unnecessary rearrangements in the UI */
-    @Query("SELECT * FROM dirs WHERE path LIKE :path || '/%' AND path NOT LIKE :path || '/%/%' ORDER BY path")
+    @Query("SELECT * FROM dirs WHERE path LIKE :path || '/%' AND path NOT LIKE :path || '/%/%' ORDER BY name")
     fun dirsInDir(path: String): Flowable<List<Dir>>
 
-    @Query("SELECT * FROM dirs WHERE path LIKE :path || '/%' || :name || '%' AND path NOT LIKE :path || '/%' || :name || '%/%' ORDER BY path")
+    @Query("SELECT * FROM dirs WHERE path LIKE :path || '/%' AND name LIKE '%' || :name || '%' ORDER BY name")
     fun dirsWithNameUnderDir(name: String, path: String): Flowable<List<Dir>>
 
     @Query("DELETE FROM dirs")

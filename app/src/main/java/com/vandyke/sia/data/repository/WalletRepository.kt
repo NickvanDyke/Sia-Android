@@ -16,15 +16,15 @@ class WalletRepository {
     /* Functions that update the local database from the Sia node */
     fun updateAll() = Completable.mergeArray(updateWallet(), updateTransactions(), updateAddresses())!!
 
-    private fun updateWallet() = siaApi.wallet().doAfterSuccess {
+    private fun updateWallet() = siaApi.wallet().doOnSuccess {
         db.walletDao().insert(it)
     }.toCompletable()
 
-    private fun updateTransactions() = siaApi.walletTransactions().doAfterSuccess {
+    private fun updateTransactions() = siaApi.walletTransactions().doOnSuccess {
         db.transactionDao().deleteAllAndInsert(it.alltransactions) // TODO: more efficient way?
     }.toCompletable()
 
-    private fun updateAddresses() = siaApi.walletAddresses().doAfterSuccess {
+    private fun updateAddresses() = siaApi.walletAddresses().doOnSuccess {
         db.addressDao().insertAll(it.addresses.map { AddressData(it) })
     }.toCompletable()
 
@@ -36,7 +36,7 @@ class WalletRepository {
     fun addresses() = db.addressDao().all()
 
     /* singles */
-    fun getAddress() = siaApi.walletAddress().doAfterSuccess {
+    fun getAddress() = siaApi.walletAddress().doOnSuccess {
         db.addressDao().insert(it)
     }.onErrorResumeNext {
         val siaError = SiaError(it)
@@ -58,7 +58,7 @@ class WalletRepository {
 
     fun lock() = siaApi.walletLock()
 
-    fun init(password: String, dictionary: String, force: Boolean) = siaApi.walletInit(password, dictionary, force).doAfterSuccess {
+    fun init(password: String, dictionary: String, force: Boolean) = siaApi.walletInit(password, dictionary, force).doOnSuccess {
         clearWalletDb().subscribe()
     }!!
 

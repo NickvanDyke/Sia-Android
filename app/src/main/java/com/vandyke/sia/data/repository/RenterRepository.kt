@@ -25,7 +25,6 @@ class RenterRepository {
         return siaApi.renterFiles().doAfterSuccess {
             it.files.forEach { file ->
                 db.fileDao().insert(file)
-                println("inserted file: $file")
             }
 
             // need to update ALL dirs, because filesizes might have changed, and therefore their filesize needs to be recalced

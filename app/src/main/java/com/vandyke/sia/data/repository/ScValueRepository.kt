@@ -8,7 +8,7 @@ import com.vandyke.sia.data.remote.siaApi
 import com.vandyke.sia.db
 
 class ScValueRepository {
-    fun updateScValue() = siaApi.getScPrice().doAfterSuccess {
+    fun updateScValue() = siaApi.getScPrice().doOnSuccess {
         db.scValueDao().insert(it)
     }.toCompletable()
 

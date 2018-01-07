@@ -8,7 +8,7 @@ import com.vandyke.sia.data.remote.siaApi
 import com.vandyke.sia.db
 
 class ConsensusRepository {
-    fun updateConsensus() = siaApi.consensus().doAfterSuccess {
+    fun updateConsensus() = siaApi.consensus().doOnSuccess {
         db.consensusDao().insert(it)
     }.toCompletable()
 

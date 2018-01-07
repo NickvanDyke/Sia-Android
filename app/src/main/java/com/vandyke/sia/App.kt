@@ -6,7 +6,6 @@ package com.vandyke.sia
 
 import android.app.Application
 import android.arch.persistence.room.Room
-import android.os.Build
 import com.chibatching.kotpref.Kotpref
 import com.vandyke.sia.data.local.AppDatabase
 import com.vandyke.sia.util.NotificationUtil
@@ -44,7 +43,5 @@ class App : Application() {
             db.dirDao().deleteAll()
         }
         super.onCreate()
-
-        println(Build.SUPPORTED_64_BIT_ABIS)
     }
 }
