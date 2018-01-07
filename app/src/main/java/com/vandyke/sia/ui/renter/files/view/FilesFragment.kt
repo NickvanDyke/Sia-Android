@@ -13,6 +13,7 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.SearchView
+import android.util.Log
 import android.view.*
 import android.widget.EditText
 import com.vandyke.sia.R
@@ -32,9 +33,12 @@ class FilesFragment : BaseFragment() {
 
     lateinit var viewModel: FilesViewModel
 
+    private var searchItem: MenuItem? = null
     private var searchView: SearchView? = null
+    private var searchIsExpanded = false
+
     private lateinit var adapter: NodesAdapter
-    private var programmaticallySelecting = true
+    private var programmatic = true
 
     /** tracked in the view so that when the viewmodel's path updates, we can determine the differences for animating the path display */
     private var currentPath: List<String> = listOf()
@@ -49,7 +53,7 @@ class FilesFragment : BaseFragment() {
             override fun onTabReselected(tab: TabLayout.Tab?) {}
             override fun onTabUnselected(tab: TabLayout.Tab?) {}
             override fun onTabSelected(tab: TabLayout.Tab) {
-                if (!programmaticallySelecting) {
+                if (!programmatic) {
                     viewModel.goToIndexInPath(tab.position)
                 }
             }
@@ -90,9 +94,18 @@ class FilesFragment : BaseFragment() {
             adapter.display(it)
         }
 
+        viewModel.searching.observe(this) {
+            Log.d("DEBUG", "searching = $it")
+            /* searchItem.isActionViewExpanded() doesn't always return the correct value, so need to keep track ourselves and use that */
+            if (it && !searchIsExpanded)
+                searchItem?.expandActionView()
+            else if (!it && searchIsExpanded)
+                searchItem?.collapseActionView()
+        }
+
         viewModel.currentDir.observe(this) {
-            programmaticallySelecting = true
-            val newPath = if (it.path == "/") listOf("/") else it.path.split("/")
+            programmatic = true
+            val newPath = it.path.split("/")
             /* find the point at which the path differs */
             val breakpoint = (0 until maxOf(newPath.size, currentPath.size)).firstOrNull {
                 it > currentPath.size - 1 || it > newPath.size - 1 || newPath[it] != currentPath[it]
@@ -107,13 +120,11 @@ class FilesFragment : BaseFragment() {
             for (i in breakpoint until newPath.size)
                 renterFilepath.addTab(renterFilepath.newTab().setText(newPath[i]), true)
             /* set the first tab's text to Home, since otherwise it will just be a space due to the paths of stuff starting with a slash */
-            renterFilepath.getTabAt(0)!!.text = "Home"
             /* scroll the tabs all the way to the right */
             renterFilepath.postDelayed({ renterFilepath.fullScroll(TabLayout.FOCUS_RIGHT) }, 5)
-            programmaticallySelecting = false
             currentPath = newPath
-
             setSearchHint()
+            programmatic = false
         }
 
         viewModel.error.observe(this) {
@@ -141,22 +152,32 @@ class FilesFragment : BaseFragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.toolbar_files, menu)
 
-        val searchItem = menu.findItem(R.id.search)
-        searchView = searchItem.actionView as SearchView
+        searchItem = menu.findItem(R.id.search)
+        searchView = searchItem!!.actionView as SearchView
         setSearchHint()
 
         /* have to use this to listen for it being closed, because closelistener doesn't work for whatever reason */
-        searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+        searchItem!!.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
             override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
-                viewModel.cancelSearch()
+                Log.d("DEBUG", "onCollapse")
+                searchIsExpanded = false
+                if (viewModel.searching.value == true)
+                    viewModel.cancelSearch()
                 return true
             }
 
-            override fun onMenuItemActionExpand(item: MenuItem) = true
+            override fun onMenuItemActionExpand(item: MenuItem): Boolean {
+                Log.d("DEBUG", "onExpand")
+                searchIsExpanded = true
+                viewModel.searching.value = true
+                return true
+            }
         })
         searchView!!.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextChange(newText: String): Boolean {
-                if (newText.isNotEmpty())
+                Log.d("DEBUG", "SearchView text changed to: $newText")
+                /* need to check because collapsing the SearchView will clear it's text and trigger this after it's collapsed */
+                if (viewModel.searching.value == true)
                     viewModel.search(newText)
                 return true
             }
@@ -168,8 +189,13 @@ class FilesFragment : BaseFragment() {
         })
     }
 
+    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
+        R.id.search -> true
+        else -> super.onOptionsItemSelected(item)
+    }
+
     fun setSearchHint() {
-        if (viewModel.currentDirPath == "/" || viewModel.currentDir.value == null)
+        if (viewModel.currentDirPath == "root" || viewModel.currentDir.value == null)
             searchView?.queryHint = "Search..."
         else
             searchView?.queryHint = "Search ${viewModel.currentDir.value!!.name}..."
@@ -184,7 +210,6 @@ class FilesFragment : BaseFragment() {
     }
 
     companion object {
-        val ROOT_DIR_NAME = "/"
         val FILE_REQUEST_CODE = 5424
     }
 }

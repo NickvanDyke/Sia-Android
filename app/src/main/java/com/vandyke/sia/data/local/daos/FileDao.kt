@@ -26,7 +26,7 @@ interface FileDao {
     @Query("SELECT * FROM files WHERE path LIKE :path || '/%'")
     fun getFilesUnder(path: String): Single<List<RenterFileData>>
 
-    @Query("SELECT * FROM files WHERE path LIKE :path || '/%/' || :name OR path LIKE :path || '/' || :name ")
+    @Query("SELECT * FROM files WHERE path LIKE :path || '/%' || :name || '%' AND path NOT LIKE :path || '/%' || :name || '%/%' ORDER BY path")
     fun filesWithNameUnderDir(name: String, path: String): Flowable<List<RenterFileData>>
 
     @Language("RoomSql")

@@ -21,7 +21,7 @@ class AboutFragment : BaseFragment() {
     override val layoutResId: Int = 0
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val version = Element("Version ${BuildConfig.VERSION_NAME}", null)
+        val version = Element("Version ${BuildConfig.VERSION_NAME}", R.drawable.ic_format_list_bulleted)
                 .setOnClickListener {
                     ChangeLog(context).fullLogDialog.show()
                 }

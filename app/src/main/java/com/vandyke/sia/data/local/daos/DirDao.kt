@@ -26,15 +26,19 @@ interface DirDao {
     @Query("SELECT * FROM dirs")
     fun all(): Flowable<List<Dir>>
 
+    @Query("SELECT * FROM dirs")
+    fun getAll(): Single<List<Dir>>
+
     @Query("SELECT * FROM dirs WHERE path = :path")
     fun getDir(path: String): Single<Dir>
 
-    /* ordered by path because otherwise the order of the list emitted by the flowable can swap during inserts,
+    /* ordered by path because otherwise the order of the list emitted by the flowable can swap for whatever reason,
      * causing unnecessary rearrangements in the UI */
-    // TODO: checking that the path != '/' is literally just so that when getting the immediate children of the root dir /, it doesn't get itself
-    // there's gotta be a better way than that
-    @Query("SELECT * FROM dirs WHERE path LIKE :path || '/%' AND path NOT LIKE :path || '/%/%' AND path != '/' ORDER BY path")
-    fun immediateChildren(path: String): Flowable<List<Dir>>
+    @Query("SELECT * FROM dirs WHERE path LIKE :path || '/%' AND path NOT LIKE :path || '/%/%' ORDER BY path")
+    fun dirsInDir(path: String): Flowable<List<Dir>>
+
+    @Query("SELECT * FROM dirs WHERE path LIKE :path || '/%' || :name || '%' AND path NOT LIKE :path || '/%' || :name || '%/%' ORDER BY path")
+    fun dirsWithNameUnderDir(name: String, path: String): Flowable<List<Dir>>
 
     @Query("DELETE FROM dirs")
     fun deleteAll()

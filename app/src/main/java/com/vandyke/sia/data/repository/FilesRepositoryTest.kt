@@ -9,21 +9,23 @@ import com.vandyke.sia.data.local.models.renter.Node
 import com.vandyke.sia.data.models.renter.RenterFileData
 import com.vandyke.sia.data.models.renter.RenterFilesData
 import com.vandyke.sia.db
-import com.vandyke.sia.util.emptyIfJustSlash
-import com.vandyke.sia.util.slashStart
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
+import io.reactivex.rxkotlin.toObservable
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.launch
 import java.math.BigDecimal
 
-class RenterRepositoryTest {
+val ROOT_DIR_NAME = "root"
+
+class FilesRepositoryTest {
+
 
     init {
         launch(CommonPool) {
-            db.dirDao().insertIgnoreIfConflict(Dir("/", BigDecimal.ZERO))
+            db.dirDao().insertIgnoreIfConflict(Dir(ROOT_DIR_NAME, BigDecimal.ZERO))
         }
     }
 
@@ -68,54 +70,62 @@ class RenterRepositoryTest {
 
     /** Queries the list of files from the Sia node, and updates local database from it */
     fun updateFilesAndDirs(): Completable {
-        /* first, insert all files, so that their data can be used to calculate dir values (such as size) */
-        // should also check for and delete local db files that aren't returned from the sia node
-
-        // changing to an observable and then a list is so we have a Single with a list of files, similar to the actual API response */
+        // changing to an observable and then a list is so we have a Single with a list of files, similar to the actual API response
         return files().doAfterSuccess {
-            it.files.forEach { file ->
+            /* insert each file to the db and also every dir that leads up to it */
+            for (file in it.files) {
                 db.fileDao().insert(file)
-            }
-
-            // need to update ALL dirs, because filesizes might have changed, and therefore their filesize needs to be recalced
-            it.files.forEach {
-                /* insert directories for each directory in the path to the file */
-                var path = ""
-                it.siapath.substring(0, it.siapath.lastIndexOf('/')).split("/").forEach {
-                    path += "/" + it
-                    db.fileDao().getFilesUnder(path).subscribe { filesInNewDir ->
-                        var size = BigDecimal.ZERO
-                        filesInNewDir.forEach {
-                            size += it.filesize
-                        }
-                        val newDir = Dir(path, size)
-                        db.dirDao().insertReplaceIfConflict(newDir)
-                    }
+//                println("inserted file: ${file.path}")
+                // also add all the dirs leading up to the file
+                var pathSoFar = ""
+                val dirPath = file.parent?.split("/") ?: continue
+                dirPath.forEachIndexed { index, pathElement ->
+                    if (index != 0)
+                        pathSoFar += "/"
+                    pathSoFar += pathElement
+                    db.dirDao().insertIgnoreIfConflict(Dir(pathSoFar, BigDecimal.ZERO))
+//                    println("inserted empty dir: $pathSoFar")
                 }
             }
 
-            /* also add the root dir, /  */
-            db.fileDao().getFilesUnder("/").subscribe { filesInNewDir ->
+            /* also add the root dir */
+            db.dirDao().insertIgnoreIfConflict(Dir(ROOT_DIR_NAME, BigDecimal.ZERO))
+
+            /* loop through all the dirs and calculate their values (filesize etc) */
+            db.dirDao().getAll().flatMapObservable { list ->
+                list.toObservable()
+            }.flatMapSingle { dir ->
+                Single.zip(db.fileDao().getFilesUnder(dir.path),
+                        Single.just(dir),
+                        BiFunction<List<RenterFileData>, Dir, Pair<Dir, List<RenterFileData>>> { filesUnderDir, dir ->
+                            Pair(dir, filesUnderDir)
+                        })
+            }.subscribe { dirAndItsFiles ->
                 var size = BigDecimal.ZERO
-                filesInNewDir.forEach {
-                    size += it.filesize
+                dirAndItsFiles.second.forEach { file ->
+                    size += file.filesize
                 }
-                val newDir = Dir("/", size)
-                db.dirDao().insertReplaceIfConflict(newDir)
+                db.dirDao().insertReplaceIfConflict(Dir(dirAndItsFiles.first.path, size))
+//                println("inserted dir with info: ${dirAndItsFiles.first.path}")
             }
         }.toCompletable()
     }
 
     fun immediateNodes(path: String) = Flowable.combineLatest(
-            db.dirDao().immediateChildren(path.emptyIfJustSlash()),
-            db.fileDao().filesInDir(path.emptyIfJustSlash()),
+            db.dirDao().dirsInDir(path),
+            db.fileDao().filesInDir(path),
             BiFunction<List<Dir>, List<RenterFileData>, List<Node>> { dirs, files ->
                 return@BiFunction dirs + files
             })!!
 
-    fun getDir(path: String) = db.dirDao().getDir(path.slashStart())
+    fun getDir(path: String) = db.dirDao().getDir(path)
 
-    fun search(name: String, path: String) = db.fileDao().filesWithNameUnderDir(name, path.emptyIfJustSlash())
+    fun search(name: String, path: String) = Flowable.combineLatest(
+            db.dirDao().dirsWithNameUnderDir(name, path),
+            db.fileDao().filesWithNameUnderDir(name, path),
+            BiFunction<List<Dir>, List<RenterFileData>, List<Node>> { dirs, files ->
+                return@BiFunction dirs + files
+            })!!
 
     fun createNewDir(path: String) = db.fileDao().getFilesUnder(path).doAfterSuccess { filesInNewDir ->
         var size = BigDecimal.ZERO
@@ -138,7 +148,7 @@ class RenterRepositoryTest {
     }.toCompletable()!!
 
     fun renameDir(currentName: String, newName: String) {
-
+        // TODO
     }
 
     fun addFile(siapath: String, source: String, dataPieces: Int, parityPieces: Int) = addFileOp(siapath, source, dataPieces, parityPieces)
