@@ -109,32 +109,93 @@ class FilesRepositoryTest {
         }.toCompletable()!!
     }
 
-    fun immediateNodes(path: String, ascending: Boolean): Flowable<List<Node>> {
+    fun immediateNodes(path: String, sortBy: SortBy, ascending: Boolean): Flowable<List<Node>> {
         val dirs: Flowable<List<Dir>>
         val files: Flowable<List<RenterFileData>>
         if (ascending) {
-            dirs = db.dirDao().dirsInDirByName(path)
-            files = db.fileDao().filesInDirByName(path)
+            when (sortBy) {
+                SortBy.NAME -> {
+                    dirs = db.dirDao().dirsInDirByName(path)
+                    files = db.fileDao().filesInDirByName(path)
+                }
+                SortBy.SIZE -> {
+                    dirs = db.dirDao().dirsInDirBySize(path)
+                    files = db.fileDao().filesInDirBySize(path)
+                }
+                SortBy.MODIFIED -> {
+                    dirs = db.dirDao().dirsInDirByModified(path)
+                    files = db.fileDao().filesInDirByModified(path)
+                }
+            }
         } else {
-            dirs = db.dirDao().dirsInDirByNameDesc(path)
-            files = db.fileDao().filesInDirByNameDesc(path)
+            when (sortBy) {
+                SortBy.NAME -> {
+                    dirs = db.dirDao().dirsInDirByNameDesc(path)
+                    files = db.fileDao().filesInDirByNameDesc(path)
+                }
+                SortBy.SIZE -> {
+                    dirs = db.dirDao().dirsInDirBySizeDesc(path)
+                    files = db.fileDao().filesInDirBySizeDesc(path)
+                }
+                SortBy.MODIFIED -> {
+                    dirs = db.dirDao().dirsInDirByModifiedDesc(path)
+                    files = db.fileDao().filesInDirByModifiedDesc(path)
+                }
+            }
         }
         return Flowable.combineLatest(
                 dirs,
                 files,
-                BiFunction<List<Dir>, List<RenterFileData>, List<Node>> { dirs, files ->
-                    return@BiFunction dirs + files
+                BiFunction<List<Dir>, List<RenterFileData>, List<Node>> { dir, file ->
+                    return@BiFunction dir + file
                 })!!
     }
 
     fun getDir(path: String) = db.dirDao().getDir(path)
 
-    fun search(name: String, path: String) = Flowable.combineLatest(
-            db.dirDao().dirsWithNameUnderDir(name, path),
-            db.fileDao().filesWithNameUnderDir(name, path),
-            BiFunction<List<Dir>, List<RenterFileData>, List<Node>> { dirs, files ->
-                return@BiFunction dirs + files
-            })!!
+    fun dir(path: String) = db.dirDao().dir(path)
+
+    fun search(name: String, path: String, sortBy: SortBy, ascending: Boolean): Flowable<List<Node>> {
+        val dirs: Flowable<List<Dir>>
+        val files: Flowable<List<RenterFileData>>
+        if (ascending) {
+            when (sortBy) {
+                SortBy.NAME -> {
+                    dirs = db.dirDao().dirsWithNameUnderDirByName(name, path)
+                    files = db.fileDao().filesWithNameUnderDirByName(name, path)
+                }
+                SortBy.SIZE -> {
+                    dirs = db.dirDao().dirsWithNameUnderDirBySize(name, path)
+                    files = db.fileDao().filesWithNameUnderDirBySize(name, path)
+                }
+                SortBy.MODIFIED -> {
+                    dirs = db.dirDao().dirsWithNameUnderDirByModified(name, path)
+                    files = db.fileDao().filesWithNameUnderDirByModified(name, path)
+                }
+            }
+        } else {
+            when (sortBy) {
+                SortBy.NAME -> {
+                    dirs = db.dirDao().dirsWithNameUnderDirByNameDesc(name, path)
+                    files = db.fileDao().filesWithNameUnderDirByNameDesc(name, path)
+                }
+                SortBy.SIZE -> {
+                    dirs = db.dirDao().dirsWithNameUnderDirBySizeDesc(name, path)
+                    files = db.fileDao().filesWithNameUnderDirBySizeDesc(name, path)
+                }
+                SortBy.MODIFIED -> {
+                    dirs = db.dirDao().dirsWithNameUnderDirByModifiedDesc(name, path)
+                    files = db.fileDao().filesWithNameUnderDirByModifiedDesc(name, path)
+                }
+            }
+        }
+        return Flowable.combineLatest(
+                dirs,
+                files,
+                BiFunction<List<Dir>, List<RenterFileData>, List<Node>> { dir, file ->
+                    return@BiFunction dir + file
+                })!!
+    }
 
     fun createDir(path: String) = db.fileDao().getFilesUnder(path).doOnSuccess { filesInNewDir ->
         var size = BigDecimal.ZERO
@@ -163,4 +224,10 @@ class FilesRepositoryTest {
     fun addFile(siapath: String, source: String, dataPieces: Int, parityPieces: Int) = addFileOp(siapath, source, dataPieces, parityPieces)
 
     fun deleteFile(path: String) = deleteFileOp(path)
+
+    enum class SortBy {
+        NAME,
+        SIZE,
+        MODIFIED
+    }
 }

@@ -30,24 +30,47 @@ interface DirDao {
     fun getAll(): Single<List<Dir>>
 
     @Query("SELECT * FROM dirs WHERE path = :path")
+    fun dir(path: String): Flowable<Dir>
+
+    @Query("SELECT * FROM dirs WHERE path = :path")
     fun getDir(path: String): Single<Dir>
 
-    /* ordered by name because otherwise the order of the list emitted by the flowable can swap for whatever reason,
-     * causing unnecessary rearrangements in the UI */
-    @Query("SELECT * FROM dirs WHERE path LIKE :path || '/%' AND path NOT LIKE :path || '/%/%' ORDER BY name")
+    /* Room doesn't allow using variables for certain things, so we need different queries for each sorting method */
+    @Query("SELECT * FROM dirs WHERE path LIKE :path || '/%' AND path NOT LIKE :path || '/%/%' ORDER BY name ASC, size ASC")
     fun dirsInDirByName(path: String): Flowable<List<Dir>>
 
-    @Query("SELECT * FROM dirs WHERE path LIKE :path || '/%' AND path NOT LIKE :path || '/%/%' ORDER BY name DESC")
+    @Query("SELECT * FROM dirs WHERE path LIKE :path || '/%' AND path NOT LIKE :path || '/%/%' ORDER BY name DESC, size DESC")
     fun dirsInDirByNameDesc(path: String): Flowable<List<Dir>>
 
-    @Query("SELECT * FROM dirs WHERE path LIKE :path || '/%' AND path NOT LIKE :path || '/%/%' ORDER BY size")
+    @Query("SELECT * FROM dirs WHERE path LIKE :path || '/%' AND path NOT LIKE :path || '/%/%' ORDER BY size ASC, name ASC")
     fun dirsInDirBySize(path: String): Flowable<List<Dir>>
 
-    @Query("SELECT * FROM dirs WHERE path LIKE :path || '/%' AND path NOT LIKE :path || '/%/%' ORDER BY size DESC")
+    @Query("SELECT * FROM dirs WHERE path LIKE :path || '/%' AND path NOT LIKE :path || '/%/%' ORDER BY size DESC, name DESC")
     fun dirsInDirBySizeDesc(path: String): Flowable<List<Dir>>
 
-    @Query("SELECT * FROM dirs WHERE path LIKE :path || '/%' AND name LIKE '%' || :name || '%' ORDER BY name")
-    fun dirsWithNameUnderDir(name: String, path: String): Flowable<List<Dir>>
+    @Query("SELECT * FROM dirs WHERE path LIKE :path || '/%' AND path NOT LIKE :path || '/%/%' ORDER BY modified ASC, name ASC")
+    fun dirsInDirByModified(path: String): Flowable<List<Dir>>
+
+    @Query("SELECT * FROM dirs WHERE path LIKE :path || '/%' AND path NOT LIKE :path || '/%/%' ORDER BY modified DESC, name DESC")
+    fun dirsInDirByModifiedDesc(path: String): Flowable<List<Dir>>
+
+    @Query("SELECT * FROM dirs WHERE path LIKE :path || '/%' AND name LIKE '%' || :name || '%' ORDER BY name ASC, size ASC")
+    fun dirsWithNameUnderDirByName(name: String, path: String): Flowable<List<Dir>>
+
+    @Query("SELECT * FROM dirs WHERE path LIKE :path || '/%' AND name LIKE '%' || :name || '%' ORDER BY name DESC, size DESC")
+    fun dirsWithNameUnderDirByNameDesc(name: String, path: String): Flowable<List<Dir>>
+
+    @Query("SELECT * FROM dirs WHERE path LIKE :path || '/%' AND name LIKE '%' || :name || '%' ORDER BY size ASC, name ASC")
+    fun dirsWithNameUnderDirBySize(name: String, path: String): Flowable<List<Dir>>
+
+    @Query("SELECT * FROM dirs WHERE path LIKE :path || '/%' AND name LIKE '%' || :name || '%' ORDER BY size DESC, name DESC")
+    fun dirsWithNameUnderDirBySizeDesc(name: String, path: String): Flowable<List<Dir>>
+
+    @Query("SELECT * FROM dirs WHERE path LIKE :path || '/%' AND name LIKE '%' || :name || '%' ORDER BY modified ASC, name ASC")
+    fun dirsWithNameUnderDirByModified(name: String, path: String): Flowable<List<Dir>>
+
+    @Query("SELECT * FROM dirs WHERE path LIKE :path || '/%' AND name LIKE '%' || :name || '%' ORDER BY modified DESC, name DESC")
+    fun dirsWithNameUnderDirByModifiedDesc(name: String, path: String): Flowable<List<Dir>>
 
     @Query("DELETE FROM dirs")
     fun deleteAll()

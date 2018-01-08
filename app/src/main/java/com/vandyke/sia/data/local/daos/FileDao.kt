@@ -11,42 +11,58 @@ import android.arch.persistence.room.Query
 import com.vandyke.sia.data.models.renter.RenterFileData
 import io.reactivex.Flowable
 import io.reactivex.Single
-import org.intellij.lang.annotations.Language
 
 @Dao
 interface FileDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insert(file: RenterFileData)
 
-    @Language("RoomSql")
-    @Query("SELECT * FROM files WHERE path LIKE :path || '/%' AND path NOT LIKE :path || '/%/%' ORDER BY name")
+    /* Room doesn't allow using variables for certain things, so we need different queries for each sorting method */
+    @Query("SELECT * FROM files WHERE path LIKE :path || '/%' AND path NOT LIKE :path || '/%/%' ORDER BY name ASC, filesize ASC")
     fun filesInDirByName(path: String): Flowable<List<RenterFileData>>
 
-    @Query("SELECT * FROM files WHERE path LIKE :path || '/%' AND path NOT LIKE :path || '/%/%' ORDER BY name DESC")
+    @Query("SELECT * FROM files WHERE path LIKE :path || '/%' AND path NOT LIKE :path || '/%/%' ORDER BY name DESC, filesize DESC")
     fun filesInDirByNameDesc(path: String): Flowable<List<RenterFileData>>
 
-    @Query("SELECT * FROM files WHERE path LIKE :path || '/%' AND path NOT LIKE :path || '/%/%' ORDER BY filesize")
+    @Query("SELECT * FROM files WHERE path LIKE :path || '/%' AND path NOT LIKE :path || '/%/%' ORDER BY filesize ASC, name ASC")
     fun filesInDirBySize(path: String): Flowable<List<RenterFileData>>
 
-    @Query("SELECT * FROM files WHERE path LIKE :path || '/%' AND path NOT LIKE :path || '/%/%' ORDER BY filesize DESC")
+    @Query("SELECT * FROM files WHERE path LIKE :path || '/%' AND path NOT LIKE :path || '/%/%' ORDER BY filesize DESC, name DESC")
     fun filesInDirBySizeDesc(path: String): Flowable<List<RenterFileData>>
 
-    @Language("RoomSql")
+    @Query("SELECT * FROM files WHERE path LIKE :path || '/%' AND path NOT LIKE :path || '/%/%' ORDER BY modified ASC, name ASC")
+    fun filesInDirByModified(path: String): Flowable<List<RenterFileData>>
+
+    @Query("SELECT * FROM files WHERE path LIKE :path || '/%' AND path NOT LIKE :path || '/%/%' ORDER BY modified DESC, name DESC")
+    fun filesInDirByModifiedDesc(path: String): Flowable<List<RenterFileData>>
+
+    @Query("SELECT * FROM files WHERE path LIKE :path || '/%' AND name LIKE '%' || :name || '%' ORDER BY name, filesize ASC")
+    fun filesWithNameUnderDirByName(name: String, path: String): Flowable<List<RenterFileData>>
+
+    @Query("SELECT * FROM files WHERE path LIKE :path || '/%' AND name LIKE '%' || :name || '%' ORDER BY name DESC, filesize DESC")
+    fun filesWithNameUnderDirByNameDesc(name: String, path: String): Flowable<List<RenterFileData>>
+
+    @Query("SELECT * FROM files WHERE path LIKE :path || '/%' AND name LIKE '%' || :name || '%' ORDER BY filesize ASC, name ASC")
+    fun filesWithNameUnderDirBySize(name: String, path: String): Flowable<List<RenterFileData>>
+
+    @Query("SELECT * FROM files WHERE path LIKE :path || '/%' AND name LIKE '%' || :name || '%' ORDER BY filesize DESC, name DESC")
+    fun filesWithNameUnderDirBySizeDesc(name: String, path: String): Flowable<List<RenterFileData>>
+
+    @Query("SELECT * FROM files WHERE path LIKE :path || '/%' AND name LIKE '%' || :name || '%' ORDER BY modified ASC, name ASC")
+    fun filesWithNameUnderDirByModified(name: String, path: String): Flowable<List<RenterFileData>>
+
+    @Query("SELECT * FROM files WHERE path LIKE :path || '/%' AND name LIKE '%' || :name || '%' ORDER BY modified DESC, name DESC")
+    fun filesWithNameUnderDirByModifiedDesc(name: String, path: String): Flowable<List<RenterFileData>>
+
     @Query("SELECT * FROM files WHERE path LIKE :path || '/%'")
     fun getFilesUnder(path: String): Single<List<RenterFileData>>
 
-    @Query("SELECT * FROM files WHERE path LIKE :path || '/%' AND name LIKE '%' || :name || '%' ORDER BY name")
-    fun filesWithNameUnderDir(name: String, path: String): Flowable<List<RenterFileData>>
-
-    @Language("RoomSql")
     @Query("DELETE FROM files")
     fun deleteAll()
 
-    @Language("RoomSql")
     @Query("DELETE FROM files WHERE path == :path")
     fun deleteFile(path: String)
 
-    @Language("RoomSql")
     @Query("DELETE FROM files WHERE path LIKE :path || '/%'")
     fun deleteFilesUnder(path: String)
 }

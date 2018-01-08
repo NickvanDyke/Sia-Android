@@ -58,5 +58,6 @@ class NodesAdapter(val viewModel: FilesViewModel) : RecyclerView.Adapter<NodeHol
 
         override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int) =
                 oldList[oldItemPosition].name == newList[newItemPosition].name
+        && oldList[oldItemPosition].modified == newList[newItemPosition].modified
     }
 }

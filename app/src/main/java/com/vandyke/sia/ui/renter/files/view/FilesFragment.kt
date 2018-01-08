@@ -21,6 +21,7 @@ import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.Spinner
 import com.vandyke.sia.R
+import com.vandyke.sia.data.repository.FilesRepositoryTest.SortBy
 import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.ui.renter.files.view.list.NodesAdapter
 import com.vandyke.sia.ui.renter.files.viewmodel.FilesViewModel
@@ -42,6 +43,7 @@ class FilesFragment : BaseFragment() {
     private var searchIsExpanded = false
 
     private var ascendingItem: MenuItem? = null
+    private val orderByItems = mutableListOf<MenuItem>()
 
     private lateinit var spinnerView: Spinner
     private lateinit var pathAdapter: ArrayAdapter<String>
@@ -122,6 +124,10 @@ class FilesFragment : BaseFragment() {
             ascendingItem?.isChecked = it
         }
 
+        viewModel.sortBy.observe(this) {
+            setCheckedOrderByItem()
+        }
+
         viewModel.searching.observe(this) {
             if (it && !searchIsExpanded)
                 searchItem?.expandActionView()
@@ -182,7 +188,14 @@ class FilesFragment : BaseFragment() {
         })
 
         ascendingItem = menu.findItem(R.id.ascendingToggle)
-        ascendingItem!!.isChecked = viewModel.ascending.value ?: false
+        ascendingItem!!.isChecked = viewModel.ascending.value!!
+
+        /* must add the items in the same order as they appear in the enum values for the function after to work */
+        orderByItems.clear()
+        orderByItems.add(menu.findItem(R.id.orderByName))
+        orderByItems.add(menu.findItem(R.id.orderBySize))
+        orderByItems.add(menu.findItem(R.id.orderByModified))
+        setCheckedOrderByItem()
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
@@ -192,9 +205,32 @@ class FilesFragment : BaseFragment() {
             false
         }
         R.id.orderByName -> {
+            viewModel.sortBy.value = SortBy.NAME
+            false
+        }
+        R.id.orderBySize -> {
+            viewModel.sortBy.value = SortBy.SIZE
+            false
+        }
+        R.id.orderByModified -> {
+            viewModel.sortBy.value = SortBy.MODIFIED
             false
         }
         else -> super.onOptionsItemSelected(item)
+    }
+
+    /** The order of the SortBy enum values and the order of the sort by options in the list must be the same for this to work */
+    private fun setCheckedOrderByItem() {
+        val sortBy = viewModel.sortBy.value!!
+        orderByItems.forEachIndexed { i, item ->
+            if (i == sortBy.ordinal) {
+                item.isChecked = true
+                item.isCheckable = true
+            } else {
+                item.isChecked = false
+                item.isCheckable = false
+            }
+        }
     }
 
     private fun setSearchHint() {

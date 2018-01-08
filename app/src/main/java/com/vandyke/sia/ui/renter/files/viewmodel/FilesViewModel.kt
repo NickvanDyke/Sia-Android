@@ -7,6 +7,7 @@ package com.vandyke.sia.ui.renter.files.viewmodel
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.vandyke.sia.data.SiaError
+import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.local.models.renter.Dir
 import com.vandyke.sia.data.local.models.renter.Node
 import com.vandyke.sia.data.repository.FilesRepositoryTest
@@ -18,9 +19,13 @@ import io.reactivex.disposables.Disposable
 class FilesViewModel : ViewModel() {
     val displayedNodes = MutableLiveData<List<Node>>()
     val currentDir = MutableLiveData<Dir>()
+
     val searching = MutableLiveData<Boolean>()
     val searchTerm = MutableLiveData<String>() // maybe bind this to the search query?
+
     val ascending = MutableLiveData<Boolean>()
+    val sortBy = MutableLiveData<FilesRepositoryTest.SortBy>()
+
     val error = MutableLiveData<SiaError>()
 
     val currentDirPath
@@ -40,10 +45,18 @@ class FilesViewModel : ViewModel() {
         }
 
     init {
-        ascending.value = true
-        ascending.observeForever({
+        ascending.value = Prefs.ascending
+        sortBy.value = Prefs.sortBy
+        ascending.observeForever {
             setDisplayedNodes()
-        })
+            if (it != null)
+                Prefs.ascending = it
+        }
+        sortBy.observeForever {
+            setDisplayedNodes()
+            if (it != null)
+                Prefs.sortBy = it
+        }
         displayedNodes.value = listOf()
         changeDir(ROOT_DIR_NAME)
     }
@@ -60,24 +73,27 @@ class FilesViewModel : ViewModel() {
     }
 
     fun changeDir(path: String) {
+        if (path == currentDirPath)
+            return
         println("changing to dir: $path")
         filesRepo.getDir(path).siaSubscribe({
-            /* note that changing directory will cancel an active search. This is intended */
-            searching.value = false
-            searchTerm.value = null
             currentDir.value = it
             setDisplayedNodes()
-        }, ::onError)
+        }, {
+            /* presumably the only error would be an empty result set from querying for the dir. In which case we go home */
+            changeDir(ROOT_DIR_NAME)
+            onError(it)
+        })
     }
 
     /** subscribes to the proper source for the displayed nodes, depending on the state of the viewmodel */
     private fun setDisplayedNodes() {
         if (searching.value == true) {
-            nodesSubscription = filesRepo.search(searchTerm.value!!, currentDirPath).siaSubscribe({
+            nodesSubscription = filesRepo.search(searchTerm.value!!, currentDirPath, sortBy.value!!, ascending.value!!).siaSubscribe({
                 displayedNodes.value = it
             }, ::onError)
         } else {
-            nodesSubscription = filesRepo.immediateNodes(currentDirPath, ascending.value!!).siaSubscribe({ nodes ->
+            nodesSubscription = filesRepo.immediateNodes(currentDirPath, sortBy.value!!, ascending.value!!).siaSubscribe({ nodes ->
                 displayedNodes.value = nodes
             }, ::onError)
         }
