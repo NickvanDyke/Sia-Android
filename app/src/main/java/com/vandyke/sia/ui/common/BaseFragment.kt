@@ -47,7 +47,7 @@ abstract class BaseFragment : Fragment() {
         super.onResume()
         activity!!.invalidateOptionsMenu()
         if (visibleWhenRecreated)
-            onShow()
+            onShow() // TODO: figure out correct times to call this
         else
             visibleWhenRecreated = true
     }

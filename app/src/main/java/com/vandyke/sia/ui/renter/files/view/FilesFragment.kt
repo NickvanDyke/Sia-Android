@@ -12,8 +12,6 @@ import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.SearchView
 import android.view.*
 import android.widget.AdapterView
@@ -54,15 +52,15 @@ class FilesFragment : BaseFragment() {
         viewModel = ViewModelProviders.of(this).get(FilesViewModel::class.java)
 
         /* set up nodes list */
-        nodesList.addItemDecoration(DividerItemDecoration(nodesList.context, (nodesList.layoutManager as LinearLayoutManager).orientation))
         nodesAdapter = NodesAdapter(viewModel)
         nodesList.adapter = nodesAdapter
 
         pathAdapter = ArrayAdapter(context, R.layout.spinner_selected_item)
-        pathAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item)
+        pathAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
         /* set up path spinner */
         spinnerView = Spinner(context)
+        spinnerView.minimumWidth = 400
         spinnerView.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
             }
