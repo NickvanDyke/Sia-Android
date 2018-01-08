@@ -32,7 +32,6 @@
         <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="darkMode"
-            android:summary="Changes will apply on next restart."
             android:title="Dark mode" />
         <SwitchPreferenceCompat
             android:defaultValue="true"

@@ -18,10 +18,9 @@ import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.launch
 import java.math.BigDecimal
 
-val ROOT_DIR_NAME = "root"
+val ROOT_DIR_NAME = "Home"
 
 class FilesRepositoryTest {
-
 
     init {
         launch(CommonPool) {
@@ -71,12 +70,12 @@ class FilesRepositoryTest {
 
     /** Queries the list of files from the Sia node, and updates local database from it */
     fun updateFilesAndDirs(): Completable {
+        // TODO: also need to remove any files that are in the db but not returned from the API. More efficient way than just deleting all?
         // changing to an observable and then a list is so we have a Single with a list of files, similar to the actual API response
         return files().doOnSuccess {
             /* insert each file to the db and also every dir that leads up to it */
             for (file in it.files) {
                 db.fileDao().insert(file)
-//                println("inserted file: ${file.path}")
                 /* also add all the dirs leading up to the file */
                 var pathSoFar = ""
                 val dirPath = file.parent?.split("/") ?: continue

@@ -13,7 +13,6 @@ class ResizeAnimation(private val view: View, private val targetHeight: Int) : A
     private val startHeight = view.height
 
     init {
-        println("start height: $startHeight  target height: $targetHeight")
         interpolator = FastOutSlowInInterpolator()
     }
 

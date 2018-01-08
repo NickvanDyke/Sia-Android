@@ -57,6 +57,7 @@ class SiadService : Service() {
             startSiad()
         } else {
             Prefs.siaStoppedManually = true
+            isSiadProcessStarting.onNext(false)
         }
     }
 
@@ -73,9 +74,9 @@ class SiadService : Service() {
         isSiadProcessStarting.onNext(true)
 
         /* acquire partial wake lock to keep device CPU awake and therefore keep the Sia node active */
-        if (Prefs.SiaNodeWakeLock && !wakeLock.isHeld) {
+        if (Prefs.SiaNodeWakeLock && !wakeLock.isHeld)
             wakeLock.acquire()
-        }
+
         val pb = ProcessBuilder(siadFile!!.absolutePath, "-M", "gctw") // TODO: maybe let user set which modules to load?
         pb.redirectErrorStream(true)
 

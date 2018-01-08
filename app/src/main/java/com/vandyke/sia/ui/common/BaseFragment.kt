@@ -25,15 +25,25 @@ abstract class BaseFragment : Fragment() {
      * the fragment is newly visible to the user */
     open fun onShow() {}
 
+    open fun onHide() {}
+
     override fun onHiddenChanged(hidden: Boolean) {
         if (!hidden) {
             onShow()
             activity!!.invalidateOptionsMenu()
+        } else {
+            onHide()
         }
     }
 
     override fun onResume() {
         super.onResume()
+        activity!!.invalidateOptionsMenu()
         onShow()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        onHide()
     }
 }

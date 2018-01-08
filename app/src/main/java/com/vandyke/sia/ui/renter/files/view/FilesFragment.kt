@@ -7,14 +7,19 @@ package com.vandyke.sia.ui.renter.files.view
 import android.app.Activity.RESULT_OK
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
+import android.graphics.PorterDuff
 import android.os.Bundle
-import android.support.design.widget.TabLayout
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.SearchView
 import android.view.*
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.EditText
+import android.widget.Spinner
 import com.vandyke.sia.R
 import com.vandyke.sia.data.local.models.renter.Dir
 import com.vandyke.sia.data.models.renter.RenterFileData
@@ -23,48 +28,54 @@ import com.vandyke.sia.ui.renter.files.view.list.NodesAdapter
 import com.vandyke.sia.ui.renter.files.viewmodel.FilesViewModel
 import com.vandyke.sia.util.GenUtil
 import com.vandyke.sia.util.observe
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_renter_files.*
 
 
 class FilesFragment : BaseFragment() {
     override val layoutResId: Int = R.layout.fragment_renter_files
-    override val hasOptionsMenu: Boolean = true
+    override val hasOptionsMenu = true
 
     lateinit var viewModel: FilesViewModel
 
     private var searchItem: MenuItem? = null
     private var searchView: SearchView? = null
-    /** searchItem.isActionViewExpanded() doesn't always return the correct value, so need to keep track ourselves and use that */
+    /** searchItem.isActionViewExpanded() doesn't always return the correct value? so need to keep track ourselves and use that */
     private var searchIsExpanded = false
 
-    private var tabsHeight: Int = 0
+    private lateinit var spinnerView: Spinner
+    private lateinit var pathAdapter: ArrayAdapter<String>
 
-    private lateinit var adapter: NodesAdapter
-    private var programmatic = true
-
-    /** tracked in the view so that when the viewmodel's path updates, we can determine the differences for animating the path display */
-    private var currentPath: List<String> = listOf()
+    private lateinit var nodesAdapter: NodesAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewModel = ViewModelProviders.of(this).get(FilesViewModel::class.java)
-        filesList.addItemDecoration(DividerItemDecoration(filesList.context, (filesList.layoutManager as LinearLayoutManager).orientation))
-        adapter = NodesAdapter(viewModel)
-        filesList.adapter = adapter
 
-        filepathTabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabReselected(tab: TabLayout.Tab?) {}
-            override fun onTabUnselected(tab: TabLayout.Tab?) {}
-            override fun onTabSelected(tab: TabLayout.Tab) {
-                if (!programmatic) {
-                    viewModel.goToIndexInPath(tab.position)
-                }
+        /* set up nodes list */
+        nodesList.addItemDecoration(DividerItemDecoration(nodesList.context, (nodesList.layoutManager as LinearLayoutManager).orientation))
+        nodesAdapter = NodesAdapter(viewModel)
+        nodesList.adapter = nodesAdapter
+
+        pathAdapter = ArrayAdapter(context, R.layout.spinner_selected_item)
+        pathAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item)
+
+        /* set up path spinner */
+        spinnerView = Spinner(context)
+        spinnerView.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) {
             }
-        })
 
-        renterSwipeRefresh.setColorSchemeResources(R.color.colorAccent)
-        renterSwipeRefresh.setOnRefreshListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                viewModel.goToIndexInPath(position)
+            }
+        }
+        spinnerView.adapter = pathAdapter
+        spinnerView.background.setColorFilter(ContextCompat.getColor(context!!, android.R.color.white), PorterDuff.Mode.SRC_ATOP)
+
+        nodesListRefresh.setColorSchemeResources(R.color.colorAccent)
+        nodesListRefresh.setOnRefreshListener {
             viewModel.refresh()
-            renterSwipeRefresh.isRefreshing = false
+            nodesListRefresh.isRefreshing = false
         }
 
         /* FAB stuff */
@@ -92,10 +103,9 @@ class FilesFragment : BaseFragment() {
             dialog.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
         }
 
-
         /* observe viewModel stuff */
         viewModel.displayedNodes.observe(this) {
-            adapter.display(it)
+            nodesAdapter.display(it)
         }
 
         viewModel.searching.observe(this) {
@@ -103,47 +113,21 @@ class FilesFragment : BaseFragment() {
                 searchItem?.expandActionView()
             else if (!it && searchIsExpanded)
                 searchItem?.collapseActionView()
-
-            if (it) {
-                // when using resize animation, the tab resets its height after the animation if finished for whatever reason
-                filepathTabs.visibility = View.GONE
-                top_shadow.visibility = View.GONE
-            } else {
-                filepathTabs.visibility = View.VISIBLE
-                top_shadow.visibility = View.VISIBLE
-            }
         }
 
         viewModel.currentDir.observe(this) {
-            programmatic = true
-            val newPath = it.path.split("/")
-            /* find the last point at which the path is the same */
-            val breakpoint = ((0 until maxOf(newPath.size, currentPath.size)).firstOrNull {
-                it > currentPath.size - 1 || it > newPath.size - 1 || newPath[it] != currentPath[it]
-            } ?: 0) - 1
-            /* select the appropriate tab if it already exists */
-            if (breakpoint >= 0)
-                filepathTabs.getTabAt(breakpoint)?.select()
-            /* remove tabs that are past the breakpoint */
-            for (i in breakpoint + 1 until filepathTabs.tabCount)
-                filepathTabs.removeTabAt(breakpoint + 1)
-            /* add new tabs from the breakpoint to the end of the new path */
-            for (i in breakpoint + 1 until newPath.size)
-                filepathTabs.addTab(filepathTabs.newTab().setText(newPath[i]), true)
-            /* select the rightmost tab */
-            /* scroll the tabs all the way to the right */
-            filepathTabs.postDelayed({
-                filepathTabs.getTabAt(newPath.size - 1)!!.select()
-                filepathTabs.fullScroll(TabLayout.FOCUS_RIGHT)
-            }, 20)
-            currentPath = newPath
+            pathAdapter.clear()
+            val path = it.path.split('/')
+            path.forEach {
+                pathAdapter.add(it)
+            }
+            spinnerView.setSelection(path.size - 1)
             setSearchHint()
-            programmatic = false
         }
 
         viewModel.error.observe(this) {
             it.snackbar(coordinator) // TODO: make FAB move up when snackbar appears
-            renterSwipeRefresh.isRefreshing = false
+            nodesListRefresh.isRefreshing = false
         }
 
         viewModel.detailsItem.observe(this) {
@@ -166,10 +150,10 @@ class FilesFragment : BaseFragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.toolbar_files, menu)
 
+        /* set up search stuff */
         searchItem = menu.findItem(R.id.search)
         searchView = searchItem!!.actionView as SearchView
         setSearchHint()
-
         /* have to use this to listen for it being closed, because closelistener doesn't work for whatever reason */
         searchItem!!.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
             override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
@@ -182,13 +166,12 @@ class FilesFragment : BaseFragment() {
             override fun onMenuItemActionExpand(item: MenuItem): Boolean {
                 searchIsExpanded = true
                 viewModel.searching.value = true
-                    viewModel.search(searchView?.query?.toString() ?: "")
+                viewModel.search(searchView?.query?.toString() ?: "")
                 return true
             }
         })
         searchView!!.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextChange(newText: String): Boolean {
-                println("onQueryTextChange")
                 /* need to check because collapsing the SearchView will clear it's text and trigger this after it's collapsed */
                 if (viewModel.searching.value == true)
                     viewModel.search(newText)
@@ -203,7 +186,14 @@ class FilesFragment : BaseFragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
-        R.id.search -> true
+        R.id.ascendingToggle -> {
+            item.isChecked = !item.isChecked
+            viewModel.ascending.value = item.isChecked
+            false
+        }
+        R.id.orderByName -> {
+            false
+        }
         else -> super.onOptionsItemSelected(item)
     }
 
@@ -225,6 +215,13 @@ class FilesFragment : BaseFragment() {
 
     override fun onShow() {
         viewModel.refresh()
+        activity!!.toolbar.addView(spinnerView)
+        (activity as AppCompatActivity).supportActionBar!!.setDisplayShowTitleEnabled(false)
+    }
+
+    override fun onHide() {
+        activity!!.toolbar.removeView(spinnerView)
+        (activity as AppCompatActivity).supportActionBar!!.setDisplayShowTitleEnabled(true)
     }
 
     companion object {

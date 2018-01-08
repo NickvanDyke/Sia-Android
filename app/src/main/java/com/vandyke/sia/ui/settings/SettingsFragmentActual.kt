@@ -21,7 +21,7 @@ import com.vandyke.sia.util.StorageUtil
 /* the actual settings fragment, contained within SettingsFragment */
 class SettingsFragmentActual : PreferenceFragmentCompat() {
 
-    private lateinit var prefsListener: SharedPreferences.OnSharedPreferenceChangeListener
+    private var prefsListener: SharedPreferences.OnSharedPreferenceChangeListener? = null
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.settings)
@@ -51,10 +51,12 @@ class SettingsFragmentActual : PreferenceFragmentCompat() {
         }
     }
 
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         /* create and register a SharedPrefs PreferenceChangeListener that'll take appropriate action
-         * when certain settings are changed */
+         * when certain settings are changed. We are supposed to keep a reference, otherwise it could
+         * be unregistered/destroyed. */
         prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
             when (key) {
                 "SiaNodeWakeLock" -> SiadService.getService(context!!).subscribe { service ->
@@ -73,8 +75,15 @@ class SettingsFragmentActual : PreferenceFragmentCompat() {
                     service.stopSiad()
                     service.startSiad()
                 }
+
+                "darkMode" -> activity!!.recreate()
             }
         }
         Prefs.preferences.registerOnSharedPreferenceChangeListener(prefsListener)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Prefs.preferences.unregisterOnSharedPreferenceChangeListener(prefsListener)
     }
 }

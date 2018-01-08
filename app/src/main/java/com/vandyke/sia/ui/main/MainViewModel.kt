@@ -10,7 +10,7 @@ import android.view.MenuItem
 import com.vandyke.sia.R
 import com.vandyke.sia.ui.about.AboutFragment
 import com.vandyke.sia.ui.hosting.fragments.HostingFragment
-import com.vandyke.sia.ui.renter.main.RenterFragment
+import com.vandyke.sia.ui.renter.files.view.FilesFragment
 import com.vandyke.sia.ui.settings.SettingsFragment
 import com.vandyke.sia.ui.terminal.TerminalFragment
 import com.vandyke.sia.ui.wallet.view.WalletFragment
@@ -45,7 +45,7 @@ class MainViewModel : ViewModel() {
     
     fun navigationItemSelected(item: MenuItem) {
         visibleFragmentClass.value = when (item.itemId) {
-            R.id.drawer_item_renter -> RenterFragment::class.java
+            R.id.drawer_item_renter -> FilesFragment::class.java
             R.id.drawer_item_hosting -> HostingFragment::class.java
             R.id.drawer_item_wallet -> WalletFragment::class.java
             R.id.drawer_item_terminal -> TerminalFragment::class.java
@@ -65,7 +65,7 @@ class MainViewModel : ViewModel() {
         val clazz = visibleFragmentClass.value ?: return
         title.value = clazz.simpleName.replace("Fragment", "")
         selectedMenuItem.value = when (clazz) {
-            RenterFragment::class.java -> R.id.drawer_item_renter
+            FilesFragment::class.java -> R.id.drawer_item_renter
             HostingFragment::class.java -> R.id.drawer_item_hosting
             WalletFragment::class.java -> R.id.drawer_item_wallet
             TerminalFragment::class.java -> R.id.drawer_item_terminal

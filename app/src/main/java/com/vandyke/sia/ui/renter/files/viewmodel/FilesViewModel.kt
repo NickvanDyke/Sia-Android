@@ -10,6 +10,7 @@ import com.vandyke.sia.data.SiaError
 import com.vandyke.sia.data.local.models.renter.Dir
 import com.vandyke.sia.data.local.models.renter.Node
 import com.vandyke.sia.data.repository.FilesRepositoryTest
+import com.vandyke.sia.data.repository.ROOT_DIR_NAME
 import com.vandyke.sia.isSiadLoaded
 import com.vandyke.sia.util.siaSubscribe
 import io.reactivex.disposables.Disposable
@@ -18,6 +19,8 @@ class FilesViewModel : ViewModel() {
     val displayedNodes = MutableLiveData<List<Node>>()
     val currentDir = MutableLiveData<Dir>()
     val searching = MutableLiveData<Boolean>()
+    val searchTerm = MutableLiveData<String>() // maybe bind this to the search query?
+    val ascending = MutableLiveData<Boolean>()
     val detailsItem = MutableLiveData<Node>()
     val error = MutableLiveData<SiaError>()
 
@@ -27,8 +30,7 @@ class FilesViewModel : ViewModel() {
     private val filesRepo = FilesRepositoryTest()
 
     private val subscription = isSiadLoaded.subscribe {
-        if (it)
-            refresh()
+        if (it) refresh()
     }
 
     /** the subscription to the database flowable that emits items in the current path */
@@ -39,8 +41,9 @@ class FilesViewModel : ViewModel() {
         }
 
     init {
+        ascending.value = true
         displayedNodes.value = listOf()
-        changeDir("root")
+        changeDir(ROOT_DIR_NAME)
     }
 
     override fun onCleared() {
@@ -56,14 +59,25 @@ class FilesViewModel : ViewModel() {
     fun changeDir(path: String) {
         println("changing to dir: $path")
         filesRepo.getDir(path).siaSubscribe({
+            /* note that changing directory will cancel an active search. This is intended */
+            searching.value = false
+            searchTerm.value = null
             currentDir.value = it
+            setDisplayedNodes()
         }, ::onError)
-        /* note that changing directory will essentially cancel an active search. This is intended */
-        searching.value = false
-        nodesSubscription = filesRepo.immediateNodes(path).siaSubscribe({ nodes ->
-            displayedNodes.value = nodes
-        }, ::onError)
+    }
 
+    /** subscribes to the proper source for the displayed nodes, depending on the state of the viewmodel */
+    private fun setDisplayedNodes() {
+        if (searching.value == true) {
+            nodesSubscription = filesRepo.search(searchTerm.value!!, currentDirPath).siaSubscribe({
+                displayedNodes.value = it
+            }, ::onError)
+        } else {
+            nodesSubscription = filesRepo.immediateNodes(currentDirPath).siaSubscribe({ nodes ->
+                displayedNodes.value = nodes
+            }, ::onError)
+        }
     }
 
     fun goToIndexInPath(index: Int) {
@@ -71,23 +85,7 @@ class FilesViewModel : ViewModel() {
         changeDir(splitPath.subList(0, index + 1).joinToString("/"))
     }
 
-    fun goUpDir(): Boolean {
-        val parent = currentDir.value?.parent
-        return if (parent == null) {
-            false
-        } else {
-            changeDir(parent)
-            true
-        }
-    }
-
-    fun displayDetails(node: Node) {
-        detailsItem.value = node
-    }
-
-    /**
-     * Creates a new directory with the given name in the current directory
-     */
+    /** Creates a new directory with the given name in the current directory */
     fun createDir(name: String) = filesRepo.createDir("$currentDirPath/$name").siaSubscribe({}, ::onError)
 
     fun deleteDir(path: String) = filesRepo.deleteDir(path).siaSubscribe({}, ::onError)
@@ -108,21 +106,32 @@ class FilesViewModel : ViewModel() {
 
     fun search(name: String) {
         searching.value = true
-        nodesSubscription = filesRepo.search(name, currentDirPath).siaSubscribe({
-            println("GOT SEARCH RESULTS $it")
-            displayedNodes.value = it
-        }, ::onError)
+        searchTerm.value = name
+        setDisplayedNodes()
     }
 
     fun cancelSearch() {
         searching.value = false
-        nodesSubscription = filesRepo.immediateNodes(currentDirPath).siaSubscribe({
-            displayedNodes.value = it
-        }, ::onError)
+        searchTerm.value = null
+        setDisplayedNodes()
     }
 
     private fun onError(err: SiaError) {
         error.value = err
         error.value = null
+    }
+
+    fun goUpDir(): Boolean {
+        val parent = currentDir.value?.parent
+        return if (parent == null) {
+            false
+        } else {
+            changeDir(parent)
+            true
+        }
+    }
+
+    fun displayDetails(node: Node) {
+        detailsItem.value = node
     }
 }

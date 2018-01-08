@@ -18,7 +18,7 @@ import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.siad.SiadService
 import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.ui.hosting.fragments.HostingFragment
-import com.vandyke.sia.ui.renter.main.RenterFragment
+import com.vandyke.sia.ui.renter.files.view.FilesFragment
 import com.vandyke.sia.ui.terminal.TerminalFragment
 import com.vandyke.sia.ui.wallet.view.WalletFragment
 import com.vandyke.sia.util.observe
@@ -75,7 +75,7 @@ class MainActivity : AppCompatActivity() {
         /* set the VM's visibleFragmentClass differently depending on whether the activity is being recreated */
         if (savedInstanceState == null) {
             viewModel.setDisplayedFragmentClass(when (Prefs.startupPage) {
-                "renter" -> RenterFragment::class.java
+                "renter" -> FilesFragment::class.java
                 "hosting" -> HostingFragment::class.java
                 "wallet" -> WalletFragment::class.java
                 "terminal" -> TerminalFragment::class.java

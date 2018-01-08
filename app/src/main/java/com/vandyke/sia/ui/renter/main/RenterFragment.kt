@@ -20,7 +20,7 @@ class RenterFragment : BaseFragment() {
     lateinit var adapter: Adapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        adapter = Adapter(fragmentManager!!)
+        adapter = Adapter(childFragmentManager)
         pager.adapter = adapter
 
         /* update pager when navigation bar item is selected */
