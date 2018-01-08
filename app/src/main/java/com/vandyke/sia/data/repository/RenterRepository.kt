@@ -67,8 +67,8 @@ class RenterRepository {
     }
 
     fun immediateNodes(path: String) = Flowable.combineLatest(
-            db.dirDao().dirsInDir(path),
-            db.fileDao().filesInDir(path),
+            db.dirDao().dirsInDirByName(path),
+            db.fileDao().filesInDirByName(path),
             BiFunction<List<Dir>, List<RenterFileData>, List<Node>> { dirs, files ->
                 return@BiFunction dirs + files
             })!!

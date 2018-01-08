@@ -24,7 +24,7 @@ class DirHolder(itemView: View) : NodeHolder(itemView) {
         size.text = GenUtil.readableFilesizeString(dir.size)
         itemView.setOnClickListener { v -> viewModel.changeDir(dir.path) }
         more.setOnClickListener {
-            viewModel.displayDetails(dir)
+
         }
     }
 }

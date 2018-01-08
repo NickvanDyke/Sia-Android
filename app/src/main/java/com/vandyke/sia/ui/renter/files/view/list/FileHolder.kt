@@ -24,7 +24,7 @@ class FileHolder(itemView: View) : NodeHolder(itemView) {
         size.text = GenUtil.readableFilesizeString(file.filesize)
         itemView.setOnClickListener(null)
         more.setOnClickListener {
-            viewModel.displayDetails(file)
+
         }
     }
 }

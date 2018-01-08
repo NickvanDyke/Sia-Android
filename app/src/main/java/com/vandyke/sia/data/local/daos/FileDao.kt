@@ -20,7 +20,16 @@ interface FileDao {
 
     @Language("RoomSql")
     @Query("SELECT * FROM files WHERE path LIKE :path || '/%' AND path NOT LIKE :path || '/%/%' ORDER BY name")
-    fun filesInDir(path: String): Flowable<List<RenterFileData>>
+    fun filesInDirByName(path: String): Flowable<List<RenterFileData>>
+
+    @Query("SELECT * FROM files WHERE path LIKE :path || '/%' AND path NOT LIKE :path || '/%/%' ORDER BY name DESC")
+    fun filesInDirByNameDesc(path: String): Flowable<List<RenterFileData>>
+
+    @Query("SELECT * FROM files WHERE path LIKE :path || '/%' AND path NOT LIKE :path || '/%/%' ORDER BY filesize")
+    fun filesInDirBySize(path: String): Flowable<List<RenterFileData>>
+
+    @Query("SELECT * FROM files WHERE path LIKE :path || '/%' AND path NOT LIKE :path || '/%/%' ORDER BY filesize DESC")
+    fun filesInDirBySizeDesc(path: String): Flowable<List<RenterFileData>>
 
     @Language("RoomSql")
     @Query("SELECT * FROM files WHERE path LIKE :path || '/%'")

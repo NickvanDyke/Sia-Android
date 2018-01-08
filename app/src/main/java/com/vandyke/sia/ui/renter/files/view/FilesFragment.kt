@@ -21,8 +21,6 @@ import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.Spinner
 import com.vandyke.sia.R
-import com.vandyke.sia.data.local.models.renter.Dir
-import com.vandyke.sia.data.models.renter.RenterFileData
 import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.ui.renter.files.view.list.NodesAdapter
 import com.vandyke.sia.ui.renter.files.viewmodel.FilesViewModel
@@ -42,6 +40,8 @@ class FilesFragment : BaseFragment() {
     private var searchView: SearchView? = null
     /** searchItem.isActionViewExpanded() doesn't always return the correct value? so need to keep track ourselves and use that */
     private var searchIsExpanded = false
+
+    private var ascendingItem: MenuItem? = null
 
     private lateinit var spinnerView: Spinner
     private lateinit var pathAdapter: ArrayAdapter<String>
@@ -104,17 +104,6 @@ class FilesFragment : BaseFragment() {
         }
 
         /* observe viewModel stuff */
-        viewModel.displayedNodes.observe(this) {
-            nodesAdapter.display(it)
-        }
-
-        viewModel.searching.observe(this) {
-            if (it && !searchIsExpanded)
-                searchItem?.expandActionView()
-            else if (!it && searchIsExpanded)
-                searchItem?.collapseActionView()
-        }
-
         viewModel.currentDir.observe(this) {
             pathAdapter.clear()
             val path = it.path.split('/')
@@ -125,16 +114,24 @@ class FilesFragment : BaseFragment() {
             setSearchHint()
         }
 
+        viewModel.displayedNodes.observe(this) {
+            nodesAdapter.display(it)
+        }
+
+        viewModel.ascending.observe(this) {
+            ascendingItem?.isChecked = it
+        }
+
+        viewModel.searching.observe(this) {
+            if (it && !searchIsExpanded)
+                searchItem?.expandActionView()
+            else if (!it && searchIsExpanded)
+                searchItem?.collapseActionView()
+        }
+
         viewModel.error.observe(this) {
             it.snackbar(coordinator) // TODO: make FAB move up when snackbar appears
             nodesListRefresh.isRefreshing = false
-        }
-
-        viewModel.detailsItem.observe(this) {
-            if (it is Dir)
-                DirBottomSheetFragment().show(childFragmentManager, null)
-            else if (it is RenterFileData)
-                FileBottomSheetFragment().show(childFragmentManager, null)
         }
     }
 
@@ -183,6 +180,9 @@ class FilesFragment : BaseFragment() {
                 return true
             }
         })
+
+        ascendingItem = menu.findItem(R.id.ascendingToggle)
+        ascendingItem!!.isChecked = viewModel.ascending.value ?: false
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {

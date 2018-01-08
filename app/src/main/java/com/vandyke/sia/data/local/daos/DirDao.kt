@@ -35,7 +35,16 @@ interface DirDao {
     /* ordered by name because otherwise the order of the list emitted by the flowable can swap for whatever reason,
      * causing unnecessary rearrangements in the UI */
     @Query("SELECT * FROM dirs WHERE path LIKE :path || '/%' AND path NOT LIKE :path || '/%/%' ORDER BY name")
-    fun dirsInDir(path: String): Flowable<List<Dir>>
+    fun dirsInDirByName(path: String): Flowable<List<Dir>>
+
+    @Query("SELECT * FROM dirs WHERE path LIKE :path || '/%' AND path NOT LIKE :path || '/%/%' ORDER BY name DESC")
+    fun dirsInDirByNameDesc(path: String): Flowable<List<Dir>>
+
+    @Query("SELECT * FROM dirs WHERE path LIKE :path || '/%' AND path NOT LIKE :path || '/%/%' ORDER BY size")
+    fun dirsInDirBySize(path: String): Flowable<List<Dir>>
+
+    @Query("SELECT * FROM dirs WHERE path LIKE :path || '/%' AND path NOT LIKE :path || '/%/%' ORDER BY size DESC")
+    fun dirsInDirBySizeDesc(path: String): Flowable<List<Dir>>
 
     @Query("SELECT * FROM dirs WHERE path LIKE :path || '/%' AND name LIKE '%' || :name || '%' ORDER BY name")
     fun dirsWithNameUnderDir(name: String, path: String): Flowable<List<Dir>>

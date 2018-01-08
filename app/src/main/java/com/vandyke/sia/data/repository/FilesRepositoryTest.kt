@@ -109,12 +109,23 @@ class FilesRepositoryTest {
         }.toCompletable()!!
     }
 
-    fun immediateNodes(path: String) = Flowable.combineLatest(
-            db.dirDao().dirsInDir(path),
-            db.fileDao().filesInDir(path),
-            BiFunction<List<Dir>, List<RenterFileData>, List<Node>> { dirs, files ->
-                return@BiFunction dirs + files
-            })!!
+    fun immediateNodes(path: String, ascending: Boolean): Flowable<List<Node>> {
+        val dirs: Flowable<List<Dir>>
+        val files: Flowable<List<RenterFileData>>
+        if (ascending) {
+            dirs = db.dirDao().dirsInDirByName(path)
+            files = db.fileDao().filesInDirByName(path)
+        } else {
+            dirs = db.dirDao().dirsInDirByNameDesc(path)
+            files = db.fileDao().filesInDirByNameDesc(path)
+        }
+        return Flowable.combineLatest(
+                dirs,
+                files,
+                BiFunction<List<Dir>, List<RenterFileData>, List<Node>> { dirs, files ->
+                    return@BiFunction dirs + files
+                })!!
+    }
 
     fun getDir(path: String) = db.dirDao().getDir(path)
 

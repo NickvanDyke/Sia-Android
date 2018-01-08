@@ -21,7 +21,6 @@ class FilesViewModel : ViewModel() {
     val searching = MutableLiveData<Boolean>()
     val searchTerm = MutableLiveData<String>() // maybe bind this to the search query?
     val ascending = MutableLiveData<Boolean>()
-    val detailsItem = MutableLiveData<Node>()
     val error = MutableLiveData<SiaError>()
 
     val currentDirPath
@@ -42,6 +41,9 @@ class FilesViewModel : ViewModel() {
 
     init {
         ascending.value = true
+        ascending.observeForever({
+            setDisplayedNodes()
+        })
         displayedNodes.value = listOf()
         changeDir(ROOT_DIR_NAME)
     }
@@ -49,6 +51,7 @@ class FilesViewModel : ViewModel() {
     override fun onCleared() {
         super.onCleared()
         subscription.dispose()
+        nodesSubscription?.dispose()
     }
 
     fun refresh() {
@@ -74,7 +77,7 @@ class FilesViewModel : ViewModel() {
                 displayedNodes.value = it
             }, ::onError)
         } else {
-            nodesSubscription = filesRepo.immediateNodes(currentDirPath).siaSubscribe({ nodes ->
+            nodesSubscription = filesRepo.immediateNodes(currentDirPath, ascending.value!!).siaSubscribe({ nodes ->
                 displayedNodes.value = nodes
             }, ::onError)
         }
@@ -129,9 +132,5 @@ class FilesViewModel : ViewModel() {
             changeDir(parent)
             true
         }
-    }
-
-    fun displayDetails(node: Node) {
-        detailsItem.value = node
     }
 }
