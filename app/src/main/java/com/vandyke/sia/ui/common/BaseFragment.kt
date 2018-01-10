@@ -14,19 +14,26 @@ abstract class BaseFragment : Fragment() {
     abstract val layoutResId: Int
     open val hasOptionsMenu = false
     /** this is so that if the activity is recreated, therefore recreating this fragment, it's
-     *  onShow() won't be called if it wasn't visible before recreating. */
+     *  onShow() won't be called if it wasn't visible before recreation. */
     private var wasVisible = false
     private var recreating = false
+
+    /** need this variable because isVisible sometimes returns false in onResume if this is the first fragment being shown */
+    private var firstTimeVisible = true
+
+    // could maybe use userVisibleHint to simplify the above? It persists across save states and recreations apparently
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         if (savedInstanceState != null) {
             recreating = true
             wasVisible = savedInstanceState["visible"] as Boolean
+            firstTimeVisible = false
         }
         setHasOptionsMenu(hasOptionsMenu)
         return inflater.inflate(layoutResId, container, false)
     }
 
+    /** returns true if the back press was consumed/used by this fragment, otherwise false */
     open fun onBackPressed(): Boolean = false
 
     /** called in onResume and in onHiddenChanged when hidden is false. Basically, called whenever
@@ -52,8 +59,9 @@ abstract class BaseFragment : Fragment() {
             recreating = false
             if (wasVisible)
                 onShow()
-        } else {
+        } else if (firstTimeVisible || isVisible) {
             onShow()
+            firstTimeVisible = false
         }
     }
 

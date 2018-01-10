@@ -120,7 +120,8 @@ class MainActivity : AppCompatActivity() {
         } else {
             tx.show(newFragment)
         }
-        visibleFragment?.let { tx.hide(it) }
+        if (visibleFragment != null)
+            tx.hide(visibleFragment)
         tx.commit()
         visibleFragment = newFragment
     }

@@ -207,6 +207,8 @@ class SiadService : Service() {
     companion object {
         // TODO: maybe emit an error from this if the service isn't already running, and don't attempt to bind?
         // If I don't want to start it as a result of binding, that is. Not sure if that's what I'll want
+        /** Note that the service is returned and then immediately unbound. So if the service is started because
+          * of this binding, then it will also immediately stop */
         fun getService(context: Context) = Single.create<SiadService> {
             val connection = object : ServiceConnection {
                 override fun onServiceConnected(name: ComponentName, service: IBinder) {

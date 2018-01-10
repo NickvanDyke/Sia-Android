@@ -36,6 +36,7 @@ interface DirDao {
     fun getDir(path: String): Single<Dir>
 
     /* Room doesn't allow using variables for certain things, so we need different queries for each sorting method */
+    // TODO: Use RawQuery instead once it's released. Should be in the next version of Room
     @Query("SELECT * FROM dirs WHERE path LIKE :path || '/%' AND path NOT LIKE :path || '/%/%' ORDER BY name ASC, size ASC")
     fun dirsInDirByName(path: String): Flowable<List<Dir>>
 
