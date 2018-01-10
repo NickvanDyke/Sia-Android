@@ -19,6 +19,13 @@ import java.net.SocketException
 import java.net.SocketTimeoutException
 
 class SiaError : Throwable {
+    override val message: String?
+        get() = reason.msg
+
+    override fun getLocalizedMessage(): String {
+        return reason.msg
+    }
+
     val reason: Reason
 
     constructor(errorMessage: String) {
@@ -26,7 +33,12 @@ class SiaError : Throwable {
     }
 
     constructor(t: Throwable) {
-        reason = getReasonFromThrowable(t)
+        reason = if (t is SiaError) {
+            println("Chaining SiaErrors")
+            t.reason
+        } else {
+            getReasonFromThrowable(t)
+        }
     }
 
     constructor(reason: Reason) {
@@ -65,6 +77,7 @@ class SiaError : Throwable {
     }
 
     private fun getReasonFromThrowable(t: Throwable): Reason {
+        t.printStackTrace()
         return when (t) {
             /* HTTPException is emitted by retrofit observables on HTTP non-2XX responses */
             is HttpException -> getReasonFromMsg(t.response().errorBody()!!.string())
@@ -108,7 +121,7 @@ class SiaError : Throwable {
         INVALID_SEED("Invalid seed"),
         CANNOT_INIT_FROM_SEED_UNTIL_SYNCED("Cannot create wallet from seed until fully synced"),
         CANNOT_SWEEP_UNTIL_SYNCED("Cannot sweep until fully synced"),
-        NOTHING_TO_SWEEP("Seed doesn't have anything to sweep"),
+        NOTHING_TO_SWEEP("Seed doesn't have anything sweep"),
         /* renter */
         DIRECTORY_ALREADY_EXISTS("Directory already exists"),
         /* explorer */

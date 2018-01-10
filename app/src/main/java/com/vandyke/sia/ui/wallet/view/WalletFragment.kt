@@ -68,14 +68,14 @@ class WalletFragment : BaseFragment() {
         viewModel.activeTasks.observe(this) {
             progress.visibility = if (it > 0) View.VISIBLE else View.GONE
             if (it == 0)
-                transactionListSwipe?.isRefreshing = false
+                transactionListSwipe.isRefreshing = false
         }
 
         /* observe data in the viewModel */
         viewModel.wallet.observe(this) {
-            balanceUnconfirmed?.text = ((if (it.unconfirmedSiacoinBalance > BigDecimal.ZERO) "+" else "") +
+            balanceUnconfirmed.text = ((if (it.unconfirmedSiacoinBalance > BigDecimal.ZERO) "+" else "") +
                     "${it.unconfirmedSiacoinBalance.toSC().round().toPlainString()} unconfirmed")
-            balanceText?.text = it.confirmedSiacoinBalance.toSC().round().toPlainString()
+            balanceText.text = it.confirmedSiacoinBalance.toSC().round().toPlainString()
             setStatusIcon()
             updateUsdValue()
         }
@@ -90,22 +90,22 @@ class WalletFragment : BaseFragment() {
 
         viewModel.consensus.observe(this) {
             if (viewModel.numPeers.value ?: 0 == 0) {
-                syncText?.text = ("Not syncing: ${it.height}")
-                syncBar?.progress = it.syncProgress.toInt()
+                syncText.text = ("Not syncing: ${it.height}")
+                syncBar.progress = it.syncProgress.toInt()
             } else {
                 if (it.synced) {
-                    syncText?.text = ("${getString(R.string.synced)}: ${it.height}")
-                    syncBar?.progress = 100
+                    syncText.text = ("${getString(R.string.synced)}: ${it.height}")
+                    syncBar.progress = 100
                 } else {
-                    syncText?.text = ("${getString(R.string.syncing)}: ${it.height}")
-                    syncBar?.progress = it.syncProgress.toInt()
+                    syncText.text = ("${getString(R.string.syncing)}: ${it.height}")
+                    syncBar.progress = it.syncProgress.toInt()
                 }
             }
         }
 
         viewModel.numPeers.observe(this) {
             if (it == 0)
-                syncText?.text = ("Not syncing: ${viewModel.consensus.value?.height ?: 0}")
+                syncText.text = ("Not syncing: ${viewModel.consensus.value?.height ?: 0}")
         }
 
         viewModel.success.observe(this) {

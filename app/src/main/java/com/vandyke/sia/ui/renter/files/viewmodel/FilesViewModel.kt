@@ -13,6 +13,7 @@ import com.vandyke.sia.data.local.models.renter.Node
 import com.vandyke.sia.data.repository.FilesRepositoryTest
 import com.vandyke.sia.data.repository.ROOT_DIR_NAME
 import com.vandyke.sia.isSiadLoaded
+import com.vandyke.sia.util.NonNullLiveData
 import com.vandyke.sia.util.siaSubscribe
 import io.reactivex.disposables.Disposable
 
@@ -20,11 +21,11 @@ class FilesViewModel : ViewModel() {
     val displayedNodes = MutableLiveData<List<Node>>()
     val currentDir = MutableLiveData<Dir>()
 
-    val searching = MutableLiveData<Boolean>()
-    val searchTerm = MutableLiveData<String>() // maybe bind this to the search query?
+    val searching = NonNullLiveData(false)
+    val searchTerm = NonNullLiveData("") // maybe bind this to the search query?
 
-    val ascending = MutableLiveData<Boolean>()
-    val sortBy = MutableLiveData<FilesRepositoryTest.SortBy>()
+    val ascending = NonNullLiveData(Prefs.ascending)
+    val sortBy = NonNullLiveData(Prefs.sortBy)
 
     val error = MutableLiveData<SiaError>()
 
@@ -45,17 +46,13 @@ class FilesViewModel : ViewModel() {
         }
 
     init {
-        ascending.value = Prefs.ascending
-        sortBy.value = Prefs.sortBy
-        ascending.observeForever {
+        ascending.observeForevs {
             setDisplayedNodes()
-            if (it != null)
-                Prefs.ascending = it
+            Prefs.ascending = it
         }
-        sortBy.observeForever {
+        sortBy.observeForevs {
             setDisplayedNodes()
-            if (it != null)
-                Prefs.sortBy = it
+            Prefs.sortBy = it
         }
         displayedNodes.value = listOf()
         changeDir(ROOT_DIR_NAME)
@@ -88,12 +85,12 @@ class FilesViewModel : ViewModel() {
 
     /** subscribes to the proper source for the displayed nodes, depending on the state of the viewmodel */
     private fun setDisplayedNodes() {
-        if (searching.value == true) {
-            nodesSubscription = filesRepo.search(searchTerm.value!!, currentDirPath, sortBy.value!!, ascending.value!!).siaSubscribe({
+        if (searching.value) {
+            nodesSubscription = filesRepo.search(searchTerm.value!!, currentDirPath, sortBy.value, ascending.value).siaSubscribe({
                 displayedNodes.value = it
             }, ::onError)
         } else {
-            nodesSubscription = filesRepo.immediateNodes(currentDirPath, sortBy.value!!, ascending.value!!).siaSubscribe({ nodes ->
+            nodesSubscription = filesRepo.immediateNodes(currentDirPath, sortBy.value, ascending.value).siaSubscribe({ nodes ->
                 displayedNodes.value = nodes
             }, ::onError)
         }
@@ -131,7 +128,7 @@ class FilesViewModel : ViewModel() {
 
     fun cancelSearch() {
         searching.value = false
-        searchTerm.value = null
+        searchTerm.value = ""
         setDisplayedNodes()
     }
 

@@ -11,7 +11,6 @@ import android.arch.persistence.room.Query
 import com.vandyke.sia.data.models.wallet.AddressData
 import io.reactivex.Flowable
 import io.reactivex.Single
-import org.intellij.lang.annotations.Language
 
 @Dao
 interface AddressDao {
@@ -21,13 +20,14 @@ interface AddressDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertAll(addresses: List<AddressData>)
 
-    @Language("RoomSql")
     @Query("SELECT * FROM addresses ORDER BY Random() LIMIT 1")
     fun getAddress(): Single<AddressData>
 
-    @Language("RoomSql")
     @Query("SELECT * FROM addresses")
     fun all(): Flowable<List<AddressData>>
+
+    @Query("SELECT * FROM addresses")
+    fun getAll(): Single<List<AddressData>>
 
     @Query("DELETE FROM addresses")
     fun deleteAll()

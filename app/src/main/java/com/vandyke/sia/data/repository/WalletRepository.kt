@@ -39,10 +39,23 @@ class WalletRepository {
     fun getAddress() = siaApi.walletAddress().doOnSuccess {
         db.addressDao().insert(it)
     }.onErrorResumeNext {
+        // fallback to DB
         val siaError = SiaError(it)
         // don't attempt to get an address from the db if the reason the request to the API failed is that it doesn't have a wallet
         if (siaError.reason != SiaError.Reason.WALLET_NOT_ENCRYPTED)
             db.addressDao().getAddress().onErrorResumeNext(Single.error(siaError))
+        else
+            Single.error(siaError)
+    }!!
+
+    fun getAddresses(): Single<List<AddressData>> = siaApi.walletAddresses().map {
+        it.addresses.map { AddressData(it) }
+    }.doOnSuccess {
+        db.addressDao().insertAll(it)
+    }.onErrorResumeNext {
+        val siaError = SiaError(it)
+        if (siaError.reason != SiaError.Reason.WALLET_NOT_ENCRYPTED)
+            db.addressDao().getAll().onErrorResumeNext(Single.error(siaError))
         else
             Single.error(siaError)
     }!!
@@ -58,14 +71,14 @@ class WalletRepository {
 
     fun lock() = siaApi.walletLock()
 
-    fun init(password: String, dictionary: String, force: Boolean) = siaApi.walletInit(password, dictionary, force).doOnSuccess {
+    fun init(password: String, dictionary: String, force: Boolean) = siaApi.walletInit(password, dictionary, force).doAfterSuccess {
         clearWalletDb().subscribe()
     }!!
 
     fun initSeed(password: String, dictionary: String, seed: String, force: Boolean) = siaApi.walletInitSeed(password, dictionary, seed, force)
             .doOnComplete {
                 clearWalletDb().subscribe()
-            }
+            }!!
 
     fun send(amount: String, destination: String) = siaApi.walletSiacoins(amount, destination)
 

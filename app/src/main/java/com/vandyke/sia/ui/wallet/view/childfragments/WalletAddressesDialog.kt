@@ -10,7 +10,6 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import com.vandyke.sia.R
 import com.vandyke.sia.ui.common.TextCopyAdapter
-import com.vandyke.sia.util.observe
 import kotlinx.android.synthetic.main.fragment_wallet_addresses.*
 
 class WalletAddressesDialog : BaseWalletFragment() {
@@ -24,11 +23,9 @@ class WalletAddressesDialog : BaseWalletFragment() {
         addressesList.addItemDecoration(DividerItemDecoration(addressesList.context, layoutManager.orientation))
         addressesList.adapter = adapter
 
-        viewModel.addresses.observe(this) {
-            adapter.data = it.map { it.address }
+        viewModel.getAddresses().subscribe({ addresses ->
+            adapter.data = addresses.map { it.address }
             adapter.notifyDataSetChanged()
-        }
-
-        viewModel.getAddresses()
+        }, {})
     }
 }

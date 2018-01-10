@@ -10,7 +10,6 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import com.vandyke.sia.R
 import com.vandyke.sia.ui.common.TextCopyAdapter
-import com.vandyke.sia.util.observe
 import kotlinx.android.synthetic.main.fragment_wallet_seeds.*
 
 class WalletSeedsDialog : BaseWalletFragment() {
@@ -24,13 +23,11 @@ class WalletSeedsDialog : BaseWalletFragment() {
         seedsList.addItemDecoration(DividerItemDecoration(seedsList.context, layoutManager.orientation))
         seedsList.adapter = adapter
 
-        viewModel.seeds.observe(this) {
+        viewModel.getSeeds().subscribe({ seeds ->
             val list = mutableListOf<String>()
-            list.addAll(it.allseeds)
+            list.addAll(seeds.allseeds)
             adapter.data = list
             adapter.notifyDataSetChanged()
-        }
-
-        viewModel.getSeeds()
+        }, {})
     }
 }

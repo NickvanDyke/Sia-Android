@@ -14,17 +14,20 @@ import com.vandyke.sia.data.repository.ConsensusRepository
 import com.vandyke.sia.data.repository.ScValueRepository
 import com.vandyke.sia.data.repository.WalletRepository
 import com.vandyke.sia.siadOutput
+import com.vandyke.sia.util.NonNullLiveData
 import com.vandyke.sia.util.siaSubscribe
 import com.vandyke.sia.util.toSC
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 
 class WalletViewModel : ViewModel() {
     val wallet = MutableLiveData<WalletData>()
     val usd = MutableLiveData<ScValueData>()
     val consensus = MutableLiveData<ConsensusData>()
     val transactions = MutableLiveData<List<TransactionData>>()
-    val activeTasks = MutableLiveData<Int>()
-    val numPeers = MutableLiveData<Int>()
+    val activeTasks = NonNullLiveData(0) // TODO: ideally, also represent refreshing, separately from the number of active tasks
+    val numPeers = NonNullLiveData(0)
     val success = MutableLiveData<String>()
     val error = MutableLiveData<SiaError>()
 
@@ -34,10 +37,6 @@ class WalletViewModel : ViewModel() {
     /* when you see a LiveData's value being set to null immediately after, it's so that an observer
        won't receive anything upon initial subscription to it (normally it still would, but generally
        an extension function is used that doesn't pass the value unless it's not null) */
-    /* the below LiveDatas are used by child fragments of the Wallet page */
-    val address = MutableLiveData<AddressData>()
-    val addresses = MutableLiveData<List<AddressData>>()
-    val seeds = MutableLiveData<SeedsData>()
 
     // TODO: inject these
     private val walletRepo = WalletRepository()
@@ -50,7 +49,6 @@ class WalletViewModel : ViewModel() {
     }
 
     init {
-        activeTasks.value = 0
         /* subscribe to flowables from the database. Note that since they're flowables, they'll update
            when their results update, and therefore we don't need to do anything but subscribe this once */
         walletRepo.wallet().siaSubscribe({
@@ -92,12 +90,12 @@ class WalletViewModel : ViewModel() {
     }
 
     private fun incrementTasks() {
-        activeTasks.value = activeTasks.value!! + 1
+        activeTasks.value = activeTasks.value + 1
     }
 
     private fun decrementTasks() {
-        if (activeTasks.value!! > 0)
-            activeTasks.value = activeTasks.value!! - 1
+        if (activeTasks.value > 0)
+            activeTasks.value = activeTasks.value - 1
     }
 
     fun refreshAll() {
@@ -134,7 +132,8 @@ class WalletViewModel : ViewModel() {
     fun unlock(password: String) {
         incrementTasks()
         walletRepo.unlock(password).siaSubscribe({
-            setSuccess("Unlocked") // TODO: maybe have cool animations eventually, to indicate locking/unlocking/creating?
+            setSuccess("Unlocked")
+            refreshWallet()
         }, ::onError)
     }
 
@@ -146,33 +145,6 @@ class WalletViewModel : ViewModel() {
         }, ::onError)
     }
 
-    fun getAddress() {
-        incrementTasks()
-        walletRepo.getAddress().siaSubscribe({
-            decrementTasks()
-            address.value = it
-            address.value = null
-        }, ::onError)
-    }
-
-    fun getAddresses() {
-        incrementTasks()
-        walletRepo.addresses().siaSubscribe({
-            decrementTasks()
-            addresses.value = it
-            addresses.value = null
-        }, ::onError)
-    }
-
-    fun getSeeds() {
-        incrementTasks()
-        walletRepo.getSeeds().siaSubscribe({
-            decrementTasks()
-            seeds.value = it
-            seeds.value = null
-        }, ::onError)
-    }
-
     fun create(password: String, force: Boolean, seed: String? = null) {
         incrementTasks()
         if (seed == null) {
@@ -180,12 +152,14 @@ class WalletViewModel : ViewModel() {
                 setSuccess("Created wallet")
                 refreshWallet()
                 this.seed.value = it.primaryseed
+                this.seed.value = null
             }, ::onError)
         } else {
             walletRepo.initSeed(password, "english", seed, force).siaSubscribe({
                 setSuccess("Created wallet")
                 refreshWallet()
                 this.seed.value = seed
+                this.seed.value = null
             }, ::onError)
         }
     }
@@ -212,5 +186,36 @@ class WalletViewModel : ViewModel() {
             decrementTasks()
             refreshWallet()
         }, ::onError)
+    }
+
+    /* the below are exposed as Singles because it's more straightforward
+     * for the child fragments that use these to just subscribe to them,
+     * as opposed to them observing some LiveData and then calling a function
+     * that will populate that LiveData */
+    fun getAddress(): Single<AddressData> {
+        incrementTasks()
+        return walletRepo.getAddress()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnError { onError(it as SiaError) }
+                .doAfterSuccess { decrementTasks() }
+    }
+
+    fun getAddresses(): Single<List<AddressData>> {
+        incrementTasks()
+        return walletRepo.getAddresses()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnError { onError(it as SiaError) }
+                .doAfterSuccess { decrementTasks() }
+    }
+
+    fun getSeeds(): Single<SeedsData> {
+        incrementTasks()
+        return walletRepo.getSeeds()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnError { onError(SiaError(it)) }
+                .doAfterSuccess { decrementTasks() }
     }
 }
