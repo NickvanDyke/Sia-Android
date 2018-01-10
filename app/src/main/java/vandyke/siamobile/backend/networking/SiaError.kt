@@ -49,7 +49,7 @@ class SiaError {
             errorMessage.contains("unsupported on cold storage wallet") -> Reason.UNSUPPORTED_ON_COLD_WALLET
             errorMessage.contains("word not found in dictionary for given language") -> Reason.INVALID_WORD_IN_SEED
             errorMessage.contains("seed failed checksum verification") -> Reason.INVALID_SEED
-            errorMessage.contains("unrecognized hash used as input to /explorer/hash") -> Reason.UNRECOGNIZED_HASH
+            errorMessage.contains("hash not found") -> Reason.HASH_NOT_FOUND
             errorMessage.contains("Cloudflare") -> Reason.ERROR_REACHING_SIATECH
             else -> {
                 println("unaccounted for error message: $errorMessage")
@@ -92,7 +92,7 @@ class SiaError {
         CANNOT_INIT_FROM_SEED_UNTIL_SYNCED("Cannot create wallet from seed until fully synced"),
         UNSUPPORTED_ON_COLD_WALLET("Unsupported on cold storage wallet"),
         UNEXPECTED_END_OF_STREAM("Unexpected end of stream"),
-        UNRECOGNIZED_HASH("Unrecognized hash"),
+        HASH_NOT_FOUND("Hash not found"),
         ERROR_REACHING_SIATECH("Unable to reach explore.sia.tech/explorer to estimate wallet balance")
     }
 

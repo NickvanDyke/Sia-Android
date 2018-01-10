@@ -9,7 +9,6 @@ package vandyke.siamobile.ui.wallet.view
 import android.app.Fragment
 import android.os.Bundle
 import android.support.design.widget.Snackbar
-import android.support.v7.app.AlertDialog
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.view.*
@@ -85,20 +84,6 @@ class WalletFragment : Fragment(), IWalletView, SiadService.SiadListener {
 
         /* listen to siad output, so that we can refresh the presenter at appropriate times */
         SiadService.addListener(this)
-
-        AlertDialog.Builder(activity!!)
-                .setTitle("Notice")
-                .setMessage("The Sia team has recently updated their website, explore.sia.tech, which Sia Mobile" +
-                        " previously used to estimate your balance and transactions. They haven't yet added the" +
-                        " necessary API endpoints to it that Sia Mobile uses, which is why you'll see errors" +
-                        " and your balance and transactions won't load. Rest assured that your coins are still safe and still belong" +
-                        " to your wallet seed - Sia Mobile just can't estimate them currently." +
-                        " You can also still safely receive coins at any of your receive addresses. Remember that" +
-                        " you can load your wallet seed on Sia UI on your desktop to access and spend your coins." +
-                        " I have temporarily unpublished Sia Mobile from the Play Store until the Sia team adds the" +
-                        " necessary features, at which point I will update it. Sorry for the inconvenience.")
-                .setPositiveButton(getString(android.R.string.ok), null)
-                .show()
     }
 
     override fun onSuccess() {

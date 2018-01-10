@@ -26,7 +26,7 @@ class WalletModelColdStorage : IWalletModel {
     private var addresses: List<String> = prefs.coldStorageAddresses.toList()
     private var password: String = prefs.coldStoragePassword
     private var exists: Boolean = prefs.coldStorageExists
-    private var unlocked: Boolean = false
+    private var unlocked: Boolean = true
 
     override fun getWallet(callback: SiaCallback<WalletData>) {
         val counter = AtomicInteger(addresses.size)
@@ -41,7 +41,7 @@ class WalletModelColdStorage : IWalletModel {
                 if (counter.decrementAndGet() == 0)
                     callback.onSuccess?.invoke(WalletData(exists, unlocked, false, balance))
             }, {
-                if (it.reason == SiaError.Reason.UNRECOGNIZED_HASH) {
+                if (it.reason == SiaError.Reason.HASH_NOT_FOUND) {
                     if (counter.decrementAndGet() == 0)
                         callback.onSuccess?.invoke(WalletData(exists, unlocked, false, balance))
                 } else {
@@ -76,7 +76,7 @@ class WalletModelColdStorage : IWalletModel {
                 if (counter.decrementAndGet() == 0)
                     callback.onSuccess?.invoke(TransactionsData(txs.sortedBy { it.confirmationtimestamp }))
             }, {
-                if (it.reason == SiaError.Reason.UNRECOGNIZED_HASH) {
+                if (it.reason == SiaError.Reason.HASH_NOT_FOUND) {
                     if (counter.decrementAndGet() == 0)
                         callback.onSuccess?.invoke(TransactionsData(txs.sortedBy { it.confirmationtimestamp }))
                 } else {
@@ -143,7 +143,7 @@ class WalletModelColdStorage : IWalletModel {
 
         this.password = password
         exists = true
-        unlocked = false
+        unlocked = true
         prefs.coldStorageSeed = this.seed
         prefs.coldStorageAddresses = HashSet(addresses)
         prefs.coldStoragePassword = password
