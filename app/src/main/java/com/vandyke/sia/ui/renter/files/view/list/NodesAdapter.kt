@@ -19,7 +19,7 @@ class NodesAdapter(val viewModel: FilesViewModel) : RecyclerView.Adapter<NodeHol
     private val DIR = 0
     private val FILE = 1
 
-    private var nodes = listOf<Node>()
+    private val nodes = mutableListOf<Node>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NodeHolder {
         if (viewType == DIR) {
@@ -42,9 +42,10 @@ class NodesAdapter(val viewModel: FilesViewModel) : RecyclerView.Adapter<NodeHol
 
     override fun getItemCount() = nodes.size
 
-    fun display(nodes: List<Node>) {
-        val diffResult = DiffUtil.calculateDiff(NodesDiffUtil(this.nodes, nodes))
-        this.nodes = nodes
+    fun display(newNodes: List<Node>) {
+        val diffResult = DiffUtil.calculateDiff(NodesDiffUtil(this.nodes, newNodes))
+        nodes.clear()
+        nodes.addAll(newNodes)
         diffResult.dispatchUpdatesTo(this) // TODO: causes delay when the entire list changes, as opposed to notifyDataSetChanged
     }
 
@@ -58,6 +59,6 @@ class NodesAdapter(val viewModel: FilesViewModel) : RecyclerView.Adapter<NodeHol
 
         override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int) =
                 oldList[oldItemPosition].name == newList[newItemPosition].name
-        && oldList[oldItemPosition].modified == newList[newItemPosition].modified
+                        && oldList[oldItemPosition].modified == newList[newItemPosition].modified
     }
 }

@@ -14,13 +14,15 @@ abstract class BaseFragment : Fragment() {
     abstract val layoutResId: Int
     open val hasOptionsMenu = false
     /** this is so that if the activity is recreated, therefore recreating this fragment, it's
-     *  onShow() won't be called if it wasn't visible before recreating. I might need to do a similar
-     *  thing so that onHide() isn't called as a result of recreating when it's destroyed. */
-    private var visibleWhenRecreated = true
+     *  onShow() won't be called if it wasn't visible before recreating. */
+    private var wasVisible = false
+    private var recreating = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        if (savedInstanceState != null)
-            visibleWhenRecreated = savedInstanceState["visible"] as Boolean
+        if (savedInstanceState != null) {
+            recreating = true
+            wasVisible = savedInstanceState["visible"] as Boolean
+        }
         setHasOptionsMenu(hasOptionsMenu)
         return inflater.inflate(layoutResId, container, false)
     }
@@ -46,18 +48,23 @@ abstract class BaseFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         activity!!.invalidateOptionsMenu()
-        if (visibleWhenRecreated)
-            onShow() // TODO: figure out correct times to call this
-        else
-            visibleWhenRecreated = true
+        if (recreating) {
+            recreating = false
+            if (wasVisible)
+                onShow()
+        } else {
+            onShow()
+        }
     }
 
     /** call through to the super implementation when overriding */
     override fun onPause() {
         super.onPause()
-        onHide()
+        if (isVisible)
+            onHide()
     }
 
+    /** call through to the super implementation when overriding */
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putBoolean("visible", isVisible)

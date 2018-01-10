@@ -19,7 +19,7 @@ import com.vandyke.sia.data.models.wallet.WalletData
 @Database(
         entities = [Dir::class, RenterFileData::class, WalletData::class, TransactionData::class,
             AddressData::class, ConsensusData::class, ScValueData::class],
-        version = 16)
+        version = 17)
 @TypeConverters(com.vandyke.sia.data.local.TypeConverters::class)
 abstract class AppDatabase : RoomDatabase() {
     /* renter */

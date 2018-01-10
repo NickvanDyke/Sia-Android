@@ -26,5 +26,7 @@ data class ConsensusData @JsonCreator constructor(
 
     @PrimaryKey
     var timestamp = System.currentTimeMillis()
-    var syncProgress: Double = height.toDouble() / SCUtil.estimatedBlockHeightAt(System.currentTimeMillis() / 1000) * 100
+
+    val syncProgress: Double
+        get() = height.toDouble() / SCUtil.estimatedBlockHeightAt(System.currentTimeMillis() / 1000) * 100
 }
