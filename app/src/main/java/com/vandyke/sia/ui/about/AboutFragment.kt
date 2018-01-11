@@ -26,21 +26,45 @@ class AboutFragment : BaseFragment() {
                     ChangeLog(context).fullLogDialog.show()
                 }
 
-        val whySia = Element("Why Sia?", R.drawable.ic_info_outline)
-                .setIntent(Intent(context, AboutSiaActivity::class.java))
-
         val siaHelp = Element("Help", R.drawable.ic_help_outline)
                 .setIntent(Intent(Intent.ACTION_VIEW, Uri.parse("https://support.sia.tech/help_center")))
 
+        val shareIntent = Intent.createChooser(
+                Intent(Intent.ACTION_SEND)
+                .setType("text/plain")
+                .putExtra(Intent.EXTRA_TEXT, "TODO"), "Share Sia") // TODO: some share sentence here, with the play store url
+        val share = Element("Share", R.drawable.ic_share)
+                .setIntent(shareIntent)
+
+        // maybe I shouldn't have these links here? I don't want people going there for support, since this isn't an official Sia product
+        // it's nice to have them other than that though. I'll see what ends up happening and remove if necessary.
+        val discord = Element("Discord", R.drawable.discord_logo_black)
+                .setIntent(Intent(Intent.ACTION_VIEW, Uri.parse("https://discord.gg/sFCT3Ar")))
+
+        val reddit = Element("Reddit", R.drawable.reddit_logo)
+                .setIntent(Intent(Intent.ACTION_VIEW, Uri.parse("https://reddit.com/r/siacoin")))
+
+        /* creating my own email element because the default one opens a chooser. This one goes straight to email */
+        val emailIntent = Intent(Intent.ACTION_SENDTO)
+                .setData(Uri.parse("mailto:"))
+                .putExtra(Intent.EXTRA_EMAIL, "siamobiledev@gmail.com")
+        val email = Element("Email me", mehdi.sakout.aboutpage.R.drawable.about_icon_email)
+                .setIntent(emailIntent)
+
+        val youtube = Element("Why Sia?", mehdi.sakout.aboutpage.R.drawable.about_icon_youtube)
+                .setIntent(Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/watch?v=B4YGpWxyn6Y")))
 
         return AboutPage(context)
-                .setImage(R.drawable.sia_logo_svg)
+                .setImage(R.drawable.sia_logo_svg) // TODO: image and text could probably be better
                 .setDescription("Decentralized cloud storage of the future")
                 .addItem(version)
-                .addItem(whySia)
-                .addItem(siaHelp)
                 .addGitHub("NickvanDyke/Sia-Mobile", "GitHub")
-                .addEmail("siamobiledev@gmail.com", "Email me")
+                .addItem(reddit)
+                .addItem(discord)
+                .addItem(share)
+                .addItem(siaHelp)
+                .addItem(email)
+                .addItem(youtube)
                 .create()
     }
 }
