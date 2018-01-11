@@ -24,6 +24,7 @@ import com.vandyke.sia.util.*
 import kotlinx.android.synthetic.main.fragment_wallet.*
 import java.math.BigDecimal
 
+
 class WalletFragment : BaseFragment() {
     override val layoutResId: Int = R.layout.fragment_wallet
     override val hasOptionsMenu = true
@@ -62,13 +63,19 @@ class WalletFragment : BaseFragment() {
         /* set listener to updateDatabase the viewModel when the swipelayout is triggered */
         transactionListSwipe.setOnRefreshListener { viewModel.refreshAll() }
         transactionListSwipe.setColorSchemeResources(R.color.colorAccent)
+        val array = context!!.theme.obtainStyledAttributes(intArrayOf(android.R.attr.windowBackground))
+        val backgroundColor = array.getColor(0, 0xFF00FF)
+        array.recycle()
+        transactionListSwipe.setProgressBackgroundColorSchemeColor(backgroundColor)
 
         expandableFrame.onSwipeUp = ::collapseFrame
 
+        viewModel.refreshing.observe(this) {
+            transactionListSwipe.isRefreshing = it
+        }
+
         viewModel.activeTasks.observe(this) {
             progress.visibility = if (it > 0) View.VISIBLE else View.GONE
-            if (it == 0)
-                transactionListSwipe.isRefreshing = false
         }
 
         /* observe data in the viewModel */
@@ -89,7 +96,7 @@ class WalletFragment : BaseFragment() {
         }
 
         viewModel.consensus.observe(this) {
-            if (viewModel.numPeers.value ?: 0 == 0) {
+            if (viewModel.numPeers.value == 0) {
                 syncText.text = ("Not syncing: ${it.height}")
                 syncBar.progress = it.syncProgress.toInt()
             } else {
@@ -133,11 +140,6 @@ class WalletFragment : BaseFragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.actionStatus -> {
-//                when (statusButton?.icon?.constantState) {
-//                    activity.resources.getDrawable(R.drawable.ic_add, null).constantState -> expandFrame(WalletCreateDialog(viewModel))
-//                    activity.resources.getDrawable(R.drawable.ic_lock_outline, null).constantState -> expandFrame(WalletUnlockDialog(viewModel))
-//                    activity.resources.getDrawable(R.drawable.ic_lock_open, null).constantState -> viewModel.lock()
-//                }
                 when (viewModel.wallet.value?.encrypted ?: false || viewModel.wallet.value?.rescanning ?: false) {
                     false -> expandFrame(WalletCreateDialog())
                     true -> if (!viewModel.wallet.value!!.unlocked) expandFrame(WalletUnlockDialog())

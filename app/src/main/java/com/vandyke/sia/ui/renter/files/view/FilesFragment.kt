@@ -72,11 +72,16 @@ class FilesFragment : BaseFragment() {
         spinnerView.adapter = pathAdapter
         spinnerView.background.setColorFilter(ContextCompat.getColor(context!!, android.R.color.white), PorterDuff.Mode.SRC_ATOP)
 
+        /* pull-to-refresh stuff */
         nodesListRefresh.setColorSchemeResources(R.color.colorAccent)
         nodesListRefresh.setOnRefreshListener {
             viewModel.refresh()
             nodesListRefresh.isRefreshing = false
         }
+        val array = context!!.theme.obtainStyledAttributes(intArrayOf(android.R.attr.windowBackground))
+        val backgroundColor = array.getColor(0, 0xFF00FF)
+        array.recycle()
+        nodesListRefresh.setProgressBackgroundColorSchemeColor(backgroundColor)
 
         /* FAB stuff */
         fabAddFile.setOnClickListener {
@@ -159,7 +164,7 @@ class FilesFragment : BaseFragment() {
         searchItem!!.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
             override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
                 searchIsExpanded = false
-                if (viewModel.searching.value == true)
+                if (viewModel.searching.value)
                     viewModel.cancelSearch()
                 return true
             }
@@ -174,7 +179,7 @@ class FilesFragment : BaseFragment() {
         searchView!!.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextChange(newText: String): Boolean {
                 /* need to check because collapsing the SearchView will clear it's text and trigger this after it's collapsed */
-                if (viewModel.searching.value == true)
+                if (viewModel.searching.value)
                     viewModel.search(newText)
                 return true
             }
@@ -186,7 +191,7 @@ class FilesFragment : BaseFragment() {
         })
 
         ascendingItem = menu.findItem(R.id.ascendingToggle)
-        ascendingItem!!.isChecked = viewModel.ascending.value!!
+        ascendingItem!!.isChecked = viewModel.ascending.value
 
         /* must add the items in the same order as they appear in the enum values for the function after to work */
         orderByItems.clear()
@@ -219,7 +224,7 @@ class FilesFragment : BaseFragment() {
 
     /** The order of the SortBy enum values and the order of the sort by options in the list must be the same for this to work */
     private fun setCheckedOrderByItem() {
-        val sortBy = viewModel.sortBy.value!!
+        val sortBy = viewModel.sortBy.value
         orderByItems.forEachIndexed { i, item ->
             if (i == sortBy.ordinal) {
                 item.isChecked = true
@@ -239,7 +244,7 @@ class FilesFragment : BaseFragment() {
     }
 
     override fun onBackPressed(): Boolean {
-        return if (viewModel.searching.value == true) {
+        return if (viewModel.searching.value) {
             viewModel.cancelSearch()
             true
         } else {

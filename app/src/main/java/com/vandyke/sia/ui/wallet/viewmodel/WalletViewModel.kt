@@ -18,6 +18,7 @@ import com.vandyke.sia.siadOutput
 import com.vandyke.sia.util.NonNullLiveData
 import com.vandyke.sia.util.siaSubscribe
 import com.vandyke.sia.util.toSC
+import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -28,6 +29,7 @@ class WalletViewModel : ViewModel() {
     val consensus = MutableLiveData<ConsensusData>()
     val transactions = MutableLiveData<List<TransactionData>>()
     val activeTasks = NonNullLiveData(0) // TODO: ideally, also represent refreshing, separately from the number of active tasks
+    val refreshing = NonNullLiveData(false)
     val numPeers = NonNullLiveData(0)
     val success = MutableLiveData<String>()
     val error = MutableLiveData<SiaError>()
@@ -50,8 +52,8 @@ class WalletViewModel : ViewModel() {
     }
 
     init {
-        /* subscribe to flowables from the database. Note that since they're flowables, they'll update
-           when their results update, and therefore we don't need to do anything but subscribe this once */
+        /* subscribe to flowables from the repositories. Note that since they're flowables,
+         * we only need to subscribe this once */
         walletRepo.wallet().siaSubscribe({
             wallet.value = it
         }, ::onError)
@@ -103,31 +105,28 @@ class WalletViewModel : ViewModel() {
         /* We tell the relevant repositories to update their data from the Sia node. This will
            trigger necessary updates elsewhere in the VM, as a result of subscribing to flowables from the database. */
         incrementTasks()
-        walletRepo.updateAll().siaSubscribe(::decrementTasks, ::onError)
-
-        incrementTasks()
-        consensusRepo.updateConsensus().siaSubscribe(::decrementTasks, ::onError)
-
-        incrementTasks()
-        scValueRepo.updateScValue().siaSubscribe(::decrementTasks, ::onError)
-
-        refreshPeers()
+        refreshing.value = true
+        Completable.mergeArray(
+                walletRepo.updateAll(),
+                consensusRepo.updateConsensus(),
+                scValueRepo.updateScValue(),
+                siaApi.gateway().doAfterSuccess {
+                    numPeers.postValue(it.peers.size)
+                }.doOnError {
+                    numPeers.postValue(0)
+                }.toCompletable()
+        ).siaSubscribe({
+            refreshing.value = false
+            decrementTasks()
+        }, {
+            refreshing.value = false
+            decrementTasks()
+        })
     }
 
     fun refreshWallet() {
         incrementTasks()
         walletRepo.updateAll().siaSubscribe(::decrementTasks, ::onError)
-    }
-
-    fun refreshPeers() {
-        incrementTasks()
-        siaApi.gateway().siaSubscribe({
-            numPeers.value = it.peers.size
-            decrementTasks()
-        }, {
-            numPeers.value = 0
-            onError(it)
-        })
     }
 
     fun unlock(password: String) {

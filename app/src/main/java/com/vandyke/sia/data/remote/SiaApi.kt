@@ -114,7 +114,7 @@ interface SiaApiInterface {
     fun txPoolFee(): Single<FeeData>
 }
 
-val siaApi: SiaApiInterface = MockSiaApi()//SiaApi.buildApi()
+val siaApi: SiaApiInterface = SiaApi.buildApi()
 
 object SiaApi {
     fun buildApi(): SiaApiInterface {
