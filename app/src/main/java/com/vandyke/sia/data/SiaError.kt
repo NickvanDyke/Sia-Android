@@ -10,8 +10,10 @@ import android.support.design.widget.Snackbar
 import android.view.View
 import com.vandyke.sia.data.SiaError.Reason.*
 import com.vandyke.sia.util.SnackbarUtil
+import io.reactivex.exceptions.CompositeException
 import retrofit2.HttpException
 import java.io.IOException
+import java.net.ConnectException
 import java.net.SocketException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
@@ -26,16 +28,28 @@ class SiaError : Throwable {
 
     val reason: Reason
 
+    /** if this SiaError was constructed from a CompositeException, then it's list of exceptions will be stored here.
+      * Otherwise, this is null. */
+    var exceptions: List<Throwable>? = null
+
     constructor(errorMessage: String) {
         reason = getReasonFromMsg(errorMessage)
     }
 
     constructor(t: Throwable) {
-        reason = if (t is SiaError) {
-            println("Chaining SiaErrors")
-            t.reason
-        } else {
-            getReasonFromThrowable(t)
+        exceptions = listOf(t)
+        reason = when (t) {
+            is SiaError -> {
+                println("Chaining SiaErrors")
+                t.reason
+            }
+            /* So far I've only gotten a CompositeException from using mergeArrayDelayError.
+             * So be wary that important ones aren't being swallowed by only taking the first error here */
+            is CompositeException -> {
+                exceptions = t.exceptions
+                getReasonFromThrowable(t.exceptions[0])
+            }
+            else -> getReasonFromThrowable(t)
         }
     }
 
@@ -76,12 +90,14 @@ class SiaError : Throwable {
     }
 
     private fun getReasonFromThrowable(t: Throwable): Reason {
+        t.printStackTrace()
         return when (t) {
             /* HTTPException is emitted by retrofit observables on HTTP non-2XX responses */
             is HttpException -> getReasonFromMsg(t.response().errorBody()!!.string())
             is EmptyResultSetException -> ROOM_EMPTY_RESULT_SET
             is SQLiteConstraintException -> DIRECTORY_ALREADY_EXISTS
             is SocketTimeoutException -> TIMEOUT
+            is ConnectException -> COULDNT_CONNECT
             is SocketException -> NO_NETWORK_RESPONSE
             is UnknownHostException -> UNKNOWN_HOST_NAME
             is IOException -> UNEXPECTED_END_OF_STREAM
@@ -92,12 +108,15 @@ class SiaError : Throwable {
         }
     }
 
-    // TODO: translate the msgs
+    // TODO: maybe it would be better if I had a separate throwable class for each error, instead of one throwable (SiaError)
+    // that holds an enum containing the Reason for it. And then I'd have a static method that maps a more generic throwable
+    // to one of the more specific ones
     enum class Reason(val msg: String) {
         /* common */
         SIAD_LOADING("Sia is still loading"),
         TIMEOUT("Response timed out"),
-        NO_NETWORK_RESPONSE("Sia node isn't running"),
+        COULDNT_CONNECT("Couldn't connect"),
+        NO_NETWORK_RESPONSE("No network response"),
         /** seems to occur when attempting a network request to the outside world with wifi and data turned off? */
         UNKNOWN_HOST_NAME("Unknown hostname"),
         INCORRECT_API_PASSWORD("Incorrect API password"),

@@ -18,6 +18,7 @@ import com.vandyke.sia.siadOutput
 import com.vandyke.sia.util.*
 import io.reactivex.Completable
 import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
 
 class WalletViewModel : ViewModel() {
     val wallet = MutableLiveData<WalletData>()
@@ -42,7 +43,7 @@ class WalletViewModel : ViewModel() {
     private val consensusRepo = ConsensusRepository()
     private val scValueRepo = ScValueRepository()
 
-    private val subscription = siadOutput.subscribe {
+    private val subscription = siadOutput.observeOn(AndroidSchedulers.mainThread()).subscribe {
         if (it.contains("Finished loading") || it.contains("Done!"))
             refreshAll()
     }
@@ -102,7 +103,7 @@ class WalletViewModel : ViewModel() {
            trigger necessary updates elsewhere in the VM, as a result of subscribing to flowables from the database. */
         incrementTasks()
         refreshing.value = true
-        Completable.mergeArray(
+        Completable.mergeArrayDelayError(
                 walletRepo.updateAll(),
                 consensusRepo.updateConsensus(),
                 scValueRepo.updateScValue(),

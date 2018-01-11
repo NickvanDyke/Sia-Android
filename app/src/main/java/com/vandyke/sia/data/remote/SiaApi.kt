@@ -115,7 +115,7 @@ interface SiaApiInterface {
 }
 
 // TODO: inject this. And maybe put an option in settings to toggle between the mock api and the retrofit api
-val siaApi: SiaApiInterface = MockSiaApi()//SiaApi.buildApi()
+val siaApi: SiaApiInterface = SiaApi.buildApi()
 
 object SiaApi {
     fun buildApi(): SiaApiInterface {
