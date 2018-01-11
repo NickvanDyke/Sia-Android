@@ -11,7 +11,7 @@ import com.vandyke.sia.data.remote.SiaApiInterface
 import io.reactivex.Completable
 import io.reactivex.Single
 
-class WalletRepository(val db: AppDatabase, val api: SiaApiInterface) {
+class WalletRepository(val api: SiaApiInterface, val db: AppDatabase) {
 
     /* Functions that update the local database from the Sia node */
     fun updateAll() = Completable.mergeArray(updateWallet(), updateTransactions(), updateAddresses())!!

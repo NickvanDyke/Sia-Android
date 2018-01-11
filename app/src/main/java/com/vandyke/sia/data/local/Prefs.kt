@@ -6,7 +6,7 @@ package com.vandyke.sia.data.local
 
 import com.chibatching.kotpref.KotprefModel
 import com.chibatching.kotpref.enumpref.enumOrdinalPref
-import com.vandyke.sia.data.repository.FilesRepositoryTest
+import com.vandyke.sia.data.repository.FilesRepository
 
 object Prefs : KotprefModel() {
     override val kotprefName: String = "${context.packageName}_preferences"
@@ -23,5 +23,5 @@ object Prefs : KotprefModel() {
     var runSiaOnData by booleanPref()
 
     var ascending by booleanPref(true)
-    var sortBy by enumOrdinalPref(FilesRepositoryTest.SortBy.NAME)
+    var sortBy by enumOrdinalPref(FilesRepository.SortBy.NAME)
 }

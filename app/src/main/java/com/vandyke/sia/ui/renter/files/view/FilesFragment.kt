@@ -19,7 +19,7 @@ import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.Spinner
 import com.vandyke.sia.R
-import com.vandyke.sia.data.repository.FilesRepositoryTest.SortBy
+import com.vandyke.sia.data.repository.FilesRepository.SortBy
 import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.ui.renter.files.view.list.NodesAdapter
 import com.vandyke.sia.ui.renter.files.viewmodel.FilesViewModel

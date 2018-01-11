@@ -10,8 +10,10 @@ import com.vandyke.sia.data.SiaError
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.local.models.renter.Dir
 import com.vandyke.sia.data.local.models.renter.Node
-import com.vandyke.sia.data.repository.FilesRepositoryTest
+import com.vandyke.sia.data.remote.siaApi
+import com.vandyke.sia.data.repository.FilesRepository
 import com.vandyke.sia.data.repository.ROOT_DIR_NAME
+import com.vandyke.sia.db
 import com.vandyke.sia.isSiadLoaded
 import com.vandyke.sia.util.NonNullLiveData
 import com.vandyke.sia.util.siaSubscribe
@@ -32,7 +34,7 @@ class FilesViewModel : ViewModel() {
     val currentDirPath
         get() = currentDir.value?.path ?: ""
 
-    private val filesRepo = FilesRepositoryTest()
+    private val filesRepo = FilesRepository(siaApi, db)
 
     private val subscription = isSiadLoaded.subscribe {
         if (it) refresh()

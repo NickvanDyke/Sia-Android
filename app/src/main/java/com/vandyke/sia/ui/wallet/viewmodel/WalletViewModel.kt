@@ -40,7 +40,7 @@ class WalletViewModel : ViewModel() {
        an extension function is used that doesn't pass the value unless it's not null) */
 
     // TODO: inject these
-    private val walletRepo = WalletRepository(db, siaApi)
+    private val walletRepo = WalletRepository(siaApi, db)
     private val consensusRepo = ConsensusRepository()
     private val scValueRepo = ScValueRepository()
 

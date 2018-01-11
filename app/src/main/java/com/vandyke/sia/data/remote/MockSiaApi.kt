@@ -53,6 +53,23 @@ class MockSiaApi : SiaApiInterface {
         TransactionData(nonce.toString(), nonce * 10, UNCONFIRMED_TX_TIMESTAMP, inputs, outputs)
     })
 
+    private val files = mutableListOf(
+            RenterFileData("legos/brick/picture.jpg", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534),
+            RenterFileData("legos/brick/manual", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534),
+            RenterFileData("legos/brick/blueprint.b", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534),
+            RenterFileData("legos/brick/draft.txt", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534),
+            RenterFileData("legos/brick/ad.doc", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534),
+            RenterFileData("legos/brick/writeup.txt", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534),
+            RenterFileData("legos/brick/buyers.db", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534),
+            RenterFileData("legos/brick/listing.html", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534),
+            RenterFileData("legos/brick/colors.rgb", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534),
+            RenterFileData("legos/block/picture.jpg", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534),
+            RenterFileData("legos/block/blueprint", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534),
+            RenterFileData("legos/block/vector.svg", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534),
+            RenterFileData("legos/block/colors.rgb", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534),
+            RenterFileData("legos/blue/brick/picture.jpg", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534),
+            RenterFileData("my/name/is/nick/and/this/is/my/story.txt", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534)
+    )
 
     override fun daemonStop(): Completable {
         TODO("not implemented")
@@ -172,7 +189,7 @@ class MockSiaApi : SiaApiInterface {
     }
 
     override fun renterFiles(): Single<RenterFilesData> {
-        TODO("not implemented")
+        return Single.just(RenterFilesData(files))
     }
 
     override fun renterPrices(): Single<PricesData> {
@@ -184,11 +201,23 @@ class MockSiaApi : SiaApiInterface {
     }
 
     override fun renterDelete(siapath: String): Completable {
-        TODO("not implemented")
+        return Completable.fromCallable {
+            var removed: RenterFileData? = null
+            files.forEach {
+                if (it.path == siapath) {
+                    removed = it
+                    return@forEach
+                }
+            }
+            removed?.let { files.remove(it) }
+        }
     }
 
     override fun renterUpload(siapath: String, source: String, dataPieces: Int, parityPieces: Int): Completable {
-        TODO("not implemented")
+        return Completable.fromAction {
+            files.add(RenterFileData(siapath, "eh", BigDecimal("156743"), true, false,
+                    2.0, 663453, 100, 1235534))
+        }
     }
 
     override fun renterDownload(siapath: String, destination: String): Completable {
