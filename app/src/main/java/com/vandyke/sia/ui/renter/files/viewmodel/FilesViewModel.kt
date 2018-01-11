@@ -29,6 +29,7 @@ class FilesViewModel : ViewModel() {
     val ascending = NonNullLiveData(Prefs.ascending)
     val sortBy = NonNullLiveData(Prefs.sortBy)
 
+    val refreshing = NonNullLiveData(false)
     val error = MutableLiveData<SiaError>()
 
     val currentDirPath
@@ -67,7 +68,13 @@ class FilesViewModel : ViewModel() {
     }
 
     fun refresh() {
-        filesRepo.updateFilesAndDirs().siaSubscribe({}, ::onError)
+        refreshing.value = true
+        filesRepo.updateFilesAndDirs().siaSubscribe({
+            refreshing.value = false
+        }, {
+            refreshing.value = false
+            onError(it)
+        })
         // TODO: check that current directory is still valid. and track/display progress of update
     }
 
@@ -75,7 +82,7 @@ class FilesViewModel : ViewModel() {
         if (path == currentDirPath)
             return
         println("changing to dir: $path")
-        filesRepo.getDir(path).siaSubscribe({
+        filesRepo.getDir(path).siaSubscribe({ // maybe this would be better as a flowable
             currentDir.value = it
             setDisplayedNodes()
         }, {
@@ -88,7 +95,7 @@ class FilesViewModel : ViewModel() {
     /** subscribes to the proper source for the displayed nodes, depending on the state of the viewmodel */
     private fun setDisplayedNodes() {
         if (searching.value) {
-            nodesSubscription = filesRepo.search(searchTerm.value!!, currentDirPath, sortBy.value, ascending.value).siaSubscribe({
+            nodesSubscription = filesRepo.search(searchTerm.value, currentDirPath, sortBy.value, ascending.value).siaSubscribe({
                 displayedNodes.value = it
             }, ::onError)
         } else {
@@ -104,7 +111,7 @@ class FilesViewModel : ViewModel() {
     }
 
     /** Creates a new directory with the given name in the current directory */
-    fun createDir(name: String) = filesRepo.createDir("$currentDirPath/$name").siaSubscribe({}, ::onError)
+    fun createDir(name: String) = filesRepo.createDir("$currentDirPath/$name").siaSubscribe(onError = ::onError)
 
     fun deleteDir(path: String) = filesRepo.deleteDir(path).siaSubscribe({}, ::onError)
 
@@ -118,9 +125,7 @@ class FilesViewModel : ViewModel() {
         // TODO
     }
 
-    fun renameDir(currentName: String, newName: String) {
-        // TODO
-    }
+    fun renameDir(path: String, newName: String) = filesRepo.renameDir(path, newName).siaSubscribe(onError = ::onError)
 
     fun search(name: String) {
         searching.value = true

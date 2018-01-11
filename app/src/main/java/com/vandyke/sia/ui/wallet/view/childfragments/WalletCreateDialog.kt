@@ -52,11 +52,11 @@ class WalletCreateDialog : BaseWalletFragment() {
 
 
     companion object {
-
         fun showSeed(seed: String, context: Context) {
             val msg = "Below is your wallet seed. Your wallet's addresses are generated using this seed. Therefore, any coins you " +
                     "send to this wallet and its addresses will \"belong\" to this seed. It's what you will need" +
-                    " in order to recover your coins if something happens to your wallet, or to load your wallet on another device. Record it elsewhere, and keep it safe."
+                    " in order to recover your coins if something happens to your wallet, or to load your wallet on another device. " +
+                    "Record it elsewhere, and keep it safe."
             AlertDialog.Builder(context)
                     .setTitle("Wallet seed")
                     .setMessage("$msg\n\n$seed")

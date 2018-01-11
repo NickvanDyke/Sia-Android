@@ -114,7 +114,8 @@ interface SiaApiInterface {
     fun txPoolFee(): Single<FeeData>
 }
 
-val siaApi: SiaApiInterface = SiaApi.buildApi()
+// TODO: inject this. And maybe put an option in settings to toggle between the mock api and the retrofit api
+val siaApi: SiaApiInterface = MockSiaApi()//SiaApi.buildApi()
 
 object SiaApi {
     fun buildApi(): SiaApiInterface {

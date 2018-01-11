@@ -177,9 +177,9 @@ class FilesRepository(val api: SiaApiInterface, val db: AppDatabase) {
         println("deleted dir: $path and the dirs under it")
     }.toCompletable()!!
 
-    fun renameDir(currentName: String, newName: String) {
-        TODO()
-    }
+    fun renameDir(path: String, newName: String) = Completable.fromAction {
+        // TODO
+    }!!
 
     fun addFile(siapath: String, source: String, dataPieces: Int, parityPieces: Int): Completable {
         return api.renterUpload(siapath, source, dataPieces, parityPieces)

@@ -15,13 +15,9 @@ import com.vandyke.sia.data.repository.ScValueRepository
 import com.vandyke.sia.data.repository.WalletRepository
 import com.vandyke.sia.db
 import com.vandyke.sia.siadOutput
-import com.vandyke.sia.util.NonNullLiveData
-import com.vandyke.sia.util.siaSubscribe
-import com.vandyke.sia.util.toSC
+import com.vandyke.sia.util.*
 import io.reactivex.Completable
 import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 
 class WalletViewModel : ViewModel() {
     val wallet = MutableLiveData<WalletData>()
@@ -46,7 +42,7 @@ class WalletViewModel : ViewModel() {
     private val consensusRepo = ConsensusRepository()
     private val scValueRepo = ScValueRepository()
 
-    private val subscription = siadOutput.observeOn(AndroidSchedulers.mainThread()).subscribe {
+    private val subscription = siadOutput.subscribe {
         if (it.contains("Finished loading") || it.contains("Done!"))
             refreshAll()
     }
@@ -120,7 +116,7 @@ class WalletViewModel : ViewModel() {
             decrementTasks()
         }, {
             refreshing.value = false
-            decrementTasks()
+            onError(it)
         })
     }
 
@@ -195,8 +191,8 @@ class WalletViewModel : ViewModel() {
     fun getAddress(): Single<AddressData> {
         incrementTasks()
         return walletRepo.getAddress()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .io()
+                .main()
                 .doOnError { onError(it as SiaError) }
                 .doAfterSuccess { decrementTasks() }
     }
@@ -204,8 +200,8 @@ class WalletViewModel : ViewModel() {
     fun getAddresses(): Single<List<AddressData>> {
         incrementTasks()
         return walletRepo.getAddresses()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .io()
+                .main()
                 .doOnError { onError(it as SiaError) }
                 .doAfterSuccess { decrementTasks() }
     }
@@ -213,8 +209,8 @@ class WalletViewModel : ViewModel() {
     fun getSeeds(): Single<SeedsData> {
         incrementTasks()
         return walletRepo.getSeeds()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .io()
+                .main()
                 .doOnError { onError(SiaError(it)) }
                 .doAfterSuccess { decrementTasks() }
     }

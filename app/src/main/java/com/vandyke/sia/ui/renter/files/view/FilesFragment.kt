@@ -76,7 +76,6 @@ class FilesFragment : BaseFragment() {
         nodesListRefresh.setColorSchemeResources(R.color.colorAccent)
         nodesListRefresh.setOnRefreshListener {
             viewModel.refresh()
-            nodesListRefresh.isRefreshing = false
         }
         val array = context!!.theme.obtainStyledAttributes(intArrayOf(android.R.attr.windowBackground))
         val backgroundColor = array.getColor(0, 0xFF00FF)
@@ -136,6 +135,10 @@ class FilesFragment : BaseFragment() {
                 searchItem?.expandActionView()
             else if (!it && searchIsExpanded)
                 searchItem?.collapseActionView()
+        }
+
+        viewModel.refreshing.observe(this) {
+            nodesListRefresh.isRefreshing = it
         }
 
         viewModel.error.observe(this) {

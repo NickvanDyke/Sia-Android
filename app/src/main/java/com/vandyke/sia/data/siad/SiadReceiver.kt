@@ -9,8 +9,8 @@ import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
 import com.vandyke.sia.data.local.Prefs
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import com.vandyke.sia.util.io
+import com.vandyke.sia.util.main
 
 
 class SiadReceiver : BroadcastReceiver() {
@@ -41,8 +41,8 @@ class SiadReceiver : BroadcastReceiver() {
 
     fun startSiad(context: Context) {
         SiadService.getService(context.applicationContext)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .io()
+                .main()
                 .subscribe { service ->
                     service.startSiad()
                 }
@@ -50,8 +50,8 @@ class SiadReceiver : BroadcastReceiver() {
 
     fun stopSiad(context: Context) {
         SiadService.getService(context.applicationContext)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .io()
+                .main()
                 .subscribe { service ->
                     service.stopSiad()
                 }
