@@ -13,6 +13,7 @@ import com.vandyke.sia.data.remote.siaApi
 import com.vandyke.sia.data.repository.ConsensusRepository
 import com.vandyke.sia.data.repository.ScValueRepository
 import com.vandyke.sia.data.repository.WalletRepository
+import com.vandyke.sia.db
 import com.vandyke.sia.siadOutput
 import com.vandyke.sia.util.NonNullLiveData
 import com.vandyke.sia.util.siaSubscribe
@@ -39,7 +40,7 @@ class WalletViewModel : ViewModel() {
        an extension function is used that doesn't pass the value unless it's not null) */
 
     // TODO: inject these
-    private val walletRepo = WalletRepository()
+    private val walletRepo = WalletRepository(db, siaApi)
     private val consensusRepo = ConsensusRepository()
     private val scValueRepo = ScValueRepository()
 

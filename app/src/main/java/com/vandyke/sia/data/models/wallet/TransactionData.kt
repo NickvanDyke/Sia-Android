@@ -21,7 +21,7 @@ data class TransactionData @JsonCreator constructor(
         @JsonProperty(value = "transactionid")
         val transactionId: String,
         @JsonProperty(value = "confirmationheight")
-        val confirmationHeight: BigDecimal,
+        val confirmationHeight: Int,
         @JsonProperty(value = "confirmationtimestamp")
         val confirmationTimestamp: BigDecimal,
         @Ignore
@@ -33,12 +33,13 @@ data class TransactionData @JsonCreator constructor(
 
 
     constructor(transactionId: String,
-                confirmationHeight: BigDecimal,
+                confirmationHeight: Int,
                 confirmationTimestamp: BigDecimal) :
             this(transactionId, confirmationHeight, confirmationTimestamp, null, null)
 
-    var confirmed: Boolean = confirmationTimestamp != BigDecimal(UNCONFIRMED_TX_TIMESTAMP)
+    var confirmed: Boolean = confirmationTimestamp != UNCONFIRMED_TX_TIMESTAMP
 
+    // TODO: I'm pretty sure this gets calculated even when the object is loaded from the database. Not ideal.
     var netValue: BigDecimal = run {
         var net = BigDecimal.ZERO
         inputs?.filter { it.walletaddress }?.forEach { net -= it.value }

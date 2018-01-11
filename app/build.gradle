@@ -9,7 +9,7 @@ apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 27
-    buildToolsVersion '27.0.1'
+    buildToolsVersion '27.0.3'
     defaultConfig {
         applicationId "com.vandyke.sia"
         minSdkVersion 21
@@ -17,20 +17,23 @@ android {
         versionCode 100
         versionName "0.1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        /* lets us not shrink debug builds. Not necessary for release builds */
+        multiDexEnabled true
     }
     buildTypes {
         release {
             lintOptions {
                 checkReleaseBuilds false
             }
-            /* using this combination of the following two options lets us minify (remove unused methods + classes)
+            shrinkResources true
+            /* Using this combination of the following two options lets us minify (remove unused methods + classes)
              * using the Android Gradle Plugin's minifier, which doesn't obfuscate and can also be used in incremental builds */
             minifyEnabled true
             useProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
-            minifyEnabled true
+            minifyEnabled false
             useProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
@@ -48,18 +51,28 @@ android {
             path 'CMakeLists.txt'
         }
     }
+//    sourceSets {
+//        test.java.srcDirs += 'src/test/kotlin'
+//        androidTest.java.srcDirs += 'src/androidTest/kotlin'
+//    }
 }
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     /* kotlin stdlib and coroutines */
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.18'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.21'
 
-    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
+    /* testing */
+    androidTestImplementation 'com.android.support:support-annotations:27.0.2'
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
     testImplementation 'junit:junit:4.12'
+    testImplementation 'org.mockito:mockito-core:2.8.47'
+    testImplementation "com.nhaarman:mockito-kotlin-kt1.1:1.5.0"
+    testImplementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+    testImplementation "org.amshove.kluent:kluent:1.33"
+    testImplementation 'org.amshove.kluent:kluent-android:1.33'
 
     /* support library */
     implementation 'com.android.support:appcompat-v7:27.0.2'
