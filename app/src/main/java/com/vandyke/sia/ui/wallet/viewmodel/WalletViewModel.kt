@@ -6,7 +6,6 @@ package com.vandyke.sia.ui.wallet.viewmodel
 
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
-import com.vandyke.sia.data.SiaError
 import com.vandyke.sia.data.models.consensus.ConsensusData
 import com.vandyke.sia.data.models.wallet.*
 import com.vandyke.sia.data.remote.siaApi
@@ -15,7 +14,10 @@ import com.vandyke.sia.data.repository.ScValueRepository
 import com.vandyke.sia.data.repository.WalletRepository
 import com.vandyke.sia.db
 import com.vandyke.sia.siadOutput
-import com.vandyke.sia.util.*
+import com.vandyke.sia.util.NonNullLiveData
+import com.vandyke.sia.util.io
+import com.vandyke.sia.util.main
+import com.vandyke.sia.util.toSC
 import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -29,7 +31,7 @@ class WalletViewModel : ViewModel() {
     val refreshing = NonNullLiveData(false)
     val numPeers = NonNullLiveData(0)
     val success = MutableLiveData<String>()
-    val error = MutableLiveData<SiaError>()
+    val error = MutableLiveData<Throwable>()
 
     /* seed is used specifically for when a new wallet is created - not for when called /wallet/seeds */
     val seed = MutableLiveData<String>()
@@ -51,19 +53,19 @@ class WalletViewModel : ViewModel() {
     init {
         /* subscribe to flowables from the repositories. Note that since they're flowables,
          * we only need to subscribe this once */
-        walletRepo.wallet().siaSubscribe({
+        walletRepo.wallet().io().main().subscribe({
             wallet.value = it
         }, ::onError)
 
-        walletRepo.transactions().siaSubscribe({
+        walletRepo.transactions().io().main().subscribe({
             transactions.value = it
         }, ::onError)
 
-        consensusRepo.consensus().siaSubscribe({
+        consensusRepo.consensus().io().main().subscribe({
             consensus.value = it
         }, ::onError)
 
-        scValueRepo.scValue().siaSubscribe({
+        scValueRepo.scValue().io().main().subscribe({
             usd.value = it
         }, ::onError)
     }
@@ -83,9 +85,9 @@ class WalletViewModel : ViewModel() {
         success.value = null
     }
 
-    private fun onError(err: SiaError) {
+    private fun onError(t: Throwable) {
         decrementTasks()
-        error.value = err
+        error.value = t
         error.value = null
     }
 
@@ -112,7 +114,7 @@ class WalletViewModel : ViewModel() {
                 }.doOnError {
                     numPeers.postValue(0)
                 }.toCompletable()
-        ).siaSubscribe({
+        ).io().main().subscribe({
             refreshing.value = false
             decrementTasks()
         }, {
@@ -123,12 +125,12 @@ class WalletViewModel : ViewModel() {
 
     fun refreshWallet() {
         incrementTasks()
-        walletRepo.updateAll().siaSubscribe(::decrementTasks, ::onError)
+        walletRepo.updateAll().io().main().subscribe(::decrementTasks, ::onError)
     }
 
     fun unlock(password: String) {
         incrementTasks()
-        walletRepo.unlock(password).siaSubscribe({
+        walletRepo.unlock(password).io().main().subscribe({
             setSuccess("Unlocked")
             refreshWallet()
         }, ::onError)
@@ -136,7 +138,7 @@ class WalletViewModel : ViewModel() {
 
     fun lock() {
         incrementTasks()
-        walletRepo.lock().siaSubscribe({
+        walletRepo.lock().io().main().subscribe({
             setSuccess("Locked")
             refreshWallet()
         }, ::onError)
@@ -145,14 +147,14 @@ class WalletViewModel : ViewModel() {
     fun create(password: String, force: Boolean, seed: String? = null) {
         incrementTasks()
         if (seed == null) {
-            walletRepo.init(password, "english", force).siaSubscribe({ it ->
+            walletRepo.init(password, "english", force).io().main().subscribe({ it ->
                 setSuccess("Created wallet")
                 refreshWallet()
                 this.seed.value = it.primaryseed
                 this.seed.value = null
             }, ::onError)
         } else {
-            walletRepo.initSeed(password, "english", seed, force).siaSubscribe({
+            walletRepo.initSeed(password, "english", seed, force).io().main().subscribe({
                 setSuccess("Created wallet")
                 refreshWallet()
                 this.seed.value = seed
@@ -163,7 +165,7 @@ class WalletViewModel : ViewModel() {
 
     fun send(amount: String, destination: String) {
         incrementTasks()
-        walletRepo.send(amount, destination).siaSubscribe({
+        walletRepo.send(amount, destination).io().main().subscribe({
             setSuccess("Sent ${amount.toSC()} SC to $destination")
             refreshWallet()
         }, ::onError)
@@ -171,7 +173,7 @@ class WalletViewModel : ViewModel() {
 
     fun changePassword(currentPassword: String, newPassword: String) {
         incrementTasks()
-        walletRepo.changePassword(currentPassword, newPassword).siaSubscribe({
+        walletRepo.changePassword(currentPassword, newPassword).io().main().subscribe({
             setSuccess("Changed password")
             refreshWallet()
         }, ::onError)
@@ -179,7 +181,7 @@ class WalletViewModel : ViewModel() {
 
     fun sweep(seed: String) {
         incrementTasks()
-        walletRepo.sweep("english", seed).siaSubscribe({
+        walletRepo.sweep("english", seed).io().main().subscribe({
             decrementTasks()
             refreshWallet()
         }, ::onError)
@@ -191,28 +193,22 @@ class WalletViewModel : ViewModel() {
      * that will populate that LiveData */
     fun getAddress(): Single<AddressData> {
         incrementTasks()
-        return walletRepo.getAddress()
-                .io()
-                .main()
-                .doOnError { onError(it as SiaError) }
+        return walletRepo.getAddress().io().main()
+                .doOnError { onError(it) }
                 .doAfterSuccess { decrementTasks() }
     }
 
     fun getAddresses(): Single<List<AddressData>> {
         incrementTasks()
-        return walletRepo.getAddresses()
-                .io()
-                .main()
-                .doOnError { onError(it as SiaError) }
+        return walletRepo.getAddresses().io().main()
+                .doOnError { onError(it) }
                 .doAfterSuccess { decrementTasks() }
     }
 
     fun getSeeds(): Single<SeedsData> {
         incrementTasks()
-        return walletRepo.getSeeds()
-                .io()
-                .main()
-                .doOnError { onError(SiaError(it)) }
+        return walletRepo.getSeeds().io().main()
+                .doOnError { onError(it) }
                 .doAfterSuccess { decrementTasks() }
     }
 }

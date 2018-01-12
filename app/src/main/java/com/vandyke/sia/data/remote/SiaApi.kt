@@ -114,7 +114,8 @@ interface SiaApiInterface {
     fun txPoolFee(): Single<FeeData>
 }
 
-// TODO: inject this. And maybe put an option in settings to toggle between the mock api and the retrofit api
+// TODO: inject this. And maybe put an option in settings to toggle between the mock api and the retrofit api. And maybe a remote address too
+// should probably keep separate DBs for each mode too
 val siaApi: SiaApiInterface = SiaApi.buildApi()
 
 object SiaApi {
@@ -130,7 +131,14 @@ object SiaApi {
                             .header("Authorization", "Basic " + Base64.encodeToString(":${Prefs.apiPassword}".toByteArray(), Base64.NO_WRAP))
                             .method(original.method(), original.body())
                             .build()
-                    return@addInterceptor it.proceed(request)
+                    val response = it.proceed(request)
+                    if (!response.isSuccessful) {
+                        val errorMsg = response.peekBody(256).string()
+                        val siaException = SiaException.fromError(errorMsg)
+                        if (siaException != null)
+                            throw siaException
+                    }
+                    return@addInterceptor response
                 })
 
         return Retrofit.Builder()

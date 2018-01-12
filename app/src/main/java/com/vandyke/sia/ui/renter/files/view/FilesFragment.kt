@@ -25,6 +25,7 @@ import com.vandyke.sia.ui.renter.files.view.list.NodesAdapter
 import com.vandyke.sia.ui.renter.files.viewmodel.FilesViewModel
 import com.vandyke.sia.util.GenUtil
 import com.vandyke.sia.util.observe
+import com.vandyke.sia.util.snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_renter_files.*
 

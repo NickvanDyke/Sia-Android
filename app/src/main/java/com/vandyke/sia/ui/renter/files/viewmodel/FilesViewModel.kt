@@ -6,7 +6,6 @@ package com.vandyke.sia.ui.renter.files.viewmodel
 
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
-import com.vandyke.sia.data.SiaError
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.local.models.renter.Dir
 import com.vandyke.sia.data.local.models.renter.Node
@@ -16,7 +15,8 @@ import com.vandyke.sia.data.repository.ROOT_DIR_NAME
 import com.vandyke.sia.db
 import com.vandyke.sia.isSiadLoaded
 import com.vandyke.sia.util.NonNullLiveData
-import com.vandyke.sia.util.siaSubscribe
+import com.vandyke.sia.util.io
+import com.vandyke.sia.util.main
 import io.reactivex.disposables.Disposable
 
 class FilesViewModel : ViewModel() {
@@ -30,7 +30,7 @@ class FilesViewModel : ViewModel() {
     val sortBy = NonNullLiveData(Prefs.sortBy)
 
     val refreshing = NonNullLiveData(false)
-    val error = MutableLiveData<SiaError>()
+    val error = MutableLiveData<Throwable>()
 
     val currentDirPath
         get() = currentDir.value?.path ?: ""
@@ -69,7 +69,7 @@ class FilesViewModel : ViewModel() {
 
     fun refresh() {
         refreshing.value = true
-        filesRepo.updateFilesAndDirs().siaSubscribe({
+        filesRepo.updateFilesAndDirs().io().main().subscribe({
             refreshing.value = false
         }, {
             refreshing.value = false
@@ -82,7 +82,7 @@ class FilesViewModel : ViewModel() {
         if (path == currentDirPath)
             return
         println("changing to dir: $path")
-        filesRepo.getDir(path).siaSubscribe({ // maybe this would be better as a flowable
+        filesRepo.getDir(path).io().main().subscribe({ // maybe this would be better as a flowable
             currentDir.value = it
             setDisplayedNodes()
         }, {
@@ -95,11 +95,11 @@ class FilesViewModel : ViewModel() {
     /** subscribes to the proper source for the displayed nodes, depending on the state of the viewmodel */
     private fun setDisplayedNodes() {
         if (searching.value) {
-            nodesSubscription = filesRepo.search(searchTerm.value, currentDirPath, sortBy.value, ascending.value).siaSubscribe({
+            nodesSubscription = filesRepo.search(searchTerm.value, currentDirPath, sortBy.value, ascending.value).io().main().subscribe({
                 displayedNodes.value = it
             }, ::onError)
         } else {
-            nodesSubscription = filesRepo.immediateNodes(currentDirPath, sortBy.value, ascending.value).siaSubscribe({ nodes ->
+            nodesSubscription = filesRepo.immediateNodes(currentDirPath, sortBy.value, ascending.value).io().main().subscribe({ nodes ->
                 displayedNodes.value = nodes
             }, ::onError)
         }
@@ -111,21 +111,21 @@ class FilesViewModel : ViewModel() {
     }
 
     /** Creates a new directory with the given name in the current directory */
-    fun createDir(name: String) = filesRepo.createDir("$currentDirPath/$name").siaSubscribe(onError = ::onError)
+    fun createDir(name: String) = filesRepo.createDir("$currentDirPath/$name").io().main().subscribe({}, ::onError)
 
-    fun deleteDir(path: String) = filesRepo.deleteDir(path).siaSubscribe({}, ::onError)
+    fun deleteDir(path: String) = filesRepo.deleteDir(path).io().main().subscribe({}, ::onError)
 
-    fun deleteFile(path: String) = filesRepo.deleteFile(path).siaSubscribe(::refresh, ::onError)
+    fun deleteFile(path: String) = filesRepo.deleteFile(path).io().main().subscribe(::refresh, ::onError)
 
     fun addFile(path: String) {
-        filesRepo.addFile(path, "blah", 10, 20).siaSubscribe(::refresh, ::onError)
+        filesRepo.addFile(path, "blah", 10, 20).io().main().subscribe(::refresh, ::onError)
     }
 
     fun renameFile(currentName: String, newName: String) {
         // TODO
     }
 
-    fun renameDir(path: String, newName: String) = filesRepo.renameDir(path, newName).siaSubscribe(onError = ::onError)
+    fun renameDir(path: String, newName: String) = filesRepo.renameDir(path, newName).io().main().subscribe({}, ::onError)
 
     fun search(name: String) {
         searching.value = true
@@ -139,8 +139,8 @@ class FilesViewModel : ViewModel() {
         setDisplayedNodes()
     }
 
-    private fun onError(err: SiaError) {
-        error.value = err
+    private fun onError(t: Throwable) {
+        error.value = t
         error.value = null
     }
 

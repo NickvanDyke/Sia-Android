@@ -15,10 +15,7 @@ import android.widget.Button
 import android.widget.EditText
 import com.vandyke.sia.R
 import com.vandyke.sia.data.remote.siaApi
-import com.vandyke.sia.util.GenUtil
-import com.vandyke.sia.util.SnackbarUtil
-import com.vandyke.sia.util.siaSubscribe
-import com.vandyke.sia.util.toHastings
+import com.vandyke.sia.util.*
 
 class DonateDialog : DialogFragment() {
 
@@ -31,10 +28,10 @@ class DonateDialog : DialogFragment() {
 
         dialogView.findViewById<Button>(R.id.donateButton).setOnClickListener {
             val amount = dialogView.findViewById<EditText>(R.id.donateAmount).text.toString().toHastings().toPlainString()
-            siaApi.walletSiacoins(amount, paymentRecipient).siaSubscribe({
+            siaApi.walletSiacoins(amount, paymentRecipient).io().main().subscribe({
                 SnackbarUtil.showSnackbar(dialogView, "Donation successful. Thank you!", Snackbar.LENGTH_SHORT)
             }, {
-                SnackbarUtil.showSnackbar(dialogView, it.reason.msg + ". No donation made.", Snackbar.LENGTH_SHORT)
+                SnackbarUtil.showSnackbar(dialogView, it.message + ". No donation made.", Snackbar.LENGTH_SHORT)
             })
         }
         builder.setTitle("Donate")

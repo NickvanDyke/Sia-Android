@@ -4,9 +4,9 @@
 
 package com.vandyke.sia.data.repository
 
-import com.vandyke.sia.data.SiaError
 import com.vandyke.sia.data.local.AppDatabase
 import com.vandyke.sia.data.models.wallet.AddressData
+import com.vandyke.sia.data.remote.NoWallet
 import com.vandyke.sia.data.remote.SiaApiInterface
 import io.reactivex.Completable
 import io.reactivex.Single
@@ -40,12 +40,11 @@ class WalletRepository(val api: SiaApiInterface, val db: AppDatabase) {
         db.addressDao().insert(it)
     }.onErrorResumeNext {
         // fallback to DB
-        val siaError = SiaError(it)
         // don't attempt to get an address from the db if the reason the request to the API failed is that it doesn't have a wallet
-        if (siaError.reason != SiaError.Reason.WALLET_NOT_ENCRYPTED)
-            db.addressDao().getAddress().onErrorResumeNext(Single.error(siaError))
+        if (it is NoWallet)
+            db.addressDao().getAddress().onErrorResumeNext(Single.error(it))
         else
-            Single.error(siaError)
+            Single.error(it)
     }!!
 
     fun getAddresses(): Single<List<AddressData>> = api.walletAddresses().map {
@@ -53,11 +52,10 @@ class WalletRepository(val api: SiaApiInterface, val db: AppDatabase) {
     }.doOnSuccess {
         db.addressDao().insertAll(it)
     }.onErrorResumeNext {
-        val siaError = SiaError(it)
-        if (siaError.reason != SiaError.Reason.WALLET_NOT_ENCRYPTED)
-            db.addressDao().getAll().onErrorResumeNext(Single.error(siaError))
+        if (it is NoWallet)
+            db.addressDao().getAll().onErrorResumeNext(Single.error(it))
         else
-            Single.error(siaError)
+            Single.error(it)
     }!!
 
     // chose not to store the seeds in a database for security reasons I guess? Maybe I should

@@ -32,6 +32,7 @@ interface DirDao {
     @Query("SELECT * FROM dirs WHERE path = :path")
     fun dir(path: String): Flowable<Dir>
 
+    // TODO: should maybe return a Maybe instead of a Single? Since I don't want an error when it's an empty result
     @Query("SELECT * FROM dirs WHERE path = :path")
     fun getDir(path: String): Single<Dir>
 

@@ -14,8 +14,8 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import com.vandyke.sia.R
-import com.vandyke.sia.data.SiaError
 import com.vandyke.sia.data.local.Prefs
+import com.vandyke.sia.data.remote.WalletLocked
 import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.ui.wallet.view.childfragments.*
 import com.vandyke.sia.ui.wallet.view.transactionslist.TransactionAdapter
@@ -122,7 +122,7 @@ class WalletFragment : BaseFragment() {
 
         viewModel.error.observe(this) {
             it.snackbar(view)
-            if (it.reason == SiaError.Reason.WALLET_LOCKED)
+            if (it is WalletLocked)
                 expandFrame(WalletUnlockDialog())
         }
 

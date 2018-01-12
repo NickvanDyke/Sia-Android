@@ -4,8 +4,6 @@
 
 package com.vandyke.sia.data.remote
 
-import com.vandyke.sia.data.SiaError
-import com.vandyke.sia.data.SiaError.Reason.*
 import com.vandyke.sia.data.models.consensus.ConsensusData
 import com.vandyke.sia.data.models.gateway.GatewayData
 import com.vandyke.sia.data.models.gateway.GatewayPeerData
@@ -127,7 +125,7 @@ class MockSiaApi : SiaApiInterface {
     override fun walletInit(password: String, dictionary: String, force: Boolean): Single<WalletInitData> {
         return Single.fromCallable {
             if (!force && encrypted)
-                throw SiaError(EXISTING_WALLET)
+                throw ExistingWallet()
             this.password = password
             this.seed = "random testing seed"
             encrypted = true
@@ -138,7 +136,7 @@ class MockSiaApi : SiaApiInterface {
     override fun walletInitSeed(password: String, dictionary: String, seed: String, force: Boolean): Completable {
         return Completable.fromAction {
             if (!force && encrypted)
-                throw SiaError(EXISTING_WALLET)
+                throw ExistingWallet()
             this.password = password
             this.seed = seed
             encrypted = true
@@ -247,16 +245,24 @@ class MockSiaApi : SiaApiInterface {
 
     fun checkPassword(password: String) {
         if (password != this.password)
-            throw SiaError(WALLET_PASSWORD_INCORRECT)
+            throw WalletPasswordIncorrect()
     }
 
     fun checkUnlocked(desired: Boolean = true) {
-        if (unlocked != desired)
-            throw SiaError(WALLET_LOCKED)
+        if (unlocked != desired) {
+            if (unlocked)
+                throw WalletAlreadyUnlocked()
+            else
+                throw WalletLocked()
+        }
     }
 
     fun checkEncrypted(desired: Boolean = true) {
-        if (encrypted != desired)
-            throw SiaError(WALLET_NOT_ENCRYPTED)
+        if (encrypted != desired) {
+            if (encrypted)
+                throw ExistingWallet()
+            else
+                throw NoWallet()
+        }
     }
 }
