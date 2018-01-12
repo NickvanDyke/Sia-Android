@@ -4,13 +4,20 @@
 
 package com.vandyke.sia.data.repository
 
-import com.vandyke.sia.data.remote.siaApi
-import com.vandyke.sia.db
+import com.vandyke.sia.data.local.AppDatabase
+import com.vandyke.sia.data.remote.SiaApiInterface
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class ScValueRepository {
-    fun updateScValue() = siaApi.getScPrice().doOnSuccess {
+@Singleton
+class ScValueRepository
+@Inject constructor(
+        private val api: SiaApiInterface,
+        private val db: AppDatabase
+) {
+    fun updateScValue() = api.getScPrice().doOnSuccess {
         db.scValueDao().insert(it)
-    }.toCompletable()
+    }.toCompletable()!!
 
     fun scValue() = db.scValueDao().mostRecent()
 }

@@ -17,7 +17,6 @@ import com.vandyke.sia.R
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.siad.SiadService
 import com.vandyke.sia.ui.common.BaseFragment
-import com.vandyke.sia.ui.hosting.fragments.HostingFragment
 import com.vandyke.sia.ui.renter.files.view.FilesFragment
 import com.vandyke.sia.ui.terminal.TerminalFragment
 import com.vandyke.sia.ui.wallet.view.WalletFragment
@@ -77,7 +76,6 @@ class MainActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             viewModel.setDisplayedFragmentClass(when (Prefs.startupPage) {
                 "renter" -> FilesFragment::class.java
-                "hosting" -> HostingFragment::class.java
                 "wallet" -> WalletFragment::class.java
                 "terminal" -> TerminalFragment::class.java
                 else -> throw Exception()

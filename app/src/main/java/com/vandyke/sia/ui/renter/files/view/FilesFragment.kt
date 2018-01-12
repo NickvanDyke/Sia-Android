@@ -5,6 +5,7 @@
 package com.vandyke.sia.ui.renter.files.view
 
 import android.app.Activity.RESULT_OK
+import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.graphics.PorterDuff
@@ -19,6 +20,7 @@ import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.Spinner
 import com.vandyke.sia.R
+import com.vandyke.sia.appComponent
 import com.vandyke.sia.data.repository.FilesRepository.SortBy
 import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.ui.renter.files.view.list.NodesAdapter
@@ -28,13 +30,15 @@ import com.vandyke.sia.util.observe
 import com.vandyke.sia.util.snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_renter_files.*
+import javax.inject.Inject
 
 
 class FilesFragment : BaseFragment() {
     override val layoutResId: Int = R.layout.fragment_renter_files
     override val hasOptionsMenu = true
 
-    lateinit var viewModel: FilesViewModel
+    @Inject lateinit var factory: ViewModelProvider.Factory
+    private lateinit var viewModel: FilesViewModel
 
     private var searchItem: MenuItem? = null
     private var searchView: SearchView? = null
@@ -50,7 +54,8 @@ class FilesFragment : BaseFragment() {
     private lateinit var nodesAdapter: NodesAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        viewModel = ViewModelProviders.of(this).get(FilesViewModel::class.java)
+        appComponent.inject(this)
+        viewModel = ViewModelProviders.of(this, factory).get(FilesViewModel::class.java)
 
         /* set up nodes list */
         nodesAdapter = NodesAdapter(viewModel)

@@ -4,8 +4,6 @@
 
 package com.vandyke.sia.data.remote
 
-import android.util.Base64
-import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.models.consensus.ConsensusData
 import com.vandyke.sia.data.models.gateway.GatewayData
 import com.vandyke.sia.data.models.renter.*
@@ -13,14 +11,8 @@ import com.vandyke.sia.data.models.txpool.FeeData
 import com.vandyke.sia.data.models.wallet.*
 import io.reactivex.Completable
 import io.reactivex.Single
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
-import retrofit2.converter.jackson.JacksonConverterFactory
 import retrofit2.http.*
 import java.math.BigDecimal
-import java.util.concurrent.TimeUnit
 
 interface SiaApiInterface {
     /* daemon API */
@@ -112,41 +104,4 @@ interface SiaApiInterface {
     /* transactionpool API */
     @GET("tpool/fee")
     fun txPoolFee(): Single<FeeData>
-}
-
-// TODO: inject this. And maybe put an option in settings to toggle between the mock api and the retrofit api. And maybe a remote address too
-// should probably keep separate DBs for each mode too
-val siaApi: SiaApiInterface = SiaApi.buildApi()
-
-object SiaApi {
-    fun buildApi(): SiaApiInterface {
-
-        val clientBuilder = OkHttpClient.Builder()
-                .readTimeout(0, TimeUnit.MILLISECONDS) // no timeout because some Sia API calls can take a long time to return
-//                .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
-                .addInterceptor({
-                    val original: Request = it.request()
-                    val request: Request = original.newBuilder()
-                            .header("User-agent", "Sia-Agent")
-                            .header("Authorization", "Basic " + Base64.encodeToString(":${Prefs.apiPassword}".toByteArray(), Base64.NO_WRAP))
-                            .method(original.method(), original.body())
-                            .build()
-                    val response = it.proceed(request)
-                    if (!response.isSuccessful) {
-                        val errorMsg = response.peekBody(256).string()
-                        val siaException = SiaException.fromError(errorMsg)
-                        if (siaException != null)
-                            throw siaException
-                    }
-                    return@addInterceptor response
-                })
-
-        return Retrofit.Builder()
-                .addConverterFactory(JacksonConverterFactory.create())
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .client(clientBuilder.build())
-                .baseUrl("http://localhost:9980/")
-                .build()
-                .create(SiaApiInterface::class.java)
-    }
 }

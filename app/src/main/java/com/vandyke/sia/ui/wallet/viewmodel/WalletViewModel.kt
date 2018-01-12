@@ -8,11 +8,10 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.vandyke.sia.data.models.consensus.ConsensusData
 import com.vandyke.sia.data.models.wallet.*
-import com.vandyke.sia.data.remote.siaApi
 import com.vandyke.sia.data.repository.ConsensusRepository
+import com.vandyke.sia.data.repository.GatewayRepository
 import com.vandyke.sia.data.repository.ScValueRepository
 import com.vandyke.sia.data.repository.WalletRepository
-import com.vandyke.sia.db
 import com.vandyke.sia.siadOutput
 import com.vandyke.sia.util.NonNullLiveData
 import com.vandyke.sia.util.io
@@ -21,13 +20,20 @@ import com.vandyke.sia.util.toSC
 import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
+import javax.inject.Inject
 
-class WalletViewModel : ViewModel() {
+class WalletViewModel
+@Inject constructor(
+        private val walletRepository: WalletRepository,
+        private val consensusRepository: ConsensusRepository,
+        private val scValueRepository: ScValueRepository,
+        private val gatewayRepository: GatewayRepository
+) : ViewModel() {
     val wallet = MutableLiveData<WalletData>()
     val usd = MutableLiveData<ScValueData>()
     val consensus = MutableLiveData<ConsensusData>()
     val transactions = MutableLiveData<List<TransactionData>>()
-    val activeTasks = NonNullLiveData(0) // TODO: ideally, also represent refreshing, separately from the number of active tasks
+    val activeTasks = NonNullLiveData(0)
     val refreshing = NonNullLiveData(false)
     val numPeers = NonNullLiveData(0)
     val success = MutableLiveData<String>()
@@ -40,11 +46,6 @@ class WalletViewModel : ViewModel() {
        won't receive anything upon initial subscription to it (normally it still would, but generally
        an extension function is used that doesn't pass the value unless it's not null) */
 
-    // TODO: inject these
-    private val walletRepo = WalletRepository(siaApi, db)
-    private val consensusRepo = ConsensusRepository()
-    private val scValueRepo = ScValueRepository()
-
     private val subscription = siadOutput.observeOn(AndroidSchedulers.mainThread()).subscribe {
         if (it.contains("Finished loading") || it.contains("Done!"))
             refreshAll()
@@ -53,19 +54,19 @@ class WalletViewModel : ViewModel() {
     init {
         /* subscribe to flowables from the repositories. Note that since they're flowables,
          * we only need to subscribe this once */
-        walletRepo.wallet().io().main().subscribe({
+        this.walletRepository.wallet().io().main().subscribe({
             wallet.value = it
         }, ::onError)
 
-        walletRepo.transactions().io().main().subscribe({
+        this.walletRepository.transactions().io().main().subscribe({
             transactions.value = it
         }, ::onError)
 
-        consensusRepo.consensus().io().main().subscribe({
+        this.consensusRepository.consensus().io().main().subscribe({
             consensus.value = it
         }, ::onError)
 
-        scValueRepo.scValue().io().main().subscribe({
+        this.scValueRepository.scValue().io().main().subscribe({
             usd.value = it
         }, ::onError)
     }
@@ -106,10 +107,10 @@ class WalletViewModel : ViewModel() {
         incrementTasks()
         refreshing.value = true
         Completable.mergeArrayDelayError(
-                walletRepo.updateAll(),
-                consensusRepo.updateConsensus(),
-                scValueRepo.updateScValue(),
-                siaApi.gateway().doAfterSuccess {
+                this.walletRepository.updateAll(),
+                this.consensusRepository.updateConsensus(),
+                this.scValueRepository.updateScValue(),
+                this.gatewayRepository.getGateway().doAfterSuccess {
                     numPeers.postValue(it.peers.size)
                 }.doOnError {
                     numPeers.postValue(0)
@@ -125,12 +126,12 @@ class WalletViewModel : ViewModel() {
 
     fun refreshWallet() {
         incrementTasks()
-        walletRepo.updateAll().io().main().subscribe(::decrementTasks, ::onError)
+        this.walletRepository.updateAll().io().main().subscribe(::decrementTasks, ::onError)
     }
 
     fun unlock(password: String) {
         incrementTasks()
-        walletRepo.unlock(password).io().main().subscribe({
+        this.walletRepository.unlock(password).io().main().subscribe({
             setSuccess("Unlocked")
             refreshWallet()
         }, ::onError)
@@ -138,7 +139,7 @@ class WalletViewModel : ViewModel() {
 
     fun lock() {
         incrementTasks()
-        walletRepo.lock().io().main().subscribe({
+        this.walletRepository.lock().io().main().subscribe({
             setSuccess("Locked")
             refreshWallet()
         }, ::onError)
@@ -147,14 +148,14 @@ class WalletViewModel : ViewModel() {
     fun create(password: String, force: Boolean, seed: String? = null) {
         incrementTasks()
         if (seed == null) {
-            walletRepo.init(password, "english", force).io().main().subscribe({ it ->
+            this.walletRepository.init(password, "english", force).io().main().subscribe({ it ->
                 setSuccess("Created wallet")
                 refreshWallet()
                 this.seed.value = it.primaryseed
                 this.seed.value = null
             }, ::onError)
         } else {
-            walletRepo.initSeed(password, "english", seed, force).io().main().subscribe({
+            this.walletRepository.initSeed(password, "english", seed, force).io().main().subscribe({
                 setSuccess("Created wallet")
                 refreshWallet()
                 this.seed.value = seed
@@ -165,7 +166,7 @@ class WalletViewModel : ViewModel() {
 
     fun send(amount: String, destination: String) {
         incrementTasks()
-        walletRepo.send(amount, destination).io().main().subscribe({
+        this.walletRepository.send(amount, destination).io().main().subscribe({
             setSuccess("Sent ${amount.toSC()} SC to $destination")
             refreshWallet()
         }, ::onError)
@@ -173,7 +174,7 @@ class WalletViewModel : ViewModel() {
 
     fun changePassword(currentPassword: String, newPassword: String) {
         incrementTasks()
-        walletRepo.changePassword(currentPassword, newPassword).io().main().subscribe({
+        this.walletRepository.changePassword(currentPassword, newPassword).io().main().subscribe({
             setSuccess("Changed password")
             refreshWallet()
         }, ::onError)
@@ -181,7 +182,7 @@ class WalletViewModel : ViewModel() {
 
     fun sweep(seed: String) {
         incrementTasks()
-        walletRepo.sweep("english", seed).io().main().subscribe({
+        this.walletRepository.sweep("english", seed).io().main().subscribe({
             decrementTasks()
             refreshWallet()
         }, ::onError)
@@ -193,21 +194,21 @@ class WalletViewModel : ViewModel() {
      * that will populate that LiveData */
     fun getAddress(): Single<AddressData> {
         incrementTasks()
-        return walletRepo.getAddress().io().main()
+        return this.walletRepository.getAddress().io().main()
                 .doOnError { onError(it) }
                 .doAfterSuccess { decrementTasks() }
     }
 
     fun getAddresses(): Single<List<AddressData>> {
         incrementTasks()
-        return walletRepo.getAddresses().io().main()
+        return this.walletRepository.getAddresses().io().main()
                 .doOnError { onError(it) }
                 .doAfterSuccess { decrementTasks() }
     }
 
     fun getSeeds(): Single<SeedsData> {
         incrementTasks()
-        return walletRepo.getSeeds().io().main()
+        return this.walletRepository.getSeeds().io().main()
                 .doOnError { onError(it) }
                 .doAfterSuccess { decrementTasks() }
     }

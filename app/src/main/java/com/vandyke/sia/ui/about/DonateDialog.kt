@@ -14,12 +14,14 @@ import android.view.WindowManager
 import android.widget.Button
 import android.widget.EditText
 import com.vandyke.sia.R
-import com.vandyke.sia.data.remote.siaApi
+import com.vandyke.sia.data.remote.SiaApiInterface
 import com.vandyke.sia.util.*
+import javax.inject.Inject
 
 class DonateDialog : DialogFragment() {
 
     private val paymentRecipient = GenUtil.devAddresses[(Math.random() * GenUtil.devAddresses.size).toInt()]
+    @Inject lateinit var api: SiaApiInterface
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val builder = AlertDialog.Builder(context!!)
@@ -28,7 +30,7 @@ class DonateDialog : DialogFragment() {
 
         dialogView.findViewById<Button>(R.id.donateButton).setOnClickListener {
             val amount = dialogView.findViewById<EditText>(R.id.donateAmount).text.toString().toHastings().toPlainString()
-            siaApi.walletSiacoins(amount, paymentRecipient).io().main().subscribe({
+            api.walletSiacoins(amount, paymentRecipient).io().main().subscribe({
                 SnackbarUtil.showSnackbar(dialogView, "Donation successful. Thank you!", Snackbar.LENGTH_SHORT)
             }, {
                 SnackbarUtil.showSnackbar(dialogView, it.message + ". No donation made.", Snackbar.LENGTH_SHORT)

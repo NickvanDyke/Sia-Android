@@ -4,6 +4,7 @@
 
 package com.vandyke.sia.ui.wallet.view
 
+import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
@@ -14,6 +15,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import com.vandyke.sia.R
+import com.vandyke.sia.appComponent
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.remote.WalletLocked
 import com.vandyke.sia.ui.common.BaseFragment
@@ -23,12 +25,14 @@ import com.vandyke.sia.ui.wallet.viewmodel.WalletViewModel
 import com.vandyke.sia.util.*
 import kotlinx.android.synthetic.main.fragment_wallet.*
 import java.math.BigDecimal
+import javax.inject.Inject
 
 
 class WalletFragment : BaseFragment() {
     override val layoutResId: Int = R.layout.fragment_wallet
     override val hasOptionsMenu = true
 
+    @Inject lateinit var factory: ViewModelProvider.Factory
     private lateinit var viewModel: WalletViewModel
 
     private val adapter = TransactionAdapter()
@@ -36,13 +40,15 @@ class WalletFragment : BaseFragment() {
     private var statusButton: MenuItem? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        appComponent.inject(this)
+
         /* color stuff depending on theme */
         if (Prefs.darkMode) {
             top_shadow.setBackgroundResource(R.drawable.top_shadow_dark)
         }
         syncBar.setProgressTextColor(balanceUsdText.currentTextColor)
 
-        viewModel = ViewModelProviders.of(this).get(WalletViewModel::class.java)
+        viewModel = ViewModelProviders.of(this, factory).get(WalletViewModel::class.java)
 
         /* set up recyclerview for transactions */
         transactionList.addItemDecoration(DividerItemDecoration(transactionList.context,

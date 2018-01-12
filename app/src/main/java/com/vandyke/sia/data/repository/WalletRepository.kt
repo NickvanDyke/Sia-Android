@@ -10,9 +10,15 @@ import com.vandyke.sia.data.remote.NoWallet
 import com.vandyke.sia.data.remote.SiaApiInterface
 import io.reactivex.Completable
 import io.reactivex.Single
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class WalletRepository(val api: SiaApiInterface, val db: AppDatabase) {
-
+@Singleton
+class WalletRepository
+@Inject constructor(
+        private val api: SiaApiInterface,
+        private val db: AppDatabase
+) {
     /* Functions that update the local database from the Sia node */
     fun updateAll() = Completable.mergeArray(updateWallet(), updateTransactions(), updateAddresses())!!
 

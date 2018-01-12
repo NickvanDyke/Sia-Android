@@ -13,10 +13,6 @@
                 android:icon="@drawable/ic_cloud"
                 android:title="@string/renter"/>
         <item
-                android:id="@+id/drawer_item_hosting"
-                android:icon="@drawable/ic_folder_shared"
-                android:title="@string/hosting"/>
-        <item
                 android:id="@+id/drawer_item_wallet"
                 android:icon="@drawable/ic_account_balance_wallet"
                 android:title="@string/wallet"/>

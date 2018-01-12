@@ -17,11 +17,17 @@ import io.reactivex.rxkotlin.toObservable
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.launch
 import java.math.BigDecimal
+import javax.inject.Inject
+import javax.inject.Singleton
 
-val ROOT_DIR_NAME = "Home"
+const val ROOT_DIR_NAME = "Home"
 
-class FilesRepository(val api: SiaApiInterface, val db: AppDatabase) {
-
+@Singleton
+class FilesRepository
+@Inject constructor(
+        private val api: SiaApiInterface,
+        private val db: AppDatabase
+) {
     init {
         launch(CommonPool) {
             /* want to always have at least a root directory */

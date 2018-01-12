@@ -9,7 +9,6 @@ import android.arch.lifecycle.ViewModel
 import android.view.MenuItem
 import com.vandyke.sia.R
 import com.vandyke.sia.ui.about.AboutFragment
-import com.vandyke.sia.ui.hosting.fragments.HostingFragment
 import com.vandyke.sia.ui.renter.files.view.FilesFragment
 import com.vandyke.sia.ui.settings.SettingsFragment
 import com.vandyke.sia.ui.terminal.TerminalFragment
@@ -46,7 +45,6 @@ class MainViewModel : ViewModel() {
     fun navigationItemSelected(item: MenuItem) {
         visibleFragmentClass.value = when (item.itemId) {
             R.id.drawer_item_renter -> FilesFragment::class.java
-            R.id.drawer_item_hosting -> HostingFragment::class.java
             R.id.drawer_item_wallet -> WalletFragment::class.java
             R.id.drawer_item_terminal -> TerminalFragment::class.java
             R.id.drawer_item_settings -> SettingsFragment::class.java
@@ -66,7 +64,6 @@ class MainViewModel : ViewModel() {
         title.value = clazz.simpleName.replace("Fragment", "")
         selectedMenuItem.value = when (clazz) {
             FilesFragment::class.java -> R.id.drawer_item_renter
-            HostingFragment::class.java -> R.id.drawer_item_hosting
             WalletFragment::class.java -> R.id.drawer_item_wallet
             TerminalFragment::class.java -> R.id.drawer_item_terminal
             SettingsFragment::class.java -> R.id.drawer_item_settings
