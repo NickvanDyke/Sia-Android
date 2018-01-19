@@ -21,7 +21,6 @@ import com.vandyke.sia.ui.renter.files.view.FilesFragment
 import com.vandyke.sia.ui.terminal.TerminalFragment
 import com.vandyke.sia.ui.wallet.view.WalletFragment
 import com.vandyke.sia.util.observe
-import de.cketti.library.changelog.ChangeLog
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -86,15 +85,15 @@ class MainActivity : AppCompatActivity() {
             viewModel.setDisplayedFragmentClass(storedFragmentClass)
         }
 
-        /* changelog stuff */
-        val changelog = ChangeLog(this)
-        /* if this is the user's first time ever running the app, there isn't much point to showing
-           them a changelog, so skip it until they update */
-        if (changelog.isFirstRunEver) {
-            changelog.skipLogDialog()
-        } else if (changelog.isFirstRun) {
-            changelog.logDialog.show()
-        }
+//        /* changelog stuff */
+//        val changelog = ChangeLog(this)
+//        /* if this is the user's first time ever running the app, there isn't much point to showing
+//           them a changelog, so skip it until they update */
+//        if (changelog.isFirstRunEver) {
+//            changelog.skipLogDialog()
+//        } else if (changelog.isFirstRun) {
+//            changelog.logDialog.show()
+//        }
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {

@@ -15,7 +15,6 @@ import android.net.ConnectivityManager
 import android.os.Binder
 import android.os.Handler
 import android.os.IBinder
-import android.os.PowerManager
 import android.support.v4.app.NotificationCompat
 import com.vandyke.sia.R
 import com.vandyke.sia.appComponent
@@ -37,7 +36,6 @@ class SiadService : LifecycleService() {
 
     private var siadFile: File? = null
     private var siadProcess: java.lang.Process? = null
-    lateinit var wakeLock: PowerManager.WakeLock
     private val SIAD_NOTIFICATION = 3
     val siadProcessIsRunning: Boolean
         get() = siadProcess != null
@@ -53,7 +51,6 @@ class SiadService : LifecycleService() {
         // TODO: need some way to do this such that if I push an update with a new version of siad, that it will overwrite the
         // current one. Maybe just keep the version in sharedprefs and check against it?
         siadFile = StorageUtil.copyFromAssetsToAppStorage("siad", this)
-        wakeLock = (getSystemService(Context.POWER_SERVICE) as PowerManager).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Sia node")
 
         siadSource.allConditionsGood.observe(this) {
             println("received conditions: $it")
@@ -76,10 +73,6 @@ class SiadService : LifecycleService() {
             showSiadNotification("Couldn't start Siad")
             return
         }
-
-        /* acquire partial wake lock to keep device CPU awake and therefore keep the Sia node active */
-        if (Prefs.SiaNodeWakeLock && !wakeLock.isHeld)
-            wakeLock.acquire()
 
         val pb = ProcessBuilder(siadFile!!.absolutePath, "-M", "gctw") // TODO: maybe let user set which modules to load?
         pb.redirectErrorStream(true)
@@ -144,8 +137,6 @@ class SiadService : LifecycleService() {
     }
 
     fun stopSiad() {
-        if (wakeLock.isHeld)
-            wakeLock.release()
         // TODO: maybe shut it down using http stop request instead? Takes ages sometimes. Might be advantageous though
         siadProcess?.destroy()
         siadProcess = null
@@ -175,8 +166,6 @@ class SiadService : LifecycleService() {
         super.onDestroy()
         unregisterReceiver(receiver)
         stopSiad()
-        if (wakeLock.isHeld)
-            wakeLock.release()
     }
 
     fun showSiadNotification(text: String) {

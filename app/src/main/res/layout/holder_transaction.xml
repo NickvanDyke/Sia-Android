@@ -14,7 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/transactionStatus"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         android:textAlignment="viewStart"
         android:gravity="start"
         android:layout_marginStart="16dp"
@@ -26,7 +26,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/transactionValue"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:textAlignment="textEnd"
         android:gravity="end"
@@ -46,7 +46,7 @@
         android:ellipsize="middle"
         android:singleLine="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toRightOf="@+id/transactionStatus"
-        app:layout_constraintRight_toLeftOf="@+id/transactionValue"
+        app:layout_constraintStart_toEndOf="@+id/transactionStatus"
+        app:layout_constraintEnd_toStartOf="@+id/transactionValue"
         app:layout_constraintTop_toTopOf="parent" />
 </android.support.constraint.ConstraintLayout>

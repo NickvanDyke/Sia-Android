@@ -18,8 +18,8 @@
         android:hint="@string/recipient_address"
         android:inputType="textNoSuggestions|textVisiblePassword"
         android:layout_marginStart="16dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/walletScan"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/walletScan"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
@@ -32,8 +32,8 @@
         android:gravity="center"
         android:hint="@string/amount_sc"
         android:inputType="numberDecimal"
-        app:layout_constraintLeft_toLeftOf="@+id/sendRecipient"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/sendRecipient"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/sendRecipient" />
 
     <Button
@@ -57,6 +57,6 @@
         android:contentDescription="Scan QR code"
         android:scaleType="fitCenter"
         android:src="@drawable/qr_image"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/sendRecipient" />
 </android.support.constraint.ConstraintLayout>

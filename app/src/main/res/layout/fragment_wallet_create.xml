@@ -21,8 +21,8 @@
         android:gravity="center"
         android:hint="@string/new_password"
         android:inputType="textPassword"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintTop_creator="1" />
@@ -37,8 +37,8 @@
         android:gravity="center"
         android:hint="@string/confirm_password"
         android:inputType="textPassword"
-        app:layout_constraintLeft_toLeftOf="@+id/newPasswordCreate"
-        app:layout_constraintRight_toRightOf="@+id/newPasswordCreate"
+        app:layout_constraintStart_toStartOf="@+id/newPasswordCreate"
+        app:layout_constraintEnd_toEndOf="@+id/newPasswordCreate"
         app:layout_constraintTop_toBottomOf="@+id/newPasswordCreate" />
 
     <CheckBox
@@ -46,7 +46,7 @@
         android:layout_width="0dp"
         android:layout_height="48dp"
         android:text="Force"
-        app:layout_constraintLeft_toLeftOf="@+id/confirmNewPasswordCreate"
+        app:layout_constraintStart_toStartOf="@+id/confirmNewPasswordCreate"
         app:layout_constraintTop_toBottomOf="@+id/walletCreateFromSeed" />
 
     <CheckBox
@@ -54,7 +54,7 @@
         android:layout_width="wrap_content"
         android:layout_height="48dp"
         android:text="Create from existing seed"
-        app:layout_constraintLeft_toLeftOf="@+id/confirmNewPasswordCreate"
+        app:layout_constraintStart_toStartOf="@+id/confirmNewPasswordCreate"
         app:layout_constraintTop_toBottomOf="@+id/confirmNewPasswordCreate" />
 
     <EditText
@@ -67,8 +67,8 @@
         android:hint="@string/seed"
         android:inputType="textNoSuggestions|textVisiblePassword"
         app:layout_constraintBottom_toBottomOf="@+id/walletCreateFromSeed"
-        app:layout_constraintLeft_toRightOf="@+id/walletCreateFromSeed"
-        app:layout_constraintRight_toRightOf="@+id/confirmNewPasswordCreate"
+        app:layout_constraintStart_toEndOf="@+id/walletCreateFromSeed"
+        app:layout_constraintEnd_toEndOf="@+id/confirmNewPasswordCreate"
         app:layout_constraintTop_toTopOf="@+id/walletCreateFromSeed" />
 
     <TextView
@@ -79,7 +79,7 @@
         android:text="Warning: this will overwrite\nany existing wallet"
         android:textColor="@android:color/holo_red_light"
         app:layout_constraintBottom_toBottomOf="@+id/walletCreateForce"
-        app:layout_constraintLeft_toRightOf="@+id/walletCreateForce"
+        app:layout_constraintStart_toEndOf="@+id/walletCreateForce"
         app:layout_constraintTop_toTopOf="@+id/walletCreateForce" />
 
     <Button
@@ -89,7 +89,7 @@
         android:background="@null"
         android:text="@string/create"
         android:textColor="@color/colorPrimary"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/walletCreateForce" />
 </android.support.constraint.ConstraintLayout>

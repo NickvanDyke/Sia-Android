@@ -20,7 +20,7 @@
         android:src="@drawable/ic_more_vert"
         android:tint="@android:color/darker_gray"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -32,7 +32,7 @@
         android:text="Name"
         android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/fileSize"
-        app:layout_constraintLeft_toRightOf="@+id/fileImage"
+        app:layout_constraintStart_toEndOf="@+id/fileImage"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
@@ -45,7 +45,7 @@
         android:src="@drawable/ic_file"
         android:tint="@android:color/darker_gray"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -56,6 +56,6 @@
         android:text="Size"
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="@+id/fileName"
+        app:layout_constraintStart_toStartOf="@+id/fileName"
         app:layout_constraintTop_toBottomOf="@+id/fileName" />
 </android.support.constraint.ConstraintLayout>

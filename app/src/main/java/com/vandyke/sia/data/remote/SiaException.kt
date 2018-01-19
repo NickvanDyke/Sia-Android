@@ -36,6 +36,7 @@ sealed class SiaException(msg: String) : Throwable(msg) {
                 msg.contains("nothing to sweep") -> NothingToSweep()
                 msg.contains("word not found in dictionary for given language") -> WordNotFoundInDictionary()
                 msg.contains("seed failed checksum verification") -> SeedFailedChecksum()
+
                 msg.contains("unrecognized hash used as input to /explorer/hash") -> ExplorerUnrecognizedHash()
 
                 else -> UncaughtSiaError(msg)

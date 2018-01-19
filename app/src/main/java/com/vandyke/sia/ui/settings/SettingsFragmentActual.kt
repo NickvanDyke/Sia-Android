@@ -59,17 +59,6 @@ class SettingsFragmentActual : PreferenceFragmentCompat() {
          * be unregistered/destroyed. */
         prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
             when (key) {
-                "SiaNodeWakeLock" -> SiadService.getService(context!!).subscribe { service ->
-                    /* If Siad is already running then we must tell the service to acquire/release its wake lock
-                       because normally it does so in start/stopSiad() */
-                    if (service.siadProcessIsRunning) {
-                        if (service.wakeLock.isHeld)
-                            service.wakeLock.release()
-                        else if (Prefs.SiaNodeWakeLock)
-                            service.wakeLock.acquire()
-                    }
-                }
-
                 "apiPassword", "useExternal" -> SiadService.getService(context!!).subscribe { service ->
                     /* restart siad so that it'll switch storage directories */
                     service.restartSiad()

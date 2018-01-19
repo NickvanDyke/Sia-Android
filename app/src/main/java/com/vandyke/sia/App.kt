@@ -10,12 +10,8 @@ import com.vandyke.sia.dagger.AppComponent
 import com.vandyke.sia.dagger.AppModule
 import com.vandyke.sia.dagger.DaggerAppComponent
 import com.vandyke.sia.util.NotificationUtil
-import io.reactivex.subjects.PublishSubject
 
 lateinit var appComponent: AppComponent
-// TODO: inject these where they're used
-val siadOutput = PublishSubject.create<String>()!!
-
 
 class App : Application() {
 

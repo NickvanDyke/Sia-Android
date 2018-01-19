@@ -11,9 +11,13 @@ import android.arch.lifecycle.Observer
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.net.Uri
 import android.os.Build
+import android.support.customtabs.CustomTabsIntent
+import android.support.v4.content.ContextCompat
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import com.vandyke.sia.R
 import com.vandyke.sia.data.local.Prefs
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -80,6 +84,13 @@ object GenUtil {
     }
 
     val isSiadSupported = Build.SUPPORTED_64_BIT_ABIS.any { it == "arm64-v8a" }
+
+    fun launchCustomTabs(context: Context, url: String) {
+        CustomTabsIntent.Builder()
+                .setToolbarColor(ContextCompat.getColor(context, R.color.colorPrimary))
+                .build()
+                .launchUrl(context, Uri.parse(url))
+    }
 }
 
 fun <T> LiveData<T>.observe(owner: LifecycleOwner, onChanged: (T) -> Unit) {

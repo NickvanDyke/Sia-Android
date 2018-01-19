@@ -17,7 +17,6 @@ object Prefs : KotprefModel() {
     var hideZero by booleanPref(true)
     var useExternal by booleanPref(false)
     var displayedDecimalPrecision by intPref(2)
-    var SiaNodeWakeLock by booleanPref(false)
     var runSiaOnData by booleanPref()
 
     var ascending by booleanPref(true)

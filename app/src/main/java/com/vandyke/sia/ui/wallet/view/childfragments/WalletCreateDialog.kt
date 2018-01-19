@@ -62,7 +62,7 @@ class WalletCreateDialog : BaseWalletFragment() {
                     .setMessage("$msg\n\n$seed")
                     .setPositiveButton("Copy seed", { _, _ ->
                         GenUtil.copyToClipboard(context, seed)
-                        Toast.makeText(context, "Copied seed", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Copied seed. Please store it safely.", Toast.LENGTH_LONG).show()
                     })
                     .show()
         }
