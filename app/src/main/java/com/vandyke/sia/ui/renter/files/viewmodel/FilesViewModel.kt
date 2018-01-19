@@ -11,7 +11,6 @@ import com.vandyke.sia.data.local.models.renter.Dir
 import com.vandyke.sia.data.local.models.renter.Node
 import com.vandyke.sia.data.repository.FilesRepository
 import com.vandyke.sia.data.repository.ROOT_DIR_NAME
-import com.vandyke.sia.isSiadLoaded
 import com.vandyke.sia.util.NonNullLiveData
 import com.vandyke.sia.util.io
 import com.vandyke.sia.util.main
@@ -19,7 +18,9 @@ import io.reactivex.disposables.Disposable
 import javax.inject.Inject
 
 class FilesViewModel
-@Inject constructor(private val filesRepository: FilesRepository) : ViewModel() {
+@Inject constructor(
+        private val filesRepository: FilesRepository
+) : ViewModel() {
     val displayedNodes = MutableLiveData<List<Node>>()
     val currentDir = MutableLiveData<Dir>()
 
@@ -34,10 +35,6 @@ class FilesViewModel
 
     val currentDirPath
         get() = currentDir.value?.path ?: ""
-
-    private val subscription = isSiadLoaded.subscribe {
-        if (it) refresh()
-    }
 
     /** the subscription to the database flowable that emits items in the current path */
     private var nodesSubscription: Disposable? = null
@@ -61,7 +58,6 @@ class FilesViewModel
 
     override fun onCleared() {
         super.onCleared()
-        subscription.dispose()
         nodesSubscription?.dispose()
     }
 

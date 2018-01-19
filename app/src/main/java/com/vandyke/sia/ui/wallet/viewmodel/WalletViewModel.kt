@@ -12,14 +12,12 @@ import com.vandyke.sia.data.repository.ConsensusRepository
 import com.vandyke.sia.data.repository.GatewayRepository
 import com.vandyke.sia.data.repository.ScValueRepository
 import com.vandyke.sia.data.repository.WalletRepository
-import com.vandyke.sia.siadOutput
 import com.vandyke.sia.util.NonNullLiveData
 import com.vandyke.sia.util.io
 import com.vandyke.sia.util.main
 import com.vandyke.sia.util.toSC
 import io.reactivex.Completable
 import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
 import javax.inject.Inject
 
 class WalletViewModel
@@ -46,11 +44,6 @@ class WalletViewModel
        won't receive anything upon initial subscription to it (normally it still would, but generally
        an extension function is used that doesn't pass the value unless it's not null) */
 
-    private val subscription = siadOutput.observeOn(AndroidSchedulers.mainThread()).subscribe {
-        if (it.contains("Finished loading") || it.contains("Done!"))
-            refreshAll()
-    }
-
     init {
         /* subscribe to flowables from the repositories. Note that since they're flowables,
          * we only need to subscribe this once */
@@ -69,11 +62,6 @@ class WalletViewModel
         this.scValueRepository.scValue().io().main().subscribe({
             usd.value = it
         }, ::onError)
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        subscription.dispose()
     }
 
     /* success and error are immediately set back to null because the view only reacts on

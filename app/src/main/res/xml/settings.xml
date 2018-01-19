@@ -5,11 +5,6 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory android:title="Sia node">
         <SwitchPreferenceCompat
-            android:defaultValue="true"
-            android:key="startSiaAutomatically"
-            android:summary="Start the Sia node automatically when this app is started. Otherwise, you can use the 'Start' button on its notification."
-            android:title="Start Sia automatically" />
-        <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="SiaNodeWakeLock"
             android:summary="Keep your phone's CPU awake when the Sia node is running, even while your phone is locked, so that the Sia node can continue operating (syncing, downloading, etc)."
@@ -21,12 +16,12 @@
         <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="useExternal"
-            android:summary="The Sia node will store its data on whatever your phone returns as its external storage - this is manufacturer-dependent, and will not necessarily be an external SD card. Restart the Sia node after changing."
+            android:summary="The Sia node will instead store its data on whatever your phone returns as its external storage - this is manufacturer-dependent, and will not necessarily be an external SD card. The Sia node will restart after changing this."
             android:title="Use external storage" />
         <EditTextPreference
             android:key="apiPassword"
             android:title="API password"
-            android:summary="API password to set on the Sia node, so that only this app can interact with it. Optional, but recommended. Restart the Sia node after changing."/>
+            android:summary="API password to set on the Sia node, so that only this app can interact with it. Optional, but recommended. The Sia node will restart after changing this."/>
     </PreferenceCategory>
     <PreferenceCategory android:title="Appearance">
         <SwitchPreferenceCompat
@@ -37,6 +32,12 @@
             android:defaultValue="true"
             android:key="hideZero"
             android:title="Hide net-zero transactions" />
+        <ListPreference
+            android:defaultValue="wallet"
+            android:entries="@array/startup_entries"
+            android:entryValues="@array/startup_values"
+            android:key="startupPage"
+            android:title="Launch screen" />
         <com.vandyke.sia.ui.settings.IntEditTextPreference
             android:defaultValue="2"
             android:gravity="center"
@@ -45,13 +46,6 @@
             android:numeric="integer"
             android:summary="The number of decimal places displayed. This does not affect actual precision of values in memory, which is exact. When displayed, they will be rounded up."
             android:title="Displayed decimal precision" />
-        <ListPreference
-            android:defaultValue="wallet"
-            android:entries="@array/startup_entries"
-            android:entryValues="@array/startup_values"
-            android:key="startupPage"
-            android:summary="The screen to load to when Sia launches."
-            android:title="Launch screen" />
     </PreferenceCategory>
     <PreferenceCategory android:title="Misc">
         <Preference

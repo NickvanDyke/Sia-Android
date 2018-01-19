@@ -18,6 +18,7 @@ import com.vandyke.sia.R
 import com.vandyke.sia.appComponent
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.remote.WalletLocked
+import com.vandyke.sia.data.siad.SiadSource
 import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.ui.wallet.view.childfragments.*
 import com.vandyke.sia.ui.wallet.view.transactionslist.TransactionAdapter
@@ -34,6 +35,7 @@ class WalletFragment : BaseFragment() {
 
     @Inject lateinit var factory: ViewModelProvider.Factory
     private lateinit var viewModel: WalletViewModel
+    @Inject lateinit var siadSource: SiadSource
 
     private val adapter = TransactionAdapter()
 
@@ -134,6 +136,11 @@ class WalletFragment : BaseFragment() {
 
         viewModel.seed.observe(this) {
             WalletCreateDialog.showSeed(it, context!!)
+        }
+
+        siadSource.isSiadLoaded.observe(this) {
+            if (it)
+                viewModel.refreshAll()
         }
     }
 

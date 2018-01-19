@@ -70,10 +70,9 @@ class SettingsFragmentActual : PreferenceFragmentCompat() {
                     }
                 }
 
-                "useExternal" -> SiadService.getService(context!!).subscribe { service ->
+                "apiPassword", "useExternal" -> SiadService.getService(context!!).subscribe { service ->
                     /* restart siad so that it'll switch storage directories */
-                    service.stopSiad()
-                    service.startSiad()
+                    service.restartSiad()
                 }
 
                 "darkMode" -> activity!!.recreate()

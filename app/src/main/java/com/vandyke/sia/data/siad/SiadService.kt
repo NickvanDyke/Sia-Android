@@ -8,18 +8,22 @@ import android.app.Notification
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
+import android.arch.lifecycle.LifecycleService
 import android.content.*
 import android.graphics.BitmapFactory
 import android.net.ConnectivityManager
 import android.os.Binder
+import android.os.Handler
 import android.os.IBinder
 import android.os.PowerManager
 import android.support.v4.app.NotificationCompat
-import com.vandyke.sia.*
+import com.vandyke.sia.R
+import com.vandyke.sia.appComponent
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.ui.main.MainActivity
 import com.vandyke.sia.util.NotificationUtil
 import com.vandyke.sia.util.StorageUtil
+import com.vandyke.sia.util.observe
 import io.reactivex.Single
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.launch
@@ -27,8 +31,9 @@ import java.io.BufferedReader
 import java.io.File
 import java.io.IOException
 import java.io.InputStreamReader
+import javax.inject.Inject
 
-class SiadService : Service() {
+class SiadService : LifecycleService() {
 
     private var siadFile: File? = null
     private var siadProcess: java.lang.Process? = null
@@ -38,31 +43,32 @@ class SiadService : Service() {
         get() = siadProcess != null
     private val receiver = SiadReceiver()
 
+    @Inject lateinit var siadSource: SiadSource
+
     override fun onCreate() {
-        val filter = IntentFilter(SiadReceiver.START_SIAD)
-        filter.addAction(SiadReceiver.STOP_SIAD)
-        filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION)
+        super.onCreate()
+        appComponent.inject(this)
+        val filter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
         registerReceiver(receiver, filter)
         // TODO: need some way to do this such that if I push an update with a new version of siad, that it will overwrite the
         // current one. Maybe just keep the version in sharedprefs and check against it?
         siadFile = StorageUtil.copyFromAssetsToAppStorage("siad", this)
         wakeLock = (getSystemService(Context.POWER_SERVICE) as PowerManager).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Sia node")
 
-        startForeground(SIAD_NOTIFICATION, siadNotification("Not running"))
+        siadSource.allConditionsGood.observe(this) {
+            println("received conditions: $it")
+            if (it)
+                startSiad()
+            else
+                stopSiad()
+        }
 
-        isSiadServiceStarted.onNext(true)
-
-        if (Prefs.startSiaAutomatically) {
-            Prefs.siaStoppedManually = false
-            startSiad()
-        } else {
-            Prefs.siaStoppedManually = true
-            isSiadProcessStarting.onNext(false)
+        siadSource.siadOutput.observe(this) {
+            showSiadNotification(it)
         }
     }
 
     fun startSiad() {
-        Prefs.siaStoppedManually = false
         if (siadProcessIsRunning) {
             return
         }
@@ -70,8 +76,6 @@ class SiadService : Service() {
             showSiadNotification("Couldn't start Siad")
             return
         }
-        isSiadLoaded.onNext(false)
-        isSiadProcessStarting.onNext(true)
 
         /* acquire partial wake lock to keep device CPU awake and therefore keep the Sia node active */
         if (Prefs.SiaNodeWakeLock && !wakeLock.isHeld)
@@ -95,7 +99,7 @@ class SiadService : Service() {
                 if (dir != null) {
                     pb.directory(dir)
                 } else {
-                    showSiadNotification("Error getting external storage")
+                    showSiadNotification("Error getting external storage directory")
                     return
                 }
             } else {
@@ -109,7 +113,7 @@ class SiadService : Service() {
         try {
             siadProcess = pb.start() // TODO: this causes the application to skip about a second of frames when starting at the same time as the app. Preventable?
 
-            showSiadNotification("Starting Sia node...")
+            startForeground(SIAD_NOTIFICATION, siadNotification("Starting Sia node..."))
 
             /* launch a coroutine that will read output from the siad process, and update siad observables from it's output */
             launch(CommonPool) {
@@ -118,23 +122,21 @@ class SiadService : Service() {
                     val inputReader = BufferedReader(InputStreamReader(siadProcess!!.inputStream))
                     var line: String? = inputReader.readLine()
                     while (line != null) {
-                        siadOutput.onNext(line)
-                        if (line.contains("Finished loading"))
-                            isSiadLoaded.onNext(true)
                         /* sometimes the phone runs a portscan, and siad receives an HTTP request from it, and outputs a weird
                          * error message thingy. It doesn't affect operation at all, and we don't want the user to see it since
                          * it'd just be confusing */
                         if (!line.contains("Unsolicited response received on idle HTTP channel starting with"))
-                            showSiadNotification(line)
+                            siadSource.siadOutput.postValue(line)
+
+                        if (line.contains("Finished loading"))
+                            siadSource.isSiadLoaded.postValue(true)
+
                         line = inputReader.readLine()
                     }
                     inputReader.close()
-                    siadOutput.onComplete()
                 } catch (e: IOException) {
                     e.printStackTrace()
                 }
-
-                isSiadProcessStarting.onNext(false)
             }
         } catch (e: IOException) {
             showSiadNotification(e.localizedMessage ?: "Error starting Sia node")
@@ -144,14 +146,24 @@ class SiadService : Service() {
     fun stopSiad() {
         if (wakeLock.isHeld)
             wakeLock.release()
-        // TODO: maybe shut it down using stop http request instead? Takes ages sometimes
+        // TODO: maybe shut it down using http stop request instead? Takes ages sometimes. Might be advantageous though
         siadProcess?.destroy()
         siadProcess = null
-        isSiadLoaded.onNext(false)
-        showSiadNotification("Stopped")
+        siadSource.isSiadLoaded.value = false
+        stopForeground(true)
+    }
+
+    /** restarts siad, but only if it's already running */
+    fun restartSiad() {
+        if (siadProcessIsRunning) {
+            stopSiad()
+            /* need to wait a little bit, otherwise siad will report that the address is already in use */
+            Handler(mainLooper).postDelayed({ startSiad() }, 1000)
+        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        super.onStartCommand(intent, flags, startId)
         return Service.START_STICKY
     }
 
@@ -160,14 +172,11 @@ class SiadService : Service() {
     }
 
     override fun onDestroy() {
+        super.onDestroy()
         unregisterReceiver(receiver)
         stopSiad()
         if (wakeLock.isHeld)
             wakeLock.release()
-        /* need to clear the notification, otherwise the
-         * "Stopped" notification that stopSiad() displays will persist */
-        NotificationUtil.cancelNotification(this, SIAD_NOTIFICATION)
-        isSiadServiceStarted.onNext(false)
     }
 
     fun showSiadNotification(text: String) {
@@ -188,18 +197,21 @@ class SiadService : Service() {
         val contentPI = PendingIntent.getActivity(this, 0, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT)
         builder.setContentIntent(contentPI)
 
+        /* the action to open settings for Sia node running conditions */
+        // TODO
+
         /* the action to stop/start the Sia node */
-        if (siadProcessIsRunning) {
-            val stopIntent = Intent(SiadReceiver.STOP_SIAD)
-            stopIntent.setClass(this, SiadReceiver::class.java)
-            val stopPI = PendingIntent.getBroadcast(this, 0, stopIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-            builder.addAction(R.drawable.siacoin_logo_svg_white, "Stop", stopPI)
-        } else {
-            val startIntent = Intent(SiadReceiver.START_SIAD)
-            startIntent.setClass(this, SiadReceiver::class.java)
-            val startPI = PendingIntent.getBroadcast(this, 0, startIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-            builder.addAction(R.drawable.siacoin_logo_svg_white, "Start", startPI)
-        }
+//        if (siadProcessIsRunning) {
+//            val stopIntent = Intent(SiadReceiver.STOP_SIAD)
+//            stopIntent.setClass(this, SiadReceiver::class.java)
+//            val stopPI = PendingIntent.getBroadcast(this, 0, stopIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+//            builder.addAction(R.drawable.siacoin_logo_svg_white, "Stop", stopPI)
+//        } else {
+//            val startIntent = Intent(SiadReceiver.START_SIAD)
+//            startIntent.setClass(this, SiadReceiver::class.java)
+//            val startPI = PendingIntent.getBroadcast(this, 0, startIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+//            builder.addAction(R.drawable.siacoin_logo_svg_white, "Start", startPI)
+//        }
 
         return builder.build()
     }
@@ -208,7 +220,7 @@ class SiadService : Service() {
         // TODO: maybe emit an error from this if the service isn't already running, and don't attempt to bind?
         // If I don't want to start it as a result of binding, that is. Not sure if that's what I'll want
         /** Note that the service is returned and then immediately unbound. So if the service is started because
-          * of this binding, then it will also immediately stop */
+         * of this binding, then it will also immediately stop */
         fun getService(context: Context) = Single.create<SiadService> {
             val connection = object : ServiceConnection {
                 override fun onServiceConnected(name: ComponentName, service: IBinder) {
@@ -226,6 +238,7 @@ class SiadService : Service() {
     private val binder = LocalBinder()
 
     override fun onBind(intent: Intent): IBinder {
+        super.onBind(intent)
         return binder
     }
 

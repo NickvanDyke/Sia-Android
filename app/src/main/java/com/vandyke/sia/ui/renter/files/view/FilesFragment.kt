@@ -22,6 +22,7 @@ import android.widget.Spinner
 import com.vandyke.sia.R
 import com.vandyke.sia.appComponent
 import com.vandyke.sia.data.repository.FilesRepository.SortBy
+import com.vandyke.sia.data.siad.SiadSource
 import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.ui.renter.files.view.list.NodesAdapter
 import com.vandyke.sia.ui.renter.files.viewmodel.FilesViewModel
@@ -39,6 +40,7 @@ class FilesFragment : BaseFragment() {
 
     @Inject lateinit var factory: ViewModelProvider.Factory
     private lateinit var viewModel: FilesViewModel
+    @Inject lateinit var siadSource: SiadSource
 
     private var searchItem: MenuItem? = null
     private var searchView: SearchView? = null
@@ -55,6 +57,7 @@ class FilesFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         appComponent.inject(this)
+
         viewModel = ViewModelProviders.of(this, factory).get(FilesViewModel::class.java)
 
         /* set up nodes list */
@@ -150,6 +153,11 @@ class FilesFragment : BaseFragment() {
         viewModel.error.observe(this) {
             it.snackbar(coordinator) // TODO: make FAB move up when snackbar appears
             nodesListRefresh.isRefreshing = false
+        }
+
+        siadSource.isSiadLoaded.observe(this) {
+            if (it)
+                viewModel.refresh()
         }
     }
 

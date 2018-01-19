@@ -8,15 +8,11 @@ import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.MutableLiveData
 import android.graphics.Typeface
-import android.os.Handler
-import android.os.Looper
 import android.text.SpannableStringBuilder
 import android.text.style.StyleSpan
 import com.vandyke.sia.App
 import com.vandyke.sia.R
-import com.vandyke.sia.siadOutput
 import com.vandyke.sia.util.StorageUtil
-import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.launch
 import java.io.BufferedReader
@@ -25,30 +21,18 @@ import java.io.IOException
 import java.io.InputStreamReader
 
 class TerminalViewModel(application: Application) : AndroidViewModel(application) {
+
     val output = MutableLiveData<String>()
 
-    private val handler = Handler(Looper.getMainLooper())
-
     private var siacFile: File? = null
-    private val subscription = siadOutput.observeOn(AndroidSchedulers.mainThread()).subscribe {
-        appendToOutput(it + "\n")
-    }
 
     init {
         output.value = getApplication<App>().getString(R.string.terminal_warning)
         siacFile = StorageUtil.copyFromAssetsToAppStorage("siac", application)
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        subscription.dispose()
-    }
-
-    private fun appendToOutput(text: String) {
-        /* need to use this handler so that it's run on the main thread */
-        handler.post {
-            output.value = text
-        }
+    fun appendToOutput(text: String) {
+        output.postValue(text)
     }
 
     fun runSiacCommand(command: String) {

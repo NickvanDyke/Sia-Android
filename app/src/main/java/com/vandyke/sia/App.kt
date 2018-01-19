@@ -10,23 +10,14 @@ import com.vandyke.sia.dagger.AppComponent
 import com.vandyke.sia.dagger.AppModule
 import com.vandyke.sia.dagger.DaggerAppComponent
 import com.vandyke.sia.util.NotificationUtil
-import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 
 lateinit var appComponent: AppComponent
 // TODO: inject these where they're used
 val siadOutput = PublishSubject.create<String>()!!
-val isSiadLoaded = BehaviorSubject.create<Boolean>()!!
-val isSiadServiceStarted = BehaviorSubject.create<Boolean>()!!
-val isSiadProcessStarting = BehaviorSubject.create<Boolean>()!!
 
 
 class App : Application() {
-
-    init {
-        isSiadLoaded.onNext(false)
-        isSiadServiceStarted.onNext(false)
-    }
 
     override fun onCreate() {
         NotificationUtil.createSiaNodeNotificationChannel(this)

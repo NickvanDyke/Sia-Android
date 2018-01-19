@@ -56,14 +56,14 @@ class AboutFragment : BaseFragment() {
 
         return AboutPage(context)
                 .setImage(R.drawable.sia_logo_svg) // TODO: image and text could probably be better
-                .setDescription("Decentralized cloud storage of the future")
+                .setDescription("Your private, decentralized cloud")
                 .addItem(version)
                 .addGitHub("NickvanDyke/Sia-Mobile", "GitHub")
                 .addItem(reddit)
                 .addItem(discord)
                 .addItem(share)
-                .addItem(siaHelp)
                 .addItem(email)
+                .addItem(siaHelp)
                 .addItem(youtube)
                 .create()
     }

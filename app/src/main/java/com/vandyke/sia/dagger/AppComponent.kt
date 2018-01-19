@@ -4,7 +4,10 @@
 
 package com.vandyke.sia.dagger
 
+import com.vandyke.sia.data.siad.SiadReceiver
+import com.vandyke.sia.data.siad.SiadService
 import com.vandyke.sia.ui.renter.files.view.FilesFragment
+import com.vandyke.sia.ui.terminal.TerminalFragment
 import com.vandyke.sia.ui.wallet.view.WalletFragment
 import dagger.Component
 import javax.inject.Singleton
@@ -21,4 +24,7 @@ import javax.inject.Singleton
 interface AppComponent {
     fun inject(walletFragment: WalletFragment)
     fun inject(filesFragment: FilesFragment)
+    fun inject(terminalFragment: TerminalFragment)
+    fun inject(siadService: SiadService)
+    fun inject(siadReceiver: SiadReceiver)
 }

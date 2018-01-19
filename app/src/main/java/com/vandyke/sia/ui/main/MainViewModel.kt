@@ -13,34 +13,11 @@ import com.vandyke.sia.ui.renter.files.view.FilesFragment
 import com.vandyke.sia.ui.settings.SettingsFragment
 import com.vandyke.sia.ui.terminal.TerminalFragment
 import com.vandyke.sia.ui.wallet.view.WalletFragment
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
 
 class MainViewModel : ViewModel() {
-    val isSiadLoaded = MutableLiveData<Boolean>()
-    val siadOutput = MutableLiveData<String>()
     val visibleFragmentClass = MutableLiveData<Class<*>>()
     val title = MutableLiveData<String>()
     val selectedMenuItem = MutableLiveData<Int>()
-
-    private val loadedSubscription: Disposable
-    private val outputSubscription: Disposable
-
-    init {
-        loadedSubscription = com.vandyke.sia.isSiadLoaded.observeOn(AndroidSchedulers.mainThread()).subscribe {
-            isSiadLoaded.value = it
-        }
-
-        outputSubscription = com.vandyke.sia.siadOutput.observeOn(AndroidSchedulers.mainThread()).subscribe {
-            siadOutput.value = it
-        }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        loadedSubscription.dispose()
-        outputSubscription.dispose()
-    }
     
     fun navigationItemSelected(item: MenuItem) {
         visibleFragmentClass.value = when (item.itemId) {
