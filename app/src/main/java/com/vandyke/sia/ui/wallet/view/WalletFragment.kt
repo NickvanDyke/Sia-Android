@@ -17,6 +17,7 @@ import android.view.View
 import com.vandyke.sia.R
 import com.vandyke.sia.appComponent
 import com.vandyke.sia.data.local.Prefs
+import com.vandyke.sia.data.models.consensus.ConsensusData
 import com.vandyke.sia.data.remote.WalletLocked
 import com.vandyke.sia.data.siad.SiadSource
 import com.vandyke.sia.ui.common.BaseFragment
@@ -131,23 +132,11 @@ class WalletFragment : BaseFragment() {
         }
 
         viewModel.consensus.observe(this) {
-            if (viewModel.numPeers.value == 0) {
-                syncText.text = ("Not syncing: ${it.height}")
-                syncBar.progress = it.syncProgress.toInt()
-            } else {
-                if (it.synced) {
-                    syncText.text = ("${getString(R.string.synced)}: ${it.height}")
-                    syncBar.progress = 100
-                } else {
-                    syncText.text = ("${getString(R.string.syncing)}: ${it.height}")
-                    syncBar.progress = it.syncProgress.toInt()
-                }
-            }
+            setSyncStatus()
         }
 
         viewModel.numPeers.observe(this) {
-            if (it == 0)
-                syncText.text = ("Not syncing: ${viewModel.consensus.value?.height ?: 0}")
+            setSyncStatus()
         }
 
         viewModel.success.observe(this) {
@@ -224,10 +213,26 @@ class WalletFragment : BaseFragment() {
     }
 
     private fun setStatusIcon() {
-        when (viewModel.wallet.value?.encrypted ?: false || viewModel.wallet.value?.rescanning ?: false) {
-            false -> statusButton?.setIcon(R.drawable.ic_add)
-            true -> if (!viewModel.wallet.value!!.unlocked) statusButton?.setIcon(R.drawable.ic_lock_outline)
-            else statusButton?.setIcon(R.drawable.ic_lock_open)
+        statusButton?.setIcon(when (viewModel.wallet.value?.encrypted ?: false || viewModel.wallet.value?.rescanning ?: false) {
+            false -> R.drawable.ic_add
+            true -> if (!viewModel.wallet.value!!.unlocked) R.drawable.ic_lock_open
+            else R.drawable.ic_lock_outline
+        })
+    }
+
+    private fun setSyncStatus() {
+        val consensus = viewModel.consensus.value ?: ConsensusData(false, 0, "", BigDecimal.ZERO)
+        if (viewModel.numPeers.value == 0) {
+            syncText.text = ("Not syncing: ${consensus.height}")
+            syncBar.progress = consensus.syncProgress.toInt()
+        } else {
+            if (consensus.synced) {
+                syncText.text = ("${getString(R.string.synced)}: ${consensus.height}")
+                syncBar.progress = 100
+            } else {
+                syncText.text = ("${getString(R.string.syncing)}: ${consensus.height}")
+                syncBar.progress = consensus.syncProgress.toInt()
+            }
         }
     }
 
