@@ -93,7 +93,7 @@ class FilesFragment : BaseFragment() {
 
         /* FAB stuff */
         fabAddFile.setOnClickListener {
-            fabMenu.collapse()
+            fabFilesMenu.close(true)
             val intent = Intent(Intent.ACTION_GET_CONTENT)
             intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true)
             intent.putExtra(Intent.CATEGORY_OPENABLE, true) // should I have this set?
@@ -102,7 +102,7 @@ class FilesFragment : BaseFragment() {
         }
 
         fabAddDir.setOnClickListener {
-            fabMenu.collapse()
+            fabFilesMenu.close(true)
             val dialogView = layoutInflater.inflate(R.layout.fragment_renter_add_dir, null, false)
             val dialog = AlertDialog.Builder(context!!)
                     .setTitle("New directory")

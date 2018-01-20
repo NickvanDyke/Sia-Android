@@ -1,160 +1,153 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2017 Nicholas van Dyke. All rights reserved.
   -->
 
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/wallet_layout"
+    xmlns:fab="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <Button
-        android:text="@string/send"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/sendButton"
-        android:background="@color/colorPrimary"
-        android:textColor="#FFFFFF"
-        android:layout_marginStart="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/receiveButton"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="32dp"
-        app:layout_constraintTop_toBottomOf="@+id/balanceText"
-        app:layout_constraintHorizontal_chainStyle="spread_inside"/>
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/wallet_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <Button
-        android:text="@string/receive"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/receiveButton"
-        android:background="@color/colorPrimary"
-        android:textColor="#FFFFFF"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/sendButton"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
-        app:layout_constraintTop_toTopOf="@+id/sendButton"/>
+        <TextView
+            android:id="@+id/balanceText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="34dp"
+            android:layout_marginStart="16dp"
+            android:text="@string/loading"
+            android:textColor="@color/colorPrimary"
+            android:textSize="48sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/balanceText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="34dp"
-        android:layout_marginStart="16dp"
-        android:text="@string/loading"
-        android:textColor="@color/colorPrimary"
-        android:textSize="48sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <com.daimajia.numberprogressbar.NumberProgressBar
+            android:id="@+id/syncBar"
+            style="@style/NumberProgressBar_Grace_Yellow"
+            android:layout_width="175dp"
+            android:layout_height="12dp"
+            app:layout_constraintEnd_toEndOf="@+id/syncText"
+            app:layout_constraintTop_toBottomOf="@+id/syncText"
+            app:progress_current="0"
+            app:progress_reached_bar_height="3dp"
+            app:progress_reached_color="@color/colorAccent"
+            app:progress_text_color="?android:attr/textColorPrimary"
+            app:progress_text_offset="1dp"
+            app:progress_text_size="14sp"
+            app:progress_unreached_bar_height="3dp"
+            app:progress_unreached_color="#d6d6d6" />
 
-    <TextView
-        android:id="@+id/scNote"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:text="SC"
-        android:textColor="@color/colorPrimary"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@+id/balanceText"
-        app:layout_constraintStart_toEndOf="@+id/balanceText" />
+        <TextView
+            android:id="@+id/syncText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:text="@string/loading"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/balanceText" />
 
-    <com.daimajia.numberprogressbar.NumberProgressBar
-        xmlns:custom="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/syncBar"
-        style="@style/NumberProgressBar_Grace_Yellow"
-        custom:progress_unreached_color="#d6d6d6"
-        custom:progress_reached_color="@color/colorAccent"
-        custom:progress_text_color="?android:attr/textColorPrimary"
-        custom:progress_unreached_bar_height="3dp"
-        custom:progress_reached_bar_height="3dp"
-        custom:progress_text_size="14sp"
-        custom:progress_text_offset="1dp"
-        android:layout_width="0dp"
-        android:layout_height="12dp"
-        custom:layout_constraintRight_toRightOf="@+id/receiveButton"
-        custom:layout_constraintBottom_toTopOf="@+id/receiveButton"
-        android:layout_marginBottom="4dp"
-        custom:layout_constraintLeft_toLeftOf="@+id/receiveButton"
-        custom:progress_current="0"/>
+        <TextView
+            android:id="@+id/balanceUnconfirmed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
+            android:text="@string/loading"
+            android:textColor="@color/colorPrimary"
+            app:layout_constraintStart_toStartOf="@+id/balanceText"
+            app:layout_constraintTop_toBottomOf="@+id/balanceText" />
 
-    <TextView
-        android:text="@string/loading"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/syncText"
-        app:layout_constraintEnd_toEndOf="@+id/syncBar"
-        app:layout_constraintBottom_toTopOf="@+id/syncBar" />
+        <TextView
+            android:id="@+id/balanceUsdText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/loading"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="@+id/balanceUnconfirmed"
+            app:layout_constraintTop_toBottomOf="@+id/balanceUnconfirmed" />
 
-    <TextView
-        android:text="@string/loading"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/balanceUnconfirmed"
-        app:layout_constraintTop_toBottomOf="@+id/scNote"
-        app:layout_constraintStart_toStartOf="@+id/balanceText"
-        android:textColor="@color/colorPrimary"
-        android:layout_marginStart="2dp"/>
+        <View
+            android:id="@+id/top_shadow"
+            android:layout_width="0dp"
+            android:layout_height="4dp"
+            android:alpha="0.8"
+            android:background="@drawable/top_shadow"
+            app:layout_constraintEnd_toEndOf="@+id/transactionListSwipe"
+            app:layout_constraintStart_toStartOf="@+id/transactionListSwipe"
+            app:layout_constraintTop_toTopOf="@+id/transactionListSwipe" />
 
-    <TextView
-        android:text="@string/loading"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/balanceUsdText"
-        android:textSize="12sp"
-        app:layout_constraintTop_toBottomOf="@+id/balanceUnconfirmed"
-        app:layout_constraintStart_toStartOf="@+id/balanceUnconfirmed"/>
-
-    <View
-        android:id="@+id/top_shadow"
-        android:background="@drawable/top_shadow"
-        android:layout_width="0dp"
-        app:layout_constraintTop_toTopOf="@+id/transactionListSwipe"
-        app:layout_constraintEnd_toEndOf="@+id/transactionListSwipe"
-        app:layout_constraintStart_toStartOf="@+id/transactionListSwipe"
-        android:alpha="0.8"
-        android:layout_height="4dp"/>
-
-    <com.vandyke.sia.ui.common.SwipeableFrameLayout
-        android:id="@+id/expandableFrame"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="12dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/receiveButton"/>
-
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/transactionListSwipe"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/expandableFrame">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/transactionList"
+        <com.vandyke.sia.ui.common.SwipeableFrameLayout
+            android:id="@+id/expandableFrame"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:scrollbars="vertical"
-            app:layoutManager="LinearLayoutManager"/>
+            android:layout_marginTop="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/syncBar" />
 
-    </android.support.v4.widget.SwipeRefreshLayout>
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/transactionListSwipe"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/expandableFrame">
 
-    <ProgressBar
-        android:indeterminate="true"
-        android:id="@+id/progress"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:scaleY="5"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        app:layout_constraintBottom_toBottomOf="@+id/expandableFrame"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/transactionList"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:scrollbars="vertical"
+                app:layoutManager="LinearLayoutManager" />
 
+        </android.support.v4.widget.SwipeRefreshLayout>
 
-</android.support.constraint.ConstraintLayout>
+        <ProgressBar
+            android:id="@+id/progress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:indeterminate="true"
+            android:scaleY="5"
+            app:layout_constraintBottom_toBottomOf="@+id/expandableFrame"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </android.support.constraint.ConstraintLayout>
+
+    <com.github.clans.fab.FloatingActionMenu xmlns:fab="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/fabWalletMenu"
+        android:layout_width="@dimen/fab_size_normal"
+        android:layout_height="@dimen/fab_size_normal"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="16dp"
+        android:src="@drawable/ic_add"
+        fab:menu_colorNormal="@color/colorPrimary"
+        fab:menu_colorPressed="@color/colorPrimaryDark">
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fabSend"
+            android:layout_width="@dimen/fab_size_normal"
+            android:layout_height="@dimen/fab_size_normal"
+            android:src="@drawable/ic_send"
+            fab:fab_colorNormal="@color/colorPrimary"
+            fab:fab_colorPressed="@color/colorPrimaryDark" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fabReceive"
+            android:layout_width="@dimen/fab_size_normal"
+            android:layout_height="@dimen/fab_size_normal"
+            android:src="@drawable/ic_file_download"
+            fab:fab_colorNormal="@color/colorPrimary"
+            fab:fab_colorPressed="@color/colorPrimaryDark" />
+
+    </com.github.clans.fab.FloatingActionMenu>
+
+</android.support.design.widget.CoordinatorLayout>

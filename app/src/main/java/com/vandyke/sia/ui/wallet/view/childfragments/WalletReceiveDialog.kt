@@ -10,6 +10,7 @@ import android.view.View
 import com.vandyke.sia.R
 import com.vandyke.sia.util.GenUtil
 import com.vandyke.sia.util.SnackbarUtil
+import com.vandyke.sia.util.customMsg
 import kotlinx.android.synthetic.main.fragment_wallet_receive.*
 import net.glxn.qrgen.android.QRCode
 
@@ -22,7 +23,11 @@ class WalletReceiveDialog : BaseWalletFragment() {
                 receiveAddress.text = address.address
                 setQrCode(address.address)
             }
-        }, {})
+        }, {
+            if (isVisible) {
+                receiveAddress.text = it.customMsg()
+            }
+        })
 
         receiveAddress.setOnClickListener {
             GenUtil.copyToClipboard(context!!, receiveAddress.text)
@@ -30,7 +35,7 @@ class WalletReceiveDialog : BaseWalletFragment() {
         }
     }
 
-    fun setQrCode(walletAddress: String) {
+    private fun setQrCode(walletAddress: String) {
         walletQrCode.visibility = View.VISIBLE
         walletQrCode.setImageBitmap(QRCode.from(walletAddress).bitmap())
     }

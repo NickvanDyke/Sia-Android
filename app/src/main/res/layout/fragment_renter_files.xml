@@ -35,31 +35,34 @@
 
     </android.support.constraint.ConstraintLayout>
 
-    <com.getbase.floatingactionbutton.FloatingActionsMenu
+    <com.github.clans.fab.FloatingActionMenu xmlns:fab="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/fabFilesMenu"
         android:layout_gravity="bottom|end"
-        android:id="@+id/fabMenu"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:layout_marginEnd="16dp"
-        app:fab_addButtonColorNormal="@color/colorPrimary"
-        app:fab_addButtonColorPressed="@color/colorPrimaryDark">
+        android:layout_width="@dimen/fab_size_normal"
+        android:layout_height="@dimen/fab_size_normal"
+        android:src="@drawable/ic_add"
+        fab:menu_colorNormal="@color/colorPrimary"
+        fab:menu_colorPressed="@color/colorPrimaryDark"
+        fab:menu_colorRipple="@color/colorPrimaryDark">
 
-        <com.getbase.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fabAddFile"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:fab_colorNormal="@color/colorPrimary"
-            app:fab_colorPressed="@color/colorPrimaryDark"
-            app:fab_icon="@drawable/ic_file" />
+    <com.github.clans.fab.FloatingActionButton
+        android:id="@+id/fabAddFile"
+        android:layout_width="@dimen/fab_size_normal"
+        android:layout_height="@dimen/fab_size_normal"
+        fab:fab_colorPressed="@color/colorPrimaryDark"
+        fab:fab_colorNormal="@color/colorPrimary"
+        android:src="@drawable/ic_file"/>
 
-        <com.getbase.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fabAddDir"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:fab_colorNormal="@color/colorPrimary"
-            app:fab_colorPressed="@color/colorPrimaryDark"
-            app:fab_icon="@drawable/ic_folder" />
-    </com.getbase.floatingactionbutton.FloatingActionsMenu>
+    <com.github.clans.fab.FloatingActionButton
+        android:id="@+id/fabAddDir"
+        android:layout_width="@dimen/fab_size_normal"
+        android:layout_height="@dimen/fab_size_normal"
+        fab:fab_colorPressed="@color/colorPrimaryDark"
+        fab:fab_colorNormal="@color/colorPrimary"
+        android:src="@drawable/ic_folder"/>
+
+    </com.github.clans.fab.FloatingActionMenu>
 
 </android.support.design.widget.CoordinatorLayout>

@@ -4,9 +4,7 @@
 
 package com.vandyke.sia.data.siad
 
-import android.app.Application
 import android.arch.lifecycle.MutableLiveData
-import android.content.Context
 import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import com.vandyke.sia.data.local.Prefs
@@ -14,16 +12,17 @@ import com.vandyke.sia.util.NonNullLiveData
 import javax.inject.Inject
 import javax.inject.Singleton
 
+/** This class is used as a singleton that holds the state of siad and whether it should be running */
 @Singleton
 class SiadSource
-@Inject constructor(app: Application) {
+@Inject constructor() {
 
     val siadOutput = MutableLiveData<String>()
     val isSiadLoaded = NonNullLiveData(false)
 
     val allConditionsGood = NonNullLiveData(false)
 
-    val activeNetworkType = MutableLiveData<Int>()
+    val activeNetworkType = NonNullLiveData(ConnectivityManager.TYPE_MOBILE)
 
     private val prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
         when (key) {
@@ -32,10 +31,6 @@ class SiadSource
     }
 
     init {
-        val cm = app.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val activeNetwork = cm.activeNetworkInfo
-        activeNetworkType.value = activeNetwork?.type
-
         activeNetworkType.observeForever {
             setConditions()
         }

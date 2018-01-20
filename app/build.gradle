@@ -14,8 +14,8 @@ android {
         applicationId "com.vandyke.sia"
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 101
-        versionName "0.1.1"
+        versionCode 102
+        versionName "0.1.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         /* lets us not shrink debug builds. Not necessary for release builds */
         multiDexEnabled true
@@ -87,12 +87,12 @@ dependencies {
 
     /* UI */
     implementation 'com.daimajia.numberprogressbar:library:1.4@aar'
-    implementation 'com.getbase:floatingactionbutton:1.10.1'
     implementation 'com.github.apl-devs:appintro:v4.2.0'
     implementation 'com.github.medyo:android-about-page:1.2.2'
     implementation 'de.cketti.library.changelog:ckchangelog:1.2.2'
     implementation 'com.github.kenglxn.QRGen:android:2.3.0'
     implementation 'me.dm7.barcodescanner:zxing:1.9.3'
+    implementation 'com.github.clans:fab:1.6.4'
 
     /* simplified SharedPreferences */
     implementation "com.chibatching.kotpref:kotpref:2.2.0"

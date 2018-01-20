@@ -53,7 +53,6 @@ class SiadService : LifecycleService() {
         siadFile = StorageUtil.copyFromAssetsToAppStorage("siad", this)
 
         siadSource.allConditionsGood.observe(this) {
-            println("received conditions: $it")
             if (it)
                 startSiad()
             else

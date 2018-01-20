@@ -33,9 +33,9 @@ class WalletFragment : BaseFragment() {
     override val layoutResId: Int = R.layout.fragment_wallet
     override val hasOptionsMenu = true
 
+    @Inject lateinit var siadSource: SiadSource
     @Inject lateinit var factory: ViewModelProvider.Factory
     private lateinit var viewModel: WalletViewModel
-    @Inject lateinit var siadSource: SiadSource
 
     private val adapter = TransactionAdapter()
 
@@ -44,13 +44,13 @@ class WalletFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         appComponent.inject(this)
 
+        viewModel = ViewModelProviders.of(this, factory).get(WalletViewModel::class.java)
+
         /* color stuff depending on theme */
         if (Prefs.darkMode) {
             top_shadow.setBackgroundResource(R.drawable.top_shadow_dark)
         }
         syncBar.setProgressTextColor(balanceUsdText.currentTextColor)
-
-        viewModel = ViewModelProviders.of(this, factory).get(WalletViewModel::class.java)
 
         /* set up recyclerview for transactions */
         transactionList.addItemDecoration(DividerItemDecoration(transactionList.context,
@@ -58,8 +58,25 @@ class WalletFragment : BaseFragment() {
         transactionList.adapter = adapter
 
         /* set up click listeners for the big buttons */
-        sendButton.setOnClickListener { expandFrame(WalletSendDialog()) }
-        receiveButton.setOnClickListener { expandFrame(WalletReceiveDialog()) }
+        fabWalletMenu.setOnMenuButtonClickListener {
+            if (!fabWalletMenu.isOpened) {
+                if (viewModel.wallet.value?.encrypted == false) {
+                    expandFrame(WalletCreateDialog())
+                } else {
+                    fabWalletMenu.open(true)
+                }
+            } else {
+                fabWalletMenu.close(true)
+            }
+        }
+        fabSend.setOnClickListener {
+            fabWalletMenu.close(true)
+            expandFrame(WalletSendDialog())
+        }
+        fabReceive.setOnClickListener {
+            fabWalletMenu.close(true)
+            expandFrame(WalletReceiveDialog())
+        }
         balanceText.setOnClickListener { v ->
             AlertDialog.Builder(v.context)
                     .setTitle("Exact Balance")
@@ -68,7 +85,7 @@ class WalletFragment : BaseFragment() {
                     .show()
         }
 
-        /* set listener to updateDatabase the viewModel when the swipelayout is triggered */
+        /* set swipe-down stuff */
         transactionListSwipe.setOnRefreshListener { viewModel.refreshAll() }
         transactionListSwipe.setColorSchemeResources(R.color.colorAccent)
         val array = context!!.theme.obtainStyledAttributes(intArrayOf(android.R.attr.windowBackground))
