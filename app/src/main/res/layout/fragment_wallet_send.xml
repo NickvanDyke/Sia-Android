@@ -13,13 +13,14 @@
         android:id="@+id/sendRecipient"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         android:ems="10"
         android:gravity="center"
         android:hint="@string/recipient_address"
         android:inputType="textNoSuggestions|textVisiblePassword"
-        android:layout_marginStart="16dp"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/walletScan"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText

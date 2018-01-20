@@ -20,14 +20,15 @@
         android:layout_height="64dp"/>
 
     <TextView
+        android:id="@+id/seedsWarning"
+        android:layout_width="0dp"
+        android:layout_height="72dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         android:text="@string/seed_warning"
         android:textColor="@android:color/holo_red_light"
-        android:layout_width="0dp"
-        android:id="@+id/seedsWarning"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_height="72dp"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </android.support.constraint.ConstraintLayout>

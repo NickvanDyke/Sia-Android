@@ -6,8 +6,11 @@ package com.vandyke.sia.ui.wallet.view
 
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
+import android.graphics.PorterDuff
 import android.os.Bundle
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
@@ -51,9 +54,9 @@ class WalletFragment : BaseFragment() {
 
         /* color stuff depending on theme */
         if (Prefs.darkMode) {
+            top_shadow_tx.setBackgroundResource(R.drawable.top_shadow_dark)
             top_shadow.setBackgroundResource(R.drawable.top_shadow_dark)
         }
-        syncBar.setProgressTextColor(balanceUsdText.currentTextColor)
 
         /* set up recyclerview for transactions */
         transactionList.addItemDecoration(DividerItemDecoration(transactionList.context,
@@ -63,9 +66,7 @@ class WalletFragment : BaseFragment() {
         /* set up click listeners for the big buttons */
         fabWalletMenu.setOnMenuButtonClickListener {
             if (!fabWalletMenu.isOpened) {
-                if (viewModel.wallet.value?.unlocked == false) {
-                    expandFrame(WalletUnlockDialog())
-                } else if (viewModel.wallet.value?.encrypted == false) {
+                if (viewModel.wallet.value?.encrypted == false) {
                     expandFrame(WalletCreateDialog())
                 } else {
                     fabWalletMenu.open(true)
@@ -112,12 +113,19 @@ class WalletFragment : BaseFragment() {
 
         /* observe data in the viewModel */
         viewModel.wallet.observe(this) {
-            fabWalletMenu.menuIconView.setImageResource(if (!it.unlocked)
-                R.drawable.ic_lock_open
-            else
-                R.drawable.ic_add)
-            balanceUnconfirmed.text = ((if (it.unconfirmedSiacoinBalance > BigDecimal.ZERO) "+" else "") +
-                    "${it.unconfirmedSiacoinBalance.toSC().round().toPlainString()} unconfirmed")
+            if (it.unconfirmedSiacoinBalance != BigDecimal.ZERO) {
+                balanceUnconfirmedText.visibility = View.VISIBLE
+                var balance = ""
+                if (it.unconfirmedSiacoinBalance > BigDecimal.ZERO)
+                    balance += "+"
+                else
+                    balance += "-"
+                balance += it.unconfirmedSiacoinBalance.toSC().round().toPlainString()
+                balance += " unconfirmed"
+                balanceUnconfirmedText.text = balance
+            } else {
+                balanceUnconfirmedText.visibility = View.GONE
+            }
             balanceText.text = it.confirmedSiacoinBalance.toSC().round().toPlainString()
             setStatusIcon()
             updateUsdValue()
@@ -191,6 +199,7 @@ class WalletFragment : BaseFragment() {
         childFragmentManager.beginTransaction().replace(R.id.expandableFrame, fragment).commit()
         childFragmentManager.executePendingTransactions()
         expandableFrame.expandVertically(fragment.height)
+        setProgressColor(R.color.colorPrimary)
     }
 
     fun collapseFrame() {
@@ -198,12 +207,23 @@ class WalletFragment : BaseFragment() {
             val currentChildFragment = childFragmentManager.findFragmentById(R.id.expandableFrame)
             if (currentChildFragment != null)
                 childFragmentManager.beginTransaction().remove(currentChildFragment).commit()
+            if (Prefs.darkMode)
+                setProgressColor(R.color.darkModeBg)
+            else
+                setProgressColor(android.R.color.white)
         })
         GenUtil.hideSoftKeyboard(activity!!)
     }
 
     override fun onShow() {
+        setActionBarElevation(0f)
+        setActionBarTitleDisplayed(false)
         viewModel.refreshAll()
+    }
+
+    override fun onHide() {
+        setActionBarElevation(4f)
+        setActionBarTitleDisplayed(true)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -215,23 +235,20 @@ class WalletFragment : BaseFragment() {
     private fun setStatusIcon() {
         statusButton?.setIcon(when (viewModel.wallet.value?.encrypted ?: false || viewModel.wallet.value?.rescanning ?: false) {
             false -> R.drawable.ic_add
-            true -> if (!viewModel.wallet.value!!.unlocked) R.drawable.ic_lock_open
-            else R.drawable.ic_lock_outline
+            true -> if (!viewModel.wallet.value!!.unlocked) R.drawable.ic_lock_outline
+            else R.drawable.ic_lock_open
         })
     }
 
     private fun setSyncStatus() {
         val consensus = viewModel.consensus.value ?: ConsensusData(false, 0, "", BigDecimal.ZERO)
         if (viewModel.numPeers.value == 0) {
-            syncText.text = ("Not syncing: ${consensus.height}")
-            syncBar.progress = consensus.syncProgress.toInt()
+            syncText.text = ("Not syncing: ${consensus.height} (${consensus.syncProgress.toInt()}%)")
         } else {
             if (consensus.synced) {
                 syncText.text = ("${getString(R.string.synced)}: ${consensus.height}")
-                syncBar.progress = 100
             } else {
-                syncText.text = ("${getString(R.string.syncing)}: ${consensus.height}")
-                syncBar.progress = consensus.syncProgress.toInt()
+                syncText.text = ("${getString(R.string.syncing)}: ${consensus.height} (${consensus.syncProgress.toInt()}%)")
             }
         }
     }
@@ -243,5 +260,17 @@ class WalletFragment : BaseFragment() {
         } else {
             false
         }
+    }
+
+    private fun setProgressColor(resId: Int) {
+        progress.indeterminateDrawable.setColorFilter(ContextCompat.getColor(context!!, resId), PorterDuff.Mode.SRC_IN)
+    }
+
+    private fun setActionBarTitleDisplayed(visible: Boolean) {
+        (activity as AppCompatActivity).supportActionBar!!.setDisplayShowTitleEnabled(visible)
+    }
+
+    private fun setActionBarElevation(elevation: Float) {
+        (activity as AppCompatActivity).supportActionBar!!.elevation = elevation
     }
 }

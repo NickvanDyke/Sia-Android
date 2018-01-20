@@ -21,13 +21,14 @@
         android:layout_marginStart="16dp"/>
 
     <ImageView
-        android:visibility="invisible"
         android:id="@+id/walletQrCode"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginStart="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="16dp"
         android:layout_width="160dp"
-        android:layout_height="160dp"/>
+        android:layout_height="160dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </android.support.constraint.ConstraintLayout>

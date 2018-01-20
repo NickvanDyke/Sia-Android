@@ -22,3 +22,13 @@ fun Completable.main() = this.observeOn(AndroidSchedulers.mainThread())!!
 fun <T> Single<T>.main() = this.observeOn(AndroidSchedulers.mainThread())!!
 
 fun <T> Flowable<T>.main() = this.observeOn(AndroidSchedulers.mainThread())!!
+
+
+fun NonNullLiveData<Int>.increment() {
+    this.value = this.value + 1
+}
+
+fun NonNullLiveData<Int>.decrementZeroMin() {
+    if (this.value > 0)
+        this.value = this.value - 1
+}

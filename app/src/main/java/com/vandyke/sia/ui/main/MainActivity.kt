@@ -107,6 +107,8 @@ class MainActivity : AppCompatActivity() {
         if (clazz == visibleFragment?.javaClass)
             return
         val tx = supportFragmentManager.beginTransaction()
+        if (visibleFragment != null)
+            tx.hide(visibleFragment)
         /* check if the to-be-displayed fragment already exists */
         var newFragment = supportFragmentManager.findFragmentByTag(clazz.simpleName) as? BaseFragment
         /* if not, create an instance of it and add it to the frame */
@@ -116,8 +118,6 @@ class MainActivity : AppCompatActivity() {
         } else {
             tx.show(newFragment)
         }
-        if (visibleFragment != null)
-            tx.hide(visibleFragment)
         tx.commit()
         visibleFragment = newFragment
     }

@@ -23,6 +23,7 @@ class SiaModule {
     @Provides
     @Singleton
     fun provideSiaApi(): SiaApiInterface {
+//        return MockSiaApi()
         val clientBuilder = OkHttpClient.Builder()
                 .readTimeout(0, TimeUnit.MILLISECONDS) // no timeout because some Sia API calls can take a long time to return
 //                .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))

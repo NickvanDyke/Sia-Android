@@ -13,74 +13,66 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/expandableFrame"
+            android:background="@color/colorPrimary"/>
+
         <TextView
             android:id="@+id/balanceText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:layout_marginStart="12dp"
-            android:layout_marginTop="4dp"
+            android:layout_marginStart="16dp"
             android:text="@string/loading"
-            android:textColor="@color/colorPrimary"
+            android:textColor="@android:color/white"
             android:textSize="48sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <com.daimajia.numberprogressbar.NumberProgressBar
-            android:id="@+id/syncBar"
-            style="@style/NumberProgressBar_Grace_Yellow"
-            android:layout_width="175dp"
-            android:layout_height="12dp"
-            android:layout_marginTop="4dp"
-            app:layout_constraintEnd_toEndOf="@+id/syncText"
-            app:layout_constraintTop_toBottomOf="@+id/syncText"
-            app:progress_current="0"
-            app:progress_reached_bar_height="3dp"
-            app:progress_reached_color="@color/colorAccent"
-            app:progress_text_color="?android:attr/textColorPrimary"
-            app:progress_text_offset="1dp"
-            app:progress_text_size="14sp"
-            app:progress_unreached_bar_height="3dp"
-            app:progress_unreached_color="#d6d6d6" />
+        <TextView
+            android:id="@+id/balanceUnconfirmedText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:text="@string/loading"
+            android:textColor="#E8E8E8"
+            app:layout_constraintEnd_toEndOf="@+id/balanceText"
+            app:layout_constraintStart_toStartOf="@+id/balanceText"
+            app:layout_constraintTop_toBottomOf="@+id/balanceText" />
+
+        <TextView
+            android:id="@+id/balanceUsdText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:text="@string/loading"
+            android:textSize="14sp"
+            android:textColor="#E8E8E8"
+            app:layout_constraintEnd_toEndOf="@id/balanceText"
+            app:layout_constraintStart_toStartOf="@id/balanceText"
+            app:layout_constraintTop_toBottomOf="@id/balanceUnconfirmedText" />
 
         <TextView
             android:id="@+id/syncText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
+            android:layout_marginTop="24dp"
             android:text="@string/loading"
+            android:textColor="@android:color/white"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/balanceText" />
-
-        <TextView
-            android:id="@+id/balanceUnconfirmed"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_marginStart="16dp"
-            android:text="@string/loading"
-            android:textColor="@color/colorPrimary"
-            app:layout_constraintEnd_toStartOf="@+id/syncText"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/syncText" />
-
-        <TextView
-            android:id="@+id/balanceUsdText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:text="@string/loading"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toStartOf="@+id/syncBar"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/balanceUnconfirmed"
-            app:layout_constraintTop_toBottomOf="@+id/balanceUnconfirmed" />
+            app:layout_constraintTop_toBottomOf="@id/balanceUsdText" />
 
         <View
-            android:id="@+id/top_shadow"
+            android:id="@+id/top_shadow_tx"
             android:layout_width="0dp"
             android:layout_height="4dp"
             android:alpha="0.8"
@@ -89,6 +81,16 @@
             app:layout_constraintStart_toStartOf="@+id/transactionListSwipe"
             app:layout_constraintTop_toTopOf="@+id/transactionListSwipe" />
 
+        <View
+            android:id="@+id/top_shadow"
+            android:layout_width="0dp"
+            android:layout_height="4dp"
+            android:alpha="0.8"
+            android:background="@drawable/top_shadow"
+            app:layout_constraintEnd_toEndOf="@+id/expandableFrame"
+            app:layout_constraintStart_toStartOf="@+id/expandableFrame"
+            app:layout_constraintTop_toTopOf="@+id/expandableFrame" />
+
         <com.vandyke.sia.ui.common.SwipeableFrameLayout
             android:id="@+id/expandableFrame"
             android:layout_width="0dp"
@@ -96,7 +98,7 @@
             android:layout_marginTop="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/syncBar" />
+            app:layout_constraintTop_toBottomOf="@+id/syncText" />
 
         <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/transactionListSwipe"
@@ -117,12 +119,13 @@
         </android.support.v4.widget.SwipeRefreshLayout>
 
         <ProgressBar
+            android:indeterminateTint="@android:color/white"
             android:id="@+id/progress"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="0dp"
             android:layout_height="1dp"
             android:indeterminate="true"
-            android:scaleY="5"
+            android:scaleY="6"
             app:layout_constraintBottom_toBottomOf="@+id/expandableFrame"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

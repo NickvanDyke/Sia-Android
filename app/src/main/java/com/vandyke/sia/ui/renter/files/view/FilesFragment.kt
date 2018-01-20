@@ -272,15 +272,19 @@ class FilesFragment : BaseFragment() {
     override fun onShow() {
         viewModel.refresh()
         activity!!.toolbar.addView(spinnerView)
-        (activity as AppCompatActivity).supportActionBar!!.setDisplayShowTitleEnabled(false)
+        setActionBarTitleDisplayed(false)
     }
 
     override fun onHide() {
         activity!!.toolbar.removeView(spinnerView)
-        (activity as AppCompatActivity).supportActionBar!!.setDisplayShowTitleEnabled(true)
+        setActionBarTitleDisplayed(true)
     }
 
     companion object {
         val FILE_REQUEST_CODE = 5424
+    }
+
+    private fun setActionBarTitleDisplayed(visible: Boolean) {
+        (activity as AppCompatActivity).supportActionBar!!.setDisplayShowTitleEnabled(visible)
     }
 }
