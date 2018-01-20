@@ -33,8 +33,10 @@ class WalletFragment : BaseFragment() {
     override val layoutResId: Int = R.layout.fragment_wallet
     override val hasOptionsMenu = true
 
-    @Inject lateinit var siadSource: SiadSource
-    @Inject lateinit var factory: ViewModelProvider.Factory
+    @Inject
+    lateinit var siadSource: SiadSource
+    @Inject
+    lateinit var factory: ViewModelProvider.Factory
     private lateinit var viewModel: WalletViewModel
 
     private val adapter = TransactionAdapter()
@@ -60,7 +62,9 @@ class WalletFragment : BaseFragment() {
         /* set up click listeners for the big buttons */
         fabWalletMenu.setOnMenuButtonClickListener {
             if (!fabWalletMenu.isOpened) {
-                if (viewModel.wallet.value?.encrypted == false) {
+                if (viewModel.wallet.value?.unlocked == false) {
+                    expandFrame(WalletUnlockDialog())
+                } else if (viewModel.wallet.value?.encrypted == false) {
                     expandFrame(WalletCreateDialog())
                 } else {
                     fabWalletMenu.open(true)
@@ -80,7 +84,8 @@ class WalletFragment : BaseFragment() {
         balanceText.setOnClickListener { v ->
             AlertDialog.Builder(v.context)
                     .setTitle("Exact Balance")
-                    .setMessage("${viewModel.wallet.value?.confirmedSiacoinBalance?.toSC()?.toPlainString() ?: 0} Siacoins")
+                    .setMessage("${viewModel.wallet.value?.confirmedSiacoinBalance?.toSC()?.toPlainString()
+                            ?: 0} Siacoins")
                     .setPositiveButton("Close", null)
                     .show()
         }
@@ -95,6 +100,7 @@ class WalletFragment : BaseFragment() {
 
         expandableFrame.onSwipeUp = ::collapseFrame
 
+        /* observe VM stuff */
         viewModel.refreshing.observe(this) {
             transactionListSwipe.isRefreshing = it
         }
@@ -105,6 +111,10 @@ class WalletFragment : BaseFragment() {
 
         /* observe data in the viewModel */
         viewModel.wallet.observe(this) {
+            fabWalletMenu.menuIconView.setImageResource(if (!it.unlocked)
+                R.drawable.ic_lock_open
+            else
+                R.drawable.ic_add)
             balanceUnconfirmed.text = ((if (it.unconfirmedSiacoinBalance > BigDecimal.ZERO) "+" else "") +
                     "${it.unconfirmedSiacoinBalance.toSC().round().toPlainString()} unconfirmed")
             balanceText.text = it.confirmedSiacoinBalance.toSC().round().toPlainString()

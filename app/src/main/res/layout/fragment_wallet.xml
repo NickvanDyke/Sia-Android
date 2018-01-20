@@ -17,8 +17,9 @@
             android:id="@+id/balanceText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="34dp"
-            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="4dp"
             android:text="@string/loading"
             android:textColor="@color/colorPrimary"
             android:textSize="48sp"
@@ -32,6 +33,7 @@
             style="@style/NumberProgressBar_Grace_Yellow"
             android:layout_width="175dp"
             android:layout_height="12dp"
+            android:layout_marginTop="4dp"
             app:layout_constraintEnd_toEndOf="@+id/syncText"
             app:layout_constraintTop_toBottomOf="@+id/syncText"
             app:progress_current="0"
@@ -56,18 +58,24 @@
             android:id="@+id/balanceUnconfirmed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="2dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
             android:text="@string/loading"
             android:textColor="@color/colorPrimary"
-            app:layout_constraintStart_toStartOf="@+id/balanceText"
-            app:layout_constraintTop_toBottomOf="@+id/balanceText" />
+            app:layout_constraintEnd_toStartOf="@+id/syncText"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/syncText" />
 
         <TextView
             android:id="@+id/balanceUsdText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
             android:text="@string/loading"
-            android:textSize="12sp"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toStartOf="@+id/syncBar"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/balanceUnconfirmed"
             app:layout_constraintTop_toBottomOf="@+id/balanceUnconfirmed" />
 

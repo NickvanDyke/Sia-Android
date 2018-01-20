@@ -4,24 +4,23 @@
 
 package com.vandyke.sia.ui.wallet.view.transactionslist
 
-import android.content.Intent
 import android.graphics.Color
-import android.net.Uri
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.TextView
 import com.vandyke.sia.R
 import com.vandyke.sia.data.models.wallet.TransactionData
+import com.vandyke.sia.util.GenUtil
 import com.vandyke.sia.util.round
 import com.vandyke.sia.util.toSC
 import java.text.SimpleDateFormat
 import java.util.*
 
 class TransactionHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    val transactionStatus: TextView = itemView.findViewById(R.id.transactionStatus)
-    val transactionId: TextView = itemView.findViewById(R.id.transactionId)
-    val transactionValue: TextView = itemView.findViewById(R.id.transactionValue)
-    
+    private val transactionStatus: TextView = itemView.findViewById(R.id.transactionStatus)
+    private val transactionId: TextView = itemView.findViewById(R.id.transactionId)
+    private val transactionValue: TextView = itemView.findViewById(R.id.transactionValue)
+
     fun bind(transaction: TransactionData) {
         val timeString: String
         if (!transaction.confirmed) {
@@ -34,25 +33,23 @@ class TransactionHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         transactionStatus.text = timeString
 
         transactionId.text = transaction.transactionId
-//        transactionId.text = ("${id.substring(0, id.length / 2)}\n${id.substring(id.length / 2)}")
 
         var valueText = transaction.netValue.toSC().round().toPlainString()
-        if (transaction.isNetZero) {
-            transactionValue.setTextColor(transactionId.currentTextColor)
-        } else if (valueText.contains("-")) {
-            transactionValue.setTextColor(red)
-        } else {
-            valueText = ("+$valueText")
-            transactionValue.setTextColor(green)
-        }
+        transactionValue.setTextColor(when {
+            transaction.isNetZero -> transactionId.currentTextColor
+            valueText.contains("-") -> red
+            else -> {
+                valueText = ("+$valueText")
+                green
+            }
+        })
         transactionValue.text = valueText
 
         itemView.setOnClickListener {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://explorer.siahub.info/hash/${transaction.transactionId}"))
-            itemView.context.startActivity(intent)
+            GenUtil.launchCustomTabs(itemView.context, "https://explore.sia.tech/explorer/hashes/${transaction.transactionId}")
         }
     }
-    
+
     companion object {
         private val df = SimpleDateFormat("MMM dd\nh:mm a", Locale.getDefault())
         private val red = Color.rgb(186, 63, 63) // TODO: choose better colors maybe
