@@ -55,12 +55,6 @@ class WalletFragment : BaseFragment() {
 
         viewModel = ViewModelProviders.of(this, factory).get(WalletViewModel::class.java)
 
-        /* color stuff depending on theme */
-        if (Prefs.darkMode) {
-            top_shadow_tx.setBackgroundResource(R.drawable.top_shadow_dark)
-            top_shadow.setBackgroundResource(R.drawable.top_shadow_dark)
-        }
-
         /* set up recyclerview for transactions */
         transactionList.addItemDecoration(DividerItemDecoration(transactionList.context,
                 (transactionList.layoutManager as LinearLayoutManager).orientation))
@@ -218,12 +212,13 @@ class WalletFragment : BaseFragment() {
     }
 
     override fun onShow() {
+        println((activity as AppCompatActivity).supportActionBar!!.elevation)
         setActionBarElevation(0f)
         viewModel.refreshAll()
     }
 
     override fun onHide() {
-        setActionBarElevation(4f)
+        setActionBarElevation(12f)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -264,10 +259,6 @@ class WalletFragment : BaseFragment() {
 
     private fun setProgressColor(resId: Int) {
         progressBar.indeterminateDrawable.setColorFilter(ContextCompat.getColor(context!!, resId), PorterDuff.Mode.SRC_IN)
-    }
-
-    private fun setActionBarTitleDisplayed(visible: Boolean) {
-        (activity as AppCompatActivity).supportActionBar!!.setDisplayShowTitleEnabled(visible)
     }
 
     private fun setActionBarElevation(elevation: Float) {
