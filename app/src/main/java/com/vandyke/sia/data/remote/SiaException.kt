@@ -4,6 +4,7 @@
 
 package com.vandyke.sia.data.remote
 
+import android.util.Log
 import org.json.JSONObject
 
 /** An exception resulting from the Sia node returning some HTTP error response code and message */
@@ -69,4 +70,8 @@ class SeedFailedChecksum : SiaException("Seed failed checksum verification - ver
 
 class ExplorerUnrecognizedHash : SiaException("Unrecognized hash")
 
-class UncaughtSiaError(errMsg: String) : SiaException("Uncaught Sia error: $errMsg")
+class UncaughtSiaError(errMsg: String) : SiaException(errMsg) {
+    init {
+        Log.d("Uncaught Sia error", errMsg)
+    }
+}

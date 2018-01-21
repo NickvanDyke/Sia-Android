@@ -44,19 +44,19 @@ class WalletViewModel
     init {
         /* subscribe to flowables from the repositories. Note that since they're flowables,
          * we only need to subscribe this once */
-        this.walletRepository.wallet().io().main().subscribe({
+        walletRepository.wallet().io().main().subscribe({
             wallet.value = it
         }, ::onError)
 
-        this.walletRepository.transactions().io().main().subscribe({
+        walletRepository.transactions().io().main().subscribe({
             transactions.value = it
         }, ::onError)
 
-        this.consensusRepository.consensus().io().main().subscribe({
+        consensusRepository.consensus().io().main().subscribe({
             consensus.value = it
         }, ::onError)
 
-        this.scValueRepository.scValue().io().main().subscribe({
+        scValueRepository.scValue().io().main().subscribe({
             usd.value = it
         }, ::onError)
     }
@@ -83,10 +83,10 @@ class WalletViewModel
         activeTasks.increment()
         refreshing.value = true
         Completable.mergeArrayDelayError(
-                this.walletRepository.updateAll(),
-                this.consensusRepository.updateConsensus(),
-                this.scValueRepository.updateScValue(),
-                this.gatewayRepository.getGateway().doAfterSuccess {
+                walletRepository.updateAll(),
+                consensusRepository.updateConsensus(),
+                scValueRepository.updateScValue(),
+                gatewayRepository.getGateway().doAfterSuccess {
                     numPeers.postValue(it.peers.size)
                 }.doOnError {
                     numPeers.postValue(0)
@@ -102,12 +102,12 @@ class WalletViewModel
 
     fun refreshWallet() {
         activeTasks.increment()
-        this.walletRepository.updateAll().io().main().subscribe({ activeTasks.decrementZeroMin() }, ::onError)
+        walletRepository.updateAll().io().main().subscribe({ activeTasks.decrementZeroMin() }, ::onError)
     }
 
     fun unlock(password: String) {
         activeTasks.increment()
-        this.walletRepository.unlock(password).io().main().subscribe({
+        walletRepository.unlock(password).io().main().subscribe({
             setSuccess("Unlocked")
             refreshWallet()
         }, ::onError)
@@ -115,7 +115,7 @@ class WalletViewModel
 
     fun lock() {
         activeTasks.increment()
-        this.walletRepository.lock().io().main().subscribe({
+        walletRepository.lock().io().main().subscribe({
             setSuccess("Locked")
             refreshWallet()
         }, ::onError)
@@ -124,14 +124,14 @@ class WalletViewModel
     fun create(password: String, force: Boolean, seed: String? = null) {
         activeTasks.increment()
         if (seed == null) {
-            this.walletRepository.init(password, "english", force).io().main().subscribe({ it ->
+            walletRepository.init(password, "english", force).io().main().subscribe({ it ->
                 setSuccess("Created wallet")
                 refreshWallet()
                 this.seed.value = it.primaryseed
                 this.seed.value = null
             }, ::onError)
         } else {
-            this.walletRepository.initSeed(password, "english", seed, force).io().main().subscribe({
+            walletRepository.initSeed(password, "english", seed, force).io().main().subscribe({
                 setSuccess("Created wallet")
                 refreshWallet()
                 this.seed.value = seed
@@ -142,7 +142,7 @@ class WalletViewModel
 
     fun send(amount: String, destination: String) {
         activeTasks.increment()
-        this.walletRepository.send(amount, destination).io().main().subscribe({
+        walletRepository.send(amount, destination).io().main().subscribe({
             setSuccess("Sent ${amount.toSC()} SC to $destination")
             refreshWallet()
         }, ::onError)
@@ -150,7 +150,7 @@ class WalletViewModel
 
     fun changePassword(currentPassword: String, newPassword: String) {
         activeTasks.increment()
-        this.walletRepository.changePassword(currentPassword, newPassword).io().main().subscribe({
+        walletRepository.changePassword(currentPassword, newPassword).io().main().subscribe({
             setSuccess("Changed password")
             refreshWallet()
         }, ::onError)
@@ -158,7 +158,7 @@ class WalletViewModel
 
     fun sweep(seed: String) {
         activeTasks.increment()
-        this.walletRepository.sweep("english", seed).io().main().subscribe({
+        walletRepository.sweep("english", seed).io().main().subscribe({
             activeTasks.decrementZeroMin()
             refreshWallet()
         }, ::onError)
@@ -170,21 +170,21 @@ class WalletViewModel
      * that will populate that LiveData */
     fun getAddress(): Single<AddressData> {
         activeTasks.increment()
-        return this.walletRepository.getAddress().io().main()
+        return walletRepository.getAddress().io().main()
                 .doOnError { onError(it) }
                 .doAfterSuccess { activeTasks.decrementZeroMin() }
     }
 
     fun getAddresses(): Single<List<AddressData>> {
         activeTasks.increment()
-        return this.walletRepository.getAddresses().io().main()
+        return walletRepository.getAddresses().io().main()
                 .doOnError { onError(it) }
                 .doAfterSuccess { activeTasks.decrementZeroMin() }
     }
 
     fun getSeeds(): Single<SeedsData> {
         activeTasks.increment()
-        return this.walletRepository.getSeeds().io().main()
+        return walletRepository.getSeeds().io().main()
                 .doOnError { onError(it) }
                 .doAfterSuccess { activeTasks.decrementZeroMin() }
     }

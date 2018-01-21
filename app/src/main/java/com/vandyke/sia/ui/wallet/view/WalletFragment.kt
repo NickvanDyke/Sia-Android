@@ -21,6 +21,7 @@ import com.vandyke.sia.R
 import com.vandyke.sia.appComponent
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.models.consensus.ConsensusData
+import com.vandyke.sia.data.remote.SiadNotRunning
 import com.vandyke.sia.data.remote.WalletLocked
 import com.vandyke.sia.data.siad.SiadSource
 import com.vandyke.sia.ui.common.BaseFragment
@@ -28,9 +29,9 @@ import com.vandyke.sia.ui.wallet.view.childfragments.*
 import com.vandyke.sia.ui.wallet.view.transactionslist.TransactionAdapter
 import com.vandyke.sia.ui.wallet.viewmodel.WalletViewModel
 import com.vandyke.sia.util.*
+import io.reactivex.exceptions.CompositeException
 import kotlinx.android.synthetic.main.fragment_wallet.*
 import java.math.BigDecimal
-import java.text.NumberFormat
 import javax.inject.Inject
 
 
@@ -45,8 +46,6 @@ class WalletFragment : BaseFragment() {
     private lateinit var viewModel: WalletViewModel
 
     private val adapter = TransactionAdapter()
-
-    private val nf = NumberFormat.getNumberInstance()
 
     private var statusButton: MenuItem? = null
 
@@ -152,6 +151,13 @@ class WalletFragment : BaseFragment() {
         }
 
         viewModel.error.observe(this) {
+            /* check if the errors are a result of siad not running yet, and return if the conditions
+             * for siad running are all met, meaning it's currently starting and just hasn't gotten to
+             * the point that it can respond with the "Siad is not ready" error */
+            if (siadSource.allConditionsGood.value &&
+                    ((it is CompositeException && it.exceptions.none { it !is SiadNotRunning }) || it is SiadNotRunning)) {
+                return@observe
+            }
             it.snackbar(wallet_coordinator)
             if (it is WalletLocked)
                 expandFrame(WalletUnlockDialog())
@@ -212,7 +218,6 @@ class WalletFragment : BaseFragment() {
     }
 
     override fun onShow() {
-        println((activity as AppCompatActivity).supportActionBar!!.elevation)
         setActionBarElevation(0f)
         viewModel.refreshAll()
     }
