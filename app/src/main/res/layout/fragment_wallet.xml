@@ -2,25 +2,25 @@
   ~ Copyright (c) 2017 Nicholas van Dyke. All rights reserved.
   -->
 
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:fab="http://schemas.android.com/tools"
+    android:id="@+id/wallet_coordinator"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <android.support.constraint.ConstraintLayout
-        android:id="@+id/wallet_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <View
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:background="@color/colorPrimary"
+            app:layout_constraintBottom_toTopOf="@id/expandableFrame"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/expandableFrame"
-            android:background="@color/colorPrimary"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/balanceText"
@@ -67,8 +67,8 @@
             android:layout_marginTop="24dp"
             android:text="@string/loading"
             android:textColor="@android:color/white"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="@id/balanceUsdText" />
+            app:layout_constraintBottom_toBottomOf="@id/balanceUsdText"
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <View
             android:id="@+id/top_shadow_tx"
@@ -119,21 +119,21 @@
 
         <me.zhanghai.android.materialprogressbar.MaterialProgressBar
             android:id="@+id/progressBar"
-            app:mpb_progressStyle="horizontal"
-            app:mpb_useIntrinsicPadding="false"
-            app:mpb_indeterminateTint="@android:color/white"
-            app:mpb_showProgressBackground="false"
             style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal"
             android:layout_width="0dp"
             android:layout_height="2dp"
             android:indeterminate="true"
             app:layout_constraintBottom_toBottomOf="@+id/expandableFrame"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:mpb_indeterminateTint="@android:color/white"
+            app:mpb_progressStyle="horizontal"
+            app:mpb_showProgressBackground="false"
+            app:mpb_useIntrinsicPadding="false" />
 
     </android.support.constraint.ConstraintLayout>
 
-    <com.github.clans.fab.FloatingActionMenu xmlns:fab="http://schemas.android.com/apk/res-auto"
+    <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/fabWalletMenu"
         android:layout_width="@dimen/fab_size_normal"
         android:layout_height="@dimen/fab_size_normal"
@@ -141,24 +141,25 @@
         android:layout_marginBottom="16dp"
         android:layout_marginEnd="16dp"
         android:src="@drawable/ic_add"
-        fab:menu_colorNormal="@color/colorPrimary"
-        fab:menu_colorPressed="@color/colorPrimaryDark">
+        app:layout_behavior="com.vandyke.sia.ui.common.FabBehavior"
+        app:menu_colorNormal="@color/colorPrimary"
+        app:menu_colorPressed="@color/colorPrimaryDark">
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fabSend"
             android:layout_width="@dimen/fab_size_normal"
             android:layout_height="@dimen/fab_size_normal"
             android:src="@drawable/ic_send"
-            fab:fab_colorNormal="@color/colorPrimary"
-            fab:fab_colorPressed="@color/colorPrimaryDark" />
+            app:fab_colorNormal="@color/colorPrimary"
+            app:fab_colorPressed="@color/colorPrimaryDark" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fabReceive"
             android:layout_width="@dimen/fab_size_normal"
             android:layout_height="@dimen/fab_size_normal"
             android:src="@drawable/ic_file_download"
-            fab:fab_colorNormal="@color/colorPrimary"
-            fab:fab_colorPressed="@color/colorPrimaryDark" />
+            app:fab_colorNormal="@color/colorPrimary"
+            app:fab_colorPressed="@color/colorPrimaryDark" />
 
     </com.github.clans.fab.FloatingActionMenu>
 

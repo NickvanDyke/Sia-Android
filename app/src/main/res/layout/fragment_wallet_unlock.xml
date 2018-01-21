@@ -11,6 +11,7 @@
                                              android:layout_height="wrap_content">
 
     <EditText
+        android:imeOptions="actionDone"
         android:id="@+id/walletPassword"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

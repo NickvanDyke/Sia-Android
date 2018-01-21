@@ -5,8 +5,9 @@
 
 <resources>
     <color name="colorPrimary">#00cb9e</color>
-    <color name="colorPrimaryDark">#00a882</color>
+    <color name="colorPrimaryDark">#24b293</color>
     <color name="colorAccent">#00cb9e</color>
+
     <color name="shadowStart">#c5c5c5</color>
     <color name="shadowEnd">@android:color/transparent</color>
 

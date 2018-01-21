@@ -153,12 +153,12 @@ class WalletFragment : BaseFragment() {
         }
 
         viewModel.success.observe(this) {
-            SnackbarUtil.showSnackbar(view, it)
+            SnackbarUtil.showSnackbar(wallet_coordinator, it)
             collapseFrame()
         }
 
         viewModel.error.observe(this) {
-            it.snackbar(view)
+            it.snackbar(wallet_coordinator)
             if (it is WalletLocked)
                 expandFrame(WalletUnlockDialog())
         }
@@ -212,10 +212,7 @@ class WalletFragment : BaseFragment() {
             val currentChildFragment = childFragmentManager.findFragmentById(R.id.expandableFrame)
             if (currentChildFragment != null)
                 childFragmentManager.beginTransaction().remove(currentChildFragment).commit()
-            if (Prefs.darkMode)
-                setProgressColor(R.color.darkModeBg)
-            else
-                setProgressColor(android.R.color.white)
+            setProgressColor(android.R.color.white)
         })
         GenUtil.hideSoftKeyboard(activity!!)
     }

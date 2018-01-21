@@ -99,7 +99,3 @@ fun <T> LiveData<T>.observe(owner: LifecycleOwner, onChanged: (T) -> Unit) {
             onChanged(it)
     })
 }
-
-fun String.slashStart(): String = if (this.startsWith('/')) this else "/$this"
-
-fun String.emptyIfJustSlash() = if (this == "/") "" else this
