@@ -25,8 +25,7 @@ class SiadReceiver : BroadcastReceiver() {
             ConnectivityManager.CONNECTIVITY_ACTION -> {
                 val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
                 val activeNetwork = cm.activeNetworkInfo
-                if (activeNetwork != null)
-                    siadSource.activeNetworkType.value = activeNetwork.type
+                siadSource.activeNetworkType.value = activeNetwork?.type
             }
         }
     }

@@ -22,7 +22,7 @@ class SiadSource
 
     val allConditionsGood = NonNullLiveData(false)
 
-    val activeNetworkType = NonNullLiveData(ConnectivityManager.TYPE_MOBILE)
+    val activeNetworkType = MutableLiveData<Int>()
 
     private val prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
         when (key) {
@@ -33,10 +33,6 @@ class SiadSource
     init {
         activeNetworkType.observeForever {
             setConditions()
-        }
-
-        allConditionsGood.observeForevs {
-            println("allConditionsGood changed to $it")
         }
 
         Prefs.preferences.registerOnSharedPreferenceChangeListener(prefsListener)

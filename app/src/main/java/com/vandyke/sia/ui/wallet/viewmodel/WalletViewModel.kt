@@ -99,7 +99,7 @@ class WalletViewModel
         })
 
         /* we don't include this in the refresh task because it's remote and less reliable and speedy. And also not as integral. */
-        scValueRepository.updateScValue().io().subscribe({}, ::onError)
+        scValueRepository.updateScValue().io().main().subscribe({}, ::onError)
     }
 
     fun refreshWallet() {
