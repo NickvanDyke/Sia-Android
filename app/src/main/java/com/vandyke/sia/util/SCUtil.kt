@@ -6,6 +6,7 @@ package com.vandyke.sia.util
 
 import com.vandyke.sia.data.local.Prefs
 import java.math.BigDecimal
+import java.text.NumberFormat
 
 val HASTINGS_PER_SC = BigDecimal("1000000000000000000000000")
 
@@ -13,17 +14,21 @@ val BLOCK_100k_TIMESTAMP = 1492126789
 
 val UNCONFIRMED_TX_TIMESTAMP = BigDecimal("18446744073709551615")
 
-fun BigDecimal.toSC(): BigDecimal = divide(HASTINGS_PER_SC)
+fun BigDecimal.toSC(): BigDecimal = this.divide(HASTINGS_PER_SC)
 
 fun String.toSC(): BigDecimal = if (this.isBlank()) BigDecimal.ZERO else BigDecimal(this).divide(HASTINGS_PER_SC)
 
-fun BigDecimal.toHastings(): BigDecimal = multiply(HASTINGS_PER_SC)
+fun BigDecimal.toHastings(): BigDecimal = this.multiply(HASTINGS_PER_SC)
 
 fun String.toHastings(): BigDecimal = if (this.isBlank()) BigDecimal.ZERO else BigDecimal(this).multiply(HASTINGS_PER_SC)
 
-fun BigDecimal.round(): BigDecimal = setScale(Prefs.displayedDecimalPrecision, BigDecimal.ROUND_CEILING)
-
 fun BigDecimal.toUsd(usdPrice: BigDecimal): BigDecimal = multiply(usdPrice)
+
+fun BigDecimal.format(): String {
+    val nf = NumberFormat.getNumberInstance()
+    nf.maximumFractionDigits = Prefs.displayedDecimalPrecision
+    return nf.format(this)
+}
 
 object SCUtil {
     fun estimatedBlockHeightAt(time: Long): Long {

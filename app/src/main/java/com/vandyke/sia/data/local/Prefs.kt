@@ -11,7 +11,7 @@ import com.vandyke.sia.data.repository.FilesRepository
 object Prefs : KotprefModel() {
     override val kotprefName: String = "${context.packageName}_preferences"
 
-    var darkMode by booleanPref(true)
+    var darkMode by booleanPref(false)
     var apiPassword by stringPref()
     var startupPage by stringPref("wallet")
     var hideZero by booleanPref(true)

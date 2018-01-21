@@ -93,6 +93,7 @@ dependencies {
     implementation 'com.github.kenglxn.QRGen:android:2.3.0'
     implementation 'me.dm7.barcodescanner:zxing:1.9.3'
     implementation 'com.github.clans:fab:1.6.4'
+    implementation 'me.zhanghai.android.materialprogressbar:library:1.4.2'
 
     /* simplified SharedPreferences */
     implementation "com.chibatching.kotpref:kotpref:2.2.0"

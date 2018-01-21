@@ -43,12 +43,12 @@ class MockSiaApi : SiaApiInterface {
     var confirmedTxs: MutableList<TransactionData> = MutableList(7, { index ->
         val inputs = listOf(TransactionInputData(walletaddress = nonce % 2 == 0, value = BigDecimal(nonce * 2) * HASTINGS_PER_SC))
         val outputs = listOf(TransactionOutputData(walletaddress = nonce % 2 == 1, value = BigDecimal(nonce) * HASTINGS_PER_SC))
-        TransactionData(nonce.toString(), nonce * 10, BigDecimal(nonce * 100), inputs, outputs)
+        TransactionData(nonce.toString(), BigDecimal(nonce * 10), BigDecimal(nonce * 100), inputs, outputs)
     })
     var unconfirmedTxs: MutableList<TransactionData> = MutableList(2, { index ->
         val inputs = listOf(TransactionInputData(walletaddress = nonce % 2 == 1, value = BigDecimal(nonce) * HASTINGS_PER_SC))
         val outputs = listOf(TransactionOutputData(walletaddress = nonce % 2 == 0, value = BigDecimal(nonce * 3) * HASTINGS_PER_SC))
-        TransactionData(nonce.toString(), nonce * 10, UNCONFIRMED_TX_TIMESTAMP, inputs, outputs)
+        TransactionData(nonce.toString(), BigDecimal(nonce * 10), UNCONFIRMED_TX_TIMESTAMP, inputs, outputs)
     })
 
     private val files = mutableListOf(
@@ -84,7 +84,7 @@ class MockSiaApi : SiaApiInterface {
         return Completable.fromAction {
             val input = TransactionInputData(walletaddress = true, value = BigDecimal(amount))
             val output = TransactionOutputData(walletaddress = false, value = BigDecimal(amount))
-            unconfirmedTxs.add(TransactionData(nonce.toString(), nonce,
+            unconfirmedTxs.add(TransactionData(nonce.toString(), BigDecimal(nonce),
                     UNCONFIRMED_TX_TIMESTAMP, listOf(input), listOf(output)))
         }
     }

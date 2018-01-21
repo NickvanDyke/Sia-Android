@@ -21,7 +21,7 @@ data class TransactionData @JsonCreator constructor(
         @JsonProperty(value = "transactionid")
         val transactionId: String,
         @JsonProperty(value = "confirmationheight")
-        val confirmationHeight: Int,
+        val confirmationHeight: BigDecimal,
         @JsonProperty(value = "confirmationtimestamp")
         val confirmationTimestamp: BigDecimal,
         @Ignore
@@ -33,7 +33,7 @@ data class TransactionData @JsonCreator constructor(
 
 
     constructor(transactionId: String,
-                confirmationHeight: Int,
+                confirmationHeight: BigDecimal,
                 confirmationTimestamp: BigDecimal) :
             this(transactionId, confirmationHeight, confirmationTimestamp, null, null)
 

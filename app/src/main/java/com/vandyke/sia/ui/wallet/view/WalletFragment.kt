@@ -30,6 +30,7 @@ import com.vandyke.sia.ui.wallet.viewmodel.WalletViewModel
 import com.vandyke.sia.util.*
 import kotlinx.android.synthetic.main.fragment_wallet.*
 import java.math.BigDecimal
+import java.text.NumberFormat
 import javax.inject.Inject
 
 
@@ -44,6 +45,8 @@ class WalletFragment : BaseFragment() {
     private lateinit var viewModel: WalletViewModel
 
     private val adapter = TransactionAdapter()
+
+    private val nf = NumberFormat.getNumberInstance()
 
     private var statusButton: MenuItem? = null
 
@@ -66,7 +69,9 @@ class WalletFragment : BaseFragment() {
         /* set up click listeners for the big buttons */
         fabWalletMenu.setOnMenuButtonClickListener {
             if (!fabWalletMenu.isOpened) {
-                if (viewModel.wallet.value?.encrypted == false) {
+                if (viewModel.wallet.value?.unlocked == false) {
+                    expandFrame(WalletUnlockDialog())
+                } else if (viewModel.wallet.value?.encrypted == false) {
                     expandFrame(WalletCreateDialog())
                 } else {
                     fabWalletMenu.open(true)
@@ -108,25 +113,25 @@ class WalletFragment : BaseFragment() {
         }
 
         viewModel.activeTasks.observe(this) {
-            progress.visibility = if (it > 0) View.VISIBLE else View.GONE
+            // TODO: when being made visible, the bar flickers at the location it was at last, before restarting
+            // Tried a few potential solutions, none worked
+            progressBar.visibility = if (it > 0) View.VISIBLE else View.INVISIBLE
         }
 
         /* observe data in the viewModel */
         viewModel.wallet.observe(this) {
+            balanceText.text = it.confirmedSiacoinBalance.toSC().format()
             if (it.unconfirmedSiacoinBalance != BigDecimal.ZERO) {
+                balanceUnconfirmedText.text = ("${it.unconfirmedSiacoinBalance.toSC().format()} unconfirmed")
                 balanceUnconfirmedText.visibility = View.VISIBLE
-                var balance = ""
-                if (it.unconfirmedSiacoinBalance > BigDecimal.ZERO)
-                    balance += "+"
-                else
-                    balance += "-"
-                balance += it.unconfirmedSiacoinBalance.toSC().round().toPlainString()
-                balance += " unconfirmed"
-                balanceUnconfirmedText.text = balance
             } else {
                 balanceUnconfirmedText.visibility = View.INVISIBLE
             }
-            balanceText.text = it.confirmedSiacoinBalance.toSC().round().toPlainString()
+            if (!it.unlocked) {
+                fabWalletMenu.menuIconView.setImageResource(R.drawable.ic_lock_open)
+            } else {
+                fabWalletMenu.menuIconView.setImageResource(R.drawable.ic_add)
+            }
             setStatusIcon()
             updateUsdValue()
         }
@@ -171,7 +176,7 @@ class WalletFragment : BaseFragment() {
     private fun updateUsdValue() {
         if (viewModel.wallet.value != null && viewModel.usd.value != null)
             balanceUsdText.text = ("${viewModel.wallet.value!!.confirmedSiacoinBalance.toSC()
-                    .toUsd(viewModel.usd.value!!.UsdPerSc).round().toPlainString()} USD")
+                    .toUsd(viewModel.usd.value!!.UsdPerSc).format()} USD")
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -261,7 +266,7 @@ class WalletFragment : BaseFragment() {
     }
 
     private fun setProgressColor(resId: Int) {
-        progress.indeterminateDrawable.setColorFilter(ContextCompat.getColor(context!!, resId), PorterDuff.Mode.SRC_IN)
+        progressBar.indeterminateDrawable.setColorFilter(ContextCompat.getColor(context!!, resId), PorterDuff.Mode.SRC_IN)
     }
 
     private fun setActionBarTitleDisplayed(visible: Boolean) {

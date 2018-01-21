@@ -11,7 +11,7 @@ import android.widget.TextView
 import com.vandyke.sia.R
 import com.vandyke.sia.data.models.wallet.TransactionData
 import com.vandyke.sia.util.GenUtil
-import com.vandyke.sia.util.round
+import com.vandyke.sia.util.format
 import com.vandyke.sia.util.toSC
 import java.text.SimpleDateFormat
 import java.util.*
@@ -34,7 +34,7 @@ class TransactionHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         transactionId.text = transaction.transactionId
 
-        var valueText = transaction.netValue.toSC().round().toPlainString()
+        var valueText = transaction.netValue.toSC().format()
         transactionValue.setTextColor(when {
             transaction.isNetZero -> transactionId.currentTextColor
             valueText.contains("-") -> red
@@ -46,7 +46,7 @@ class TransactionHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         transactionValue.text = valueText
 
         itemView.setOnClickListener {
-            GenUtil.launchCustomTabs(itemView.context, "https://explore.sia.tech/explorer/hashes/${transaction.transactionId}")
+            GenUtil.launchCustomTabs(itemView.context, "https://explore.sia.tech/hashes/${transaction.transactionId}")
         }
     }
 

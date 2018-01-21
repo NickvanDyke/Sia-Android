@@ -8,6 +8,7 @@ import android.util.Base64
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.remote.SiaApiInterface
 import com.vandyke.sia.data.remote.SiaException
+import com.vandyke.sia.data.remote.SiadNotRunning
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
@@ -15,6 +16,7 @@ import okhttp3.Request
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.jackson.JacksonConverterFactory
+import java.net.ConnectException
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
@@ -34,14 +36,21 @@ class SiaModule {
                             .header("Authorization", "Basic " + Base64.encodeToString(":${Prefs.apiPassword}".toByteArray(), Base64.NO_WRAP))
                             .method(original.method(), original.body())
                             .build()
-                    val response = it.proceed(request)
-                    if (!response.isSuccessful) {
-                        val errorMsg = response.peekBody(256).string()
-                        val siaException = SiaException.fromError(errorMsg)
-                        if (siaException != null)
-                            throw siaException
+                    try {
+                        val response = it.proceed(request)
+                        if (!response.isSuccessful) {
+                            val errorMsg = response.peekBody(256).string()
+                            val siaException = SiaException.fromError(errorMsg)
+                            if (siaException != null)
+                                throw siaException
+                        }
+                        return@addInterceptor response
+                    } catch (e: ConnectException) {
+                        if (e.message == "Failed to connect to localhost/127.0.0.1:9980")
+                            throw SiadNotRunning()
+                        else
+                            throw e
                     }
-                    return@addInterceptor response
                 })
 
         return Retrofit.Builder()

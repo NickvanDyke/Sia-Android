@@ -32,7 +32,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         startService(Intent(this, SiadService::class.java))
 
-        /* appearance stuff */
         if (Prefs.darkMode)
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         else
