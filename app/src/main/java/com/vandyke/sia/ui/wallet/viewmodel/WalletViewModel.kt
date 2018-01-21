@@ -12,10 +12,7 @@ import com.vandyke.sia.data.repository.ConsensusRepository
 import com.vandyke.sia.data.repository.GatewayRepository
 import com.vandyke.sia.data.repository.ScValueRepository
 import com.vandyke.sia.data.repository.WalletRepository
-import com.vandyke.sia.util.NonNullLiveData
-import com.vandyke.sia.util.io
-import com.vandyke.sia.util.main
-import com.vandyke.sia.util.toSC
+import com.vandyke.sia.util.*
 import io.reactivex.Completable
 import io.reactivex.Single
 import javax.inject.Inject
@@ -69,30 +66,21 @@ class WalletViewModel
        view is recreated, then it'll display the success/error even though it shouldn't.
        There might be a better way around that */
     private fun setSuccess(msg: String) {
-        decrementTasks()
+        activeTasks.decrementZeroMin()
         success.value = msg
         success.value = null
     }
 
     private fun onError(t: Throwable) {
-        decrementTasks()
+        activeTasks.decrementZeroMin()
         error.value = t
         error.value = null
-    }
-
-    private fun incrementTasks() {
-        activeTasks.value = activeTasks.value + 1
-    }
-
-    private fun decrementTasks() {
-        if (activeTasks.value > 0)
-            activeTasks.value = activeTasks.value - 1
     }
 
     fun refreshAll() {
         /* We tell the relevant repositories to update their data from the Sia node. This will
            trigger necessary updates elsewhere in the VM, as a result of subscribing to flowables from the database. */
-        incrementTasks()
+        activeTasks.increment()
         refreshing.value = true
         Completable.mergeArrayDelayError(
                 this.walletRepository.updateAll(),
@@ -105,7 +93,7 @@ class WalletViewModel
                 }.toCompletable()
         ).io().main().subscribe({
             refreshing.value = false
-            decrementTasks()
+            activeTasks.decrementZeroMin()
         }, {
             refreshing.value = false
             onError(it)
@@ -113,12 +101,12 @@ class WalletViewModel
     }
 
     fun refreshWallet() {
-        incrementTasks()
-        this.walletRepository.updateAll().io().main().subscribe(::decrementTasks, ::onError)
+        activeTasks.increment()
+        this.walletRepository.updateAll().io().main().subscribe({ activeTasks.decrementZeroMin() }, ::onError)
     }
 
     fun unlock(password: String) {
-        incrementTasks()
+        activeTasks.increment()
         this.walletRepository.unlock(password).io().main().subscribe({
             setSuccess("Unlocked")
             refreshWallet()
@@ -126,7 +114,7 @@ class WalletViewModel
     }
 
     fun lock() {
-        incrementTasks()
+        activeTasks.increment()
         this.walletRepository.lock().io().main().subscribe({
             setSuccess("Locked")
             refreshWallet()
@@ -134,7 +122,7 @@ class WalletViewModel
     }
 
     fun create(password: String, force: Boolean, seed: String? = null) {
-        incrementTasks()
+        activeTasks.increment()
         if (seed == null) {
             this.walletRepository.init(password, "english", force).io().main().subscribe({ it ->
                 setSuccess("Created wallet")
@@ -153,7 +141,7 @@ class WalletViewModel
     }
 
     fun send(amount: String, destination: String) {
-        incrementTasks()
+        activeTasks.increment()
         this.walletRepository.send(amount, destination).io().main().subscribe({
             setSuccess("Sent ${amount.toSC()} SC to $destination")
             refreshWallet()
@@ -161,7 +149,7 @@ class WalletViewModel
     }
 
     fun changePassword(currentPassword: String, newPassword: String) {
-        incrementTasks()
+        activeTasks.increment()
         this.walletRepository.changePassword(currentPassword, newPassword).io().main().subscribe({
             setSuccess("Changed password")
             refreshWallet()
@@ -169,9 +157,9 @@ class WalletViewModel
     }
 
     fun sweep(seed: String) {
-        incrementTasks()
+        activeTasks.increment()
         this.walletRepository.sweep("english", seed).io().main().subscribe({
-            decrementTasks()
+            activeTasks.decrementZeroMin()
             refreshWallet()
         }, ::onError)
     }
@@ -181,23 +169,23 @@ class WalletViewModel
      * as opposed to them observing some LiveData and then calling a function
      * that will populate that LiveData */
     fun getAddress(): Single<AddressData> {
-        incrementTasks()
+        activeTasks.increment()
         return this.walletRepository.getAddress().io().main()
                 .doOnError { onError(it) }
-                .doAfterSuccess { decrementTasks() }
+                .doAfterSuccess { activeTasks.decrementZeroMin() }
     }
 
     fun getAddresses(): Single<List<AddressData>> {
-        incrementTasks()
+        activeTasks.increment()
         return this.walletRepository.getAddresses().io().main()
                 .doOnError { onError(it) }
-                .doAfterSuccess { decrementTasks() }
+                .doAfterSuccess { activeTasks.decrementZeroMin() }
     }
 
     fun getSeeds(): Single<SeedsData> {
-        incrementTasks()
+        activeTasks.increment()
         return this.walletRepository.getSeeds().io().main()
                 .doOnError { onError(it) }
-                .doAfterSuccess { decrementTasks() }
+                .doAfterSuccess { activeTasks.decrementZeroMin() }
     }
 }

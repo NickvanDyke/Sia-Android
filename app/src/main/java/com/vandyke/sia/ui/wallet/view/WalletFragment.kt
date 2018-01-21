@@ -124,7 +124,7 @@ class WalletFragment : BaseFragment() {
                 balance += " unconfirmed"
                 balanceUnconfirmedText.text = balance
             } else {
-                balanceUnconfirmedText.visibility = View.GONE
+                balanceUnconfirmedText.visibility = View.INVISIBLE
             }
             balanceText.text = it.confirmedSiacoinBalance.toSC().round().toPlainString()
             setStatusIcon()
@@ -217,13 +217,11 @@ class WalletFragment : BaseFragment() {
 
     override fun onShow() {
         setActionBarElevation(0f)
-        setActionBarTitleDisplayed(false)
         viewModel.refreshAll()
     }
 
     override fun onHide() {
         setActionBarElevation(4f)
-        setActionBarTitleDisplayed(true)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
