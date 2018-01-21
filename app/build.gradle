@@ -86,10 +86,8 @@ dependencies {
     implementation "com.android.support.constraint:constraint-layout:1.1.0-beta4"
 
     /* UI */
-    implementation 'com.daimajia.numberprogressbar:library:1.4@aar'
     implementation 'com.github.apl-devs:appintro:v4.2.0'
     implementation 'com.github.medyo:android-about-page:1.2.2'
-    implementation 'de.cketti.library.changelog:ckchangelog:1.2.2'
     implementation 'com.github.kenglxn.QRGen:android:2.3.0'
     implementation 'me.dm7.barcodescanner:zxing:1.9.3'
     implementation 'com.github.clans:fab:1.6.4'

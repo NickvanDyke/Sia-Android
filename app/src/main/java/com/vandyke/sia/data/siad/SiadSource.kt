@@ -35,6 +35,10 @@ class SiadSource
             setConditions()
         }
 
+        allConditionsGood.observeForevs {
+            println("allConditionsGood changed to $it")
+        }
+
         Prefs.preferences.registerOnSharedPreferenceChangeListener(prefsListener)
     }
 

@@ -85,7 +85,6 @@ class WalletViewModel
         Completable.mergeArrayDelayError(
                 walletRepository.updateAll(),
                 consensusRepository.updateConsensus(),
-                scValueRepository.updateScValue(),
                 gatewayRepository.getGateway().doAfterSuccess {
                     numPeers.postValue(it.peers.size)
                 }.doOnError {
@@ -98,6 +97,9 @@ class WalletViewModel
             refreshing.value = false
             onError(it)
         })
+
+        /* we don't include this in the refresh task because it's remote and less reliable and speedy. And also not as integral. */
+        scValueRepository.updateScValue().io().subscribe({}, ::onError)
     }
 
     fun refreshWallet() {

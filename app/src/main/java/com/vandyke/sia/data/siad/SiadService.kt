@@ -33,24 +33,23 @@ import java.io.InputStreamReader
 import javax.inject.Inject
 
 class SiadService : LifecycleService() {
-
     private var siadFile: File? = null
     private var siadProcess: java.lang.Process? = null
-    private val SIAD_NOTIFICATION = 3
     val siadProcessIsRunning: Boolean
         get() = siadProcess != null
+
     private val receiver = SiadReceiver()
 
-    @Inject lateinit var siadSource: SiadSource
+    @Inject
+    lateinit var siadSource: SiadSource
 
     override fun onCreate() {
         super.onCreate()
         appComponent.inject(this)
         val filter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
         registerReceiver(receiver, filter)
-        // TODO: need some way to do this such that if I push an update with a new version of siad, that it will overwrite the
-        // current one. Maybe just keep the version in sharedprefs and check against it?
-        siadFile = StorageUtil.copyFromAssetsToAppStorage("siad", this)
+        // TODO: should also check for and delete older versions of Sia
+        siadFile = StorageUtil.copyFromAssetsToAppStorage("siad-${Prefs.siaVersion}", this)
 
         siadSource.allConditionsGood.observe(this) {
             if (it)
@@ -69,7 +68,7 @@ class SiadService : LifecycleService() {
             return
         }
         if (siadFile == null) {
-            showSiadNotification("Couldn't start Siad")
+            showSiadNotification("Couldn't copy siad from assets to app storage")
             return
         }
 
@@ -80,7 +79,7 @@ class SiadService : LifecycleService() {
         if (Prefs.apiPassword.isNotEmpty()) {
             val args = pb.command()
             args.add("--authenticate-api")
-            pb.environment().put("SIA_API_PASSWORD", Prefs.apiPassword)
+            pb.environment()["SIA_API_PASSWORD"] = Prefs.apiPassword
             pb.command(args)
         }
 
@@ -220,6 +219,8 @@ class SiadService : LifecycleService() {
             }
             context.bindService(Intent(context, SiadService::class.java), connection, Context.BIND_AUTO_CREATE)
         }!!
+
+        const val SIAD_NOTIFICATION = 3
     }
 
     /* binding stuff */

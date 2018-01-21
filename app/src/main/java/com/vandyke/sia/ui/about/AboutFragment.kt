@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.vandyke.sia.BuildConfig
 import com.vandyke.sia.R
+import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.util.GenUtil
 import mehdi.sakout.aboutpage.AboutPage
@@ -21,14 +22,24 @@ class AboutFragment : BaseFragment() {
     override val layoutResId: Int = 0
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val version = Element("Version ${BuildConfig.VERSION_NAME}", R.drawable.ic_format_list_bulleted)
+        val appVersion = Element("Version ${BuildConfig.VERSION_NAME}", R.drawable.ic_format_list_bulleted)
                 .setOnClickListener {
-                    //                    ChangeLog(context).fullLogDialog.show() TODO: maybe go to GitHub releases page instead?
+                    GenUtil.launchCustomTabs(context!!, "https://github.com/NickvanDyke/Sia-Android/releases")
                 }
 
-        val github = Element("GitHub", mehdi.sakout.aboutpage.R.drawable.about_icon_github)
+        val siaVersion = Element("Version ${Prefs.siaVersion}", R.drawable.siacoin_logo_svg)
+                .setOnClickListener {
+                    GenUtil.launchCustomTabs(context!!, "https://github.com/NebulousLabs/Sia/releases")
+                }
+
+        val appGithub = Element("GitHub", mehdi.sakout.aboutpage.R.drawable.about_icon_github)
                 .setOnClickListener {
                     GenUtil.launchCustomTabs(context!!, "https://github.com/NickvanDyke/Sia-Android")
+                }
+
+        val siaGithub = Element("GitHub", mehdi.sakout.aboutpage.R.drawable.about_icon_github)
+                .setOnClickListener {
+                    GenUtil.launchCustomTabs(context!!, "https://github.com/NebulousLabs/Sia")
                 }
 
         val siaHelp = Element("Help", R.drawable.ic_help_outline)
@@ -54,7 +65,7 @@ class AboutFragment : BaseFragment() {
             GenUtil.launchCustomTabs(context!!, "https://reddit.com/r/siacoin")
         }
 
-        /* creating my own email element because the default one opens a chooser. This one goes straight to email */
+        /* creating our own email element because the default one opens a chooser. This one goes straight to email */
         val emailIntent = Intent(Intent.ACTION_SENDTO)
                 .setData(Uri.parse("mailto:"))
                 .putExtra(Intent.EXTRA_EMAIL, "siamobiledev@gmail.com")
@@ -67,12 +78,16 @@ class AboutFragment : BaseFragment() {
         return AboutPage(context)
                 .setImage(R.drawable.sia_logo_svg) // TODO: image and text could probably be better
                 .setDescription("Your private, decentralized cloud")
-                .addItem(version)
-                .addItem(github)
+                .addGroup("App")
+                .addItem(appVersion)
+                .addItem(appGithub)
+                .addItem(email)
+                .addGroup("Sia")
+                .addItem(siaVersion)
+                .addItem(siaGithub)
                 .addItem(reddit)
                 .addItem(discord)
                 .addItem(share)
-                .addItem(email)
                 .addItem(youtube)
                 .addItem(siaHelp)
                 .create()

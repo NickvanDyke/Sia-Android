@@ -82,16 +82,6 @@ class MainActivity : AppCompatActivity() {
             val storedFragmentClass = supportFragmentManager.findFragmentByTag(savedInstanceState.getString("visibleFragment")).javaClass
             viewModel.setDisplayedFragmentClass(storedFragmentClass)
         }
-
-//        /* changelog stuff */
-//        val changelog = ChangeLog(this)
-//        /* if this is the user's first time ever running the app, there isn't much point to showing
-//           them a changelog, so skip it until they update */
-//        if (changelog.isFirstRunEver) {
-//            changelog.skipLogDialog()
-//        } else if (changelog.isFirstRun) {
-//            changelog.logDialog.show()
-//        }
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
