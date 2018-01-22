@@ -35,11 +35,11 @@ class WalletCreateDialog : BaseWalletFragment() {
                 walletCreateForceWarning.visibility = View.GONE
         }
 
-        walletCreateButton.setOnClickListener(View.OnClickListener {
+        walletCreateButton.setOnClickListener {
             val password = newPasswordCreate.text.toString()
             if (password != confirmNewPasswordCreate.text.toString()) {
                 SnackbarUtil.showSnackbar(view, "New passwords don't match", Snackbar.LENGTH_SHORT)
-                return@OnClickListener
+                return@setOnClickListener
             }
             val force = walletCreateForce.isChecked
             if (!walletCreateFromSeed.isChecked) {
@@ -47,7 +47,7 @@ class WalletCreateDialog : BaseWalletFragment() {
             } else {
                 viewModel.create(password, force, walletCreateSeed.text.toString())
             }
-        })
+        }
     }
 
 

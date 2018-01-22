@@ -45,32 +45,28 @@ class WalletRepository
     fun getAddress() = api.walletAddress().doOnSuccess {
         db.addressDao().insert(it)
     }.onErrorResumeNext {
-        // fallback to DB
-        // don't attempt to get an address from the db if the reason the request to the API failed is that it doesn't have a wallet
-        if (it is NoWallet)
-            db.addressDao().getAddress().onErrorResumeNext(Single.error(it))
-        else
-            Single.error(it)
-    }!!
+                /* fallback to db, but only if the reason for the failure was not due to the absence of a wallet */
+                if (it !is NoWallet)
+                    db.addressDao().getAddress().onErrorResumeNext(Single.error(it))
+                else
+                    Single.error(it)
+            }!!
 
     fun getAddresses(): Single<List<AddressData>> = api.walletAddresses().map {
         it.addresses.map { AddressData(it) }
     }.doOnSuccess {
-        db.addressDao().insertAll(it)
-    }.onErrorResumeNext {
-        if (it is NoWallet)
-            db.addressDao().getAll().onErrorResumeNext(Single.error(it))
-        else
-            Single.error(it)
-    }!!
+                db.addressDao().insertAll(it)
+            }.onErrorResumeNext {
+                /* fallback to db, but only if the reason for the failure was not due to the absence of a wallet */
+                if (it !is NoWallet)
+                    db.addressDao().getAll().onErrorResumeNext(Single.error(it))
+                else
+                    Single.error(it)
+            }!!
 
     // chose not to store the seeds in a database for security reasons I guess? Maybe I should
     fun getSeeds(dictionary: String = "english") = api.walletSeeds(dictionary)
 
-    /* Below are actions that affect the Sia node. Previously, it would call the appropriate updates upon completion of the actions.
-     * I changed it because then errors with updating will propagate up these observables, and these observables won't
-     * complete until the updates they call also complete, which isn't the behavior I want when using them. Is there a way
-     * to subscribe to the update observables within these observables without that behavior? */
     fun unlock(password: String) = api.walletUnlock(password)
 
     fun lock() = api.walletLock()

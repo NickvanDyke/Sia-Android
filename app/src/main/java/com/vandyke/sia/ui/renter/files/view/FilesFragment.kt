@@ -270,9 +270,9 @@ class FilesFragment : BaseFragment() {
     }
 
     override fun onShow() {
-        viewModel.refresh()
         activity!!.toolbar.addView(spinnerView)
         setActionBarTitleDisplayed(false)
+        viewModel.refresh()
     }
 
     override fun onHide() {

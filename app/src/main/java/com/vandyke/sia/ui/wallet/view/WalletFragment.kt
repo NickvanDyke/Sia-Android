@@ -33,6 +33,7 @@ import com.vandyke.sia.util.*
 import io.reactivex.exceptions.CompositeException
 import kotlinx.android.synthetic.main.fragment_wallet.*
 import java.math.BigDecimal
+import java.text.NumberFormat
 import javax.inject.Inject
 
 
@@ -154,27 +155,27 @@ class WalletFragment : BaseFragment() {
         viewModel.error.observe(this) {
             if (it is WalletLocked) {
                 expandFrame(WalletUnlockDialog())
-            } else if (siadSource.allConditionsGood.value) {
-                if (it is SiadNotRunning) {
+            } else if (siadSource.allConditionsGood.value && it is SiadNotRunning) {
+                return@observe
+            } else if (siadSource.allConditionsGood.value && it is CompositeException) {
+                if (it.exceptions.all { e -> e is SiadNotRunning }) {
                     return@observe
-                } else if (it is CompositeException) {
-                    if (it.exceptions.all { e -> e is SiadNotRunning }) {
-                        return@observe
-                    } else if (it.exceptions.any { e -> e is SiadNotReady }) {
-                        SiadNotReady().snackbar(wallet_coordinator)
-                        return@observe
-                    }
+                } else if (it.exceptions.any { e -> e is SiadNotReady }) {
+                    SiadNotReady().snackbar(wallet_coordinator)
+                    return@observe
                 }
             } else {
                 it.snackbar(wallet_coordinator)
             }
         }
 
-        viewModel.seed.observe(this) {
+        viewModel.seed.observe(this)
+        {
             WalletCreateDialog.showSeed(it, context!!)
         }
 
-        siadSource.isSiadLoaded.observe(this) {
+        siadSource.isSiadLoaded.observe(this)
+        {
             if (it)
                 viewModel.refreshAll()
         }
@@ -249,13 +250,14 @@ class WalletFragment : BaseFragment() {
 
     private fun setSyncStatus() {
         val consensus = viewModel.consensus.value ?: ConsensusData(false, 0, "", BigDecimal.ZERO)
+        val height  = NumberFormat.getInstance().format(consensus.height)
         if (viewModel.numPeers.value == 0) {
-            syncText.text = ("Not syncing: ${consensus.height} (${consensus.syncProgress.toInt()}%)")
+            syncText.text = ("Not syncing: $height (${consensus.syncProgress.toInt()}%)")
         } else {
             if (consensus.synced) {
-                syncText.text = ("${getString(R.string.synced)}: ${consensus.height}")
+                syncText.text = ("${getString(R.string.synced)}: $height")
             } else {
-                syncText.text = ("${getString(R.string.syncing)}: ${consensus.height} (${consensus.syncProgress.toInt()}%)")
+                syncText.text = ("${getString(R.string.syncing)}: $height (${consensus.syncProgress.toInt()}%)")
             }
         }
     }

@@ -126,7 +126,7 @@ class WalletViewModel
     fun create(password: String, force: Boolean, seed: String? = null) {
         activeTasks.increment()
         if (seed == null) {
-            walletRepository.init(password, "english", force).io().main().subscribe({ it ->
+            walletRepository.init(password, "english", force).io().main().subscribe({
                 setSuccess("Created wallet")
                 refreshWallet()
                 this.seed.value = it.primaryseed

@@ -4,7 +4,7 @@
 
 package com.vandyke.sia.ui.wallet.view.transactionslist
 
-import android.graphics.Color
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.TextView
@@ -22,25 +22,23 @@ class TransactionHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val transactionValue: TextView = itemView.findViewById(R.id.transactionValue)
 
     fun bind(transaction: TransactionData) {
-        val timeString: String
         if (!transaction.confirmed) {
-            timeString = "Unconfirmed"
-            transactionStatus.setTextColor(Color.RED)
+            transactionStatus.text = "Unconfirmed"
+            transactionStatus.setTextColor(getColor(R.color.negativeTransaction))
         } else {
-            timeString = df.format(transaction.confirmationDate)
+            transactionStatus.text = df.format(transaction.confirmationDate)
             transactionStatus.setTextColor(transactionId.currentTextColor)
         }
-        transactionStatus.text = timeString
 
         transactionId.text = transaction.transactionId
 
         var valueText = transaction.netValue.toSC().format()
         transactionValue.setTextColor(when {
             transaction.isNetZero -> transactionId.currentTextColor
-            valueText.contains("-") -> red
+            valueText.contains("-") -> getColor(R.color.negativeTransaction)
             else -> {
                 valueText = ("+$valueText")
-                green
+                getColor(R.color.positiveTransaction)
             }
         })
         transactionValue.text = valueText
@@ -50,9 +48,9 @@ class TransactionHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         }
     }
 
+    private fun getColor(resId: Int) = ContextCompat.getColor(itemView.context, resId)
+
     companion object {
         private val df = SimpleDateFormat("MMM dd\nh:mm a", Locale.getDefault())
-        private val red = Color.rgb(186, 63, 63) // TODO: choose better colors maybe
-        private val green = Color.rgb(0, 114, 11)
     }
 }
