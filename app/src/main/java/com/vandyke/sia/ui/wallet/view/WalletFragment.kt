@@ -154,6 +154,7 @@ class WalletFragment : BaseFragment() {
 
         viewModel.error.observe(this) {
             if (it is WalletLocked) {
+                it.snackbar(wallet_coordinator)
                 expandFrame(WalletUnlockDialog())
             } else if (siadSource.allConditionsGood.value && it is SiadNotRunning) {
                 return@observe
