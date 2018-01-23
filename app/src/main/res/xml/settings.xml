@@ -7,7 +7,8 @@
         <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="runSiaOnData"
-            android:title="Run on mobile data"/>
+            android:title="Run on mobile data"
+            android:summary="The Sia node uploads and downloads a significant amount of data while running."/>
         <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="useExternal"

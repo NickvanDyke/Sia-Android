@@ -50,7 +50,7 @@ class AboutFragment : BaseFragment() {
         val shareIntent = Intent.createChooser(
                 Intent(Intent.ACTION_SEND)
                         .setType("text/plain")
-                        .putExtra(Intent.EXTRA_TEXT, "TODO"), "Share Sia") // TODO: some share sentence here, with the play store url
+                        .putExtra(Intent.EXTRA_TEXT, "https://play.google.com/store/apps/details?id=com.vandyke.sia"), "Share Sia")
         val share = Element("Share", R.drawable.ic_share)
                 .setIntent(shareIntent)
 
