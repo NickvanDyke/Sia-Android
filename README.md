@@ -8,6 +8,8 @@ This app can:
 * Coming soon: upload to and download from the Sia cloud storage network (in-progress on the develop branch)
 * Coming soon: SPV functionality (a.k.a. "lite wallet") once Sia implements this feature
 
+This app is developed independently by me. It is not an official Nebulous Labs product.
+
 # Contact me
 siamobiledev@gmail.com or Nick#6026 on the [Sia Discord](https://discord.gg/sFCT3Ar)
 
