@@ -64,10 +64,10 @@ class WalletFragment : BaseFragment() {
         /* set up click listeners for the big buttons */
         fabWalletMenu.setOnMenuButtonClickListener {
             if (!fabWalletMenu.isOpened) {
-                if (viewModel.wallet.value?.unlocked == false) {
-                    expandFrame(WalletUnlockDialog())
-                } else if (viewModel.wallet.value?.encrypted == false) {
+                if (viewModel.wallet.value?.encrypted == false) {
                     expandFrame(WalletCreateDialog())
+                } else if (viewModel.wallet.value?.unlocked == false) {
+                    expandFrame(WalletUnlockDialog())
                 } else {
                     fabWalletMenu.open(true)
                 }
@@ -122,7 +122,7 @@ class WalletFragment : BaseFragment() {
             } else {
                 balanceUnconfirmedText.visibility = View.INVISIBLE
             }
-            if (!it.unlocked) {
+            if (!it.unlocked && it.encrypted) {
                 fabWalletMenu.menuIconView.setImageResource(R.drawable.ic_lock_open)
             } else {
                 fabWalletMenu.menuIconView.setImageResource(R.drawable.ic_add)

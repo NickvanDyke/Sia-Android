@@ -24,9 +24,6 @@ allprojects {
         jcenter()
         maven { url 'https://jitpack.io' }
         google()
-        flatDir {
-            dirs 'libs'
-        }
     }
 }
 

@@ -5,12 +5,12 @@
 
 <resources>
     <string-array name="startup_entries">
-        <item>Renter</item>
+        <!--<item>Renter</item>-->
         <item>Wallet</item>
         <item>Terminal</item>
     </string-array>
     <string-array name="startup_values">
-        <item>renter</item>
+        <!--<item>renter</item>-->
         <item>wallet</item>
         <item>terminal</item>
     </string-array>
