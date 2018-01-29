@@ -4,10 +4,11 @@
 
 <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/drawer_header_image"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:paddingBottom="32dp"
-    android:paddingEnd="32dp"
-    android:paddingStart="32dp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="start"
+    android:paddingBottom="16dp"
     android:paddingTop="32dp"
-    android:src="@drawable/sia_logo_svg" />
+    android:paddingStart="32dp"
+    android:scaleType="fitStart"
+    android:src="@drawable/sia_new_wordmark_transparent_png" />

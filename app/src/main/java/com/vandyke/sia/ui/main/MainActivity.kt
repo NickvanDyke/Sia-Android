@@ -32,6 +32,11 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         startService(Intent(this, SiadService::class.java))
 
+        viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
+
+
+        /* purchases stuff */
+
         if (Prefs.darkMode)
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         else
@@ -46,7 +51,10 @@ class MainActivity : AppCompatActivity() {
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setHomeButtonEnabled(true)
 
-        viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
+
+        viewModel.purchased.observe(this) {
+
+        }
 
         viewModel.visibleFragmentClass.observe(this) {
             displayFragment(it)

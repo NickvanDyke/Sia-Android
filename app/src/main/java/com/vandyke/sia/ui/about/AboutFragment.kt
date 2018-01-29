@@ -27,7 +27,7 @@ class AboutFragment : BaseFragment() {
                     GenUtil.launchCustomTabs(context!!, "https://github.com/NickvanDyke/Sia-Android/releases")
                 }
 
-        val siaVersion = Element("Version ${Prefs.siaVersion}", R.drawable.siacoin_logo_svg)
+        val siaVersion = Element("Version ${Prefs.siaVersion}", R.drawable.sia_new_circle_logo_transparent)
                 .setOnClickListener {
                     GenUtil.launchCustomTabs(context!!, "https://github.com/NebulousLabs/Sia/releases")
                 }
@@ -76,7 +76,7 @@ class AboutFragment : BaseFragment() {
                 .setIntent(Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/watch?v=B4YGpWxyn6Y")))
 
         return AboutPage(context)
-                .setImage(R.drawable.sia_logo_svg) // TODO: image and text could probably be better
+                .setImage(R.drawable.sia_new_wordmark_transparent_png) // TODO: image and text could probably be better
                 .setDescription("Your private, decentralized cloud")
                 .addGroup("App")
                 .addItem(appVersion)

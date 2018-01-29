@@ -3,9 +3,9 @@
   -->
 
 <resources>
-    <color name="colorPrimary">#00cb9e</color>
-    <color name="colorPrimaryDark">#24b293</color>
-    <color name="colorAccent">#00cb9e</color>
+    <color name="colorPrimary">#20ee82</color>
+    <color name="colorPrimaryDark">#1dd674</color>
+    <color name="colorAccent">#20ee82</color>
 
     <color name="positiveTransaction">#00A27E</color>
     <color name="negativeTransaction">#F70027</color>

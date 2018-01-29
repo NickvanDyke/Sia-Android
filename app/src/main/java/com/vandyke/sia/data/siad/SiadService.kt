@@ -10,7 +10,6 @@ import android.app.PendingIntent
 import android.app.Service
 import android.arch.lifecycle.LifecycleService
 import android.content.*
-import android.graphics.BitmapFactory
 import android.net.ConnectivityManager
 import android.os.Binder
 import android.os.Handler
@@ -20,6 +19,7 @@ import com.vandyke.sia.R
 import com.vandyke.sia.appComponent
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.ui.main.MainActivity
+import com.vandyke.sia.util.GenUtil
 import com.vandyke.sia.util.NotificationUtil
 import com.vandyke.sia.util.StorageUtil
 import com.vandyke.sia.util.observe
@@ -173,8 +173,8 @@ class SiadService : LifecycleService() {
 
     private fun siadNotification(text: String): Notification {
         val builder = NotificationCompat.Builder(this, NotificationUtil.SIA_NODE_CHANNEL)
-                .setSmallIcon(R.drawable.siacoin_logo_svg_white)
-                .setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.sia_logo_transparent))
+                .setSmallIcon(R.drawable.sia_new_circle_logo_transparent)
+                .setLargeIcon(GenUtil.getBitmapFromVectorDrawable(this, R.drawable.sia_new_circle_logo_transparent))
                 .setContentTitle("Sia node")
                 .setContentText(text)
                 .setStyle(NotificationCompat.BigTextStyle().bigText(text))

@@ -13,11 +13,13 @@ import com.vandyke.sia.ui.renter.files.view.FilesFragment
 import com.vandyke.sia.ui.settings.SettingsFragment
 import com.vandyke.sia.ui.terminal.TerminalFragment
 import com.vandyke.sia.ui.wallet.view.WalletFragment
+import com.vandyke.sia.util.NonNullLiveData
 
 class MainViewModel : ViewModel() {
     val visibleFragmentClass = MutableLiveData<Class<*>>()
     val title = MutableLiveData<String>()
     val selectedMenuItem = MutableLiveData<Int>()
+    val purchased = NonNullLiveData(false)
     
     fun navigationItemSelected(item: MenuItem) {
         visibleFragmentClass.value = when (item.itemId) {
