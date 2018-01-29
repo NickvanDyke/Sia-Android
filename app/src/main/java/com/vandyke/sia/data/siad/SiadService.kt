@@ -173,7 +173,7 @@ class SiadService : LifecycleService() {
 
     private fun siadNotification(text: String): Notification {
         val builder = NotificationCompat.Builder(this, NotificationUtil.SIA_NODE_CHANNEL)
-                .setSmallIcon(R.drawable.sia_new_circle_logo_transparent)
+                .setSmallIcon(R.drawable.sia_new_circle_logo_transparent_white)
                 .setLargeIcon(GenUtil.getBitmapFromVectorDrawable(this, R.drawable.sia_new_circle_logo_transparent))
                 .setContentTitle("Sia node")
                 .setContentText(text)
