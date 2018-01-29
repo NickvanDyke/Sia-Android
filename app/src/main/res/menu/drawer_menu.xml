@@ -8,10 +8,10 @@
     <group
             android:id="@+id/main_items"
             android:checkableBehavior="all">
-        <!--<item-->
-                <!--android:id="@+id/drawer_item_renter"-->
-                <!--android:icon="@drawable/ic_cloud"-->
-                <!--android:title="@string/renter"/>-->
+        <item
+                android:id="@+id/drawer_item_renter"
+                android:icon="@drawable/ic_cloud"
+                android:title="@string/renter"/>
         <item
                 android:id="@+id/drawer_item_wallet"
                 android:icon="@drawable/ic_account_balance_wallet"
