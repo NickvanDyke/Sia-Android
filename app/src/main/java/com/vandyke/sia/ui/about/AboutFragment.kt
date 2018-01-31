@@ -47,6 +47,11 @@ class AboutFragment : BaseFragment() {
                     GenUtil.launchCustomTabs(context!!, "https://support.sia.tech/help_center")
                 }
 
+        val siaHomepage = Element("Homepage", R.drawable.ic_format_list_bulleted)
+                .setOnClickListener {
+                    GenUtil.launchCustomTabs(context!!, "https://sia.tech")
+                }
+
         val shareIntent = Intent.createChooser(
                 Intent(Intent.ACTION_SEND)
                         .setType("text/plain")
@@ -76,8 +81,8 @@ class AboutFragment : BaseFragment() {
                 .setIntent(Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/watch?v=B4YGpWxyn6Y")))
 
         return AboutPage(context)
-                .setImage(R.drawable.sia_new_wordmark_transparent_png) // TODO: image and text could probably be better
-                .setDescription("Your private, decentralized cloud")
+                .setImage(R.drawable.sia_new_wordmark_transparent_png)
+                .setDescription("")
                 .addGroup("App")
                 .addItem(appVersion)
                 .addItem(appGithub)
@@ -85,6 +90,7 @@ class AboutFragment : BaseFragment() {
                 .addItem(email)
                 .addGroup("Sia")
                 .addItem(siaVersion)
+                .addItem(siaHomepage)
                 .addItem(siaGithub)
                 .addItem(reddit)
                 .addItem(discord)

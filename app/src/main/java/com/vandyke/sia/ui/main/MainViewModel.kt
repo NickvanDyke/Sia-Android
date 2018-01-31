@@ -19,7 +19,7 @@ class MainViewModel : ViewModel() {
     val visibleFragmentClass = MutableLiveData<Class<*>>()
     val title = MutableLiveData<String>()
     val selectedMenuItem = MutableLiveData<Int>()
-    val purchased = NonNullLiveData(false)
+    val purchased = NonNullLiveData(true)
     
     fun navigationItemSelected(item: MenuItem) {
         visibleFragmentClass.value = when (item.itemId) {

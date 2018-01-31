@@ -13,10 +13,14 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.app.AppCompatDelegate
 import android.view.MenuItem
+import com.android.billingclient.api.BillingClient
+import com.android.billingclient.api.BillingClientStateListener
 import com.vandyke.sia.R
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.siad.SiadService
 import com.vandyke.sia.ui.common.BaseFragment
+import com.vandyke.sia.ui.onboarding.IntroActivity
+import com.vandyke.sia.ui.onboarding.PurchaseActivity
 import com.vandyke.sia.ui.renter.files.view.FilesFragment
 import com.vandyke.sia.ui.terminal.TerminalFragment
 import com.vandyke.sia.ui.wallet.view.WalletFragment
@@ -30,12 +34,44 @@ class MainActivity : AppCompatActivity() {
     private lateinit var drawerToggle: ActionBarDrawerToggle
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        if (!Prefs.viewedOnboarding) {
+            finish()
+            startActivity(Intent(this, IntroActivity::class.java))
+            return
+        }
+
+        if (!Prefs.cachedPurchased) {
+            finish()
+            startActivity(Intent(this, PurchaseActivity::class.java))
+            return
+        }
+
         startService(Intent(this, SiadService::class.java))
 
+        val client = BillingClient.newBuilder(this).setListener({ responseCode, purchases ->
+            /* we don't make purchases here so don't care about listening for updates. Required to set a listener though. */
+        }).build()
+        client.startConnection(object : BillingClientStateListener {
+            override fun onBillingSetupFinished(responseCode: Int) {
+                if (responseCode == BillingClient.BillingResponse.OK) {
+                    val purchased = client.queryPurchases(BillingClient.SkuType.SUBS)
+                            .purchasesList
+                            .find { it.sku == PurchaseActivity.overall_sub_sku } != null
+                    Prefs.cachedPurchased = purchased
+                    if (!purchased) {
+                        finish()
+                        startActivity(Intent(this@MainActivity, PurchaseActivity::class.java))
+                    }
+                }
+            }
+
+            override fun onBillingServiceDisconnected() {
+            }
+        })
+
         viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
-
-
-        /* purchases stuff */
 
         if (Prefs.darkMode)
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
@@ -43,7 +79,6 @@ class MainActivity : AppCompatActivity() {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         setTheme(R.style.AppTheme_DayNight)
 
-        super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         /* actionbar setup stuff */
@@ -51,10 +86,6 @@ class MainActivity : AppCompatActivity() {
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setHomeButtonEnabled(true)
 
-
-        viewModel.purchased.observe(this) {
-
-        }
 
         viewModel.visibleFragmentClass.observe(this) {
             displayFragment(it)
