@@ -164,19 +164,19 @@ class WalletFragment : BaseFragment() {
                 } else if (it.exceptions.any { e -> e is SiadNotReady }) {
                     SiadNotReady().snackbar(wallet_coordinator)
                     return@observe
+                } else {
+                    it.snackbar(wallet_coordinator)
                 }
             } else {
                 it.snackbar(wallet_coordinator)
             }
         }
 
-        viewModel.seed.observe(this)
-        {
+        viewModel.seed.observe(this) {
             WalletCreateDialog.showSeed(it, context!!)
         }
 
-        siadSource.isSiadLoaded.observe(this)
-        {
+        siadSource.isSiadLoaded.observe(this) {
             if (it)
                 viewModel.refreshAll()
         }
@@ -251,7 +251,7 @@ class WalletFragment : BaseFragment() {
 
     private fun setSyncStatus() {
         val consensus = viewModel.consensus.value ?: ConsensusData(false, 0, "", BigDecimal.ZERO)
-        val height  = NumberFormat.getInstance().format(consensus.height)
+        val height = NumberFormat.getInstance().format(consensus.height)
         if (viewModel.numPeers.value == 0) {
             syncText.text = ("Not syncing: $height (${consensus.syncProgress.toInt()}%)")
         } else {

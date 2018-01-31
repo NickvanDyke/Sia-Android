@@ -4,7 +4,6 @@
 
 package com.vandyke.sia.ui.renter.files.viewmodel
 
-import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.local.models.renter.Dir
@@ -12,17 +11,19 @@ import com.vandyke.sia.data.local.models.renter.Node
 import com.vandyke.sia.data.repository.FilesRepository
 import com.vandyke.sia.data.repository.ROOT_DIR_NAME
 import com.vandyke.sia.util.NonNullLiveData
+import com.vandyke.sia.util.SingleLiveEvent
 import com.vandyke.sia.util.io
 import com.vandyke.sia.util.main
 import io.reactivex.disposables.Disposable
+import java.math.BigDecimal
 import javax.inject.Inject
 
 class FilesViewModel
 @Inject constructor(
         private val filesRepository: FilesRepository
 ) : ViewModel() {
-    val displayedNodes = MutableLiveData<List<Node>>()
-    val currentDir = MutableLiveData<Dir>()
+    val displayedNodes = NonNullLiveData<List<Node>>(listOf())
+    val currentDir = NonNullLiveData<Dir>(Dir(ROOT_DIR_NAME, BigDecimal.ZERO))
 
     val searching = NonNullLiveData(false)
     val searchTerm = NonNullLiveData("") // maybe bind this to the search query?
@@ -31,10 +32,10 @@ class FilesViewModel
     val sortBy = NonNullLiveData(Prefs.sortBy)
 
     val refreshing = NonNullLiveData(false)
-    val error = MutableLiveData<Throwable>()
+    val error = SingleLiveEvent<Throwable>()
 
     val currentDirPath
-        get() = currentDir.value?.path ?: ""
+        get() = currentDir.value.path
 
     /** the subscription to the database flowable that emits items in the current path */
     private var nodesSubscription: Disposable? = null
@@ -52,7 +53,6 @@ class FilesViewModel
             setDisplayedNodes()
             Prefs.sortBy = it
         }
-        displayedNodes.value = listOf()
         changeDir(ROOT_DIR_NAME)
     }
 
@@ -135,11 +135,10 @@ class FilesViewModel
 
     private fun onError(t: Throwable) {
         error.value = t
-        error.value = null
     }
 
     fun goUpDir(): Boolean {
-        val parent = currentDir.value?.parent
+        val parent = currentDir.value.parent
         return if (parent == null) {
             false
         } else {

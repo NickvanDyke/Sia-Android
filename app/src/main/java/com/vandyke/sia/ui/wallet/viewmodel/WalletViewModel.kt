@@ -31,15 +31,11 @@ class WalletViewModel
     val activeTasks = NonNullLiveData(0)
     val refreshing = NonNullLiveData(false)
     val numPeers = NonNullLiveData(0)
-    val success = MutableLiveData<String>()
-    val error = MutableLiveData<Throwable>()
+    val success = SingleLiveEvent<String>()
+    val error = SingleLiveEvent<Throwable>()
 
     /* seed is used specifically for when a new wallet is created - not for when called /wallet/seeds */
-    val seed = MutableLiveData<String>()
-
-    /* when you see a LiveData's value being set to null immediately after, it's so that an observer
-       won't receive anything upon initial subscription to it (normally it still would, but generally
-       an extension function is used that doesn't pass the value unless it's not null) */
+    val seed = SingleLiveEvent<String>()
 
     init {
         /* subscribe to flowables from the repositories. Note that since they're flowables,
@@ -65,16 +61,14 @@ class WalletViewModel
        non-null values of them, and if they're holding a non-null value and the
        view is recreated, then it'll display the success/error even though it shouldn't.
        There might be a better way around that */
-    private fun setSuccess(msg: String) {
+    private fun onSuccess(msg: String) {
         activeTasks.decrementZeroMin()
         success.value = msg
-        success.value = null
     }
 
     private fun onError(t: Throwable) {
         activeTasks.decrementZeroMin()
         error.value = t
-        error.value = null
     }
 
     fun refreshAll() {
@@ -110,7 +104,7 @@ class WalletViewModel
     fun unlock(password: String) {
         activeTasks.increment()
         walletRepository.unlock(password).io().main().subscribe({
-            setSuccess("Unlocked")
+            onSuccess("Unlocked")
             refreshWallet()
         }, ::onError)
     }
@@ -118,7 +112,7 @@ class WalletViewModel
     fun lock() {
         activeTasks.increment()
         walletRepository.lock().io().main().subscribe({
-            setSuccess("Locked")
+            onSuccess("Locked")
             refreshWallet()
         }, ::onError)
     }
@@ -127,17 +121,15 @@ class WalletViewModel
         activeTasks.increment()
         if (seed == null) {
             walletRepository.init(password, "english", force).io().main().subscribe({
-                setSuccess("Created wallet")
+                onSuccess("Created wallet")
                 refreshWallet()
                 this.seed.value = it.primaryseed
-                this.seed.value = null
             }, ::onError)
         } else {
             walletRepository.initSeed(password, "english", seed, force).io().main().subscribe({
-                setSuccess("Created wallet")
+                onSuccess("Created wallet")
                 refreshWallet()
                 this.seed.value = seed
-                this.seed.value = null
             }, ::onError)
         }
     }
@@ -145,7 +137,7 @@ class WalletViewModel
     fun send(amount: String, destination: String) {
         activeTasks.increment()
         walletRepository.send(amount, destination).io().main().subscribe({
-            setSuccess("Sent ${amount.toSC()} SC to $destination")
+            onSuccess("Sent ${amount.toSC()} SC to $destination")
             refreshWallet()
         }, ::onError)
     }
@@ -153,7 +145,7 @@ class WalletViewModel
     fun changePassword(currentPassword: String, newPassword: String) {
         activeTasks.increment()
         walletRepository.changePassword(currentPassword, newPassword).io().main().subscribe({
-            setSuccess("Changed password")
+            onSuccess("Changed password")
             refreshWallet()
         }, ::onError)
     }
