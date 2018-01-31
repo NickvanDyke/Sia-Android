@@ -7,6 +7,6 @@
     <color name="colorPrimaryDark">#1dd674</color>
     <color name="colorAccent">#20ee82</color>
 
-    <color name="positiveTransaction">#00A27E</color>
-    <color name="negativeTransaction">#F70027</color>
+    <color name="positiveTransaction">@color/colorPrimaryDark</color>
+    <color name="negativeTransaction">#ee3820</color>
 </resources>

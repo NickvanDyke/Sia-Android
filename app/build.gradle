@@ -14,8 +14,8 @@ android {
         applicationId "com.vandyke.sia"
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 105
-        versionName "0.1.5"
+        versionCode 106
+        versionName "0.1.6"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         /* lets us not shrink debug builds, for faster build times. Not necessary for release builds, since we shrink those */
         multiDexEnabled true
@@ -39,6 +39,7 @@ android {
         }
     }
     splits {
+        /* see main.c file in cpp directory for why we use ABI splits */
         abi {
             enable true
             reset()
@@ -51,10 +52,6 @@ android {
             path 'CMakeLists.txt'
         }
     }
-//    sourceSets {
-//        test.java.srcDirs += 'src/test/kotlin'
-//        androidTest.java.srcDirs += 'src/androidTest/kotlin'
-//    }
 }
 
 dependencies {
@@ -106,9 +103,9 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxkotlin:2.2.0'
 
     /* Android Architecture Components */
-    implementation 'android.arch.lifecycle:runtime:1.0.3'
-    implementation 'android.arch.lifecycle:extensions:1.0.0'
-    kapt 'android.arch.lifecycle:compiler:1.0.0'
+    implementation 'android.arch.lifecycle:runtime:1.1.0'
+    implementation 'android.arch.lifecycle:extensions:1.1.0'
+    kapt 'android.arch.lifecycle:compiler:1.1.0'
 
     /* Room, for local data persistence */
     implementation "android.arch.persistence.room:runtime:1.0.0"

@@ -23,8 +23,8 @@ class MockSiaApi : SiaApiInterface {
     // obviously using a nonce when setting up internal values won't give very reproducible tests. Should do some other way.
     // maybe throw in some real data or something
     // maybe have some factory functions that initialize to often-used values, like with a wallet already created
-    val counter = AtomicInteger()
-    val nonce
+    private val counter = AtomicInteger()
+    private val nonce
         get() = counter.getAndIncrement()
     /* the fields are left public so that they can be modified for testing particular things if needed */
     var password = ""
@@ -74,10 +74,9 @@ class MockSiaApi : SiaApiInterface {
     }
 
     override fun wallet(): Single<WalletData> {
-        return Single.fromCallable {
+        return Single.just(
             WalletData(encrypted, unlocked, rescanning, confirmedSiacoinBalance, unconfirmedOutgoingSiacoins,
-                    unconfirmedIncomingSiacoins, siafundBalance, siacoinClaimBalance, dustThreshold)
-        }
+                    unconfirmedIncomingSiacoins, siafundBalance, siacoinClaimBalance, dustThreshold))
     }
 
     override fun walletSiacoins(amount: String, destination: String): Completable {
@@ -97,9 +96,7 @@ class MockSiaApi : SiaApiInterface {
     }
 
     override fun walletAddresses(): Single<AddressesData> {
-        return Single.fromCallable {
-            AddressesData(addresses)
-        }
+        return Single.just(AddressesData(addresses))
     }
 
     override fun walletSeeds(dictionary: String): Single<SeedsData> {
@@ -243,12 +240,12 @@ class MockSiaApi : SiaApiInterface {
         TODO("not implemented")
     }
 
-    fun checkPassword(password: String) {
+    private fun checkPassword(password: String) {
         if (password != this.password)
             throw WalletPasswordIncorrect()
     }
 
-    fun checkUnlocked(desired: Boolean = true) {
+    private fun checkUnlocked(desired: Boolean = true) {
         if (unlocked != desired) {
             if (unlocked)
                 throw WalletAlreadyUnlocked()
@@ -257,7 +254,7 @@ class MockSiaApi : SiaApiInterface {
         }
     }
 
-    fun checkEncrypted(desired: Boolean = true) {
+    private fun checkEncrypted(desired: Boolean = true) {
         if (encrypted != desired) {
             if (encrypted)
                 throw ExistingWallet()

@@ -10,6 +10,7 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.app.AppCompatDelegate
 import android.view.MenuItem
@@ -24,6 +25,7 @@ import com.vandyke.sia.ui.onboarding.PurchaseActivity
 import com.vandyke.sia.ui.renter.files.view.FilesFragment
 import com.vandyke.sia.ui.terminal.TerminalFragment
 import com.vandyke.sia.ui.wallet.view.WalletFragment
+import com.vandyke.sia.util.GenUtil
 import com.vandyke.sia.util.observe
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -48,10 +50,24 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        startService(Intent(this, SiadService::class.java))
+        if (Prefs.darkMode)
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        else
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        setTheme(R.style.AppTheme_DayNight)
+
+        if (!GenUtil.isSiadSupported) {
+            AlertDialog.Builder(this)
+                    .setTitle("Sia node unsupported")
+                    .setMessage("Your device isn't able to run the Sia node. Only devices that can are able to download" +
+                            " this app from the Play Store, so you must have obtained it some other way. Sorry.")
+                    .show()
+        } else {
+            startService(Intent(this, SiadService::class.java))
+        }
 
         val client = BillingClient.newBuilder(this).setListener({ responseCode, purchases ->
-            /* we don't make purchases here so don't care about listening for updates. Required to set a listener though. */
+            /* we don't make purchases here so we don't care about listening for updates. Required to set a listener though. */
         }).build()
         client.startConnection(object : BillingClientStateListener {
             override fun onBillingSetupFinished(responseCode: Int) {
@@ -72,12 +88,6 @@ class MainActivity : AppCompatActivity() {
         })
 
         viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
-
-        if (Prefs.darkMode)
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        else
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        setTheme(R.style.AppTheme_DayNight)
 
         setContentView(R.layout.activity_main)
 
