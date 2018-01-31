@@ -8,10 +8,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
-import com.android.billingclient.api.BillingClient
-import com.android.billingclient.api.BillingFlowParams
-import com.android.billingclient.api.Purchase
-import com.android.billingclient.api.PurchasesUpdatedListener
+import com.android.billingclient.api.*
 import com.vandyke.sia.R
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.ui.main.MainActivity
@@ -25,26 +22,36 @@ class PurchaseActivity : AppCompatActivity(), PurchasesUpdatedListener {
         subscribe.setOnClickListener {
             val client = BillingClient.newBuilder(this).setListener(this).build()
 
-            val params = BillingFlowParams.newBuilder()
-                    .setType(BillingClient.SkuType.INAPP)
-                    .setSku(overall_sub_sku)
-                    .build()
-            if (client.isFeatureSupported(BillingClient.FeatureType.SUBSCRIPTIONS) == BillingClient.BillingResponse.OK) {
-                client.launchBillingFlow(this, params)
-            } else {
-                AlertDialog.Builder(this)
-                        .setTitle("Unsupported")
-                        .setMessage("Your device doesn't support subscriptions, sorry.")
-                        .show()
-            }
+            client.startConnection(object : BillingClientStateListener {
+                override fun onBillingSetupFinished(responseCode: Int) {
+                    val params = BillingFlowParams.newBuilder()
+                            .setType(BillingClient.SkuType.INAPP)
+                            .setSku(overall_sub_sku)
+                            .build()
+                    if (client.isFeatureSupported(BillingClient.FeatureType.SUBSCRIPTIONS) == BillingClient.BillingResponse.OK) {
+                        client.launchBillingFlow(this@PurchaseActivity, params)
+                    } else {
+                        AlertDialog.Builder(this@PurchaseActivity)
+                                .setTitle("Unsupported")
+                                .setMessage("Your device doesn't support subscriptions, sorry.")
+                                .show()
+                    }
+                }
+
+                override fun onBillingServiceDisconnected() {
+
+                }
+            })
         }
     }
 
     override fun onPurchasesUpdated(responseCode: Int, purchases: MutableList<Purchase>?) {
-        val purchased = purchases?.find { it.sku == overall_sub_sku } != null
-        Prefs.cachedPurchased = purchased
-        finish()
-        startActivity(Intent(this@PurchaseActivity, MainActivity::class.java))
+        if (responseCode == BillingClient.BillingResponse.ITEM_ALREADY_OWNED
+                || purchases?.find { it.sku == overall_sub_sku } != null) {
+            Prefs.cachedPurchased = true
+            finish()
+            startActivity(Intent(this@PurchaseActivity, MainActivity::class.java))
+        }
     }
 
     companion object {

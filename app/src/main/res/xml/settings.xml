@@ -7,8 +7,8 @@
         <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="runSiaOnData"
-            android:title="Run on mobile data"
-            android:summary="The Sia node uploads and downloads a significant amount of data while running."/>
+            android:summary="The Sia node uploads and downloads a significant amount of data while running."
+            android:title="Run on mobile data" />
         <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="useExternal"
@@ -16,8 +16,8 @@
             android:title="Use external storage" />
         <EditTextPreference
             android:key="apiPassword"
-            android:title="API password"
-            android:summary="API password to set on the Sia node, so that only this app can interact with it. Optional, but recommended. The Sia node will restart after changing this."/>
+            android:summary="API password to set on the Sia node, so that only this app can interact with it. Optional, but recommended. The Sia node will restart after changing this."
+            android:title="API password" />
     </PreferenceCategory>
     <PreferenceCategory android:title="Appearance">
         <SwitchPreferenceCompat
@@ -40,10 +40,12 @@
             android:key="displayedDecimalPrecision"
             android:maxLength="1"
             android:numeric="integer"
-            android:summary="The number of decimal places displayed. This does not affect actual precision of values in memory, which is exact. When displayed, they will be rounded up."
             android:title="Displayed decimal precision" />
     </PreferenceCategory>
     <PreferenceCategory android:title="Misc">
+        <Preference
+            android:key="viewSubscription"
+            android:title="View subscription" />
         <Preference
             android:key="openAppSettings"
             android:summary="You can clear all of the Sia node's data from here, such as the blockchain. Doing that will delete ALL of Sia's data, including any wallet files - write down your seed(s) first."

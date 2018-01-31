@@ -14,6 +14,7 @@ import com.vandyke.sia.BuildConfig
 import com.vandyke.sia.R
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.ui.common.BaseFragment
+import com.vandyke.sia.ui.onboarding.IntroActivity
 import com.vandyke.sia.util.GenUtil
 import mehdi.sakout.aboutpage.AboutPage
 import mehdi.sakout.aboutpage.Element
@@ -27,7 +28,7 @@ class AboutFragment : BaseFragment() {
                     GenUtil.launchCustomTabs(context!!, "https://github.com/NickvanDyke/Sia-Android/releases")
                 }
 
-        val siaVersion = Element("Version ${Prefs.siaVersion}", R.drawable.sia_new_circle_logo_transparent)
+        val siaVersion = Element("Version ${Prefs.siaVersion}", R.drawable.ic_format_list_bulleted)
                 .setOnClickListener {
                     GenUtil.launchCustomTabs(context!!, "https://github.com/NebulousLabs/Sia/releases")
                 }
@@ -47,7 +48,7 @@ class AboutFragment : BaseFragment() {
                     GenUtil.launchCustomTabs(context!!, "https://support.sia.tech/help_center")
                 }
 
-        val siaHomepage = Element("Homepage", R.drawable.ic_format_list_bulleted)
+        val siaHomepage = Element("Website", R.drawable.sia_new_circle_logo_transparent)
                 .setOnClickListener {
                     GenUtil.launchCustomTabs(context!!, "https://sia.tech")
                 }
@@ -58,6 +59,9 @@ class AboutFragment : BaseFragment() {
                         .putExtra(Intent.EXTRA_TEXT, "https://play.google.com/store/apps/details?id=com.vandyke.sia"), "Share Sia")
         val share = Element("Share", R.drawable.ic_share)
                 .setIntent(shareIntent)
+
+        val onboarding = Element("Intro", R.drawable.ic_view_carousel)
+                .setIntent(Intent(context!!, IntroActivity::class.java))
 
         // maybe I shouldn't have these links here? I don't want people going there for support, since this isn't an official Sia product.
         // It's nice to have them other than that though. I'll see what ends up happening and remove if necessary.
@@ -80,13 +84,12 @@ class AboutFragment : BaseFragment() {
         val youtube = Element("Why Sia?", mehdi.sakout.aboutpage.R.drawable.about_icon_youtube)
                 .setIntent(Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/watch?v=B4YGpWxyn6Y")))
 
-        return AboutPage(context)
-                .setImage(R.drawable.sia_new_wordmark_transparent_png)
-                .setDescription("")
+        val page = AboutPage(context)
                 .addGroup("App")
                 .addItem(appVersion)
                 .addItem(appGithub)
                 .addItem(share)
+                .addItem(onboarding)
                 .addItem(email)
                 .addGroup("Sia")
                 .addItem(siaVersion)
@@ -97,5 +100,10 @@ class AboutFragment : BaseFragment() {
                 .addItem(youtube)
                 .addItem(siaHelp)
                 .create()
+
+        /* gets the LinearLayout that holds the image and description, and hides it, since we don't want it */
+        ((page.rootView as ViewGroup).getChildAt(0) as ViewGroup).getChildAt(0).visibility = View.GONE
+
+        return page
     }
 }

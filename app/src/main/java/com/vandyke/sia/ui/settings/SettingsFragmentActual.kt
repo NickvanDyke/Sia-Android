@@ -15,6 +15,7 @@ import com.vandyke.sia.BuildConfig
 import com.vandyke.sia.R
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.siad.SiadService
+import com.vandyke.sia.util.GenUtil
 import com.vandyke.sia.util.SnackbarUtil
 import com.vandyke.sia.util.StorageUtil
 
@@ -35,6 +36,14 @@ class SettingsFragmentActual : PreferenceFragmentCompat() {
             }
         }
 
+        findPreference("displayedDecimalPrecision").onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, newValue ->
+            try {
+                return@OnPreferenceChangeListener Integer.parseInt(newValue as String) < 10
+            } catch (e: Exception) {
+                return@OnPreferenceChangeListener false
+            }
+        }
+
         findPreference("openAppSettings").onPreferenceClickListener = Preference.OnPreferenceClickListener {
             val appSettings = Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + BuildConfig.APPLICATION_ID))
             appSettings.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -42,12 +51,9 @@ class SettingsFragmentActual : PreferenceFragmentCompat() {
             false
         }
 
-        findPreference("displayedDecimalPrecision").onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, newValue ->
-            try {
-                return@OnPreferenceChangeListener Integer.parseInt(newValue as String) < 10
-            } catch (e: Exception) {
-                return@OnPreferenceChangeListener false
-            }
+        findPreference("viewSubscription").onPreferenceClickListener = Preference.OnPreferenceClickListener {
+            GenUtil.launchCustomTabs(context!!, "https://play.google.com/store/account/subscriptions")
+            false
         }
     }
 
