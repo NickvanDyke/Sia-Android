@@ -51,22 +51,23 @@ class PurchaseActivity : AppCompatActivity(), PurchasesUpdatedListener {
                 || client.queryPurchases(BillingClient.SkuType.SUBS).purchasesList.find { it.sku == overall_sub_sku } != null) {
             Prefs.cachedPurchased = true
             finish()
-            startActivity(Intent(this@PurchaseActivity, MainActivity::class.java))
+            startActivity(Intent(this, MainActivity::class.java))
         }
     }
 
     private fun launchSubscriptionPurchase() {
         pending = false
-        val params = BillingFlowParams.newBuilder()
-                .setType(BillingClient.SkuType.INAPP)
-                .setSku(overall_sub_sku)
-                .build()
         if (client.isFeatureSupported(BillingClient.FeatureType.SUBSCRIPTIONS) == BillingClient.BillingResponse.OK) {
-            client.launchBillingFlow(this@PurchaseActivity, params)
+            val params = BillingFlowParams.newBuilder()
+                    .setType(BillingClient.SkuType.INAPP)
+                    .setSku(overall_sub_sku)
+                    .build()
+            client.launchBillingFlow(this, params)
         } else {
-            AlertDialog.Builder(this@PurchaseActivity)
+            AlertDialog.Builder(this)
                     .setTitle("Unsupported")
                     .setMessage("Your device doesn't support subscriptions, sorry.")
+                    .setPositiveButton("Close", null)
                     .show()
         }
     }
