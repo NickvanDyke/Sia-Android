@@ -64,13 +64,13 @@ class WalletFragment : BaseFragment() {
         /* set up click listeners for the big buttons */
         fabWalletMenu.setOnMenuButtonClickListener {
             if (!fabWalletMenu.isOpened) {
-                if (viewModel.wallet.value?.encrypted == false) {
-                    expandFrame(WalletCreateDialog())
-                } else if (viewModel.wallet.value?.unlocked == false && expandedFragment !is WalletUnlockDialog) {
-                    expandFrame(WalletUnlockDialog())
-                } else if (expandedFragment != null) {
+                if (expandedFragment != null) {
                     if (expandedFragment?.onCheckPressed() == false)
                         collapseFrame()
+                } else if (viewModel.wallet.value?.encrypted == false) {
+                    expandFrame(WalletCreateDialog())
+                } else if (viewModel.wallet.value?.unlocked == false) {
+                    expandFrame(WalletUnlockDialog())
                 } else {
                     fabWalletMenu.open(true)
                 }
@@ -89,8 +89,7 @@ class WalletFragment : BaseFragment() {
         balanceText.setOnClickListener { v ->
             AlertDialog.Builder(v.context)
                     .setTitle("Exact Balance")
-                    .setMessage("${viewModel.wallet.value?.confirmedSiacoinBalance?.toSC()?.toPlainString()
-                            ?: 0} Siacoins")
+                    .setMessage("${viewModel.wallet.value?.confirmedSiacoinBalance?.toSC()?.toPlainString() ?: 0} Siacoins")
                     .setPositiveButton("Close", null)
                     .show()
         }
