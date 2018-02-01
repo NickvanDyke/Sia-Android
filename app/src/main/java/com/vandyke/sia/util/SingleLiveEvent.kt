@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2017 Nicholas van Dyke. All rights reserved.
+ */
+
 package com.vandyke.sia.util
 
 import android.arch.lifecycle.LifecycleOwner
