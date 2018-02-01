@@ -34,20 +34,21 @@ class WalletCreateDialog : BaseWalletFragment() {
             else
                 walletCreateForceWarning.visibility = View.GONE
         }
+    }
 
-        walletCreateButton.setOnClickListener {
-            val password = newPasswordCreate.text.toString()
-            if (password != confirmNewPasswordCreate.text.toString()) {
-                SnackbarUtil.showSnackbar(view, "New passwords don't match", Snackbar.LENGTH_SHORT)
-                return@setOnClickListener
-            }
-            val force = walletCreateForce.isChecked
-            if (!walletCreateFromSeed.isChecked) {
-                viewModel.create(password, force)
-            } else {
-                viewModel.create(password, force, walletCreateSeed.text.toString())
-            }
+    override fun onCheckPressed(): Boolean {
+        val password = newPasswordCreate.text.toString()
+        if (password != confirmNewPasswordCreate.text.toString()) {
+            SnackbarUtil.showSnackbar(view, "New passwords don't match", Snackbar.LENGTH_SHORT)
+            return true
         }
+        val force = walletCreateForce.isChecked
+        if (!walletCreateFromSeed.isChecked) {
+            viewModel.create(password, force)
+        } else {
+            viewModel.create(password, force, walletCreateSeed.text.toString())
+        }
+        return true
     }
 
 

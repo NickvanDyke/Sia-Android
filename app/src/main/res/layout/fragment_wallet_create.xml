@@ -45,15 +45,19 @@
     <CheckBox
         android:id="@+id/walletCreateForce"
         android:layout_width="0dp"
-        android:layout_height="48dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="8dp"
         android:text="Force"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/confirmNewPasswordCreate"
         app:layout_constraintTop_toBottomOf="@+id/walletCreateFromSeed" />
 
     <CheckBox
         android:id="@+id/walletCreateFromSeed"
         android:layout_width="wrap_content"
-        android:layout_height="48dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:text="Create from existing seed"
         app:layout_constraintStart_toStartOf="@+id/confirmNewPasswordCreate"
         app:layout_constraintTop_toBottomOf="@+id/confirmNewPasswordCreate" />
@@ -83,14 +87,4 @@
         app:layout_constraintStart_toEndOf="@+id/walletCreateForce"
         app:layout_constraintTop_toTopOf="@+id/walletCreateForce" />
 
-    <Button
-        android:id="@+id/walletCreateButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@null"
-        android:text="@string/create"
-        android:textColor="@color/colorPrimary"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/walletCreateForce" />
 </android.support.constraint.ConstraintLayout>

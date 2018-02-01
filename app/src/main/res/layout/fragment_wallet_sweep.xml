@@ -12,6 +12,7 @@
         android:id="@+id/walletSweepSeed"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
@@ -19,19 +20,9 @@
         android:gravity="center"
         android:hint="@string/seed"
         android:inputType="textNoSuggestions"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:text="@string/sweep"
-        android:background="@null"
-        android:textColor="@color/colorAccent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/walletAddSeed"
-        app:layout_constraintTop_toBottomOf="@+id/walletSweepSeed"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
 
 </android.support.constraint.ConstraintLayout>

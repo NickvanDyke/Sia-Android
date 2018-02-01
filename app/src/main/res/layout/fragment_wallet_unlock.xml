@@ -11,10 +11,10 @@
                                              android:layout_height="wrap_content">
 
     <EditText
-        android:imeOptions="actionDone"
         android:id="@+id/walletPassword"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
@@ -22,7 +22,9 @@
         android:fontFamily="sans-serif"
         android:gravity="center"
         android:hint="@string/password"
+        android:imeOptions="actionDone"
         android:inputType="textPassword"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -30,14 +32,4 @@
         tools:layout_constraintRight_creator="1"
         tools:layout_constraintTop_creator="1" />
 
-    <Button
-        android:id="@+id/walletUnlockConfirm"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@null"
-        android:text="@string/unlock"
-        android:textColor="@color/colorPrimary"
-        app:layout_constraintEnd_toEndOf="@+id/walletPassword"
-        app:layout_constraintStart_toStartOf="@+id/walletPassword"
-        app:layout_constraintTop_toBottomOf="@+id/walletPassword" />
 </android.support.constraint.ConstraintLayout>

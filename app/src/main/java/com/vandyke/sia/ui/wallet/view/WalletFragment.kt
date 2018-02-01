@@ -48,7 +48,7 @@ class WalletFragment : BaseFragment() {
     private lateinit var viewModel: WalletViewModel
 
     private val adapter = TransactionAdapter()
-
+    private var expandedFragment: BaseWalletFragment? = null
     private var statusButton: MenuItem? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -66,8 +66,11 @@ class WalletFragment : BaseFragment() {
             if (!fabWalletMenu.isOpened) {
                 if (viewModel.wallet.value?.encrypted == false) {
                     expandFrame(WalletCreateDialog())
-                } else if (viewModel.wallet.value?.unlocked == false) {
+                } else if (viewModel.wallet.value?.unlocked == false && expandedFragment !is WalletUnlockDialog) {
                     expandFrame(WalletUnlockDialog())
+                } else if (expandedFragment != null) {
+                    if (expandedFragment?.onCheckPressed() == false)
+                        collapseFrame()
                 } else {
                     fabWalletMenu.open(true)
                 }
@@ -122,11 +125,7 @@ class WalletFragment : BaseFragment() {
             } else {
                 balanceUnconfirmedText.visibility = View.INVISIBLE
             }
-            if (!it.unlocked && it.encrypted) {
-                fabWalletMenu.menuIconView.setImageResource(R.drawable.ic_lock_open)
-            } else {
-                fabWalletMenu.menuIconView.setImageResource(R.drawable.ic_add)
-            }
+            setFabIcon()
             setStatusIcon()
             updateUsdValue()
         }
@@ -212,8 +211,10 @@ class WalletFragment : BaseFragment() {
     fun expandFrame(fragment: BaseWalletFragment) {
         childFragmentManager.beginTransaction().replace(R.id.expandableFrame, fragment).commit()
         childFragmentManager.executePendingTransactions()
+        expandedFragment = fragment
         expandableFrame.expandVertically(fragment.height)
         setProgressColor(R.color.colorPrimary)
+        setFabIcon()
     }
 
     fun collapseFrame() {
@@ -222,6 +223,8 @@ class WalletFragment : BaseFragment() {
             if (currentChildFragment != null)
                 childFragmentManager.beginTransaction().remove(currentChildFragment).commit()
             setProgressColor(android.R.color.white)
+            expandedFragment = null
+            setFabIcon()
         })
         GenUtil.hideSoftKeyboard(activity!!)
     }
@@ -278,5 +281,14 @@ class WalletFragment : BaseFragment() {
 
     private fun setActionBarElevation(elevation: Float) {
         (activity as AppCompatActivity).supportActionBar!!.elevation = elevation
+    }
+
+    private fun setFabIcon() {
+        val wallet = viewModel.wallet.value
+        fabWalletMenu.menuIconView.setImageResource(when {
+            expandedFragment != null -> R.drawable.ic_check
+            wallet?.unlocked == false && wallet?.encrypted == true -> R.drawable.ic_lock_open
+            else -> R.drawable.ic_add
+        })
     }
 }

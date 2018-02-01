@@ -14,10 +14,6 @@ class WalletUnlockDialog : BaseWalletFragment() {
     override val layout: Int = R.layout.fragment_wallet_unlock
 
     override fun create(view: View, savedInstanceState: Bundle?) {
-        walletUnlockConfirm.setOnClickListener {
-            viewModel.unlock(walletPassword.text.toString())
-        }
-
         walletPassword.setOnEditorActionListener { v, actionId, event ->
             viewModel.unlock(walletPassword.text.toString())
             true
@@ -25,5 +21,10 @@ class WalletUnlockDialog : BaseWalletFragment() {
 
         walletPassword.requestFocus()
         GenUtil.showSoftKeyboard(context!!)
+    }
+
+    override fun onCheckPressed(): Boolean {
+        viewModel.unlock(walletPassword.text.toString())
+        return true
     }
 }
