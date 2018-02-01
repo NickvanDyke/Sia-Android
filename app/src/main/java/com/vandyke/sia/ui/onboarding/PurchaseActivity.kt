@@ -27,8 +27,15 @@ class PurchaseActivity : AppCompatActivity(), PurchasesUpdatedListener {
         client = BillingClient.newBuilder(this).setListener(this).build()
         client.startConnection(object : BillingClientStateListener {
             override fun onBillingSetupFinished(responseCode: Int) {
-                if (pending)
+                val purchased = client.queryPurchases(BillingClient.SkuType.SUBS)
+                        .purchasesList
+                        .find { it.sku == overall_sub_sku } != null
+                Prefs.cachedPurchased = purchased
+                if (purchased) {
+                    goToMainActivity()
+                } else if (pending) {
                     launchSubscriptionPurchase()
+                }
             }
 
             override fun onBillingServiceDisconnected() {
@@ -50,8 +57,7 @@ class PurchaseActivity : AppCompatActivity(), PurchasesUpdatedListener {
                 || purchases?.find { it.sku == overall_sub_sku } != null
                 || client.queryPurchases(BillingClient.SkuType.SUBS).purchasesList.find { it.sku == overall_sub_sku } != null) {
             Prefs.cachedPurchased = true
-            finish()
-            startActivity(Intent(this, MainActivity::class.java))
+            goToMainActivity()
         }
     }
 
@@ -70,6 +76,11 @@ class PurchaseActivity : AppCompatActivity(), PurchasesUpdatedListener {
                     .setPositiveButton("Close", null)
                     .show()
         }
+    }
+
+    private fun goToMainActivity() {
+        finish()
+        startActivity(Intent(this, MainActivity::class.java))
     }
 
     override fun onDestroy() {

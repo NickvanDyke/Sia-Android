@@ -76,6 +76,7 @@ class MainActivity : AppCompatActivity() {
                     val purchased = client.queryPurchases(BillingClient.SkuType.SUBS)
                             .purchasesList
                             .find { it.sku == PurchaseActivity.overall_sub_sku } != null
+                    client.endConnection()
                     Prefs.cachedPurchased = purchased
                     if (!purchased) {
                         finish()

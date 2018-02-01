@@ -8,10 +8,12 @@ import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.math.BigDecimal
 
 @Entity(tableName = "wallet")
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class WalletData @JsonCreator constructor(
         @JsonProperty(value = "encrypted")
         val encrypted: Boolean = false,
