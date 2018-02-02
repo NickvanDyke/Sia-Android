@@ -23,7 +23,9 @@ object Prefs : KotprefModel() {
     var hideZero by booleanPref(true)
     var useExternal by booleanPref(false)
     var displayedDecimalPrecision by intPref(2)
-    var runSiaOnData by booleanPref()
+
+    var runSiaInBackground by booleanPref(true)
+    var runSiaOnData by booleanPref(false)
 
     var ascending by booleanPref(true)
     var sortBy by enumOrdinalPref(FilesRepository.SortBy.NAME)

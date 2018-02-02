@@ -5,6 +5,11 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory android:title="Sia node">
         <SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="runSiaInBackground"
+            android:summary="Continue running the Sia node when the app isn't in the foreground."
+            android:title="Run in background" />
+        <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="runSiaOnData"
             android:summary="The Sia node uploads and downloads a significant amount of data while running."
