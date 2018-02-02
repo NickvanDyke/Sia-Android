@@ -14,8 +14,8 @@ android {
         applicationId "com.vandyke.sia"
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 109
-        versionName "0.1.9"
+        versionCode 110
+        versionName "0.1.10"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         /* lets us not shrink debug builds, for faster build times. Not necessary for release builds, since we shrink those */
         multiDexEnabled true
@@ -39,7 +39,7 @@ android {
         }
     }
     splits {
-        /* see main.c file in cpp directory for why we use ABI splits */
+        /* see app/src/main/cpp/main.c for why we use ABI splits */
         abi {
             enable true
             reset()

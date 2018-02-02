@@ -22,9 +22,6 @@ import com.vandyke.sia.data.siad.SiadService
 import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.ui.onboarding.IntroActivity
 import com.vandyke.sia.ui.onboarding.PurchaseActivity
-import com.vandyke.sia.ui.renter.files.view.FilesFragment
-import com.vandyke.sia.ui.terminal.TerminalFragment
-import com.vandyke.sia.ui.wallet.view.WalletFragment
 import com.vandyke.sia.util.GenUtil
 import com.vandyke.sia.util.observe
 import kotlinx.android.synthetic.main.activity_main.*
@@ -114,7 +111,7 @@ class MainActivity : AppCompatActivity() {
         /* notify VM when navigation items are selected */
         navigationView.setNavigationItemSelectedListener({ item ->
             drawerLayout.closeDrawers()
-            viewModel.navigationItemSelected(item)
+            viewModel.navigationItemSelected(item.itemId)
             return@setNavigationItemSelectedListener true
         })
         drawerToggle = ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close)
@@ -122,10 +119,10 @@ class MainActivity : AppCompatActivity() {
 
         /* set the VM's visibleFragmentClass differently depending on whether the activity is being recreated */
         if (savedInstanceState == null) {
-            viewModel.setDisplayedFragmentClass(when (Prefs.startupPage) {
-                "renter" -> FilesFragment::class.java
-                "wallet" -> WalletFragment::class.java
-                "terminal" -> TerminalFragment::class.java
+            viewModel.navigationItemSelected(when (Prefs.startupPage) {
+                "renter" -> R.id.drawer_item_renter
+                "wallet" -> R.id.drawer_item_wallet
+                "terminal" -> R.id.drawer_item_terminal
                 else -> throw Exception()
             })
         } else {

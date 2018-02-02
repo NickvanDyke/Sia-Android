@@ -6,7 +6,6 @@ package com.vandyke.sia.ui.main
 
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
-import android.view.MenuItem
 import com.vandyke.sia.BuildConfig
 import com.vandyke.sia.R
 import com.vandyke.sia.ui.about.AboutFragment
@@ -21,8 +20,8 @@ class MainViewModel : ViewModel() {
     val title = MutableLiveData<String>()
     val selectedMenuItem = MutableLiveData<Int>()
 
-    fun navigationItemSelected(item: MenuItem) {
-        visibleFragmentClass.value = when (item.itemId) {
+    fun navigationItemSelected(itemId: Int) {
+        visibleFragmentClass.value = when (itemId) {
             R.id.drawer_item_renter -> {
                 if (BuildConfig.DEBUG)
                     FilesFragment::class.java

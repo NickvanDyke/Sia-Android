@@ -217,13 +217,13 @@ class WalletFragment : BaseFragment() {
     }
 
     fun collapseFrame() {
+        expandedFragment = null
+        setFabIcon()
         expandableFrame.collapseVertically({
             val currentChildFragment = childFragmentManager.findFragmentById(R.id.expandableFrame)
             if (currentChildFragment != null)
                 childFragmentManager.beginTransaction().remove(currentChildFragment).commit()
             setProgressColor(android.R.color.white)
-            expandedFragment = null
-            setFabIcon()
         })
         GenUtil.hideSoftKeyboard(activity!!)
     }
