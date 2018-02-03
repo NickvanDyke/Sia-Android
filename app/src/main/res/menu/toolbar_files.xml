@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2017 Nicholas van Dyke. All rights reserved.
+  -->
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/search"
+        android:icon="@drawable/ic_search"
+        android:title="Search"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="collapseActionView|always" />
+
+    <item
+        android:icon="@drawable/ic_sort"
+        android:title="Order by"
+        app:showAsAction="ifRoom">
+        <menu>
+            <item
+                android:id="@+id/ascendingToggle"
+                android:checkable="true"
+                android:title="Ascending" />
+            <item
+                android:id="@+id/orderByName"
+                android:title="Name" />
+            <item
+                android:id="@+id/orderBySize"
+                android:title="Size" />
+            <item
+                android:id="@+id/orderByModified"
+                android:title="Modified" />
+        </menu>
+    </item>
+</menu>

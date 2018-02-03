@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2017 Nicholas van Dyke. All rights reserved.
+  -->
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:title="Download"
+        android:id="@+id/fileDownload"/>
+    <item
+        android:title="Delete"
+        android:id="@+id/fileDelete"/>
+    <item
+        android:title="Rename"
+        android:id="@+id/fileRename"/>
+    <item
+        android:title="Move"
+        android:id="@+id/fileMove"/>
+</menu>

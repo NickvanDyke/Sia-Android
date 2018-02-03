@@ -1,21 +1,18 @@
 /*
- * Copyright (c) 2017 Nicholas van Dyke
- *
- * This file is subject to the terms and conditions defined in 'LICENSE.md'
+ * Copyright (c) 2017 Nicholas van Dyke. All rights reserved.
  */
 
 buildscript {
-    ext.kotlin_version = '1.2.0'
+    ext.kotlin_version = '1.2.21'
     repositories {
         jcenter()
+        maven { url 'https://jitpack.io' }
+        google()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.0.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.google.gms:google-services:3.1.0'
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
+        classpath 'com.google.gms:google-services:3.1.1'
     }
 }
 
@@ -23,10 +20,7 @@ allprojects {
     repositories {
         jcenter()
         maven { url 'https://jitpack.io' }
-        maven { url "https://maven.google.com" }
-        flatDir {
-            dirs 'libs'
-        }
+        google()
     }
 }
 

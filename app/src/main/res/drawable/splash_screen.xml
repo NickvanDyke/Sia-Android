@@ -1,17 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2017 Nicholas van Dyke
-  ~
-  ~ This file is subject to the terms and conditions defined in 'LICENSE.md'
+  ~ Copyright (c) 2017 Nicholas van Dyke. All rights reserved.
   -->
 
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android"
-        >
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:drawable="@color/darkModeBg" />
+    <item android:drawable="@android:color/background_light" />
 
     <item
-        android:drawable="@drawable/sia_logo_svg"
+        android:drawable="@drawable/sia_new_wordmark_transparent_png"
         android:gravity="center" />
 
 </layer-list>

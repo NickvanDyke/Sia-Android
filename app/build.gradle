@@ -1,72 +1,133 @@
 /*
- * Copyright (c) 2017 Nicholas van Dyke
- *
- * This file is subject to the terms and conditions defined in 'LICENSE.md'
+ * Copyright (c) 2017 Nicholas van Dyke. All rights reserved.
  */
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 27
     buildToolsVersion '27.0.3'
     defaultConfig {
-        applicationId "vandyke.siamobile"
+        applicationId "com.vandyke.sia"
         minSdkVersion 21
-        targetSdkVersion 26
-        versionCode 20309
-        versionName "2.3.9"
+        targetSdkVersion 27
+        versionCode 110
+        versionName "0.1.10"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-    }
-    lintOptions {
-        checkReleaseBuilds false
+        /* lets us not shrink debug builds, for faster build times. Not necessary for release builds, since we shrink those */
+        multiDexEnabled true
     }
     buildTypes {
         release {
+            lintOptions {
+                checkReleaseBuilds false
+            }
+            shrinkResources true
+            /* Using this combination of the following two options lets us minify (remove unused methods + classes)
+             * using the Android Gradle Plugin's minifier, which doesn't obfuscate and can also be used in incremental builds */
+            minifyEnabled true
+            useProguard false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
             minifyEnabled false
+            useProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-//    splits {
-//        abi {
-//            enable true
-//        }
-//    }
+    splits {
+        /* see app/src/main/cpp/main.c for why we use ABI splits */
+        abi {
+            enable true
+            reset()
+            include 'arm64-v8a', 'x86'
+            universalApk false
+        }
+    }
+    externalNativeBuild {
+        cmake {
+            path 'CMakeLists.txt'
+        }
+    }
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    compile 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.17'
+    ext.support_version = "27.0.2"
+    
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    /* kotlin stdlib and coroutines */
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.21'
 
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    testCompile 'junit:junit:4.12'
+    /* testing */
+    androidTestImplementation 'com.android.support:support-annotations:27.0.2'
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    testImplementation 'junit:junit:4.12'
+    testImplementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+    testImplementation "org.amshove.kluent:kluent:1.33"
+    testImplementation 'org.amshove.kluent:kluent-android:1.33'
 
-    compile(name: 'siawallet', ext: 'aar')
+    /* support library */
+    implementation "com.android.support:appcompat-v7:$support_version"
+    implementation "com.android.support:design:$support_version"
+    implementation "com.android.support:recyclerview-v7:$support_version"
+    implementation "com.android.support:cardview-v7:$support_version"
+    implementation "com.android.support:preference-v14:$support_version"
+    implementation "com.android.support:customtabs:$support_version"
+    implementation "com.android.support.constraint:constraint-layout:1.1.0-beta4"
 
-    compile 'com.android.support:appcompat-v7:26.0.1'
-    compile 'com.android.support:design:26.0.1'
-    compile 'com.android.support:recyclerview-v7:26.0.1'
-    compile 'com.android.support:cardview-v7:26.0.1'
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    /* UI */
+    implementation 'com.github.medyo:android-about-page:1.2.2'
+    implementation 'com.codemybrainsout.onboarding:onboarder:1.0.4'
+    implementation 'com.github.kenglxn.QRGen:android:2.3.0'
+    implementation 'me.dm7.barcodescanner:zxing:1.9.3'
+    implementation 'com.github.clans:fab:1.6.4'
+    implementation 'me.zhanghai.android.materialprogressbar:library:1.4.2'
 
-    compile 'com.daimajia.numberprogressbar:library:1.4@aar'
+    /* simplified SharedPreferences */
+    implementation "com.chibatching.kotpref:kotpref:2.2.0"
+    implementation "com.chibatching.kotpref:enum-support:2.2.0"
 
-    compile 'com.github.apl-devs:appintro:v4.2.0'
-    compile 'com.github.jrvansuita:MaterialAbout:0.1.6'
-    compile 'com.github.gabrielemariotti.changeloglib:changelog:2.1.0'
+    /* networking */
+    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.9.0'
 
-    compile 'com.github.kenglxn.QRGen:android:2.3.0'
-    compile 'me.dm7.barcodescanner:zxing:1.9.3'
+    /* RxJava */
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.6'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    implementation 'io.reactivex.rxjava2:rxkotlin:2.2.0'
 
-    compile 'com.squareup.retrofit2:retrofit:2.3.0'
-    compile 'com.squareup.retrofit2:converter-gson:2.1.0'
-    compile 'com.google.code.gson:gson:2.8.1'
+    /* Android Architecture Components */
+    implementation 'android.arch.lifecycle:runtime:1.1.0'
+    implementation 'android.arch.lifecycle:extensions:1.1.0'
+    kapt 'android.arch.lifecycle:compiler:1.1.0'
 
-    compile "com.google.firebase:firebase-crash:11.2.0"
+    /* Room, for local data persistence */
+    implementation "android.arch.persistence.room:runtime:1.0.0"
+    implementation "android.arch.persistence.room:rxjava2:1.0.0"
+    kapt "android.arch.persistence.room:compiler:1.0.0"
+
+    /* Dagger, for DI */
+    implementation 'com.google.dagger:dagger:2.12'
+    kapt "com.google.dagger:dagger-android-processor:2.12"
+    kapt 'com.google.dagger:dagger-compiler:2.12'
+    implementation 'com.google.dagger:dagger-android-support:2.12'
+
+    /* Jackson (JSON converter) */
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.8.11'
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.8.11'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.8.11'
+    implementation 'com.squareup.retrofit2:converter-jackson:2.3.0'
+
+    /* for crash reporting/analytics */
+    implementation "com.google.firebase:firebase-crash:11.8.0"
+
+    implementation 'com.android.billingclient:billing:1.0'
 }
 
 repositories {

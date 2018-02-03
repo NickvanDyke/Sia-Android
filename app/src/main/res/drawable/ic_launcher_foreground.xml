@@ -1,0 +1,22 @@
+<!--
+  ~ Copyright (c) 2017 Nicholas van Dyke. All rights reserved.
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+        android:width="108dp"
+        android:height="108dp"
+        android:viewportWidth="833.9394"
+        android:viewportHeight="833.9394">
+    <group android:translateX="160.9697"
+            android:translateY="160.9697">
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M316.6,256v60.6L256,316.6a60.6,60.6 0,1 1,60.6 -60.6m-59.8,-101a101,101 0,1 0,-0.8 201.9h101v-99.7c0,-55.7 -44.5,-101.8 -100.2,-102.2" />
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M398.8,113.2c-69.1,-69.1 -175.8,-77.6 -254.2,-25.7a40.3,40.3 0,0 1,5.8 8.3c74.4,-49.1 175.8,-40.9 241.3,24.5 74.8,74.8 74.8,196.5 0,271.3s-196.5,74.8 -271.3,0c-65.4,-65.4 -73.6,-166.8 -24.5,-241.3a40,40 0,0 1,-8.3 -5.8c-52,78.4 -43.4,185.1 25.7,254.2 78.9,78.9 206.7,78.9 285.6,0s78.9,-206.7 0,-285.6" />
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M100.4,100.4a20.2,20.2 0,1 1,0 28.6,20.2 20.2,0 0,1 0,-28.6" />
+    </group>
+</vector>

@@ -1,64 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2017 Nicholas van Dyke
-  ~
-  ~ This file is subject to the terms and conditions defined in 'LICENSE.md'
+  ~ Copyright (c) 2017 Nicholas van Dyke. All rights reserved.
   -->
 
 <resources>
-    <string-array name="operation_modes_entries">
-        <item>View explanation</item>
-        <item>Cold storage</item>
-        <item>Remote full node</item>
-        <item>Local full node</item>
-    </string-array>
-    <string-array name="operation_modes_values">
-        <item>view_explanation</item>
-        <item>cold_storage</item>
-        <item>remote_full_node</item>
-        <item>local_full_node</item>
-    </string-array>
-
-    <string-array name="theme_entries">
-        <item>Light</item>
-        <item>Dark</item>
-        <item>Amoled</item>
-        <item>Custom Background</item>
-    </string-array>
-    <string-array name="theme_values">
-        <item>light</item>
-        <item>dark</item>
-        <item>amoled</item>
-        <item>custom</item>
-    </string-array>
-
     <string-array name="startup_entries">
-        <item>Files</item>
-        <item>Hosting</item>
+        <item>Renter</item>
         <item>Wallet</item>
         <item>Terminal</item>
     </string-array>
     <string-array name="startup_values">
-        <item>files</item>
-        <item>hosting</item>
+        <item>renter</item>
         <item>wallet</item>
         <item>terminal</item>
-    </string-array>
-
-    <string-array name="refresh_interval_entries">
-        <item>Never</item>
-        <item>1 minute</item>
-        <item>5 minutes</item>
-        <item>15 minutes</item>
-        <item>30 minutes</item>
-        <item>60 minutes</item>
-    </string-array>
-    <string-array name="refresh_interval_values">
-        <item>0</item>
-        <item>1</item>
-        <item>5</item>
-        <item>15</item>
-        <item>30</item>
-        <item>60</item>
     </string-array>
 </resources>

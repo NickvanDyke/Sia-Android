@@ -1,99 +1,60 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
-  ~ Copyright (c) 2017 Nicholas van Dyke
-  ~
-  ~ This file is subject to the terms and conditions defined in 'LICENSE.md'
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2017 Nicholas van Dyke. All rights reserved.
   -->
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory
-        android:title="Operation"
-        android:key="operationCategory">
-        <ListPreference
-            android:title="Mode"
-            android:key="operationMode"
-            android:entries="@array/operation_modes_entries"
-            android:entryValues="@array/operation_modes_values"
-            android:defaultValue="cold_storage"/>
-        <!--<ListPreference-->
-        <!--android:key="refreshInterval"-->
-        <!--android:title="Automatic refresh interval"-->
-        <!--android:summary="Refreshes balance, transactions, and sync progress."-->
-        <!--android:entries="@array/refresh_interval_entries"-->
-        <!--android:entryValues="@array/refresh_interval_values"-->
-        <!--android:defaultValue="1"/>-->
-        <EditTextPreference
-            android:key="remoteAddress"
-            android:title="Remote node address"
-            android:summary="The IP address and port number of your remote full node. If your device is not on the same network as it, you will have to port forward."
-            android:dialogTitle="Remote node address"
-            android:gravity="center"
-            android:hint="ip:port"/>
-        <EditTextPreference
-            android:key="apiPass"
-            android:title="API password"
-            android:summary="The API password set on your remote full node."
-            android:dialogTitle="API password"
-            android:gravity="center"
-            android:inputType="textPassword"
-            android:password="true"
-            android:fontFamily="sans-serif"/>
-        <SwitchPreference
-            android:key="runLocalNodeOffWifi"
-            android:title="Run node when off WiFi"
-            android:summary="Run the local node in the background even when not connected to WiFi. WARNING: Syncing the blockchain can involve a lot of downloading."
-            android:defaultValue="false"/>
-        <EditTextPreference
-            android:key="localNodeMinBattery"
-            android:title="Minimum battery percentage to run node"
-            android:numeric="integer"
-            android:gravity="center"
-            android:defaultValue="20"/>
-        <SwitchPreference
+    <PreferenceCategory android:title="Sia node">
+        <SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="runSiaInBackground"
+            android:summary="Continue running the Sia node when the app isn't in the foreground."
+            android:title="Run in background" />
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="runSiaOnData"
+            android:summary="The Sia node uploads and downloads a significant amount of data while running."
+            android:title="Run on mobile data" />
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
             android:key="useExternal"
-            android:title="Use external storage"
-            android:summary="Will use whatever your phone returns as its external storage - this will not necessarily be your SD card. Restart Sia Mobile after changing this. It's recommended you clear existing data using the button at the bottom of settings after changing this."
-            android:defaultValue="false"/>
+            android:summary="The Sia node will instead store its data wherever your phone returns as its external storage - this is manufacturer-dependent, and will not necessarily be an external SD card. The Sia node will restart after changing this."
+            android:title="Use external storage" />
+        <EditTextPreference
+            android:key="apiPassword"
+            android:summary="API password to set on the Sia node, so that only this app can interact with it. Optional, but recommended. The Sia node will restart after changing this."
+            android:title="API password" />
     </PreferenceCategory>
     <PreferenceCategory android:title="Appearance">
-        <ListPreference
-            android:summary="Changes will apply on next restart."
-            android:key="theme"
-            android:title="Theme"
-            android:entries="@array/theme_entries"
-            android:entryValues="@array/theme_values"
-            android:defaultValue="dark"/>
-        <SwitchPreference
-            android:summary="Changes will apply on next restart."
-            android:key="transparentBars"
-            android:title="Transparent bars"
-            android:defaultValue="false"/>
-        <SwitchPreference
-            android:key="hideZero"
-            android:title="Hide net-zero transactions"
+        <SwitchPreferenceCompat
             android:defaultValue="false"
-            android:summary="For each regular transaction, Sia also makes a setup transaction that does not affect your wallet balance."/>
-        <EditTextPreference
-            android:key="displayedDecimalPrecision"
-            android:title="Displayed decimal precision"
-            android:summary="The number of decimal places displayed. This does not affect actual precision of values in memory, which is exact. When displayed, they will be rounded up."
-            android:inputType="number"
-            android:gravity="center"
-            android:defaultValue="2"
-            android:maxLength="1"/>
+            android:key="darkMode"
+            android:title="Dark mode" />
+        <SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="hideZero"
+            android:title="Hide net-zero transactions" />
         <ListPreference
-            android:key="startupPage"
-            android:title="Launch screen"
-            android:summary="The screen to load to when Sia Mobile launches."
+            android:defaultValue="wallet"
             android:entries="@array/startup_entries"
             android:entryValues="@array/startup_values"
-            android:defaultValue="wallet"/>
+            android:key="startupPage"
+            android:title="Launch screen" />
+        <com.vandyke.sia.ui.settings.IntEditTextPreference
+            android:defaultValue="2"
+            android:gravity="center"
+            android:key="displayedDecimalPrecision"
+            android:maxLength="1"
+            android:numeric="integer"
+            android:title="Displayed decimal precision" />
     </PreferenceCategory>
     <PreferenceCategory android:title="Misc">
         <Preference
+            android:key="viewSubscription"
+            android:title="View subscription" />
+        <Preference
             android:key="openAppSettings"
-            android:title="Open Application Info page for Sia Mobile"
-            android:summary="You can clear all of Sia Mobile's data from here, such as the blockchain. WARNING: this will delete ALL of Sia Mobile's data, including any wallet files. Write down your seed(s) first."/>
+            android:summary="You can clear all of the Sia node's data from here, such as the blockchain. Doing that will delete ALL of Sia's data, including any wallet files - write down your seed(s) first."
+            android:title="Open Application Info page for Sia" />
     </PreferenceCategory>
 
 </PreferenceScreen>

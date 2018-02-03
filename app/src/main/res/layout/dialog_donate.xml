@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2017 Nicholas van Dyke
-  ~
-  ~ This file is subject to the terms and conditions defined in 'LICENSE.md'
+  ~ Copyright (c) 2017 Nicholas van Dyke. All rights reserved.
   -->
 
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -17,17 +15,17 @@
         android:inputType="numberDecimal"
         android:ems="10"
         android:id="@+id/donateAmount"
-        app:layout_constraintRight_toLeftOf="@+id/donateButton"
+        app:layout_constraintEnd_toStartOf="@+id/donateButton"
         android:layout_marginEnd="8dp"
         app:layout_constraintTop_toTopOf="@+id/donateButton"
         app:layout_constraintBottom_toBottomOf="@+id/donateButton"
         android:hint="Amount (SC)"
         android:gravity="center"
         android:layout_marginStart="16dp"
-        app:layout_constraintLeft_toLeftOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent"/>
 
     <Button
-        android:text="@string/donate"
+        android:text="Donate"
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
         android:textColor="#FFFFFF"
@@ -35,18 +33,18 @@
         android:layout_marginTop="16dp"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginEnd="32dp"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         android:layout_width="wrap_content"/>
 
     <TextView
-        android:text="I develop Sia Mobile in my spare time for free. As you've noticed, it's also 100% free and ad-free. Any amount is appreciated and supports development. Thank you!"
+        android:text="I develop Sia in my spare time for free. As you've noticed, it's also 100% free and ad-free. Any amount is appreciated and supports development. Thank you!"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:id="@+id/textView20"
         android:layout_marginEnd="16dp"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginStart="16dp"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         android:layout_marginTop="16dp"
         app:layout_constraintTop_toBottomOf="@+id/donateButton"/>
