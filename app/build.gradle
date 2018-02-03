@@ -10,13 +10,13 @@ apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion '26.0.2'
+    buildToolsVersion '27.0.3'
     defaultConfig {
         applicationId "vandyke.siamobile"
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 20308
-        versionName "2.3.8"
+        versionCode 20309
+        versionName "2.3.9"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     lintOptions {

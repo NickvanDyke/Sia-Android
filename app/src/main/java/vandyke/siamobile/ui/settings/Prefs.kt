@@ -97,6 +97,10 @@ class Prefs(context: Context) {
         get() = prefs.getStringSet("coldStorageAddresses", HashSet())
         set(value) = prefs.edit().putStringSet("coldStorageAddresses", value).apply()
 
+    var viewedNewApp: Boolean
+        get() = prefs.getBoolean("viewedNewApp", false)
+        set(value) = prefs.edit().putBoolean("viewedNewApp", value).apply()
+
     fun registerOnSharedPreferenceChangeListener(listener: SharedPreferences.OnSharedPreferenceChangeListener) {
         prefs.registerOnSharedPreferenceChangeListener(listener)
     }

@@ -12,10 +12,13 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
+import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.Snackbar
+import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.app.AppCompatDelegate
 import android.support.v7.widget.Toolbar
@@ -96,7 +99,7 @@ class MainActivity : AppCompatActivity() {
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         if (prefs.transparentBars) {
-            toolbar.setBackgroundColor(android.R.color.transparent)
+            toolbar.setBackgroundColor(ContextCompat.getColor(this, android.R.color.transparent))
             window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
             toolbar.setPadding(0, statusBarHeight, 0, 0)
         }
@@ -162,6 +165,23 @@ class MainActivity : AppCompatActivity() {
             startActivityForResult(Intent(this, ModesActivity::class.java), REQUEST_OPERATION_MODE)
 //            startActivity(Intent(this, AboutSiaActivity::class.java))
             prefs.firstTime = false
+        }
+
+        if (!prefs.viewedNewApp) {
+            prefs.viewedNewApp = true
+            AlertDialog.Builder(this)
+                    .setTitle("New Sia Android app")
+                    .setMessage("I've released a hugely revamped and improved Android app for Sia. " +
+                            "You'll be taken to it upon closing this. I highly recommend switching to it from Sia Mobile. " +
+                            "All development efforts are being focused on it - Sia Mobile likely will not receive any more updates. " +
+                            "Thank you for using my app.")
+                    .setPositiveButton("Okay") { dialogInterface, i ->
+                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.vandyke.sia")))
+                    }
+                    .setOnDismissListener {
+                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.vandyke.sia")))
+                    }
+                    .show()
         }
     }
 
