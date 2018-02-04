@@ -7,7 +7,7 @@ package com.vandyke.sia.ui.wallet.view.childfragments
 import android.os.Bundle
 import android.view.View
 import com.vandyke.sia.R
-import com.vandyke.sia.util.GenUtil
+import com.vandyke.sia.util.KeyboardUtil
 import kotlinx.android.synthetic.main.fragment_wallet_unlock.*
 
 class WalletUnlockDialog : BaseWalletFragment() {
@@ -20,7 +20,7 @@ class WalletUnlockDialog : BaseWalletFragment() {
         }
 
         walletPassword.requestFocus()
-        GenUtil.showSoftKeyboard(context!!)
+        KeyboardUtil.showSoftKeyboard(context!!)
     }
 
     override fun onCheckPressed(): Boolean {

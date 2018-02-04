@@ -16,6 +16,7 @@ import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.ui.onboarding.IntroActivity
 import com.vandyke.sia.util.GenUtil
+import com.vandyke.sia.util.Intents
 import mehdi.sakout.aboutpage.AboutPage
 import mehdi.sakout.aboutpage.Element
 
@@ -75,11 +76,8 @@ class AboutFragment : BaseFragment() {
         }
 
         /* creating our own email element because the default one opens a chooser. This one goes straight to email */
-        val emailIntent = Intent(Intent.ACTION_SENDTO)
-                .setData(Uri.parse("mailto:"))
-                .putExtra(Intent.EXTRA_EMAIL, "siamobiledev@gmail.com")
-        val email = Element("Email me", mehdi.sakout.aboutpage.R.drawable.about_icon_email)
-                .setIntent(emailIntent)
+        val email = Element("Email me\n(feedback, help, etc.)", mehdi.sakout.aboutpage.R.drawable.about_icon_email)
+                .setIntent(Intents.emailMe)
 
         val youtube = Element("Why Sia?", mehdi.sakout.aboutpage.R.drawable.about_icon_youtube)
                 .setIntent(Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/watch?v=B4YGpWxyn6Y")))

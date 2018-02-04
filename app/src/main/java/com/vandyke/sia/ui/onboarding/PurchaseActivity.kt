@@ -27,14 +27,15 @@ class PurchaseActivity : AppCompatActivity(), PurchasesUpdatedListener {
         client = BillingClient.newBuilder(this).setListener(this).build()
         client.startConnection(object : BillingClientStateListener {
             override fun onBillingSetupFinished(responseCode: Int) {
-                val purchased = client.queryPurchases(BillingClient.SkuType.SUBS)
-                        .purchasesList
-                        .find { it.sku == overall_sub_sku } != null
-                Prefs.cachedPurchased = purchased
-                if (purchased) {
-                    goToMainActivity()
-                } else if (pending) {
-                    launchSubscriptionPurchase()
+                val purchases = client.queryPurchases(BillingClient.SkuType.SUBS)
+                if (purchases.responseCode == BillingClient.BillingResponse.OK) {
+                    val purchased = purchases.purchasesList?.find { it.sku == overall_sub_sku } != null
+                    Prefs.cachedPurchased = purchased
+                    if (purchased) {
+                        goToMainActivity()
+                    } else if (pending) {
+                        launchSubscriptionPurchase()
+                    }
                 }
             }
 

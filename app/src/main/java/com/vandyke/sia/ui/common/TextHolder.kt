@@ -9,7 +9,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.TextView
 import com.vandyke.sia.R
-import com.vandyke.sia.util.GenUtil
+import com.vandyke.sia.util.KeyboardUtil
 import com.vandyke.sia.util.SnackbarUtil
 
 class TextHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -17,7 +17,7 @@ class TextHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     init {
         itemView.setOnClickListener {
-            GenUtil.copyToClipboard(text.context, text.text)
+            KeyboardUtil.copyToClipboard(text.context, text.text)
             SnackbarUtil.showSnackbar(text, "Copied selection to clipboard", Snackbar.LENGTH_SHORT)
         }
     }

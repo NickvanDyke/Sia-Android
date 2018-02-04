@@ -14,6 +14,9 @@ object Prefs : KotprefModel() {
     /* make sure to update this when the included siad is updated */
     val siaVersion by stringPref("1.3.1")
 
+    var timesStarted by intPref()
+    var shownFeedbackDialog by booleanPref(false)
+
     var cachedPurchased by booleanPref(false)
     var viewedOnboarding by booleanPref(false)
 

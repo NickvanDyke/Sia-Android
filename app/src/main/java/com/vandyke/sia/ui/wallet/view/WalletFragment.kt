@@ -225,7 +225,7 @@ class WalletFragment : BaseFragment() {
                 childFragmentManager.beginTransaction().remove(currentChildFragment).commit()
             setProgressColor(android.R.color.white)
         })
-        GenUtil.hideSoftKeyboard(activity!!)
+        KeyboardUtil.hideSoftKeyboard(activity!!)
     }
 
     override fun onShow() {

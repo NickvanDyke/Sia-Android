@@ -11,7 +11,7 @@ import android.support.v7.app.AlertDialog
 import android.view.View
 import android.widget.Toast
 import com.vandyke.sia.R
-import com.vandyke.sia.util.GenUtil
+import com.vandyke.sia.util.KeyboardUtil
 import com.vandyke.sia.util.SnackbarUtil
 import kotlinx.android.synthetic.main.fragment_wallet_create.*
 
@@ -62,7 +62,7 @@ class WalletCreateDialog : BaseWalletFragment() {
                     .setTitle("Wallet seed")
                     .setMessage("$msg\n\n$seed")
                     .setPositiveButton("Copy seed", { _, _ ->
-                        GenUtil.copyToClipboard(context, seed)
+                        KeyboardUtil.copyToClipboard(context, seed)
                         Toast.makeText(context, "Copied seed. Please store it safely.", Toast.LENGTH_LONG).show()
                     })
                     .show()
