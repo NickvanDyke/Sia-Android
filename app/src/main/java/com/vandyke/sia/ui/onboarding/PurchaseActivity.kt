@@ -8,6 +8,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.view.View
 import android.widget.Toast
 import com.android.billingclient.api.*
 import com.vandyke.sia.R
@@ -48,7 +49,17 @@ class PurchaseActivity : AppCompatActivity(), PurchasesUpdatedListener {
                 launchSubscriptionPurchase()
             } else {
                 pending = true
-                Toast.makeText(this, "Google Play Billing is still connecting", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Google Play Billing isn't connected", Toast.LENGTH_LONG).show()
+            }
+        }
+
+        if (Prefs.requirePurchaseAt != 0L && System.currentTimeMillis() > Prefs.requirePurchaseAt) {
+            later.visibility = View.GONE
+        } else {
+            later.setOnClickListener {
+                Prefs.requirePurchaseAt = System.currentTimeMillis() + 86400000 /* one day in the future */
+                Toast.makeText(this, "Delayed for one day", Toast.LENGTH_LONG).show()
+                goToMainActivity()
             }
         }
     }
@@ -86,7 +97,8 @@ class PurchaseActivity : AppCompatActivity(), PurchasesUpdatedListener {
 
     override fun onDestroy() {
         super.onDestroy()
-        client.endConnection()
+        if (client.isReady)
+            client.endConnection()
     }
 
     companion object {

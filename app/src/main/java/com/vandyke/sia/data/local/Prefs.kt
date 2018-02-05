@@ -17,6 +17,7 @@ object Prefs : KotprefModel() {
     var timesStarted by intPref()
     var shownFeedbackDialog by booleanPref(false)
 
+    var requirePurchaseAt by longPref(0)
     var cachedPurchased by booleanPref(false)
     var viewedOnboarding by booleanPref(false)
 
