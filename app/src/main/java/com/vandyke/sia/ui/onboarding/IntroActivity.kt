@@ -36,7 +36,7 @@ class IntroActivity : AhoyOnboarderActivity() {
                 R.drawable.ic_person_outline)
         val emailMeCard = AhoyOnboarderCard("Contact me!",
                 "I respond to each and every email. Please contact me from the About page if you " +
-                        "have any feedback or questions. Thanks for downloading Sia for Android, I hope you enjoy it!",
+                        "have any feedback or questions. Thanks for downloading Sia for Android, I hope you find it useful.",
                 mehdi.sakout.aboutpage.R.drawable.about_icon_email)
 
         val pages = listOf(explanationCard, syncCard, sourceCard, underDevCard, independentCard, emailMeCard)

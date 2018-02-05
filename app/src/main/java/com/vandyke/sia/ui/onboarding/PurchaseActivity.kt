@@ -33,6 +33,7 @@ class PurchaseActivity : AppCompatActivity(), PurchasesUpdatedListener {
                     val purchased = purchases.purchasesList?.find { it.sku == overall_sub_sku } != null
                     Prefs.cachedPurchased = purchased
                     if (purchased) {
+                        Prefs.requirePurchaseAt = 0
                         goToMainActivity()
                     } else if (pending) {
                         launchSubscriptionPurchase()
@@ -53,7 +54,7 @@ class PurchaseActivity : AppCompatActivity(), PurchasesUpdatedListener {
             }
         }
 
-        if (Prefs.requirePurchaseAt != 0L && System.currentTimeMillis() > Prefs.requirePurchaseAt) {
+        if (Prefs.isPurchaseRequired) {
             later.visibility = View.GONE
         } else {
             later.setOnClickListener {
@@ -69,6 +70,7 @@ class PurchaseActivity : AppCompatActivity(), PurchasesUpdatedListener {
                 || purchases?.find { it.sku == overall_sub_sku } != null
                 || client.queryPurchases(BillingClient.SkuType.SUBS).purchasesList.find { it.sku == overall_sub_sku } != null) {
             Prefs.cachedPurchased = true
+            Prefs.requirePurchaseAt = 0
             goToMainActivity()
         }
     }

@@ -5,6 +5,8 @@
 package com.vandyke.sia.data.repository
 
 import com.vandyke.sia.data.local.AppDatabase
+import com.vandyke.sia.data.local.daos.getDirs
+import com.vandyke.sia.data.local.daos.getFiles
 import com.vandyke.sia.data.local.models.renter.Dir
 import com.vandyke.sia.data.local.models.renter.Node
 import com.vandyke.sia.data.models.renter.RenterFileData
