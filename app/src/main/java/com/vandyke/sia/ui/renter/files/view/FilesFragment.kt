@@ -21,7 +21,7 @@ import android.widget.EditText
 import android.widget.Spinner
 import com.vandyke.sia.R
 import com.vandyke.sia.appComponent
-import com.vandyke.sia.data.repository.FilesRepository.SortBy
+import com.vandyke.sia.data.repository.FilesRepository.OrderBy
 import com.vandyke.sia.data.siad.SiadSource
 import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.ui.renter.files.view.list.NodesAdapter
@@ -134,7 +134,7 @@ class FilesFragment : BaseFragment() {
             ascendingItem?.isChecked = it
         }
 
-        viewModel.sortBy.observe(this) {
+        viewModel.orderBy.observe(this) {
             setCheckedOrderByItem()
         }
 
@@ -213,7 +213,6 @@ class FilesFragment : BaseFragment() {
         orderByItems.clear()
         orderByItems.add(menu.findItem(R.id.orderByName))
         orderByItems.add(menu.findItem(R.id.orderBySize))
-        orderByItems.add(menu.findItem(R.id.orderByModified))
         setCheckedOrderByItem()
     }
 
@@ -224,25 +223,21 @@ class FilesFragment : BaseFragment() {
             false
         }
         R.id.orderByName -> {
-            viewModel.sortBy.value = SortBy.NAME
+            viewModel.orderBy.value = OrderBy.PATH
             false
         }
         R.id.orderBySize -> {
-            viewModel.sortBy.value = SortBy.SIZE
-            false
-        }
-        R.id.orderByModified -> {
-            viewModel.sortBy.value = SortBy.MODIFIED
+            viewModel.orderBy.value = OrderBy.SIZE
             false
         }
         else -> super.onOptionsItemSelected(item)
     }
 
-    /** The order of the SortBy enum values and the order of the sort by options in the list must be the same for this to work */
+    /** The order of the OrderBy enum values and the order of the sort by options in the list must be the same for this to work */
     private fun setCheckedOrderByItem() {
-        val sortBy = viewModel.sortBy.value
+        val orderBy = viewModel.orderBy.value
         orderByItems.forEachIndexed { i, item ->
-            if (i == sortBy.ordinal) {
+            if (i == orderBy.ordinal) {
                 item.isChecked = true
                 item.isCheckable = true
             } else {

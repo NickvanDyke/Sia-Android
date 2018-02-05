@@ -22,20 +22,24 @@ class NodesAdapter(val viewModel: FilesViewModel) : RecyclerView.Adapter<NodeHol
     private val nodes = mutableListOf<Node>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NodeHolder {
-        if (viewType == DIR) {
-            val holder = DirHolder(LayoutInflater.from(parent.context).inflate(R.layout.holder_renter_dir, parent, false))
-            return holder
+        return if (viewType == DIR) {
+            DirHolder(
+                    LayoutInflater.from(parent.context).inflate(R.layout.holder_renter_dir, parent, false),
+                    viewModel
+            )
         } else {
-            val holder = FileHolder(LayoutInflater.from(parent.context).inflate(R.layout.holder_renter_file, parent, false))
-            return holder
+            FileHolder(
+                    LayoutInflater.from(parent.context).inflate(R.layout.holder_renter_file, parent, false),
+                    viewModel
+            )
         }
     }
 
     override fun onBindViewHolder(holder: NodeHolder, position: Int) {
         if (holder is DirHolder)
-            holder.bind(nodes[position] as Dir, viewModel)
+            holder.bind(nodes[position] as Dir)
         else if (holder is FileHolder)
-            holder.bind(nodes[position] as RenterFileData, viewModel)
+            holder.bind(nodes[position] as RenterFileData)
     }
 
     override fun getItemViewType(position: Int) = if (nodes[position] is Dir) DIR else FILE
@@ -59,6 +63,6 @@ class NodesAdapter(val viewModel: FilesViewModel) : RecyclerView.Adapter<NodeHol
 
         override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int) =
                 oldList[oldItemPosition].name == newList[newItemPosition].name
-                        && oldList[oldItemPosition].modified == newList[newItemPosition].modified
+                        && oldList[oldItemPosition].size == newList[newItemPosition].size
     }
 }

@@ -8,12 +8,10 @@ import android.arch.lifecycle.ViewModel
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.local.models.renter.Dir
 import com.vandyke.sia.data.local.models.renter.Node
+import com.vandyke.sia.data.models.renter.RenterFileData
 import com.vandyke.sia.data.repository.FilesRepository
 import com.vandyke.sia.data.repository.ROOT_DIR_NAME
-import com.vandyke.sia.util.NonNullLiveData
-import com.vandyke.sia.util.SingleLiveEvent
-import com.vandyke.sia.util.io
-import com.vandyke.sia.util.main
+import com.vandyke.sia.util.*
 import io.reactivex.disposables.Disposable
 import java.math.BigDecimal
 import javax.inject.Inject
@@ -29,8 +27,9 @@ class FilesViewModel
     val searchTerm = NonNullLiveData("") // maybe bind this to the search query?
 
     val ascending = NonNullLiveData(Prefs.ascending)
-    val sortBy = NonNullLiveData(Prefs.sortBy)
+    val orderBy = NonNullLiveData<FilesRepository.OrderBy>(Prefs.orderBy)
 
+    val activeTasks = NonNullLiveData(0)
     val refreshing = NonNullLiveData(false)
     val error = SingleLiveEvent<Throwable>()
 
@@ -49,9 +48,9 @@ class FilesViewModel
             setDisplayedNodes()
             Prefs.ascending = it
         }
-        sortBy.observeForevs {
+        orderBy.observeForevs {
+            Prefs.orderBy = it
             setDisplayedNodes()
-            Prefs.sortBy = it
         }
         changeDir(ROOT_DIR_NAME)
     }
@@ -62,12 +61,14 @@ class FilesViewModel
     }
 
     fun refresh() {
+        activeTasks.increment()
         refreshing.value = true
         this.filesRepository.updateFilesAndDirs().io().main().subscribe({
             refreshing.value = false
         }, {
             refreshing.value = false
             onError(it)
+            activeTasks.decrementZeroMin()
         })
         // TODO: check that current directory is still valid. and track/display progress of update
     }
@@ -89,11 +90,11 @@ class FilesViewModel
     /** subscribes to the proper source for the displayed nodes, depending on the state of the viewmodel */
     private fun setDisplayedNodes() {
         if (searching.value) {
-            nodesSubscription = this.filesRepository.search(searchTerm.value, currentDirPath, sortBy.value, ascending.value).io().main().subscribe({
+            nodesSubscription = this.filesRepository.search(searchTerm.value, currentDirPath, orderBy.value, ascending.value).io().main().subscribe({
                 displayedNodes.value = it
             }, ::onError)
         } else {
-            nodesSubscription = this.filesRepository.immediateNodes(currentDirPath, sortBy.value, ascending.value).io().main().subscribe({ nodes ->
+            nodesSubscription = this.filesRepository.immediateNodes(currentDirPath, orderBy.value, ascending.value).io().main().subscribe({ nodes ->
                 displayedNodes.value = nodes
             }, ::onError)
         }
@@ -107,19 +108,20 @@ class FilesViewModel
     /** Creates a new directory with the given name in the current directory */
     fun createDir(name: String) = this.filesRepository.createDir("$currentDirPath/$name").io().main().subscribe({}, ::onError)
 
-    fun deleteDir(path: String) = this.filesRepository.deleteDir(path).io().main().subscribe({}, ::onError)
+    fun deleteDir(dir: Dir) = this.filesRepository.deleteDir(dir.path).io().main().subscribe({}, ::onError)
 
     fun deleteFile(path: String) = this.filesRepository.deleteFile(path).io().main().subscribe(::refresh, ::onError)
 
-    fun addFile(path: String) {
-        this.filesRepository.addFile(path, "blah", 10, 20).io().main().subscribe(::refresh, ::onError)
+    fun addFile(path: String, source: String) {
+        this.filesRepository.addFile(path, source, 10, 20).io().main().subscribe(::refresh, ::onError)
     }
 
-    fun renameFile(currentName: String, newName: String) {
-        // TODO
-    }
+    fun renameFile(file: RenterFileData, newName: String) = this.filesRepository.moveFile(file.siapath, "${file.siapathParent}/$newName")
 
-    fun renameDir(path: String, newName: String) = this.filesRepository.renameDir(path, newName).io().main().subscribe({}, ::onError)
+    fun renameDir(dir: Dir, newName: String) {
+        this.filesRepository.moveDir(dir.path, "${dir.parent!!}/$newName")
+                .io().main().subscribe({}, ::onError)
+    }
 
     fun search(name: String) {
         searching.value = true
