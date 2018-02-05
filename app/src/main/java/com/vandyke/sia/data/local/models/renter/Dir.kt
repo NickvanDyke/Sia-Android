@@ -8,4 +8,4 @@ import android.arch.persistence.room.Entity
 import java.math.BigDecimal
 
 @Entity(tableName = "dirs")
-class Dir(path: String, val size: BigDecimal) : Node(path)
+class Dir(path: String, size: BigDecimal) : Node(path, size)

@@ -34,8 +34,12 @@ class IntroActivity : AhoyOnboarderActivity() {
         val independentCard = AhoyOnboarderCard("Independent",
                 "Sia for Android is developed independently by me, an individual, and is not affiliated with Nebulous Labs.",
                 R.drawable.ic_person_outline)
+        val emailMeCard = AhoyOnboarderCard("Contact me!",
+                "I respond to each and every email. Please contact me from the About page if you " +
+                        "have any feedback or questions. Thanks for downloading Sia for Android, I hope you enjoy it!",
+                mehdi.sakout.aboutpage.R.drawable.about_icon_email)
 
-        val pages = listOf(explanationCard, syncCard, sourceCard, underDevCard, independentCard)
+        val pages = listOf(explanationCard, syncCard, sourceCard, underDevCard, independentCard, emailMeCard)
         pages.forEach {
             it.titleColor = android.R.color.primary_text_light
             it.descriptionColor = android.R.color.secondary_text_light

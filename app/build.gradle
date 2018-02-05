@@ -56,7 +56,7 @@ android {
 
 dependencies {
     ext.support_version = "27.0.2"
-    
+
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     /* kotlin stdlib and coroutines */
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
@@ -101,6 +101,7 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxjava:2.1.6'
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
     implementation 'io.reactivex.rxjava2:rxkotlin:2.2.0'
+    implementation "android.arch.lifecycle:reactivestreams:1.1.0"
 
     /* Android Architecture Components */
     implementation 'android.arch.lifecycle:runtime:1.1.0'
@@ -108,9 +109,10 @@ dependencies {
     kapt 'android.arch.lifecycle:compiler:1.1.0'
 
     /* Room, for local data persistence */
-    implementation "android.arch.persistence.room:runtime:1.0.0"
-    implementation "android.arch.persistence.room:rxjava2:1.0.0"
-    kapt "android.arch.persistence.room:compiler:1.0.0"
+    implementation "android.arch.persistence.room:runtime:1.1.0-alpha1"
+    implementation "android.arch.persistence.room:rxjava2:1.1.0-alpha1"
+    implementation "android.arch.lifecycle:reactivestreams:1.1.0"
+    kapt "android.arch.persistence.room:compiler:1.1.0-alpha1"
 
     /* Dagger, for DI */
     implementation 'com.google.dagger:dagger:2.12'

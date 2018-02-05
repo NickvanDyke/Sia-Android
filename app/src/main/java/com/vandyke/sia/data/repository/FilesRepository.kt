@@ -39,7 +39,7 @@ class FilesRepository
     fun updateFilesAndDirs(): Completable {
         // TODO: also need to remove any files that are in the db but not returned from the API. More efficient way than just deleting all?
         return api.renterFiles().doOnSuccess {
-            /* insert each file to the db and also every dir that leads up to it */
+            /* insert each file into the db and also every dir that leads up to it */
             for (file in it.files) {
                 db.fileDao().insert(file)
                 /* also add all the dirs leading up to the file */
@@ -75,43 +75,19 @@ class FilesRepository
         }.toCompletable()!!
     }
 
-    fun immediateNodes(path: String, sortBy: SortBy, ascending: Boolean): Flowable<List<Node>> {
-        val dirs: Flowable<List<Dir>>
-        val files: Flowable<List<RenterFileData>>
-        if (ascending) {
-            when (sortBy) {
-                SortBy.NAME -> {
-                    dirs = db.dirDao().dirsInDirByName(path)
-                    files = db.fileDao().filesInDirByName(path)
-                }
-                SortBy.SIZE -> {
-                    dirs = db.dirDao().dirsInDirBySize(path)
-                    files = db.fileDao().filesInDirBySize(path)
-                }
-                SortBy.MODIFIED -> {
-                    dirs = db.dirDao().dirsInDirByModified(path)
-                    files = db.fileDao().filesInDirByModified(path)
-                }
-            }
-        } else {
-            when (sortBy) {
-                SortBy.NAME -> {
-                    dirs = db.dirDao().dirsInDirByNameDesc(path)
-                    files = db.fileDao().filesInDirByNameDesc(path)
-                }
-                SortBy.SIZE -> {
-                    dirs = db.dirDao().dirsInDirBySizeDesc(path)
-                    files = db.fileDao().filesInDirBySizeDesc(path)
-                }
-                SortBy.MODIFIED -> {
-                    dirs = db.dirDao().dirsInDirByModifiedDesc(path)
-                    files = db.fileDao().filesInDirByModifiedDesc(path)
-                }
-            }
-        }
+    fun immediateNodes(path: String, orderBy: OrderBy, ascending: Boolean): Flowable<List<Node>> {
         return Flowable.combineLatest(
-                dirs,
-                files,
+                db.dirDao().getDirs(path, orderBy = orderBy, ascending =  ascending),
+                db.fileDao().getFiles(path, orderBy = orderBy, ascending = ascending),
+                BiFunction<List<Dir>, List<RenterFileData>, List<Node>> { dir, file ->
+                    return@BiFunction dir + file
+                })!!
+    }
+
+    fun search(name: String, path: String, orderBy: OrderBy, ascending: Boolean): Flowable<List<Node>> {
+        return Flowable.combineLatest(
+                db.dirDao().getDirs(path, name, orderBy, ascending),
+                db.fileDao().getFiles(path, name, orderBy, ascending),
                 BiFunction<List<Dir>, List<RenterFileData>, List<Node>> { dir, file ->
                     return@BiFunction dir + file
                 })!!
@@ -120,48 +96,6 @@ class FilesRepository
     fun getDir(path: String) = db.dirDao().getDir(path)
 
     fun dir(path: String) = db.dirDao().dir(path)
-
-    fun search(name: String, path: String, sortBy: SortBy, ascending: Boolean): Flowable<List<Node>> {
-        val dirs: Flowable<List<Dir>>
-        val files: Flowable<List<RenterFileData>>
-        if (ascending) {
-            when (sortBy) {
-                SortBy.NAME -> {
-                    dirs = db.dirDao().dirsWithNameUnderDirByName(name, path)
-                    files = db.fileDao().filesWithNameUnderDirByName(name, path)
-                }
-                SortBy.SIZE -> {
-                    dirs = db.dirDao().dirsWithNameUnderDirBySize(name, path)
-                    files = db.fileDao().filesWithNameUnderDirBySize(name, path)
-                }
-                SortBy.MODIFIED -> {
-                    dirs = db.dirDao().dirsWithNameUnderDirByModified(name, path)
-                    files = db.fileDao().filesWithNameUnderDirByModified(name, path)
-                }
-            }
-        } else {
-            when (sortBy) {
-                SortBy.NAME -> {
-                    dirs = db.dirDao().dirsWithNameUnderDirByNameDesc(name, path)
-                    files = db.fileDao().filesWithNameUnderDirByNameDesc(name, path)
-                }
-                SortBy.SIZE -> {
-                    dirs = db.dirDao().dirsWithNameUnderDirBySizeDesc(name, path)
-                    files = db.fileDao().filesWithNameUnderDirBySizeDesc(name, path)
-                }
-                SortBy.MODIFIED -> {
-                    dirs = db.dirDao().dirsWithNameUnderDirByModifiedDesc(name, path)
-                    files = db.fileDao().filesWithNameUnderDirByModifiedDesc(name, path)
-                }
-            }
-        }
-        return Flowable.combineLatest(
-                dirs,
-                files,
-                BiFunction<List<Dir>, List<RenterFileData>, List<Node>> { dir, file ->
-                    return@BiFunction dir + file
-                })!!
-    }
 
     fun createDir(path: String) = db.fileDao().getFilesUnder(path).doOnSuccess { filesInNewDir ->
         var size = BigDecimal.ZERO
@@ -183,22 +117,24 @@ class FilesRepository
         println("deleted dir: $path and the dirs under it")
     }.toCompletable()!!
 
-    fun renameDir(path: String, newName: String) = Completable.fromAction {
-        // TODO
+
+    fun moveDir(path: String, newPath: String) = Completable.fromAction {
+        println("path: $path\nnewPath: $newPath")
+        db.dirDao().updatePath(path, newPath) // TODO: needs to update name too
     }!!
 
+    /* note that the below methods don't update the local database - they depend on the update method to do that.
+     * Ideally, they should update the database accordingly. TODO */
     fun addFile(siapath: String, source: String, dataPieces: Int, parityPieces: Int): Completable {
         return api.renterUpload(siapath, source, dataPieces, parityPieces)
     }
 
-    fun deleteFile(path: String): Completable {
-        // should I also be deleting it from the file db here? Or wait for the update to do that?
-        return api.renterDelete(path)
-    }
+    fun deleteFile(path: String): Completable = api.renterDelete(path)
 
-    enum class SortBy {
-        NAME,
-        SIZE,
-        MODIFIED
+    fun moveFile(siapath: String, newSiapath: String) = api.renterRename(siapath, newSiapath)
+
+    enum class OrderBy(val text: String) {
+        PATH("path"),
+        SIZE("size")
     }
 }

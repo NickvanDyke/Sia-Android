@@ -32,5 +32,5 @@ object Prefs : KotprefModel() {
     var runSiaOnData by booleanPref(false)
 
     var ascending by booleanPref(true)
-    var sortBy by enumOrdinalPref(FilesRepository.SortBy.NAME)
+    var orderBy by enumOrdinalPref(FilesRepository.OrderBy.PATH)
 }

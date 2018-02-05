@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity() {
         setTheme(R.style.AppTheme_DayNight)
         setContentView(R.layout.activity_main)
 
-        if (!GenUtil.isSiadSupported) {
+        if (!BuildConfig.DEBUG && !GenUtil.isSiadSupported) {
             AlertDialog.Builder(this)
                     .setTitle("Sia node unsupported")
                     .setMessage("Your device isn't able to run the Sia node. Only devices that can are able to download" +
