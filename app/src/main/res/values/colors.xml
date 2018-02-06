@@ -9,4 +9,5 @@
 
     <color name="positiveTransaction">@color/colorPrimaryDark</color>
     <color name="negativeTransaction">#ee3820</color>
+    <color name="cardNightColor">#424242</color>
 </resources>

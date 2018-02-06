@@ -25,6 +25,7 @@ object Prefs : KotprefModel() {
     var displayedDecimalPrecision by intPref(2)
     var runSiaOnData by booleanPref()
 
+    var viewTypeList by booleanPref(true)
     var ascending by booleanPref(true)
     var sortBy by enumOrdinalPref(FilesRepository.SortBy.NAME)
 }

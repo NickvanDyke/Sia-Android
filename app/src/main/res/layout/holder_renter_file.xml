@@ -6,7 +6,7 @@
     android:id="@+id/fileLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?android:attr/selectableItemBackground">
+    style="@style/cardStyle">
 
     <!--TODO: fix tinting of overflow drawable when in dark mode-->
     <ImageButton

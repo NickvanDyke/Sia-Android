@@ -13,12 +13,10 @@ import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.*
 import android.support.v7.widget.SearchView
 import android.view.*
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.EditText
-import android.widget.Spinner
+import android.widget.*
 import com.vandyke.sia.R
 import com.vandyke.sia.appComponent
 import com.vandyke.sia.data.repository.FilesRepository.SortBy
@@ -31,6 +29,7 @@ import com.vandyke.sia.util.snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_renter_files.*
 import javax.inject.Inject
+import com.vandyke.sia.util.LayoutUtil
 
 
 class FilesFragment : BaseFragment() {
@@ -45,6 +44,10 @@ class FilesFragment : BaseFragment() {
     private var searchView: SearchView? = null
     /** searchItem.isActionViewExpanded() doesn't always return the correct value? so need to keep track ourselves and use that */
     private var searchIsExpanded = false
+
+    private var viewTypeList: MenuItem? = null
+    private var viewTypeGrid: MenuItem? = null
+    private var verticalDecoration: DividerItemDecoration? = null
 
     private var ascendingItem: MenuItem? = null
     private val orderByItems = mutableListOf<MenuItem>()
@@ -62,6 +65,8 @@ class FilesFragment : BaseFragment() {
         /* set up nodes list */
         nodesAdapter = NodesAdapter(viewModel)
         nodesList.adapter = nodesAdapter
+        nodesList.layoutManager = LinearLayoutManager(context)
+        verticalDecoration = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
 
         pathAdapter = ArrayAdapter(context, R.layout.spinner_selected_item)
         pathAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -128,6 +133,10 @@ class FilesFragment : BaseFragment() {
 
         viewModel.displayedNodes.observe(this) {
             nodesAdapter.display(it)
+        }
+
+        viewModel.viewTypeList.observe(this) {
+            setViewType(it)
         }
 
         viewModel.ascending.observe(this) {
@@ -206,6 +215,9 @@ class FilesFragment : BaseFragment() {
             }
         })
 
+        viewTypeList = menu.findItem(R.id.viewTypeList)
+        viewTypeGrid = menu.findItem(R.id.viewTypeGrid)
+
         ascendingItem = menu.findItem(R.id.ascendingToggle)
         ascendingItem!!.isChecked = viewModel.ascending.value
 
@@ -235,7 +247,22 @@ class FilesFragment : BaseFragment() {
             viewModel.sortBy.value = SortBy.MODIFIED
             false
         }
+        R.id.viewTypeList -> {
+            viewModel.viewTypeList.value = true
+            false
+        }
+        R.id.viewTypeGrid -> {
+            viewModel.viewTypeList.value = false
+            false
+        }
         else -> super.onOptionsItemSelected(item)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?) {
+        super.onPrepareOptionsMenu(menu)
+
+        viewTypeList?.isVisible = !viewModel.viewTypeList.value
+        viewTypeGrid?.isVisible = viewModel.viewTypeList.value
     }
 
     /** The order of the SortBy enum values and the order of the sort by options in the list must be the same for this to work */
@@ -257,6 +284,21 @@ class FilesFragment : BaseFragment() {
             searchView?.queryHint = "Search..."
         else
             searchView?.queryHint = "Search ${viewModel.currentDir.value.name}..."
+    }
+
+    private fun setViewType (visible: Boolean) {
+        activity!!.invalidateOptionsMenu()
+        nodesAdapter.toggleListViewType(visible)
+        if (visible) {
+            nodesList.layoutManager = LinearLayoutManager(context)
+            nodesList.addItemDecoration(verticalDecoration)
+        } else {
+            nodesList.layoutManager = GridLayoutManager(
+                context, LayoutUtil.calculateNoOfColumns(context!!)
+            )
+            nodesList.removeItemDecoration(verticalDecoration)
+        }
+        nodesList.adapter = nodesAdapter
     }
 
     override fun onBackPressed(): Boolean {

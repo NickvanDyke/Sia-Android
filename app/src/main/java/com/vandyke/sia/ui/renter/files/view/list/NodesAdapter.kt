@@ -16,18 +16,21 @@ import com.vandyke.sia.ui.renter.files.viewmodel.FilesViewModel
 
 class NodesAdapter(val viewModel: FilesViewModel) : RecyclerView.Adapter<NodeHolder>() {
 
+    private var LIST = true
     private val DIR = 0
     private val FILE = 1
 
     private val nodes = mutableListOf<Node>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NodeHolder {
-        if (viewType == DIR) {
-            val holder = DirHolder(LayoutInflater.from(parent.context).inflate(R.layout.holder_renter_dir, parent, false))
-            return holder
+        if (viewType == DIR && LIST) {
+            return DirHolder(LayoutInflater.from(parent.context).inflate(R.layout.holder_renter_dir, parent, false))
+        } else if (viewType == DIR) {
+            return DirHolder(LayoutInflater.from(parent.context).inflate(R.layout.holder_renter_grid_dir, parent, false))
+        } else if (viewType == FILE && LIST) {
+            return FileHolder(LayoutInflater.from(parent.context).inflate(R.layout.holder_renter_file, parent, false))
         } else {
-            val holder = FileHolder(LayoutInflater.from(parent.context).inflate(R.layout.holder_renter_file, parent, false))
-            return holder
+            return FileHolder(LayoutInflater.from(parent.context).inflate(R.layout.holder_renter_grid_file, parent, false))
         }
     }
 
@@ -47,6 +50,10 @@ class NodesAdapter(val viewModel: FilesViewModel) : RecyclerView.Adapter<NodeHol
         nodes.clear()
         nodes.addAll(newNodes)
         diffResult.dispatchUpdatesTo(this) // TODO: causes delay when the entire list changes, as opposed to notifyDataSetChanged
+    }
+
+    fun toggleListViewType(value: Boolean) {
+        LIST = value
     }
 
     inner class NodesDiffUtil(private val oldList: List<Node>, private val newList: List<Node>) : DiffUtil.Callback() {

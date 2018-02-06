@@ -28,6 +28,7 @@ class FilesViewModel
     val searching = NonNullLiveData(false)
     val searchTerm = NonNullLiveData("") // maybe bind this to the search query?
 
+    val viewTypeList = NonNullLiveData(Prefs.viewTypeList)
     val ascending = NonNullLiveData(Prefs.ascending)
     val sortBy = NonNullLiveData(Prefs.sortBy)
 
@@ -45,6 +46,10 @@ class FilesViewModel
         }
 
     init {
+        viewTypeList.observeForevs {
+            setDisplayedNodes()
+            Prefs.viewTypeList = it
+        }
         ascending.observeForevs {
             setDisplayedNodes()
             Prefs.ascending = it

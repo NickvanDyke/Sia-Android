@@ -58,11 +58,11 @@ class MainActivity : AppCompatActivity() {
 
         if (!GenUtil.isSiadSupported) {
             AlertDialog.Builder(this)
-                    .setTitle("Sia node unsupported")
-                    .setMessage("Your device isn't able to run the Sia node. Only devices that can are able to download" +
-                            " this app from the Play Store, so you must have obtained it some other way. Sorry.")
-                    .setPositiveButton("Close", null)
-                    .show()
+                .setTitle("Sia node unsupported")
+                .setMessage("Your device isn't able to run the Sia node. Only devices that can are able to download" +
+                        " this app from the Play Store, so you must have obtained it some other way. Sorry.")
+                .setPositiveButton("Close", null)
+                .show()
         } else {
             startService(Intent(this, SiadService::class.java))
         }
