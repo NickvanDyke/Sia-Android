@@ -35,7 +35,7 @@ class IntroActivity : AhoyOnboarderActivity() {
                 "Sia for Android is developed independently by me, an individual, and is not affiliated with Nebulous Labs.",
                 R.drawable.ic_person_outline)
         val emailMeCard = AhoyOnboarderCard("Contact me!",
-                "I respond to each and every email. Please contact me from the About page if you " +
+                "I respond to each and every email. Please contact me at siamobiledev@gmail.com if you " +
                         "have any feedback or questions. Thanks for downloading Sia for Android, I hope you find it useful.",
                 mehdi.sakout.aboutpage.R.drawable.about_icon_email)
 

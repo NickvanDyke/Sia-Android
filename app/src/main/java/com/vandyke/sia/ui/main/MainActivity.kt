@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         if (!BuildConfig.DEBUG) {
-            if (!Prefs.cachedPurchased && Prefs.isPurchaseRequired) {
+            if (!Prefs.cachedPurchased && System.currentTimeMillis() > Prefs.requirePurchaseAt) {
                 finish()
                 startActivity(Intent(this, PurchaseActivity::class.java))
                 return
@@ -163,7 +163,6 @@ class MainActivity : AppCompatActivity() {
         }).build()
         client.startConnection(object : BillingClientStateListener {
             override fun onBillingSetupFinished(responseCode: Int) {
-                println(responseCode)
                 if (responseCode == BillingClient.BillingResponse.OK) {
                     val purchases = client.queryPurchases(BillingClient.SkuType.SUBS)
                     if (purchases.responseCode == BillingClient.BillingResponse.OK) {
@@ -171,7 +170,7 @@ class MainActivity : AppCompatActivity() {
                         Prefs.cachedPurchased = purchased
                         if (purchased)
                             Prefs.requirePurchaseAt = 0
-                        if (!purchased && Prefs.isPurchaseRequired) {
+                        if (!purchased && System.currentTimeMillis() > Prefs.requirePurchaseAt) {
                             finish()
                             startActivity(Intent(this@MainActivity, PurchaseActivity::class.java))
                         }

@@ -166,6 +166,7 @@ class SiadService : LifecycleService() {
         super.onDestroy()
         unregisterReceiver(receiver)
         stopSiad()
+        NotificationUtil.cancelNotification(this, SIAD_NOTIFICATION)
     }
 
     fun showSiadNotification(text: String) {

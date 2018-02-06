@@ -54,12 +54,13 @@ class PurchaseActivity : AppCompatActivity(), PurchasesUpdatedListener {
             }
         }
 
-        if (Prefs.isPurchaseRequired) {
+        if (Prefs.delayedPurchase && System.currentTimeMillis() > Prefs.requirePurchaseAt) {
             later.visibility = View.GONE
         } else {
             later.setOnClickListener {
-                Prefs.requirePurchaseAt = System.currentTimeMillis() + 86400000 /* one day in the future */
-                Toast.makeText(this, "Delayed for one day", Toast.LENGTH_LONG).show()
+                Prefs.delayedPurchase = true
+                Prefs.requirePurchaseAt = System.currentTimeMillis() + 60000//86400000 /* one day in the future */
+//                Toast.makeText(this, "Delayed for one day", Toast.LENGTH_LONG).show()
                 goToMainActivity()
             }
         }

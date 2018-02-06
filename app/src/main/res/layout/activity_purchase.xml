@@ -61,7 +61,7 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="16dp"
         android:background="@null"
-        android:text="Later"
+        android:text="I'll try it for a day first"
         android:textColor="@color/colorPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

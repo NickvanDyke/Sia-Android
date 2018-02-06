@@ -18,8 +18,7 @@ object Prefs : KotprefModel() {
     var shownFeedbackDialog by booleanPref(false)
 
     var requirePurchaseAt by longPref(0)
-    val isPurchaseRequired
-        get() = requirePurchaseAt != 0L && System.currentTimeMillis() > requirePurchaseAt
+    var delayedPurchase by booleanPref(false)
 
     var cachedPurchased by booleanPref(false)
     var viewedOnboarding by booleanPref(false)
