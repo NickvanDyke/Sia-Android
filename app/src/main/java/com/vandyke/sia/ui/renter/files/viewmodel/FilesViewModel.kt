@@ -10,7 +10,6 @@ import com.vandyke.sia.data.local.models.renter.Dir
 import com.vandyke.sia.data.local.models.renter.Node
 import com.vandyke.sia.data.models.renter.RenterFileData
 import com.vandyke.sia.data.repository.FilesRepository
-import com.vandyke.sia.data.repository.ROOT_DIR_NAME
 import com.vandyke.sia.util.*
 import io.reactivex.disposables.Disposable
 import java.math.BigDecimal
@@ -21,13 +20,13 @@ class FilesViewModel
         private val filesRepository: FilesRepository
 ) : ViewModel() {
     val displayedNodes = NonNullLiveData<List<Node>>(listOf())
-    val currentDir = NonNullLiveData<Dir>(Dir(ROOT_DIR_NAME, BigDecimal.ZERO))
+    val currentDir = NonNullLiveData<Dir>(Dir("", BigDecimal.ZERO))
 
     val searching = NonNullLiveData(false)
     val searchTerm = NonNullLiveData("") // maybe bind this to the search query?
 
     val ascending = NonNullLiveData(Prefs.ascending)
-    val orderBy = NonNullLiveData<FilesRepository.OrderBy>(Prefs.orderBy)
+    val orderBy = NonNullLiveData(Prefs.orderBy)
 
     val activeTasks = NonNullLiveData(0)
     val refreshing = NonNullLiveData(false)
@@ -45,14 +44,14 @@ class FilesViewModel
 
     init {
         ascending.observeForevs {
-            setDisplayedNodes()
             Prefs.ascending = it
+            setDisplayedNodes()
         }
         orderBy.observeForevs {
             Prefs.orderBy = it
             setDisplayedNodes()
         }
-        changeDir(ROOT_DIR_NAME)
+        changeDir()
     }
 
     override fun onCleared() {
@@ -73,16 +72,17 @@ class FilesViewModel
         // TODO: check that current directory is still valid. and track/display progress of update
     }
 
-    fun changeDir(path: String) {
+    fun changeDir(path: String = "") {
         if (path == currentDirPath)
             return
         println("changing to dir: $path")
-        this.filesRepository.getDir(path).io().main().subscribe({ // maybe this would be better as a flowable
+        this.filesRepository.getDir(path).io().main().subscribe({
+            // maybe this would be better as a flowable
             currentDir.value = it
             setDisplayedNodes()
         }, {
             /* presumably the only error would be an empty result set from querying for the dir. In which case we go home */
-            changeDir(ROOT_DIR_NAME)
+            changeDir()
             onError(it)
         })
     }
@@ -101,12 +101,19 @@ class FilesViewModel
     }
 
     fun goToIndexInPath(index: Int) {
-        val splitPath = currentDirPath.split("/")
-        changeDir(splitPath.subList(0, index + 1).joinToString("/"))
+        if (index == 0) {
+            changeDir()
+        } else {
+            val splitPath = currentDirPath.split("/")
+            val path = splitPath.subList(0, index).joinToString("/")
+            changeDir(path)
+        }
     }
 
     /** Creates a new directory with the given name in the current directory */
-    fun createDir(name: String) = this.filesRepository.createDir("$currentDirPath/$name").io().main().subscribe({}, ::onError)
+    fun createDir(name: String) = this.filesRepository.createDir(
+            "${if (currentDirPath.isNotEmpty()) "$currentDirPath/" else ""}$name"
+    ).io().main().subscribe({}, ::onError)
 
     fun deleteDir(dir: Dir) = this.filesRepository.deleteDir(dir.path).io().main().subscribe({}, ::onError)
 
@@ -116,7 +123,7 @@ class FilesViewModel
         this.filesRepository.addFile(path, source, 10, 20).io().main().subscribe(::refresh, ::onError)
     }
 
-    fun renameFile(file: RenterFileData, newName: String) = this.filesRepository.moveFile(file.siapath, "${file.siapathParent}/$newName")
+    fun renameFile(file: RenterFileData, newName: String) = this.filesRepository.moveFile(file.path, "${file.parent}/$newName")
 
     fun renameDir(dir: Dir, newName: String) {
         this.filesRepository.moveDir(dir.path, "${dir.parent!!}/$newName")
@@ -140,12 +147,7 @@ class FilesViewModel
     }
 
     fun goUpDir(): Boolean {
-        val parent = currentDir.value.parent
-        return if (parent == null) {
-            false
-        } else {
-            changeDir(parent)
-            true
-        }
+        changeDir(currentDir.value.parent ?: return false)
+        return true
     }
 }

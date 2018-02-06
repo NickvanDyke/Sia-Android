@@ -102,12 +102,12 @@ class FilesFragment : BaseFragment() {
 
         fabAddDir.setOnClickListener {
             fabFilesMenu.close(true)
-            val dialogView = layoutInflater.inflate(R.layout.fragment_renter_add_dir, null, false)
+            val dialogView = layoutInflater.inflate(R.layout.edit_text_field, null, false)
             val dialog = AlertDialog.Builder(context!!)
                     .setTitle("New directory")
                     .setView(dialogView)
                     .setPositiveButton("Create", { dialogInterface, i ->
-                        viewModel.createDir(dialogView.findViewById<EditText>(R.id.newDirName).text.toString())
+                        viewModel.createDir(dialogView.findViewById<EditText>(R.id.field).text.toString())
                     })
                     .setNegativeButton("Cancel", null)
                     .create()
@@ -118,7 +118,12 @@ class FilesFragment : BaseFragment() {
         /* observe viewModel stuff */
         viewModel.currentDir.observe(this) {
             pathAdapter.clear()
-            val path = it.path.split('/')
+            /* need to handle it a bit differently since the root dir's name is "" */
+            val path = if (it.path.isNotEmpty())
+                it.path.split('/').toMutableList()
+            else
+                mutableListOf()
+            path.add(0, "Home")
             path.forEach {
                 pathAdapter.add(it)
             }
@@ -248,7 +253,7 @@ class FilesFragment : BaseFragment() {
     }
 
     private fun setSearchHint() {
-        if (viewModel.currentDirPath == "root")
+        if (viewModel.currentDirPath.isEmpty())
             searchView?.queryHint = "Search..."
         else
             searchView?.queryHint = "Search ${viewModel.currentDir.value.name}..."
@@ -274,11 +279,11 @@ class FilesFragment : BaseFragment() {
         setActionBarTitleDisplayed(true)
     }
 
-    companion object {
-        val FILE_REQUEST_CODE = 5424
-    }
-
     private fun setActionBarTitleDisplayed(visible: Boolean) {
         (activity as AppCompatActivity).supportActionBar!!.setDisplayShowTitleEnabled(visible)
+    }
+
+    companion object {
+        const val FILE_REQUEST_CODE = 5424
     }
 }

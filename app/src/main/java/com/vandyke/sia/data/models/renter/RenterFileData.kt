@@ -5,11 +5,9 @@
 package com.vandyke.sia.data.models.renter
 
 import android.arch.persistence.room.Entity
-import android.arch.persistence.room.Ignore
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.vandyke.sia.data.local.models.renter.Node
-import com.vandyke.sia.data.repository.ROOT_DIR_NAME
 import java.math.BigDecimal
 
 @Entity(tableName = "files")
@@ -32,13 +30,4 @@ data class RenterFileData
         @JsonProperty(value = "uploadprogress")
         val uploadProgress: Int,
         @JsonProperty(value = "expiration")
-        val expiration: Long) : Node("$ROOT_DIR_NAME/$siapath", filesize) {
-    @Ignore
-    val siapathParent = run {
-        val index = this.siapath.lastIndexOf('/')
-        if (index == -1)
-            null
-        else
-            this.siapath.substring(0, index)
-    }
-}
+        val expiration: Long) : Node(siapath, filesize) // TODO: want to store only siapath or path, not both

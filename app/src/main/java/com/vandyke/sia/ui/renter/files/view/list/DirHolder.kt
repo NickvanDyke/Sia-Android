@@ -34,12 +34,12 @@ class DirHolder(itemView: View, val viewModel: FilesViewModel) : NodeHolder(item
             when (it.itemId) {
                 R.id.dirDelete -> viewModel.deleteDir(dir)
                 R.id.dirRename -> {
-                    val dialogView = View.inflate(itemView.context, R.layout.fragment_renter_add_dir, null)
+                    val dialogView = View.inflate(itemView.context, R.layout.edit_text_field, null)
                     AlertDialog.Builder(itemView.context)
                             .setTitle("Rename ${dir.name}")
                             .setView(dialogView)
                             .setPositiveButton("Rename", { dialogInterface, i ->
-                                viewModel.renameDir(dir, dialogView.findViewById<EditText>(R.id.newDirName).text.toString())
+                                viewModel.renameDir(dir, dialogView.findViewById<EditText>(R.id.field).text.toString())
                             })
                             .setNegativeButton("Cancel", null)
                             .show()

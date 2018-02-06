@@ -22,8 +22,6 @@ import java.math.BigDecimal
 import javax.inject.Inject
 import javax.inject.Singleton
 
-const val ROOT_DIR_NAME = "Home"
-
 @Singleton
 class FilesRepository
 @Inject constructor(
@@ -33,7 +31,7 @@ class FilesRepository
     init {
         launch(CommonPool) {
             /* want to always have at least a root directory */
-            db.dirDao().insertIgnoreIfConflict(Dir(ROOT_DIR_NAME, BigDecimal.ZERO))
+            db.dirDao().insertIgnoreIfConflict(Dir("", BigDecimal.ZERO))
         }
     }
 
@@ -56,7 +54,7 @@ class FilesRepository
             }
 
             /* also add the root dir */
-            db.dirDao().insertIgnoreIfConflict(Dir(ROOT_DIR_NAME, BigDecimal.ZERO))
+            db.dirDao().insertIgnoreIfConflict(Dir("", BigDecimal.ZERO))
 
             /* loop through all the dirs and calculate their values (filesize etc) */
             db.dirDao().getAll().flatMapObservable { list ->
@@ -121,8 +119,12 @@ class FilesRepository
 
 
     fun moveDir(path: String, newPath: String) = Completable.fromAction {
-        println("path: $path\nnewPath: $newPath")
-        db.dirDao().updatePath(path, newPath) // TODO: needs to update name too
+        db.dirDao().updatePath(path, newPath)
+        db.fileDao().getFilesUnder(path).subscribe({ files ->
+            files.forEach {
+//                moveFile() TODO
+            }
+        })
     }!!
 
     /* note that the below methods don't update the local database - they depend on the update method to do that.
@@ -133,7 +135,9 @@ class FilesRepository
 
     fun deleteFile(path: String): Completable = api.renterDelete(path)
 
-    fun moveFile(siapath: String, newSiapath: String) = api.renterRename(siapath, newSiapath)
+    fun moveFile(siapath: String, newSiapath: String) = api.renterRename(siapath, newSiapath).doOnComplete {
+
+    }!!
 
     enum class OrderBy(val text: String) {
         PATH("path"),

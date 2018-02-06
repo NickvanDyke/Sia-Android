@@ -12,25 +12,35 @@ import io.reactivex.Flowable
 
 fun DirDao.getDirs(path: String, name: String? = null, orderBy: FilesRepository.OrderBy? = null, ascending: Boolean = true): Flowable<List<Dir>> {
     var query = when {
-        name == null -> "SELECT * FROM dirs WHERE path LIKE '$path/%' AND path NOT LIKE '$path/%/%'"
-        name.isNotEmpty() -> "SELECT * FROM dirs WHERE path LIKE '$path/%$name%' AND path NOT LIKE '$path/%$name%/%'"
-        else -> "SELECT * FROM dirs WHERE path LIKE '$path/%'"
+        path.isEmpty() && name?.isEmpty() == true -> "SELECT * FROM dirs WHERE path != ''"
+        path.isNotEmpty() && name?.isEmpty() == true -> "SELECT * FROM dirs WHERE path LIKE '$path/%'"
+        path.isNotEmpty() && name != null -> "SELECT * FROM dirs WHERE path LIKE '$path/%$name%' AND path NOT LIKE '$path/%$name%/%'"
+        path.isNotEmpty() && name == null -> "SELECT * FROM dirs WHERE path LIKE '$path/%' AND path NOT LIKE '$path/%/%'"
+        path.isEmpty() && name == null -> "SELECT * FROM dirs WHERE path NOT LIKE '%/%' AND path != ''"
+        path.isEmpty() && name != null -> "SELECT * FROM dirs WHERE ((path LIKE '$path/%$name%' AND path NOT LIKE '$path/%$name%/%') OR (path LIKE '%$name%' AND path NOT LIKE '%$name%/%')) AND path != ''"
+        else -> throw IllegalArgumentException()
     }
-    
+
     if (orderBy != null) { // maybe include secondary sorting
         query += " ORDER BY ${orderBy.text}"
         if (!ascending) {
             query += " DESC"
         }
     }
+    println("dirs query is: $query")
+
     return customQuery(SimpleSQLiteQuery(query))
 }
 
 fun FileDao.getFiles(path: String, name: String? = null, orderBy: FilesRepository.OrderBy? = null, ascending: Boolean = true): Flowable<List<RenterFileData>> {
     var query = when {
-        name == null -> "SELECT * FROM files WHERE path LIKE '$path/%' AND path NOT LIKE '$path/%/%'"
-        name.isNotEmpty() -> "SELECT * FROM files WHERE path LIKE '$path/%$name%' AND path NOT LIKE '$path/%$name%/%'"
-        else -> "SELECT * FROM files WHERE path LIKE '$path/%'"
+        path.isEmpty() && name?.isEmpty() == true -> "SELECT * FROM files"
+        path.isNotEmpty() && name?.isEmpty() == true -> "SELECT * FROM files WHERE path LIKE '$path/%'"
+        path.isNotEmpty() && name != null -> "SELECT * FROM files WHERE path LIKE '$path/%$name%' AND path NOT LIKE '$path/%$name%/%'"
+        path.isNotEmpty() && name == null -> "SELECT * FROM files WHERE path LIKE '$path/%' AND path NOT LIKE '$path/%/%'"
+        path.isEmpty() && name == null -> "SELECT * FROM files WHERE path NOT LIKE '%/%'"
+        path.isEmpty() && name != null -> "SELECT * FROM files WHERE ((path LIKE '$path/%$name%' AND path NOT LIKE '$path/%$name%/%') OR (path LIKE '%$name%' AND path NOT LIKE '%$name%/%'))"
+        else -> throw IllegalArgumentException()
     }
 
     if (orderBy != null) { // maybe include secondary sorting
@@ -39,5 +49,7 @@ fun FileDao.getFiles(path: String, name: String? = null, orderBy: FilesRepositor
             query += " DESC"
         }
     }
+    println("files query is: $query")
+
     return customQuery(SimpleSQLiteQuery(query))
 }

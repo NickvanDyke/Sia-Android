@@ -13,14 +13,18 @@ open class Node(
         var size: BigDecimal
 ) {
     @Ignore
-    var name = this.path.substring(this.path.lastIndexOf('/') + 1)
+    val name = this.path.substring(this.path.lastIndexOf('/') + 1)
 
     @Ignore
     val parent = run {
         val index = this.path.lastIndexOf('/')
-        if (index == -1)
-            null
-        else
+        if (index == -1) {
+            if (this.path == "")
+                null
+            else
+                ""
+        } else {
             this.path.substring(0, index)
+        }
     }
 }

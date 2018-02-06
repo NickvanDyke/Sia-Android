@@ -17,7 +17,7 @@
         <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="useExternal"
-            android:summary="The Sia node will instead store its data wherever your phone returns as its external storage - this is manufacturer-dependent, and will not necessarily be an external SD card. The Sia node will restart after changing this."
+            android:summary="The Sia node will restart after changing this."
             android:title="Use external storage" />
         <EditTextPreference
             android:key="apiPassword"

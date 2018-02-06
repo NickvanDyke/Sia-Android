@@ -25,7 +25,7 @@ public abstract class DirDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     public abstract void insertIgnoreIfConflict(Dir dir);
 
-    @Query("UPDATE dirs SET path = :newPath WHERE path == :path")
+    @Query("UPDATE dirs SET path = replace(path, :path, :newPath)")
     public abstract void updatePath(String path, String newPath);
 
     @Query("SELECT * FROM dirs")
