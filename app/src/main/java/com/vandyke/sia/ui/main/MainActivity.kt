@@ -115,8 +115,7 @@ class MainActivity : AppCompatActivity() {
             viewModel.setDisplayedFragmentClass(storedFragmentClass)
         }
 
-        Prefs.timesStarted++
-        if (Prefs.timesStarted > 7 && !Prefs.shownFeedbackDialog) {
+        if (Prefs.displayedTransaction && !Prefs.shownFeedbackDialog) {
             GenUtil.showRateDialog(this)
             Prefs.shownFeedbackDialog = true
         }

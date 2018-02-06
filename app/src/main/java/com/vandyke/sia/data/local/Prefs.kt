@@ -14,7 +14,10 @@ object Prefs : KotprefModel() {
     /* make sure to update this when the included siad is updated */
     val siaVersion by stringPref("1.3.1")
 
-    var timesStarted by intPref()
+    /** Tracked so that we can ask the user to rate after a transaction has been displayed to them,
+      * meaning they've experienced a good amount of the app, and presumably will also be satisfied with it
+      * since their transaction was displayed successfully. */
+    var displayedTransaction by booleanPref(false)
     var shownFeedbackDialog by booleanPref(false)
 
     var requirePurchaseAt by longPref(0)

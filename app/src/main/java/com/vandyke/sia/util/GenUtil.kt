@@ -73,10 +73,11 @@ object GenUtil {
                 .setPositiveButton("Yes") { _, _ ->
                     AlertDialog.Builder(context)
                             .setMessage("Would you like to leave a rating? I'd really appreciate it.")
-                            .setPositiveButton("Sure!") { _, _ ->
-                                Toast.makeText(context, "Thank you!", Toast.LENGTH_LONG).show()
+                            .setPositiveButton("Sure") { _, _ ->
+                                Toast.makeText(context, "Thank you :)", Toast.LENGTH_LONG).show()
                                 context.startActivity(Intents.playStore)
                             }.setNegativeButton("No thanks", null)
+                            .setCancelable(false)
                             .show()
                 }.setNegativeButton("No") { _, _ ->
                     AlertDialog.Builder(context)
@@ -85,8 +86,10 @@ object GenUtil {
                                 context.startActivity(Intents.emailMe
                                         .putExtra(Intent.EXTRA_SUBJECT, "Feedback"))
                             }.setNegativeButton("No thanks", null)
+                            .setCancelable(false)
                             .show()
-                }.show()
+                }.setCancelable(false)
+                .show()
     }
 }
 

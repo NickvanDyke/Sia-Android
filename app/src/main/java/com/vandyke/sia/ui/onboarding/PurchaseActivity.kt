@@ -59,8 +59,7 @@ class PurchaseActivity : AppCompatActivity(), PurchasesUpdatedListener {
         } else {
             later.setOnClickListener {
                 Prefs.delayedPurchase = true
-                Prefs.requirePurchaseAt = System.currentTimeMillis() + 60000//86400000 /* one day in the future */
-//                Toast.makeText(this, "Delayed for one day", Toast.LENGTH_LONG).show()
+                Prefs.requirePurchaseAt = System.currentTimeMillis() + 86400000 /* one day in the future */
                 goToMainActivity()
             }
         }
@@ -72,6 +71,7 @@ class PurchaseActivity : AppCompatActivity(), PurchasesUpdatedListener {
                 || client.queryPurchases(BillingClient.SkuType.SUBS).purchasesList.find { it.sku == overall_sub_sku } != null) {
             Prefs.cachedPurchased = true
             Prefs.requirePurchaseAt = 0
+            Toast.makeText(this, "Thanks, enjoy! I look forward to bringing you updates.", Toast.LENGTH_LONG).show()
             goToMainActivity()
         }
     }

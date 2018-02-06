@@ -134,6 +134,8 @@ class WalletFragment : BaseFragment() {
         }
 
         viewModel.transactions.observe(this) {
+            if (it.isNotEmpty())
+                Prefs.displayedTransaction = true
             adapter.update(it.filterNot { Prefs.hideZero && it.isNetZero })
         }
 
