@@ -25,7 +25,7 @@ public interface DirDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertIgnoreIfConflict(Dir dir);
 
-    @Query("UPDATE dirs SET path = replace(path, :path, :newPath)")
+    @Query("UPDATE dirs SET path = REPLACE(SUBSTR(path, 0, LENGTH(:path) + 1), :path, :newPath) || SUBSTR(path, LENGTH(:path) + 1) WHERE path == :path OR path LIKE :path || '/%'")
     void updatePath(String path, String newPath);
 
     @Query("SELECT * FROM dirs")
@@ -37,7 +37,6 @@ public interface DirDao {
     @Query("SELECT * FROM dirs WHERE path = :path")
     Flowable<Dir> dir(String path);
 
-    // TODO: should maybe return a Maybe instead of a Single? Since I don't want an error when it's an empty result
     @Query("SELECT * FROM dirs WHERE path = :path")
     Single<Dir> getDir(String path);
 

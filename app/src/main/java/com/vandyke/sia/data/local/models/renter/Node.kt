@@ -4,21 +4,19 @@
 
 package com.vandyke.sia.data.local.models.renter
 
-import android.arch.persistence.room.Ignore
-import android.arch.persistence.room.PrimaryKey
 import java.math.BigDecimal
 
-open class Node(
-        @PrimaryKey var path: String,
-        var size: BigDecimal
-) {
-    @Ignore
-    val name = this.path.substring(this.path.lastIndexOf('/') + 1)
+abstract class Node {
+    abstract val path: String
+    abstract val size: BigDecimal
 
-    @Ignore
-    val parent = run {
+    val name: String
+        get() = this.path.substring(this.path.lastIndexOf('/') + 1)
+
+    val parent: String?
+    get() {
         val index = this.path.lastIndexOf('/')
-        if (index == -1) {
+        return if (index == -1) {
             if (this.path == "")
                 null
             else

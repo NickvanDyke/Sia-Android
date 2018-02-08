@@ -52,6 +52,6 @@ class FileHolder(itemView: View, val viewModel: FilesViewModel) : NodeHolder(ite
     fun bind(file: RenterFileData) {
         this.file = file
         name.text = file.name
-        size.text = GenUtil.readableFilesizeString(file.filesize)
+        size.text = GenUtil.readableFilesizeString(file.size)
     }
 }

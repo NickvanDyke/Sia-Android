@@ -70,7 +70,7 @@ class FilesRepository
             }.subscribe { dirAndItsFiles ->
                 var size = BigDecimal.ZERO
                 dirAndItsFiles.second.forEach { file ->
-                    size += file.filesize
+                    size += file.size
                 }
                 db.dirDao().insertReplaceIfConflict(Dir(dirAndItsFiles.first.path, size))
             }
@@ -102,7 +102,7 @@ class FilesRepository
     fun createDir(path: String) = db.fileDao().getFilesUnder(path).doOnSuccess { filesInNewDir ->
         var size = BigDecimal.ZERO
         filesInNewDir.forEach {
-            size += it.filesize
+            size += it.size
         }
         val newDir = Dir(path, size)
         db.dirDao().insertAbortIfConflict(newDir)
@@ -121,7 +121,7 @@ class FilesRepository
         db.dirDao().updatePath(path, newPath)
         db.fileDao().getFilesUnder(path).subscribe { files ->
             files.forEach {
-                moveFile(it.path, it.path.replace(path, newPath)).subscribe()
+                moveFile(it.path, it.path.replaceFirst(path, newPath)).subscribe()
             }
         }
     }!!

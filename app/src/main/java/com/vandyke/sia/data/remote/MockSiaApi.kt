@@ -192,8 +192,7 @@ class MockSiaApi : SiaApiInterface {
     }
 
     override fun renterRename(siapath: String, newSiaPath: String) = Completable.fromAction {
-        val file = files.find { it.siapath == siapath } ?: return@fromAction
-        file.siapath = newSiaPath
+        val file = files.find { it.path == siapath } ?: return@fromAction
         file.path = newSiaPath
     }!!
 

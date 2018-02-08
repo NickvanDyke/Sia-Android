@@ -5,6 +5,7 @@
 package com.vandyke.sia.data.models.renter
 
 import android.arch.persistence.room.Entity
+import android.arch.persistence.room.PrimaryKey
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.vandyke.sia.data.local.models.renter.Node
@@ -13,12 +14,13 @@ import java.math.BigDecimal
 @Entity(tableName = "files")
 data class RenterFileData
 @JsonCreator constructor(
+        @PrimaryKey
         @JsonProperty(value = "siapath")
-        var siapath: String, // TODO: change back to val
+        override var path: String, // TODO: change back to val
         @JsonProperty(value = "localpath")
         val localpath: String,
         @JsonProperty(value = "filesize")
-        val filesize: BigDecimal, // bytes
+        override val size: BigDecimal, // bytes
         @JsonProperty(value = "available")
         val available: Boolean,
         @JsonProperty(value = "renewing")
@@ -30,6 +32,6 @@ data class RenterFileData
         @JsonProperty(value = "uploadprogress")
         val uploadProgress: Int,
         @JsonProperty(value = "expiration")
-        val expiration: Long) : Node(siapath, filesize) // TODO: want to store only siapath or path, not both
+        val expiration: Long) : Node()
 
 typealias SiaFile = RenterFileData
