@@ -31,3 +31,5 @@ data class RenterFileData
         val uploadProgress: Int,
         @JsonProperty(value = "expiration")
         val expiration: Long) : Node(siapath, filesize) // TODO: want to store only siapath or path, not both
+
+typealias SiaFile = RenterFileData

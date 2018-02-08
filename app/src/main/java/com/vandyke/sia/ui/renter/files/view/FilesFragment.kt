@@ -155,7 +155,7 @@ class FilesFragment : BaseFragment() {
         }
 
         viewModel.error.observe(this) {
-            it.snackbar(coordinator) // TODO: make FAB move up when snackbar appears
+            it.snackbar(coordinator)
             nodesListRefresh.isRefreshing = false
         }
 

@@ -4,9 +4,6 @@
 
 package com.vandyke.sia.util
 
-import android.arch.lifecycle.LifecycleOwner
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.LiveDataReactiveStreams
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Observable
@@ -30,12 +27,6 @@ fun <T> Single<T>.main() = this.observeOn(AndroidSchedulers.mainThread())!!
 fun <T> Flowable<T>.main() = this.observeOn(AndroidSchedulers.mainThread())!!
 
 fun <T> Observable<T>.main() = this.observeOn(AndroidSchedulers.mainThread())!!
-
-
-fun <T> LiveData<T>.toFlowable(lifecycleOwner: LifecycleOwner) : Flowable<T> =
-        Flowable.fromPublisher(LiveDataReactiveStreams.toPublisher(lifecycleOwner, this))
-
-fun <T> Flowable<T>.toLiveData(): LiveData<T> = LiveDataReactiveStreams.fromPublisher(this)
 
 
 fun NonNullLiveData<Int>.increment() {
