@@ -12,7 +12,8 @@ import com.vandyke.sia.data.repository.ConsensusRepository
 import com.vandyke.sia.data.repository.GatewayRepository
 import com.vandyke.sia.data.repository.ScValueRepository
 import com.vandyke.sia.data.repository.WalletRepository
-import com.vandyke.sia.util.*
+import com.vandyke.sia.util.rx.*
+import com.vandyke.sia.util.toSC
 import io.reactivex.Completable
 import io.reactivex.Single
 import javax.inject.Inject

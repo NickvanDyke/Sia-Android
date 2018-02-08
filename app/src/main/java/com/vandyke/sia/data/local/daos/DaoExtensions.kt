@@ -10,6 +10,7 @@ import io.reactivex.Flowable
  * would generate the @RawQuery code in such a way that caused compilation errors. Using Java files instead fixed it.
  * TODO: change back to Kotlin files once it's fixed. */
 
+/** When a name is passed, it searches all directories under the given path. Without a name, it searches only immediate children of the given path */
 fun DirDao.getDirs(path: String, name: String? = null, orderBy: FilesRepository.OrderBy? = null, ascending: Boolean = true): Flowable<List<Dir>> {
     var query = when {
         path.isEmpty() && name?.isEmpty() == true -> "SELECT * FROM dirs WHERE path != ''"
@@ -27,11 +28,11 @@ fun DirDao.getDirs(path: String, name: String? = null, orderBy: FilesRepository.
             query += " DESC"
         }
     }
-    println("dirs query is: $query")
 
     return customQuery(SimpleSQLiteQuery(query))
 }
 
+/** When a name is passed, it searches all files under the given path. Without a name, it searches only immediate children of the given path */
 fun FileDao.getFiles(path: String, name: String? = null, orderBy: FilesRepository.OrderBy? = null, ascending: Boolean = true): Flowable<List<RenterFileData>> {
     var query = when {
         path.isEmpty() && name?.isEmpty() == true -> "SELECT * FROM files"
@@ -49,7 +50,6 @@ fun FileDao.getFiles(path: String, name: String? = null, orderBy: FilesRepositor
             query += " DESC"
         }
     }
-    println("files query is: $query")
 
     return customQuery(SimpleSQLiteQuery(query))
 }

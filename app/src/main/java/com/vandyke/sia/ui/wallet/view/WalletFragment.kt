@@ -30,6 +30,7 @@ import com.vandyke.sia.ui.wallet.view.childfragments.*
 import com.vandyke.sia.ui.wallet.view.transactionslist.TransactionAdapter
 import com.vandyke.sia.ui.wallet.viewmodel.WalletViewModel
 import com.vandyke.sia.util.*
+import com.vandyke.sia.util.rx.observe
 import io.reactivex.exceptions.CompositeException
 import kotlinx.android.synthetic.main.fragment_wallet.*
 import java.math.BigDecimal
@@ -227,7 +228,7 @@ class WalletFragment : BaseFragment() {
                 childFragmentManager.beginTransaction().remove(currentChildFragment).commit()
             setProgressColor(android.R.color.white)
         })
-        KeyboardUtil.hideSoftKeyboard(activity!!)
+        KeyboardUtil.hideKeyboard(activity!!)
     }
 
     override fun onShow() {

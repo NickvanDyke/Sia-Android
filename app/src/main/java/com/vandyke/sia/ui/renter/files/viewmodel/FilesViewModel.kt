@@ -10,7 +10,7 @@ import com.vandyke.sia.data.local.models.renter.Dir
 import com.vandyke.sia.data.local.models.renter.Node
 import com.vandyke.sia.data.models.renter.RenterFileData
 import com.vandyke.sia.data.repository.FilesRepository
-import com.vandyke.sia.util.*
+import com.vandyke.sia.util.rx.*
 import io.reactivex.disposables.Disposable
 import java.math.BigDecimal
 import javax.inject.Inject
@@ -111,22 +111,42 @@ class FilesViewModel
     }
 
     /** Creates a new directory with the given name in the current directory */
-    fun createDir(name: String) = this.filesRepository.createDir(
-            "${if (currentDirPath.isNotEmpty()) "$currentDirPath/" else ""}$name"
-    ).io().main().subscribe({}, ::onError)
+    fun createDir(name: String) {
+        this.filesRepository.createDir(
+                "${if (currentDirPath.isNotEmpty()) "$currentDirPath/" else ""}$name"
+        ).io().main().subscribe({}, ::onError)
+    }
 
-    fun deleteDir(dir: Dir) = this.filesRepository.deleteDir(dir.path).io().main().subscribe({}, ::onError)
+    fun deleteDir(dir: Dir) {
+        this.filesRepository.deleteDir(dir.path).io().main().subscribe({}, ::onError)
+    }
 
-    fun deleteFile(path: String) = this.filesRepository.deleteFile(path).io().main().subscribe(::refresh, ::onError)
+    fun deleteFile(file: RenterFileData) {
+        this.filesRepository.deleteFile(file.path).io().main().subscribe(::refresh, ::onError)
+    }
 
-    fun addFile(path: String, source: String) {
+    fun addFile(source: String) {
+        val path = currentDirPath + "/" + source.substring(source.lastIndexOf('/') + 1)
         this.filesRepository.addFile(path, source, 10, 20).io().main().subscribe(::refresh, ::onError)
     }
 
-    fun renameFile(file: RenterFileData, newName: String) = this.filesRepository.moveFile(file.path, "${file.parent}/$newName")
+    fun renameFile(file: RenterFileData, newName: String) {
+        val parent = file.parent!!
+        val parentPath = if (parent.isEmpty())
+            ""
+        else
+            parent + "/"
+        this.filesRepository.moveFile(file.path, "$parentPath$newName")
+                .io().main().subscribe({}, ::onError)
+    }
 
     fun renameDir(dir: Dir, newName: String) {
-        this.filesRepository.moveDir(dir.path, "${dir.parent!!}/$newName")
+        val parent = dir.parent!!
+        val parentPath = if (parent.isEmpty())
+            ""
+        else
+            parent + "/"
+        this.filesRepository.moveDir(dir.path, "$parentPath$newName")
                 .io().main().subscribe({}, ::onError)
     }
 

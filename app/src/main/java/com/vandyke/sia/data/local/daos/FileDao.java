@@ -15,22 +15,25 @@ import io.reactivex.Flowable;
 import io.reactivex.Single;
 
 @Dao
-public abstract class FileDao {
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    public abstract void insert(RenterFileData file);
+public interface FileDao {
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insert(RenterFileData file);
 
     @RawQuery(observedEntities = RenterFileData.class)
-    public abstract Flowable<List<RenterFileData>> customQuery(final SupportSQLiteQuery query);
+    Flowable<List<RenterFileData>> customQuery(final SupportSQLiteQuery query);
+    
+    @Query("SELECT * FROM files")
+    Single<List<RenterFileData>> getAll();
 
     @Query("SELECT * FROM files WHERE path LIKE :path || '/%'")
-    public abstract Single<List<RenterFileData>> getFilesUnder(String path);
+    Single<List<RenterFileData>> getFilesUnder(String path);
 
     @Query("DELETE FROM files")
-    public abstract void deleteAll();
+    void deleteAll();
 
     @Query("DELETE FROM files WHERE path == :path")
-    public abstract void deleteFile(String path);
+    void deleteFile(String path);
 
     @Query("DELETE FROM files WHERE path LIKE :path || '/%'")
-    public abstract void deleteFilesUnder(String path);
+    void deleteFilesUnder(String path);
 }

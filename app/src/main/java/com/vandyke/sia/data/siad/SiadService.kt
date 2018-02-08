@@ -23,7 +23,7 @@ import com.vandyke.sia.ui.main.MainActivity
 import com.vandyke.sia.util.GenUtil
 import com.vandyke.sia.util.NotificationUtil
 import com.vandyke.sia.util.StorageUtil
-import com.vandyke.sia.util.observe
+import com.vandyke.sia.util.rx.observe
 import io.reactivex.Single
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.launch

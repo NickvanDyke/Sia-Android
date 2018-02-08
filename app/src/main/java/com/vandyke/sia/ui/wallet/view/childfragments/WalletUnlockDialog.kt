@@ -20,7 +20,7 @@ class WalletUnlockDialog : BaseWalletFragment() {
         }
 
         walletPassword.requestFocus()
-        KeyboardUtil.showSoftKeyboard(context!!)
+        KeyboardUtil.showKeyboard(context!!)
     }
 
     override fun onCheckPressed(): Boolean {

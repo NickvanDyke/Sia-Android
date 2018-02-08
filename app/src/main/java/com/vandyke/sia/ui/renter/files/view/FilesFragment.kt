@@ -14,7 +14,10 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.SearchView
-import android.view.*
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.EditText
@@ -26,7 +29,9 @@ import com.vandyke.sia.data.siad.SiadSource
 import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.ui.renter.files.view.list.NodesAdapter
 import com.vandyke.sia.ui.renter.files.viewmodel.FilesViewModel
+import com.vandyke.sia.util.FileUtils
 import com.vandyke.sia.util.KeyboardUtil
+import com.vandyke.sia.util.showDialogAndKeyboard
 import com.vandyke.sia.util.snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_renter_files.*
@@ -37,9 +42,11 @@ class FilesFragment : BaseFragment() {
     override val layoutResId: Int = R.layout.fragment_renter_files
     override val hasOptionsMenu = true
 
-    @Inject lateinit var factory: ViewModelProvider.Factory
+    @Inject
+    lateinit var factory: ViewModelProvider.Factory
     private lateinit var viewModel: FilesViewModel
-    @Inject lateinit var siadSource: SiadSource
+    @Inject
+    lateinit var siadSource: SiadSource
 
     private var searchItem: MenuItem? = null
     private var searchView: SearchView? = null
@@ -95,7 +102,7 @@ class FilesFragment : BaseFragment() {
             fabFilesMenu.close(true)
             val intent = Intent(Intent.ACTION_GET_CONTENT)
             intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true)
-            intent.putExtra(Intent.CATEGORY_OPENABLE, true) // should I have this set?
+            intent.putExtra(Intent.CATEGORY_OPENABLE, true)
             intent.type = "*/*"
             startActivityForResult(Intent.createChooser(intent, "Upload a file"), FILE_REQUEST_CODE)
         }
@@ -103,16 +110,14 @@ class FilesFragment : BaseFragment() {
         fabAddDir.setOnClickListener {
             fabFilesMenu.close(true)
             val dialogView = layoutInflater.inflate(R.layout.edit_text_field, null, false)
-            val dialog = AlertDialog.Builder(context!!)
+            AlertDialog.Builder(context!!)
                     .setTitle("New directory")
                     .setView(dialogView)
                     .setPositiveButton("Create", { dialogInterface, i ->
                         viewModel.createDir(dialogView.findViewById<EditText>(R.id.field).text.toString())
                     })
                     .setNegativeButton("Cancel", null)
-                    .create()
-            dialog.show()
-            dialog.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+                    .showDialogAndKeyboard()
         }
 
         /* observe viewModel stuff */
@@ -168,9 +173,19 @@ class FilesFragment : BaseFragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == FILE_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
             val uri = data.data
+            val path = FileUtils.getPath(context, uri) // TODO: not sure if this will work for all sources of files
             println(uri)
             println(uri.path)
-            // TODO: call uploadFile() or whatever on the VM using this info
+            println(path)
+            if (path == null) {
+                AlertDialog.Builder(context!!)
+                        .setTitle("Unsupported")
+                        .setMessage("Sia for Android doesn't currently support uploading files from that source, sorry.")
+                        .setPositiveButton("Close", null)
+                        .show()
+            } else {
+                viewModel.addFile(path)
+            }
         }
     }
 
@@ -206,7 +221,7 @@ class FilesFragment : BaseFragment() {
             }
 
             override fun onQueryTextSubmit(query: String): Boolean {
-                KeyboardUtil.hideSoftKeyboard(activity)
+                KeyboardUtil.hideKeyboard(activity)
                 return true
             }
         })

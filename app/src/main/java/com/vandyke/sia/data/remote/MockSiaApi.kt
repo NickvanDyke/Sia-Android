@@ -191,12 +191,14 @@ class MockSiaApi : SiaApiInterface {
         TODO("not implemented")
     }
 
-    override fun renterRename(siapath: String, newSiaPath: String): Completable {
-        TODO("not implemented")
-    }
+    override fun renterRename(siapath: String, newSiaPath: String) = Completable.fromAction {
+        val file = files.find { it.siapath == siapath } ?: return@fromAction
+        file.siapath = newSiaPath
+        file.path = newSiaPath
+    }!!
 
     override fun renterDelete(siapath: String): Completable {
-        return Completable.fromCallable {
+        return Completable.fromAction {
             var removed: RenterFileData? = null
             files.forEach {
                 if (it.path == siapath) {
@@ -210,7 +212,7 @@ class MockSiaApi : SiaApiInterface {
 
     override fun renterUpload(siapath: String, source: String, dataPieces: Int, parityPieces: Int): Completable {
         return Completable.fromAction {
-            files.add(RenterFileData(siapath, "eh", BigDecimal("156743"), true, false,
+            files.add(RenterFileData(siapath, source, BigDecimal("156743"), true, false,
                     2.0, 663453, 100, 1235534))
         }
     }
@@ -219,9 +221,7 @@ class MockSiaApi : SiaApiInterface {
         TODO("not implemented")
     }
 
-    override fun renterDownloadAsync(siapath: String, destination: String): Completable {
-        TODO("not implemented")
-    }
+    override fun renterDownloadAsync(siapath: String, destination: String) = Completable.complete()!!
 
     override fun gateway(): Single<GatewayData> {
         return Single.just(GatewayData("536.623.53.8", listOf(

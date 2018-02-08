@@ -14,7 +14,7 @@ import java.math.BigDecimal
 data class RenterFileData
 @JsonCreator constructor(
         @JsonProperty(value = "siapath")
-        val siapath: String,
+        var siapath: String, // TODO: change back to val
         @JsonProperty(value = "localpath")
         val localpath: String,
         @JsonProperty(value = "filesize")

@@ -10,8 +10,8 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 
-object StorageUtil {
 
+object StorageUtil {
     fun copyFromAssetsToAppStorage(filename: String, context: Context): File? {
         try {
             val inputStream = context.assets.open(filename)

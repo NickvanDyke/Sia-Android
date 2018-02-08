@@ -2,7 +2,7 @@
  * Copyright (c) 2017 Nicholas van Dyke. All rights reserved.
  */
 
-package com.vandyke.sia.util
+package com.vandyke.sia.util.rx
 
 import io.reactivex.Completable
 import io.reactivex.Flowable

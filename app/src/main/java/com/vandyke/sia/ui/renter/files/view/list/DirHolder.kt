@@ -11,6 +11,7 @@ import com.vandyke.sia.R
 import com.vandyke.sia.data.local.models.renter.Dir
 import com.vandyke.sia.ui.renter.files.viewmodel.FilesViewModel
 import com.vandyke.sia.util.GenUtil
+import com.vandyke.sia.util.showDialogAndKeyboard
 
 class DirHolder(itemView: View, val viewModel: FilesViewModel) : NodeHolder(itemView) {
     private val image: ImageView = itemView.findViewById(R.id.dirImage)
@@ -38,11 +39,11 @@ class DirHolder(itemView: View, val viewModel: FilesViewModel) : NodeHolder(item
                     AlertDialog.Builder(itemView.context)
                             .setTitle("Rename ${dir.name}")
                             .setView(dialogView)
-                            .setPositiveButton("Rename", { dialogInterface, i ->
+                            .setPositiveButton("Rename", { _, _ ->
                                 viewModel.renameDir(dir, dialogView.findViewById<EditText>(R.id.field).text.toString())
                             })
                             .setNegativeButton("Cancel", null)
-                            .show()
+                            .showDialogAndKeyboard()
                 }
                 R.id.dirMove -> TODO()
             }

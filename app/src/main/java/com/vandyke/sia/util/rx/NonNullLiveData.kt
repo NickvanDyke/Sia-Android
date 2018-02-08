@@ -2,7 +2,7 @@
  * Copyright (c) 2017 Nicholas van Dyke. All rights reserved.
  */
 
-package com.vandyke.sia.util
+package com.vandyke.sia.util.rx
 
 import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.LiveData

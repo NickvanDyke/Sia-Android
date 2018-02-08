@@ -16,6 +16,7 @@ import io.reactivex.Flowable
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
 import io.reactivex.rxkotlin.toObservable
+import io.reactivex.rxkotlin.zipWith
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.launch
 import java.math.BigDecimal
@@ -37,10 +38,14 @@ class FilesRepository
 
     /** Queries the list of files from the Sia node, and updates local database from it */
     fun updateFilesAndDirs(): Completable {
-        // TODO: also need to remove any files that are in the db but not returned from the API. More efficient way than just deleting all?
-        return api.renterFiles().doOnSuccess {
+        return api.renterFiles().zipWith(db.fileDao().getAll()).doOnSuccess { (files, dbFiles) ->
+            /* remove files that are in the local database but not in the Sia API response */
+            dbFiles.retainAll { it !in files.files }
+            dbFiles.forEach {
+                db.fileDao().deleteFile(it.path)
+            }
             /* insert each file into the db and also every dir that leads up to it */
-            for (file in it.files) {
+            for (file in files.files) {
                 db.fileDao().insert(file)
                 /* also add all the dirs leading up to the file */
                 var pathSoFar = ""
@@ -52,9 +57,6 @@ class FilesRepository
                     db.dirDao().insertIgnoreIfConflict(Dir(pathSoFar, BigDecimal.ZERO))
                 }
             }
-
-            /* also add the root dir */
-            db.dirDao().insertIgnoreIfConflict(Dir("", BigDecimal.ZERO))
 
             /* loop through all the dirs and calculate their values (filesize etc) */
             db.dirDao().getAll().flatMapObservable { list ->
@@ -108,36 +110,31 @@ class FilesRepository
 
     fun deleteDir(path: String) = db.fileDao().getFilesUnder(path).doOnSuccess { files ->
         files.forEach {
-            deleteFile(it.path).subscribe {
-                println("deleted file: ${it.path}")
-            }
+            deleteFile(it.path).subscribe()
         }
         db.dirDao().deleteDirsUnder(path)
         db.dirDao().deleteDir(path)
-        println("deleted dir: $path and the dirs under it")
     }.toCompletable()!!
 
 
     fun moveDir(path: String, newPath: String) = Completable.fromAction {
         db.dirDao().updatePath(path, newPath)
-        db.fileDao().getFilesUnder(path).subscribe({ files ->
+        db.fileDao().getFilesUnder(path).subscribe { files ->
             files.forEach {
-//                moveFile() TODO
+                moveFile(it.path, it.path.replace(path, newPath)).subscribe()
             }
-        })
+        }
     }!!
 
     /* note that the below methods don't update the local database - they depend on the update method to do that.
-     * Ideally, they should update the database accordingly. TODO */
+     * Ideally, they should update the database accordingly upon success. TODO */
     fun addFile(siapath: String, source: String, dataPieces: Int, parityPieces: Int): Completable {
         return api.renterUpload(siapath, source, dataPieces, parityPieces)
     }
 
     fun deleteFile(path: String): Completable = api.renterDelete(path)
 
-    fun moveFile(siapath: String, newSiapath: String) = api.renterRename(siapath, newSiapath).doOnComplete {
-
-    }!!
+    fun moveFile(siapath: String, newSiapath: String) = api.renterRename(siapath, newSiapath)
 
     enum class OrderBy(val text: String) {
         PATH("path"),

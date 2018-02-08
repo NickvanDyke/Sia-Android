@@ -4,9 +4,6 @@
 
 package com.vandyke.sia.util
 
-import android.arch.lifecycle.LifecycleOwner
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.Observer
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -91,11 +88,4 @@ object GenUtil {
                 }.setCancelable(false)
                 .show()
     }
-}
-
-fun <T> LiveData<T>.observe(owner: LifecycleOwner, onChanged: (T) -> Unit) {
-    this.observe(owner, Observer {
-        if (it != null)
-            onChanged(it)
-    })
 }

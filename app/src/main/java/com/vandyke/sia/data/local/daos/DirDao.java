@@ -15,41 +15,41 @@ import io.reactivex.Flowable;
 import io.reactivex.Single;
 
 @Dao
-public abstract class DirDao {
+public interface DirDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public abstract void insertReplaceIfConflict(Dir dir);
+    void insertReplaceIfConflict(Dir dir);
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
-    public abstract void insertAbortIfConflict(Dir dir);
+    void insertAbortIfConflict(Dir dir);
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    public abstract void insertIgnoreIfConflict(Dir dir);
+    void insertIgnoreIfConflict(Dir dir);
 
     @Query("UPDATE dirs SET path = replace(path, :path, :newPath)")
-    public abstract void updatePath(String path, String newPath);
+    void updatePath(String path, String newPath);
 
     @Query("SELECT * FROM dirs")
-    public abstract Flowable<List<Dir>> all();
+    Flowable<List<Dir>> all();
 
     @Query("SELECT * FROM dirs")
-    public abstract Single<List<Dir>> getAll();
+    Single<List<Dir>> getAll();
 
     @Query("SELECT * FROM dirs WHERE path = :path")
-    public abstract Flowable<Dir> dir(String path);
+    Flowable<Dir> dir(String path);
 
     // TODO: should maybe return a Maybe instead of a Single? Since I don't want an error when it's an empty result
     @Query("SELECT * FROM dirs WHERE path = :path")
-    public abstract Single<Dir> getDir(String path);
+    Single<Dir> getDir(String path);
 
     @RawQuery(observedEntities = Dir.class)
-    public abstract Flowable<List<Dir>> customQuery(final SupportSQLiteQuery query);
+    Flowable<List<Dir>> customQuery(final SupportSQLiteQuery query);
 
     @Query("DELETE FROM dirs")
-    public abstract void deleteAll();
+    void deleteAll();
 
     @Query("DELETE FROM dirs WHERE path = :path")
-    public abstract void deleteDir(String path);
+    void deleteDir(String path);
 
     @Query("DELETE FROM dirs WHERE path LIKE :path || '/%'")
-    public abstract void deleteDirsUnder(String path);
+    void deleteDirsUnder(String path);
 }

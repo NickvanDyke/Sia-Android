@@ -8,7 +8,7 @@ import android.arch.lifecycle.MutableLiveData
 import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import com.vandyke.sia.data.local.Prefs
-import com.vandyke.sia.util.NonNullLiveData
+import com.vandyke.sia.util.rx.NonNullLiveData
 import javax.inject.Inject
 import javax.inject.Singleton
 

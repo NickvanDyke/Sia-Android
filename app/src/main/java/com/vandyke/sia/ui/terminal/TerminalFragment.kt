@@ -12,7 +12,7 @@ import com.vandyke.sia.R
 import com.vandyke.sia.appComponent
 import com.vandyke.sia.data.siad.SiadSource
 import com.vandyke.sia.ui.common.BaseFragment
-import com.vandyke.sia.util.observe
+import com.vandyke.sia.util.rx.observe
 import kotlinx.android.synthetic.main.fragment_terminal.*
 import javax.inject.Inject
 
