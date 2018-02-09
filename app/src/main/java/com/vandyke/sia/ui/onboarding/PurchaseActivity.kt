@@ -13,6 +13,7 @@ import android.widget.Toast
 import com.android.billingclient.api.*
 import com.vandyke.sia.R
 import com.vandyke.sia.data.local.Prefs
+import com.vandyke.sia.logging.Analytics
 import com.vandyke.sia.ui.main.MainActivity
 import kotlinx.android.synthetic.main.activity_purchase.*
 
@@ -61,6 +62,7 @@ class PurchaseActivity : AppCompatActivity(), PurchasesUpdatedListener {
             later.setOnClickListener {
                 Prefs.delayedPurchase = true
                 Prefs.requirePurchaseAt = System.currentTimeMillis() + 86400000 /* one day in the future */
+                Analytics.subscribeLater()
                 goToMainActivity()
             }
         }
@@ -72,6 +74,7 @@ class PurchaseActivity : AppCompatActivity(), PurchasesUpdatedListener {
                 || client.queryPurchases(BillingClient.SkuType.SUBS).purchasesList.find { it.sku == overall_sub_sku } != null) {
             Prefs.requirePurchaseAt = 0
             Toast.makeText(this, "Thanks, enjoy! I look forward to bringing you updates.", Toast.LENGTH_LONG).show()
+            Analytics.subscribe()
             goToMainActivity()
         }
     }

@@ -12,6 +12,7 @@ import com.vandyke.sia.dagger.AppComponent
 import com.vandyke.sia.dagger.AppModule
 import com.vandyke.sia.dagger.DaggerAppComponent
 import com.vandyke.sia.data.siad.SiadSource
+import com.vandyke.sia.logging.Analytics
 import com.vandyke.sia.util.NotificationUtil
 import javax.inject.Inject
 
@@ -25,8 +26,9 @@ class App : Application() {
     override fun onCreate() {
         NotificationUtil.createSiaNodeNotificationChannel(this)
 
-        /* init the Prefs singleton */
+        /* init singletons */
         Kotpref.init(this)
+        Analytics.init(this)
 
         appComponent = DaggerAppComponent.builder()
                 .appModule(AppModule(this))
