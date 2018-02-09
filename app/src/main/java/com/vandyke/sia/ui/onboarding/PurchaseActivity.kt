@@ -28,15 +28,16 @@ class PurchaseActivity : AppCompatActivity(), PurchasesUpdatedListener {
         client = BillingClient.newBuilder(this).setListener(this).build()
         client.startConnection(object : BillingClientStateListener {
             override fun onBillingSetupFinished(responseCode: Int) {
-                val purchases = client.queryPurchases(BillingClient.SkuType.SUBS)
-                if (purchases.responseCode == BillingClient.BillingResponse.OK) {
-                    val purchased = purchases.purchasesList?.find { it.sku == overall_sub_sku } != null
-                    Prefs.cachedPurchased = purchased
-                    if (purchased) {
-                        Prefs.requirePurchaseAt = 0
-                        goToMainActivity()
-                    } else if (pending) {
-                        launchSubscriptionPurchase()
+                if (responseCode == BillingClient.BillingResponse.OK) {
+                    val purchases = client.queryPurchases(BillingClient.SkuType.SUBS)
+                    if (purchases.responseCode == BillingClient.BillingResponse.OK) {
+                        val purchased = purchases.purchasesList?.find { it.sku == overall_sub_sku } != null
+                        if (purchased) {
+                            Prefs.requirePurchaseAt = 0
+                            goToMainActivity()
+                        } else if (pending) {
+                            launchSubscriptionPurchase()
+                        }
                     }
                 }
             }
@@ -69,7 +70,6 @@ class PurchaseActivity : AppCompatActivity(), PurchasesUpdatedListener {
         if (responseCode == BillingClient.BillingResponse.ITEM_ALREADY_OWNED
                 || purchases?.find { it.sku == overall_sub_sku } != null
                 || client.queryPurchases(BillingClient.SkuType.SUBS).purchasesList.find { it.sku == overall_sub_sku } != null) {
-            Prefs.cachedPurchased = true
             Prefs.requirePurchaseAt = 0
             Toast.makeText(this, "Thanks, enjoy! I look forward to bringing you updates.", Toast.LENGTH_LONG).show()
             goToMainActivity()

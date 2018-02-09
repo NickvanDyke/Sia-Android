@@ -61,6 +61,7 @@ dependencies {
     /* kotlin stdlib and coroutines */
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.21'
+    implementation 'androidx.core:core-ktx:0.1'
 
     /* testing */
     androidTestImplementation 'com.android.support:support-annotations:27.0.2'

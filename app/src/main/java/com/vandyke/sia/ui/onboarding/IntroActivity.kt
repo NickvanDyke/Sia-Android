@@ -26,7 +26,7 @@ class IntroActivity : AhoyOnboarderActivity() {
                         " This can take a while.",
                 R.drawable.ic_cloud_download)
         val sourceCard = AhoyOnboarderCard("Open source",
-                "Sia for Android's source code is available on GitHub, linked in the About page.",
+                "Sia for Android and Sia both have their source code available on GitHub, linked in the About page.",
                 mehdi.sakout.aboutpage.R.drawable.about_icon_github)
         val underDevCard = AhoyOnboarderCard("In development",
                 "Sia for Android and Sia are both still under heavy development, and will continue to improve.",
@@ -35,8 +35,8 @@ class IntroActivity : AhoyOnboarderActivity() {
                 "Sia for Android is developed independently by me, an individual, and is not affiliated with Nebulous Labs.",
                 R.drawable.ic_person_outline)
         val emailMeCard = AhoyOnboarderCard("Contact me!",
-                "I respond to each and every email. Please contact me at siamobiledev@gmail.com if you " +
-                        "have any feedback or questions. Thanks for downloading Sia for Android, I hope you find it useful.",
+                "I respond to each and every email. Please email me from the About page if you " +
+                        "have any feedback or questions. Enjoy!",
                 mehdi.sakout.aboutpage.R.drawable.about_icon_email)
 
         val pages = listOf(explanationCard, syncCard, sourceCard, underDevCard, independentCard, emailMeCard)

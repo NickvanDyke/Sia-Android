@@ -32,7 +32,7 @@ class MainViewModel : ViewModel() {
             R.id.drawer_item_terminal -> TerminalFragment::class.java
             R.id.drawer_item_settings -> SettingsFragment::class.java
             R.id.drawer_item_about -> AboutFragment::class.java
-            else -> throw Exception()
+            else -> throw IllegalArgumentException()
         }
         setTitleAndMenuFromVisibleFragment()
     }
@@ -47,7 +47,7 @@ class MainViewModel : ViewModel() {
         if (clazz == ComingSoonFragment::class.java) {
             title.value = "Coming soon"
         } else {
-            title.value = clazz.simpleName.replace("Fragment", "")
+            title.value = clazz.simpleName.removeSuffix("Fragment")
         }
         selectedMenuItem.value = when (clazz) {
             FilesFragment::class.java, ComingSoonFragment::class.java -> R.id.drawer_item_renter
@@ -55,7 +55,7 @@ class MainViewModel : ViewModel() {
             TerminalFragment::class.java -> R.id.drawer_item_terminal
             SettingsFragment::class.java -> R.id.drawer_item_settings
             AboutFragment::class.java -> R.id.drawer_item_about
-            else -> throw Exception() /* not sure what this should actually be, if anything */
+            else -> throw IllegalArgumentException()
         }
     }
 }

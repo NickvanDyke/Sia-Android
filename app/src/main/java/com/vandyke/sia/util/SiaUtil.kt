@@ -4,6 +4,7 @@
 
 package com.vandyke.sia.util
 
+import android.os.Build
 import com.vandyke.sia.data.local.Prefs
 import java.math.BigDecimal
 import java.text.NumberFormat
@@ -30,7 +31,7 @@ fun BigDecimal.format(): String {
     return nf.format(this)
 }
 
-object SCUtil {
+object SiaUtil {
     fun estimatedBlockHeightAt(time: Long): Long {
         val blockTime = 9 // overestimate
         val diff = time - BLOCK_139949_TIMESTAMP
@@ -43,4 +44,6 @@ object SCUtil {
         val timeDiff = heightDiff * blockTime
         return (BLOCK_139949_TIMESTAMP + timeDiff * 60)
     }
+
+    val isSiadSupported = Build.SUPPORTED_64_BIT_ABIS.any { it == "arm64-v8a" }
 }

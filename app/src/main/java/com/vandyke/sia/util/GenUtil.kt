@@ -9,7 +9,6 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.net.Uri
-import android.os.Build
 import android.support.customtabs.CustomTabsIntent
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
@@ -43,8 +42,6 @@ object GenUtil {
 
         return String.format("%.${Prefs.displayedDecimalPrecision}f %s", size, sizeString)
     }
-
-    val isSiadSupported = Build.SUPPORTED_64_BIT_ABIS.any { it == "arm64-v8a" }
 
     fun launchCustomTabs(context: Context, url: String) {
         CustomTabsIntent.Builder()

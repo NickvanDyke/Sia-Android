@@ -24,6 +24,7 @@ import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.ui.onboarding.IntroActivity
 import com.vandyke.sia.ui.onboarding.PurchaseActivity
 import com.vandyke.sia.util.GenUtil
+import com.vandyke.sia.util.SiaUtil
 import com.vandyke.sia.util.rx.observe
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -42,14 +43,8 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        if (!BuildConfig.DEBUG) {
-            if (!Prefs.cachedPurchased && System.currentTimeMillis() > Prefs.requirePurchaseAt) {
-                finish()
-                startActivity(Intent(this, PurchaseActivity::class.java))
-                return
-            }
+        if (!BuildConfig.DEBUG)
             checkPurchases()
-        }
 
         AppCompatDelegate.setDefaultNightMode(
                 if (Prefs.darkMode)
@@ -60,7 +55,7 @@ class MainActivity : AppCompatActivity() {
         setTheme(R.style.AppTheme_DayNight)
         setContentView(R.layout.activity_main)
 
-        if (!BuildConfig.DEBUG && !GenUtil.isSiadSupported) {
+        if (!BuildConfig.DEBUG && !SiaUtil.isSiadSupported) {
             AlertDialog.Builder(this)
                     .setTitle("Sia node unsupported")
                     .setMessage("Your device isn't able to run the Sia node. Only devices that can are able to download" +
@@ -91,12 +86,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         /* notify VM when navigation items are selected */
-        navigationView.setNavigationItemSelectedListener(
-                { item ->
-                    drawerLayout.closeDrawers()
-                    viewModel.navigationItemSelected(item.itemId)
-                    return@setNavigationItemSelectedListener true
-                })
+        navigationView.setNavigationItemSelectedListener { item ->
+            drawerLayout.closeDrawers()
+            viewModel.navigationItemSelected(item.itemId)
+            return@setNavigationItemSelectedListener true
+        }
         drawerToggle = ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close)
         drawerLayout.addDrawerListener(drawerToggle)
 
@@ -135,7 +129,7 @@ class MainActivity : AppCompatActivity() {
         val tx = supportFragmentManager.beginTransaction()
         if (visibleFragment != null)
             tx.hide(visibleFragment)
-        /* check if the to-be-displayed fragment already exists */
+        /* check if the to-be-displayed fragment already exists in the fragment manager */
         var newFragment = supportFragmentManager.findFragmentByTag(clazz.simpleName) as? BaseFragment
         /* if not, create an instance of it and add it to the frame */
         if (newFragment == null) {
@@ -157,7 +151,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun checkPurchases() {
-        val client = BillingClient.newBuilder(this).setListener({ responseCode, purchases ->
+        val client = BillingClient.newBuilder(this).setListener({ _, _ ->
             /* we don't make purchases here so we don't care about listening for updates. Required to set a listener though. */
         }).build()
         client.startConnection(object : BillingClientStateListener {
@@ -166,7 +160,6 @@ class MainActivity : AppCompatActivity() {
                     val purchases = client.queryPurchases(BillingClient.SkuType.SUBS)
                     if (purchases.responseCode == BillingClient.BillingResponse.OK) {
                         val purchased = purchases.purchasesList?.find { it.sku == PurchaseActivity.overall_sub_sku } != null
-                        Prefs.cachedPurchased = purchased
                         if (purchased)
                             Prefs.requirePurchaseAt = 0
                         if (!purchased && System.currentTimeMillis() > Prefs.requirePurchaseAt) {
