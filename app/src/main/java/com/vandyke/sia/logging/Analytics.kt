@@ -6,6 +6,7 @@ package com.vandyke.sia.logging
 
 import android.app.Application
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import com.google.firebase.analytics.FirebaseAnalytics
 import java.math.BigDecimal
 
@@ -14,6 +15,10 @@ object Analytics {
 
     fun init(application: Application) {
         fb = FirebaseAnalytics.getInstance(application)
+    }
+
+    fun setCurrentScreen(fragment: Fragment) {
+        fb.setCurrentScreen(fragment.activity!!, fragment.javaClass.simpleName, fragment.javaClass.simpleName)
     }
 
     fun createWallet(fromSeed: Boolean) {

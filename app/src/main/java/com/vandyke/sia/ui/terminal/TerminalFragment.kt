@@ -20,7 +20,8 @@ class TerminalFragment : BaseFragment() {
     override val layoutResId: Int = R.layout.fragment_terminal
 
     private lateinit var viewModel: TerminalViewModel
-    @Inject lateinit var siadSource: SiadSource
+    @Inject
+    lateinit var siadSource: SiadSource
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         appComponent.inject(this)
