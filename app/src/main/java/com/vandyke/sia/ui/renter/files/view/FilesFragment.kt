@@ -4,12 +4,15 @@
 
 package com.vandyke.sia.ui.renter.files.view
 
+import android.Manifest
 import android.app.Activity.RESULT_OK
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.PorterDuff
 import android.os.Bundle
+import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
@@ -41,6 +44,8 @@ import javax.inject.Inject
 class FilesFragment : BaseFragment() {
     override val layoutResId: Int = R.layout.fragment_renter_files
     override val hasOptionsMenu = true
+
+    private val REQUEST_READ_EXTERNAL_STORAGE = 70
 
     @Inject
     lateinit var factory: ViewModelProvider.Factory
@@ -100,11 +105,11 @@ class FilesFragment : BaseFragment() {
         /* FAB stuff */
         fabAddFile.setOnClickListener {
             fabFilesMenu.close(true)
-            val intent = Intent(Intent.ACTION_GET_CONTENT)
-            intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true)
-            intent.putExtra(Intent.CATEGORY_OPENABLE, true)
-            intent.type = "*/*"
-            startActivityForResult(Intent.createChooser(intent, "Upload a file"), FILE_REQUEST_CODE)
+            if (ContextCompat.checkSelfPermission(context!!, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(activity!!, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_READ_EXTERNAL_STORAGE)
+            } else {
+                launchSAF()
+            }
         }
 
         fabAddDir.setOnClickListener {
@@ -185,6 +190,14 @@ class FilesFragment : BaseFragment() {
                         .show()
             } else {
                 viewModel.addFile(path)
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        if (requestCode == REQUEST_READ_EXTERNAL_STORAGE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                launchSAF()
             }
         }
     }
@@ -272,6 +285,14 @@ class FilesFragment : BaseFragment() {
             searchView?.queryHint = "Search..."
         else
             searchView?.queryHint = "Search ${viewModel.currentDir.value.name}..."
+    }
+
+    private fun launchSAF() {
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true)
+        intent.putExtra(Intent.CATEGORY_OPENABLE, true)
+        intent.type = "*/*"
+        startActivityForResult(Intent.createChooser(intent, "Upload a file"), FILE_REQUEST_CODE)
     }
 
     override fun onBackPressed(): Boolean {
