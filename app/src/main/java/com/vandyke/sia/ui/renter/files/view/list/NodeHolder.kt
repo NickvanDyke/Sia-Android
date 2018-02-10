@@ -18,7 +18,7 @@ abstract class NodeHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     init {
         val typedValue = TypedValue()
         val theme = itemView.context.theme
-        theme.resolveAttribute(android.R.attr.windowBackground, typedValue, true)
+        theme.resolveAttribute(android.R.attr.selectableItemBackground, typedValue, true)
         normalBg = typedValue.data
     }
 }

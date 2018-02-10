@@ -112,7 +112,7 @@ class FilesFragment : BaseFragment() {
             AlertDialog.Builder(context!!)
                     .setTitle("New directory")
                     .setView(dialogView)
-                    .setPositiveButton("Create", { dialogInterface, i ->
+                    .setPositiveButton("Create", { _, _ ->
                         viewModel.createDir(dialogView.findViewById<EditText>(R.id.field).text.toString())
                     })
                     .setNegativeButton("Cancel", null)
@@ -137,6 +137,11 @@ class FilesFragment : BaseFragment() {
 
         viewModel.displayedNodes.observe(this) {
             nodesAdapter.display(it)
+        }
+
+        viewModel.selectedNodes.observe(this) {
+            selectedMenu.visibility = if (it.isEmpty()) View.GONE else View.VISIBLE
+            numSelected.text = ("${it.size} ${if (it.size == 1) "item" else "items"}")
         }
 
         viewModel.ascending.observe(this) {

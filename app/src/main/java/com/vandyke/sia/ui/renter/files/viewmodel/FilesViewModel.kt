@@ -8,6 +8,7 @@ import android.arch.lifecycle.ViewModel
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.local.models.renter.Dir
 import com.vandyke.sia.data.local.models.renter.Node
+import com.vandyke.sia.data.local.models.renter.withTrailingSlashIfNotEmpty
 import com.vandyke.sia.data.models.renter.RenterFileData
 import com.vandyke.sia.data.repository.FilesRepository
 import com.vandyke.sia.util.rx.*
@@ -36,6 +37,10 @@ class FilesViewModel
 
     val currentDirPath
         get() = currentDir.value.path
+
+    val currentDirPathWithTrailingSlash
+        get() = currentDirPath + if (currentDirPath.isNotEmpty()) "/" else ""
+
 
     val selecting
         get() = selectedNodes.value.isNotEmpty()
@@ -74,7 +79,7 @@ class FilesViewModel
             onError(it)
             activeTasks.decrementZeroMin()
         })
-        // TODO: check that current directory is still valid. and track/display progress of update
+        // TODO: check that current directory is still valid
     }
 
     fun changeDir(path: String = "") {
@@ -134,8 +139,7 @@ class FilesViewModel
 
     /** Creates a new directory with the given name in the current directory */
     fun createDir(name: String) {
-        this.filesRepository.createDir(
-                "${if (currentDirPath.isNotEmpty()) "$currentDirPath/" else ""}$name"
+        this.filesRepository.createDir("${currentDirPath.withTrailingSlashIfNotEmpty()}$name"
         ).io().main().subscribe({}, ::onError)
     }
 
@@ -148,26 +152,18 @@ class FilesViewModel
     }
 
     fun addFile(source: String) {
-        val path = currentDirPath + "/" + source.substring(source.lastIndexOf('/') + 1)
+        val path = currentDirPath.withTrailingSlashIfNotEmpty() + source.substring(source.lastIndexOf('/') + 1)
         this.filesRepository.addFile(path, source, 10, 20).io().main().subscribe(::refresh, ::onError)
     }
 
     fun renameFile(file: RenterFileData, newName: String) {
-        val parent = file.parent!!
-        val parentPath = if (parent.isEmpty())
-            ""
-        else
-            parent + "/"
+        val parentPath = file.parent!!.withTrailingSlashIfNotEmpty()
         this.filesRepository.moveFile(file.path, "$parentPath$newName")
                 .io().main().subscribe({}, ::onError)
     }
 
     fun renameDir(dir: Dir, newName: String) {
-        val parent = dir.parent!!
-        val parentPath = if (parent.isEmpty())
-            ""
-        else
-            parent + "/"
+        val parentPath = dir.parent!!.withTrailingSlashIfNotEmpty()
         this.filesRepository.moveDir(dir.path, "$parentPath$newName")
                 .io().main().subscribe({}, ::onError)
     }

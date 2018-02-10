@@ -26,3 +26,5 @@ abstract class Node {
         }
     }
 }
+
+fun String.withTrailingSlashIfNotEmpty() = if (this.isNotEmpty()) "$this/" else this
