@@ -4,10 +4,12 @@
 
 package com.vandyke.sia.ui.renter.files.view.list
 
+import android.arch.lifecycle.Observer
 import android.support.v7.app.AlertDialog
 import android.view.View
 import android.widget.*
 import com.vandyke.sia.R
+import com.vandyke.sia.data.local.models.renter.Node
 import com.vandyke.sia.data.models.renter.RenterFileData
 import com.vandyke.sia.ui.renter.files.viewmodel.FilesViewModel
 import com.vandyke.sia.util.GenUtil
@@ -23,8 +25,19 @@ class FileHolder(itemView: View, val viewModel: FilesViewModel) : NodeHolder(ite
 
     private lateinit var file: RenterFileData
 
+    private val obs = Observer<List<Node>> {
+        if (it?.find { it.path == file.path} != null) {
+            itemView.setBackgroundColor(selectedBg)
+        } else {
+            itemView.setBackgroundColor(normalBg)
+        }
+    }
+
     init {
-        itemView.setOnClickListener(null)
+        image.setOnClickListener {
+            viewModel.toggleSelect(file)
+        }
+
         more.setOnClickListener {
             moreMenu.show()
         }
@@ -51,6 +64,8 @@ class FileHolder(itemView: View, val viewModel: FilesViewModel) : NodeHolder(ite
 
     fun bind(file: RenterFileData) {
         this.file = file
+        viewModel.selectedNodes.removeObserver(obs)
+        viewModel.selectedNodes.observeForever(obs)
         name.text = file.name
         size.text = GenUtil.readableFilesizeString(file.size)
     }

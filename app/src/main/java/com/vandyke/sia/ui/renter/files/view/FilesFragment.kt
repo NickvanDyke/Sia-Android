@@ -31,10 +31,7 @@ import com.vandyke.sia.data.siad.SiadSource
 import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.ui.renter.files.view.list.NodesAdapter
 import com.vandyke.sia.ui.renter.files.viewmodel.FilesViewModel
-import com.vandyke.sia.util.FileUtils
-import com.vandyke.sia.util.KeyboardUtil
-import com.vandyke.sia.util.showDialogAndKeyboard
-import com.vandyke.sia.util.snackbar
+import com.vandyke.sia.util.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_renter_files.*
 import javax.inject.Inject
@@ -43,8 +40,6 @@ import javax.inject.Inject
 class FilesFragment : BaseFragment() {
     override val layoutResId: Int = R.layout.fragment_renter_files
     override val hasOptionsMenu = true
-
-    private val REQUEST_READ_EXTERNAL_STORAGE = 70
 
     @Inject
     lateinit var factory: ViewModelProvider.Factory
@@ -182,6 +177,7 @@ class FilesFragment : BaseFragment() {
             println(uri.path)
             println(path)
             if (path == null) {
+                Analytics.unsupportedDataSource(uri)
                 AlertDialog.Builder(context!!)
                         .setTitle("Unsupported")
                         .setMessage("Sia for Android doesn't currently support uploading files from that source, sorry.")
@@ -287,6 +283,7 @@ class FilesFragment : BaseFragment() {
     }
 
     private fun launchSAF() {
+        // TODO: crashes when choosing a contact from the SAF. Need to prevent being able to choose it. I thought CATEGORY_OPENABLE would but I guess not
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true)
         intent.putExtra(Intent.CATEGORY_OPENABLE, true)
@@ -319,6 +316,7 @@ class FilesFragment : BaseFragment() {
     }
 
     companion object {
-        const val FILE_REQUEST_CODE = 5424
+        private const val FILE_REQUEST_CODE = 5424
+        private const val REQUEST_READ_EXTERNAL_STORAGE = 70
     }
 }

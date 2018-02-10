@@ -13,8 +13,8 @@ import android.widget.Toast
 import com.android.billingclient.api.*
 import com.vandyke.sia.R
 import com.vandyke.sia.data.local.Prefs
-import com.vandyke.sia.logging.Analytics
 import com.vandyke.sia.ui.main.MainActivity
+import com.vandyke.sia.util.Analytics
 import kotlinx.android.synthetic.main.activity_purchase.*
 
 class PurchaseActivity : AppCompatActivity(), PurchasesUpdatedListener {

@@ -22,6 +22,8 @@ class FilesViewModel
     val displayedNodes = NonNullLiveData<List<Node>>(listOf())
     val currentDir = NonNullLiveData<Dir>(Dir("", BigDecimal.ZERO))
 
+    val selectedNodes = NonNullLiveData(listOf<Node>())
+
     val searching = NonNullLiveData(false)
     val searchTerm = NonNullLiveData("") // maybe bind this to the search query?
 
@@ -34,6 +36,9 @@ class FilesViewModel
 
     val currentDirPath
         get() = currentDir.value.path
+
+    val selecting
+        get() = selectedNodes.value.isNotEmpty()
 
     /** the subscription to the database flowable that emits items in the current path */
     private var nodesSubscription: Disposable? = null
@@ -85,6 +90,23 @@ class FilesViewModel
             changeDir()
             onError(it)
         })
+    }
+
+    fun select(node: Node) {
+        val new = mutableListOf(node)
+        new.addAll(selectedNodes.value)
+        selectedNodes.value = new
+    }
+
+    fun deselect(node: Node) {
+        selectedNodes.value = selectedNodes.value.filterNot { it.path == node.path }
+    }
+
+    fun toggleSelect(node: Node) {
+        if (selectedNodes.value.find { it.path == node.path } != null)
+            deselect(node)
+        else
+            select(node)
     }
 
     /** subscribes to the proper source for the displayed nodes, depending on the state of the viewmodel */

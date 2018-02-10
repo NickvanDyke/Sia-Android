@@ -9,7 +9,7 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.vandyke.sia.logging.Analytics
+import com.vandyke.sia.util.Analytics
 
 abstract class BaseFragment : Fragment() {
     abstract val layoutResId: Int

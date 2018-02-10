@@ -12,7 +12,7 @@ import com.vandyke.sia.dagger.AppComponent
 import com.vandyke.sia.dagger.AppModule
 import com.vandyke.sia.dagger.DaggerAppComponent
 import com.vandyke.sia.data.siad.SiadSource
-import com.vandyke.sia.logging.Analytics
+import com.vandyke.sia.util.Analytics
 import com.vandyke.sia.util.NotificationUtil
 import javax.inject.Inject
 

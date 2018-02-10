@@ -2,9 +2,10 @@
  * Copyright (c) 2017 Nicholas van Dyke. All rights reserved.
  */
 
-package com.vandyke.sia.logging
+package com.vandyke.sia.util
 
 import android.app.Application
+import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -30,7 +31,7 @@ object Analytics {
     fun sendSiacoin(amount: BigDecimal) {
         val bundle = Bundle()
         bundle.putString("amount", amount.toPlainString())
-        fb.logEvent("send_siacoin", null)
+        fb.logEvent("send_siacoin", bundle)
     }
 
     fun viewAddress() {
@@ -47,5 +48,11 @@ object Analytics {
 
     fun subscribeLater() {
         fb.logEvent("subscribe_later", null)
+    }
+
+    fun unsupportedDataSource(uri: Uri) {
+        val bundle = Bundle()
+        bundle.putString("uri_path", uri.path)
+        fb.logEvent("unsupported_data_source", bundle)
     }
 }
