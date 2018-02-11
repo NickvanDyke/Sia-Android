@@ -1,4 +1,4 @@
-# Sia for Android  [![Google Play Link](https://developer.android.com/images/brand/en_generic_rgb_wo_60.png)](https://play.google.com/store/apps/details?id=com.vandyke.sia) [![forthebadge](http://forthebadge.com/images/badges/built-with-love.svg)](http://forthebadge.com) [![Awesome Kotlin Badge](https://kotlin.link/awesome-kotlin.svg)](https://github.com/KotlinBy/awesome-kotlin)
+# Sia for Android<div align = right>[![Awesome Kotlin Badge](https://kotlin.link/awesome-kotlin.svg)](https://github.com/KotlinBy/awesome-kotlin) [![forthebadge](http://forthebadge.com/images/badges/built-with-love.svg)](http://forthebadge.com) [![Google Play Link](https://developer.android.com/images/brand/en_generic_rgb_wo_60.png)](https://play.google.com/store/apps/details?id=com.vandyke.sia)</div>
 
 This app serves as an Android client for the decentralized cloud storage platform [Sia](https://github.com/NebulousLabs/Sia). Sia has the potential to disrupt the cloud storage industry, and a successful mobile app for Sia will greatly help in making this a reality. This app aims to be that.
 
@@ -6,7 +6,7 @@ This app can:
 * Run a Sia node on your device
 * Interact with all wallet functionalities of the running node - create, send, receive, etc.
 * Coming soon: upload to and download from the Sia cloud storage network (in-progress on the develop branch)
-* Coming soon: SPV functionality (a.k.a. "lite wallet") once Sia implements this feature
+* Coming later: SPV functionality (a.k.a. "lite wallet") once Sia implements this feature
 
 This app is developed independently by me. It is not an official Nebulous Labs product.
 
@@ -20,6 +20,8 @@ This app is still in heavy development, and contributions to it through this rep
 Huge thanks to [SiaPulse](http://siapulse.com) for a donation that made the time spent on this many times more possible.
 
 [JGall1](https://github.com/JGall1) for implementing QR code generation and scanning.
+
+[your-mirror](https://github.com/your-mirror) for implementing list/grid toggle.
 
 # Donations
 Any amount is appreciated and supports development. Thanks!
