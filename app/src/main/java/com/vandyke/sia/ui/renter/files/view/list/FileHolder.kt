@@ -28,8 +28,10 @@ class FileHolder(itemView: View, val viewModel: FilesViewModel) : NodeHolder(ite
     private val obs = Observer<List<Node>> {
         if (it?.find { it.path == file.path} != null) {
             itemView.setBackgroundColor(selectedBg)
+            itemView.background.alpha = selectedAlpha
         } else {
             itemView.setBackgroundColor(normalBg)
+            itemView.background.alpha = 255
         }
     }
 

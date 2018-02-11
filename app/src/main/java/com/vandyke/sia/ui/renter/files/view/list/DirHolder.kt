@@ -28,8 +28,10 @@ class DirHolder(itemView: View, val viewModel: FilesViewModel) : NodeHolder(item
     private val obs = Observer<List<Node>> {
         if (it?.find { it.path == dir.path} != null) {
             itemView.setBackgroundColor(selectedBg)
+            itemView.background.alpha = selectedAlpha
         } else {
             itemView.setBackgroundColor(normalBg)
+            itemView.background.alpha = 255
         }
     }
 

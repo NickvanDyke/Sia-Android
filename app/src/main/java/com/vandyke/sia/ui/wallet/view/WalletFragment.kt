@@ -248,11 +248,16 @@ class WalletFragment : BaseFragment() {
     }
 
     private fun setStatusIcon() {
-        statusButton?.setIcon(when (viewModel.wallet.value?.encrypted ?: false || viewModel.wallet.value?.rescanning ?: false) {
-            false -> R.drawable.ic_add
-            true -> if (!viewModel.wallet.value!!.unlocked) R.drawable.ic_lock_outline
-            else R.drawable.ic_lock_open
-        })
+        statusButton?.setIcon(
+                when (viewModel.wallet.value?.encrypted == true || viewModel.wallet.value?.rescanning == true) {
+                    false -> R.drawable.ic_add
+                    true -> {
+                        if (!viewModel.wallet.value!!.unlocked)
+                            R.drawable.ic_lock_outline
+                        else
+                            R.drawable.ic_lock_open
+                    }
+                })
     }
 
     private fun setSyncStatus() {
@@ -290,7 +295,7 @@ class WalletFragment : BaseFragment() {
         val wallet = viewModel.wallet.value
         fabWalletMenu.menuIconView.setImageResource(when {
             expandedFragment != null -> R.drawable.ic_check
-            wallet?.unlocked == false && wallet?.encrypted == true -> R.drawable.ic_lock_open
+            wallet?.unlocked == false && wallet.encrypted == true -> R.drawable.ic_lock_open
             else -> R.drawable.ic_add
         })
     }

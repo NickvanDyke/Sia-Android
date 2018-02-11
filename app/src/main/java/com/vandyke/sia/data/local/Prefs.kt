@@ -26,16 +26,16 @@ object Prefs : KotprefModel() {
     var viewedOnboarding by booleanPref(false)
 
     var darkMode by booleanPref(false)
-    var apiPassword by stringPref()
-    var startupPage by stringPref("wallet")
     var hideZero by booleanPref(true)
-    var useExternal by booleanPref(false)
+    var startupPage by stringPref("wallet")
     var displayedDecimalPrecision by intPref(2)
 
     var runSiaInBackground by booleanPref(true)
     var runSiaOnData by booleanPref(false)
+    var apiPassword by stringPref()
+    var useExternal by booleanPref(false)
 
-    var viewTypeList by booleanPref(true)
+    var viewAsList by booleanPref(true)
     var ascending by booleanPref(true)
     var orderBy by enumOrdinalPref(FilesRepository.OrderBy.PATH)
 }

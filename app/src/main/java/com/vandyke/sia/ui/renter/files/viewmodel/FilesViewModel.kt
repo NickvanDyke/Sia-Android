@@ -28,7 +28,7 @@ class FilesViewModel
     val searching = NonNullLiveData(false)
     val searchTerm = NonNullLiveData("") // maybe bind this to the search query?
 
-    val viewTypeList = NonNullLiveData(Prefs.viewTypeList)
+    val viewAsList = NonNullLiveData(Prefs.viewAsList)
     val ascending = NonNullLiveData(Prefs.ascending)
     val orderBy = NonNullLiveData(Prefs.orderBy)
 
@@ -38,10 +38,6 @@ class FilesViewModel
 
     val currentDirPath
         get() = currentDir.value.path
-
-    val currentDirPathWithTrailingSlash
-        get() = currentDirPath + if (currentDirPath.isNotEmpty()) "/" else ""
-
 
     val selecting
         get() = selectedNodes.value.isNotEmpty()
@@ -54,9 +50,8 @@ class FilesViewModel
         }
 
     init {
-        viewTypeList.observeForevs {
-            setDisplayedNodes()
-            Prefs.viewTypeList = it
+        viewAsList.observeForevs {
+            Prefs.viewAsList = it
         }
         ascending.observeForevs {
             Prefs.ascending = it

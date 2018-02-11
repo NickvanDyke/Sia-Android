@@ -16,21 +16,30 @@ import com.vandyke.sia.ui.renter.files.viewmodel.FilesViewModel
 
 class NodesAdapter(val viewModel: FilesViewModel) : RecyclerView.Adapter<NodeHolder>() {
 
-    private var LIST = true
-    private val DIR = 0
-    private val FILE = 1
-
     private val nodes = mutableListOf<Node>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NodeHolder {
-        if (viewType == DIR && LIST) {
-            return DirHolder(LayoutInflater.from(parent.context).inflate(R.layout.holder_renter_dir, parent, false))
-        } else if (viewType == DIR) {
-            return DirHolder(LayoutInflater.from(parent.context).inflate(R.layout.holder_renter_grid_dir, parent, false))
-        } else if (viewType == FILE && LIST) {
-            return FileHolder(LayoutInflater.from(parent.context).inflate(R.layout.holder_renter_file, parent, false))
+        val inflater = LayoutInflater.from(parent.context)
+        return if (viewType == DIR) {
+            DirHolder(
+                    inflater.inflate(
+//                            if (viewModel.viewAsList.value)
+                                R.layout.holder_renter_dir_list,
+//                            else
+//                                R.layout.holder_renter_dir_grid,
+                            parent, false),
+                    viewModel
+            )
         } else {
-            return FileHolder(LayoutInflater.from(parent.context).inflate(R.layout.holder_renter_grid_file, parent, false))
+            FileHolder(
+                    inflater.inflate(
+                            if (viewModel.viewAsList.value)
+                                R.layout.holder_renter_file_list
+                            else
+                                R.layout.holder_renter_file_grid,
+                            parent, false),
+                    viewModel
+            )
         }
     }
 
@@ -52,10 +61,6 @@ class NodesAdapter(val viewModel: FilesViewModel) : RecyclerView.Adapter<NodeHol
         diffResult.dispatchUpdatesTo(this) // TODO: causes delay when the entire list changes, as opposed to notifyDataSetChanged
     }
 
-    fun toggleListViewType(value: Boolean) {
-        LIST = value
-    }
-
     inner class NodesDiffUtil(private val oldList: List<Node>, private val newList: List<Node>) : DiffUtil.Callback() {
         override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
                 oldList[oldItemPosition].path == newList[newItemPosition].path
@@ -67,5 +72,10 @@ class NodesAdapter(val viewModel: FilesViewModel) : RecyclerView.Adapter<NodeHol
         override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int) =
                 oldList[oldItemPosition].name == newList[newItemPosition].name
                         && oldList[oldItemPosition].size == newList[newItemPosition].size
+    }
+
+    companion object {
+        private const val DIR = 0
+        private const val FILE = 1
     }
 }

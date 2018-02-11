@@ -13,7 +13,8 @@ import com.vandyke.sia.R
 
 abstract class NodeHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val normalBg: Int
-    val selectedBg = ContextCompat.getColor(itemView.context, R.color.selectedNode)
+    val selectedBg = ContextCompat.getColor(itemView.context, R.color.colorPrimaryDark)
+    val selectedAlpha = 50
 
     init {
         val typedValue = TypedValue()
