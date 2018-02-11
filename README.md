@@ -1,5 +1,5 @@
-# <div align = right>[![Awesome Kotlin Badge](https://kotlin.link/awesome-kotlin.svg)](https://github.com/KotlinBy/awesome-kotlin) [![forthebadge](http://forthebadge.com/images/badges/built-with-love.svg)](http://forthebadge.com) [![Google Play Link](https://developer.android.com/images/brand/en_generic_rgb_wo_60.png)](https://play.google.com/store/apps/details?id=com.vandyke.sia)</div>
-# Sia for Android
+# Sia for Android <div align = right>[![Awesome Kotlin Badge](https://kotlin.link/awesome-kotlin.svg)](https://github.com/KotlinBy/awesome-kotlin) [![forthebadge](http://forthebadge.com/images/badges/built-with-love.svg)](http://forthebadge.com) [![Google Play Link](https://developer.android.com/images/brand/en_generic_rgb_wo_60.png)](https://play.google.com/store/apps/details?id=com.vandyke.sia)</div>
+
 
 This app serves as an Android client for the decentralized cloud storage platform [Sia](https://github.com/NebulousLabs/Sia). Sia has the potential to disrupt the cloud storage industry, and a successful mobile app for Sia will greatly help in making this a reality. This app aims to be that.
 
