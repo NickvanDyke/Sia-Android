@@ -8,7 +8,7 @@ import android.arch.lifecycle.MutableLiveData
 import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import com.vandyke.sia.data.local.Prefs
-import com.vandyke.sia.util.NonNullLiveData
+import com.vandyke.sia.util.rx.NonNullLiveData
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -22,19 +22,26 @@ class SiadSource
 
     val allConditionsGood = NonNullLiveData(false)
 
-    val activeNetworkType = MutableLiveData<Int>()
+    var activeNetworkType: Int? = null
+        set(value) {
+            field = value
+            setConditions()
+        }
+
+    var appInForeground = false
+        set(value) {
+            field = value
+            setConditions()
+        }
 
     private val prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
         when (key) {
             "runSiaOnData" -> setConditions()
+            "runSiaInBackground" -> setConditions()
         }
     }
 
     init {
-        activeNetworkType.observeForever {
-            setConditions()
-        }
-
         Prefs.preferences.registerOnSharedPreferenceChangeListener(prefsListener)
     }
 
@@ -43,9 +50,10 @@ class SiadSource
     }
 
     private fun checkConditions(): Boolean {
-        if (activeNetworkType.value == ConnectivityManager.TYPE_MOBILE && !Prefs.runSiaOnData)
-            return false
-
-        return true
+        return when {
+            activeNetworkType == ConnectivityManager.TYPE_MOBILE && !Prefs.runSiaOnData -> false
+            !appInForeground && !Prefs.runSiaInBackground -> false
+            else -> true
+        }
     }
 }

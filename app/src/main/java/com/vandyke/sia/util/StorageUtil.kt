@@ -6,14 +6,12 @@ package com.vandyke.sia.util
 
 import android.content.Context
 import android.os.Environment
-import android.widget.Toast
-import com.vandyke.sia.data.local.Prefs
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 
-object StorageUtil {
 
+object StorageUtil {
     fun copyFromAssetsToAppStorage(filename: String, context: Context): File? {
         try {
             val inputStream = context.assets.open(filename)
@@ -37,24 +35,6 @@ object StorageUtil {
 
         return null
     }
-
-    fun getWorkingDirectory(context: Context?): File? {
-        if (context == null)
-            return null
-        var result: File?
-        if (Prefs.useExternal) {
-            result = context.getExternalFilesDir(null)
-            if (result == null) { // external storage not found
-                Toast.makeText(context, "No external storage found. Using internal", Toast.LENGTH_LONG).show()
-                result = context.filesDir
-            }
-        } else
-            result = context.filesDir
-        return result
-    }
-
-    val isExternalStorageWritable: Boolean
-        get() = Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED
 
     fun externalStorageStateDescription(): String {
         return when (Environment.getExternalStorageState()) {

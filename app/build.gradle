@@ -14,8 +14,8 @@ android {
         applicationId "com.vandyke.sia"
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 107
-        versionName "0.1.7"
+        versionCode 120
+        versionName "0.1.20"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         /* lets us not shrink debug builds, for faster build times. Not necessary for release builds, since we shrink those */
         multiDexEnabled true
@@ -39,7 +39,7 @@ android {
         }
     }
     splits {
-        /* see main.c file in cpp directory for why we use ABI splits */
+        /* see app/src/main/cpp/main.c for why we use ABI splits */
         abi {
             enable true
             reset()
@@ -56,11 +56,13 @@ android {
 
 dependencies {
     ext.support_version = "27.0.2"
+    
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
     /* kotlin stdlib and coroutines */
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.21'
+    implementation 'androidx.core:core-ktx:0.1'
 
     /* testing */
     androidTestImplementation 'com.android.support:support-annotations:27.0.2'
@@ -108,9 +110,9 @@ dependencies {
     kapt 'android.arch.lifecycle:compiler:1.1.0'
 
     /* Room, for local data persistence */
-    implementation 'android.arch.persistence.room:runtime:1.0.0'
-    implementation 'android.arch.persistence.room:rxjava2:1.0.0'
-    kapt "android.arch.persistence.room:compiler:1.0.0"
+    implementation "android.arch.persistence.room:runtime:1.1.0-alpha1"
+    implementation "android.arch.persistence.room:rxjava2:1.1.0-alpha1"
+    kapt "android.arch.persistence.room:compiler:1.1.0-alpha1"
 
     /* Dagger, for DI */
     implementation 'com.google.dagger:dagger:2.12'

@@ -8,7 +8,8 @@ import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
 import android.view.View
 import com.vandyke.sia.R
-// TODO: queue snackbars, or don't show duplicates, or something like that
+
+
 object SnackbarUtil {
     fun showSnackbar(view: View?, text: String, duration: Int = Snackbar.LENGTH_SHORT) {
         if (view == null || !view.isShown)

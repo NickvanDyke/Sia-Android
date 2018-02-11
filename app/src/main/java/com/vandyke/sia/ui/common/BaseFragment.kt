@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.vandyke.sia.util.Analytics
 
 abstract class BaseFragment : Fragment() {
     abstract val layoutResId: Int
@@ -45,6 +46,7 @@ abstract class BaseFragment : Fragment() {
     override fun onHiddenChanged(hidden: Boolean) {
         if (!hidden) {
             onShow()
+            logScreen()
             activity!!.invalidateOptionsMenu()
         } else {
             onHide()
@@ -57,10 +59,13 @@ abstract class BaseFragment : Fragment() {
         activity!!.invalidateOptionsMenu()
         if (recreating) {
             recreating = false
-            if (wasVisible)
+            if (wasVisible) {
                 onShow()
+                logScreen()
+            }
         } else if (firstTimeVisible || isVisible) {
             onShow()
+            logScreen()
             firstTimeVisible = false
         }
     }
@@ -76,5 +81,9 @@ abstract class BaseFragment : Fragment() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putBoolean("visible", isVisible)
+    }
+
+    private fun logScreen() {
+        Analytics.setCurrentScreen(this)
     }
 }

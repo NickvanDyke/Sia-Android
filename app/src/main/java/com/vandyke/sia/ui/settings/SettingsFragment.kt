@@ -20,6 +20,5 @@ class SettingsFragment : BaseFragment() {
             settingsFragment = SettingsFragmentActual()
             childFragmentManager.beginTransaction().add(R.id.settings_fragment_frame, settingsFragment, "settingsFragment").commit()
         }
-
     }
 }

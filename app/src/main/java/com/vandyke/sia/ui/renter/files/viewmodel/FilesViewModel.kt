@@ -8,12 +8,10 @@ import android.arch.lifecycle.ViewModel
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.local.models.renter.Dir
 import com.vandyke.sia.data.local.models.renter.Node
+import com.vandyke.sia.data.local.models.renter.withTrailingSlashIfNotEmpty
+import com.vandyke.sia.data.models.renter.RenterFileData
 import com.vandyke.sia.data.repository.FilesRepository
-import com.vandyke.sia.data.repository.ROOT_DIR_NAME
-import com.vandyke.sia.util.NonNullLiveData
-import com.vandyke.sia.util.SingleLiveEvent
-import com.vandyke.sia.util.io
-import com.vandyke.sia.util.main
+import com.vandyke.sia.util.rx.*
 import io.reactivex.disposables.Disposable
 import java.math.BigDecimal
 import javax.inject.Inject
@@ -23,20 +21,30 @@ class FilesViewModel
         private val filesRepository: FilesRepository
 ) : ViewModel() {
     val displayedNodes = NonNullLiveData<List<Node>>(listOf())
-    val currentDir = NonNullLiveData<Dir>(Dir(ROOT_DIR_NAME, BigDecimal.ZERO))
+    val currentDir = NonNullLiveData<Dir>(Dir("", BigDecimal.ZERO))
+
+    val selectedNodes = NonNullLiveData(listOf<Node>())
 
     val searching = NonNullLiveData(false)
     val searchTerm = NonNullLiveData("") // maybe bind this to the search query?
 
     val viewTypeList = NonNullLiveData(Prefs.viewTypeList)
     val ascending = NonNullLiveData(Prefs.ascending)
-    val sortBy = NonNullLiveData(Prefs.sortBy)
+    val orderBy = NonNullLiveData(Prefs.orderBy)
 
+    val activeTasks = NonNullLiveData(0)
     val refreshing = NonNullLiveData(false)
     val error = SingleLiveEvent<Throwable>()
 
     val currentDirPath
         get() = currentDir.value.path
+
+    val currentDirPathWithTrailingSlash
+        get() = currentDirPath + if (currentDirPath.isNotEmpty()) "/" else ""
+
+
+    val selecting
+        get() = selectedNodes.value.isNotEmpty()
 
     /** the subscription to the database flowable that emits items in the current path */
     private var nodesSubscription: Disposable? = null
@@ -51,14 +59,14 @@ class FilesViewModel
             Prefs.viewTypeList = it
         }
         ascending.observeForevs {
-            setDisplayedNodes()
             Prefs.ascending = it
-        }
-        sortBy.observeForevs {
             setDisplayedNodes()
-            Prefs.sortBy = it
         }
-        changeDir(ROOT_DIR_NAME)
+        orderBy.observeForevs {
+            Prefs.orderBy = it
+            setDisplayedNodes()
+        }
+        changeDir()
     }
 
     override fun onCleared() {
@@ -67,64 +75,115 @@ class FilesViewModel
     }
 
     fun refresh() {
+        activeTasks.increment()
         refreshing.value = true
         this.filesRepository.updateFilesAndDirs().io().main().subscribe({
             refreshing.value = false
         }, {
             refreshing.value = false
             onError(it)
+            activeTasks.decrementZeroMin()
         })
-        // TODO: check that current directory is still valid. and track/display progress of update
+        // TODO: check that current directory is still valid
     }
 
-    fun changeDir(path: String) {
+    fun changeDir(path: String = "") {
         if (path == currentDirPath)
             return
         println("changing to dir: $path")
-        this.filesRepository.getDir(path).io().main().subscribe({ // maybe this would be better as a flowable
+        this.filesRepository.getDir(path).io().main().subscribe({
+            // maybe this would be better as a flowable
             currentDir.value = it
             setDisplayedNodes()
         }, {
             /* presumably the only error would be an empty result set from querying for the dir. In which case we go home */
-            changeDir(ROOT_DIR_NAME)
+            changeDir()
             onError(it)
         })
+    }
+
+    fun select(node: Node) {
+        val new = mutableListOf(node)
+        new.addAll(selectedNodes.value)
+        selectedNodes.value = new
+    }
+
+    fun deselect(node: Node) {
+        selectedNodes.value = selectedNodes.value.filterNot { it.path == node.path }
+    }
+
+    fun deselectAll() {
+        selectedNodes.value = listOf()
+    }
+
+    fun toggleSelect(node: Node) {
+        if (selectedNodes.value.find { it.path == node.path } != null)
+            deselect(node)
+        else
+            select(node)
     }
 
     /** subscribes to the proper source for the displayed nodes, depending on the state of the viewmodel */
     private fun setDisplayedNodes() {
         if (searching.value) {
-            nodesSubscription = this.filesRepository.search(searchTerm.value, currentDirPath, sortBy.value, ascending.value).io().main().subscribe({
+            nodesSubscription = this.filesRepository.search(searchTerm.value, currentDirPath, orderBy.value, ascending.value).io().main().subscribe({
                 displayedNodes.value = it
             }, ::onError)
         } else {
-            nodesSubscription = this.filesRepository.immediateNodes(currentDirPath, sortBy.value, ascending.value).io().main().subscribe({ nodes ->
+            nodesSubscription = this.filesRepository.immediateNodes(currentDirPath, orderBy.value, ascending.value).io().main().subscribe({ nodes ->
                 displayedNodes.value = nodes
             }, ::onError)
         }
     }
 
     fun goToIndexInPath(index: Int) {
-        val splitPath = currentDirPath.split("/")
-        changeDir(splitPath.subList(0, index + 1).joinToString("/"))
+        if (index == 0) {
+            changeDir()
+        } else {
+            val splitPath = currentDirPath.split("/")
+            val path = splitPath.subList(0, index).joinToString("/")
+            changeDir(path)
+        }
+    }
+
+    fun downloadFile(file: RenterFileData) {
+        TODO()
+    }
+
+    fun downloadDir(dir: Dir) {
+        TODO()
     }
 
     /** Creates a new directory with the given name in the current directory */
-    fun createDir(name: String) = this.filesRepository.createDir("$currentDirPath/$name").io().main().subscribe({}, ::onError)
-
-    fun deleteDir(path: String) = this.filesRepository.deleteDir(path).io().main().subscribe({}, ::onError)
-
-    fun deleteFile(path: String) = this.filesRepository.deleteFile(path).io().main().subscribe(::refresh, ::onError)
-
-    fun addFile(path: String) {
-        this.filesRepository.addFile(path, "blah", 10, 20).io().main().subscribe(::refresh, ::onError)
+    fun createDir(name: String) {
+        this.filesRepository.createDir("${currentDirPath.withTrailingSlashIfNotEmpty()}$name"
+        ).io().main().subscribe({}, ::onError)
     }
 
-    fun renameFile(currentName: String, newName: String) {
-        // TODO
+    fun deleteDir(dir: Dir) {
+        this.filesRepository.deleteDir(dir.path).io().main().subscribe({}, ::onError)
     }
 
-    fun renameDir(path: String, newName: String) = this.filesRepository.renameDir(path, newName).io().main().subscribe({}, ::onError)
+    fun deleteFile(file: RenterFileData) {
+        this.filesRepository.deleteFile(file).io().main().subscribe({}, ::onError)
+    }
+
+    fun addFile(source: String) {
+        val path = currentDirPath.withTrailingSlashIfNotEmpty() + source.substring(source.lastIndexOf('/') + 1)
+        this.filesRepository.addFile(path, source, 10, 20).io().main().subscribe({}, ::onError)
+    }
+
+    fun renameFile(file: RenterFileData, newName: String) {
+        val parentPath = file.parent!!.withTrailingSlashIfNotEmpty()
+        this.filesRepository.moveFile(file, "$parentPath$newName")
+                .io().main().subscribe({}, ::onError)
+    }
+
+    fun renameDir(dir: Dir, newName: String) {
+        val parentPath = dir.parent!!.withTrailingSlashIfNotEmpty()
+        this.filesRepository.moveDir(dir.path, "$parentPath$newName")
+                .io().main().subscribe({}, ::onError)
+    }
 
     fun search(name: String) {
         searching.value = true
@@ -143,12 +202,7 @@ class FilesViewModel
     }
 
     fun goUpDir(): Boolean {
-        val parent = currentDir.value.parent
-        return if (parent == null) {
-            false
-        } else {
-            changeDir(parent)
-            true
-        }
+        changeDir(currentDir.value.parent ?: return false)
+        return true
     }
 }

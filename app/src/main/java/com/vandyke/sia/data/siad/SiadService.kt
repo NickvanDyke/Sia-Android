@@ -12,6 +12,7 @@ import android.arch.lifecycle.LifecycleService
 import android.content.*
 import android.net.ConnectivityManager
 import android.os.Binder
+import android.os.Environment
 import android.os.Handler
 import android.os.IBinder
 import android.support.v4.app.NotificationCompat
@@ -22,7 +23,7 @@ import com.vandyke.sia.ui.main.MainActivity
 import com.vandyke.sia.util.GenUtil
 import com.vandyke.sia.util.NotificationUtil
 import com.vandyke.sia.util.StorageUtil
-import com.vandyke.sia.util.observe
+import com.vandyke.sia.util.rx.observe
 import io.reactivex.Single
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.launch
@@ -85,16 +86,17 @@ class SiadService : LifecycleService() {
 
         /* determine what directory Sia should use. Display notification with errors if external storage is set and not working */
         if (Prefs.useExternal) {
-            if (StorageUtil.isExternalStorageWritable) {
-                val dir = getExternalFilesDir(null)
-                if (dir != null) {
-                    pb.directory(dir)
-                } else {
-                    showSiadNotification("Error getting external storage directory")
-                    return
-                }
+            val dirs = getExternalFilesDirs(null)
+            if (dirs.isEmpty()) {
+                showSiadNotification("No external storage available")
+                return
+            }
+            val dir = if (dirs.size > 1) dirs[1] else dirs[0]
+            val state = Environment.getExternalStorageState(dir)
+            if (state == Environment.MEDIA_MOUNTED) {
+                pb.directory(dir)
             } else {
-                showSiadNotification(StorageUtil.externalStorageStateDescription())
+                showSiadNotification("Error with external storage: $state")
                 return
             }
         } else {
@@ -164,6 +166,7 @@ class SiadService : LifecycleService() {
         super.onDestroy()
         unregisterReceiver(receiver)
         stopSiad()
+        NotificationUtil.cancelNotification(this, SIAD_NOTIFICATION)
     }
 
     fun showSiadNotification(text: String) {

@@ -16,17 +16,16 @@ import android.support.v7.app.AppCompatDelegate
 import android.view.MenuItem
 import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.BillingClientStateListener
+import com.vandyke.sia.BuildConfig
 import com.vandyke.sia.R
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.siad.SiadService
 import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.ui.onboarding.IntroActivity
 import com.vandyke.sia.ui.onboarding.PurchaseActivity
-import com.vandyke.sia.ui.renter.files.view.FilesFragment
-import com.vandyke.sia.ui.terminal.TerminalFragment
-import com.vandyke.sia.ui.wallet.view.WalletFragment
 import com.vandyke.sia.util.GenUtil
-import com.vandyke.sia.util.observe
+import com.vandyke.sia.util.SiaUtil
+import com.vandyke.sia.util.rx.observe
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -44,19 +43,19 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        if (!Prefs.cachedPurchased) {
-            finish()
-            startActivity(Intent(this, PurchaseActivity::class.java))
-            return
-        }
+        if (!BuildConfig.DEBUG)
+            checkPurchases()
 
-        if (Prefs.darkMode)
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        else
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        AppCompatDelegate.setDefaultNightMode(
+                if (Prefs.darkMode)
+                    AppCompatDelegate.MODE_NIGHT_YES
+                else
+                    AppCompatDelegate.MODE_NIGHT_NO
+        )
         setTheme(R.style.AppTheme_DayNight)
+        setContentView(R.layout.activity_main)
 
-        if (!GenUtil.isSiadSupported) {
+        if (!BuildConfig.DEBUG && !SiaUtil.isSiadSupported) {
             AlertDialog.Builder(this)
                 .setTitle("Sia node unsupported")
                 .setMessage("Your device isn't able to run the Sia node. Only devices that can are able to download" +
@@ -67,36 +66,12 @@ class MainActivity : AppCompatActivity() {
             startService(Intent(this, SiadService::class.java))
         }
 
-        val client = BillingClient.newBuilder(this).setListener({ responseCode, purchases ->
-            /* we don't make purchases here so we don't care about listening for updates. Required to set a listener though. */
-        }).build()
-        client.startConnection(object : BillingClientStateListener {
-            override fun onBillingSetupFinished(responseCode: Int) {
-                if (responseCode == BillingClient.BillingResponse.OK) {
-                    val purchased = client.queryPurchases(BillingClient.SkuType.SUBS)
-                            .purchasesList
-                            .find { it.sku == PurchaseActivity.overall_sub_sku } != null
-                    Prefs.cachedPurchased = purchased
-                    if (!purchased) {
-                        finish()
-                        startActivity(Intent(this@MainActivity, PurchaseActivity::class.java))
-                    }
-                }
-            }
-
-            override fun onBillingServiceDisconnected() {
-            }
-        })
-
-        viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
-
-        setContentView(R.layout.activity_main)
-
         /* actionbar setup stuff */
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setHomeButtonEnabled(true)
 
+        viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
 
         viewModel.visibleFragmentClass.observe(this) {
             displayFragment(it)
@@ -111,26 +86,32 @@ class MainActivity : AppCompatActivity() {
         }
 
         /* notify VM when navigation items are selected */
-        navigationView.setNavigationItemSelectedListener({ item ->
+        navigationView.setNavigationItemSelectedListener { item ->
             drawerLayout.closeDrawers()
-            viewModel.navigationItemSelected(item)
+            viewModel.navigationItemSelected(item.itemId)
             return@setNavigationItemSelectedListener true
-        })
+        }
         drawerToggle = ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close)
         drawerLayout.addDrawerListener(drawerToggle)
 
         /* set the VM's visibleFragmentClass differently depending on whether the activity is being recreated */
         if (savedInstanceState == null) {
-            viewModel.setDisplayedFragmentClass(when (Prefs.startupPage) {
-                "renter" -> FilesFragment::class.java
-                "wallet" -> WalletFragment::class.java
-                "terminal" -> TerminalFragment::class.java
-                else -> throw Exception()
-            })
+            viewModel.navigationItemSelected(
+                    when (Prefs.startupPage) {
+                        "renter" -> R.id.drawer_item_renter
+                        "wallet" -> R.id.drawer_item_wallet
+                        "terminal" -> R.id.drawer_item_terminal
+                        else -> throw Exception()
+                    })
         } else {
             /* find the fragment currently visible stored in the savedInstanceState */
             val storedFragmentClass = supportFragmentManager.findFragmentByTag(savedInstanceState.getString("visibleFragment")).javaClass
             viewModel.setDisplayedFragmentClass(storedFragmentClass)
+        }
+
+        if (Prefs.displayedTransaction && !Prefs.shownFeedbackDialog) {
+            GenUtil.showRateDialog(this)
+            Prefs.shownFeedbackDialog = true
         }
     }
 
@@ -148,7 +129,7 @@ class MainActivity : AppCompatActivity() {
         val tx = supportFragmentManager.beginTransaction()
         if (visibleFragment != null)
             tx.hide(visibleFragment)
-        /* check if the to-be-displayed fragment already exists */
+        /* check if the to-be-displayed fragment already exists in the fragment manager */
         var newFragment = supportFragmentManager.findFragmentByTag(clazz.simpleName) as? BaseFragment
         /* if not, create an instance of it and add it to the frame */
         if (newFragment == null) {
@@ -167,6 +148,33 @@ class MainActivity : AppCompatActivity() {
         } else if (visibleFragment?.onBackPressed() != true) {
             super.onBackPressed()
         }
+    }
+
+    private fun checkPurchases() {
+        val client = BillingClient.newBuilder(this).setListener({ _, _ ->
+            /* we don't make purchases here so we don't care about listening for updates. Required to set a listener though. */
+        }).build()
+        client.startConnection(object : BillingClientStateListener {
+            override fun onBillingSetupFinished(responseCode: Int) {
+                if (responseCode == BillingClient.BillingResponse.OK) {
+                    val purchases = client.queryPurchases(BillingClient.SkuType.SUBS)
+                    if (purchases.responseCode == BillingClient.BillingResponse.OK) {
+                        val purchased = purchases.purchasesList?.find { it.sku == PurchaseActivity.overall_sub_sku } != null
+                        if (purchased)
+                            Prefs.requirePurchaseAt = 0
+                        if (!purchased && System.currentTimeMillis() > Prefs.requirePurchaseAt) {
+                            finish()
+                            startActivity(Intent(this@MainActivity, PurchaseActivity::class.java))
+                        }
+                    }
+                }
+                if (client.isReady)
+                    client.endConnection()
+            }
+
+            override fun onBillingServiceDisconnected() {
+            }
+        })
     }
 
     /* below methods are for drawer stuff */

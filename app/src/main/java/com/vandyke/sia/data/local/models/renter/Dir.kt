@@ -5,7 +5,12 @@
 package com.vandyke.sia.data.local.models.renter
 
 import android.arch.persistence.room.Entity
+import android.arch.persistence.room.PrimaryKey
 import java.math.BigDecimal
 
 @Entity(tableName = "dirs")
-class Dir(path: String, val size: BigDecimal) : Node(path)
+class Dir(
+        @PrimaryKey
+        override val path: String,
+        override val size: BigDecimal
+) : Node()

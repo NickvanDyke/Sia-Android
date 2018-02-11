@@ -9,7 +9,7 @@ import android.arch.persistence.room.PrimaryKey
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.vandyke.sia.util.SCUtil
+import com.vandyke.sia.util.SiaUtil
 import java.math.BigDecimal
 
 @Entity(tableName = "consensus")
@@ -28,5 +28,5 @@ data class ConsensusData @JsonCreator constructor(
     var timestamp = System.currentTimeMillis()
 
     val syncProgress: Double
-        get() = height.toDouble() / SCUtil.estimatedBlockHeightAt(System.currentTimeMillis() / 1000) * 100
+        get() = height.toDouble() / SiaUtil.estimatedBlockHeightAt(System.currentTimeMillis() / 1000) * 100
 }

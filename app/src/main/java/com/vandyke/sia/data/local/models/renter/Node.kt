@@ -4,19 +4,27 @@
 
 package com.vandyke.sia.data.local.models.renter
 
-import android.arch.persistence.room.Ignore
-import android.arch.persistence.room.PrimaryKey
+import java.math.BigDecimal
 
-open class Node(@PrimaryKey var path: String, var modified: Long = System.currentTimeMillis()) {
+abstract class Node {
+    abstract val path: String
+    abstract val size: BigDecimal
 
-    var name = this.path.substring(this.path.lastIndexOf('/') + 1)
+    val name: String
+        get() = this.path.substring(this.path.lastIndexOf('/') + 1)
 
-    @Ignore
-    val parent = run {
+    val parent: String?
+    get() {
         val index = this.path.lastIndexOf('/')
-        if (index == -1)
-            null
-        else
+        return if (index == -1) {
+            if (this.path == "")
+                null
+            else
+                ""
+        } else {
             this.path.substring(0, index)
+        }
     }
 }
+
+fun String.withTrailingSlashIfNotEmpty() = if (this.isNotEmpty()) "$this/" else this

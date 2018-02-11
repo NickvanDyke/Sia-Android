@@ -8,11 +8,13 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.view.View
 import android.widget.Toast
 import com.android.billingclient.api.*
 import com.vandyke.sia.R
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.ui.main.MainActivity
+import com.vandyke.sia.util.Analytics
 import kotlinx.android.synthetic.main.activity_purchase.*
 
 class PurchaseActivity : AppCompatActivity(), PurchasesUpdatedListener {
@@ -27,8 +29,18 @@ class PurchaseActivity : AppCompatActivity(), PurchasesUpdatedListener {
         client = BillingClient.newBuilder(this).setListener(this).build()
         client.startConnection(object : BillingClientStateListener {
             override fun onBillingSetupFinished(responseCode: Int) {
-                if (pending)
-                    launchSubscriptionPurchase()
+                if (responseCode == BillingClient.BillingResponse.OK) {
+                    val purchases = client.queryPurchases(BillingClient.SkuType.SUBS)
+                    if (purchases.responseCode == BillingClient.BillingResponse.OK) {
+                        val purchased = purchases.purchasesList?.find { it.sku == overall_sub_sku } != null
+                        if (purchased) {
+                            Prefs.requirePurchaseAt = 0
+                            goToMainActivity()
+                        } else if (pending) {
+                            launchSubscriptionPurchase()
+                        }
+                    }
+                }
             }
 
             override fun onBillingServiceDisconnected() {
@@ -40,7 +52,18 @@ class PurchaseActivity : AppCompatActivity(), PurchasesUpdatedListener {
                 launchSubscriptionPurchase()
             } else {
                 pending = true
-                Toast.makeText(this, "Google Play Billing is still connecting", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Google Play Billing isn't connected", Toast.LENGTH_LONG).show()
+            }
+        }
+
+        if (Prefs.delayedPurchase && System.currentTimeMillis() > Prefs.requirePurchaseAt) {
+            later.visibility = View.GONE
+        } else {
+            later.setOnClickListener {
+                Prefs.delayedPurchase = true
+                Prefs.requirePurchaseAt = System.currentTimeMillis() + 86400000 /* one day in the future */
+                Analytics.subscribeLater()
+                goToMainActivity()
             }
         }
     }
@@ -49,9 +72,10 @@ class PurchaseActivity : AppCompatActivity(), PurchasesUpdatedListener {
         if (responseCode == BillingClient.BillingResponse.ITEM_ALREADY_OWNED
                 || purchases?.find { it.sku == overall_sub_sku } != null
                 || client.queryPurchases(BillingClient.SkuType.SUBS).purchasesList.find { it.sku == overall_sub_sku } != null) {
-            Prefs.cachedPurchased = true
-            finish()
-            startActivity(Intent(this, MainActivity::class.java))
+            Prefs.requirePurchaseAt = 0
+            Toast.makeText(this, "Thanks, enjoy! I look forward to bringing you updates.", Toast.LENGTH_LONG).show()
+            Analytics.subscribe()
+            goToMainActivity()
         }
     }
 
@@ -72,9 +96,15 @@ class PurchaseActivity : AppCompatActivity(), PurchasesUpdatedListener {
         }
     }
 
+    private fun goToMainActivity() {
+        finish()
+        startActivity(Intent(this, MainActivity::class.java))
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-        client.endConnection()
+        if (client.isReady)
+            client.endConnection()
     }
 
     companion object {

@@ -20,7 +20,7 @@ fun Throwable.customMsg(): String {
         is CompositeException -> this.exceptions[0].localizedMessage
         else -> {
             if (this !is SiaException)
-                Log.d("LOOK", "customMsg() called on ${this.javaClass.simpleName} without a custom msg implemented")
+                Log.d("LOOK", "customMsg() called on ${this.javaClass.simpleName} without a custom text implemented")
             localizedMessage
         }
     }

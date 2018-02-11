@@ -4,10 +4,12 @@
 
 package com.vandyke.sia.ui.renter.files.view
 
+import android.Manifest
 import android.app.Activity.RESULT_OK
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.PorterDuff
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
@@ -15,17 +17,22 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.*
 import android.support.v7.widget.SearchView
-import android.view.*
-import android.widget.*
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.EditText
+import android.widget.Spinner
 import com.vandyke.sia.R
 import com.vandyke.sia.appComponent
-import com.vandyke.sia.data.repository.FilesRepository.SortBy
+import com.vandyke.sia.data.repository.FilesRepository.OrderBy
 import com.vandyke.sia.data.siad.SiadSource
 import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.ui.renter.files.view.list.NodesAdapter
 import com.vandyke.sia.ui.renter.files.viewmodel.FilesViewModel
-import com.vandyke.sia.util.GenUtil
-import com.vandyke.sia.util.snackbar
+import com.vandyke.sia.util.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_renter_files.*
 import javax.inject.Inject
@@ -36,9 +43,11 @@ class FilesFragment : BaseFragment() {
     override val layoutResId: Int = R.layout.fragment_renter_files
     override val hasOptionsMenu = true
 
-    @Inject lateinit var factory: ViewModelProvider.Factory
+    @Inject
+    lateinit var factory: ViewModelProvider.Factory
     private lateinit var viewModel: FilesViewModel
-    @Inject lateinit var siadSource: SiadSource
+    @Inject
+    lateinit var siadSource: SiadSource
 
     private var searchItem: MenuItem? = null
     private var searchView: SearchView? = null
@@ -98,32 +107,36 @@ class FilesFragment : BaseFragment() {
         /* FAB stuff */
         fabAddFile.setOnClickListener {
             fabFilesMenu.close(true)
-            val intent = Intent(Intent.ACTION_GET_CONTENT)
-            intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true)
-            intent.putExtra(Intent.CATEGORY_OPENABLE, true) // should I have this set?
-            intent.type = "*/*"
-            startActivityForResult(Intent.createChooser(intent, "Upload a file"), FILE_REQUEST_CODE)
+            if (ContextCompat.checkSelfPermission(context!!, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_READ_EXTERNAL_STORAGE)
+            } else {
+                launchSAF()
+            }
         }
 
         fabAddDir.setOnClickListener {
             fabFilesMenu.close(true)
-            val dialogView = layoutInflater.inflate(R.layout.fragment_renter_add_dir, null, false)
-            val dialog = AlertDialog.Builder(context!!)
+            val dialogView = layoutInflater.inflate(R.layout.edit_text_field, null, false)
+            AlertDialog.Builder(context!!)
                     .setTitle("New directory")
                     .setView(dialogView)
-                    .setPositiveButton("Create", { dialogInterface, i ->
-                        viewModel.createDir(dialogView.findViewById<EditText>(R.id.newDirName).text.toString())
+                    .setPositiveButton("Create", { _, _ ->
+                        viewModel.createDir(dialogView.findViewById<EditText>(R.id.field).text.toString())
                     })
                     .setNegativeButton("Cancel", null)
-                    .create()
-            dialog.show()
-            dialog.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+                    .showDialogAndKeyboard()
+            // TODO: pressing enter on KB should create the dir, or rename it, or whatever the dialog is for. Should make an abstraction for this type of dialog
         }
 
         /* observe viewModel stuff */
         viewModel.currentDir.observe(this) {
             pathAdapter.clear()
-            val path = it.path.split('/')
+            /* need to handle it a bit differently since the root dir's name is "" */
+            val path = if (it.path.isNotEmpty())
+                it.path.split('/').toMutableList()
+            else
+                mutableListOf()
+            path.add(0, "Home")
             path.forEach {
                 pathAdapter.add(it)
             }
@@ -134,16 +147,21 @@ class FilesFragment : BaseFragment() {
         viewModel.displayedNodes.observe(this) {
             nodesAdapter.display(it)
         }
-
+      
         viewModel.viewTypeList.observe(this) {
             setViewType(it)
+        }
+      
+        viewModel.selectedNodes.observe(this) {
+            selectedMenu.visibility = if (it.isEmpty()) View.GONE else View.VISIBLE
+            numSelected.text = ("${it.size} ${if (it.size == 1) "item" else "items"}")
         }
 
         viewModel.ascending.observe(this) {
             ascendingItem?.isChecked = it
         }
 
-        viewModel.sortBy.observe(this) {
+        viewModel.orderBy.observe(this) {
             setCheckedOrderByItem()
         }
 
@@ -159,7 +177,7 @@ class FilesFragment : BaseFragment() {
         }
 
         viewModel.error.observe(this) {
-            it.snackbar(coordinator) // TODO: make FAB move up when snackbar appears
+            it.snackbar(coordinator)
             nodesListRefresh.isRefreshing = false
         }
 
@@ -172,9 +190,28 @@ class FilesFragment : BaseFragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == FILE_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
             val uri = data.data
+            val path = FileUtils.getPath(context, uri) // TODO: not sure if this will work for all sources of files
             println(uri)
             println(uri.path)
-            // TODO: call uploadFile() or whatever on the VM using this info
+            println(path)
+            if (path == null) {
+                Analytics.unsupportedDataSource(uri)
+                AlertDialog.Builder(context!!)
+                        .setTitle("Unsupported")
+                        .setMessage("Sia for Android doesn't currently support uploading files from that source, sorry.")
+                        .setPositiveButton("Close", null)
+                        .show()
+            } else {
+                viewModel.addFile(path)
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        if (requestCode == REQUEST_READ_EXTERNAL_STORAGE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                launchSAF()
+            }
         }
     }
 
@@ -210,7 +247,7 @@ class FilesFragment : BaseFragment() {
             }
 
             override fun onQueryTextSubmit(query: String): Boolean {
-                GenUtil.hideSoftKeyboard(activity)
+                KeyboardUtil.hideKeyboard(activity)
                 return true
             }
         })
@@ -225,7 +262,6 @@ class FilesFragment : BaseFragment() {
         orderByItems.clear()
         orderByItems.add(menu.findItem(R.id.orderByName))
         orderByItems.add(menu.findItem(R.id.orderBySize))
-        orderByItems.add(menu.findItem(R.id.orderByModified))
         setCheckedOrderByItem()
     }
 
@@ -236,15 +272,11 @@ class FilesFragment : BaseFragment() {
             false
         }
         R.id.orderByName -> {
-            viewModel.sortBy.value = SortBy.NAME
+            viewModel.orderBy.value = OrderBy.PATH
             false
         }
         R.id.orderBySize -> {
-            viewModel.sortBy.value = SortBy.SIZE
-            false
-        }
-        R.id.orderByModified -> {
-            viewModel.sortBy.value = SortBy.MODIFIED
+            viewModel.orderBy.value = OrderBy.SIZE
             false
         }
         R.id.viewTypeList -> {
@@ -264,12 +296,12 @@ class FilesFragment : BaseFragment() {
         viewTypeList?.isVisible = !viewModel.viewTypeList.value
         viewTypeGrid?.isVisible = viewModel.viewTypeList.value
     }
-
-    /** The order of the SortBy enum values and the order of the sort by options in the list must be the same for this to work */
+  
+    /** The order of the OrderBy enum values and the order of the sort by options in the list must be the same for this to work */
     private fun setCheckedOrderByItem() {
-        val sortBy = viewModel.sortBy.value
+        val orderBy = viewModel.orderBy.value
         orderByItems.forEachIndexed { i, item ->
-            if (i == sortBy.ordinal) {
+            if (i == orderBy.ordinal) {
                 item.isChecked = true
                 item.isCheckable = true
             } else {
@@ -280,13 +312,14 @@ class FilesFragment : BaseFragment() {
     }
 
     private fun setSearchHint() {
-        if (viewModel.currentDirPath == "root")
+        if (viewModel.currentDirPath.isEmpty())
             searchView?.queryHint = "Search..."
         else
             searchView?.queryHint = "Search ${viewModel.currentDir.value.name}..."
     }
 
-    private fun setViewType (visible: Boolean) {
+
+    private fun setViewType(visible: Boolean) {
         activity!!.invalidateOptionsMenu()
         nodesAdapter.toggleListViewType(visible)
         if (visible) {
@@ -299,6 +332,15 @@ class FilesFragment : BaseFragment() {
             nodesList.removeItemDecoration(verticalDecoration)
         }
         nodesList.adapter = nodesAdapter
+    }
+  
+    private fun launchSAF() {
+        // TODO: crashes when choosing a contact from the SAF. Need to prevent being able to choose it. I thought CATEGORY_OPENABLE would but I guess not
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true)
+        intent.putExtra(Intent.CATEGORY_OPENABLE, true)
+        intent.type = "*/*"
+        startActivityForResult(Intent.createChooser(intent, "Upload a file"), FILE_REQUEST_CODE)
     }
 
     override fun onBackPressed(): Boolean {
@@ -321,11 +363,12 @@ class FilesFragment : BaseFragment() {
         setActionBarTitleDisplayed(true)
     }
 
-    companion object {
-        val FILE_REQUEST_CODE = 5424
-    }
-
     private fun setActionBarTitleDisplayed(visible: Boolean) {
         (activity as AppCompatActivity).supportActionBar!!.setDisplayShowTitleEnabled(visible)
+    }
+
+    companion object {
+        private const val FILE_REQUEST_CODE = 5424
+        private const val REQUEST_READ_EXTERNAL_STORAGE = 70
     }
 }

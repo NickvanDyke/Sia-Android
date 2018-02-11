@@ -30,6 +30,7 @@ import com.vandyke.sia.ui.wallet.view.childfragments.*
 import com.vandyke.sia.ui.wallet.view.transactionslist.TransactionAdapter
 import com.vandyke.sia.ui.wallet.viewmodel.WalletViewModel
 import com.vandyke.sia.util.*
+import com.vandyke.sia.util.rx.observe
 import io.reactivex.exceptions.CompositeException
 import kotlinx.android.synthetic.main.fragment_wallet.*
 import java.math.BigDecimal
@@ -89,7 +90,8 @@ class WalletFragment : BaseFragment() {
         balanceText.setOnClickListener { v ->
             AlertDialog.Builder(v.context)
                     .setTitle("Exact Balance")
-                    .setMessage("${viewModel.wallet.value?.confirmedSiacoinBalance?.toSC()?.toPlainString() ?: 0} Siacoins")
+                    .setMessage("${viewModel.wallet.value?.confirmedSiacoinBalance?.toSC()?.toPlainString()
+                            ?: 0} Siacoins")
                     .setPositiveButton("Close", null)
                     .show()
         }
@@ -134,6 +136,8 @@ class WalletFragment : BaseFragment() {
         }
 
         viewModel.transactions.observe(this) {
+            if (it.isNotEmpty())
+                Prefs.displayedTransaction = true
             adapter.update(it.filterNot { Prefs.hideZero && it.isNetZero })
         }
 
@@ -217,15 +221,15 @@ class WalletFragment : BaseFragment() {
     }
 
     fun collapseFrame() {
+        expandedFragment = null
+        setFabIcon()
         expandableFrame.collapseVertically({
             val currentChildFragment = childFragmentManager.findFragmentById(R.id.expandableFrame)
             if (currentChildFragment != null)
                 childFragmentManager.beginTransaction().remove(currentChildFragment).commit()
             setProgressColor(android.R.color.white)
-            expandedFragment = null
-            setFabIcon()
         })
-        GenUtil.hideSoftKeyboard(activity!!)
+        KeyboardUtil.hideKeyboard(activity!!)
     }
 
     override fun onShow() {

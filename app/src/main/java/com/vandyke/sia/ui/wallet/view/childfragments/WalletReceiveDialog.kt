@@ -8,7 +8,7 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.view.View
 import com.vandyke.sia.R
-import com.vandyke.sia.util.GenUtil
+import com.vandyke.sia.util.KeyboardUtil
 import com.vandyke.sia.util.SnackbarUtil
 import com.vandyke.sia.util.customMsg
 import kotlinx.android.synthetic.main.fragment_wallet_receive.*
@@ -30,7 +30,7 @@ class WalletReceiveDialog : BaseWalletFragment() {
         })
 
         receiveAddress.setOnClickListener {
-            GenUtil.copyToClipboard(context!!, receiveAddress.text)
+            KeyboardUtil.copyToClipboard(context!!, receiveAddress.text)
             SnackbarUtil.showSnackbar(view, "Copied receive address", Snackbar.LENGTH_SHORT)
         }
     }

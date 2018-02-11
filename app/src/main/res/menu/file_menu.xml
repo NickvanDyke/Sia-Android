@@ -8,12 +8,9 @@
         android:title="Download"
         android:id="@+id/fileDownload"/>
     <item
-        android:title="Delete"
-        android:id="@+id/fileDelete"/>
-    <item
         android:title="Rename"
         android:id="@+id/fileRename"/>
     <item
-        android:title="Move"
-        android:id="@+id/fileMove"/>
+        android:title="Delete"
+        android:id="@+id/fileDelete"/>
 </menu>

@@ -45,7 +45,6 @@
         Sia developers that can interface with all of Sia\'s API endpoints; you can type --help and press enter for a list
         of commands. The purpose of this terminal and its use of siac is to make available to you commands that might not
         yet be part of the mobile graphical interface. While siac is fully functional on a computer, very little testing of
-        it has been done on a mobile device. Functionality is not guaranteed. Use at your own risk.\n\nIf you\'re running a local full node,
-        it\'s output will also appear here.\n\n</string>
+        it has been done on a mobile device. Functionality is not guaranteed. Use at your own risk.\n\nThe Sia node\'s output will also appear here.\n\n</string>
 
 </resources>

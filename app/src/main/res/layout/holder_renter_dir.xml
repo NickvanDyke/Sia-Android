@@ -4,14 +4,13 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    style="@style/cardStyle">
+    android:layout_height="72dp"
+    android:background="?android:attr/selectableItemBackground">
 
     <TextView
         android:id="@+id/dirName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:text="Name"
         app:layout_constraintBottom_toTopOf="@+id/dirSize"
@@ -19,12 +18,11 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
         android:id="@+id/dirImage"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:layout_marginBottom="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_width="72dp"
+        android:layout_height="0dp"
         android:src="@drawable/ic_folder"
         android:tint="@android:color/darker_gray"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -43,12 +41,11 @@
         app:layout_constraintTop_toBottomOf="@+id/dirName" />
 
     <ImageButton
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
         android:id="@+id/dirMore"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_height="0dp"
         android:background="@null"
         android:src="@drawable/ic_more_vert"
         android:tint="@android:color/darker_gray"

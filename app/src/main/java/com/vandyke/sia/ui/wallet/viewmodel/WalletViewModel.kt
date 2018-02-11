@@ -12,7 +12,9 @@ import com.vandyke.sia.data.repository.ConsensusRepository
 import com.vandyke.sia.data.repository.GatewayRepository
 import com.vandyke.sia.data.repository.ScValueRepository
 import com.vandyke.sia.data.repository.WalletRepository
-import com.vandyke.sia.util.*
+import com.vandyke.sia.util.Analytics
+import com.vandyke.sia.util.rx.*
+import com.vandyke.sia.util.toSC
 import io.reactivex.Completable
 import io.reactivex.Single
 import javax.inject.Inject
@@ -57,10 +59,6 @@ class WalletViewModel
         }, ::onError)
     }
 
-    /* success and error are immediately set back to null because the view only reacts on
-       non-null values of them, and if they're holding a non-null value and the
-       view is recreated, then it'll display the success/error even though it shouldn't.
-       There might be a better way around that */
     private fun onSuccess(msg: String) {
         activeTasks.decrementZeroMin()
         success.value = msg
@@ -124,12 +122,14 @@ class WalletViewModel
                 onSuccess("Created wallet")
                 refreshWallet()
                 this.seed.value = it.primaryseed
+                Analytics.createWallet(false)
             }, ::onError)
         } else {
             walletRepository.initSeed(password, "english", seed, force).io().main().subscribe({
                 onSuccess("Created wallet")
                 refreshWallet()
                 this.seed.value = seed
+                Analytics.createWallet(true)
             }, ::onError)
         }
     }
@@ -139,6 +139,7 @@ class WalletViewModel
         walletRepository.send(amount, destination).io().main().subscribe({
             onSuccess("Sent ${amount.toSC()} SC to $destination")
             refreshWallet()
+            Analytics.sendSiacoin(amount.toSC())
         }, ::onError)
     }
 
@@ -155,6 +156,7 @@ class WalletViewModel
         walletRepository.sweep("english", seed).io().main().subscribe({
             activeTasks.decrementZeroMin()
             refreshWallet()
+            Analytics.sweepSeed()
         }, ::onError)
     }
 
@@ -166,7 +168,10 @@ class WalletViewModel
         activeTasks.increment()
         return walletRepository.getAddress().io().main()
                 .doOnError { onError(it) }
-                .doAfterSuccess { activeTasks.decrementZeroMin() }
+                .doAfterSuccess {
+                    activeTasks.decrementZeroMin()
+                    Analytics.viewAddress()
+                }
     }
 
     fun getAddresses(): Single<List<AddressData>> {
