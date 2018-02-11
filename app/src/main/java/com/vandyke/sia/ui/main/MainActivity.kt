@@ -19,6 +19,7 @@ import com.android.billingclient.api.BillingClientStateListener
 import com.vandyke.sia.BuildConfig
 import com.vandyke.sia.R
 import com.vandyke.sia.data.local.Prefs
+import com.vandyke.sia.data.siad.SiadService
 import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.ui.onboarding.IntroActivity
 import com.vandyke.sia.ui.onboarding.PurchaseActivity
@@ -62,7 +63,7 @@ class MainActivity : AppCompatActivity() {
                     .setPositiveButton("Close", null)
                     .show()
         } else {
-//            startService(Intent(this, SiadService::class.java))
+            startService(Intent(this, SiadService::class.java))
         }
 
         /* actionbar setup stuff */

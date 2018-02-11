@@ -9,6 +9,7 @@ import android.arch.persistence.room.RawQuery;
 
 import com.vandyke.sia.data.local.models.renter.Dir;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import io.reactivex.Flowable;
@@ -16,6 +17,9 @@ import io.reactivex.Single;
 
 @Dao
 public interface DirDao {
+    @RawQuery(observedEntities = Dir.class)
+    Flowable<List<Dir>> customQuery(final SupportSQLiteQuery query);
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertReplaceIfConflict(Dir dir);
 
@@ -27,6 +31,9 @@ public interface DirDao {
 
     @Query("UPDATE dirs SET path = REPLACE(SUBSTR(path, 0, LENGTH(:path) + 1), :path, :newPath) || SUBSTR(path, LENGTH(:path) + 1) WHERE path == :path OR path LIKE :path || '/%'")
     void updatePath(String path, String newPath);
+
+    @Query("UPDATE dirs SET size = :newSize WHERE path == :path")
+    void updateSize(String path, BigDecimal newSize);
 
     @Query("SELECT * FROM dirs")
     Flowable<List<Dir>> all();
@@ -40,8 +47,8 @@ public interface DirDao {
     @Query("SELECT * FROM dirs WHERE path = :path")
     Single<Dir> getDir(String path);
 
-    @RawQuery(observedEntities = Dir.class)
-    Flowable<List<Dir>> customQuery(final SupportSQLiteQuery query);
+    @Query("SELECT * FROM dirs WHERE INSTR(:filePath, path) == 1")
+    Single<List<Dir>> getDirsContainingFile(String filePath);
 
     @Query("DELETE FROM dirs")
     void deleteAll();

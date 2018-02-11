@@ -42,7 +42,7 @@ class FilesRepository
             /* remove files that are in the local database but not in the Sia API response */
             dbFiles.retainAll { it !in files.files }
             dbFiles.forEach {
-                db.fileDao().deleteFile(it.path)
+                db.fileDao().delete(it.path)
             }
             /* insert each file into the db and also every dir that leads up to it */
             for (file in files.files) {
@@ -62,24 +62,24 @@ class FilesRepository
             db.dirDao().getAll().flatMapObservable { list ->
                 list.toObservable()
             }.flatMapSingle { dir ->
-                Single.zip(db.fileDao().getFilesUnder(dir.path),
-                        Single.just(dir),
-                        BiFunction<List<RenterFileData>, Dir, Pair<Dir, List<RenterFileData>>> { filesUnderDir, dir ->
-                            Pair(dir, filesUnderDir)
-                        })
-            }.subscribe { dirAndItsFiles ->
-                var size = BigDecimal.ZERO
-                dirAndItsFiles.second.forEach { file ->
-                    size += file.size
-                }
-                db.dirDao().insertReplaceIfConflict(Dir(dirAndItsFiles.first.path, size))
-            }
+                        Single.zip(db.fileDao().getFilesUnder(dir.path),
+                                Single.just(dir),
+                                BiFunction<List<RenterFileData>, Dir, Pair<Dir, List<RenterFileData>>> { filesUnderDir, dir ->
+                                    Pair(dir, filesUnderDir)
+                                })
+                    }.subscribe { dirAndItsFiles ->
+                        var size = BigDecimal.ZERO
+                        dirAndItsFiles.second.forEach { file ->
+                            size += file.size
+                        }
+                        db.dirDao().insertReplaceIfConflict(Dir(dirAndItsFiles.first.path, size))
+                    }
         }.toCompletable()!!
     }
 
     fun immediateNodes(path: String, orderBy: OrderBy, ascending: Boolean): Flowable<List<Node>> {
         return Flowable.combineLatest(
-                db.dirDao().getDirs(path, orderBy = orderBy, ascending =  ascending),
+                db.dirDao().getDirs(path, orderBy = orderBy, ascending = ascending),
                 db.fileDao().getFiles(path, orderBy = orderBy, ascending = ascending),
                 BiFunction<List<Dir>, List<RenterFileData>, List<Node>> { dir, file ->
                     return@BiFunction dir + file
@@ -110,7 +110,7 @@ class FilesRepository
 
     fun deleteDir(path: String) = db.fileDao().getFilesUnder(path).doOnSuccess { files ->
         files.forEach {
-            deleteFile(it.path).subscribe()
+            deleteFile(it).subscribe()
         }
         db.dirDao().deleteDirsUnder(path)
         db.dirDao().deleteDir(path)
@@ -118,23 +118,64 @@ class FilesRepository
 
 
     fun moveDir(path: String, newPath: String) = Completable.fromAction {
+        println("moving dir $path to $newPath")
         db.dirDao().updatePath(path, newPath)
+        /* move all the files that were under the dir to the new dir */
         db.fileDao().getFilesUnder(path).subscribe { files ->
-            files.forEach {
-                moveFile(it.path, it.path.replaceFirst(path, newPath)).subscribe()
+            files.forEach { file ->
+                println("moving file ${file.path} to ${file.path.replaceFirst(path, newPath)}")
+                moveFile(file, file.path.replaceFirst(path, newPath), false).subscribe()
+                // TODO: when moveFile updates the dir sizes, it fails to properly subtract it's size
+                // from the size of every dir including and after the one that was moved, since it's path has already changed
             }
         }
     }!!
 
-    /* note that the below methods don't update the local database - they depend on the update method to do that.
-     * Ideally, they should update the database accordingly upon success. TODO */
-    fun addFile(siapath: String, source: String, dataPieces: Int, parityPieces: Int): Completable {
-        return api.renterUpload(siapath, source, dataPieces, parityPieces)
-    }
+    // not sure if I should be inserting a file here, or just let updating do it
+    fun addFile(siapath: String, source: String, dataPieces: Int, parityPieces: Int) = api.renterUpload(siapath, source, dataPieces, parityPieces)
+            .doOnComplete {
+                db.fileDao().insert(RenterFileData(
+                        siapath,
+                        source,
+                        BigDecimal.ZERO,
+                        false,
+                        false,
+                        0.0,
+                        0,
+                        0,
+                        0
+                ))
+            }!!
 
-    fun deleteFile(path: String): Completable = api.renterDelete(path)
+    fun deleteFile(file: RenterFileData): Completable = api.renterDelete(file.path).doOnComplete {
+        db.fileDao().delete(file.path)
+        /* subtract the file's size from the directories that it was previously in */
+        db.dirDao().getDirsContainingFile(file.path).subscribe { dirs ->
+            dirs.forEach { dir ->
+                db.dirDao().updateSize(dir.path, dir.size - file.size)
+            }
+        }
+    }!!
 
-    fun moveFile(siapath: String, newSiapath: String) = api.renterRename(siapath, newSiapath)
+    fun moveFile(file: RenterFileData, newSiapath: String, updateDirSizes: Boolean = true) = api.renterRename(file.path, newSiapath).doOnComplete {
+        db.fileDao().updatePath(file.path, newSiapath)
+        if (updateDirSizes) {
+            /* subtract the file's size from the directories that it was moved out of */
+            db.dirDao().getDirsContainingFile(file.path).subscribe { dirs ->
+                dirs.forEach { dir ->
+                    println("subtracting size of ${file.path} from ${dir.path}")
+                    db.dirDao().updateSize(dir.path, dir.size - file.size)
+                }
+            }
+            /* add the file's size to the directories that it was moved into */
+            db.dirDao().getDirsContainingFile(newSiapath).subscribe { dirs ->
+                dirs.forEach { dir ->
+                    println("adding size of $newSiapath to ${dir.path}")
+                    db.dirDao().updateSize(dir.path, dir.size + file.size)
+                }
+            }
+        }
+    }!!
 
     enum class OrderBy(val text: String) {
         PATH("path"),

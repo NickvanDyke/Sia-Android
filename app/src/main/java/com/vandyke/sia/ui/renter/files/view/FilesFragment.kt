@@ -117,6 +117,7 @@ class FilesFragment : BaseFragment() {
                     })
                     .setNegativeButton("Cancel", null)
                     .showDialogAndKeyboard()
+            // TODO: pressing enter on KB should create the dir, or rename it, or whatever the dialog is for. Should make an abstraction for this type of dialog
         }
 
         /* observe viewModel stuff */

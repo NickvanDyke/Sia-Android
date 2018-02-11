@@ -107,6 +107,10 @@ class FilesViewModel
         selectedNodes.value = selectedNodes.value.filterNot { it.path == node.path }
     }
 
+    fun deselectAll() {
+        selectedNodes.value = listOf()
+    }
+
     fun toggleSelect(node: Node) {
         if (selectedNodes.value.find { it.path == node.path } != null)
             deselect(node)
@@ -137,6 +141,14 @@ class FilesViewModel
         }
     }
 
+    fun downloadFile(file: RenterFileData) {
+        TODO()
+    }
+
+    fun downloadDir(dir: Dir) {
+        TODO()
+    }
+
     /** Creates a new directory with the given name in the current directory */
     fun createDir(name: String) {
         this.filesRepository.createDir("${currentDirPath.withTrailingSlashIfNotEmpty()}$name"
@@ -148,17 +160,17 @@ class FilesViewModel
     }
 
     fun deleteFile(file: RenterFileData) {
-        this.filesRepository.deleteFile(file.path).io().main().subscribe(::refresh, ::onError)
+        this.filesRepository.deleteFile(file).io().main().subscribe({}, ::onError)
     }
 
     fun addFile(source: String) {
         val path = currentDirPath.withTrailingSlashIfNotEmpty() + source.substring(source.lastIndexOf('/') + 1)
-        this.filesRepository.addFile(path, source, 10, 20).io().main().subscribe(::refresh, ::onError)
+        this.filesRepository.addFile(path, source, 10, 20).io().main().subscribe({}, ::onError)
     }
 
     fun renameFile(file: RenterFileData, newName: String) {
         val parentPath = file.parent!!.withTrailingSlashIfNotEmpty()
-        this.filesRepository.moveFile(file.path, "$parentPath$newName")
+        this.filesRepository.moveFile(file, "$parentPath$newName")
                 .io().main().subscribe({}, ::onError)
     }
 

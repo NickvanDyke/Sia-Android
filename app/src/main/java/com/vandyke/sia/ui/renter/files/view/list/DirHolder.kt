@@ -61,7 +61,7 @@ class DirHolder(itemView: View, val viewModel: FilesViewModel) : NodeHolder(item
                             .setNegativeButton("Cancel", null)
                             .showDialogAndKeyboard()
                 }
-                R.id.dirMove -> TODO()
+                R.id.dirDownload -> TODO()
             }
             true
         }

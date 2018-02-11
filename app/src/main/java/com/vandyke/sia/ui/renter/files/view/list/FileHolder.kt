@@ -57,6 +57,7 @@ class FileHolder(itemView: View, val viewModel: FilesViewModel) : NodeHolder(ite
                             .showDialogAndKeyboard()
                 }
                 R.id.fileDelete -> viewModel.deleteFile(file)
+                R.id.fileDownload -> TODO()
             }
             true
         }
