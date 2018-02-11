@@ -35,6 +35,7 @@ object Prefs : KotprefModel() {
     var runSiaInBackground by booleanPref(true)
     var runSiaOnData by booleanPref(false)
 
+    var viewTypeList by booleanPref(true)
     var ascending by booleanPref(true)
     var orderBy by enumOrdinalPref(FilesRepository.OrderBy.PATH)
 }

@@ -13,6 +13,18 @@
         app:showAsAction="collapseActionView|always" />
 
     <item
+        android:id="@+id/viewTypeGrid"
+        android:icon="@drawable/ic_view_module"
+        android:title="View as Grid"
+        app:showAsAction="ifRoom"
+        android:visible="false" />
+    <item
+        android:id="@+id/viewTypeList"
+        android:icon="@drawable/ic_view_list"
+        android:title="View as List"
+        app:showAsAction="ifRoom"
+        android:visible="false" />
+    <item
         android:icon="@drawable/ic_sort"
         android:title="Order by"
         app:showAsAction="ifRoom">

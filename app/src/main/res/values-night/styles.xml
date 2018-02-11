@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="cardStyle">
+        <item name="android:background">@color/cardNightColor</item>
+        <item name="android:foreground">?android:selectableItemBackground</item>
+    </style>
+    <style name="cardFooterStyle">
+        <item name="android:background">@android:color/white</item>
+        <item name="android:alpha">0.1</item>
+    </style>
+</resources>

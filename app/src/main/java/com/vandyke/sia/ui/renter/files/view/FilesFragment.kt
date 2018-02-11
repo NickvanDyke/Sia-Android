@@ -15,6 +15,7 @@ import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.*
 import android.support.v7.widget.SearchView
 import android.view.Menu
 import android.view.MenuInflater
@@ -35,6 +36,7 @@ import com.vandyke.sia.util.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_renter_files.*
 import javax.inject.Inject
+import com.vandyke.sia.util.LayoutUtil
 
 
 class FilesFragment : BaseFragment() {
@@ -52,6 +54,10 @@ class FilesFragment : BaseFragment() {
     /** searchItem.isActionViewExpanded() doesn't always return the correct value? so need to keep track ourselves and use that */
     private var searchIsExpanded = false
 
+    private var viewTypeList: MenuItem? = null
+    private var viewTypeGrid: MenuItem? = null
+    private var verticalDecoration: DividerItemDecoration? = null
+
     private var ascendingItem: MenuItem? = null
     private val orderByItems = mutableListOf<MenuItem>()
 
@@ -68,6 +74,8 @@ class FilesFragment : BaseFragment() {
         /* set up nodes list */
         nodesAdapter = NodesAdapter(viewModel)
         nodesList.adapter = nodesAdapter
+        nodesList.layoutManager = LinearLayoutManager(context)
+        verticalDecoration = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
 
         pathAdapter = ArrayAdapter(context, R.layout.spinner_selected_item)
         pathAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -139,7 +147,11 @@ class FilesFragment : BaseFragment() {
         viewModel.displayedNodes.observe(this) {
             nodesAdapter.display(it)
         }
-
+      
+        viewModel.viewTypeList.observe(this) {
+            setViewType(it)
+        }
+      
         viewModel.selectedNodes.observe(this) {
             selectedMenu.visibility = if (it.isEmpty()) View.GONE else View.VISIBLE
             numSelected.text = ("${it.size} ${if (it.size == 1) "item" else "items"}")
@@ -240,6 +252,9 @@ class FilesFragment : BaseFragment() {
             }
         })
 
+        viewTypeList = menu.findItem(R.id.viewTypeList)
+        viewTypeGrid = menu.findItem(R.id.viewTypeGrid)
+
         ascendingItem = menu.findItem(R.id.ascendingToggle)
         ascendingItem!!.isChecked = viewModel.ascending.value
 
@@ -264,9 +279,24 @@ class FilesFragment : BaseFragment() {
             viewModel.orderBy.value = OrderBy.SIZE
             false
         }
+        R.id.viewTypeList -> {
+            viewModel.viewTypeList.value = true
+            false
+        }
+        R.id.viewTypeGrid -> {
+            viewModel.viewTypeList.value = false
+            false
+        }
         else -> super.onOptionsItemSelected(item)
     }
 
+    override fun onPrepareOptionsMenu(menu: Menu?) {
+        super.onPrepareOptionsMenu(menu)
+
+        viewTypeList?.isVisible = !viewModel.viewTypeList.value
+        viewTypeGrid?.isVisible = viewModel.viewTypeList.value
+    }
+  
     /** The order of the OrderBy enum values and the order of the sort by options in the list must be the same for this to work */
     private fun setCheckedOrderByItem() {
         val orderBy = viewModel.orderBy.value
@@ -288,6 +318,22 @@ class FilesFragment : BaseFragment() {
             searchView?.queryHint = "Search ${viewModel.currentDir.value.name}..."
     }
 
+
+    private fun setViewType(visible: Boolean) {
+        activity!!.invalidateOptionsMenu()
+        nodesAdapter.toggleListViewType(visible)
+        if (visible) {
+            nodesList.layoutManager = LinearLayoutManager(context)
+            nodesList.addItemDecoration(verticalDecoration)
+        } else {
+            nodesList.layoutManager = GridLayoutManager(
+                context, LayoutUtil.calculateNoOfColumns(context!!)
+            )
+            nodesList.removeItemDecoration(verticalDecoration)
+        }
+        nodesList.adapter = nodesAdapter
+    }
+  
     private fun launchSAF() {
         // TODO: crashes when choosing a contact from the SAF. Need to prevent being able to choose it. I thought CATEGORY_OPENABLE would but I guess not
         val intent = Intent(Intent.ACTION_GET_CONTENT)

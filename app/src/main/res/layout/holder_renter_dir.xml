@@ -13,7 +13,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="Name"
-        android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/dirSize"
         app:layout_constraintStart_toEndOf="@+id/dirImage"
         app:layout_constraintTop_toTopOf="parent" />

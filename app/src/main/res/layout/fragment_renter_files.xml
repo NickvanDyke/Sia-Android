@@ -32,7 +32,7 @@
         android:background="@drawable/selected_items_bg"
         android:elevation="3dp"
         app:layout_behavior="com.vandyke.sia.ui.common.SnackbarRaiseBehavior">
-
+      
         <TextView
             android:id="@+id/numSelected"
             android:text="0 items"
@@ -43,7 +43,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
-
 
     </android.support.constraint.ConstraintLayout>
 
