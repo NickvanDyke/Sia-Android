@@ -45,7 +45,7 @@
         android:layout_height="48dp"
         android:adjustViewBounds="true"
         android:layout_marginEnd="16dp"
-        android:background="@null"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
         android:contentDescription="Scan QR code"
         android:scaleType="fitCenter"
         android:src="@drawable/qr_image"

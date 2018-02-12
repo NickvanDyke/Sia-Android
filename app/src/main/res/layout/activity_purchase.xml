@@ -61,7 +61,7 @@
         android:layout_marginEnd="32dp"
         android:layout_marginStart="32dp"
         android:layout_marginTop="16dp"
-        android:background="@null"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
         android:text="Ask me again in a day"
         android:textColor="@color/colorPrimary"
         app:layout_constraintBottom_toBottomOf="parent"

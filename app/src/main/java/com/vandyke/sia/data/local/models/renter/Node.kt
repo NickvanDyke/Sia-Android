@@ -11,20 +11,24 @@ abstract class Node {
     abstract val size: BigDecimal
 
     val name: String
-        get() = this.path.substring(this.path.lastIndexOf('/') + 1)
+        get() = this.path.name()
 
     val parent: String?
-    get() {
-        val index = this.path.lastIndexOf('/')
-        return if (index == -1) {
-            if (this.path == "")
-                null
-            else
-                ""
-        } else {
-            this.path.substring(0, index)
-        }
-    }
+        get() = this.path.parent()
 }
 
 fun String.withTrailingSlashIfNotEmpty() = if (this.isNotEmpty()) "$this/" else this
+
+fun String.parent(): String? {
+    val index = this.lastIndexOf('/')
+    return if (index == -1) {
+        if (this == "")
+            null
+        else
+            ""
+    } else {
+        this.substring(0, index)
+    }
+}
+
+fun String.name(): String = this.substring(this.lastIndexOf('/') + 1)

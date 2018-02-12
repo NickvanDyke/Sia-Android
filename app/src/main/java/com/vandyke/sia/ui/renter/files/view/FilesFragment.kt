@@ -124,6 +124,23 @@ class FilesFragment : BaseFragment() {
             // TODO: pressing enter on KB should create the dir, or rename it, or whatever the dialog is for. Should make an abstraction for this type of dialog
         }
 
+        /* multi select stuff */
+        multiMove.setOnClickListener {
+            viewModel.multiMove()
+        }
+
+        multiDownload.setOnClickListener {
+            viewModel.multiDownload()
+        }
+
+        multiDelete.setOnClickListener {
+            viewModel.multiDelete()
+        }
+
+        multiDeselect.setOnClickListener {
+            viewModel.deselectAll()
+        }
+
         /* observe viewModel stuff */
         viewModel.currentDir.observe(this) {
             pathAdapter.clear()
@@ -180,6 +197,7 @@ class FilesFragment : BaseFragment() {
         }
 
         viewModel.error.observe(this) {
+            println(it)
             it.snackbar(coordinator)
             nodesListRefresh.isRefreshing = false
         }

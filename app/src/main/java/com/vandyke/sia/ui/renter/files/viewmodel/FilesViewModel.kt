@@ -20,6 +20,7 @@ class FilesViewModel
 @Inject constructor(
         private val filesRepository: FilesRepository
 ) : ViewModel() {
+    // TODO: show progress of operations
     val displayedNodes = NonNullLiveData<List<Node>>(listOf())
     val currentDir = NonNullLiveData<Dir>(Dir("", BigDecimal.ZERO))
 
@@ -87,7 +88,9 @@ class FilesViewModel
             return
         println("changing to dir: $path")
         this.filesRepository.getDir(path).io().main().subscribe({
-            // maybe this would be better as a flowable
+            // maybe this would be better as a flowable. But that caused some other problems
+            // when trying. And it also doesn't emit when the current dir no longer exists, which
+            // would have been one of the main advantages
             currentDir.value = it
             setDisplayedNodes()
         }, {
@@ -98,9 +101,9 @@ class FilesViewModel
     }
 
     fun select(node: Node) {
-        val new = mutableListOf(node)
-        new.addAll(selectedNodes.value)
-        selectedNodes.value = new
+        val new = selectedNodes.value.toMutableList()
+        new.add(node)
+        selectedNodes.value = new.toList()
     }
 
     fun deselect(node: Node) {
@@ -116,6 +119,30 @@ class FilesViewModel
             deselect(node)
         else
             select(node)
+    }
+
+    fun multiDelete() {
+        activeTasks.increment()
+        filesRepository.multiDelete(selectedNodes.value).io().main().subscribe({
+            activeTasks.decrementZeroMin()
+            deselectAll()
+        }, ::onError)
+    }
+
+    fun multiDownload() {
+        activeTasks.increment()
+        filesRepository.multiDownload(selectedNodes.value).io().main().subscribe({
+            activeTasks.decrementZeroMin()
+            deselectAll()
+        }, ::onError)
+    }
+
+    fun multiMove() {
+        activeTasks.increment()
+        filesRepository.multiMove(selectedNodes.value, currentDirPath).io().main().subscribe({
+            activeTasks.decrementZeroMin()
+            deselectAll()
+        }, ::onError)
     }
 
     /** subscribes to the proper source for the displayed nodes, depending on the state of the viewmodel */
@@ -176,7 +203,7 @@ class FilesViewModel
 
     fun renameDir(dir: Dir, newName: String) {
         val parentPath = dir.parent!!.withTrailingSlashIfNotEmpty()
-        this.filesRepository.moveDir(dir.path, "$parentPath$newName")
+        this.filesRepository.moveDir(dir, "$parentPath$newName")
                 .io().main().subscribe({}, ::onError)
     }
 
