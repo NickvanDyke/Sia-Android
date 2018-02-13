@@ -17,18 +17,6 @@ abstract class Node {
 
 fun String.withTrailingSlashIfNotEmpty() = if (this.isNotEmpty()) "$this/" else this
 
-//fun String.parent(): String? {
-//    val index = this.lastIndexOf('/')
-//    return if (index == -1) {
-//        if (this == "")
-//            null
-//        else
-//            ""
-//    } else {
-//        this.substring(0, index)
-//    }
-//}
-
 fun String.name(): String = this.substring(this.lastIndexOf('/') + 1)
 
 fun List<Node>.sumSize(): BigDecimal {

@@ -21,13 +21,11 @@ class FilesViewModel
         private val filesRepository: FilesRepository
 ) : ViewModel() {
     // TODO: show progress of operations
-    val displayedNodes = NonNullLiveData<List<Node>>(listOf())
     val currentDir = NonNullLiveData<Dir>(Dir("", BigDecimal.ZERO))
-
-    val selectedNodes = NonNullLiveData(listOf<Node>())
+    val displayedNodes = NonNullLiveData<List<Node>>(listOf())
 
     val searching = NonNullLiveData(false)
-    val searchTerm = NonNullLiveData("") // maybe bind this to the search query?
+    val searchTerm = NonNullLiveData("")
 
     val viewAsList = NonNullLiveData(Prefs.viewAsList)
     val ascending = NonNullLiveData(Prefs.ascending)
@@ -40,8 +38,11 @@ class FilesViewModel
     val currentDirPath
         get() = currentDir.value.path
 
+    val selectedNodes = NonNullLiveData(listOf<Node>())
     val selecting
         get() = selectedNodes.value.isNotEmpty()
+    val allSelectedAreInCurrentDir
+        get() = selectedNodes.value.all { it.parent == currentDirPath }
 
     /** the subscription to the database flowable that emits items in the current path */
     private var nodesSubscription: Disposable? = null
@@ -74,14 +75,8 @@ class FilesViewModel
         filesRepository.updateFilesAndDirs()
                 .io()
                 .main()
-                .doOnSubscribe {
-                    activeTasks.increment()
-                    refreshing.value = true
-                }
-                .doFinally {
-                    activeTasks.decrementZeroMin()
-                    refreshing.value = false
-                }
+                .track(activeTasks)
+                .track(refreshing)
                 .subscribe({}, ::onError)
         // TODO: check that current directory is still valid
     }

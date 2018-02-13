@@ -10,28 +10,28 @@ import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.Query
 import com.vandyke.sia.data.models.wallet.TransactionData
 import io.reactivex.Flowable
-import org.intellij.lang.annotations.Language
+import io.reactivex.Single
 
 @Dao
-abstract class TransactionDao {
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    abstract fun insert(tx: TransactionData)
+interface TransactionDao {
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertReplaceOnConflict(tx: TransactionData)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    abstract fun insertAll(txs: List<TransactionData>)
+    fun insertIgnoreOnConflict(tx: TransactionData)
 
-    @Language("RoomSql")
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    fun insertAll(txs: List<TransactionData>)
+
+    @Query("SELECT * FROM transactions")
+    fun getAll(): Single<List<TransactionData>>
+
     @Query("SELECT * FROM transactions ORDER BY confirmationTimestamp DESC")
-    abstract fun allByMostRecent(): Flowable<List<TransactionData>>
+    fun allByMostRecent(): Flowable<List<TransactionData>>
 
-    @Language("RoomSql")
     @Query("DELETE FROM transactions")
-    abstract fun deleteAll()
+    fun deleteAll()
 
-    @Language("RoomSql")
-    @android.arch.persistence.room.Transaction
-    open fun deleteAllAndInsert(txs: List<TransactionData>) {
-        deleteAll()
-        insertAll(txs)
-    }
+    @Query("DELETE FROM transactions WHERE transactionId == :id")
+    fun delete(id: String)
 }

@@ -79,14 +79,8 @@ class WalletViewModel
                         .toCompletable())
                 .io()
                 .main()
-                .doOnSubscribe {
-                    refreshing.value = true
-                    activeTasks.increment()
-                }
-                .doFinally {
-                    refreshing.value = false
-                    activeTasks.decrementZeroMin()
-                }
+                .track(activeTasks)
+                .track(refreshing)
                 .subscribe({}, ::onError)
 
         /* we don't include this in the refresh task because it's remote and less reliable and speedy. And also not as integral. */

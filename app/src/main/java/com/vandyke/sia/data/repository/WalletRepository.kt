@@ -10,6 +10,7 @@ import com.vandyke.sia.data.remote.NoWallet
 import com.vandyke.sia.data.remote.SiaApiInterface
 import io.reactivex.Completable
 import io.reactivex.Single
+import io.reactivex.rxkotlin.zipWith
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -25,17 +26,28 @@ class WalletRepository
     private fun updateWallet() = api.wallet()
             .doOnSuccess {
                 db.walletDao().insertReplaceOnConflict(it)
-            }.toCompletable()
+            }
+            .toCompletable()
 
     private fun updateTransactions() = api.walletTransactions()
-            .doOnSuccess {
-                db.transactionDao().deleteAllAndInsert(it.alltransactions) // TODO: more efficient way?
-            }.toCompletable()
+            .map { it.alltransactions }
+            .zipWith(db.transactionDao().getAll())
+            .doOnSuccess { (apiTxs, dbTxs) ->
+                /* delete all db transactions that aren't in the api response */
+                dbTxs.filter { dbTx -> apiTxs.find { it.transactionId == dbTx.transactionId } == null }
+                        .forEach { db.transactionDao().delete(it.transactionId) }
+
+                apiTxs.forEach { db.transactionDao().insertReplaceOnConflict(it) }
+                // TODO: is there a more efficient way to sync the db transactions to the api txs?
+                // Over time, the Sia node will be returning a LOT of transactions
+            }
+            .toCompletable()
 
     private fun updateAddresses() = api.walletAddresses()
             .doOnSuccess {
                 db.addressDao().insertAll(it.addresses.map { AddressData(it) })
-            }.toCompletable()
+            }
+            .toCompletable()
 
     /* database flowables to be subscribed to */
     fun wallet() = db.walletDao().mostRecent()

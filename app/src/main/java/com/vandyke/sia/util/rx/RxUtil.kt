@@ -14,7 +14,7 @@ import io.reactivex.rxkotlin.toObservable
 import io.reactivex.schedulers.Schedulers
 
 
-fun Completable.asDbTransaction(db: AppDatabase): Completable =
+fun Completable.inDbTransaction(db: AppDatabase): Completable =
         this.doOnSubscribe { db.beginTransaction() }
                 .doOnComplete { db.setTransactionSuccessful() }
                 .doFinally { db.endTransaction() }
@@ -30,6 +30,16 @@ fun Completable.track(tracker: NonNullLiveData<Int>): Completable =
 fun <T> Single<T>.track(tracker: NonNullLiveData<Int>): Single<T> =
         this.doOnSubscribe { tracker.increment() }
                 .doFinally { tracker.decrementZeroMin() }
+
+@JvmName("trackBool")
+fun Completable.track(tracker: NonNullLiveData<Boolean>): Completable =
+        this.doOnSubscribe { tracker.value = true }
+                .doFinally { tracker.value = false }
+
+@JvmName("trackBool")
+fun <T> Single<T>.track(tracker: NonNullLiveData<Boolean>): Single<T> =
+        this.doOnSubscribe { tracker.value = true }
+                .doFinally { tracker.value = false }
 
 
 fun Completable.io() = this.subscribeOn(Schedulers.io())!!

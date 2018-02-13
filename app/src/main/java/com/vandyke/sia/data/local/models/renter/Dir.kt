@@ -15,15 +15,17 @@ class Dir(
         override val size: BigDecimal
 ) : Node() {
     override val parent: String?
-        get() {
-            val index = this.path.lastIndexOf('/')
-            return if (index == -1) {
-                if (this.path == "")
-                    null
-                else
-                    ""
-            } else {
-                this.path.substring(0, index)
-            }
-        }
+        get() = this.path.dirPathParent()
+}
+
+fun String.dirPathParent(): String? {
+    val index = this.lastIndexOf('/')
+    return if (index == -1) {
+        if (this == "")
+            null
+        else
+            ""
+    } else {
+        this.substring(0, index)
+    }
 }

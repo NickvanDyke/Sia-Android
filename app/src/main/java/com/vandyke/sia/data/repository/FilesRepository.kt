@@ -11,7 +11,7 @@ import com.vandyke.sia.data.local.daos.getFiles
 import com.vandyke.sia.data.local.models.renter.*
 import com.vandyke.sia.data.models.renter.RenterFileData
 import com.vandyke.sia.data.remote.SiaApiInterface
-import com.vandyke.sia.util.rx.asDbTransaction
+import com.vandyke.sia.util.rx.inDbTransaction
 import com.vandyke.sia.util.rx.toElementsObservable
 import io.reactivex.Completable
 import io.reactivex.Flowable
@@ -41,18 +41,19 @@ class FilesRepository
     /** Queries the list of files from the Sia node, and updates local database from it */
     fun updateFilesAndDirs(): Completable = Completable.concatArray(
             /* get the list of files from the Sia node, delete db files that aren't
-             * in the response, and insertReplaceOnConflict each file and the dirs containing it */
+             * in the response, and insert each file and the dirs containing it */
             api.renterFiles()
+                    .map { it.files }
                     .zipWith(db.fileDao().getAll())
                     /* remove files that are in the local database but not in the Sia API response */
                     .doOnSuccess { (apiFiles, dbFiles) ->
-                        dbFiles.retainAll { it !in apiFiles.files }
+                        dbFiles.retainAll { it !in apiFiles }
                         dbFiles.forEach {
                             db.fileDao().delete(it.path)
                         }
                     }
-                    .flatMapObservable { (apiFiles) -> apiFiles.files.toObservable() }
-                    /* insertReplaceOnConflict each file into the db and also every dir that leads up to it */
+                    .flatMapObservable { (apiFiles) -> apiFiles.toObservable() }
+                    /* insert each file into the db and also every dir that leads up to it */
                     .doOnNext { file ->
                         db.fileDao().insertReplaceOnConflict(file)
                         /* also add all the dirs leading up to the file */
@@ -81,7 +82,7 @@ class FilesRepository
                         db.dirDao().updateSize(dir.path, itsFiles.sumSize())
                     }
                     .ignoreElements())
-            .asDbTransaction(db)
+            .inDbTransaction(db)
 
 
     fun getDir(path: String) = db.dirDao().getDir(path)
@@ -123,11 +124,16 @@ class FilesRepository
             db.fileDao().getFilesUnder(path)
                     .toElementsObservable()
                     .flatMapCompletable { deleteFile(it) })
-            .asDbTransaction(db)
+            .inDbTransaction(db)
 
     fun moveDir(dir: Dir, newPath: String) = Completable.concatArray(
             /* we first set the size of the dir to zero, because its size will be updated when its files are moved into it */
-            Completable.fromAction { db.dirDao().updateSize(dir.path, BigDecimal.ZERO) },
+            Completable.fromAction {
+                /* we don't set size to zero if the before and after paths are the same, because then
+                 * it'll end up as zero as the files subtract and add their sizes to the same dir */
+                if (dir.path != newPath)
+                    db.dirDao().updateSize(dir.path, BigDecimal.ZERO)
+            },
             Completable.fromAction { db.dirDao().updatePath(dir.path, newPath) }
                     .onErrorResumeNext {
                         Completable.error(if (it is SQLiteConstraintException) DirAlreadyExists(dir.name) else it)
@@ -135,7 +141,7 @@ class FilesRepository
             db.fileDao().getFilesUnder(dir.path)
                     .toElementsObservable()
                     .flatMapCompletable { file -> moveFile(file, file.path.replaceFirst(dir.path, newPath)) })
-            .asDbTransaction(db)
+            .inDbTransaction(db)
 
     fun addFile(siapath: String, source: String, dataPieces: Int, parityPieces: Int) = Completable.concatArray(
             api.renterUpload(siapath, source, dataPieces, parityPieces),
@@ -161,7 +167,7 @@ class FilesRepository
                     .flatMapCompletable { dir ->
                         Completable.fromAction { db.dirDao().updateSize(dir.path, dir.size - file.size) }
                     })
-            .asDbTransaction(db)
+            .inDbTransaction(db)
 
     fun moveFile(file: RenterFileData, newSiapath: String) = Completable.concatArray(
             api.renterRename(file.path, newSiapath),
@@ -179,7 +185,7 @@ class FilesRepository
                     .flatMapCompletable { dir ->
                         Completable.fromAction { db.dirDao().updateSize(dir.path, dir.size + file.size) }
                     })
-            .asDbTransaction(db)
+            .inDbTransaction(db)
 
     fun multiDelete(nodes: List<Node>) = nodes.toObservable()
             .flatMapCompletable {
@@ -188,7 +194,7 @@ class FilesRepository
                 else
                     deleteFile(it as RenterFileData)
             }
-            .asDbTransaction(db)
+            .inDbTransaction(db)
 
     fun multiDownload(nodes: List<Node>) = Completable.fromAction {
         TODO()
@@ -208,7 +214,7 @@ class FilesRepository
                     .flatMapCompletable {
                         moveFile(it as RenterFileData, to.withTrailingSlashIfNotEmpty() + it.name)
                     })
-            .asDbTransaction(db)
+            .inDbTransaction(db)
 
     enum class OrderBy(val text: String) {
         PATH("path"),

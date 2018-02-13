@@ -31,6 +31,7 @@ abstract class BaseFragment : Fragment() {
             firstTimeVisible = false
         }
         setHasOptionsMenu(hasOptionsMenu)
+//        println("${this.javaClass.simpleName}---------------\nrecreating: $recreating\nwasVisible: $wasVisible\nfirstTimeVisible: $firstTimeVisible")
         return inflater.inflate(layoutResId, container, false)
     }
 

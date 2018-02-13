@@ -65,6 +65,7 @@ class WalletCreateDialog : BaseWalletFragment() {
                         KeyboardUtil.copyToClipboard(context, seed)
                         Toast.makeText(context, "Copied seed. Please store it safely.", Toast.LENGTH_LONG).show()
                     })
+                    .setCancelable(false)
                     .show()
         }
     }
