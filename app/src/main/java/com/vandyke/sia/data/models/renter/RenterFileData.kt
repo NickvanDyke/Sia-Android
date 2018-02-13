@@ -32,6 +32,15 @@ data class RenterFileData
         @JsonProperty(value = "uploadprogress")
         val uploadProgress: Int,
         @JsonProperty(value = "expiration")
-        val expiration: Long) : Node()
+        val expiration: Long) : Node() {
 
-typealias SiaFile = RenterFileData
+    override val parent: String
+        get() {
+            val index = this.path.lastIndexOf('/')
+            return if (index == -1) {
+                ""
+            } else {
+                this.path.substring(0, index)
+            }
+        }
+}

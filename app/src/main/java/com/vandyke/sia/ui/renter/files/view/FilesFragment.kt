@@ -164,9 +164,11 @@ class FilesFragment : BaseFragment() {
         viewModel.viewAsList.observe(this) {
             if (it) {
                 viewTypeItem?.setIcon(R.drawable.ic_view_list)
+                viewTypeItem?.title = "View as grid"
                 nodesList.layoutManager = LinearLayoutManager(context)
             } else {
                 viewTypeItem?.setIcon(R.drawable.ic_view_module)
+                viewTypeItem?.title = "View as list"
                 nodesList.layoutManager = GridLayoutManager(context, LayoutUtil.calculateNoOfColumns(context!!))
             }
             nodesList.recycledViewPool.clear()

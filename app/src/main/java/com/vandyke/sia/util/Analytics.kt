@@ -55,4 +55,11 @@ object Analytics {
         bundle.putString("uri_path", uri.path)
         fb.logEvent("unsupported_data_source", bundle)
     }
+
+    fun likingSiaForAndroid(liking: Boolean, giveFeedback: Boolean) {
+        val bundle = Bundle()
+        bundle.putBoolean("liking", liking)
+        bundle.putBoolean("give_feedback_or_review", giveFeedback)
+        fb.logEvent("liking_sia_for_android", bundle)
+    }
 }

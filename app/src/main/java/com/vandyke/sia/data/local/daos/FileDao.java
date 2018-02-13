@@ -20,7 +20,7 @@ public interface FileDao {
     Flowable<List<RenterFileData>> customQuery(final SupportSQLiteQuery query);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insert(RenterFileData file);
+    void insertReplaceOnConflict(RenterFileData file);
 
     @Query("UPDATE files SET path = REPLACE(SUBSTR(path, 0, LENGTH(:path) + 1), :path, :newPath) || SUBSTR(path, LENGTH(:path) + 1) WHERE path == :path")
     void updatePath(String path, String newPath);

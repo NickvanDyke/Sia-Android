@@ -23,7 +23,7 @@ import com.vandyke.sia.data.siad.SiadService
 import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.ui.onboarding.IntroActivity
 import com.vandyke.sia.ui.onboarding.PurchaseActivity
-import com.vandyke.sia.util.GenUtil
+import com.vandyke.sia.util.DialogUtil
 import com.vandyke.sia.util.SiaUtil
 import com.vandyke.sia.util.rx.observe
 import kotlinx.android.synthetic.main.activity_main.*
@@ -110,7 +110,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         if (Prefs.displayedTransaction && !Prefs.shownFeedbackDialog) {
-            GenUtil.showRateDialog(this)
+            DialogUtil.showRateDialog(this)
             Prefs.shownFeedbackDialog = true
         }
     }

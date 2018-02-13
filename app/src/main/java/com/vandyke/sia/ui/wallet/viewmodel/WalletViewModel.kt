@@ -36,7 +36,7 @@ class WalletViewModel
     val success = SingleLiveEvent<String>()
     val error = SingleLiveEvent<Throwable>()
 
-    /* seed is used specifically for when a new wallet is created - not for when called /wallet/seeds */
+    /* seed is used specifically for when a new wallet is created - not for when calling /wallet/seeds */
     val seed = SingleLiveEvent<String>()
 
     init {
@@ -60,104 +60,127 @@ class WalletViewModel
     }
 
     private fun onSuccess(msg: String) {
-        activeTasks.decrementZeroMin()
         success.value = msg
     }
 
     private fun onError(t: Throwable) {
-        activeTasks.decrementZeroMin()
         error.value = t
     }
 
     fun refreshAll() {
         /* We tell the relevant repositories to update their data from the Sia node. This will
            trigger necessary updates elsewhere in the VM, as a result of subscribing to flowables from the database. */
-        activeTasks.increment()
-        refreshing.value = true
         Completable.mergeArrayDelayError(
                 walletRepository.updateAll(),
                 consensusRepository.updateConsensus(),
-                gatewayRepository.getGateway().doAfterSuccess {
-                    numPeers.postValue(it.peers.size)
-                }.doOnError {
-                    numPeers.postValue(0)
-                }.toCompletable()
-        ).io().main().subscribe({
-            refreshing.value = false
-            activeTasks.decrementZeroMin()
-        }, {
-            refreshing.value = false
-            onError(it)
-        })
+                gatewayRepository.getGateway()
+                        .doAfterSuccess { numPeers.postValue(it.peers.size) }
+                        .doOnError { numPeers.postValue(0) }
+                        .toCompletable())
+                .io()
+                .main()
+                .doOnSubscribe {
+                    refreshing.value = true
+                    activeTasks.increment()
+                }
+                .doFinally {
+                    refreshing.value = false
+                    activeTasks.decrementZeroMin()
+                }
+                .subscribe({}, ::onError)
 
         /* we don't include this in the refresh task because it's remote and less reliable and speedy. And also not as integral. */
         scValueRepository.updateScValue().io().main().subscribe({}, ::onError)
     }
 
     fun refreshWallet() {
-        activeTasks.increment()
-        walletRepository.updateAll().io().main().subscribe({ activeTasks.decrementZeroMin() }, ::onError)
+        walletRepository.updateAll()
+                .io()
+                .main()
+                .track(activeTasks)
+                .subscribe({}, ::onError)
     }
 
     fun unlock(password: String) {
-        activeTasks.increment()
-        walletRepository.unlock(password).io().main().subscribe({
-            onSuccess("Unlocked")
-            refreshWallet()
-        }, ::onError)
+        walletRepository.unlock(password)
+                .io()
+                .main()
+                .track(activeTasks)
+                .subscribe({
+                    onSuccess("Unlocked")
+                    refreshWallet()
+                }, ::onError)
     }
 
     fun lock() {
-        activeTasks.increment()
-        walletRepository.lock().io().main().subscribe({
-            onSuccess("Locked")
-            refreshWallet()
-        }, ::onError)
+        walletRepository.lock()
+                .io()
+                .main()
+                .track(activeTasks)
+                .subscribe({
+                    onSuccess("Locked")
+                    refreshWallet()
+                }, ::onError)
     }
 
     fun create(password: String, force: Boolean, seed: String? = null) {
-        activeTasks.increment()
         if (seed == null) {
-            walletRepository.init(password, "english", force).io().main().subscribe({
-                onSuccess("Created wallet")
-                refreshWallet()
-                this.seed.value = it.primaryseed
-                Analytics.createWallet(false)
-            }, ::onError)
+            walletRepository.init(password, "english", force)
+                    .io()
+                    .main()
+                    .track(activeTasks)
+                    .subscribe({
+                        onSuccess("Created wallet")
+                        refreshWallet()
+                        this.seed.value = it.primaryseed
+                        Analytics.createWallet(false)
+                    }, ::onError)
         } else {
-            walletRepository.initSeed(password, "english", seed, force).io().main().subscribe({
-                onSuccess("Created wallet")
-                refreshWallet()
-                this.seed.value = seed
-                Analytics.createWallet(true)
-            }, ::onError)
+            walletRepository.initSeed(password, "english", seed, force)
+                    .io()
+                    .main()
+                    .track(activeTasks)
+                    .subscribe({
+                        onSuccess("Created wallet")
+                        refreshWallet()
+                        this.seed.value = seed
+                        Analytics.createWallet(true)
+                    }, ::onError)
         }
     }
 
     fun send(amount: String, destination: String) {
-        activeTasks.increment()
-        walletRepository.send(amount, destination).io().main().subscribe({
-            onSuccess("Sent ${amount.toSC()} SC to $destination")
-            refreshWallet()
-            Analytics.sendSiacoin(amount.toSC())
-        }, ::onError)
+        walletRepository.send(amount, destination)
+                .io()
+                .main()
+                .track(activeTasks)
+                .subscribe({
+                    onSuccess("Sent ${amount.toSC()} SC to $destination")
+                    refreshWallet()
+                    Analytics.sendSiacoin(amount.toSC())
+                }, ::onError)
     }
 
     fun changePassword(currentPassword: String, newPassword: String) {
-        activeTasks.increment()
-        walletRepository.changePassword(currentPassword, newPassword).io().main().subscribe({
-            onSuccess("Changed password")
-            refreshWallet()
-        }, ::onError)
+        walletRepository.changePassword(currentPassword, newPassword)
+                .io()
+                .main()
+                .track(activeTasks)
+                .subscribe({
+                    onSuccess("Changed password")
+                    refreshWallet()
+                }, ::onError)
     }
 
     fun sweep(seed: String) {
-        activeTasks.increment()
-        walletRepository.sweep("english", seed).io().main().subscribe({
-            activeTasks.decrementZeroMin()
-            refreshWallet()
-            Analytics.sweepSeed()
-        }, ::onError)
+        walletRepository.sweep("english", seed)
+                .io()
+                .main()
+                .track(activeTasks)
+                .subscribe({
+                    refreshWallet()
+                    Analytics.sweepSeed()
+                }, ::onError)
     }
 
     /* the below are exposed as Singles because it's more straightforward
@@ -165,26 +188,27 @@ class WalletViewModel
      * as opposed to them observing some LiveData and then calling a function
      * that will populate that LiveData */
     fun getAddress(): Single<AddressData> {
-        activeTasks.increment()
-        return walletRepository.getAddress().io().main()
-                .doOnError { onError(it) }
-                .doAfterSuccess {
-                    activeTasks.decrementZeroMin()
-                    Analytics.viewAddress()
-                }
+        return walletRepository.getAddress()
+                .io()
+                .main()
+                .track(activeTasks)
+                .doOnError(::onError)
+                .doAfterSuccess { Analytics.viewAddress() }
     }
 
     fun getAddresses(): Single<List<AddressData>> {
-        activeTasks.increment()
-        return walletRepository.getAddresses().io().main()
-                .doOnError { onError(it) }
-                .doAfterSuccess { activeTasks.decrementZeroMin() }
+        return walletRepository.getAddresses()
+                .io()
+                .main()
+                .track(activeTasks)
+                .doOnError(::onError)
     }
 
     fun getSeeds(): Single<SeedsData> {
-        activeTasks.increment()
-        return walletRepository.getSeeds().io().main()
-                .doOnError { onError(it) }
-                .doAfterSuccess { activeTasks.decrementZeroMin() }
+        return walletRepository.getSeeds()
+                .io()
+                .main()
+                .track(activeTasks)
+                .doOnError(::onError)
     }
 }

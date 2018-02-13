@@ -10,6 +10,8 @@ import javax.inject.Singleton
 
 @Singleton
 class GatewayRepository
-@Inject constructor(private val api: SiaApiInterface) {
+@Inject constructor(
+        private val api: SiaApiInterface
+) {
     fun getGateway() = api.gateway()
 }

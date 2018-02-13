@@ -22,13 +22,13 @@ public interface DirDao {
     Flowable<List<Dir>> customQuery(final SupportSQLiteQuery query);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertReplaceIfConflict(Dir dir);
+    void insertReplaceOnConflict(Dir dir);
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
-    void insertAbortIfConflict(Dir dir);
+    void insertAbortOnConflict(Dir dir);
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    void insertIgnoreIfConflict(Dir dir);
+    void insertIgnoreOnConflict(Dir dir);
 
     @Query("UPDATE dirs SET path = REPLACE(SUBSTR(path, 0, LENGTH(:path) + 1), :path, :newPath) || SUBSTR(path, LENGTH(:path) + 1) WHERE path == :path OR path LIKE :path || '/%'")
     void updatePath(String path, String newPath);

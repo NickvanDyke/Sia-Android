@@ -22,17 +22,20 @@ class WalletRepository
     /* Functions that update the local database from the Sia node */
     fun updateAll() = Completable.mergeArray(updateWallet(), updateTransactions(), updateAddresses())!!
 
-    private fun updateWallet() = api.wallet().doOnSuccess {
-        db.walletDao().insert(it)
-    }.toCompletable()
+    private fun updateWallet() = api.wallet()
+            .doOnSuccess {
+                db.walletDao().insertReplaceOnConflict(it)
+            }.toCompletable()
 
-    private fun updateTransactions() = api.walletTransactions().doOnSuccess {
-        db.transactionDao().deleteAllAndInsert(it.alltransactions) // TODO: more efficient way?
-    }.toCompletable()
+    private fun updateTransactions() = api.walletTransactions()
+            .doOnSuccess {
+                db.transactionDao().deleteAllAndInsert(it.alltransactions) // TODO: more efficient way?
+            }.toCompletable()
 
-    private fun updateAddresses() = api.walletAddresses().doOnSuccess {
-        db.addressDao().insertAll(it.addresses.map { AddressData(it) })
-    }.toCompletable()
+    private fun updateAddresses() = api.walletAddresses()
+            .doOnSuccess {
+                db.addressDao().insertAll(it.addresses.map { AddressData(it) })
+            }.toCompletable()
 
     /* database flowables to be subscribed to */
     fun wallet() = db.walletDao().mostRecent()
@@ -42,9 +45,10 @@ class WalletRepository
     fun addresses() = db.addressDao().all()
 
     /* singles */
-    fun getAddress() = api.walletAddress().doOnSuccess {
-        db.addressDao().insert(it)
-    }.onErrorResumeNext {
+    fun getAddress() = api.walletAddress()
+            .doOnSuccess {
+                db.addressDao().insert(it)
+            }.onErrorResumeNext {
                 /* fallback to db, but only if the reason for the failure was not due to the absence of a wallet */
                 if (it !is NoWallet)
                     db.addressDao().getAddress().onErrorResumeNext(Single.error(it))
@@ -52,9 +56,10 @@ class WalletRepository
                     Single.error(it)
             }!!
 
-    fun getAddresses(): Single<List<AddressData>> = api.walletAddresses().map {
-        it.addresses.map { AddressData(it) }
-    }.doOnSuccess {
+    fun getAddresses(): Single<List<AddressData>> = api.walletAddresses()
+            .map {
+                it.addresses.map { AddressData(it) }
+            }.doOnSuccess {
                 db.addressDao().insertAll(it)
             }.onErrorResumeNext {
                 /* fallback to db, but only if the reason for the failure was not due to the absence of a wallet */
@@ -75,10 +80,8 @@ class WalletRepository
         clearWalletDb().subscribe()
     }!!
 
-    fun initSeed(password: String, dictionary: String, seed: String, force: Boolean) = api.walletInitSeed(password, dictionary, seed, force)
-            .doOnComplete {
-                clearWalletDb().subscribe()
-            }!!
+    fun initSeed(password: String, dictionary: String, seed: String, force: Boolean) =
+            api.walletInitSeed(password, dictionary, seed, force).concatWith(clearWalletDb())
 
     fun send(amount: String, destination: String) = api.walletSiacoins(amount, destination)
 

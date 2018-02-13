@@ -5,14 +5,11 @@
 package com.vandyke.sia.util
 
 import android.content.Context
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.net.Uri
 import android.support.customtabs.CustomTabsIntent
 import android.support.v4.content.ContextCompat
-import android.support.v7.app.AlertDialog
-import android.widget.Toast
 import com.vandyke.sia.R
 import com.vandyke.sia.data.local.Prefs
 import java.math.BigDecimal
@@ -59,30 +56,5 @@ object GenUtil {
         drawable.draw(canvas)
 
         return bitmap
-    }
-    
-    fun showRateDialog(context: Context) {
-        AlertDialog.Builder(context)
-                .setTitle("Liking Sia for Android?")
-                .setPositiveButton("Yes") { _, _ ->
-                    AlertDialog.Builder(context)
-                            .setMessage("Would you like to leave a rating? I'd really appreciate it.")
-                            .setPositiveButton("Sure") { _, _ ->
-                                Toast.makeText(context, "Thank you :)", Toast.LENGTH_LONG).show()
-                                context.startActivity(Intents.playStore)
-                            }.setNegativeButton("No thanks", null)
-                            .setCancelable(false)
-                            .show()
-                }.setNegativeButton("No") { _, _ ->
-                    AlertDialog.Builder(context)
-                            .setMessage("Would you like to give feedback on why?")
-                            .setPositiveButton("Yes") { _, _ ->
-                                context.startActivity(Intents.emailMe
-                                        .putExtra(Intent.EXTRA_SUBJECT, "Feedback"))
-                            }.setNegativeButton("No thanks", null)
-                            .setCancelable(false)
-                            .show()
-                }.setCancelable(false)
-                .show()
     }
 }

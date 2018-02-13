@@ -13,4 +13,17 @@ class Dir(
         @PrimaryKey
         override val path: String,
         override val size: BigDecimal
-) : Node()
+) : Node() {
+    override val parent: String?
+        get() {
+            val index = this.path.lastIndexOf('/')
+            return if (index == -1) {
+                if (this.path == "")
+                    null
+                else
+                    ""
+            } else {
+                this.path.substring(0, index)
+            }
+        }
+}

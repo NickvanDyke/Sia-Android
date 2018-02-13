@@ -15,7 +15,7 @@ import org.intellij.lang.annotations.Language
 @Dao
 interface WalletDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(wallet: WalletData)
+    fun insertReplaceOnConflict(wallet: WalletData)
 
     @Language("RoomSql")
     @Query("SELECT a.* FROM wallet a LEFT OUTER JOIN wallet b ON a.timestamp < b.timestamp WHERE b.timestamp IS NULL")

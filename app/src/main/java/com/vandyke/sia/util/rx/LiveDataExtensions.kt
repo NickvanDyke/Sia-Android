@@ -14,3 +14,12 @@ fun <T> LiveData<T>.observe(owner: LifecycleOwner, onChanged: (T) -> Unit) {
             onChanged(it)
     })
 }
+
+fun NonNullLiveData<Int>.increment() {
+    this.value = this.value + 1
+}
+
+fun NonNullLiveData<Int>.decrementZeroMin() {
+    if (this.value > 0)
+        this.value = this.value - 1
+}

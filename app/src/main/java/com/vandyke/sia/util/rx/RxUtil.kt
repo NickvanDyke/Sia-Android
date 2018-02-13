@@ -20,7 +20,16 @@ fun Completable.asDbTransaction(db: AppDatabase): Completable =
                 .doFinally { db.endTransaction() }
 
 
-fun <T : Any> Single<List<T>>.toElementsObservable() = this.flatMapObservable<T> { it.toObservable() }
+fun <T : Any> Single<List<T>>.toElementsObservable(): Observable<T> = this.flatMapObservable<T> { it.toObservable() }
+
+
+fun Completable.track(tracker: NonNullLiveData<Int>): Completable =
+        this.doOnSubscribe { tracker.increment() }
+                .doFinally { tracker.decrementZeroMin() }
+
+fun <T> Single<T>.track(tracker: NonNullLiveData<Int>): Single<T> =
+        this.doOnSubscribe { tracker.increment() }
+                .doFinally { tracker.decrementZeroMin() }
 
 
 fun Completable.io() = this.subscribeOn(Schedulers.io())!!
@@ -39,15 +48,3 @@ fun <T> Single<T>.main() = this.observeOn(AndroidSchedulers.mainThread())!!
 fun <T> Flowable<T>.main() = this.observeOn(AndroidSchedulers.mainThread())!!
 
 fun <T> Observable<T>.main() = this.observeOn(AndroidSchedulers.mainThread())!!
-
-
-
-// TODO: put in LiveDataExtensions file
-fun NonNullLiveData<Int>.increment() {
-    this.value = this.value + 1
-}
-
-fun NonNullLiveData<Int>.decrementZeroMin() {
-    if (this.value > 0)
-        this.value = this.value - 1
-}
