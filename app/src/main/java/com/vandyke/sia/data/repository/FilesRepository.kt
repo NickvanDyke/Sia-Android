@@ -49,7 +49,7 @@ class FilesRepository
                     .doOnSuccess { (apiFiles, dbFiles) ->
                         dbFiles.retainAll { it !in apiFiles }
                         dbFiles.forEach {
-                            db.fileDao().delete(it.path)
+                            db.fileDao().delete(it)
                         }
                     }
                     .flatMapObservable { (apiFiles) -> apiFiles.toObservable() }
@@ -118,10 +118,10 @@ class FilesRepository
                 Completable.error(if (it is SQLiteConstraintException) DirAlreadyExists(path.name()) else it)
             }!!
 
-    fun deleteDir(path: String) = Completable.concatArray(
-            Completable.fromAction { db.dirDao().deleteDir(path) },
-            Completable.fromAction { db.dirDao().deleteDirsUnder(path) },
-            db.fileDao().getFilesUnder(path)
+    fun deleteDir(dir: Dir) = Completable.concatArray(
+            Completable.fromAction { db.dirDao().delete(dir) },
+            Completable.fromAction { db.dirDao().deleteDirsUnder(dir.path) },
+            db.fileDao().getFilesUnder(dir.path)
                     .toElementsObservable()
                     .flatMapCompletable { deleteFile(it) })
             .inDbTransaction(db)
@@ -161,7 +161,7 @@ class FilesRepository
 
     fun deleteFile(file: RenterFileData) = Completable.concatArray(
             api.renterDelete(file.path),
-            Completable.fromAction { db.fileDao().delete(file.path) },
+            Completable.fromAction { db.fileDao().delete(file) },
             db.dirDao().getDirsContainingFile(file.path)
                     .toElementsObservable()
                     .flatMapCompletable { dir ->
@@ -190,7 +190,7 @@ class FilesRepository
     fun multiDelete(nodes: List<Node>) = nodes.toObservable()
             .flatMapCompletable {
                 if (it is Dir)
-                    deleteDir(it.path)
+                    deleteDir(it)
                 else
                     deleteFile(it as RenterFileData)
             }

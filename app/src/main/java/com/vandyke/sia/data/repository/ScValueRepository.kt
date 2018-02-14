@@ -16,7 +16,7 @@ class ScValueRepository
         private val db: AppDatabase
 ) {
     fun updateScValue() = api.getScPrice().doOnSuccess {
-        db.scValueDao().insert(it)
+        db.scValueDao().insertReplaceOnConflict(it)
     }.toCompletable()!!
 
     fun scValue() = db.scValueDao().mostRecent()

@@ -2,8 +2,6 @@ package com.vandyke.sia.data.local.daos;
 
 import android.arch.persistence.db.SupportSQLiteQuery;
 import android.arch.persistence.room.Dao;
-import android.arch.persistence.room.Insert;
-import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.RawQuery;
 
@@ -15,12 +13,9 @@ import io.reactivex.Flowable;
 import io.reactivex.Single;
 
 @Dao
-public interface FileDao {
+public interface FileDao extends BaseDao<RenterFileData> {
     @RawQuery(observedEntities = RenterFileData.class)
     Flowable<List<RenterFileData>> customQuery(final SupportSQLiteQuery query);
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertReplaceOnConflict(RenterFileData file);
 
     @Query("UPDATE files SET path = REPLACE(SUBSTR(path, 0, LENGTH(:path) + 1), :path, :newPath) || SUBSTR(path, LENGTH(:path) + 1) WHERE path == :path")
     void updatePath(String path, String newPath);
@@ -30,9 +25,6 @@ public interface FileDao {
 
     @Query("SELECT * FROM files WHERE path LIKE :path || '/%'")
     Single<List<RenterFileData>> getFilesUnder(String path);
-
-    @Query("DELETE FROM files WHERE path == :path")
-    void delete(String path);
 
     @Query("DELETE FROM files")
     void deleteAll();

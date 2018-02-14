@@ -16,7 +16,7 @@ class ConsensusRepository
         private val db: AppDatabase
 ) {
     fun updateConsensus() = api.consensus().doOnSuccess {
-        db.consensusDao().insert(it)
+        db.consensusDao().insertReplaceOnConflict(it)
     }.toCompletable()
 
     fun consensus() = db.consensusDao().mostRecent()
