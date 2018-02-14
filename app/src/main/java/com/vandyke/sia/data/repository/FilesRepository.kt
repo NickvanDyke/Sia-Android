@@ -160,7 +160,7 @@ class FilesRepository
             api.renterUpload(siapath, source, dataPieces, parityPieces))!!
 
     fun deleteFile(file: RenterFileData) = Completable.concatArray(
-            Completable.fromAction { db.fileDao().delete(file.path) },
+            Completable.fromAction { db.fileDao().delete(file) },
             db.dirDao().getDirsContainingFile(file.path)
                     .toElementsObservable()
                     .flatMapCompletable { dir ->
