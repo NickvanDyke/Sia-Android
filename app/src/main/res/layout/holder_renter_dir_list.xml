@@ -40,19 +40,6 @@
         app:layout_constraintStart_toStartOf="@+id/dirName"
         app:layout_constraintTop_toBottomOf="@+id/dirName" />
 
-    <ImageButton
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:id="@+id/dirMore"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:background="?android:attr/selectableItemBackgroundBorderless"
-        android:src="@drawable/ic_more_vert"
-        android:tint="@android:color/darker_gray"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <!--<View-->
         <!--android:layout_width="0dp"-->
         <!--android:layout_height="1dp"-->

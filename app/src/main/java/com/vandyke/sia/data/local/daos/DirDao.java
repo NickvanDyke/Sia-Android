@@ -13,7 +13,6 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import io.reactivex.Flowable;
-import io.reactivex.Maybe;
 import io.reactivex.Single;
 
 @Dao
@@ -48,11 +47,11 @@ public interface DirDao {
     @Query("SELECT * FROM dirs WHERE path == :path")
     Single<Dir> getDir(String path);
 
-    @Query("SELECT * FROM dirs WHERE path == :path")
-    Maybe<Dir> getDirMaybe(String path);
-
     @Query("SELECT * FROM dirs WHERE INSTR(:filePath, path) == 1")
     Single<List<Dir>> getDirsContainingFile(String filePath);
+
+    @Query("SELECT * FROM dirs WHERE path LIKE :dirPath || '/%'")
+    Single<List<Dir>> getDirsUnder(String dirPath);
 
     @Query("DELETE FROM dirs")
     void deleteAll();

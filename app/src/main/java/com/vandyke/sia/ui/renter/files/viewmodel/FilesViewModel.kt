@@ -146,14 +146,6 @@ class FilesViewModel
                 .subscribe(::deselectAll, ::onError)
     }
 
-    fun downloadFile(file: RenterFileData) {
-        TODO()
-    }
-
-    fun downloadDir(dir: Dir) {
-        TODO()
-    }
-
     /** Creates a new directory with the given name in the current directory */
     fun createDir(name: String) {
         filesRepository.createDir("${currentDirPath.withTrailingSlashIfNotEmpty()}$name")
@@ -179,9 +171,9 @@ class FilesViewModel
                 .subscribe({}, ::onError)
     }
 
-    fun addFile(source: String) {
+    fun uploadFile(source: String) {
         val path = currentDirPath.withTrailingSlashIfNotEmpty() + source.substring(source.lastIndexOf('/') + 1)
-        filesRepository.addFile(path, source, 10, 20)
+        filesRepository.uploadFile(path, source, 10, 20)
                 .io()
                 .main()
                 .track(activeTasks)
