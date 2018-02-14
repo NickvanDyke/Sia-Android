@@ -156,7 +156,7 @@ class FilesViewModel
     }
 
     fun deleteDir(dir: Dir) {
-        filesRepository.deleteDir(dir.path)
+        filesRepository.deleteDir(dir)
                 .io()
                 .main()
                 .track(activeTasks)

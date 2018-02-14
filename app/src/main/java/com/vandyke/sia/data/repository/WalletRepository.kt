@@ -45,7 +45,7 @@ class WalletRepository
 
     private fun updateAddresses() = api.walletAddresses()
             .doOnSuccess {
-                db.addressDao().insertAll(it.addresses.map { AddressData(it) })
+                db.addressDao().insertAllIgnoreOnConflict(it.addresses.map { AddressData(it) })
             }
             .toCompletable()
 
@@ -59,7 +59,7 @@ class WalletRepository
     /* singles */
     fun getAddress() = api.walletAddress()
             .doOnSuccess {
-                db.addressDao().insert(it)
+                db.addressDao().insertIgnoreOnConflict(it)
             }.onErrorResumeNext {
                 /* fallback to db, but only if the reason for the failure was not due to the absence of a wallet */
                 if (it !is NoWallet)
@@ -72,7 +72,7 @@ class WalletRepository
             .map {
                 it.addresses.map { AddressData(it) }
             }.doOnSuccess {
-                db.addressDao().insertAll(it)
+                db.addressDao().insertAllIgnoreOnConflict(it)
             }.onErrorResumeNext {
                 /* fallback to db, but only if the reason for the failure was not due to the absence of a wallet */
                 if (it !is NoWallet)
