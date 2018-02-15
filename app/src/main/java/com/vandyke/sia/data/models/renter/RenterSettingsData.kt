@@ -4,4 +4,4 @@
 
 package com.vandyke.sia.data.models.renter
 
-data class RenterSettingsData(val allowance: RenterSettingsAllowanceData = RenterSettingsAllowanceData())
+data class RenterSettingsData(val allowance: RenterSettingsAllowanceData)

@@ -42,21 +42,25 @@ class WalletViewModel
     init {
         /* subscribe to flowables from the repositories. Note that since they're flowables,
          * we only need to subscribe this once */
-        walletRepository.wallet().io().main().subscribe({
-            wallet.value = it
-        }, ::onError)
+        walletRepository.wallet()
+                .io()
+                .main()
+                .subscribe(wallet::setValue, ::onError)
 
-        walletRepository.transactions().io().main().subscribe({
-            transactions.value = it
-        }, ::onError)
+        walletRepository.transactions()
+                .io()
+                .main()
+                .subscribe(transactions::setValue, ::onError)
 
-        consensusRepository.consensus().io().main().subscribe({
-            consensus.value = it
-        }, ::onError)
+        consensusRepository.consensus()
+                .io()
+                .main()
+                .subscribe(consensus::setValue, ::onError)
 
-        scValueRepository.scValue().io().main().subscribe({
-            usd.value = it
-        }, ::onError)
+        scValueRepository.scValue()
+                .io()
+                .main()
+                .subscribe(usd::setValue, ::onError)
     }
 
     private fun onSuccess(msg: String) {

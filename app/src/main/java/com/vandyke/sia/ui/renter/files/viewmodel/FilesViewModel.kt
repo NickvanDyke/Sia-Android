@@ -155,22 +155,6 @@ class FilesViewModel
                 .subscribe({}, ::onError)
     }
 
-    fun deleteDir(dir: Dir) {
-        filesRepository.deleteDir(dir)
-                .io()
-                .main()
-                .track(activeTasks)
-                .subscribe({}, ::onError)
-    }
-
-    fun deleteFile(file: RenterFileData) {
-        filesRepository.deleteFile(file)
-                .io()
-                .main()
-                .track(activeTasks)
-                .subscribe({}, ::onError)
-    }
-
     fun uploadFile(source: String) {
         val path = currentDirPath.withTrailingSlashIfNotEmpty() + source.substring(source.lastIndexOf('/') + 1)
         filesRepository.uploadFile(path, source, 10, 20)
@@ -220,9 +204,7 @@ class FilesViewModel
                 }
                         .io()
                         .main()
-                        .subscribe({
-                            displayedNodes.value = it
-                        }, ::onError)
+                        .subscribe(displayedNodes::setValue, ::onError)
     }
 
     fun goToIndexInPath(index: Int) {

@@ -80,7 +80,7 @@ dependencies {
     implementation "com.android.support:cardview-v7:$support_version"
     implementation "com.android.support:preference-v14:$support_version"
     implementation "com.android.support:customtabs:$support_version"
-    implementation 'com.android.support.constraint:constraint-layout:1.1.0-beta4'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.0-beta5'
 
     /* UI */
     implementation 'com.github.medyo:android-about-page:1.2.2'
@@ -89,6 +89,7 @@ dependencies {
     implementation 'me.dm7.barcodescanner:zxing:1.9.3'
     implementation 'com.github.clans:fab:1.6.4'
     implementation 'me.zhanghai.android.materialprogressbar:library:1.4.2'
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
 
     /* simplified SharedPreferences */
     implementation 'com.chibatching.kotpref:kotpref:2.2.0'

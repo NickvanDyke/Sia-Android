@@ -4,10 +4,18 @@
 
 package com.vandyke.sia.data.models.renter
 
+import android.arch.persistence.room.Entity
+import android.arch.persistence.room.PrimaryKey
+import com.fasterxml.jackson.annotation.JsonIgnore
 import java.math.BigDecimal
 
-data class RenterFinancialMetricsData(val contractspending: BigDecimal = BigDecimal.ZERO,
-                                      val downloadspending: BigDecimal = BigDecimal.ZERO,
-                                      val storagespending: BigDecimal = BigDecimal.ZERO,
-                                      val uploadspending: BigDecimal = BigDecimal.ZERO,
-                                      val unspent: BigDecimal = BigDecimal.ZERO)
+@Entity(tableName = "spending")
+data class RenterFinancialMetricsData(val contractspending: BigDecimal,
+                                      val downloadspending: BigDecimal,
+                                      val storagespending: BigDecimal,
+                                      val uploadspending: BigDecimal,
+                                      val unspent: BigDecimal) {
+    @PrimaryKey
+    @JsonIgnore(value = true)
+    var timestamp = System.currentTimeMillis()
+}

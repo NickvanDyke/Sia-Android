@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2017 Nicholas van Dyke. All rights reserved.
+  -->
+
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/spendingChart"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/allowanceText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Allowance"
+        android:textColor="?android:attr/textColorPrimary"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/pieChart"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintStart_toEndOf="@+id/pieChart"
+        app:layout_constraintTop_toTopOf="@+id/pieChart" />
+
+    <TextView
+        android:id="@+id/allowanceSetTo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Set to"
+        app:layout_constraintStart_toStartOf="@id/allowanceText"
+        app:layout_constraintTop_toBottomOf="@id/allowanceText" />
+
+    <TextView
+        android:id="@+id/allowanceUnspent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Unspent"
+        app:layout_constraintStart_toStartOf="@+id/allowanceSetTo"
+        app:layout_constraintTop_toBottomOf="@+id/allowanceSetTo" />
+
+    <com.github.mikephil.charting.charts.PieChart
+        android:id="@+id/pieChart"
+        android:layout_width="192dp"
+        android:layout_height="192dp"
+        app:layout_constraintEnd_toStartOf="@id/allowanceText"
+        app:layout_constraintHorizontal_chainStyle="spread"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</android.support.constraint.ConstraintLayout>
