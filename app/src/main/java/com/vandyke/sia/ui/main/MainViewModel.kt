@@ -10,6 +10,7 @@ import com.vandyke.sia.BuildConfig
 import com.vandyke.sia.R
 import com.vandyke.sia.ui.about.AboutFragment
 import com.vandyke.sia.ui.common.ComingSoonFragment
+import com.vandyke.sia.ui.node.NodeFragment
 import com.vandyke.sia.ui.renter.files.view.FilesFragment
 import com.vandyke.sia.ui.settings.SettingsFragment
 import com.vandyke.sia.ui.terminal.TerminalFragment
@@ -29,6 +30,7 @@ class MainViewModel : ViewModel() {
                     ComingSoonFragment::class.java
             }
             R.id.drawer_item_wallet -> WalletFragment::class.java
+            R.id.drawer_item_node -> NodeFragment::class.java
             R.id.drawer_item_terminal -> TerminalFragment::class.java
             R.id.drawer_item_settings -> SettingsFragment::class.java
             R.id.drawer_item_about -> AboutFragment::class.java
@@ -52,6 +54,7 @@ class MainViewModel : ViewModel() {
         selectedMenuItem.value = when (clazz) {
             FilesFragment::class.java, ComingSoonFragment::class.java -> R.id.drawer_item_renter
             WalletFragment::class.java -> R.id.drawer_item_wallet
+            NodeFragment::class.java -> R.id.drawer_item_node
             TerminalFragment::class.java -> R.id.drawer_item_terminal
             SettingsFragment::class.java -> R.id.drawer_item_settings
             AboutFragment::class.java -> R.id.drawer_item_about

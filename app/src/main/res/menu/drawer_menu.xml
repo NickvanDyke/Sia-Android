@@ -6,6 +6,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
         >
     <group
+        android:id="@+id/node_item"
+        android:checkableBehavior="all">
+        <item
+            android:id="@+id/drawer_item_node"
+            android:icon="@drawable/sia_new_circle_logo_transparent_white"
+            android:title="Node"/>
+    </group>
+    <group
             android:id="@+id/main_items"
             android:checkableBehavior="all">
         <item

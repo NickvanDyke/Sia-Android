@@ -12,8 +12,9 @@ import android.view.ViewGroup
 import com.vandyke.sia.util.Analytics
 
 abstract class BaseFragment : Fragment() {
-    abstract val layoutResId: Int
+    open val layoutResId: Int = 0
     open val hasOptionsMenu = false
+
     /** this is so that if the activity is recreated, therefore recreating this fragment, it's
      *  onShow() won't be called if it wasn't visible before recreation. */
     private var wasVisible = false

@@ -21,9 +21,10 @@ import mehdi.sakout.aboutpage.AboutPage
 import mehdi.sakout.aboutpage.Element
 
 class AboutFragment : BaseFragment() {
-    override val layoutResId: Int = 0
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        super.onCreateView(inflater, container, savedInstanceState)
+
         val appVersion = Element("Version ${BuildConfig.VERSION_NAME}", R.drawable.ic_format_list_bulleted)
                 .setOnClickListener {
                     GenUtil.launchCustomTabs(context!!, "https://github.com/NickvanDyke/Sia-Android/releases")

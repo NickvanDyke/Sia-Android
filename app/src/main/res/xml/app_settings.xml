@@ -3,27 +3,6 @@
   -->
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory android:title="Sia node">
-        <SwitchPreferenceCompat
-            android:defaultValue="true"
-            android:key="runSiaInBackground"
-            android:summary="Continue running the Sia node when the app isn't in the foreground."
-            android:title="Run in background" />
-        <SwitchPreferenceCompat
-            android:defaultValue="false"
-            android:key="runSiaOnData"
-            android:summary="The Sia node uploads and downloads a significant amount of data while running."
-            android:title="Run on mobile data" />
-        <SwitchPreferenceCompat
-            android:defaultValue="false"
-            android:key="useExternal"
-            android:summary="The Sia node will restart after changing this."
-            android:title="Use external storage" />
-        <EditTextPreference
-            android:key="apiPassword"
-            android:summary="API password to set on the Sia node, so that only this app can interact with it. Optional, but recommended. The Sia node will restart after changing this."
-            android:title="API password" />
-    </PreferenceCategory>
     <PreferenceCategory android:title="Appearance">
         <SwitchPreferenceCompat
             android:defaultValue="false"
