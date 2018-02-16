@@ -134,8 +134,6 @@ class AllowanceViewModel
             else -> spendingData.unspent * conversionRate / price
         }
 
-        println("conversionRate: $conversionRate\nunspent: ${spendingData.unspent}\nprice: $price\npurchasable: $purchasable")
-
         currentMetricValues.value = MetricValues(
                 price,
                 spent,

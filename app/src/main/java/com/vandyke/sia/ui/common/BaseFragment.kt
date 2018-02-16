@@ -34,7 +34,7 @@ abstract class BaseFragment : Fragment() {
         get() = (activity as AppCompatActivity).supportActionBar!!
 
     // could maybe use userVisibleHint to simplify the above? It persists across save states and recreations apparently
-
+    /** call through to the super implementation when overriding */
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         if (savedInstanceState != null) {
             recreating = true
@@ -42,7 +42,7 @@ abstract class BaseFragment : Fragment() {
             firstTimeVisible = false
         }
         setHasOptionsMenu(hasOptionsMenu)
-//        println("${this.javaClass.simpleName}---------------\nrecreating: $recreating\nwasVisible: $wasVisible\nfirstTimeVisible: $firstTimeVisible")
+        println("${this.javaClass.simpleName} onCreateView\nrecreating: $recreating\nwasVisible: $wasVisible\nfirstTimeVisible: $firstTimeVisible")
         return if (layoutResId != 0)
             inflater.inflate(layoutResId, container, false)
         else
@@ -54,9 +54,13 @@ abstract class BaseFragment : Fragment() {
 
     /** called in onResume and in onHiddenChanged when hidden is false. Basically, called whenever
      * the fragment is newly visible to the user. */
-    open fun onShow() {}
+    open fun onShow() {
+        println(this.javaClass.simpleName + " onShow")
+    }
 
-    open fun onHide() {}
+    open fun onHide() {
+        println(this.javaClass.simpleName + " onHide")
+    }
 
     override fun onHiddenChanged(hidden: Boolean) {
         if (!hidden) {
@@ -70,6 +74,7 @@ abstract class BaseFragment : Fragment() {
 
     /** call through to the super implementation when overriding */
     override fun onStart() {
+        println(this.javaClass.simpleName + " onStart")
         super.onStart()
         activity!!.invalidateOptionsMenu()
         if (recreating) {
@@ -87,6 +92,7 @@ abstract class BaseFragment : Fragment() {
 
     /** call through to the super implementation when overriding */
     override fun onStop() {
+        println(this.javaClass.simpleName + " onStop")
         super.onStop()
         if (isVisible)
             onHide()

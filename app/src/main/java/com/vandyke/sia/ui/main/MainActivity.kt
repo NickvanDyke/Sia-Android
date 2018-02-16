@@ -40,6 +40,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        println("MainActivity onCreate -----------------")
 
         if (!Prefs.viewedOnboarding) {
             finish()
@@ -64,6 +65,7 @@ class MainActivity : AppCompatActivity() {
                     .setTitle("Sia node unsupported")
                     .setMessage("Your device isn't able to run the Sia node. Only devices that can are able to download" +
                             " this app from the Play Store, so you must have obtained it some other way. Sorry.")
+                    .setCancelable(false)
                     .setPositiveButton("Close", null)
                     .show()
         } else {
@@ -94,8 +96,6 @@ class MainActivity : AppCompatActivity() {
             DialogUtil.showRateDialog(this)
             Prefs.shownFeedbackDialog = true
         }
-
-        displayFragment(AllowanceFragment::class.java)
     }
 
     private fun displayFragment(clazz: Class<*>) {

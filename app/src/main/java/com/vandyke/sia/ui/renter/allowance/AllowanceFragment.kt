@@ -222,6 +222,7 @@ class AllowanceFragment : BaseFragment() {
     }
 
     override fun onShow() {
+        super.onShow()
         vm.refresh()
     }
 

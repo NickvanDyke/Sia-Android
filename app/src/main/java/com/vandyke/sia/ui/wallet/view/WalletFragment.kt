@@ -8,6 +8,7 @@ import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.graphics.PorterDuff
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.DividerItemDecoration
@@ -30,6 +31,7 @@ import com.vandyke.sia.ui.wallet.view.transactionslist.TransactionAdapter
 import com.vandyke.sia.ui.wallet.viewmodel.WalletViewModel
 import com.vandyke.sia.util.*
 import com.vandyke.sia.util.rx.observe
+import io.github.tonnyl.light.Light
 import io.reactivex.exceptions.CompositeException
 import kotlinx.android.synthetic.main.fragment_wallet.*
 import java.math.BigDecimal
@@ -145,7 +147,7 @@ class WalletFragment : BaseFragment() {
         }
 
         viewModel.success.observe(this) {
-            SnackbarUtil.showSnackbar(wallet_coordinator, it)
+            Light.success(wallet_coordinator, it, Snackbar.LENGTH_SHORT).show()
             collapseFrame()
         }
 
@@ -228,11 +230,13 @@ class WalletFragment : BaseFragment() {
     }
 
     override fun onShow() {
+        super.onShow()
         actionBar.elevation = 0f
         viewModel.refreshAll()
     }
 
     override fun onHide() {
+        super.onHide()
         actionBar.elevation = 12f
     }
 

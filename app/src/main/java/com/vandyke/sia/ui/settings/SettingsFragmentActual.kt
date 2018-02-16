@@ -17,7 +17,7 @@ import com.vandyke.sia.R
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.siad.SiadService
 import com.vandyke.sia.util.GenUtil
-import com.vandyke.sia.util.SnackbarUtil
+import io.github.tonnyl.light.Light
 
 /* the actual settings fragment, contained within SettingsFragment */
 class SettingsFragmentActual : PreferenceFragmentCompat() {
@@ -31,7 +31,7 @@ class SettingsFragmentActual : PreferenceFragmentCompat() {
             if (newValue as Boolean) {
                 val dirs = context!!.getExternalFilesDirs(null)
                 if (dirs.isEmpty()) {
-                    SnackbarUtil.showSnackbar(view, "No external storage found")
+                    Light.error(view!!, "No external storage found", Snackbar.LENGTH_SHORT).show()
                     return@OnPreferenceChangeListener false
                 }
                 val dir = if (dirs.size > 1) dirs[1] else dirs[0]
@@ -39,7 +39,7 @@ class SettingsFragmentActual : PreferenceFragmentCompat() {
                 if (state == Environment.MEDIA_MOUNTED) {
                     return@OnPreferenceChangeListener true
                 } else {
-                    SnackbarUtil.showSnackbar(view, "Error with external storage: $state", Snackbar.LENGTH_LONG)
+                    Light.error(view!!, "Error with external storage: $state", Snackbar.LENGTH_LONG).show()
                     return@OnPreferenceChangeListener false
                 }
             } else {
