@@ -4,34 +4,39 @@
 
 package com.vandyke.sia.ui.main
 
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
-import android.content.res.Configuration
 import android.os.Bundle
-import android.support.v4.view.GravityCompat
-import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.app.AppCompatDelegate
-import android.view.MenuItem
+import android.view.View
 import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.BillingClientStateListener
+import com.mikepenz.materialdrawer.Drawer
+import com.mikepenz.materialdrawer.DrawerBuilder
+import com.mikepenz.materialdrawer.model.DividerDrawerItem
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
+import com.mikepenz.materialdrawer.model.SecondaryDrawerItem
 import com.vandyke.sia.BuildConfig
 import com.vandyke.sia.R
 import com.vandyke.sia.data.local.Prefs
+import com.vandyke.sia.ui.about.AboutFragment
 import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.ui.onboarding.IntroActivity
 import com.vandyke.sia.ui.onboarding.PurchaseActivity
+import com.vandyke.sia.ui.renter.allowance.AllowanceFragment
+import com.vandyke.sia.ui.renter.files.view.FilesFragment
+import com.vandyke.sia.ui.settings.SettingsFragment
+import com.vandyke.sia.ui.terminal.TerminalFragment
+import com.vandyke.sia.ui.wallet.view.WalletFragment
 import com.vandyke.sia.util.DialogUtil
 import com.vandyke.sia.util.SiaUtil
-import com.vandyke.sia.util.rx.observe
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: MainViewModel
     private var visibleFragment: BaseFragment? = null
-    private lateinit var drawerToggle: ActionBarDrawerToggle
+    private lateinit var drawer: Drawer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,60 +70,26 @@ class MainActivity : AppCompatActivity() {
 //            startService(Intent(this, SiadService::class.java))
         }
 
-        /* actionbar setup stuff */
-        setSupportActionBar(toolbar)
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        supportActionBar!!.setHomeButtonEnabled(true)
+        setupDrawer()
 
-        viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
-
-        viewModel.visibleFragmentClass.observe(this) {
-            displayFragment(it)
-        }
-
-        viewModel.title.observe(this) {
-            supportActionBar!!.title = it
-        }
-
-        viewModel.selectedMenuItem.observe(this) {
-            navigationView.setCheckedItem(it)
-        }
-
-        /* notify VM when navigation items are selected */
-        navigationView.setNavigationItemSelectedListener { item ->
-            drawerLayout.closeDrawers()
-            viewModel.navigationItemSelected(item.itemId)
-            return@setNavigationItemSelectedListener true
-        }
-        drawerToggle = ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close)
-        drawerLayout.addDrawerListener(drawerToggle)
-
-        /* set the VM's visibleFragmentClass differently depending on whether the activity is being recreated */
         if (savedInstanceState == null) {
-            viewModel.navigationItemSelected(
+            drawer.setSelection(
                     when (Prefs.startupPage) {
-                        "renter" -> R.id.drawer_item_renter
-                        "wallet" -> R.id.drawer_item_wallet
-                        "terminal" -> R.id.drawer_item_terminal
-                        else -> throw Exception()
-                    })
+                        "files" -> -2L
+                        "wallet" -> 1L
+                        "terminal" -> 2L
+                        else -> throw IllegalArgumentException("Invalid startup page: ${Prefs.startupPage}")
+                    }, true)
         } else {
             /* find the fragment currently visible stored in the savedInstanceState */
             val storedFragmentClass = supportFragmentManager.findFragmentByTag(savedInstanceState.getString("visibleFragment")).javaClass
-            viewModel.setDisplayedFragmentClass(storedFragmentClass)
+            displayFragment(storedFragmentClass)
         }
 
         if (Prefs.displayedTransaction && !Prefs.shownFeedbackDialog) {
             DialogUtil.showRateDialog(this)
             Prefs.shownFeedbackDialog = true
         }
-    }
-
-    override fun onSaveInstanceState(outState: Bundle?) {
-        super.onSaveInstanceState(outState)
-        /* save the visible fragment, to be retrieved in onCreate */
-        if (visibleFragment != null)
-            outState?.putString("visibleFragment", visibleFragment!!.javaClass.simpleName)
     }
 
     private fun displayFragment(clazz: Class<*>) {
@@ -139,14 +110,8 @@ class MainActivity : AppCompatActivity() {
         }
         tx.commit()
         visibleFragment = newFragment
-    }
 
-    override fun onBackPressed() {
-        if (drawerLayout.isDrawerVisible(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START)
-        } else if (visibleFragment?.onBackPressed() != true) {
-            super.onBackPressed()
-        }
+        supportActionBar!!.title = visibleFragment!!.javaClass.simpleName.removeSuffix("Fragment")
     }
 
     private fun checkPurchases() {
@@ -176,20 +141,80 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    /* below methods are for drawer stuff */
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (drawerToggle.onOptionsItemSelected(item))
-            return true
-        return super.onOptionsItemSelected(item)
+    private fun setupDrawer() {
+        setSupportActionBar(toolbar)
+
+        val filesItem = SecondaryDrawerItem()
+                .withName("Files")
+                .withIconTintingEnabled(true)
+                .withIdentifier(-2)
+                .withOnDrawerItemClickListener { _, _, _ -> displayFragment(FilesFragment::class.java); false }
+
+        val allowanceItem = SecondaryDrawerItem()
+                .withName("Allowance")
+                .withIconTintingEnabled(true)
+                .withIdentifier(-1)
+                .withOnDrawerItemClickListener { _, _, _ -> displayFragment(AllowanceFragment::class.java); false }
+
+        val renterItem = PrimaryDrawerItem()
+                .withName("Renter")
+                .withIcon(R.drawable.ic_cloud)
+                .withIconTintingEnabled(true)
+                .withIdentifier(0)
+                .withSubItems(filesItem, allowanceItem)
+                .withOnDrawerItemClickListener { _, _, _ -> true }
+
+        val walletItem = PrimaryDrawerItem()
+                .withName("Wallet")
+                .withIcon(R.drawable.ic_account_balance_wallet)
+                .withIconTintingEnabled(true)
+                .withIdentifier(1)
+                .withOnDrawerItemClickListener { _, _, _ -> displayFragment(WalletFragment::class.java); false }
+
+        val terminalItem = PrimaryDrawerItem()
+                .withName("Terminal")
+                .withIcon(R.drawable.icon_terminal)
+                .withIconTintingEnabled(true)
+                .withIdentifier(2)
+                .withOnDrawerItemClickListener { _, _, _ -> displayFragment(TerminalFragment::class.java); false }
+
+        val settingsItem = PrimaryDrawerItem()
+                .withName("Settings")
+                .withIcon(R.drawable.ic_settings)
+                .withIconTintingEnabled(true)
+                .withIdentifier(3)
+                .withOnDrawerItemClickListener { _, _, _ -> displayFragment(SettingsFragment::class.java); false }
+
+        val aboutItem = PrimaryDrawerItem()
+                .withName("About")
+                .withIcon(R.drawable.ic_info_outline)
+                .withIconTintingEnabled(true)
+                .withIdentifier(4)
+                .withOnDrawerItemClickListener { _, _, _ -> displayFragment(AboutFragment::class.java); false }
+
+        drawer = DrawerBuilder()
+                .withActivity(this)
+                .withHeader(View.inflate(this, R.layout.drawer_header, null))
+                .withTranslucentStatusBar(false)
+                .addDrawerItems(renterItem, walletItem, terminalItem, DividerDrawerItem(), settingsItem, aboutItem)
+                .withToolbar(toolbar)
+                .withCloseOnClick(true)
+                .withHeaderDivider(false)
+                .build()
     }
 
-    override fun onPostCreate(savedInstanceState: Bundle?) {
-        super.onPostCreate(savedInstanceState)
-        drawerToggle.syncState()
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        /* save the visible fragment, to be retrieved in onCreate */
+        if (visibleFragment != null)
+            outState?.putString("visibleFragment", visibleFragment!!.javaClass.simpleName)
     }
 
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        drawerToggle.onConfigurationChanged(newConfig)
+    override fun onBackPressed() {
+        if (drawer.isDrawerOpen) {
+            drawer.closeDrawer()
+        } else if (visibleFragment?.onBackPressed() != true) {
+            super.onBackPressed()
+        }
     }
 }

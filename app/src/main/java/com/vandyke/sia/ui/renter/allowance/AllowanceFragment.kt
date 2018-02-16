@@ -17,7 +17,7 @@ import com.vandyke.sia.ui.common.BaseFragment
 import javax.inject.Inject
 
 
-class RenterAllowanceFragment : BaseFragment() {
+class AllowanceFragment : BaseFragment() {
     override val layoutResId = R.layout.fragment_renter_allowance
     override val hasOptionsMenu = true
 

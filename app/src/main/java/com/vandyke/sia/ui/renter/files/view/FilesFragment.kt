@@ -14,7 +14,6 @@ import android.graphics.PorterDuff
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.SearchView
@@ -35,7 +34,6 @@ import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.ui.renter.files.view.list.NodesAdapter
 import com.vandyke.sia.ui.renter.files.viewmodel.FilesViewModel
 import com.vandyke.sia.util.*
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_renter_files.*
 import javax.inject.Inject
 
@@ -379,18 +377,14 @@ class FilesFragment : BaseFragment() {
     }
 
     override fun onShow() {
-        activity!!.toolbar.addView(spinnerView)
-        setActionBarTitleDisplayed(false)
+        toolbar.addView(spinnerView)
+        actionBar.setDisplayShowTitleEnabled(false)
         viewModel.refresh()
     }
 
     override fun onHide() {
-        activity!!.toolbar.removeView(spinnerView)
-        setActionBarTitleDisplayed(true)
-    }
-
-    private fun setActionBarTitleDisplayed(visible: Boolean) {
-        (activity as AppCompatActivity).supportActionBar!!.setDisplayShowTitleEnabled(visible)
+        toolbar.removeView(spinnerView)
+        actionBar.setDisplayShowTitleEnabled(true)
     }
 
     companion object {
