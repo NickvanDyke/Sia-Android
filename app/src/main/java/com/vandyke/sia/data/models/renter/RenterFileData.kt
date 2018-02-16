@@ -16,7 +16,7 @@ data class RenterFileData
 @JsonCreator constructor(
         @PrimaryKey
         @JsonProperty(value = "siapath")
-        override var path: String, // TODO: change back to val
+        override val path: String,
         @JsonProperty(value = "localpath")
         val localpath: String,
         @JsonProperty(value = "filesize")

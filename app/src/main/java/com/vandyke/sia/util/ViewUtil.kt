@@ -1,4 +1,4 @@
-package com.vandyke.sia.util.rx
+package com.vandyke.sia.util
 
 import android.view.View
 

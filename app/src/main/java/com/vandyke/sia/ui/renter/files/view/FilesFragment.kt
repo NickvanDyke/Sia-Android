@@ -107,10 +107,10 @@ class FilesFragment : BaseFragment() {
             fabFilesMenu.close(true)
             DialogUtil.editTextDialog(context!!,
                     "New directory",
-                    "Name",
                     "Create",
                     { viewModel.createDir(it.text.toString()) },
-                    "Cancel")
+                    "Cancel",
+                    editTextFunc = { hint = "Name" })
                     .showDialogAndKeyboard()
         }
 
@@ -125,7 +125,6 @@ class FilesFragment : BaseFragment() {
                 viewModel.selectedNodes.value.forEach { node ->
                     DialogUtil.editTextDialog(context!!,
                             "Rename ${node.name}",
-                            "Name",
                             "Rename",
                             {
                                 val newName = it.text.toString()
@@ -136,7 +135,8 @@ class FilesFragment : BaseFragment() {
                                 viewModel.deselect(node)
                             },
                             "Cancel",
-                            { viewModel.deselect(node) })
+                            { viewModel.deselect(node) },
+                            { hint = "Name" })
                             .showDialogAndKeyboard()
                 }
             } else {

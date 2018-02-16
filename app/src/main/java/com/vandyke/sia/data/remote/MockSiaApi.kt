@@ -70,6 +70,22 @@ class MockSiaApi : SiaApiInterface {
             RenterFileData("my/name/is/nick/and/this/is/my/story.txt", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534)
     )
 
+    private var renterData = RenterData(
+            RenterSettingsData(RenterSettingsAllowanceData(
+                    BigDecimal("3629").toHastings(),
+                    24,
+                    6048,
+                    3024
+            )),
+            RenterFinancialMetricsData(
+                    BigDecimal("167").toHastings(),
+                    BigDecimal("154").toHastings(),
+                    BigDecimal("690").toHastings(),
+                    BigDecimal("274").toHastings(),
+                    BigDecimal("1085").toHastings()
+            )
+    )
+
     override fun daemonStop(): Completable {
         TODO("not implemented")
     }
@@ -169,27 +185,15 @@ class MockSiaApi : SiaApiInterface {
     }
 
     override fun renter(): Single<RenterData> {
-        return Single.just(
-                RenterData(
-                        RenterSettingsData(RenterSettingsAllowanceData(
-                                BigDecimal("3629").toHastings(),
-                                24,
-                                6048,
-                                3024
-                        )),
-                        RenterFinancialMetricsData(
-                                BigDecimal("167").toHastings(),
-                                BigDecimal("154").toHastings(),
-                                BigDecimal("690").toHastings(),
-                                BigDecimal("274").toHastings(),
-                                BigDecimal("1085").toHastings()
-                        )
-                )
-        )
+        return Single.just(renterData)
     }
 
     override fun renter(funds: BigDecimal, hosts: Int, period: Int, renewwindow: Int): Completable {
-        TODO("not implemented")
+        return Completable.fromAction {
+            renterData = renterData.copy(
+                    settings = renterData.settings.copy(
+                            allowance = RenterSettingsAllowanceData(funds, hosts, period, renewwindow)))
+        }
     }
 
     override fun renterContracts(): Single<ContractsData> {
@@ -214,7 +218,8 @@ class MockSiaApi : SiaApiInterface {
 
     override fun renterRename(siapath: String, newSiaPath: String) = Completable.fromAction {
         val file = files.find { it.path == siapath } ?: return@fromAction
-        file.path = newSiaPath
+        files.remove(file)
+        files.add(file.copy(path = newSiaPath))
     }!!
 
     override fun renterDelete(siapath: String): Completable {

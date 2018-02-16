@@ -20,7 +20,6 @@ import com.mikepenz.materialdrawer.model.SecondaryDrawerItem
 import com.vandyke.sia.BuildConfig
 import com.vandyke.sia.R
 import com.vandyke.sia.data.local.Prefs
-import com.vandyke.sia.data.siad.SiadService
 import com.vandyke.sia.ui.about.AboutFragment
 import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.ui.onboarding.IntroActivity
@@ -68,20 +67,20 @@ class MainActivity : AppCompatActivity() {
                     .setPositiveButton("Close", null)
                     .show()
         } else {
-            startService(Intent(this, SiadService::class.java))
+//            startService(Intent(this, SiadService::class.java))
         }
 
         setupDrawer()
 
         if (savedInstanceState == null) {
             if (Prefs.startupPage == "files") {
-                drawer.setSelection(0, true) // TODO: selecting it doesn't actually select it...? Maybe since it's in a submenu
-                displayFragment(FilesFragment::class.java) // So we set it manually here instead
+                drawer.setSelection(0, true) // doesn't fire the item's onClick? Maybe because it's in an unexpanded submenu
+                displayFragment(FilesFragment::class.java) // so we set it manually here instead
             } else {
                 drawer.setSelection(
                         when (Prefs.startupPage) {
-                            "wallet" -> 2L
-                            "terminal" -> 3L
+                            "wallet" -> 3L
+                            "terminal" -> 4L
                             else -> throw IllegalArgumentException("Invalid startup page: ${Prefs.startupPage}")
                         }, true)
             }
@@ -95,6 +94,8 @@ class MainActivity : AppCompatActivity() {
             DialogUtil.showRateDialog(this)
             Prefs.shownFeedbackDialog = true
         }
+
+        displayFragment(AllowanceFragment::class.java)
     }
 
     private fun displayFragment(clazz: Class<*>) {
@@ -169,7 +170,7 @@ class MainActivity : AppCompatActivity() {
                 .withName("Renter")
                 .withIcon(R.drawable.ic_cloud)
                 .withIconTintingEnabled(true)
-                .withIdentifier(0)
+                .withIdentifier(2)
                 .withSubItems(filesItem, allowanceItem)
                 .withSelectable(false)
                 .withOnDrawerItemClickListener { _, _, _ -> true }
@@ -178,28 +179,28 @@ class MainActivity : AppCompatActivity() {
                 .withName("Wallet")
                 .withIcon(R.drawable.ic_account_balance_wallet)
                 .withIconTintingEnabled(true)
-                .withIdentifier(2)
+                .withIdentifier(3)
                 .withOnDrawerItemClickListener { _, _, _ -> displayFragment(WalletFragment::class.java); false }
 
         val terminalItem = PrimaryDrawerItem()
                 .withName("Terminal")
                 .withIcon(R.drawable.icon_terminal)
                 .withIconTintingEnabled(true)
-                .withIdentifier(3)
+                .withIdentifier(4)
                 .withOnDrawerItemClickListener { _, _, _ -> displayFragment(TerminalFragment::class.java); false }
 
         val settingsItem = PrimaryDrawerItem()
                 .withName("Settings")
                 .withIcon(R.drawable.ic_settings)
                 .withIconTintingEnabled(true)
-                .withIdentifier(4)
+                .withIdentifier(5)
                 .withOnDrawerItemClickListener { _, _, _ -> displayFragment(SettingsFragment::class.java); false }
 
         val aboutItem = PrimaryDrawerItem()
                 .withName("About")
                 .withIcon(R.drawable.ic_info_outline)
                 .withIconTintingEnabled(true)
-                .withIdentifier(5)
+                .withIdentifier(6)
                 .withOnDrawerItemClickListener { _, _, _ -> displayFragment(AboutFragment::class.java); false }
 
         drawer = DrawerBuilder()

@@ -4,6 +4,7 @@
 
 package com.vandyke.sia.ui.renter.allowance
 
+import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.models.renter.PricesData
@@ -29,12 +30,12 @@ class AllowanceViewModel
     val currency = NonNullLiveData(Prefs.allowanceCurrency)
 
     val currentMetric = NonNullLiveData(STORAGE)
-    val currentMetricValues = NonNullLiveData(MetricValues(BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO))
+    val currentMetricValues = MutableLiveData<MetricValues>()
 
-    val allowance = NonNullLiveData(RenterSettingsAllowanceData(BigDecimal.ZERO, 0, 0, 0))
-    val spending = NonNullLiveData(RenterFinancialMetricsData(BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO))
-    val prices = NonNullLiveData(PricesData(BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO))
-    val scValue = NonNullLiveData(ScValueData(BigDecimal.ZERO))
+    val allowance = MutableLiveData<RenterSettingsAllowanceData>()
+    val spending = MutableLiveData<RenterFinancialMetricsData>()
+    val prices = MutableLiveData<PricesData>()
+    val scValue = MutableLiveData<ScValueData>()
 
     val activeTasks = NonNullLiveData(0)
     val refreshing = NonNullLiveData(false)
@@ -43,6 +44,7 @@ class AllowanceViewModel
     private var cached: Triple<PricesData, RenterFinancialMetricsData, ScValueData>? = null
 
     init {
+        // maybe merge these together
         renterRepository.mostRecentAllowance()
                 .io()
                 .main()
@@ -84,10 +86,13 @@ class AllowanceViewModel
                 .subscribe({}, ::onError)
     }
 
-    fun setAllowance(funds: BigDecimal = allowance.value.funds,
-                     hosts: Int = allowance.value.hosts,
-                     period: Int = allowance.value.period,
-                     renewWindow: Int = allowance.value.renewwindow) {
+    fun setAllowance(funds: BigDecimal? = allowance.value?.funds,
+                     hosts: Int? = allowance.value?.hosts,
+                     period: Int? = allowance.value?.period,
+                     renewWindow: Int? = allowance.value?.renewwindow) {
+        if (funds == null || hosts == null || period == null || renewWindow == null)
+            throw IllegalArgumentException("Passed null values to setAllowance()")
+
         renterRepository.setAllowance(funds, hosts, period, renewWindow)
                 .io()
                 .main()
@@ -96,14 +101,14 @@ class AllowanceViewModel
     }
 
     private fun setDisplayedMetrics() {
-        val conversionRate = with(scValue.value) {
+        val conversionRate = with(scValue.value ?: return) {
             when (currency.value) {
-                SC -> BigDecimal.ONE
+                SC -> BigDecimal("1.00") /* using the ONE constant results in rounding when dividing later. Don't know why */
                 USD -> UsdPerSc
             }
         }
 
-        val price = with(prices.value) {
+        val price = with(prices.value ?: return) {
             when (currentMetric.value) {
                 UPLOAD -> uploadterabyte
                 DOWNLOAD -> downloadterabyte
@@ -113,7 +118,8 @@ class AllowanceViewModel
             }
         } * conversionRate
 
-        val spent = with(spending.value) {
+        val spendingData = spending.value ?: return
+        val spent = with(spendingData) {
             when (currentMetric.value) {
                 UPLOAD -> uploadspending
                 DOWNLOAD -> downloadspending
@@ -123,10 +129,17 @@ class AllowanceViewModel
             }
         } * conversionRate
 
+        val purchasable = when {
+            price.toInt() == 0 -> BigDecimal.ZERO
+            else -> spendingData.unspent * conversionRate / price
+        }
+
+        println("conversionRate: $conversionRate\nunspent: ${spendingData.unspent}\nprice: $price\npurchasable: $purchasable")
+
         currentMetricValues.value = MetricValues(
                 price,
                 spent,
-                if (price.toInt() == 0) BigDecimal.ZERO else spending.value.unspent / price)
+                purchasable)
     }
 
     private fun onError(t: Throwable) {

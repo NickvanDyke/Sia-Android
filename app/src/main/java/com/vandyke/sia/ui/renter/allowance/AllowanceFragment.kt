@@ -6,6 +6,7 @@ package com.vandyke.sia.ui.renter.allowance
 
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.text.InputType
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -24,10 +25,8 @@ import com.vandyke.sia.data.siad.SiadSource
 import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.ui.renter.allowance.AllowanceViewModel.Currency
 import com.vandyke.sia.ui.renter.allowance.AllowanceViewModel.Metrics.*
-import com.vandyke.sia.util.format
-import com.vandyke.sia.util.getColorRes
-import com.vandyke.sia.util.setColors
-import com.vandyke.sia.util.toSC
+import com.vandyke.sia.util.*
+import com.vandyke.sia.util.rx.observe
 import kotlinx.android.synthetic.main.fragment_allowance.*
 import javax.inject.Inject
 
@@ -45,7 +44,7 @@ class AllowanceFragment : BaseFragment() {
 
     private var currencyButton: MenuItem? = null
 
-    private var highlightedX = 0f
+    private var highlightedX = -1f
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         appComponent.inject(this)
@@ -98,12 +97,61 @@ class AllowanceFragment : BaseFragment() {
             invalidate() // TODO: pie chart is invisible until after recreation, or unless
             // displayFragment(AllowanceFragment::class.java) is called at the end of MainActivity onCreate.
             // why??? hopefully will discover while working on other stuff here
+        }
 
+        /* listeners for clicky stuff in settings */
+        fundsClickable.setOnClickListener {
+            DialogUtil.editTextDialog(context!!,
+                    "Funds",
+                    "Set",
+                    { vm.setAllowance(it.text.toString().toBigDecimal().toHastings()) },
+                    "Cancel",
+                    editTextFunc = { hint = "Amount (SC)"; inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL })
+                    .showDialogAndKeyboard()
+        }
+
+        hostsClickable.setOnClickListener {
+            DialogUtil.editTextDialog(context!!,
+                    "Hosts",
+                    "Set",
+                    { vm.setAllowance(hosts = it.text.toString().toInt()) },
+                    "Cancel",
+                    editTextFunc = { hint = "Hosts"; inputType = InputType.TYPE_CLASS_NUMBER })
+                    .showDialogAndKeyboard()
+        }
+
+        periodClickable.setOnClickListener {
+            DialogUtil.editTextDialog(context!!,
+                    "Period",
+                    "Set",
+                    { vm.setAllowance(period = it.text.toString().toInt()) },
+                    "Cancel",
+                    editTextFunc = { hint = "Blocks"; inputType = InputType.TYPE_CLASS_NUMBER })
+                    .showDialogAndKeyboard()
+        }
+
+        renewWindowClickable.setOnClickListener {
+            DialogUtil.editTextDialog(context!!,
+                    "Renew window",
+                    "Set",
+                    { vm.setAllowance(renewWindow = it.text.toString().toInt()) },
+                    "Cancel",
+                    editTextFunc = { hint = "Blocks"; inputType = InputType.TYPE_CLASS_NUMBER })
+                    .showDialogAndKeyboard()
         }
 
         /* viewModel observation */
         vm.refreshing.observe(this) {
             allowanceSwipe.isRefreshing = it
+        }
+
+        vm.allowance.observe(this) {
+            with(it) {
+                fundsValue.text = funds.toSC().format() + " SC"
+                hostsValue.text = hosts.format()
+                periodValue.text = period.format() + " blocks"
+                renewWindowValue.text = renewwindow.format() + " blocks"
+            }
         }
 
         vm.currentMetric.observe(this) {

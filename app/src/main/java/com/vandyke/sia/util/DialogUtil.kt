@@ -45,15 +45,18 @@ object DialogUtil {
                 .show()
     }
 
-    fun editTextDialog(context: Context, title: String, hint: String,
+    fun editTextDialog(context: Context, title: String,
                        positiveText: String? = null, positiveFunc: ((EditText) -> Unit)? = null,
-                       negativeText: String? = null, negativeFunc: ((EditText) -> Unit)? = null): AlertDialog.Builder {
+                       negativeText: String? = null, negativeFunc: ((EditText) -> Unit)? = null,
+                       editTextFunc: (EditText.() -> Unit)? = null): AlertDialog.Builder {
         return with(AlertDialog.Builder(context)) {
             setTitle(title)
             val view = View.inflate(context, R.layout.edit_text_field, null)
             setView(view)
             val editText = view.findViewById<EditText>(R.id.field)
-            editText.hint = hint
+            if (editTextFunc != null) {
+                editText.editTextFunc()
+            }
             positiveText?.let { setPositiveButton(it, { _, _ -> positiveFunc?.invoke(editText) }) }
             negativeText?.let { setNegativeButton(it, { _, _ -> negativeFunc?.invoke(editText) }) }
             this
