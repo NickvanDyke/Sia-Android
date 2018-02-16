@@ -69,8 +69,8 @@ abstract class BaseFragment : Fragment() {
     }
 
     /** call through to the super implementation when overriding */
-    override fun onResume() {
-        super.onResume()
+    override fun onStart() {
+        super.onStart()
         activity!!.invalidateOptionsMenu()
         if (recreating) {
             recreating = false
@@ -86,8 +86,8 @@ abstract class BaseFragment : Fragment() {
     }
 
     /** call through to the super implementation when overriding */
-    override fun onPause() {
-        super.onPause()
+    override fun onStop() {
+        super.onStop()
         if (isVisible)
             onHide()
     }

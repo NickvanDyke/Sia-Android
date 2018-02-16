@@ -20,9 +20,9 @@ import com.vandyke.sia.R
 import com.vandyke.sia.appComponent
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.ui.main.MainActivity
-import com.vandyke.sia.util.GenUtil
 import com.vandyke.sia.util.NotificationUtil
 import com.vandyke.sia.util.StorageUtil
+import com.vandyke.sia.util.bitmapFromVector
 import com.vandyke.sia.util.rx.observe
 import io.reactivex.Single
 import kotlinx.coroutines.experimental.CommonPool
@@ -177,7 +177,7 @@ class SiadService : LifecycleService() {
     private fun siadNotification(text: String): Notification {
         val builder = NotificationCompat.Builder(this, NotificationUtil.SIA_NODE_CHANNEL)
                 .setSmallIcon(R.drawable.sia_new_circle_logo_transparent_white)
-                .setLargeIcon(GenUtil.getBitmapFromVectorDrawable(this, R.drawable.sia_new_circle_logo_transparent))
+                .setLargeIcon(bitmapFromVector(R.drawable.sia_new_circle_logo_transparent))
                 .setContentTitle("Sia node")
                 .setContentText(text)
                 .setStyle(NotificationCompat.BigTextStyle().bigText(text))

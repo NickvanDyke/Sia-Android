@@ -6,7 +6,7 @@ package com.vandyke.sia.dagger
 
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
-import com.vandyke.sia.ui.renter.allowance.RenterAllowanceViewModel
+import com.vandyke.sia.ui.renter.allowance.AllowanceViewModel
 import com.vandyke.sia.ui.renter.files.viewmodel.FilesViewModel
 import com.vandyke.sia.ui.wallet.viewmodel.WalletViewModel
 import dagger.Binds
@@ -28,8 +28,8 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(RenterAllowanceViewModel::class)
-    abstract fun bindAllowanceViewModel(renterAllowanceViewModel: RenterAllowanceViewModel): ViewModel
+    @ViewModelKey(AllowanceViewModel::class)
+    abstract fun bindAllowanceViewModel(allowanceViewModel: AllowanceViewModel): ViewModel
 
     @Binds
     abstract fun bindViewModelFactory(factory: SiaViewModelFactory): ViewModelProvider.Factory

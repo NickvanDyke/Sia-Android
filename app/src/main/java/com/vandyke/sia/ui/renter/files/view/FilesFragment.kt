@@ -34,12 +34,12 @@ import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.ui.renter.files.view.list.NodesAdapter
 import com.vandyke.sia.ui.renter.files.viewmodel.FilesViewModel
 import com.vandyke.sia.util.*
-import kotlinx.android.synthetic.main.fragment_renter_files.*
+import kotlinx.android.synthetic.main.fragment_files.*
 import javax.inject.Inject
 
 
 class FilesFragment : BaseFragment() {
-    override val layoutResId: Int = R.layout.fragment_renter_files
+    override val layoutResId: Int = R.layout.fragment_files
     override val hasOptionsMenu = true
 
     @Inject
@@ -90,14 +90,8 @@ class FilesFragment : BaseFragment() {
         spinnerView.background.setColorFilter(ContextCompat.getColor(context!!, android.R.color.white), PorterDuff.Mode.SRC_ATOP)
 
         /* pull-to-refresh stuff */
-        nodesListRefresh.setColorSchemeResources(R.color.colorAccent)
-        nodesListRefresh.setOnRefreshListener {
-            viewModel.refresh()
-        }
-        val array = context!!.theme.obtainStyledAttributes(intArrayOf(android.R.attr.windowBackground))
-        val backgroundColor = array.getColor(0, 0xFF00FF)
-        array.recycle()
-        nodesListRefresh.setProgressBackgroundColorSchemeColor(backgroundColor)
+        nodesListRefresh.setColors(context!!)
+        nodesListRefresh.setOnRefreshListener { viewModel.refresh() }
 
         /* FAB stuff */
         fabAddFile.setOnClickListener {
@@ -364,7 +358,6 @@ class FilesFragment : BaseFragment() {
     }
 
     private fun launchSAF() {
-        // TODO: crashes when choosing a contact from the SAF. Need to prevent being able to choose it. I thought CATEGORY_OPENABLE would but I guess not
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true)
         intent.putExtra(Intent.CATEGORY_OPENABLE, true)

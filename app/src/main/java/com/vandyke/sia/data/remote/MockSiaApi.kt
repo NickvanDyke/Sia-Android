@@ -12,6 +12,7 @@ import com.vandyke.sia.data.models.txpool.FeeData
 import com.vandyke.sia.data.models.wallet.*
 import com.vandyke.sia.util.HASTINGS_PER_SC
 import com.vandyke.sia.util.UNCONFIRMED_TX_TIMESTAMP
+import com.vandyke.sia.util.toHastings
 import io.reactivex.Completable
 import io.reactivex.Single
 import java.math.BigDecimal
@@ -168,7 +169,23 @@ class MockSiaApi : SiaApiInterface {
     }
 
     override fun renter(): Single<RenterData> {
-        TODO("not implemented")
+        return Single.just(
+                RenterData(
+                        RenterSettingsData(RenterSettingsAllowanceData(
+                                BigDecimal("3629").toHastings(),
+                                24,
+                                6048,
+                                3024
+                        )),
+                        RenterFinancialMetricsData(
+                                BigDecimal("167").toHastings(),
+                                BigDecimal("154").toHastings(),
+                                BigDecimal("690").toHastings(),
+                                BigDecimal("274").toHastings(),
+                                BigDecimal("1085").toHastings()
+                        )
+                )
+        )
     }
 
     override fun renter(funds: BigDecimal, hosts: Int, period: Int, renewwindow: Int): Completable {
@@ -188,7 +205,11 @@ class MockSiaApi : SiaApiInterface {
     }
 
     override fun renterPrices(): Single<PricesData> {
-        TODO("not implemented")
+        return Single.just(PricesData(
+                BigDecimal("26").toHastings(),
+                BigDecimal("100").toHastings(),
+                BigDecimal("200").toHastings(),
+                BigDecimal("75").toHastings()))
     }
 
     override fun renterRename(siapath: String, newSiaPath: String) = Completable.fromAction {

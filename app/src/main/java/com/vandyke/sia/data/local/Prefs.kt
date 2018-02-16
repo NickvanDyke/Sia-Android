@@ -7,7 +7,7 @@ package com.vandyke.sia.data.local
 import com.chibatching.kotpref.KotprefModel
 import com.chibatching.kotpref.enumpref.enumOrdinalPref
 import com.vandyke.sia.data.repository.FilesRepository
-import com.vandyke.sia.ui.renter.allowance.RenterAllowanceViewModel
+import com.vandyke.sia.ui.renter.allowance.AllowanceViewModel
 
 object Prefs : KotprefModel() {
     override val kotprefName: String = "${context.packageName}_preferences"
@@ -40,5 +40,5 @@ object Prefs : KotprefModel() {
     var ascending by booleanPref(true)
     var orderBy by enumOrdinalPref(FilesRepository.OrderBy.PATH)
 
-    var allowanceCurrency by enumOrdinalPref(RenterAllowanceViewModel.Currency.SC)
+    var allowanceCurrency by enumOrdinalPref(AllowanceViewModel.Currency.SC)
 }

@@ -12,18 +12,16 @@ import com.vandyke.sia.data.models.renter.RenterSettingsAllowanceData
 import com.vandyke.sia.data.models.wallet.ScValueData
 import com.vandyke.sia.data.repository.RenterRepository
 import com.vandyke.sia.data.repository.ScValueRepository
-import com.vandyke.sia.ui.renter.allowance.RenterAllowanceViewModel.Currency.SC
-import com.vandyke.sia.ui.renter.allowance.RenterAllowanceViewModel.Currency.USD
-import com.vandyke.sia.ui.renter.allowance.RenterAllowanceViewModel.Metrics.*
+import com.vandyke.sia.ui.renter.allowance.AllowanceViewModel.Currency.SC
+import com.vandyke.sia.ui.renter.allowance.AllowanceViewModel.Currency.USD
+import com.vandyke.sia.ui.renter.allowance.AllowanceViewModel.Metrics.*
 import com.vandyke.sia.util.rx.*
 import io.reactivex.Completable
-import io.reactivex.Flowable
-import io.reactivex.functions.Function3
 import java.math.BigDecimal
 import javax.inject.Inject
 
 
-class RenterAllowanceViewModel
+class AllowanceViewModel
 @Inject constructor(
         private val renterRepository: RenterRepository,
         private val scValueRepository: ScValueRepository
@@ -33,7 +31,10 @@ class RenterAllowanceViewModel
     val currentMetric = NonNullLiveData(STORAGE)
     val currentMetricValues = NonNullLiveData(MetricValues(BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO))
 
-    val allowanceSettings = NonNullLiveData(RenterSettingsAllowanceData(BigDecimal.ZERO, 0, 0, 0))
+    val allowance = NonNullLiveData(RenterSettingsAllowanceData(BigDecimal.ZERO, 0, 0, 0))
+    val spending = NonNullLiveData(RenterFinancialMetricsData(BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO))
+    val prices = NonNullLiveData(PricesData(BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO))
+    val scValue = NonNullLiveData(ScValueData(BigDecimal.ZERO))
 
     val activeTasks = NonNullLiveData(0)
     val refreshing = NonNullLiveData(false)
@@ -45,22 +46,25 @@ class RenterAllowanceViewModel
         renterRepository.mostRecentAllowance()
                 .io()
                 .main()
-                .subscribe(allowanceSettings::setValue, ::onError)
+                .subscribe(allowance::setValue, ::onError)
 
-        Flowable.combineLatest(
-                renterRepository.mostRecentPrices(),
-                renterRepository.mostRecentSpending(),
-                scValueRepository.mostRecent(),
-                Function3 { prices: PricesData, spending: RenterFinancialMetricsData, scValue: ScValueData ->
-                    Triple(prices, spending, scValue)
-                })
+        renterRepository.mostRecentPrices()
                 .io()
                 .main()
-                .subscribe({ cached = it; setDisplayedMetrics() }, ::onError)
+                .subscribe({ prices.value = it; setDisplayedMetrics() })
 
-        currentMetric.observeForevs { setDisplayedMetrics() }
+        renterRepository.mostRecentSpending()
+                .io()
+                .main()
+                .subscribe({ spending.value = it; setDisplayedMetrics() }, ::onError)
+
+        scValueRepository.mostRecent()
+                .io()
+                .main()
+                .subscribe({ scValue.value = it; setDisplayedMetrics() }, ::onError)
 
         currency.observeForevs { Prefs.allowanceCurrency = it; setDisplayedMetrics() }
+        currentMetric.observeForevs { setDisplayedMetrics() }
     }
 
     fun refresh() {
@@ -80,10 +84,10 @@ class RenterAllowanceViewModel
                 .subscribe({}, ::onError)
     }
 
-    fun setAllowance(funds: BigDecimal = allowanceSettings.value.funds,
-                     hosts: Int = allowanceSettings.value.hosts,
-                     period: Int = allowanceSettings.value.period,
-                     renewWindow: Int = allowanceSettings.value.renewwindow) {
+    fun setAllowance(funds: BigDecimal = allowance.value.funds,
+                     hosts: Int = allowance.value.hosts,
+                     period: Int = allowance.value.period,
+                     renewWindow: Int = allowance.value.renewwindow) {
         renterRepository.setAllowance(funds, hosts, period, renewWindow)
                 .io()
                 .main()
@@ -92,31 +96,37 @@ class RenterAllowanceViewModel
     }
 
     private fun setDisplayedMetrics() {
-        val (prices, spending, scValue) = cached ?: return
-        val conversionRate = when (currency.value) {
-            SC -> BigDecimal.ONE
-            USD -> scValue.UsdPerSc
+        val conversionRate = with(scValue.value) {
+            when (currency.value) {
+                SC -> BigDecimal.ONE
+                USD -> UsdPerSc
+            }
         }
 
-        val price = with(prices) {
+        val price = with(prices.value) {
             when (currentMetric.value) {
                 UPLOAD -> uploadterabyte
                 DOWNLOAD -> downloadterabyte
                 STORAGE -> storageterabytemonth
                 CONTRACT -> formcontracts
+                UNSPENT -> BigDecimal.ZERO
             }
         } * conversionRate
 
-        val spent = with(spending) {
+        val spent = with(spending.value) {
             when (currentMetric.value) {
                 UPLOAD -> uploadspending
                 DOWNLOAD -> downloadspending
                 STORAGE -> storagespending
                 CONTRACT -> contractspending
+                UNSPENT -> unspent
             }
         } * conversionRate
 
-        currentMetricValues.value = MetricValues(price, spent, spending.unspent / price)
+        currentMetricValues.value = MetricValues(
+                price,
+                spent,
+                if (price.toInt() == 0) BigDecimal.ZERO else spending.value.unspent / price)
     }
 
     private fun onError(t: Throwable) {
@@ -124,10 +134,11 @@ class RenterAllowanceViewModel
     }
 
     enum class Metrics(val text: String) {
-        UPLOAD("upload"),
-        DOWNLOAD("download"),
-        STORAGE("storage"),
-        CONTRACT("contract")
+        UPLOAD("Uploading"),
+        DOWNLOAD("Downloading"),
+        STORAGE("Storage"),
+        CONTRACT("Form contracts"),
+        UNSPENT("Unspent")
     }
 
     enum class Currency(val text: String) {
@@ -135,5 +146,5 @@ class RenterAllowanceViewModel
         USD("USD")
     }
 
-    data class MetricValues(val price: BigDecimal, val spent: BigDecimal, val remaining: BigDecimal)
+    data class MetricValues(val price: BigDecimal, val spent: BigDecimal, val purchasable: BigDecimal)
 }

@@ -6,7 +6,6 @@ package com.vandyke.sia.ui.onboarding
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
 import com.codemybrainsout.onboarder.AhoyOnboarderActivity
 import com.codemybrainsout.onboarder.AhoyOnboarderCard
 import com.vandyke.sia.R
@@ -51,7 +50,7 @@ class IntroActivity : AhoyOnboarderActivity() {
 
         showNavigationControls(false)
         setFinishButtonTitle("Get started")
-        setFinishButtonDrawableStyle(ContextCompat.getDrawable(this, R.drawable.onboarding_finish_button))
+        setFinishButtonDrawableStyle(getDrawable(R.drawable.onboarding_finish_button))
     }
 
     override fun onFinishButtonPressed() {
