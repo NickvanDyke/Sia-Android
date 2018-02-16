@@ -9,6 +9,7 @@ import android.content.Intent
 import android.support.v7.app.AlertDialog
 import android.view.View
 import android.view.WindowManager
+import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.Toast
 import com.vandyke.sia.R
@@ -48,19 +49,27 @@ object DialogUtil {
     fun editTextDialog(context: Context, title: String,
                        positiveText: String? = null, positiveFunc: ((EditText) -> Unit)? = null,
                        negativeText: String? = null, negativeFunc: ((EditText) -> Unit)? = null,
-                       editTextFunc: (EditText.() -> Unit)? = null): AlertDialog.Builder {
-        return with(AlertDialog.Builder(context)) {
+                       editTextFunc: (EditText.() -> Unit)? = null): AlertDialog {
+        val view = View.inflate(context, R.layout.edit_text_field, null)
+        val editText = view.findViewById<EditText>(R.id.field)
+        val dialog = with(AlertDialog.Builder(context)) {
             setTitle(title)
-            val view = View.inflate(context, R.layout.edit_text_field, null)
             setView(view)
-            val editText = view.findViewById<EditText>(R.id.field)
             if (editTextFunc != null) {
                 editText.editTextFunc()
             }
             positiveText?.let { setPositiveButton(it, { _, _ -> positiveFunc?.invoke(editText) }) }
             negativeText?.let { setNegativeButton(it, { _, _ -> negativeFunc?.invoke(editText) }) }
-            this
+            create()
         }
+        editText.setOnEditorActionListener { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                dialog.dismiss()
+                positiveFunc?.invoke(editText)
+            }
+            true
+        }
+        return dialog
     }
 }
 
