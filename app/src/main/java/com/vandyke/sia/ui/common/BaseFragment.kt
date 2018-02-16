@@ -17,15 +17,8 @@ import com.vandyke.sia.util.Analytics
 import kotlinx.android.synthetic.main.activity_main.*
 
 abstract class BaseFragment : Fragment() {
-    open val layoutResId: Int = 0
+    open val layoutResId: Int = -1
     open val hasOptionsMenu = false
-    /** this is so that if the activity is recreated, therefore recreating this fragment, it's
-     *  onShow() won't be called if it wasn't visible before recreation. */
-    private var wasVisible = false
-    private var recreating = false
-
-    /** need this variable because isVisible sometimes returns false in onResume if this is the first fragment being shown */
-    private var firstTimeVisible = true
 
     val toolbar: Toolbar
         get() = (activity as MainActivity).toolbar
@@ -33,17 +26,9 @@ abstract class BaseFragment : Fragment() {
     val actionBar: ActionBar
         get() = (activity as AppCompatActivity).supportActionBar!!
 
-    // could maybe use userVisibleHint to simplify the above? It persists across save states and recreations apparently
     /** call through to the super implementation when overriding */
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        if (savedInstanceState != null) {
-            recreating = true
-            wasVisible = savedInstanceState["visible"] as Boolean
-            firstTimeVisible = false
-        }
-        setHasOptionsMenu(hasOptionsMenu)
-        println("${this.javaClass.simpleName} onCreateView\nrecreating: $recreating\nwasVisible: $wasVisible\nfirstTimeVisible: $firstTimeVisible")
-        return if (layoutResId != 0)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {setHasOptionsMenu(hasOptionsMenu)
+        return if (layoutResId != -1)
             inflater.inflate(layoutResId, container, false)
         else
             null
@@ -55,17 +40,17 @@ abstract class BaseFragment : Fragment() {
     /** called in onResume and in onHiddenChanged when hidden is false. Basically, called whenever
      * the fragment is newly visible to the user. */
     open fun onShow() {
-        println(this.javaClass.simpleName + " onShow")
+        userVisibleHint = true
+        logScreen()
     }
 
     open fun onHide() {
-        println(this.javaClass.simpleName + " onHide")
+        userVisibleHint = false
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
         if (!hidden) {
             onShow()
-            logScreen()
             activity!!.invalidateOptionsMenu()
         } else {
             onHide()
@@ -74,34 +59,17 @@ abstract class BaseFragment : Fragment() {
 
     /** call through to the super implementation when overriding */
     override fun onStart() {
-        println(this.javaClass.simpleName + " onStart")
         super.onStart()
         activity!!.invalidateOptionsMenu()
-        if (recreating) {
-            recreating = false
-            if (wasVisible) {
-                onShow()
-                logScreen()
-            }
-        } else if (firstTimeVisible || isVisible) {
+        if (userVisibleHint)
             onShow()
-            logScreen()
-            firstTimeVisible = false
-        }
     }
 
     /** call through to the super implementation when overriding */
     override fun onStop() {
-        println(this.javaClass.simpleName + " onStop")
         super.onStop()
-        if (isVisible)
+        if (userVisibleHint)
             onHide()
-    }
-
-    /** call through to the super implementation when overriding */
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putBoolean("visible", isVisible)
     }
 
     private fun logScreen() {

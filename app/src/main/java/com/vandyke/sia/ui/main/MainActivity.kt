@@ -40,7 +40,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        println("MainActivity onCreate -----------------")
 
         if (!Prefs.viewedOnboarding) {
             finish()
@@ -75,21 +74,20 @@ class MainActivity : AppCompatActivity() {
         setupDrawer()
 
         if (savedInstanceState == null) {
-            when (Prefs.startupPage) {
+            drawer.setSelection(when (Prefs.startupPage) {
                 "files" -> {
-                    drawer.setSelection(0L, true)// doesn't fire the item's onClick? Maybe because it's in an unexpanded submenu
-                    displayFragment(FilesFragment::class.java) // so we set it manually here instead
+                    displayFragment(FilesFragment::class.java)
+                    0L // doesn't fire the listener? Maybe since it's in a submenu. So we set it manually above
                 }
-                "wallet" -> drawer.setSelection(3L, true)
-                "terminal" -> drawer.setSelection(4L, true)
+                "wallet" -> 3L
+                "terminal" -> 4L
                 else -> throw IllegalArgumentException("Invalid startup page: ${Prefs.startupPage}")
-            }
+            }, true)
         } else {
             /* find the fragment currently visible stored in the savedInstanceState */
             val storedFragmentClass = supportFragmentManager.findFragmentByTag(savedInstanceState.getString("visibleFragment")).javaClass
             displayFragment(storedFragmentClass)
-            println(savedInstanceState.getLong("drawerSelectedId"))
-            drawer.setSelection(savedInstanceState.getLong("drawerSelectedId"), true)
+            drawer.setSelection(savedInstanceState.getLong("drawerSelectedId"), false)
         }
 
         if (Prefs.displayedTransaction && !Prefs.shownFeedbackDialog) {
@@ -220,8 +218,8 @@ class MainActivity : AppCompatActivity() {
         /* save the visible fragment, to be retrieved in onCreate */
         if (visibleFragment != null) {
             outState?.putString("visibleFragment", visibleFragment!!.javaClass.simpleName)
-            outState?.putLong("drawerSelectedId", drawer.currentSelection)
         }
+        outState?.putLong("drawerSelectedId", drawer.currentSelection)
     }
 
     override fun onBackPressed() {

@@ -65,13 +65,14 @@ class AllowanceFragment : BaseFragment() {
         val colors = ColorTemplate.MATERIAL_COLORS.toMutableList()
         colors.add(0, context!!.getColorRes(android.R.color.holo_purple))
         dataSet.colors = colors
-        dataSet.sliceSpace = 2f
+        dataSet.sliceSpace = 1.5f
 
         val data = PieData(dataSet)
         data.setDrawValues(false)
 
         with(pieChart) {
             this.data = data
+            isRotationEnabled = false
             description.isEnabled = false
             legend.isEnabled = false
             setUsePercentValues(true)

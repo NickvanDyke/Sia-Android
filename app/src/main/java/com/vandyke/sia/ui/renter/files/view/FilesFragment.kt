@@ -377,7 +377,7 @@ class FilesFragment : BaseFragment() {
     }
 
     override fun onHide() {
-        super.onShow()
+        super.onHide()
         toolbar.removeView(spinnerView)
         actionBar.setDisplayShowTitleEnabled(true)
     }
