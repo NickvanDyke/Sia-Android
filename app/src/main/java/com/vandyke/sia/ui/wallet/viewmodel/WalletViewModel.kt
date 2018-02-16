@@ -57,7 +57,7 @@ class WalletViewModel
                 .main()
                 .subscribe(consensus::setValue, ::onError)
 
-        scValueRepository.scValue()
+        scValueRepository.mostRecent()
                 .io()
                 .main()
                 .subscribe(usd::setValue, ::onError)
@@ -88,7 +88,10 @@ class WalletViewModel
                 .subscribe({}, ::onError)
 
         /* we don't include this in the refresh task because it's remote and less reliable and speedy. And also not as integral. */
-        scValueRepository.updateScValue().io().main().subscribe({}, ::onError)
+        scValueRepository.updateScValue()
+                .io()
+                .main()
+                .subscribe({}, ::onError)
     }
 
     fun refreshWallet() {

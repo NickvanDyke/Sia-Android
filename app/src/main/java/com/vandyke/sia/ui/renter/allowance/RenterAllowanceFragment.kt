@@ -6,6 +6,8 @@ package com.vandyke.sia.ui.renter.allowance
 
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.View
 import com.vandyke.sia.R
 import com.vandyke.sia.appComponent
@@ -16,7 +18,8 @@ import javax.inject.Inject
 
 
 class RenterAllowanceFragment : BaseFragment() {
-    override val layoutResId: Int = R.layout.fragment_renter_settings
+    override val layoutResId = R.layout.fragment_renter_allowance
+    override val hasOptionsMenu = true
 
     @Inject
     lateinit var factory: SiaViewModelFactory
@@ -35,5 +38,9 @@ class RenterAllowanceFragment : BaseFragment() {
             if (it)
                 viewModel.refresh()
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+
     }
 }

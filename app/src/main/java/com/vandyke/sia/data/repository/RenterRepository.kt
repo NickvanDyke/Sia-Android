@@ -9,8 +9,9 @@ import com.vandyke.sia.data.remote.SiaApiInterface
 import io.reactivex.Completable
 import java.math.BigDecimal
 import javax.inject.Inject
+import javax.inject.Singleton
 
-
+@Singleton
 class RenterRepository
 @Inject constructor(
         val api: SiaApiInterface,

@@ -124,22 +124,27 @@ class FilesRepository
                     .flatMapCompletable { deleteFile(it) })
             .inDbTransaction(db)
 
-    fun moveDir(dir: Dir, newPath: String) = Completable.concatArray(
-            /* we first set the size of the dir and its children to zero, because their size will be updated when the files are moved into them */
-            Completable.fromAction { db.dirDao().updateSize(dir.path, BigDecimal.ZERO) },
-            db.dirDao().getDirsUnder(dir.path)
-                    .toElementsObservable()
-                    .flatMapCompletable { childDir ->
-                        Completable.fromAction { db.dirDao().updateSize(childDir.path, BigDecimal.ZERO) }
-                    },
-            Completable.fromAction { db.dirDao().updatePath(dir.path, newPath) }
-                    .onErrorResumeNext {
-                        Completable.error(if (it is SQLiteConstraintException) DirAlreadyExists(newPath.name()) else it)
-                    },
-            db.fileDao().getFilesUnder(dir.path)
-                    .toElementsObservable()
-                    .flatMapCompletable { file -> moveFile(file, file.path.replaceFirst(dir.path, newPath)) })
-            .inDbTransaction(db)
+    fun moveDir(dir: Dir, newPath: String): Completable {
+        var completable = Completable.concatArray(
+                Completable.fromAction { db.dirDao().updatePath(dir.path, newPath) }
+                        .onErrorResumeNext {
+                            Completable.error(if (it is SQLiteConstraintException) DirAlreadyExists(newPath.name()) else it)
+                        },
+                db.fileDao().getFilesUnder(dir.path)
+                        .toElementsObservable()
+                        .flatMapCompletable { file -> moveFile(file, file.path.replaceFirst(dir.path, newPath)) })
+
+        /* we first set the size of the dir and its children to zero, because their size will be updated when the files are moved into them.
+         * If the before/after path is the same, we don't set it's size to zero first, because files' sizes will be subtracted from it also. */
+        if (dir.path != newPath)
+            completable = completable.startWith(Completable.mergeArray(
+                    Completable.fromAction { db.dirDao().updateSize(dir.path, BigDecimal.ZERO) },
+                    db.dirDao().getDirsUnder(dir.path)
+                            .toElementsObservable()
+                            .flatMapCompletable { childDir -> Completable.fromAction { db.dirDao().updateSize(childDir.path, BigDecimal.ZERO) } }))
+
+        return completable.inDbTransaction(db)
+    }
 
     fun downloadDir(dir: Dir) = Completable.fromAction { TODO() }
 

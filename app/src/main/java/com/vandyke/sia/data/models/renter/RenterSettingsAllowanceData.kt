@@ -17,5 +17,5 @@ data class RenterSettingsAllowanceData(val funds: BigDecimal,
     /* we only want one entry in the db, so we make the primary key a constant */
     @PrimaryKey
     @JsonIgnore(value = true)
-    var num = 0
+    var key = 0
 }
