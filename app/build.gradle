@@ -132,9 +132,6 @@ dependencies {
     /* for crash reporting/analytics */
     implementation 'com.google.firebase:firebase-crash:11.8.0'
     implementation 'com.android.billingclient:billing:1.0'
-
-    /* for graph/charts */
-    implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
 }
 
 repositories {
