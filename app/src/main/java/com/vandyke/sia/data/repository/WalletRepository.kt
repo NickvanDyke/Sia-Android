@@ -48,6 +48,8 @@ class WalletRepository
     /* database flowables to be subscribed to */
     fun wallet() = db.walletDao().mostRecent()
 
+    fun walletMonthHistory() = db.walletDao().allLastMonth()
+
     fun transactions() = db.transactionDao().allByMostRecent()
 
     fun addresses() = db.addressDao().all()
