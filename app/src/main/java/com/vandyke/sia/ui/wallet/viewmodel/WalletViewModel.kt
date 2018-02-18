@@ -27,6 +27,7 @@ class WalletViewModel
         private val gatewayRepository: GatewayRepository
 ) : ViewModel() {
     val wallet = MutableLiveData<WalletData>()
+    val walletMonthHistory = MutableLiveData<List<WalletData>>()
     val usd = MutableLiveData<ScValueData>()
     val consensus = MutableLiveData<ConsensusData>()
     val transactions = MutableLiveData<List<TransactionData>>()
@@ -44,6 +45,10 @@ class WalletViewModel
          * we only need to subscribe this once */
         walletRepository.wallet().io().main().subscribe({
             wallet.value = it
+        }, ::onError)
+
+        walletRepository.walletMonthHistory().io().main().subscribe({
+            walletMonthHistory.value = it
         }, ::onError)
 
         walletRepository.transactions().io().main().subscribe({

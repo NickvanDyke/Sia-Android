@@ -6,6 +6,7 @@ package com.vandyke.sia.ui.wallet.view
 
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
+import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
@@ -17,6 +18,9 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.LineData
+import com.github.mikephil.charting.data.LineDataSet
 import com.vandyke.sia.R
 import com.vandyke.sia.appComponent
 import com.vandyke.sia.data.local.Prefs
@@ -131,6 +135,14 @@ class WalletFragment : BaseFragment() {
             updateUsdValue()
         }
 
+        viewModel.walletMonthHistory.observe(this) {
+            val list = arrayListOf<Entry>()
+            it.forEachIndexed { index, data ->
+                list.add(Entry(index.toFloat(), data.confirmedSiacoinBalance.toSC().toFloat()))
+            }
+            updateScGraph(list)
+        }
+
         viewModel.usd.observe(this) {
             updateUsdValue()
         }
@@ -188,6 +200,36 @@ class WalletFragment : BaseFragment() {
         if (viewModel.wallet.value != null && viewModel.usd.value != null)
             balanceUsdText.text = ("${viewModel.wallet.value!!.confirmedSiacoinBalance.toSC()
                     .toUsd(viewModel.usd.value!!.UsdPerSc).format()} USD")
+    }
+
+    private fun updateScGraph(list: List<Entry>) {
+        val lineSet = LineDataSet(list, "")
+        lineSet.setDrawCircles(false)
+        lineSet.setDrawValues(false)
+        lineSet.setDrawFilled(true)
+        lineSet.isHighlightEnabled = false
+
+        lineSet.color = Color.TRANSPARENT
+        lineSet.fillColor = ContextCompat.getColor(context!!, R.color.colorPrimaryDark)
+
+        siaChart.setViewPortOffsets(0f, 0f, 0f, 0f)
+        siaChart.data = LineData(lineSet)
+
+        /* enable scaling and dragging */
+        siaChart.isDragEnabled = false
+        siaChart.setScaleEnabled(false)
+
+        /* hide legend, description, background grid */
+        siaChart.legend.isEnabled = false
+        siaChart.description.isEnabled = false
+        siaChart.setDrawGridBackground(false)
+
+        /* hide axis */
+        siaChart.xAxis.isEnabled = false
+        siaChart.axisLeft.isEnabled = false
+        siaChart.axisRight.isEnabled = false
+
+        siaChart.invalidate()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
