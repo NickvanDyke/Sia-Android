@@ -9,9 +9,9 @@ import android.arch.lifecycle.ViewModelProviders
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
@@ -35,6 +35,7 @@ import com.vandyke.sia.ui.wallet.view.transactionslist.TransactionAdapter
 import com.vandyke.sia.ui.wallet.viewmodel.WalletViewModel
 import com.vandyke.sia.util.*
 import com.vandyke.sia.util.rx.observe
+import io.github.tonnyl.light.Light
 import io.reactivex.exceptions.CompositeException
 import kotlinx.android.synthetic.main.fragment_wallet.*
 import java.math.BigDecimal
@@ -102,11 +103,7 @@ class WalletFragment : BaseFragment() {
 
         /* set swipe-down stuff */
         transactionListSwipe.setOnRefreshListener { viewModel.refreshAll() }
-        transactionListSwipe.setColorSchemeResources(R.color.colorAccent)
-        val array = context!!.theme.obtainStyledAttributes(intArrayOf(android.R.attr.windowBackground))
-        val backgroundColor = array.getColor(0, 0xFF00FF)
-        array.recycle()
-        transactionListSwipe.setProgressBackgroundColorSchemeColor(backgroundColor)
+        transactionListSwipe.setColors(context!!)
 
         expandableFrame.onSwipeUp = ::collapseFrame
 
@@ -162,7 +159,7 @@ class WalletFragment : BaseFragment() {
         }
 
         viewModel.success.observe(this) {
-            SnackbarUtil.showSnackbar(wallet_coordinator, it)
+            Light.success(wallet_coordinator, it, Snackbar.LENGTH_SHORT).show()
             collapseFrame()
         }
 
@@ -248,9 +245,9 @@ class WalletFragment : BaseFragment() {
             R.id.actionCreateWallet -> expandFrame(WalletCreateDialog())
             R.id.actionSweepSeed -> expandFrame(WalletSweepSeedDialog())
             R.id.actionViewAddresses -> expandFrame(WalletAddressesDialog())
+            else -> return false
         }
-
-        return super.onOptionsItemSelected(item)
+        return true
     }
 
     fun expandFrame(fragment: BaseWalletFragment) {
@@ -275,12 +272,14 @@ class WalletFragment : BaseFragment() {
     }
 
     override fun onShow() {
-        setActionBarElevation(0f)
+        super.onShow()
+        actionBar.elevation = 0f
         viewModel.refreshAll()
     }
 
     override fun onHide() {
-        setActionBarElevation(12f)
+        super.onHide()
+        actionBar.elevation = 12f
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -327,10 +326,6 @@ class WalletFragment : BaseFragment() {
 
     private fun setProgressColor(resId: Int) {
         progressBar.indeterminateDrawable.setColorFilter(ContextCompat.getColor(context!!, resId), PorterDuff.Mode.SRC_IN)
-    }
-
-    private fun setActionBarElevation(elevation: Float) {
-        (activity as AppCompatActivity).supportActionBar!!.elevation = elevation
     }
 
     private fun setFabIcon() {

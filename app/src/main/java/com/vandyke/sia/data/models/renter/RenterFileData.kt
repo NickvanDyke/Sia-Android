@@ -16,7 +16,7 @@ data class RenterFileData
 @JsonCreator constructor(
         @PrimaryKey
         @JsonProperty(value = "siapath")
-        override var path: String, // TODO: change back to val
+        override val path: String,
         @JsonProperty(value = "localpath")
         val localpath: String,
         @JsonProperty(value = "filesize")
@@ -35,12 +35,14 @@ data class RenterFileData
         val expiration: Long) : Node() {
 
     override val parent: String
-        get() {
-            val index = this.path.lastIndexOf('/')
-            return if (index == -1) {
-                ""
-            } else {
-                this.path.substring(0, index)
-            }
-        }
+        get() = this.path.filePathParent()
+}
+
+fun String.filePathParent(): String {
+    val index = this.lastIndexOf('/')
+    return if (index == -1) {
+        ""
+    } else {
+        this.substring(0, index)
+    }
 }

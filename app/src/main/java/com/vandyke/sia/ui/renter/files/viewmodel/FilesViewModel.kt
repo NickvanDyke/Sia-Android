@@ -21,13 +21,11 @@ class FilesViewModel
         private val filesRepository: FilesRepository
 ) : ViewModel() {
     // TODO: show progress of operations
-    val displayedNodes = NonNullLiveData<List<Node>>(listOf())
     val currentDir = NonNullLiveData<Dir>(Dir("", BigDecimal.ZERO))
-
-    val selectedNodes = NonNullLiveData(listOf<Node>())
+    val displayedNodes = NonNullLiveData<List<Node>>(listOf())
 
     val searching = NonNullLiveData(false)
-    val searchTerm = NonNullLiveData("") // maybe bind this to the search query?
+    val searchTerm = NonNullLiveData("")
 
     val viewAsList = NonNullLiveData(Prefs.viewAsList)
     val ascending = NonNullLiveData(Prefs.ascending)
@@ -40,8 +38,11 @@ class FilesViewModel
     val currentDirPath
         get() = currentDir.value.path
 
+    val selectedNodes = NonNullLiveData(listOf<Node>())
     val selecting
         get() = selectedNodes.value.isNotEmpty()
+    val allSelectedAreInCurrentDir
+        get() = selectedNodes.value.all { it.parent == currentDirPath }
 
     /** the subscription to the database flowable that emits items in the current path */
     private var nodesSubscription: Disposable? = null
@@ -74,14 +75,8 @@ class FilesViewModel
         filesRepository.updateFilesAndDirs()
                 .io()
                 .main()
-                .doOnSubscribe {
-                    activeTasks.increment()
-                    refreshing.value = true
-                }
-                .doFinally {
-                    activeTasks.decrementZeroMin()
-                    refreshing.value = false
-                }
+                .track(activeTasks)
+                .track(refreshing)
                 .subscribe({}, ::onError)
         // TODO: check that current directory is still valid
     }
@@ -151,14 +146,6 @@ class FilesViewModel
                 .subscribe(::deselectAll, ::onError)
     }
 
-    fun downloadFile(file: RenterFileData) {
-        TODO()
-    }
-
-    fun downloadDir(dir: Dir) {
-        TODO()
-    }
-
     /** Creates a new directory with the given name in the current directory */
     fun createDir(name: String) {
         filesRepository.createDir("${currentDirPath.withTrailingSlashIfNotEmpty()}$name")
@@ -168,25 +155,9 @@ class FilesViewModel
                 .subscribe({}, ::onError)
     }
 
-    fun deleteDir(dir: Dir) {
-        filesRepository.deleteDir(dir.path)
-                .io()
-                .main()
-                .track(activeTasks)
-                .subscribe({}, ::onError)
-    }
-
-    fun deleteFile(file: RenterFileData) {
-        filesRepository.deleteFile(file)
-                .io()
-                .main()
-                .track(activeTasks)
-                .subscribe({}, ::onError)
-    }
-
-    fun addFile(source: String) {
+    fun uploadFile(source: String) {
         val path = currentDirPath.withTrailingSlashIfNotEmpty() + source.substring(source.lastIndexOf('/') + 1)
-        filesRepository.addFile(path, source, 10, 20)
+        filesRepository.uploadFile(path, source, 10, 20)
                 .io()
                 .main()
                 .track(activeTasks)
@@ -233,9 +204,7 @@ class FilesViewModel
                 }
                         .io()
                         .main()
-                        .subscribe({
-                            displayedNodes.value = it
-                        }, ::onError)
+                        .subscribe(displayedNodes::setValue, ::onError)
     }
 
     fun goToIndexInPath(index: Int) {

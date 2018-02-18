@@ -11,7 +11,7 @@ import com.vandyke.sia.data.local.daos.getFiles
 import com.vandyke.sia.data.local.models.renter.*
 import com.vandyke.sia.data.models.renter.RenterFileData
 import com.vandyke.sia.data.remote.SiaApiInterface
-import com.vandyke.sia.util.rx.asDbTransaction
+import com.vandyke.sia.util.rx.inDbTransaction
 import com.vandyke.sia.util.rx.toElementsObservable
 import io.reactivex.Completable
 import io.reactivex.Flowable
@@ -41,18 +41,19 @@ class FilesRepository
     /** Queries the list of files from the Sia node, and updates local database from it */
     fun updateFilesAndDirs(): Completable = Completable.concatArray(
             /* get the list of files from the Sia node, delete db files that aren't
-             * in the response, and insertReplaceOnConflict each file and the dirs containing it */
+             * in the response, and insert each file and the dirs containing it */
             api.renterFiles()
+                    .map { it.files }
                     .zipWith(db.fileDao().getAll())
                     /* remove files that are in the local database but not in the Sia API response */
                     .doOnSuccess { (apiFiles, dbFiles) ->
-                        dbFiles.retainAll { it !in apiFiles.files }
+                        dbFiles.retainAll { it !in apiFiles }
                         dbFiles.forEach {
-                            db.fileDao().delete(it.path)
+                            db.fileDao().delete(it)
                         }
                     }
-                    .flatMapObservable { (apiFiles) -> apiFiles.files.toObservable() }
-                    /* insertReplaceOnConflict each file into the db and also every dir that leads up to it */
+                    .flatMapObservable { (apiFiles) -> apiFiles.toObservable() }
+                    /* insert each file into the db and also every dir that leads up to it */
                     .doOnNext { file ->
                         db.fileDao().insertReplaceOnConflict(file)
                         /* also add all the dirs leading up to the file */
@@ -77,11 +78,9 @@ class FilesRepository
                                     Pair(theDir, itsFiles)
                                 })
                     }
-                    .doOnNext { (dir, itsFiles) ->
-                        db.dirDao().updateSize(dir.path, itsFiles.sumSize())
-                    }
+                    .doOnNext { (dir, itsFiles) -> db.dirDao().updateSize(dir.path, itsFiles.sumSize()) }
                     .ignoreElements())
-            .asDbTransaction(db)
+            .inDbTransaction(db)
 
 
     fun getDir(path: String) = db.dirDao().getDir(path)
@@ -117,28 +116,39 @@ class FilesRepository
                 Completable.error(if (it is SQLiteConstraintException) DirAlreadyExists(path.name()) else it)
             }!!
 
-    fun deleteDir(path: String) = Completable.concatArray(
-            Completable.fromAction { db.dirDao().deleteDir(path) },
-            Completable.fromAction { db.dirDao().deleteDirsUnder(path) },
-            db.fileDao().getFilesUnder(path)
-                    .toElementsObservable()
-                    .flatMapCompletable { deleteFile(it) })
-            .asDbTransaction(db)
-
-    fun moveDir(dir: Dir, newPath: String) = Completable.concatArray(
-            /* we first set the size of the dir to zero, because its size will be updated when its files are moved into it */
-            Completable.fromAction { db.dirDao().updateSize(dir.path, BigDecimal.ZERO) },
-            Completable.fromAction { db.dirDao().updatePath(dir.path, newPath) }
-                    .onErrorResumeNext {
-                        Completable.error(if (it is SQLiteConstraintException) DirAlreadyExists(dir.name) else it)
-                    },
+    fun deleteDir(dir: Dir) = Completable.concatArray(
+            Completable.fromAction { db.dirDao().delete(dir) },
+            Completable.fromAction { db.dirDao().deleteDirsUnder(dir.path) },
             db.fileDao().getFilesUnder(dir.path)
                     .toElementsObservable()
-                    .flatMapCompletable { file -> moveFile(file, file.path.replaceFirst(dir.path, newPath)) })
-            .asDbTransaction(db)
+                    .flatMapCompletable { deleteFile(it) })
+            .inDbTransaction(db)
 
-    fun addFile(siapath: String, source: String, dataPieces: Int, parityPieces: Int) = Completable.concatArray(
-            api.renterUpload(siapath, source, dataPieces, parityPieces),
+    fun moveDir(dir: Dir, newPath: String): Completable {
+        var completable = Completable.concatArray(
+                Completable.fromAction { db.dirDao().updatePath(dir.path, newPath) }
+                        .onErrorResumeNext {
+                            Completable.error(if (it is SQLiteConstraintException) DirAlreadyExists(newPath.name()) else it)
+                        },
+                db.fileDao().getFilesUnder(dir.path)
+                        .toElementsObservable()
+                        .flatMapCompletable { file -> moveFile(file, file.path.replaceFirst(dir.path, newPath)) })
+
+        /* we first set the size of the dir and its children to zero, because their size will be updated when the files are moved into them.
+         * If the before/after path is the same, we don't set it's size to zero first, because files' sizes will be subtracted from it also. */
+        if (dir.path != newPath)
+            completable = completable.startWith(Completable.mergeArray(
+                    Completable.fromAction { db.dirDao().updateSize(dir.path, BigDecimal.ZERO) },
+                    db.dirDao().getDirsUnder(dir.path)
+                            .toElementsObservable()
+                            .flatMapCompletable { childDir -> Completable.fromAction { db.dirDao().updateSize(childDir.path, BigDecimal.ZERO) } }))
+
+        return completable.inDbTransaction(db)
+    }
+
+    fun downloadDir(dir: Dir) = Completable.fromAction { TODO() }
+
+    fun uploadFile(siapath: String, source: String, dataPieces: Int, parityPieces: Int) = Completable.concatArray(
             Completable.fromAction {
                 db.fileDao().insertReplaceOnConflict(RenterFileData(
                         siapath,
@@ -151,23 +161,23 @@ class FilesRepository
                         0,
                         0
                 ))
-            })!!
+            },
+            api.renterUpload(siapath, source, dataPieces, parityPieces))!!
 
-    fun deleteFile(file: RenterFileData) = Completable.concatArray(
-            api.renterDelete(file.path),
-            Completable.fromAction { db.fileDao().delete(file.path) },
+    fun deleteFile(file: RenterFileData): Completable = Completable.concatArray(
+            Completable.fromAction { db.fileDao().delete(file) },
             db.dirDao().getDirsContainingFile(file.path)
                     .toElementsObservable()
                     .flatMapCompletable { dir ->
                         Completable.fromAction { db.dirDao().updateSize(dir.path, dir.size - file.size) }
-                    })
-            .asDbTransaction(db)
+                    },
+            api.renterDelete(file.path))
+            .inDbTransaction(db)
 
     fun moveFile(file: RenterFileData, newSiapath: String) = Completable.concatArray(
-            api.renterRename(file.path, newSiapath),
             Completable.fromAction { db.fileDao().updatePath(file.path, newSiapath) }
                     .onErrorResumeNext {
-                        Completable.error(if (it is SQLiteConstraintException) FileAlreadyExists(file.name) else it)
+                        Completable.error(if (it is SQLiteConstraintException) FileAlreadyExists(newSiapath.name()) else it)
                     },
             db.dirDao().getDirsContainingFile(file.path)
                     .toElementsObservable()
@@ -178,23 +188,31 @@ class FilesRepository
                     .toElementsObservable()
                     .flatMapCompletable { dir ->
                         Completable.fromAction { db.dirDao().updateSize(dir.path, dir.size + file.size) }
-                    })
-            .asDbTransaction(db)
+                    },
+            /* we move the file in the api last because if we move it first and then db actions fail, we
+             * can't rollback the move in the api the same way we can roll it back in the db */
+            api.renterRename(file.path, newSiapath))
+            .inDbTransaction(db)
+
+    fun downloadFile(file: RenterFileData) = Completable.fromAction { TODO() }
 
     fun multiDelete(nodes: List<Node>) = nodes.toObservable()
             .flatMapCompletable {
                 if (it is Dir)
-                    deleteDir(it.path)
+                    deleteDir(it)
                 else
                     deleteFile(it as RenterFileData)
             }
-            .asDbTransaction(db)
+            .inDbTransaction(db)
 
     fun multiDownload(nodes: List<Node>) = Completable.fromAction {
         TODO()
     }!!
 
-    fun multiMove(nodes: List<Node>, to: String) = Completable.concatArray(
+    /* we don't execute this in a db transaction because if early-on moves succeed but later ones
+     * fail (due to duplicate paths), we don't want to rollback the early ones, since those files
+     * will have already been moved in the api. */
+    fun multiMove(nodes: List<Node>, to: String): Completable = Completable.concatArray(
             nodes.toObservable()
                     .filter { it is Dir }
                     .doOnNext {
@@ -208,14 +226,13 @@ class FilesRepository
                     .flatMapCompletable {
                         moveFile(it as RenterFileData, to.withTrailingSlashIfNotEmpty() + it.name)
                     })
-            .asDbTransaction(db)
 
     enum class OrderBy(val text: String) {
         PATH("path"),
         SIZE("size")
     }
 
-    class DirAlreadyExists(dirName: String) : Throwable("Directory named \"$dirName\" already exists in this location")
-    class FileAlreadyExists(fileName: String) : Throwable("File named \"$fileName\" already exists in this location")
+    class DirAlreadyExists(dirName: String) : Throwable("Directory named \"$dirName\" already exists here")
+    class FileAlreadyExists(fileName: String) : Throwable("File named \"$fileName\" already exists here")
     class DirMovedInsideItself(dirName: String) : Throwable("Directory \"$dirName\" cannot be moved inside itself")
 }

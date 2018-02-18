@@ -12,7 +12,7 @@ import android.view.View
 import android.widget.Toast
 import com.vandyke.sia.R
 import com.vandyke.sia.util.KeyboardUtil
-import com.vandyke.sia.util.SnackbarUtil
+import io.github.tonnyl.light.Light
 import kotlinx.android.synthetic.main.fragment_wallet_create.*
 
 class WalletCreateDialog : BaseWalletFragment() {
@@ -39,7 +39,7 @@ class WalletCreateDialog : BaseWalletFragment() {
     override fun onCheckPressed(): Boolean {
         val password = newPasswordCreate.text.toString()
         if (password != confirmNewPasswordCreate.text.toString()) {
-            SnackbarUtil.showSnackbar(view, "New passwords don't match", Snackbar.LENGTH_SHORT)
+            Light.error(view!!, "Passwords don't match", Snackbar.LENGTH_SHORT).show()
             return true
         }
         val force = walletCreateForce.isChecked
@@ -65,6 +65,7 @@ class WalletCreateDialog : BaseWalletFragment() {
                         KeyboardUtil.copyToClipboard(context, seed)
                         Toast.makeText(context, "Copied seed. Please store it safely.", Toast.LENGTH_LONG).show()
                     })
+                    .setCancelable(false)
                     .show()
         }
     }

@@ -10,6 +10,7 @@ import com.vandyke.sia.data.remote.NoWallet
 import com.vandyke.sia.data.remote.SiaApiInterface
 import io.reactivex.Completable
 import io.reactivex.Single
+import io.reactivex.rxkotlin.zipWith
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -23,19 +24,26 @@ class WalletRepository
     fun updateAll() = Completable.mergeArray(updateWallet(), updateTransactions(), updateAddresses())!!
 
     private fun updateWallet() = api.wallet()
-            .doOnSuccess {
-                db.walletDao().insertReplaceOnConflict(it)
-            }.toCompletable()
+            .doOnSuccess { db.walletDao().insertReplaceOnConflict(it) }
+            .toCompletable()
 
     private fun updateTransactions() = api.walletTransactions()
-            .doOnSuccess {
-                db.transactionDao().deleteAllAndInsert(it.alltransactions) // TODO: more efficient way?
-            }.toCompletable()
+            .map { it.alltransactions }
+            .zipWith(db.transactionDao().getAll())
+            .doOnSuccess { (apiTxs, dbTxs) ->
+                /* delete all db transactions that aren't in the api response */
+                dbTxs.filter { dbTx -> apiTxs.find { it.transactionId == dbTx.transactionId } == null }
+                        .forEach { db.transactionDao().delete(it.transactionId) }
+
+                apiTxs.forEach { db.transactionDao().insertReplaceOnConflict(it) }
+                // TODO: is there a more efficient way to sync the db transactions to the api txs?
+                // Over time, the Sia node will be returning a LOT of transactions
+            }
+            .toCompletable()
 
     private fun updateAddresses() = api.walletAddresses()
-            .doOnSuccess {
-                db.addressDao().insertAll(it.addresses.map { AddressData(it) })
-            }.toCompletable()
+            .doOnSuccess { db.addressDao().insertAllIgnoreOnConflict(it.addresses.map { AddressData(it) }) }
+            .toCompletable()
 
     /* database flowables to be subscribed to */
     fun wallet() = db.walletDao().mostRecent()
@@ -48,9 +56,8 @@ class WalletRepository
 
     /* singles */
     fun getAddress() = api.walletAddress()
-            .doOnSuccess {
-                db.addressDao().insert(it)
-            }.onErrorResumeNext {
+            .doOnSuccess { db.addressDao().insertIgnoreOnConflict(it) }
+            .onErrorResumeNext {
                 /* fallback to db, but only if the reason for the failure was not due to the absence of a wallet */
                 if (it !is NoWallet)
                     db.addressDao().getAddress().onErrorResumeNext(Single.error(it))
@@ -62,7 +69,7 @@ class WalletRepository
             .map {
                 it.addresses.map { AddressData(it) }
             }.doOnSuccess {
-                db.addressDao().insertAll(it)
+                db.addressDao().insertAllIgnoreOnConflict(it)
             }.onErrorResumeNext {
                 /* fallback to db, but only if the reason for the failure was not due to the absence of a wallet */
                 if (it !is NoWallet)
@@ -78,12 +85,14 @@ class WalletRepository
 
     fun lock() = api.walletLock()
 
-    fun init(password: String, dictionary: String, force: Boolean) = api.walletInit(password, dictionary, force).doAfterSuccess {
-        clearWalletDb().subscribe()
-    }!!
+    fun init(password: String, dictionary: String, force: Boolean) = api.walletInit(password, dictionary, force)
+            .doAfterSuccess {
+                clearWalletDb().subscribe()
+            }!!
 
     fun initSeed(password: String, dictionary: String, seed: String, force: Boolean) =
-            api.walletInitSeed(password, dictionary, seed, force).concatWith(clearWalletDb())
+            api.walletInitSeed(password, dictionary, seed, force)
+                    .concatWith(clearWalletDb())
 
     fun send(amount: String, destination: String) = api.walletSiacoins(amount, destination)
 

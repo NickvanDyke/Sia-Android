@@ -31,6 +31,10 @@ fun BigDecimal.format(): String {
     return nf.format(this)
 }
 
+fun Int.format(): String {
+    return NumberFormat.getInstance().format(this)
+}
+
 object SiaUtil {
     fun estimatedBlockHeightAt(time: Long): Long {
         val blockTime = 9 // overestimate

@@ -14,7 +14,6 @@ import android.graphics.PorterDuff
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.SearchView
@@ -24,23 +23,23 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.EditText
 import android.widget.Spinner
 import com.vandyke.sia.R
 import com.vandyke.sia.appComponent
+import com.vandyke.sia.data.local.models.renter.Dir
+import com.vandyke.sia.data.models.renter.RenterFileData
 import com.vandyke.sia.data.repository.FilesRepository.OrderBy
 import com.vandyke.sia.data.siad.SiadSource
 import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.ui.renter.files.view.list.NodesAdapter
 import com.vandyke.sia.ui.renter.files.viewmodel.FilesViewModel
 import com.vandyke.sia.util.*
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_renter_files.*
+import kotlinx.android.synthetic.main.fragment_files.*
 import javax.inject.Inject
 
 
 class FilesFragment : BaseFragment() {
-    override val layoutResId: Int = R.layout.fragment_renter_files
+    override val layoutResId: Int = R.layout.fragment_files
     override val hasOptionsMenu = true
 
     @Inject
@@ -91,14 +90,8 @@ class FilesFragment : BaseFragment() {
         spinnerView.background.setColorFilter(ContextCompat.getColor(context!!, android.R.color.white), PorterDuff.Mode.SRC_ATOP)
 
         /* pull-to-refresh stuff */
-        nodesListRefresh.setColorSchemeResources(R.color.colorAccent)
-        nodesListRefresh.setOnRefreshListener {
-            viewModel.refresh()
-        }
-        val array = context!!.theme.obtainStyledAttributes(intArrayOf(android.R.attr.windowBackground))
-        val backgroundColor = array.getColor(0, 0xFF00FF)
-        array.recycle()
-        nodesListRefresh.setProgressBackgroundColorSchemeColor(backgroundColor)
+        nodesListRefresh.setColors(context!!)
+        nodesListRefresh.setOnRefreshListener { viewModel.refresh() }
 
         /* FAB stuff */
         fabAddFile.setOnClickListener {
@@ -112,21 +105,43 @@ class FilesFragment : BaseFragment() {
 
         fabAddDir.setOnClickListener {
             fabFilesMenu.close(true)
-            val dialogView = layoutInflater.inflate(R.layout.edit_text_field, null, false)
-            AlertDialog.Builder(context!!)
-                    .setTitle("New directory")
-                    .setView(dialogView)
-                    .setPositiveButton("Create", { _, _ ->
-                        viewModel.createDir(dialogView.findViewById<EditText>(R.id.field).text.toString())
-                    })
-                    .setNegativeButton("Cancel", null)
+            DialogUtil.editTextDialog(context!!,
+                    "New directory",
+                    "Create",
+                    { viewModel.createDir(it.text.toString()) },
+                    "Cancel",
+                    editTextFunc = { hint = "Name" })
                     .showDialogAndKeyboard()
-            // TODO: pressing enter on KB should create the dir, or rename it, or whatever the dialog is for. Should make an abstraction for this type of dialog
         }
 
         /* multi select stuff */
         multiMove.setOnClickListener {
-            viewModel.multiMove()
+            if (viewModel.allSelectedAreInCurrentDir) {
+                /* depending on how many nodes are selected, creating all these dialogs can have
+                 * a noticeable delay. It could probably also crash if enough are created -
+                 * each dialog uses about 20MB of memory. Maybe limit and show warning instead if # is too high?
+                 * I tried creating one dialog, and then modifying it between uses and then reshowing
+                 * it, but calling show() wouldn't show it after pressing one of the buttons hid it. Not sure why. */
+                viewModel.selectedNodes.value.forEach { node ->
+                    DialogUtil.editTextDialog(context!!,
+                            "Rename ${node.name}",
+                            "Rename",
+                            {
+                                val newName = it.text.toString()
+                                if (node is RenterFileData)
+                                    viewModel.renameFile(node, newName)
+                                else if (node is Dir)
+                                    viewModel.renameDir(node, newName)
+                                viewModel.deselect(node)
+                            },
+                            "Cancel",
+                            { viewModel.deselect(node) },
+                            { hint = "Name" })
+                            .showDialogAndKeyboard()
+                }
+            } else {
+                viewModel.multiMove()
+            }
         }
 
         multiDownload.setOnClickListener {
@@ -143,6 +158,9 @@ class FilesFragment : BaseFragment() {
 
         /* observe viewModel stuff */
         viewModel.currentDir.observe(this) {
+            // if I make the currentDir in the VM a flowable, then I probably need to do this
+            // differently, by determining the breakpoint like before and adding/removing before/after it
+            // instead of clearing it all
             pathAdapter.clear()
             /* need to handle it a bit differently since the root dir's name is "" */
             val path = if (it.path.isNotEmpty())
@@ -155,12 +173,13 @@ class FilesFragment : BaseFragment() {
             }
             spinnerView.setSelection(path.size - 1)
             setSearchHint()
+            setMultiMoveImage()
         }
 
         viewModel.displayedNodes.observe(this) {
             nodesAdapter.display(it)
         }
-      
+
         viewModel.viewAsList.observe(this) {
             if (it) {
                 viewTypeItem?.setIcon(R.drawable.ic_view_list)
@@ -173,10 +192,11 @@ class FilesFragment : BaseFragment() {
             }
             nodesList.recycledViewPool.clear()
         }
-      
+
         viewModel.selectedNodes.observe(this) {
+            setMultiMoveImage()
             selectedMenu.visibility = if (it.isEmpty()) View.GONE else View.VISIBLE
-            numSelected.text = ("${it.size} ${if (it.size == 1) "item" else "items"}")
+            numSelected.text = ("${it.size} ${if (it.size == 1) "item" else "items"}") // maybe have an image with a # over it instead of text?
         }
 
         viewModel.ascending.observe(this) {
@@ -199,7 +219,6 @@ class FilesFragment : BaseFragment() {
         }
 
         viewModel.error.observe(this) {
-            println(it)
             it.snackbar(coordinator)
             nodesListRefresh.isRefreshing = false
         }
@@ -213,7 +232,7 @@ class FilesFragment : BaseFragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == FILE_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
             val uri = data.data
-            val path = FileUtils.getPath(context, uri) // TODO: not sure if this will work for all sources of files
+            val path = FileUtils.getPath(context, uri) // TODO: not sure if this will work for all sources of files. Might not for non-primary external storage
             println(uri)
             println(uri.path)
             println(path)
@@ -225,7 +244,7 @@ class FilesFragment : BaseFragment() {
                         .setPositiveButton("Close", null)
                         .show()
             } else {
-                viewModel.addFile(path)
+                viewModel.uploadFile(path)
             }
         }
     }
@@ -308,7 +327,7 @@ class FilesFragment : BaseFragment() {
         }
         else -> super.onOptionsItemSelected(item)
     }
-  
+
     /** The order of the OrderBy enum values and the order of the sort by options in the list must be the same for this to work */
     private fun setCheckedOrderByItem() {
         val orderBy = viewModel.orderBy.value
@@ -329,9 +348,16 @@ class FilesFragment : BaseFragment() {
         else
             searchView?.queryHint = "Search ${viewModel.currentDir.value.name}..."
     }
-  
+
+    private fun setMultiMoveImage() {
+        multiMove.setImageResource(
+                if (viewModel.allSelectedAreInCurrentDir)
+                    R.drawable.ic_edit
+                else
+                    R.drawable.ic_move_to_inbox)
+    }
+
     private fun launchSAF() {
-        // TODO: crashes when choosing a contact from the SAF. Need to prevent being able to choose it. I thought CATEGORY_OPENABLE would but I guess not
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true)
         intent.putExtra(Intent.CATEGORY_OPENABLE, true)
@@ -344,18 +370,16 @@ class FilesFragment : BaseFragment() {
     }
 
     override fun onShow() {
-        activity!!.toolbar.addView(spinnerView)
-        setActionBarTitleDisplayed(false)
+        super.onShow()
+        toolbar.addView(spinnerView)
+        actionBar.setDisplayShowTitleEnabled(false)
         viewModel.refresh()
     }
 
     override fun onHide() {
-        activity!!.toolbar.removeView(spinnerView)
-        setActionBarTitleDisplayed(true)
-    }
-
-    private fun setActionBarTitleDisplayed(visible: Boolean) {
-        (activity as AppCompatActivity).supportActionBar!!.setDisplayShowTitleEnabled(visible)
+        super.onHide()
+        toolbar.removeView(spinnerView)
+        actionBar.setDisplayShowTitleEnabled(true)
     }
 
     companion object {
