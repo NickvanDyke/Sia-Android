@@ -11,6 +11,8 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
@@ -30,7 +32,8 @@ import com.vandyke.sia.util.rx.observe
 import kotlinx.android.synthetic.main.fragment_allowance.*
 import javax.inject.Inject
 
-
+// TODO: handle when there's no initial data and the node isn't running yet. i.e. if you call setAllowance it'll crash
+// because it'll have null values. And graph will be empty
 class AllowanceFragment : BaseFragment() {
     override val layoutResId = R.layout.fragment_allowance
     override val hasOptionsMenu = true
@@ -80,14 +83,7 @@ class AllowanceFragment : BaseFragment() {
             // the listener is called twice when an item is touched. Not sure why
             setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
                 override fun onValueSelected(e: Entry, h: Highlight) {
-                    vm.currentMetric.value = when (h.x) {
-                        0f -> UPLOAD
-                        1f -> DOWNLOAD
-                        2f -> STORAGE
-                        3f -> CONTRACT
-                        4f -> UNSPENT
-                        else -> throw IllegalArgumentException("Invalid x value: ${h.x}")
-                    }
+                    vm.currentMetric.value = AllowanceViewModel.Metrics.values()[h.x.toInt()]
                 }
 
                 override fun onNothingSelected() {
@@ -99,6 +95,20 @@ class AllowanceFragment : BaseFragment() {
             // displayFragment(AllowanceFragment::class.java) is called at the end of MainActivity onCreate.
             // why??? hopefully will discover while working on other stuff here
         }
+
+        /* metric spinner setup */
+        val metricAdapter = ArrayAdapter<String>(context, R.layout.spinner_selected_item)
+        metricAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        metricAdapter.addAll(AllowanceViewModel.Metrics.values().map { it.text })
+        metricSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+            }
+
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                vm.currentMetric.value = AllowanceViewModel.Metrics.values()[position]
+            }
+        }
+        metricSpinner.adapter = metricAdapter
 
         /* listeners for clicky stuff in settings */
         fundsClickable.setOnClickListener {
@@ -162,7 +172,7 @@ class AllowanceFragment : BaseFragment() {
                 pieChart.highlightValue(x, 0)
             }
 
-            metricText.text = it.text
+            metricSpinner.setSelection(it.ordinal)
         }
 
         vm.currentMetricValues.observe(this) { (price, spent, purchasable) ->
@@ -214,6 +224,12 @@ class AllowanceFragment : BaseFragment() {
                 highlightedX = x
                 pieChart.highlightValue(x, 0)
             }
+
+            // TODO: do I need to call invalidate() on the chart? Should check if it updates with new info
+        }
+
+        vm.error.observe(this) {
+            it.snackbar(view)
         }
 
         siadSource.isSiadLoaded.observe(this) {

@@ -10,7 +10,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:animateLayoutChanges="true">
 
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
@@ -31,13 +32,13 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/metricText"
+                    app:layout_constraintEnd_toStartOf="@id/metricSpinner"
                     app:layout_constraintHorizontal_chainStyle="spread_inside"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/metricText"
+                <Spinner
+                    android:id="@+id/metricSpinner"
                     android:layout_width="172dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
@@ -63,7 +64,7 @@
                     android:id="@+id/tvPrice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="TextView"
+                    android:text="0"
                     android:textColor="@color/colorPrimary"
                     android:textSize="18sp"
                     app:layout_constraintStart_toStartOf="@+id/estPriceHeader"
@@ -75,14 +76,14 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text="Spent"
-                    app:layout_constraintStart_toStartOf="@+id/metricText"
-                    app:layout_constraintTop_toBottomOf="@+id/metricText" />
+                    app:layout_constraintStart_toStartOf="@+id/metricSpinner"
+                    app:layout_constraintTop_toBottomOf="@+id/metricSpinner" />
 
                 <TextView
                     android:id="@+id/tvSpent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="TextView"
+                    android:text="0"
                     android:textColor="@color/colorPrimary"
                     android:textSize="18sp"
                     app:layout_constraintStart_toStartOf="@+id/spentHeader"
@@ -102,7 +103,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
-                    android:text="TextView"
+                    android:text="0"
                     android:textColor="@color/colorPrimary"
                     android:textSize="18sp"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -156,7 +157,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="24dp"
-                        android:text="TextView"
+                        android:text="0"
                         android:textColor="@color/colorPrimary"
                         android:textSize="18sp"
                         app:layout_constraintBottom_toBottomOf="@+id/textView12"
@@ -198,7 +199,7 @@
                         android:id="@+id/hostsValue"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="TextView"
+                        android:text="0"
                         android:textColor="@color/colorPrimary"
                         android:textSize="18sp"
                         app:layout_constraintBottom_toBottomOf="@+id/textView15"
@@ -240,7 +241,7 @@
                         android:id="@+id/periodValue"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="TextView"
+                        android:text="0"
                         android:textColor="@color/colorPrimary"
                         android:textSize="18sp"
                         app:layout_constraintBottom_toBottomOf="@+id/textView18"
@@ -284,7 +285,7 @@
                         android:id="@+id/renewWindowValue"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="TextView"
+                        android:text="0"
                         android:textColor="@color/colorPrimary"
                         android:textSize="18sp"
                         app:layout_constraintBottom_toBottomOf="@+id/textView21"

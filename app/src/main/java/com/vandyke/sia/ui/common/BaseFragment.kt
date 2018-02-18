@@ -61,7 +61,7 @@ abstract class BaseFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         activity!!.invalidateOptionsMenu()
-        if (userVisibleHint)
+        if (userVisibleHint || isVisible)
             onShow()
     }
 
@@ -74,5 +74,9 @@ abstract class BaseFragment : Fragment() {
 
     private fun logScreen() {
         Analytics.setCurrentScreen(this)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+
     }
 }

@@ -23,7 +23,7 @@ class IntroActivity : AhoyOnboarderActivity() {
         val syncCard = AhoyOnboarderCard("Blockchain syncing",
                 "The Sia node will initially have to download, process, and store the Sia blockchain, which is about 11GB." +
                         " This can take a while.",
-                R.drawable.ic_cloud_download)
+                R.drawable.ic_cloud_download_black)
         val sourceCard = AhoyOnboarderCard("Open source",
                 "Sia for Android and Sia both have their source code available on GitHub, linked in the About page.",
                 mehdi.sakout.aboutpage.R.drawable.about_icon_github)

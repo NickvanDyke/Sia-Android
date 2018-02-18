@@ -6,6 +6,7 @@ package com.vandyke.sia.ui.wallet.view
 
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
+import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
 import android.support.design.widget.Snackbar
@@ -109,24 +110,25 @@ class WalletFragment : BaseFragment() {
         /* set up the chart and its data set */
         val lineDataSet = LineDataSet(listOf(), "")
         with(lineDataSet) {
-//            setDrawCircles(false)
-//            setDrawValues(false)
+            setDrawCircles(false)
+            setDrawValues(false)
             setDrawFilled(true)
             isHighlightEnabled = false
-            color = R.color.colorPrimaryDark
+            color = Color.TRANSPARENT
             fillColor = context!!.getColorRes(R.color.colorPrimaryDark)
         }
         with(siaChart) {
-//            setViewPortOffsets(0f, 0f, 0f, 0f)
+            setViewPortOffsets(0f, 0f, 0f, 0f)
             data = LineData(lineDataSet)
             isDragEnabled = false
             setScaleEnabled(false)
             legend.isEnabled = false
             description.isEnabled = false
             setDrawGridBackground(false)
-//            xAxis.isEnabled = false
-//            axisLeft.isEnabled = false
-//            axisRight.isEnabled = false
+            xAxis.isEnabled = false
+            axisLeft.isEnabled = false
+            axisRight.isEnabled = false
+            invalidate()
         }
         
         /* observe VM stuff */
@@ -156,20 +158,12 @@ class WalletFragment : BaseFragment() {
 
         viewModel.walletMonthHistory.observe(this) {
             lineDataSet.values = it.mapIndexed { index, walletData ->
-                val entry = Entry(walletData.timestamp.toFloat(), walletData.confirmedSiacoinBalance.toSC().toFloat())
-                println(entry)
-                entry
+                Entry(index.toFloat(), walletData.confirmedSiacoinBalance.toSC().toFloat())
             }
-
-//            siaChart.setVisibleXRangeMinimum(it.first().timestamp.toFloat())
-//            siaChart.setVisibleXRangeMaximum(it.last().timestamp.toFloat())
             lineDataSet.notifyDataSetChanged()
             siaChart.data.notifyDataChanged()
+            siaChart.notifyDataSetChanged()
             siaChart.invalidate()
-            println(siaChart.lowestVisibleX)
-            println(siaChart.highestVisibleX)
-            println(siaChart.xChartMin)
-            println(siaChart.xChartMax)
         }
 
         viewModel.usd.observe(this) {
@@ -229,12 +223,6 @@ class WalletFragment : BaseFragment() {
         if (viewModel.wallet.value != null && viewModel.usd.value != null)
             balanceUsdText.text = ("${viewModel.wallet.value!!.confirmedSiacoinBalance.toSC()
                     .toUsd(viewModel.usd.value!!.UsdPerSc).format()} USD")
-    }
-
-    private fun updateScGraph(list: List<Entry>) {
-
-
-        siaChart.invalidate()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

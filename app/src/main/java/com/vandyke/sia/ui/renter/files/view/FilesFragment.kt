@@ -87,7 +87,7 @@ class FilesFragment : BaseFragment() {
             }
         }
         spinnerView.adapter = pathAdapter
-        spinnerView.background.setColorFilter(ContextCompat.getColor(context!!, android.R.color.white), PorterDuff.Mode.SRC_ATOP)
+        spinnerView.background.setColorFilter(context!!.getColorRes(android.R.color.white), PorterDuff.Mode.SRC_ATOP)
 
         /* pull-to-refresh stuff */
         nodesListRefresh.setColors(context!!)
