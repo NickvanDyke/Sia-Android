@@ -23,6 +23,7 @@ import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.siad.SiadService
 import com.vandyke.sia.ui.about.AboutFragment
 import com.vandyke.sia.ui.common.BaseFragment
+import com.vandyke.sia.ui.common.ComingSoonFragment
 import com.vandyke.sia.ui.onboarding.IntroActivity
 import com.vandyke.sia.ui.onboarding.PurchaseActivity
 import com.vandyke.sia.ui.renter.allowance.AllowanceFragment
@@ -116,7 +117,7 @@ class MainActivity : AppCompatActivity() {
         tx.commit()
         visibleFragment = newFragment
 
-        supportActionBar!!.title = visibleFragment!!.javaClass.simpleName.removeSuffix("Fragment")
+        supportActionBar!!.title = visibleFragment!!.title
     }
 
     private fun checkPurchases() {
@@ -155,14 +156,26 @@ class MainActivity : AppCompatActivity() {
                 .withIcon(R.drawable.ic_folder)
                 .withIconTintingEnabled(true)
                 .withIdentifier(0)
-                .withOnDrawerItemClickListener { _, _, _ -> displayFragment(FilesFragment::class.java); false }
+                .withOnDrawerItemClickListener { _, _, _ ->
+                    displayFragment(if (BuildConfig.DEBUG)
+                        FilesFragment::class.java
+                    else
+                        ComingSoonFragment::class.java)
+                    false
+                }
 
         val allowanceItem = SecondaryDrawerItem()
                 .withName("Allowance")
                 .withIcon(R.drawable.ic_money)
                 .withIconTintingEnabled(true)
                 .withIdentifier(1)
-                .withOnDrawerItemClickListener { _, _, _ -> displayFragment(AllowanceFragment::class.java); false }
+                .withOnDrawerItemClickListener { _, _, _ ->
+                    displayFragment(if (BuildConfig.DEBUG)
+                        AllowanceFragment::class.java
+                    else
+                        ComingSoonFragment::class.java)
+                    false
+                }
 
         // TODO: make Renter item start expanded. Seems to be buggy
         val renterItem = PrimaryDrawerItem()

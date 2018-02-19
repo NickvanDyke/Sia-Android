@@ -41,6 +41,7 @@ import javax.inject.Inject
 class FilesFragment : BaseFragment() {
     override val layoutResId: Int = R.layout.fragment_files
     override val hasOptionsMenu = true
+    override val title: String = "Files"
 
     @Inject
     lateinit var factory: ViewModelProvider.Factory
@@ -72,7 +73,7 @@ class FilesFragment : BaseFragment() {
         nodesAdapter = NodesAdapter(viewModel)
         nodesList.adapter = nodesAdapter
 
-        pathAdapter = ArrayAdapter(context, R.layout.spinner_selected_item)
+        pathAdapter = ArrayAdapter(context, R.layout.spinner_selected_item_white)
         pathAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
         /* set up path spinner */

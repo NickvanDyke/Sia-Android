@@ -18,6 +18,7 @@ import javax.inject.Inject
 
 class TerminalFragment : BaseFragment() {
     override val layoutResId: Int = R.layout.fragment_terminal
+    override val title: String = "Terminal"
 
     private lateinit var viewModel: TerminalViewModel
     @Inject

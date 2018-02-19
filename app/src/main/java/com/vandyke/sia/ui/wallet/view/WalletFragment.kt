@@ -46,6 +46,7 @@ import javax.inject.Inject
 class WalletFragment : BaseFragment() {
     override val layoutResId: Int = R.layout.fragment_wallet
     override val hasOptionsMenu = true
+    override val title: String = "Wallet"
 
     @Inject
     lateinit var siadSource: SiadSource
@@ -108,7 +109,7 @@ class WalletFragment : BaseFragment() {
         expandableFrame.onSwipeUp = ::collapseFrame
 
         /* set up the chart and its data set */
-        val lineDataSet = LineDataSet(listOf(), "")
+        val lineDataSet = LineDataSet(null, "")
         with(lineDataSet) {
             setDrawCircles(false)
             setDrawValues(false)
@@ -116,6 +117,8 @@ class WalletFragment : BaseFragment() {
             isHighlightEnabled = false
             color = Color.TRANSPARENT
             fillColor = context!!.getColorRes(R.color.colorPrimaryDark)
+            /* causes a crash if the dataset is empty, so we add an empty one. Bug with the lib it seems, based off googling */
+            addEntry(Entry(0f, 0f))
         }
         with(siaChart) {
             setViewPortOffsets(0f, 0f, 0f, 0f)
@@ -157,9 +160,14 @@ class WalletFragment : BaseFragment() {
         }
 
         viewModel.walletMonthHistory.observe(this) {
+            // TODO: still not completely sure this is working as I want it to... seems to be quirky
             lineDataSet.values = it.mapIndexed { index, walletData ->
-                Entry(index.toFloat(), walletData.confirmedSiacoinBalance.toSC().toFloat())
+                Entry(walletData.timestamp.toFloat(), walletData.confirmedSiacoinBalance.toSC().toFloat())
             }
+            /* causes a crash if the dataset is empty, so we add an empty one. Bug with the lib it seems, based off googling */
+            if (lineDataSet.values.isEmpty())
+                lineDataSet.addEntry(Entry(0f, 0f))
+            println(lineDataSet.values)
             lineDataSet.notifyDataSetChanged()
             siaChart.data.notifyDataChanged()
             siaChart.notifyDataSetChanged()

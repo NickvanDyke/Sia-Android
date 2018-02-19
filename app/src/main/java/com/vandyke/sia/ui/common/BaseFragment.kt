@@ -19,6 +19,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 abstract class BaseFragment : Fragment() {
     open val layoutResId: Int = -1
     open val hasOptionsMenu = false
+    abstract val title: String
 
     val toolbar: Toolbar
         get() = (activity as MainActivity).toolbar

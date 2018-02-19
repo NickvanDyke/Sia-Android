@@ -32,11 +32,12 @@ import com.vandyke.sia.util.rx.observe
 import kotlinx.android.synthetic.main.fragment_allowance.*
 import javax.inject.Inject
 
-// TODO: handle when there's no initial data and the node isn't running yet. i.e. if you call setAllowance it'll crash
+// TODO: handle when there's no initial data from the db and the node isn't running yet. i.e. if you call setAllowance it'll crash
 // because it'll have null values. And graph will be empty
 class AllowanceFragment : BaseFragment() {
     override val layoutResId = R.layout.fragment_allowance
     override val hasOptionsMenu = true
+    override val title: String = "Allowance"
 
     @Inject
     lateinit var factory: SiaViewModelFactory
