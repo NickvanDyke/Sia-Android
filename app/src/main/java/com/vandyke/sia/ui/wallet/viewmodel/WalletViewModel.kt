@@ -27,6 +27,7 @@ class WalletViewModel
         private val gatewayRepository: GatewayRepository
 ) : ViewModel() {
     val wallet = MutableLiveData<WalletData>()
+    val walletMonthHistory = MutableLiveData<List<WalletData>>()
     val usd = MutableLiveData<ScValueData>()
     val consensus = MutableLiveData<ConsensusData>()
     val transactions = MutableLiveData<List<TransactionData>>()
@@ -42,21 +43,30 @@ class WalletViewModel
     init {
         /* subscribe to flowables from the repositories. Note that since they're flowables,
          * we only need to subscribe this once */
-        walletRepository.wallet().io().main().subscribe({
-            wallet.value = it
-        }, ::onError)
+        walletRepository.wallet()
+                .io()
+                .main()
+                .subscribe(wallet::setValue, ::onError)
 
-        walletRepository.transactions().io().main().subscribe({
-            transactions.value = it
-        }, ::onError)
+        walletRepository.walletMonthHistory()
+                .io()
+                .main()
+                .subscribe(walletMonthHistory::setValue, ::onError)
+      
+        walletRepository.transactions()
+                .io()
+                .main()
+                .subscribe(transactions::setValue, ::onError)
 
-        consensusRepository.consensus().io().main().subscribe({
-            consensus.value = it
-        }, ::onError)
+        consensusRepository.consensus()
+                .io()
+                .main()
+                .subscribe(consensus::setValue, ::onError)
 
-        scValueRepository.scValue().io().main().subscribe({
-            usd.value = it
-        }, ::onError)
+        scValueRepository.mostRecent()
+                .io()
+                .main()
+                .subscribe(usd::setValue, ::onError)
     }
 
     private fun onSuccess(msg: String) {
@@ -84,7 +94,10 @@ class WalletViewModel
                 .subscribe({}, ::onError)
 
         /* we don't include this in the refresh task because it's remote and less reliable and speedy. And also not as integral. */
-        scValueRepository.updateScValue().io().main().subscribe({}, ::onError)
+        scValueRepository.updateScValue()
+                .io()
+                .main()
+                .subscribe({}, ::onError)
     }
 
     fun refreshWallet() {

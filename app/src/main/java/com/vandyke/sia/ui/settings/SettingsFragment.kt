@@ -12,6 +12,7 @@ import com.vandyke.sia.ui.common.BaseFragment
 /* a fragment that contains SettingsFragmentActual, since the actual settings fragment cannot extend BaseFragment */
 class SettingsFragment : BaseFragment() {
     override val layoutResId: Int = R.layout.fragment_settings_container
+    override val title: String = "Settings"
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         /* attempt to find the existing fragment, in case the activity is being recreated */

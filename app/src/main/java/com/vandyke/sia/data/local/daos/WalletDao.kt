@@ -17,6 +17,9 @@ interface WalletDao : BaseDao<WalletData> {
     @Query("SELECT a.* FROM wallet a LEFT OUTER JOIN wallet b ON a.timestamp < b.timestamp WHERE b.timestamp IS NULL")
     fun mostRecent(): Flowable<WalletData>
 
+    @Query("SELECT * FROM wallet WHERE timestamp >= strftime('%s', datetime('now', '-30 days'))*1000 ORDER BY timestamp")
+    fun allLastMonth(): Flowable<List<WalletData>>
+
     @Query("DELETE FROM wallet")
     fun deleteAll()
 }

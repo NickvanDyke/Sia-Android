@@ -19,5 +19,5 @@ class ScValueRepository
         db.scValueDao().insertReplaceOnConflict(it)
     }.toCompletable()!!
 
-    fun scValue() = db.scValueDao().mostRecent()
+    fun mostRecent() = db.scValueDao().mostRecent()
 }

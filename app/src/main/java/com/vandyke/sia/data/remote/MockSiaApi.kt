@@ -12,6 +12,7 @@ import com.vandyke.sia.data.models.txpool.FeeData
 import com.vandyke.sia.data.models.wallet.*
 import com.vandyke.sia.util.HASTINGS_PER_SC
 import com.vandyke.sia.util.UNCONFIRMED_TX_TIMESTAMP
+import com.vandyke.sia.util.toHastings
 import io.reactivex.Completable
 import io.reactivex.Single
 import java.math.BigDecimal
@@ -67,6 +68,22 @@ class MockSiaApi : SiaApiInterface {
             RenterFileData("legos/block/colors.rgb", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534),
             RenterFileData("legos/blue/brick/picture.jpg", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534),
             RenterFileData("my/name/is/nick/and/this/is/my/story.txt", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534)
+    )
+
+    private var renterData = RenterData(
+            RenterSettingsData(RenterSettingsAllowanceData(
+                    BigDecimal("3629").toHastings(),
+                    24,
+                    6048,
+                    3024
+            )),
+            RenterFinancialMetricsData(
+                    BigDecimal("167").toHastings(),
+                    BigDecimal("154").toHastings(),
+                    BigDecimal("690").toHastings(),
+                    BigDecimal("274").toHastings(),
+                    BigDecimal("1085").toHastings()
+            )
     )
 
     override fun daemonStop(): Completable {
@@ -168,11 +185,15 @@ class MockSiaApi : SiaApiInterface {
     }
 
     override fun renter(): Single<RenterData> {
-        TODO("not implemented")
+        return Single.just(renterData)
     }
 
     override fun renter(funds: BigDecimal, hosts: Int, period: Int, renewwindow: Int): Completable {
-        TODO("not implemented")
+        return Completable.fromAction {
+            renterData = renterData.copy(
+                    settings = renterData.settings.copy(
+                            allowance = RenterSettingsAllowanceData(funds, hosts, period, renewwindow)))
+        }
     }
 
     override fun renterContracts(): Single<ContractsData> {
@@ -188,12 +209,17 @@ class MockSiaApi : SiaApiInterface {
     }
 
     override fun renterPrices(): Single<PricesData> {
-        TODO("not implemented")
+        return Single.just(PricesData(
+                BigDecimal("26").toHastings(),
+                BigDecimal("100").toHastings(),
+                BigDecimal("200").toHastings(),
+                BigDecimal("75").toHastings()))
     }
 
     override fun renterRename(siapath: String, newSiaPath: String) = Completable.fromAction {
         val file = files.find { it.path == siapath } ?: return@fromAction
-        file.path = newSiaPath
+        files.remove(file)
+        files.add(file.copy(path = newSiaPath))
     }!!
 
     override fun renterDelete(siapath: String): Completable {

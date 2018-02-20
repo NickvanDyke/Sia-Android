@@ -124,22 +124,27 @@ class FilesRepository
                     .flatMapCompletable { deleteFile(it) })
             .inDbTransaction(db)
 
-    fun moveDir(dir: Dir, newPath: String) = Completable.concatArray(
-            /* we first set the size of the dir and its children to zero, because their size will be updated when the files are moved into them */
-            Completable.fromAction { db.dirDao().updateSize(dir.path, BigDecimal.ZERO) },
-            db.dirDao().getDirsUnder(dir.path)
-                    .toElementsObservable()
-                    .flatMapCompletable { childDir ->
-                        Completable.fromAction { db.dirDao().updateSize(childDir.path, BigDecimal.ZERO) }
-                    },
-            Completable.fromAction { db.dirDao().updatePath(dir.path, newPath) }
-                    .onErrorResumeNext {
-                        Completable.error(if (it is SQLiteConstraintException) DirAlreadyExists(newPath.name()) else it)
-                    },
-            db.fileDao().getFilesUnder(dir.path)
-                    .toElementsObservable()
-                    .flatMapCompletable { file -> moveFile(file, file.path.replaceFirst(dir.path, newPath)) })
-            .inDbTransaction(db)
+    fun moveDir(dir: Dir, newPath: String): Completable {
+        var completable = Completable.concatArray(
+                Completable.fromAction { db.dirDao().updatePath(dir.path, newPath) }
+                        .onErrorResumeNext {
+                            Completable.error(if (it is SQLiteConstraintException) DirAlreadyExists(newPath.name()) else it)
+                        },
+                db.fileDao().getFilesUnder(dir.path)
+                        .toElementsObservable()
+                        .flatMapCompletable { file -> moveFile(file, file.path.replaceFirst(dir.path, newPath)) })
+
+        /* we first set the size of the dir and its children to zero, because their size will be updated when the files are moved into them.
+         * If the before/after path is the same, we don't set it's size to zero first, because files' sizes will be subtracted from it also. */
+        if (dir.path != newPath)
+            completable = completable.startWith(Completable.mergeArray(
+                    Completable.fromAction { db.dirDao().updateSize(dir.path, BigDecimal.ZERO) },
+                    db.dirDao().getDirsUnder(dir.path)
+                            .toElementsObservable()
+                            .flatMapCompletable { childDir -> Completable.fromAction { db.dirDao().updateSize(childDir.path, BigDecimal.ZERO) } }))
+
+        return completable.inDbTransaction(db)
+    }
 
     fun downloadDir(dir: Dir) = Completable.fromAction { TODO() }
 
@@ -159,7 +164,7 @@ class FilesRepository
             },
             api.renterUpload(siapath, source, dataPieces, parityPieces))!!
 
-    fun deleteFile(file: RenterFileData) = Completable.concatArray(
+    fun deleteFile(file: RenterFileData): Completable = Completable.concatArray(
             Completable.fromAction { db.fileDao().delete(file) },
             db.dirDao().getDirsContainingFile(file.path)
                     .toElementsObservable()
@@ -184,6 +189,8 @@ class FilesRepository
                     .flatMapCompletable { dir ->
                         Completable.fromAction { db.dirDao().updateSize(dir.path, dir.size + file.size) }
                     },
+            /* we move the file in the api last because if we move it first and then db actions fail, we
+             * can't rollback the move in the api the same way we can roll it back in the db */
             api.renterRename(file.path, newSiapath))
             .inDbTransaction(db)
 
@@ -204,7 +211,7 @@ class FilesRepository
 
     /* we don't execute this in a db transaction because if early-on moves succeed but later ones
      * fail (due to duplicate paths), we don't want to rollback the early ones, since those files
-     * will have already been moved in the API. */
+     * will have already been moved in the api. */
     fun multiMove(nodes: List<Node>, to: String): Completable = Completable.concatArray(
             nodes.toObservable()
                     .filter { it is Dir }

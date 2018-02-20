@@ -10,6 +10,7 @@ import android.graphics.Canvas
 import android.net.Uri
 import android.support.customtabs.CustomTabsIntent
 import android.support.v4.content.ContextCompat
+import android.support.v4.widget.SwipeRefreshLayout
 import com.vandyke.sia.R
 import com.vandyke.sia.data.local.Prefs
 import java.math.BigDecimal
@@ -46,15 +47,25 @@ object GenUtil {
                 .build()
                 .launchUrl(context, Uri.parse(url))
     }
+}
 
-    fun getBitmapFromVectorDrawable(context: Context, drawableId: Int): Bitmap {
-        val drawable = ContextCompat.getDrawable(context, drawableId)
-        val bitmap = Bitmap.createBitmap(drawable!!.intrinsicWidth,
-                drawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(bitmap)
-        drawable.setBounds(0, 0, canvas.width, canvas.height)
-        drawable.draw(canvas)
+fun Context.bitmapFromVector(drawableId: Int): Bitmap {
+    val drawable = getDrawable(drawableId)
+    val bitmap = Bitmap.createBitmap(drawable!!.intrinsicWidth,
+            drawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
+    val canvas = Canvas(bitmap)
+    drawable.setBounds(0, 0, canvas.width, canvas.height)
+    drawable.draw(canvas)
 
-        return bitmap
-    }
+    return bitmap
+}
+
+fun Context.getColorRes(resId: Int) = ContextCompat.getColor(this, resId)
+
+fun SwipeRefreshLayout.setColors(context: Context) {
+    this.setColorSchemeResources(R.color.colorAccent)
+    val array = context.theme.obtainStyledAttributes(intArrayOf(android.R.attr.windowBackground))
+    val backgroundColor = array.getColor(0, 0xFF00FF)
+    array.recycle()
+    this.setProgressBackgroundColorSchemeColor(backgroundColor)
 }

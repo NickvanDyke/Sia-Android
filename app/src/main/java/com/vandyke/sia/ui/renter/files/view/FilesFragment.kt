@@ -14,7 +14,6 @@ import android.graphics.PorterDuff
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.SearchView
@@ -35,14 +34,14 @@ import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.ui.renter.files.view.list.NodesAdapter
 import com.vandyke.sia.ui.renter.files.viewmodel.FilesViewModel
 import com.vandyke.sia.util.*
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_renter_files.*
+import kotlinx.android.synthetic.main.fragment_files.*
 import javax.inject.Inject
 
 
 class FilesFragment : BaseFragment() {
-    override val layoutResId: Int = R.layout.fragment_renter_files
+    override val layoutResId: Int = R.layout.fragment_files
     override val hasOptionsMenu = true
+    override val title: String = "Files"
 
     @Inject
     lateinit var factory: ViewModelProvider.Factory
@@ -74,7 +73,7 @@ class FilesFragment : BaseFragment() {
         nodesAdapter = NodesAdapter(viewModel)
         nodesList.adapter = nodesAdapter
 
-        pathAdapter = ArrayAdapter(context, R.layout.spinner_selected_item)
+        pathAdapter = ArrayAdapter(context, R.layout.spinner_selected_item_white)
         pathAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
         /* set up path spinner */
@@ -89,17 +88,11 @@ class FilesFragment : BaseFragment() {
             }
         }
         spinnerView.adapter = pathAdapter
-        spinnerView.background.setColorFilter(ContextCompat.getColor(context!!, android.R.color.white), PorterDuff.Mode.SRC_ATOP)
+        spinnerView.background.setColorFilter(context!!.getColorRes(android.R.color.white), PorterDuff.Mode.SRC_ATOP)
 
         /* pull-to-refresh stuff */
-        nodesListRefresh.setColorSchemeResources(R.color.colorAccent)
-        nodesListRefresh.setOnRefreshListener {
-            viewModel.refresh()
-        }
-        val array = context!!.theme.obtainStyledAttributes(intArrayOf(android.R.attr.windowBackground))
-        val backgroundColor = array.getColor(0, 0xFF00FF)
-        array.recycle()
-        nodesListRefresh.setProgressBackgroundColorSchemeColor(backgroundColor)
+        nodesListRefresh.setColors(context!!)
+        nodesListRefresh.setOnRefreshListener { viewModel.refresh() }
 
         /* FAB stuff */
         fabAddFile.setOnClickListener {
@@ -115,10 +108,10 @@ class FilesFragment : BaseFragment() {
             fabFilesMenu.close(true)
             DialogUtil.editTextDialog(context!!,
                     "New directory",
-                    "Name",
                     "Create",
                     { viewModel.createDir(it.text.toString()) },
-                    "Cancel")
+                    "Cancel",
+                    editTextFunc = { hint = "Name" })
                     .showDialogAndKeyboard()
         }
 
@@ -133,7 +126,6 @@ class FilesFragment : BaseFragment() {
                 viewModel.selectedNodes.value.forEach { node ->
                     DialogUtil.editTextDialog(context!!,
                             "Rename ${node.name}",
-                            "Name",
                             "Rename",
                             {
                                 val newName = it.text.toString()
@@ -144,7 +136,8 @@ class FilesFragment : BaseFragment() {
                                 viewModel.deselect(node)
                             },
                             "Cancel",
-                            { viewModel.deselect(node) })
+                            { viewModel.deselect(node) },
+                            { hint = "Name" })
                             .showDialogAndKeyboard()
                 }
             } else {
@@ -366,7 +359,6 @@ class FilesFragment : BaseFragment() {
     }
 
     private fun launchSAF() {
-        // TODO: crashes when choosing a contact from the SAF. Need to prevent being able to choose it. I thought CATEGORY_OPENABLE would but I guess not
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true)
         intent.putExtra(Intent.CATEGORY_OPENABLE, true)
@@ -379,18 +371,16 @@ class FilesFragment : BaseFragment() {
     }
 
     override fun onShow() {
-        activity!!.toolbar.addView(spinnerView)
-        setActionBarTitleDisplayed(false)
+        super.onShow()
+        toolbar.addView(spinnerView)
+        actionBar.setDisplayShowTitleEnabled(false)
         viewModel.refresh()
     }
 
     override fun onHide() {
-        activity!!.toolbar.removeView(spinnerView)
-        setActionBarTitleDisplayed(true)
-    }
-
-    private fun setActionBarTitleDisplayed(visible: Boolean) {
-        (activity as AppCompatActivity).supportActionBar!!.setDisplayShowTitleEnabled(visible)
+        super.onHide()
+        toolbar.removeView(spinnerView)
+        actionBar.setDisplayShowTitleEnabled(true)
     }
 
     companion object {

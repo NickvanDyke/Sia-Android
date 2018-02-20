@@ -6,17 +6,21 @@ package com.vandyke.sia.ui.wallet.view
 
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
+import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.LineData
+import com.github.mikephil.charting.data.LineDataSet
 import com.vandyke.sia.R
 import com.vandyke.sia.appComponent
 import com.vandyke.sia.data.local.Prefs
@@ -31,6 +35,7 @@ import com.vandyke.sia.ui.wallet.view.transactionslist.TransactionAdapter
 import com.vandyke.sia.ui.wallet.viewmodel.WalletViewModel
 import com.vandyke.sia.util.*
 import com.vandyke.sia.util.rx.observe
+import io.github.tonnyl.light.Light
 import io.reactivex.exceptions.CompositeException
 import kotlinx.android.synthetic.main.fragment_wallet.*
 import java.math.BigDecimal
@@ -41,6 +46,7 @@ import javax.inject.Inject
 class WalletFragment : BaseFragment() {
     override val layoutResId: Int = R.layout.fragment_wallet
     override val hasOptionsMenu = true
+    override val title: String = "Wallet"
 
     @Inject
     lateinit var siadSource: SiadSource
@@ -51,7 +57,7 @@ class WalletFragment : BaseFragment() {
     private val adapter = TransactionAdapter()
     private var expandedFragment: BaseWalletFragment? = null
     private var statusButton: MenuItem? = null
-
+    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         appComponent.inject(this)
 
@@ -98,14 +104,36 @@ class WalletFragment : BaseFragment() {
 
         /* set swipe-down stuff */
         transactionListSwipe.setOnRefreshListener { viewModel.refreshAll() }
-        transactionListSwipe.setColorSchemeResources(R.color.colorAccent)
-        val array = context!!.theme.obtainStyledAttributes(intArrayOf(android.R.attr.windowBackground))
-        val backgroundColor = array.getColor(0, 0xFF00FF)
-        array.recycle()
-        transactionListSwipe.setProgressBackgroundColorSchemeColor(backgroundColor)
+        transactionListSwipe.setColors(context!!)
 
         expandableFrame.onSwipeUp = ::collapseFrame
 
+        /* set up the chart and its data set */
+        val lineDataSet = LineDataSet(null, "")
+        with(lineDataSet) {
+            setDrawCircles(false)
+            setDrawValues(false)
+            setDrawFilled(true)
+            isHighlightEnabled = false
+            color = Color.TRANSPARENT
+            fillColor = context!!.getColorRes(R.color.colorPrimaryDark)
+            /* causes a crash if the dataset is empty, so we add an empty one. Bug with the lib it seems, based off googling */
+            addEntry(Entry(0f, 0f))
+        }
+        with(siaChart) {
+            setViewPortOffsets(0f, 0f, 0f, 0f)
+            data = LineData(lineDataSet)
+            isDragEnabled = false
+            setScaleEnabled(false)
+            legend.isEnabled = false
+            description.isEnabled = false
+            setDrawGridBackground(false)
+            xAxis.isEnabled = false
+            axisLeft.isEnabled = false
+            axisRight.isEnabled = false
+            invalidate()
+        }
+        
         /* observe VM stuff */
         viewModel.refreshing.observe(this) {
             transactionListSwipe.isRefreshing = it
@@ -131,6 +159,21 @@ class WalletFragment : BaseFragment() {
             updateUsdValue()
         }
 
+        viewModel.walletMonthHistory.observe(this) {
+            // TODO: still not completely sure this is working as I want it to... seems to be quirky
+            lineDataSet.values = it.mapIndexed { index, walletData ->
+                Entry(walletData.timestamp.toFloat(), walletData.confirmedSiacoinBalance.toSC().toFloat())
+            }
+            /* causes a crash if the dataset is empty, so we add an empty one. Bug with the lib it seems, based off googling */
+            if (lineDataSet.values.isEmpty())
+                lineDataSet.addEntry(Entry(0f, 0f))
+            println(lineDataSet.values)
+            lineDataSet.notifyDataSetChanged()
+            siaChart.data.notifyDataChanged()
+            siaChart.notifyDataSetChanged()
+            siaChart.invalidate()
+        }
+
         viewModel.usd.observe(this) {
             updateUsdValue()
         }
@@ -150,7 +193,7 @@ class WalletFragment : BaseFragment() {
         }
 
         viewModel.success.observe(this) {
-            SnackbarUtil.showSnackbar(wallet_coordinator, it)
+            Light.success(wallet_coordinator, it, Snackbar.LENGTH_SHORT).show()
             collapseFrame()
         }
 
@@ -206,9 +249,9 @@ class WalletFragment : BaseFragment() {
             R.id.actionCreateWallet -> expandFrame(WalletCreateDialog())
             R.id.actionSweepSeed -> expandFrame(WalletSweepSeedDialog())
             R.id.actionViewAddresses -> expandFrame(WalletAddressesDialog())
+            else -> return false
         }
-
-        return super.onOptionsItemSelected(item)
+        return true
     }
 
     fun expandFrame(fragment: BaseWalletFragment) {
@@ -233,12 +276,14 @@ class WalletFragment : BaseFragment() {
     }
 
     override fun onShow() {
-        setActionBarElevation(0f)
+        super.onShow()
+        actionBar.elevation = 0f
         viewModel.refreshAll()
     }
 
     override fun onHide() {
-        setActionBarElevation(12f)
+        super.onHide()
+        actionBar.elevation = 12f
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -285,10 +330,6 @@ class WalletFragment : BaseFragment() {
 
     private fun setProgressColor(resId: Int) {
         progressBar.indeterminateDrawable.setColorFilter(ContextCompat.getColor(context!!, resId), PorterDuff.Mode.SRC_IN)
-    }
-
-    private fun setActionBarElevation(elevation: Float) {
-        (activity as AppCompatActivity).supportActionBar!!.elevation = elevation
     }
 
     private fun setFabIcon() {

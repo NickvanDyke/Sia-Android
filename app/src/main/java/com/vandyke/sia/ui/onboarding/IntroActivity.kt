@@ -6,7 +6,6 @@ package com.vandyke.sia.ui.onboarding
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
 import com.codemybrainsout.onboarder.AhoyOnboarderActivity
 import com.codemybrainsout.onboarder.AhoyOnboarderCard
 import com.vandyke.sia.R
@@ -24,7 +23,7 @@ class IntroActivity : AhoyOnboarderActivity() {
         val syncCard = AhoyOnboarderCard("Blockchain syncing",
                 "The Sia node will initially have to download, process, and store the Sia blockchain, which is about 11GB." +
                         " This can take a while.",
-                R.drawable.ic_cloud_download)
+                R.drawable.ic_cloud_download_black)
         val sourceCard = AhoyOnboarderCard("Open source",
                 "Sia for Android and Sia both have their source code available on GitHub, linked in the About page.",
                 mehdi.sakout.aboutpage.R.drawable.about_icon_github)
@@ -51,7 +50,7 @@ class IntroActivity : AhoyOnboarderActivity() {
 
         showNavigationControls(false)
         setFinishButtonTitle("Get started")
-        setFinishButtonDrawableStyle(ContextCompat.getDrawable(this, R.drawable.onboarding_finish_button))
+        setFinishButtonDrawableStyle(getDrawable(R.drawable.onboarding_finish_button))
     }
 
     override fun onFinishButtonPressed() {

@@ -24,9 +24,7 @@ class WalletRepository
     fun updateAll() = Completable.mergeArray(updateWallet(), updateTransactions(), updateAddresses())!!
 
     private fun updateWallet() = api.wallet()
-            .doOnSuccess {
-                db.walletDao().insertReplaceOnConflict(it)
-            }
+            .doOnSuccess { db.walletDao().insertReplaceOnConflict(it) }
             .toCompletable()
 
     private fun updateTransactions() = api.walletTransactions()
@@ -44,13 +42,13 @@ class WalletRepository
             .toCompletable()
 
     private fun updateAddresses() = api.walletAddresses()
-            .doOnSuccess {
-                db.addressDao().insertAllIgnoreOnConflict(it.addresses.map { AddressData(it) })
-            }
+            .doOnSuccess { db.addressDao().insertAllIgnoreOnConflict(it.addresses.map { AddressData(it) }) }
             .toCompletable()
 
     /* database flowables to be subscribed to */
     fun wallet() = db.walletDao().mostRecent()
+
+    fun walletMonthHistory() = db.walletDao().allLastMonth()
 
     fun transactions() = db.transactionDao().allByMostRecent()
 
@@ -58,9 +56,8 @@ class WalletRepository
 
     /* singles */
     fun getAddress() = api.walletAddress()
-            .doOnSuccess {
-                db.addressDao().insertIgnoreOnConflict(it)
-            }.onErrorResumeNext {
+            .doOnSuccess { db.addressDao().insertIgnoreOnConflict(it) }
+            .onErrorResumeNext {
                 /* fallback to db, but only if the reason for the failure was not due to the absence of a wallet */
                 if (it !is NoWallet)
                     db.addressDao().getAddress().onErrorResumeNext(Single.error(it))
@@ -88,12 +85,14 @@ class WalletRepository
 
     fun lock() = api.walletLock()
 
-    fun init(password: String, dictionary: String, force: Boolean) = api.walletInit(password, dictionary, force).doAfterSuccess {
-        clearWalletDb().subscribe()
-    }!!
+    fun init(password: String, dictionary: String, force: Boolean) = api.walletInit(password, dictionary, force)
+            .doAfterSuccess {
+                clearWalletDb().subscribe()
+            }!!
 
     fun initSeed(password: String, dictionary: String, seed: String, force: Boolean) =
-            api.walletInitSeed(password, dictionary, seed, force).concatWith(clearWalletDb())
+            api.walletInitSeed(password, dictionary, seed, force)
+                    .concatWith(clearWalletDb())
 
     fun send(amount: String, destination: String) = api.walletSiacoins(amount, destination)
 

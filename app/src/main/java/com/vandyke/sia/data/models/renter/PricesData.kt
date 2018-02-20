@@ -4,9 +4,19 @@
 
 package com.vandyke.sia.data.models.renter
 
+import android.arch.persistence.room.Entity
+import android.arch.persistence.room.PrimaryKey
+import com.fasterxml.jackson.annotation.JsonIgnore
 import java.math.BigDecimal
 
-data class PricesData(val downloadterabyte: BigDecimal = BigDecimal.ZERO,
-                      val formcontracts: BigDecimal = BigDecimal.ZERO,
-                      val storageterabytemonth: BigDecimal = BigDecimal.ZERO,
-                      val uploadterabyte: BigDecimal = BigDecimal.ZERO)
+@Entity(tableName = "prices")
+data class PricesData(
+        val downloadterabyte: BigDecimal,
+        val formcontracts: BigDecimal,
+        val storageterabytemonth: BigDecimal,
+        val uploadterabyte: BigDecimal
+) {
+    @PrimaryKey
+    @JsonIgnore(value = true)
+    var timestamp = System.currentTimeMillis()
+}

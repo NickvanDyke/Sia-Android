@@ -11,6 +11,7 @@ import com.vandyke.sia.util.GenUtil
 
 class ComingSoonFragment : BaseFragment() {
     override val layoutResId = R.layout.fragment_coming_soon
+    override val title: String = "Coming soon"
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         view.setOnClickListener {
