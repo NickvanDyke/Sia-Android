@@ -13,6 +13,7 @@ import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.Toast
 import com.vandyke.sia.R
+import com.vandyke.sia.data.local.Prefs
 
 object DialogUtil {
     fun showRateDialog(context: Context) {
@@ -30,6 +31,8 @@ object DialogUtil {
                             }
                             .setCancelable(false)
                             .show()
+                }.setNeutralButton("Ask again later") { _, _ ->
+                    Prefs.shownFeedbackDialog = false
                 }.setNegativeButton("No") { _, _ ->
                     AlertDialog.Builder(context)
                             .setMessage("Would you like to give feedback on why?")

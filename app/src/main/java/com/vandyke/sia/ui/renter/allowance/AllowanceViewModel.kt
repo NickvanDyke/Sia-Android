@@ -41,8 +41,6 @@ class AllowanceViewModel
     val refreshing = NonNullLiveData(false)
     val error = SingleLiveEvent<Throwable>()
 
-    private var cached: Triple<PricesData, RenterFinancialMetricsData, ScValueData>? = null
-
     init {
         // maybe merge these together
         renterRepository.mostRecentAllowance()
@@ -53,7 +51,7 @@ class AllowanceViewModel
         renterRepository.mostRecentPrices()
                 .io()
                 .main()
-                .subscribe({ prices.value = it; setDisplayedMetrics() })
+                .subscribe({ prices.value = it; setDisplayedMetrics() }, ::onError)
 
         renterRepository.mostRecentSpending()
                 .io()
