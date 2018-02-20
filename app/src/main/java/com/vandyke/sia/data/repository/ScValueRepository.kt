@@ -15,7 +15,7 @@ class ScValueRepository
         private val api: SiaApiInterface,
         private val db: AppDatabase
 ) {
-    fun updateScValue() = api.getScPrice().doOnSuccess {
+    fun updateScValue() = api.getScUsdPrice().doOnSuccess {
         db.scValueDao().insertReplaceOnConflict(it)
     }.toCompletable()!!
 

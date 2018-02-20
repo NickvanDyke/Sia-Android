@@ -36,20 +36,20 @@ object StorageUtil {
         return null
     }
 
-    fun externalStorageStateDescription(): String {
-        return when (Environment.getExternalStorageState()) {
-            Environment.MEDIA_BAD_REMOVAL -> "External storage was previously removed before being unmounted"
-            Environment.MEDIA_CHECKING -> "External storage is present but being disk-checked"
-            Environment.MEDIA_EJECTING -> "External storage is in the process of ejecting"
-            Environment.MEDIA_MOUNTED -> "External storage is present and mounted with read/write access"
-            Environment.MEDIA_MOUNTED_READ_ONLY -> "External storage is present but mounted as read-only"
-            Environment.MEDIA_NOFS -> "External storage is present but is blank or using an unsupported filesystem"
-            Environment.MEDIA_REMOVED -> "External storage is not present"
-            Environment.MEDIA_SHARED -> "External storage is present but being shared via USB"
-            Environment.MEDIA_UNKNOWN -> "External storage is in an unknown state"
-            Environment.MEDIA_UNMOUNTABLE -> "External storage is present but cannot be mounted. May be corrupted"
-            Environment.MEDIA_UNMOUNTED -> "External storage is present but unmounted"
-            else -> "Error with external storage"
-        }
+    fun getExternalStorage(context: Context): File {
+        val dirs = context.getExternalFilesDirs(null)
+        if (dirs.isEmpty())
+            throw ExternalStorageError("No external storage available")
+
+        /* dirs[1] will be removable storage, which we prefer over emulated external storage, which dirs[0] will be */
+        val dir = if (dirs.size > 1) dirs[1] else dirs[0]
+
+        val state = Environment.getExternalStorageState(dir)
+        if (state != Environment.MEDIA_MOUNTED)
+            throw ExternalStorageError("External storage error: $state")
+
+        return dir
     }
 }
+
+class ExternalStorageError(msg: String) : Exception(msg)

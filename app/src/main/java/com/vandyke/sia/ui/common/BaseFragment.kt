@@ -27,8 +27,12 @@ abstract class BaseFragment : Fragment() {
     val actionBar: ActionBar
         get() = (activity as AppCompatActivity).supportActionBar!!
 
+    val mainActivity
+        get() = activity as MainActivity
+
     /** call through to the super implementation when overriding */
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {setHasOptionsMenu(hasOptionsMenu)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        setHasOptionsMenu(hasOptionsMenu)
         return if (layoutResId != -1)
             inflater.inflate(layoutResId, container, false)
         else

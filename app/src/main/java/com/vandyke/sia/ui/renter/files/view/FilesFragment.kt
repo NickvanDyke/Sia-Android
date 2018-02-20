@@ -29,7 +29,7 @@ import com.vandyke.sia.appComponent
 import com.vandyke.sia.data.local.models.renter.Dir
 import com.vandyke.sia.data.models.renter.RenterFileData
 import com.vandyke.sia.data.repository.FilesRepository.OrderBy
-import com.vandyke.sia.data.siad.SiadSource
+import com.vandyke.sia.data.siad.SiadStatus
 import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.ui.renter.files.view.list.NodesAdapter
 import com.vandyke.sia.ui.renter.files.viewmodel.FilesViewModel
@@ -47,7 +47,7 @@ class FilesFragment : BaseFragment() {
     lateinit var factory: ViewModelProvider.Factory
     private lateinit var viewModel: FilesViewModel
     @Inject
-    lateinit var siadSource: SiadSource
+    lateinit var siadStatus: SiadStatus
 
     private var searchItem: MenuItem? = null
     private var searchView: SearchView? = null
@@ -224,7 +224,7 @@ class FilesFragment : BaseFragment() {
             nodesListRefresh.isRefreshing = false
         }
 
-        siadSource.isSiadLoaded.observe(this) {
+        siadStatus.isSiadLoaded.observe(this) {
             if (it)
                 viewModel.refresh()
         }

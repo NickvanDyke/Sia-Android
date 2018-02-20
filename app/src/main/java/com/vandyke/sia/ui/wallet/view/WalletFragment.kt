@@ -25,10 +25,8 @@ import com.vandyke.sia.R
 import com.vandyke.sia.appComponent
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.models.consensus.ConsensusData
-import com.vandyke.sia.data.remote.SiadNotReady
-import com.vandyke.sia.data.remote.SiadNotRunning
 import com.vandyke.sia.data.remote.WalletLocked
-import com.vandyke.sia.data.siad.SiadSource
+import com.vandyke.sia.data.siad.SiadStatus
 import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.ui.wallet.view.childfragments.*
 import com.vandyke.sia.ui.wallet.view.transactionslist.TransactionAdapter
@@ -36,7 +34,6 @@ import com.vandyke.sia.ui.wallet.viewmodel.WalletViewModel
 import com.vandyke.sia.util.*
 import com.vandyke.sia.util.rx.observe
 import io.github.tonnyl.light.Light
-import io.reactivex.exceptions.CompositeException
 import kotlinx.android.synthetic.main.fragment_wallet.*
 import java.math.BigDecimal
 import java.text.NumberFormat
@@ -49,7 +46,7 @@ class WalletFragment : BaseFragment() {
     override val title: String = "Wallet"
 
     @Inject
-    lateinit var siadSource: SiadSource
+    lateinit var siadStatus: SiadStatus
     @Inject
     lateinit var factory: ViewModelProvider.Factory
     private lateinit var viewModel: WalletViewModel
@@ -198,30 +195,16 @@ class WalletFragment : BaseFragment() {
         }
 
         viewModel.error.observe(this) {
-            if (it is WalletLocked) {
-                it.snackbar(wallet_coordinator)
+            it.snackbar(wallet_coordinator)
+            if (it is WalletLocked)
                 expandFrame(WalletUnlockDialog())
-            } else if (siadSource.allConditionsGood.value && it is SiadNotRunning) {
-                return@observe
-            } else if (siadSource.allConditionsGood.value && it is CompositeException) {
-                if (it.exceptions.all { e -> e is SiadNotRunning }) {
-                    return@observe
-                } else if (it.exceptions.any { e -> e is SiadNotReady }) {
-                    SiadNotReady().snackbar(wallet_coordinator)
-                    return@observe
-                } else {
-                    it.snackbar(wallet_coordinator)
-                }
-            } else {
-                it.snackbar(wallet_coordinator)
-            }
         }
 
         viewModel.seed.observe(this) {
             WalletCreateDialog.showSeed(it, context!!)
         }
 
-        siadSource.isSiadLoaded.observe(this) {
+        siadStatus.isSiadLoaded.observe(this) {
             if (it)
                 viewModel.refreshAll()
         }

@@ -13,7 +13,7 @@
             android:title="On mobile data" />
     </PreferenceCategory>
     <PreferenceCategory android:title="Configuration">
-    <SwitchPreferenceCompat
+        <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="useExternal"
             android:summary="The Sia node will restart after changing this."
@@ -28,5 +28,9 @@
             android:defaultValue="true"
             android:key="loadWalletModule"
             android:title="Wallet" />
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="loadRenterModule"
+            android:title="Renter" />
     </PreferenceCategory>
 </PreferenceScreen>

@@ -57,7 +57,7 @@ interface SiaApiInterface {
     fun walletChangePassword(@Query("encryptionpassword") password: String, @Query("newpassword") newPassword: String): Completable
 
     @GET
-    fun getScPrice(@Url url: String = "http://www.coincap.io/page/SC"): Single<ScValueData>
+    fun getScUsdPrice(@Url url: String = "http://www.coincap.io/page/SC"): Single<ScValueData>
 
     /* renter API */
     @GET("renter")

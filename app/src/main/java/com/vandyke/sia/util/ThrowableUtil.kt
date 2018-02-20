@@ -37,6 +37,6 @@ fun Throwable.customMsg(): String {
     }
 }
 
-fun Throwable.snackbar(view: View) {
-    Light.error(view, this.customMsg(), Snackbar.LENGTH_SHORT).show()
+fun Throwable.snackbar(view: View, length: Int = Snackbar.LENGTH_SHORT) {
+    Light.error(view, this.customMsg(), length).show()
 }

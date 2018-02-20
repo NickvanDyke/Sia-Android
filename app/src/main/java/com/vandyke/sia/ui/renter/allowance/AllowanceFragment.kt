@@ -23,7 +23,7 @@ import com.github.mikephil.charting.utils.ColorTemplate
 import com.vandyke.sia.R
 import com.vandyke.sia.appComponent
 import com.vandyke.sia.dagger.SiaViewModelFactory
-import com.vandyke.sia.data.siad.SiadSource
+import com.vandyke.sia.data.siad.SiadStatus
 import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.ui.renter.allowance.AllowanceViewModel.Currency
 import com.vandyke.sia.ui.renter.allowance.AllowanceViewModel.Metrics.*
@@ -44,7 +44,7 @@ class AllowanceFragment : BaseFragment() {
     private lateinit var vm: AllowanceViewModel
 
     @Inject
-    lateinit var siadSource: SiadSource
+    lateinit var siadStatus: SiadStatus
 
     private var currencyButton: MenuItem? = null
 
@@ -233,7 +233,7 @@ class AllowanceFragment : BaseFragment() {
             it.snackbar(view)
         }
 
-        siadSource.isSiadLoaded.observe(this) {
+        siadStatus.isSiadLoaded.observe(this) {
             if (it)
                 vm.refresh()
         }

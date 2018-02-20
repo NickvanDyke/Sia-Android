@@ -9,14 +9,12 @@ import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.app.AppCompatDelegate
-import android.view.View
+import co.zsmb.materialdrawerkt.builders.drawer
+import co.zsmb.materialdrawerkt.draweritems.badgeable.primaryItem
+import co.zsmb.materialdrawerkt.draweritems.badgeable.secondaryItem
 import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.BillingClientStateListener
 import com.mikepenz.materialdrawer.Drawer
-import com.mikepenz.materialdrawer.DrawerBuilder
-import com.mikepenz.materialdrawer.model.DividerDrawerItem
-import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
-import com.mikepenz.materialdrawer.model.SecondaryDrawerItem
 import com.vandyke.sia.BuildConfig
 import com.vandyke.sia.R
 import com.vandyke.sia.data.local.Prefs
@@ -24,6 +22,7 @@ import com.vandyke.sia.data.siad.SiadService
 import com.vandyke.sia.ui.about.AboutFragment
 import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.ui.common.ComingSoonFragment
+import com.vandyke.sia.ui.node.NodeFragment
 import com.vandyke.sia.ui.onboarding.IntroActivity
 import com.vandyke.sia.ui.onboarding.PurchaseActivity
 import com.vandyke.sia.ui.renter.allowance.AllowanceFragment
@@ -150,89 +149,93 @@ class MainActivity : AppCompatActivity() {
     private fun setupDrawer() {
         setSupportActionBar(toolbar)
 
-        val filesItem = SecondaryDrawerItem()
-                .withIsExpanded(true)
-                .withName("Files")
-                .withIcon(R.drawable.ic_folder)
-                .withIconTintingEnabled(true)
-                .withIdentifier(0)
-                .withOnDrawerItemClickListener { _, _, _ ->
-                    displayFragment(if (BuildConfig.DEBUG)
-                        FilesFragment::class.java
-                    else
-                        ComingSoonFragment::class.java)
-                    false
-                }
+        drawer = drawer {
+            headerViewRes = R.layout.drawer_header
+            translucentStatusBar = false
+            toolbar = this@MainActivity.toolbar
+            headerDivider = false
+            widthDp = 225
 
-        val allowanceItem = SecondaryDrawerItem()
-                .withName("Allowance")
-                .withIcon(R.drawable.ic_money)
-                .withIconTintingEnabled(true)
-                .withIdentifier(1)
-                .withOnDrawerItemClickListener { _, _, _ ->
-                    displayFragment(if (BuildConfig.DEBUG)
-                        AllowanceFragment::class.java
-                    else
-                        ComingSoonFragment::class.java)
-                    false
-                }
+            primaryItem {
+                name = "Node"
+                icon = R.drawable.sia_new_circle_logo_transparent_white
+                iconTintingEnabled = true
+                identifier = -1
+                onClick { view -> displayFragment(NodeFragment::class.java); false }
+            }
 
-        // TODO: make Renter item start expanded. Seems to be buggy
-        val renterItem = PrimaryDrawerItem()
-                .withName("Renter")
-                .withIcon(R.drawable.ic_cloud)
-                .withIconTintingEnabled(true)
-                .withIdentifier(2)
-                .withSubItems(filesItem, allowanceItem)
-                .withSelectable(false)
-                .withOnDrawerItemClickListener { _, _, _ -> true }
+            primaryItem {
+                name = "Renter"
+                icon = R.drawable.ic_cloud
+                iconTintingEnabled = true
+                identifier = 2
+                selectable = false
+                onClick { view -> true }
+            }.withSubItems(
+                    secondaryItem {
+                        name = "Files"
+                        icon = R.drawable.ic_folder
+                        iconTintingEnabled = true
+                        identifier = 0
+                        onClick { view ->
+                            displayFragment(if (BuildConfig.DEBUG)
+                                FilesFragment::class.java
+                            else
+                                ComingSoonFragment::class.java)
+                            false
+                        }
+                    },
+                    secondaryItem {
+                        name = "Allowance"
+                        icon = R.drawable.ic_money
+                        iconTintingEnabled = true
+                        identifier = 1
+                        onClick { view ->
+                            displayFragment(if (BuildConfig.DEBUG)
+                                AllowanceFragment::class.java
+                            else
+                                ComingSoonFragment::class.java)
+                            false
+                        }
+                    })
 
-        val walletItem = PrimaryDrawerItem()
-                .withName("Wallet")
-                .withIcon(R.drawable.ic_account_balance_wallet)
-                .withIconTintingEnabled(true)
-                .withIdentifier(3)
-                .withOnDrawerItemClickListener { _, _, _ -> displayFragment(WalletFragment::class.java); false }
+            primaryItem {
+                name = "Wallet"
+                icon = R.drawable.ic_account_balance_wallet
+                iconTintingEnabled = true
+                identifier = 3
+                onClick { view -> displayFragment(WalletFragment::class.java); false }
+            }
 
-        val terminalItem = PrimaryDrawerItem()
-                .withName("Terminal")
-                .withIcon(R.drawable.icon_terminal)
-                .withIconTintingEnabled(true)
-                .withIdentifier(4)
-                .withOnDrawerItemClickListener { _, _, _ -> displayFragment(TerminalFragment::class.java); false }
+            primaryItem {
+                name = "Terminal"
+                icon = R.drawable.icon_terminal
+                iconTintingEnabled = true
+                identifier = 4
+                onClick { view -> displayFragment(TerminalFragment::class.java); false }
+            }
 
-        val settingsItem = PrimaryDrawerItem()
-                .withName("Settings")
-                .withIcon(R.drawable.ic_settings)
-                .withIconTintingEnabled(true)
-                .withIdentifier(5)
-                .withOnDrawerItemClickListener { _, _, _ -> displayFragment(SettingsFragment::class.java); false }
+            primaryItem {
+                name = "Settings"
+                icon = R.drawable.ic_settings
+                iconTintingEnabled = true
+                onClick { view -> displayFragment(SettingsFragment::class.java); false }
+            }
 
-        val aboutItem = PrimaryDrawerItem()
-                .withName("About")
-                .withIcon(R.drawable.ic_info_outline)
-                .withIconTintingEnabled(true)
-                .withIdentifier(6)
-                .withOnDrawerItemClickListener { _, _, _ -> displayFragment(AboutFragment::class.java); false }
-
-        drawer = DrawerBuilder()
-                .withActivity(this)
-                .withHeader(View.inflate(this, R.layout.drawer_header, null))
-                .withTranslucentStatusBar(false)
-                .addDrawerItems(renterItem, walletItem, terminalItem, DividerDrawerItem(), settingsItem, aboutItem)
-                .withToolbar(toolbar)
-                .withCloseOnClick(true)
-                .withHeaderDivider(false)
-                .withDrawerWidthDp(225)
-                .build()
+            primaryItem {
+                name = "About"
+                icon = R.drawable.ic_info_outline
+                iconTintingEnabled = true
+                onClick { view -> displayFragment(AboutFragment::class.java); false }
+            }
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
         /* save the visible fragment, to be retrieved in onCreate */
-        if (visibleFragment != null) {
+        if (visibleFragment != null)
             outState?.putString("visibleFragment", visibleFragment!!.javaClass.simpleName)
-        }
         outState?.putLong("drawerSelectedId", drawer.currentSelection)
     }
 

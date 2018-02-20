@@ -44,8 +44,6 @@
             android:name=".ui.onboarding.PurchaseActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
-
-        <receiver android:name="com.vandyke.sia.data.siad.SiadReceiver" />
     </application>
 
 </manifest>

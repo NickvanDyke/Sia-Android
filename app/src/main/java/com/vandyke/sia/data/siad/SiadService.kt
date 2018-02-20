@@ -9,10 +9,9 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.arch.lifecycle.LifecycleService
-import android.content.*
-import android.net.ConnectivityManager
+import android.content.Context
+import android.content.Intent
 import android.os.Binder
-import android.os.Environment
 import android.os.Handler
 import android.os.IBinder
 import android.support.v4.app.NotificationCompat
@@ -20,11 +19,11 @@ import com.vandyke.sia.R
 import com.vandyke.sia.appComponent
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.ui.main.MainActivity
+import com.vandyke.sia.util.ExternalStorageError
 import com.vandyke.sia.util.NotificationUtil
 import com.vandyke.sia.util.StorageUtil
 import com.vandyke.sia.util.bitmapFromVector
 import com.vandyke.sia.util.rx.observe
-import io.reactivex.Single
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.launch
 import java.io.BufferedReader
@@ -34,21 +33,20 @@ import java.io.InputStreamReader
 import javax.inject.Inject
 
 class SiadService : LifecycleService() {
-    private var siadFile: File? = null
-    private var siadProcess: java.lang.Process? = null
-    val siadProcessIsRunning: Boolean
-        get() = siadProcess != null
-
-    private val receiver = SiadReceiver()
-
     @Inject
     lateinit var siadSource: SiadSource
+    @Inject
+    lateinit var siadStatus: SiadStatus
+
+    private var siadFile: File? = null
+    private var siadProcess: java.lang.Process? = null
+
+    val siadProcessIsRunning: Boolean
+        get() = siadProcess != null
 
     override fun onCreate() {
         super.onCreate()
         appComponent.inject(this)
-        val filter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
-        registerReceiver(receiver, filter)
         // TODO: should also check for and delete older versions of Sia
         siadFile = StorageUtil.copyFromAssetsToAppStorage("siad-${Prefs.siaVersion}", this)
 
@@ -59,7 +57,11 @@ class SiadService : LifecycleService() {
                 stopSiad()
         }
 
-        siadSource.siadOutput.observe(this) {
+        siadSource.restart.observe(this) {
+            restartSiad()
+        }
+
+        siadStatus.mostRecentSiadOutput.observe(this) {
             showSiadNotification(it)
         }
     }
@@ -67,8 +69,7 @@ class SiadService : LifecycleService() {
     fun startSiad() {
         if (siadProcessIsRunning) {
             return
-        }
-        if (siadFile == null) {
+        } else if (siadFile == null) {
             showSiadNotification("Couldn't copy siad from assets to app storage")
             return
         }
@@ -78,25 +79,16 @@ class SiadService : LifecycleService() {
 
         /* start the node with an api password if it's not set to something empty */
         if (Prefs.apiPassword.isNotEmpty()) {
-            val args = pb.command()
-            args.add("--authenticate-api")
+            pb.command().add("--authenticate-api")
             pb.environment()["SIA_API_PASSWORD"] = Prefs.apiPassword
-            pb.command(args)
         }
 
         /* determine what directory Sia should use. Display notification with errors if external storage is set and not working */
         if (Prefs.useExternal) {
-            val dirs = getExternalFilesDirs(null)
-            if (dirs.isEmpty()) {
-                showSiadNotification("No external storage available")
-                return
-            }
-            val dir = if (dirs.size > 1) dirs[1] else dirs[0]
-            val state = Environment.getExternalStorageState(dir)
-            if (state == Environment.MEDIA_MOUNTED) {
-                pb.directory(dir)
-            } else {
-                showSiadNotification("Error with external storage: $state")
+            try {
+                pb.directory(StorageUtil.getExternalStorage(this))
+            } catch (e: ExternalStorageError) {
+                siadStatus.siadOutput(e.localizedMessage)
                 return
             }
         } else {
@@ -119,10 +111,10 @@ class SiadService : LifecycleService() {
                          * error message thingy. It doesn't affect operation at all, and we don't want the user to see it since
                          * it'd just be confusing */
                         if (!line.contains("Unsolicited response received on idle HTTP channel starting with"))
-                            siadSource.siadOutput.postValue(line)
+                            siadStatus.siadOutput(line)
 
                         if (line.contains("Finished loading"))
-                            siadSource.isSiadLoaded.postValue(true)
+                            siadStatus.isSiadLoaded.postValue(true)
 
                         line = inputReader.readLine()
                     }
@@ -140,7 +132,7 @@ class SiadService : LifecycleService() {
         // TODO: maybe shut it down using http stop request instead? Takes ages sometimes. Might be advantageous though
         siadProcess?.destroy()
         siadProcess = null
-        siadSource.isSiadLoaded.value = false
+        siadStatus.isSiadLoaded.value = false
         stopForeground(true)
     }
 
@@ -149,7 +141,7 @@ class SiadService : LifecycleService() {
         if (siadProcessIsRunning) {
             stopSiad()
             /* need to wait a little bit, otherwise siad will report that the address is already in use */
-            Handler(mainLooper).postDelayed({ startSiad() }, 1000)
+            Handler(mainLooper).postDelayed(::startSiad, 1000)
         }
     }
 
@@ -164,7 +156,7 @@ class SiadService : LifecycleService() {
 
     override fun onDestroy() {
         super.onDestroy()
-        unregisterReceiver(receiver)
+        siadSource.onDestroy()
         stopSiad()
         NotificationUtil.cancelNotification(this, SIAD_NOTIFICATION)
     }
@@ -191,12 +183,12 @@ class SiadService : LifecycleService() {
         // TODO
 
         /* the action to stop/start the Sia node */
-//        if (siadProcessIsRunning) {
-//            val stopIntent = Intent(SiadReceiver.STOP_SIAD)
+        if (siadProcessIsRunning) {
+            val stopIntent = Intent(SiadSource.STOP_SIAD)
 //            stopIntent.setClass(this, SiadReceiver::class.java)
-//            val stopPI = PendingIntent.getBroadcast(this, 0, stopIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-//            builder.addAction(R.drawable.siacoin_logo_svg_white, "Stop", stopPI)
-//        } else {
+            val stopPI = PendingIntent.getBroadcast(this, 0, stopIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+            builder.addAction(R.drawable.sia_new_circle_logo_transparent_white, "Stop", stopPI)
+        }// else {
 //            val startIntent = Intent(SiadReceiver.START_SIAD)
 //            startIntent.setClass(this, SiadReceiver::class.java)
 //            val startPI = PendingIntent.getBroadcast(this, 0, startIntent, PendingIntent.FLAG_UPDATE_CURRENT)
@@ -207,22 +199,6 @@ class SiadService : LifecycleService() {
     }
 
     companion object {
-        // TODO: maybe emit an error from this if the service isn't already running, and don't attempt to bind?
-        // If I don't want to start it as a result of binding, that is. Not sure if that's what I'll want
-        /** Note that the service is returned and then immediately unbound. So if the service is started because
-         * of this binding, then it will also immediately stop */
-        fun getService(context: Context) = Single.create<SiadService> {
-            val connection = object : ServiceConnection {
-                override fun onServiceConnected(name: ComponentName, service: IBinder) {
-                    it.onSuccess((service as SiadService.LocalBinder).service)
-                    context.unbindService(this)
-                }
-
-                override fun onServiceDisconnected(name: ComponentName) {}
-            }
-            context.bindService(Intent(context, SiadService::class.java), connection, Context.BIND_AUTO_CREATE)
-        }!!
-
         const val SIAD_NOTIFICATION = 3
     }
 

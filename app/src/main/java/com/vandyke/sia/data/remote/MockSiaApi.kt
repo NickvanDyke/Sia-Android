@@ -180,7 +180,7 @@ class MockSiaApi : SiaApiInterface {
         }
     }
 
-    override fun getScPrice(url: String): Single<ScValueData> {
+    override fun getScUsdPrice(url: String): Single<ScValueData> {
         return Single.just(ScValueData(BigDecimal("0.07")))
     }
 

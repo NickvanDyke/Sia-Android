@@ -61,7 +61,7 @@ class PurchaseActivity : AppCompatActivity(), PurchasesUpdatedListener {
         } else {
             later.setOnClickListener {
                 Prefs.delayedPurchase = true
-                Prefs.requirePurchaseAt = System.currentTimeMillis() + 86400000 /* one day in the future */
+                Prefs.requirePurchaseAt = System.currentTimeMillis() + 86400000 * 3 /* three days in the future */
                 Analytics.subscribeLater()
                 goToMainActivity()
             }

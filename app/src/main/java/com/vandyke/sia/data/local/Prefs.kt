@@ -31,6 +31,7 @@ object Prefs : KotprefModel() {
     var startupPage by stringPref("wallet")
     var displayedDecimalPrecision by intPref(2)
 
+    var siaManuallyStopped by booleanPref(false)
     var runSiaInBackground by booleanPref(true)
     var runSiaOnData by booleanPref(false)
     var apiPassword by stringPref()

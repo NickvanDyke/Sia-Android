@@ -8,6 +8,7 @@ import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
 import com.vandyke.sia.ui.renter.allowance.AllowanceViewModel
 import com.vandyke.sia.ui.renter.files.viewmodel.FilesViewModel
+import com.vandyke.sia.ui.terminal.TerminalViewModel
 import com.vandyke.sia.ui.wallet.viewmodel.WalletViewModel
 import dagger.Binds
 import dagger.Module
@@ -30,6 +31,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(AllowanceViewModel::class)
     abstract fun bindAllowanceViewModel(allowanceViewModel: AllowanceViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(TerminalViewModel::class)
+    abstract fun bindTerminalViewModel(terminalViewModel: TerminalViewModel): ViewModel
 
     @Binds
     abstract fun bindViewModelFactory(factory: SiaViewModelFactory): ViewModelProvider.Factory
