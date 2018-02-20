@@ -148,21 +148,22 @@ class FilesRepository
 
     fun downloadDir(dir: Dir) = Completable.fromAction { TODO() }
 
-    fun uploadFile(siapath: String, source: String, dataPieces: Int, parityPieces: Int) = Completable.concatArray(
-            Completable.fromAction {
-                db.fileDao().insertReplaceOnConflict(RenterFileData(
-                        siapath,
-                        source,
-                        BigDecimal.ZERO,
-                        false,
-                        false,
-                        0.0,
-                        0,
-                        0,
-                        0
-                ))
-            },
-            api.renterUpload(siapath, source, dataPieces, parityPieces))!!
+    // should I be inserting an empty file here? Or just let updating handle it?
+    fun uploadFile(siapath: String, source: String, dataPieces: Int, parityPieces: Int) =
+            api.renterUpload(siapath, source, dataPieces, parityPieces)
+                    .doOnComplete {
+                        db.fileDao().insertReplaceOnConflict(RenterFileData(
+                                siapath,
+                                source,
+                                BigDecimal.ZERO,
+                                false,
+                                false,
+                                0.0,
+                                0,
+                                0,
+                                0
+                        ))
+                    }
 
     fun deleteFile(file: RenterFileData): Completable = Completable.concatArray(
             Completable.fromAction { db.fileDao().delete(file) },

@@ -158,13 +158,12 @@ class WalletFragment : BaseFragment() {
 
         viewModel.walletMonthHistory.observe(this) {
             // TODO: still not completely sure this is working as I want it to... seems to be quirky
-            lineDataSet.values = it.mapIndexed { index, walletData ->
+            lineDataSet.values = it.map { walletData ->
                 Entry(walletData.timestamp.toFloat(), walletData.confirmedSiacoinBalance.toSC().toFloat())
             }
             /* causes a crash if the dataset is empty, so we add an empty one. Bug with the lib it seems, based off googling */
             if (lineDataSet.values.isEmpty())
                 lineDataSet.addEntry(Entry(0f, 0f))
-            println(lineDataSet.values)
             lineDataSet.notifyDataSetChanged()
             siaChart.data.notifyDataChanged()
             siaChart.notifyDataSetChanged()
