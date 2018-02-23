@@ -25,6 +25,8 @@ fun String.toHastings(): BigDecimal = if (this.isBlank()) BigDecimal.ZERO else B
 
 fun BigDecimal.toUsd(usdPrice: BigDecimal): BigDecimal = multiply(usdPrice)
 
+fun BigDecimal.toCurrency(pricePerCurrency: BigDecimal): BigDecimal = multiply(pricePerCurrency)
+
 fun BigDecimal.format(): String {
     val nf = NumberFormat.getNumberInstance()
     nf.maximumFractionDigits = Prefs.displayedDecimalPrecision

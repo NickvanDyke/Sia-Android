@@ -3,6 +3,15 @@
   -->
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="General">
+        <ListPreference
+            android:defaultValue="USD"
+            android:key="defaultCurrency"
+            android:entries="@array/currency_entries"
+            android:entryValues="@array/currency_values"
+            android:title="Default currency"
+            android:summary="%s" />
+    </PreferenceCategory>
     <PreferenceCategory android:title="Appearance">
         <SwitchPreferenceCompat
             android:defaultValue="false"

@@ -19,6 +19,7 @@ import android.view.MenuItem
 import android.view.View
 import com.vandyke.sia.R
 import com.vandyke.sia.appComponent
+import com.vandyke.sia.data.helpers.ScValueHelper
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.models.consensus.ConsensusData
 import com.vandyke.sia.data.remote.WalletLocked
@@ -126,7 +127,7 @@ class WalletFragment : BaseFragment() {
             updateUsdValue()
         }
 
-        viewModel.usd.observe(this) {
+        viewModel.scValue.observe(this) {
             updateUsdValue()
         }
 
@@ -166,9 +167,10 @@ class WalletFragment : BaseFragment() {
     }
 
     private fun updateUsdValue() {
-        if (viewModel.wallet.value != null && viewModel.usd.value != null)
+        if (viewModel.wallet.value != null && viewModel.scValue.value != null)
             balanceUsdText.text = ("${viewModel.wallet.value!!.confirmedSiacoinBalance.toSC()
-                    .toUsd(viewModel.usd.value!!.UsdPerSc).format()} USD")
+                .toCurrency(ScValueHelper.getValueByCurrency(Prefs.defaultCurrency, viewModel.scValue.value!!))
+                .format()} ${Prefs.defaultCurrency}")
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

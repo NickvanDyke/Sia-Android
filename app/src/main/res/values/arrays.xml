@@ -14,4 +14,28 @@
         <item>wallet</item>
         <item>terminal</item>
     </string-array>
+    <string-array name="currency_entries">
+        <item>United States Dollar (USD)</item>
+        <item>Euro (EUR)</item>
+        <item>Great Britain Pound (GBP)</item>
+        <item>Switzerland Franc (CHF)</item>
+        <item>Canada Dollar (CAD)</item>
+        <item>Australia Dollar (AUD)</item>
+        <item>China Yuan/Renminbi (CNY)</item>
+        <item>Japan Yen (JPY)</item>
+        <item>India Rupee (INR)</item>
+        <item>Brazil Real (BRL)</item>
+    </string-array>
+    <string-array name="currency_values">
+        <item>USD</item>
+        <item>EUR</item>
+        <item>GBP</item>
+        <item>CHF</item>
+        <item>CAD</item>
+        <item>AUD</item>
+        <item>CNY</item>
+        <item>JPY</item>
+        <item>INR</item>
+        <item>BRL</item>
+    </string-array>
 </resources>

@@ -28,7 +28,7 @@ class WalletViewModel
 ) : ViewModel() {
     val wallet = MutableLiveData<WalletData>()
     val walletMonthHistory = MutableLiveData<List<WalletData>>()
-    val usd = MutableLiveData<ScValueData>()
+    val scValue = MutableLiveData<ScValueData>()
     val consensus = MutableLiveData<ConsensusData>()
     val transactions = MutableLiveData<List<TransactionData>>()
     val activeTasks = NonNullLiveData(0)
@@ -66,7 +66,7 @@ class WalletViewModel
         scValueRepository.mostRecent()
                 .io()
                 .main()
-                .subscribe(usd::setValue, ::onError)
+                .subscribe(scValue::setValue, ::onError)
     }
 
     private fun onSuccess(msg: String) {
