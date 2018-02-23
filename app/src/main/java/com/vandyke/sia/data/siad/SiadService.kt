@@ -18,6 +18,7 @@ import android.support.v4.app.NotificationCompat
 import com.vandyke.sia.R
 import com.vandyke.sia.appComponent
 import com.vandyke.sia.data.local.Prefs
+import com.vandyke.sia.data.siad.SiadStatus.State
 import com.vandyke.sia.ui.main.MainActivity
 import com.vandyke.sia.util.ExternalStorageError
 import com.vandyke.sia.util.NotificationUtil
@@ -70,9 +71,11 @@ class SiadService : LifecycleService() {
         if (siadProcessIsRunning) {
             return
         } else if (siadFile == null) {
-            showSiadNotification("Couldn't copy siad from assets to app storage")
+            siadStatus.siadOutput("Couldn't copy siad from assets to app storage")
             return
         }
+
+        siadStatus.state.value = State.PROCESS_STARTING
 
         val pb = ProcessBuilder(siadFile!!.absolutePath, "-M", "gctw") // TODO: maybe let user set which modules to load?
         pb.redirectErrorStream(true)
@@ -97,6 +100,7 @@ class SiadService : LifecycleService() {
 
         try {
             siadProcess = pb.start() // TODO: this causes the application to skip about a second of frames when starting at the same time as the app. Preventable?
+            siadStatus.state.value = State.SIAD_LOADING
 
             startForeground(SIAD_NOTIFICATION, siadNotification("Starting Sia node..."))
 
@@ -113,8 +117,9 @@ class SiadService : LifecycleService() {
                         if (!line.contains("Unsolicited response received on idle HTTP channel starting with"))
                             siadStatus.siadOutput(line)
 
-                        if (line.contains("Finished loading"))
-                            siadStatus.isSiadLoaded.postValue(true)
+                        if (line.contains("Finished loading")) {
+                            siadStatus.state.postValue(State.SIAD_LOADED)
+                        }
 
                         line = inputReader.readLine()
                     }
@@ -132,7 +137,7 @@ class SiadService : LifecycleService() {
         // TODO: maybe shut it down using http stop request instead? Takes ages sometimes. Might be advantageous though
         siadProcess?.destroy()
         siadProcess = null
-        siadStatus.isSiadLoaded.value = false
+        siadStatus.state.value = State.STOPPED
         stopForeground(true)
     }
 
@@ -161,7 +166,7 @@ class SiadService : LifecycleService() {
         NotificationUtil.cancelNotification(this, SIAD_NOTIFICATION)
     }
 
-    fun showSiadNotification(text: String) {
+    private fun showSiadNotification(text: String) {
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(SIAD_NOTIFICATION, siadNotification(text))
     }

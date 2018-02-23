@@ -11,10 +11,11 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.app.AppCompatDelegate
 import co.zsmb.materialdrawerkt.builders.drawer
 import co.zsmb.materialdrawerkt.draweritems.badgeable.primaryItem
-import co.zsmb.materialdrawerkt.draweritems.badgeable.secondaryItem
+import co.zsmb.materialdrawerkt.draweritems.divider
 import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.BillingClientStateListener
 import com.mikepenz.materialdrawer.Drawer
+import com.mikepenz.materialdrawer.model.SecondaryDrawerItem
 import com.vandyke.sia.BuildConfig
 import com.vandyke.sia.R
 import com.vandyke.sia.data.local.Prefs
@@ -22,12 +23,13 @@ import com.vandyke.sia.data.siad.SiadService
 import com.vandyke.sia.ui.about.AboutFragment
 import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.ui.common.ComingSoonFragment
-import com.vandyke.sia.ui.node.NodeFragment
+import com.vandyke.sia.ui.node.NodeSettingsFragmentContainer
+import com.vandyke.sia.ui.node.NodeStatusFragment
 import com.vandyke.sia.ui.onboarding.IntroActivity
 import com.vandyke.sia.ui.onboarding.PurchaseActivity
 import com.vandyke.sia.ui.renter.allowance.AllowanceFragment
 import com.vandyke.sia.ui.renter.files.view.FilesFragment
-import com.vandyke.sia.ui.settings.SettingsFragment
+import com.vandyke.sia.ui.settings.SettingsFragmentContainer
 import com.vandyke.sia.ui.terminal.TerminalFragment
 import com.vandyke.sia.ui.wallet.view.WalletFragment
 import com.vandyke.sia.util.DialogUtil
@@ -158,11 +160,22 @@ class MainActivity : AppCompatActivity() {
 
             primaryItem {
                 name = "Node"
-                icon = R.drawable.sia_new_circle_logo_transparent_white
+                icon = R.drawable.ic_dns
                 iconTintingEnabled = true
-                identifier = -1
-                onClick { view -> displayFragment(NodeFragment::class.java); false }
-            }
+                selectable = false
+            }.withSubItems(
+                    SecondaryDrawerItem()
+                            .withName("Output")
+                            .withIcon(R.drawable.ic_short_text)
+                            .withIconTintingEnabled(true)
+                            .withOnDrawerItemClickListener { _, _, _ -> displayFragment(NodeStatusFragment::class.java); false },
+                    SecondaryDrawerItem()
+                            .withName("Settings")
+                            .withIcon(R.drawable.ic_settings)
+                            .withIconTintingEnabled(true)
+                            .withOnDrawerItemClickListener { _, _, _ -> displayFragment(NodeSettingsFragmentContainer::class.java); false })
+
+            divider {  }
 
             primaryItem {
                 name = "Renter"
@@ -170,34 +183,29 @@ class MainActivity : AppCompatActivity() {
                 iconTintingEnabled = true
                 identifier = 2
                 selectable = false
-                onClick { view -> true }
             }.withSubItems(
-                    secondaryItem {
-                        name = "Files"
-                        icon = R.drawable.ic_folder
-                        iconTintingEnabled = true
-                        identifier = 0
-                        onClick { view ->
-                            displayFragment(if (BuildConfig.DEBUG)
+                    SecondaryDrawerItem()
+                            .withName("Files")
+                            .withIcon(R.drawable.ic_folder)
+                            .withIconTintingEnabled(true)
+                            .withIdentifier(0)
+                            .withOnDrawerItemClickListener { _, _, _ -> displayFragment(if (BuildConfig.DEBUG)
                                 FilesFragment::class.java
                             else
                                 ComingSoonFragment::class.java)
-                            false
-                        }
-                    },
-                    secondaryItem {
-                        name = "Allowance"
-                        icon = R.drawable.ic_money
-                        iconTintingEnabled = true
-                        identifier = 1
-                        onClick { view ->
-                            displayFragment(if (BuildConfig.DEBUG)
+                                false
+                            },
+                    SecondaryDrawerItem()
+                            .withName("Allowance")
+                            .withIcon(R.drawable.ic_money)
+                            .withIconTintingEnabled(true)
+                            .withIdentifier(1)
+                            .withOnDrawerItemClickListener { _, _, _ -> displayFragment(if (BuildConfig.DEBUG)
                                 AllowanceFragment::class.java
                             else
                                 ComingSoonFragment::class.java)
-                            false
-                        }
-                    })
+                                false
+                            })
 
             primaryItem {
                 name = "Wallet"
@@ -215,11 +223,13 @@ class MainActivity : AppCompatActivity() {
                 onClick { view -> displayFragment(TerminalFragment::class.java); false }
             }
 
+            divider {  }
+
             primaryItem {
                 name = "Settings"
                 icon = R.drawable.ic_settings
                 iconTintingEnabled = true
-                onClick { view -> displayFragment(SettingsFragment::class.java); false }
+                onClick { view -> displayFragment(SettingsFragmentContainer::class.java); false }
             }
 
             primaryItem {

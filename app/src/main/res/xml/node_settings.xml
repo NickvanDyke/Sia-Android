@@ -23,14 +23,14 @@
             android:summary="API password to set on the Sia node, so that only this app can interact with it. Optional, but recommended. The Sia node will restart after changing this."
             android:title="API password" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="Modules">
-        <SwitchPreferenceCompat
-            android:defaultValue="true"
-            android:key="loadWalletModule"
-            android:title="Wallet" />
-        <SwitchPreferenceCompat
-            android:defaultValue="false"
-            android:key="loadRenterModule"
-            android:title="Renter" />
-    </PreferenceCategory>
+    <!--<PreferenceCategory android:title="Modules">-->
+        <!--<SwitchPreferenceCompat-->
+            <!--android:defaultValue="true"-->
+            <!--android:key="loadWalletModule"-->
+            <!--android:title="Wallet" />-->
+        <!--<SwitchPreferenceCompat-->
+            <!--android:defaultValue="false"-->
+            <!--android:key="loadRenterModule"-->
+            <!--android:title="Renter" />-->
+    <!--</PreferenceCategory>-->
 </PreferenceScreen>

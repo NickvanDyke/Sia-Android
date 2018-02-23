@@ -224,8 +224,8 @@ class FilesFragment : BaseFragment() {
             nodesListRefresh.isRefreshing = false
         }
 
-        siadStatus.isSiadLoaded.observe(this) {
-            if (it)
+        siadStatus.state.observe(this) {
+            if (it == SiadStatus.State.SIAD_LOADED)
                 viewModel.refresh()
         }
     }

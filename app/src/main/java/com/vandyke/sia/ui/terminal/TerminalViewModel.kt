@@ -9,40 +9,23 @@ import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.MutableLiveData
 import com.vandyke.sia.App
 import com.vandyke.sia.R
-import com.vandyke.sia.data.siad.SiadStatus
 import com.vandyke.sia.util.StorageUtil
-import io.reactivex.disposables.Disposable
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.launch
 import java.io.BufferedReader
 import java.io.File
 import java.io.IOException
 import java.io.InputStreamReader
-import javax.inject.Inject
 
-class TerminalViewModel
-@Inject constructor(
-        application: Application,
-        siadStatus: SiadStatus
-) : AndroidViewModel(application) {
+class TerminalViewModel(application: Application) : AndroidViewModel(application) {
 
     val output = MutableLiveData<String>()
 
     private var siacFile: File? = null
 
-    private val subscription: Disposable
-
     init {
         output.value = getApplication<App>().getString(R.string.terminal_warning)
         siacFile = StorageUtil.copyFromAssetsToAppStorage("siac", application)
-
-        subscription = siadStatus.allSiadOutput.subscribe {
-            appendToOutput(it)
-        }
-    }
-
-    override fun onCleared() {
-        subscription.dispose()
     }
 
     fun appendToOutput(text: String) {

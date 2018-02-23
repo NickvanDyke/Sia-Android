@@ -16,7 +16,7 @@ class NonNullLiveData<T>(initialValue: T) : LiveData<T>() {
     fun observe(owner: LifecycleOwner, onChanged: (T) -> Unit) {
         this.observe(owner, Observer {
             if (it == null)
-                throw Exception()
+                throw IllegalStateException()
             else
                 onChanged(it)
         })
@@ -32,7 +32,7 @@ class NonNullLiveData<T>(initialValue: T) : LiveData<T>() {
     }
 
     override fun getValue(): T {
-        return super.getValue() ?: throw Exception()
+        return super.getValue() ?: throw IllegalStateException()
     }
 
     public override fun setValue(value: T) {

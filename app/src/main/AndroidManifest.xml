@@ -25,6 +25,7 @@
             android:name="com.vandyke.sia.ui.main.MainActivity"
             android:launchMode="singleTask"
             android:theme="@style/splashScreenTheme"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

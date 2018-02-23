@@ -220,21 +220,22 @@ class AllowanceFragment : BaseFragment() {
             dataSet.values[4].y = it.unspent.toSC().toFloat()
             dataSet.notifyDataSetChanged()
 
-            val x = vm.currentMetric.value.ordinal.toFloat()
-            if (highlightedX != x) {
-                highlightedX = x
-                pieChart.highlightValue(x, 0)
-            }
+            // should I be doing this here too?
+//            val x = vm.currentMetric.value.ordinal.toFloat()
+//            if (highlightedX != x) {
+//                highlightedX = x
+//                pieChart.highlightValue(x, 0)
+//            }
 
-            // TODO: do I need to call invalidate() on the chart? Should check if it updates with new info
+            pieChart.invalidate()
         }
 
         vm.error.observe(this) {
             it.snackbar(view)
         }
 
-        siadStatus.isSiadLoaded.observe(this) {
-            if (it)
+        siadStatus.state.observe(this) {
+            if (it == SiadStatus.State.SIAD_LOADED)
                 vm.refresh()
         }
     }

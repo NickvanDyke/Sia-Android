@@ -29,7 +29,7 @@ class SiadSource
             setConditions()
         }
 
-    private var appInForeground = false
+    private var appInForeground = true /* initial value is true because onActivityResumed was already called for MainActivity at this point */
         set(value) {
             field = value
             setConditions()

@@ -42,7 +42,6 @@ class SingleLiveEvent<T> : MutableLiveData<T>() {
         })
     }
 
-    /** Don't pass null. Can't make parameter non-null due to conflicting JVM signatures */
     @MainThread
     override fun setValue(t: T?) {
         pending.set(true)

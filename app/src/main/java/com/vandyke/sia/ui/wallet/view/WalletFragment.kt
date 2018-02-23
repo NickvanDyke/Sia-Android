@@ -6,7 +6,6 @@ package com.vandyke.sia.ui.wallet.view
 
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
-import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
 import android.support.design.widget.Snackbar
@@ -18,9 +17,6 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import com.github.mikephil.charting.data.Entry
-import com.github.mikephil.charting.data.LineData
-import com.github.mikephil.charting.data.LineDataSet
 import com.vandyke.sia.R
 import com.vandyke.sia.appComponent
 import com.vandyke.sia.data.local.Prefs
@@ -100,41 +96,15 @@ class WalletFragment : BaseFragment() {
         }
 
         /* set swipe-down stuff */
-        transactionListSwipe.setOnRefreshListener { viewModel.refreshAll() }
+        transactionListSwipe.setOnRefreshListener(viewModel::refreshAll)
         transactionListSwipe.setColors(context!!)
 
         expandableFrame.onSwipeUp = ::collapseFrame
 
-        /* set up the chart and its data set */
-        val lineDataSet = LineDataSet(null, "")
-        with(lineDataSet) {
-            setDrawCircles(false)
-            setDrawValues(false)
-            setDrawFilled(true)
-            isHighlightEnabled = false
-            color = Color.TRANSPARENT
-            fillColor = context!!.getColorRes(R.color.colorPrimaryDark)
-            /* causes a crash if the dataset is empty, so we add an empty one. Bug with the lib it seems, based off googling */
-            addEntry(Entry(0f, 0f))
-        }
-        with(siaChart) {
-            setViewPortOffsets(0f, 0f, 0f, 0f)
-            data = LineData(lineDataSet)
-            isDragEnabled = false
-            setScaleEnabled(false)
-            legend.isEnabled = false
-            description.isEnabled = false
-            setDrawGridBackground(false)
-            xAxis.isEnabled = false
-            axisLeft.isEnabled = false
-            axisRight.isEnabled = false
-            invalidate()
-        }
+        // setupChart() TODO: confirm/deny that this is working right and how I want it to
         
         /* observe VM stuff */
-        viewModel.refreshing.observe(this) {
-            transactionListSwipe.isRefreshing = it
-        }
+        viewModel.refreshing.observe(this, transactionListSwipe::setRefreshing)
 
         viewModel.activeTasks.observe(this) {
             // TODO: when being made visible, the bar flickers at the location it was at last, before restarting
@@ -154,20 +124,6 @@ class WalletFragment : BaseFragment() {
             setFabIcon()
             setStatusIcon()
             updateUsdValue()
-        }
-
-        viewModel.walletMonthHistory.observe(this) {
-            // TODO: still not completely sure this is working as I want it to... seems to be quirky
-            lineDataSet.values = it.map { walletData ->
-                Entry(walletData.timestamp.toFloat(), walletData.confirmedSiacoinBalance.toSC().toFloat())
-            }
-            /* causes a crash if the dataset is empty, so we add an empty one. Bug with the lib it seems, based off googling */
-            if (lineDataSet.values.isEmpty())
-                lineDataSet.addEntry(Entry(0f, 0f))
-            lineDataSet.notifyDataSetChanged()
-            siaChart.data.notifyDataChanged()
-            siaChart.notifyDataSetChanged()
-            siaChart.invalidate()
         }
 
         viewModel.usd.observe(this) {
@@ -203,8 +159,8 @@ class WalletFragment : BaseFragment() {
             WalletCreateDialog.showSeed(it, context!!)
         }
 
-        siadStatus.isSiadLoaded.observe(this) {
-            if (it)
+        siadStatus.state.observe(this) {
+            if (it == SiadStatus.State.SIAD_LOADED)
                 viewModel.refreshAll()
         }
     }
@@ -321,5 +277,47 @@ class WalletFragment : BaseFragment() {
             wallet?.unlocked == false && wallet.encrypted == true -> R.drawable.ic_lock_open
             else -> R.drawable.ic_add
         })
+    }
+
+    private fun setupChart() {
+//        /* set up the chart and its data set */
+//        val lineDataSet = LineDataSet(null, "")
+//        with(lineDataSet) {
+//            setDrawCircles(false)
+//            setDrawValues(false)
+//            setDrawFilled(true)
+//            isHighlightEnabled = false
+//            color = Color.TRANSPARENT
+//            fillColor = context!!.getColorRes(R.color.colorPrimaryDark)
+//            /* causes a crash if the dataset is empty, so we add an empty one. Bug with the lib it seems, based off googling */
+//            addEntry(Entry(0f, 0f))
+//        }
+//        with(siaChart) {
+//            setViewPortOffsets(0f, 0f, 0f, 0f)
+//            data = LineData(lineDataSet)
+//            isDragEnabled = false
+//            setScaleEnabled(false)
+//            legend.isEnabled = false
+//            description.isEnabled = false
+//            setDrawGridBackground(false)
+//            xAxis.isEnabled = false
+//            axisLeft.isEnabled = false
+//            axisRight.isEnabled = false
+//            invalidate()
+//        }
+//
+//        viewModel.walletMonthHistory.observe(this) {
+//            // TODO: still not completely sure this is working as I want it to... seems to be quirky
+//            lineDataSet.values = it.map { walletData ->
+//                Entry(walletData.timestamp.toFloat(), walletData.confirmedSiacoinBalance.toSC().toFloat())
+//            }
+//            /* causes a crash if the dataset is empty, so we add an empty one. Bug with the lib it seems, based off googling */
+//            if (lineDataSet.values.isEmpty())
+//                lineDataSet.addEntry(Entry(0f, 0f))
+//            lineDataSet.notifyDataSetChanged()
+//            siaChart.data.notifyDataChanged()
+//            siaChart.notifyDataSetChanged()
+//            siaChart.invalidate()
+//        }
     }
 }

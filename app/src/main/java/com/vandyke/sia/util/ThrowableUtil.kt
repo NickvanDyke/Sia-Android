@@ -22,9 +22,9 @@ fun Throwable.customMsg(): String {
             if (exceptions.all { it.javaClass == exceptions[0].javaClass }) {
                 exceptions[0].customMsg()
             } else {
-                var msg = "Multiple errors - "
+                var msg = "Multiple errors -"
                 exceptions.forEachIndexed { index, throwable ->
-                    msg += "$index: ${throwable.customMsg()}"
+                    msg += " $index: ${throwable.customMsg()}"
                 }
                 msg
             }

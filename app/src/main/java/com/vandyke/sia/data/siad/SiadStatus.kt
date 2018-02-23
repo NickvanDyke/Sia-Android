@@ -20,10 +20,18 @@ class SiadStatus
     /** Don't modify directly. Call siadOutput() */
     val allSiadOutput = ReplaySubject.create<String>()
 
-    val isSiadLoaded = NonNullLiveData(false)
+    val state = NonNullLiveData(State.STOPPED)
 
     fun siadOutput(output: String) {
-        mostRecentSiadOutput.value = output
+        mostRecentSiadOutput.postValue(output)
         allSiadOutput.onNext(output)
+    }
+
+    enum class State {
+        STOPPING,
+        STOPPED,
+        PROCESS_STARTING,
+        SIAD_LOADING,
+        SIAD_LOADED
     }
 }
