@@ -181,7 +181,12 @@ class MockSiaApi : SiaApiInterface {
     }
 
     override fun getScPrice(url: String): Single<ScValueData> {
-        return Single.just(ScValueData(BigDecimal("0.07")))
+        return Single.just(ScValueData(
+            BigDecimal("0.01"), BigDecimal("0.02"), BigDecimal("0.03"),
+            BigDecimal("0.04"), BigDecimal("0.05"), BigDecimal("0.06"),
+            BigDecimal("0.07"), BigDecimal("0.08"), BigDecimal("0.09"),
+            BigDecimal("0.10")
+        ))
     }
 
     override fun renter(): Single<RenterData> {

@@ -14,8 +14,36 @@ import java.math.BigDecimal
 @Entity(tableName = "scValue")
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class ScValueData @JsonCreator constructor(
-        @JsonProperty(value = "price_usd")
-        val UsdPerSc: BigDecimal) {
+    @JsonProperty(value = "USD")
+    val UsdPerSc: BigDecimal,
+
+    @JsonProperty(value = "EUR")
+    val EurPerSc: BigDecimal,
+
+    @JsonProperty(value = "GBP")
+    val GbpPerSc: BigDecimal,
+
+    @JsonProperty(value = "CHF")
+    val ChfPerSc: BigDecimal,
+
+    @JsonProperty(value = "CAD")
+    val CadPerSc: BigDecimal,
+
+    @JsonProperty(value = "AUD")
+    val AudPerSc: BigDecimal,
+
+    @JsonProperty(value = "CNY")
+    val CnyPerSc: BigDecimal,
+
+    @JsonProperty(value = "JPY")
+    val JpyPerSc: BigDecimal,
+
+    @JsonProperty(value = "INR")
+    val InrPerSc: BigDecimal,
+
+    @JsonProperty(value = "BRL")
+    val BrlPerSc: BigDecimal
+) {
 
     @PrimaryKey
     var timestamp = System.currentTimeMillis()
