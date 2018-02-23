@@ -41,6 +41,6 @@ object Prefs : KotprefModel() {
     var ascending by booleanPref(true)
     var orderBy by enumOrdinalPref(FilesRepository.OrderBy.PATH)
 
-    var defaultCurrency by stringPref("USD")
+    var fiatCurrency by stringPref("USD")
     var allowanceCurrency by enumOrdinalPref(AllowanceViewModel.Currency.SC)
 }

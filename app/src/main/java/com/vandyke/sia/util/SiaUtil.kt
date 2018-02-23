@@ -23,10 +23,6 @@ fun BigDecimal.toHastings(): BigDecimal = this.multiply(HASTINGS_PER_SC)
 
 fun String.toHastings(): BigDecimal = if (this.isBlank()) BigDecimal.ZERO else BigDecimal(this).multiply(HASTINGS_PER_SC)
 
-fun BigDecimal.toUsd(usdPrice: BigDecimal): BigDecimal = multiply(usdPrice)
-
-fun BigDecimal.toCurrency(pricePerCurrency: BigDecimal): BigDecimal = multiply(pricePerCurrency)
-
 fun BigDecimal.format(): String {
     val nf = NumberFormat.getNumberInstance()
     nf.maximumFractionDigits = Prefs.displayedDecimalPrecision

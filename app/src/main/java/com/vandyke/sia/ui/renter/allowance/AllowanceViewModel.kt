@@ -102,7 +102,7 @@ class AllowanceViewModel
         val conversionRate = with(scValue.value ?: return) {
             when (currency.value) {
                 SC -> BigDecimal("1.00") /* using the ONE constant results in rounding when dividing later. Don't know why */
-                USD -> UsdPerSc
+                USD -> Usd
             }
         }
 

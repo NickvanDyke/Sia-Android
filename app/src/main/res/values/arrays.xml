@@ -15,27 +15,27 @@
         <item>terminal</item>
     </string-array>
     <string-array name="currency_entries">
-        <item>United States Dollar (USD)</item>
-        <item>Euro (EUR)</item>
-        <item>Great Britain Pound (GBP)</item>
-        <item>Switzerland Franc (CHF)</item>
-        <item>Canada Dollar (CAD)</item>
-        <item>Australia Dollar (AUD)</item>
-        <item>China Yuan/Renminbi (CNY)</item>
-        <item>Japan Yen (JPY)</item>
-        <item>India Rupee (INR)</item>
-        <item>Brazil Real (BRL)</item>
+        <item>(USD) United States Dollar</item>
+        <item>(EUR) Euro</item>
+        <item>(GBP) Great Britain Pound</item>
+        <item>(CAD) Canadian Dollar</item>
+        <item>(AUD) Australian Dollar</item>
+        <item>(INR) Indian Rupee</item>
+        <item>(CNY) Chinese Yuan/Renminbi</item>
+        <item>(JPY) Japanese Yen</item>
+        <item>(CHF) Swiss Franc</item>
+        <item>(BRL) Brazilian Real</item>
     </string-array>
     <string-array name="currency_values">
         <item>USD</item>
         <item>EUR</item>
         <item>GBP</item>
-        <item>CHF</item>
         <item>CAD</item>
         <item>AUD</item>
+        <item>INR</item>
         <item>CNY</item>
         <item>JPY</item>
-        <item>INR</item>
+        <item>CHF</item>
         <item>BRL</item>
     </string-array>
 </resources>

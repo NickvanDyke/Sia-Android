@@ -79,7 +79,7 @@ class MainActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             drawer.setSelection(when (Prefs.startupPage) {
                 "files" -> {
-                    displayFragment(FilesFragment::class.java)
+                    displayFragment(if (BuildConfig.DEBUG) FilesFragment::class.java else ComingSoonFragment::class.java)
                     0L // doesn't fire the listener? Maybe since it's in a submenu. So we set it manually above
                 }
                 "wallet" -> 3L
@@ -165,7 +165,7 @@ class MainActivity : AppCompatActivity() {
                 selectable = false
             }.withSubItems(
                     SecondaryDrawerItem()
-                            .withName("Output")
+                            .withName("Status")
                             .withIcon(R.drawable.ic_short_text)
                             .withIconTintingEnabled(true)
                             .withOnDrawerItemClickListener { _, _, _ -> displayFragment(NodeStatusFragment::class.java); false },

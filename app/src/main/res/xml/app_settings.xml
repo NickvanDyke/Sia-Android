@@ -3,16 +3,14 @@
   -->
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory android:title="General">
+    <PreferenceCategory android:title="Appearance">
         <ListPreference
             android:defaultValue="USD"
-            android:key="defaultCurrency"
             android:entries="@array/currency_entries"
             android:entryValues="@array/currency_values"
-            android:title="Default currency"
-            android:summary="%s" />
-    </PreferenceCategory>
-    <PreferenceCategory android:title="Appearance">
+            android:key="fiatCurrency"
+            android:summary="%s"
+            android:title="Fiat currency" />
         <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="darkMode"
@@ -44,5 +42,4 @@
             android:summary="You can clear all of the Sia node's data from here, such as the blockchain. Doing that will delete ALL of Sia's data, including any wallet files - write down your seed(s) first."
             android:title="Open Application Info page for Sia" />
     </PreferenceCategory>
-
 </PreferenceScreen>

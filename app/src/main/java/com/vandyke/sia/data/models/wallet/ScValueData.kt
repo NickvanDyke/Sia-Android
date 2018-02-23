@@ -13,38 +13,65 @@ import java.math.BigDecimal
 
 @Entity(tableName = "scValue")
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class ScValueData @JsonCreator constructor(
-    @JsonProperty(value = "USD")
-    val UsdPerSc: BigDecimal,
+data class ScValueData
+@JsonCreator constructor(
+        @JsonProperty(value = "USD")
+        val Usd: BigDecimal,
 
-    @JsonProperty(value = "EUR")
-    val EurPerSc: BigDecimal,
+        @JsonProperty(value = "EUR")
+        val Eur: BigDecimal,
 
-    @JsonProperty(value = "GBP")
-    val GbpPerSc: BigDecimal,
+        @JsonProperty(value = "GBP")
+        val Gbp: BigDecimal,
 
-    @JsonProperty(value = "CHF")
-    val ChfPerSc: BigDecimal,
+        @JsonProperty(value = "CHF")
+        val Chf: BigDecimal,
 
-    @JsonProperty(value = "CAD")
-    val CadPerSc: BigDecimal,
+        @JsonProperty(value = "CAD")
+        val Cad: BigDecimal,
 
-    @JsonProperty(value = "AUD")
-    val AudPerSc: BigDecimal,
+        @JsonProperty(value = "AUD")
+        val Aud: BigDecimal,
 
-    @JsonProperty(value = "CNY")
-    val CnyPerSc: BigDecimal,
+        @JsonProperty(value = "CNY")
+        val Cny: BigDecimal,
 
-    @JsonProperty(value = "JPY")
-    val JpyPerSc: BigDecimal,
+        @JsonProperty(value = "JPY")
+        val Jpy: BigDecimal,
 
-    @JsonProperty(value = "INR")
-    val InrPerSc: BigDecimal,
+        @JsonProperty(value = "INR")
+        val Inr: BigDecimal,
 
-    @JsonProperty(value = "BRL")
-    val BrlPerSc: BigDecimal
+        @JsonProperty(value = "BRL")
+        val Brl: BigDecimal
 ) {
-
     @PrimaryKey
     var timestamp = System.currentTimeMillis()
+
+    fun getValueForCurrency(currency: String): BigDecimal = when (currency) {
+        USD -> Usd
+        EUR -> Eur
+        GBP -> Chf
+        CHF -> Chf
+        CAD -> Cad
+        AUD -> Aud
+        CNY -> Cny
+        JPY -> Jpy
+        INR -> Inr
+        BRL -> Brl
+        else -> throw IllegalArgumentException("Invalid currency passed to getValueForCurrency: $currency")
+    }
+
+    companion object {
+        const val USD = "USD"
+        const val EUR = "EUR"
+        const val GBP = "GBP"
+        const val CHF = "CHF"
+        const val CAD = "CAD"
+        const val AUD = "AUD"
+        const val CNY = "CNY"
+        const val JPY = "JPY"
+        const val INR = "INR"
+        const val BRL = "BRL"
+    }
 }

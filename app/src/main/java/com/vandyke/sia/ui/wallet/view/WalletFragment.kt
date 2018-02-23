@@ -19,7 +19,6 @@ import android.view.MenuItem
 import android.view.View
 import com.vandyke.sia.R
 import com.vandyke.sia.appComponent
-import com.vandyke.sia.data.helpers.ScValueHelper
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.models.consensus.ConsensusData
 import com.vandyke.sia.data.remote.WalletLocked
@@ -124,11 +123,11 @@ class WalletFragment : BaseFragment() {
             }
             setFabIcon()
             setStatusIcon()
-            updateUsdValue()
+            updateFiatValue()
         }
 
         viewModel.scValue.observe(this) {
-            updateUsdValue()
+            updateFiatValue()
         }
 
         viewModel.transactions.observe(this) {
@@ -164,13 +163,6 @@ class WalletFragment : BaseFragment() {
             if (it == SiadStatus.State.SIAD_LOADED)
                 viewModel.refreshAll()
         }
-    }
-
-    private fun updateUsdValue() {
-        if (viewModel.wallet.value != null && viewModel.scValue.value != null)
-            balanceUsdText.text = ("${viewModel.wallet.value!!.confirmedSiacoinBalance.toSC()
-                .toCurrency(ScValueHelper.getValueByCurrency(Prefs.defaultCurrency, viewModel.scValue.value!!))
-                .format()} ${Prefs.defaultCurrency}")
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -230,6 +222,13 @@ class WalletFragment : BaseFragment() {
         inflater.inflate(R.menu.toolbar_wallet, menu)
         statusButton = menu.findItem(R.id.actionStatus)
         setStatusIcon()
+    }
+
+    private fun updateFiatValue() {
+        if (viewModel.wallet.value != null && viewModel.scValue.value != null)
+            balanceUsdText.text = ("${(viewModel.wallet.value!!.confirmedSiacoinBalance.toSC()
+                    * viewModel.scValue.value!!.getValueForCurrency(Prefs.fiatCurrency))
+                    .format()} ${Prefs.fiatCurrency}")
     }
 
     private fun setStatusIcon() {
