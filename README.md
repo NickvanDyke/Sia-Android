@@ -20,9 +20,9 @@ This app is still in heavy development, and contributions to it through this rep
 # Acknowledgements
 Huge thanks to [SiaPulse](http://siapulse.com) for a donation that made the time spent on this many times more possible.
 
-[JGall1](https://github.com/JGall1) for implementing QR code generation and scanning.
+[your-mirror](https://github.com/your-mirror) for implementing list/grid toggle, multiple fiat currencies, and wallet page background graph.
 
-[your-mirror](https://github.com/your-mirror) for implementing list/grid toggle.
+[JGall1](https://github.com/JGall1) for implementing QR code generation and scanning.
 
 # Donations
 Any amount is appreciated and supports development. Thanks!
