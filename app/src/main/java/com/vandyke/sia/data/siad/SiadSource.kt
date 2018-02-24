@@ -15,7 +15,8 @@ import com.vandyke.sia.util.rx.SingleLiveEvent
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/** This class is used as a singleton that aggregates all factors of whether siad should be running */
+/** This class is used as a singleton that aggregates all factors of whether siad should be running.
+  * Should really only be used in SiadService. */
 @Singleton
 class SiadSource
 @Inject constructor(val application: Application) {
@@ -71,7 +72,8 @@ class SiadSource
         }
     }
 
-    init {
+    /* methods to be called in the matching SiadService lifecycle callbacks */
+    fun onCreate() {
         Prefs.preferences.registerOnSharedPreferenceChangeListener(prefsListener)
         application.registerActivityLifecycleCallbacks(lifecycleCallbacks)
 

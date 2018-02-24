@@ -10,7 +10,7 @@ import com.vandyke.sia.data.local.daos.getDirs
 import com.vandyke.sia.data.local.daos.getFiles
 import com.vandyke.sia.data.local.models.renter.*
 import com.vandyke.sia.data.models.renter.RenterFileData
-import com.vandyke.sia.data.remote.SiaApiInterface
+import com.vandyke.sia.data.remote.SiaApi
 import com.vandyke.sia.util.rx.inDbTransaction
 import com.vandyke.sia.util.rx.toElementsObservable
 import io.reactivex.Completable
@@ -28,7 +28,7 @@ import javax.inject.Singleton
 @Singleton
 class FilesRepository
 @Inject constructor(
-        private val api: SiaApiInterface,
+        private val api: SiaApi,
         private val db: AppDatabase
 ) {
     init {

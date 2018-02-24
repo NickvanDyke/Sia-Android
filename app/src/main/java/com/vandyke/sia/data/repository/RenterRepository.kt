@@ -5,7 +5,7 @@
 package com.vandyke.sia.data.repository
 
 import com.vandyke.sia.data.local.AppDatabase
-import com.vandyke.sia.data.remote.SiaApiInterface
+import com.vandyke.sia.data.remote.SiaApi
 import io.reactivex.Completable
 import java.math.BigDecimal
 import javax.inject.Inject
@@ -14,7 +14,7 @@ import javax.inject.Singleton
 @Singleton
 class RenterRepository
 @Inject constructor(
-        val api: SiaApiInterface,
+        val api: SiaApi,
         val db: AppDatabase
 ) {
     fun setAllowance(funds: BigDecimal, hosts: Int, period: Int, renewWindow: Int) = api.renter(funds, hosts, period, renewWindow)

@@ -51,6 +51,8 @@ class SiadService : LifecycleService() {
         // TODO: should also check for and delete older versions of Sia
         siadFile = StorageUtil.copyFromAssetsToAppStorage("siad-${Prefs.siaVersion}", this)
 
+        siadSource.onCreate()
+
         siadSource.allConditionsGood.observe(this) {
             if (it)
                 startSiad()
@@ -117,9 +119,8 @@ class SiadService : LifecycleService() {
                         if (!line.contains("Unsolicited response received on idle HTTP channel starting with"))
                             siadStatus.siadOutput(line)
 
-                        if (line.contains("Finished loading")) {
+                        if (line.contains("Finished loading"))
                             siadStatus.state.postValue(State.SIAD_LOADED)
-                        }
 
                         line = inputReader.readLine()
                     }

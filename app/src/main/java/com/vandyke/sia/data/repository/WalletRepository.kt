@@ -7,7 +7,7 @@ package com.vandyke.sia.data.repository
 import com.vandyke.sia.data.local.AppDatabase
 import com.vandyke.sia.data.models.wallet.AddressData
 import com.vandyke.sia.data.remote.NoWallet
-import com.vandyke.sia.data.remote.SiaApiInterface
+import com.vandyke.sia.data.remote.SiaApi
 import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.rxkotlin.zipWith
@@ -17,7 +17,7 @@ import javax.inject.Singleton
 @Singleton
 class WalletRepository
 @Inject constructor(
-        private val api: SiaApiInterface,
+        private val api: SiaApi,
         private val db: AppDatabase
 ) {
     /* Functions that update the local database from the Sia node */

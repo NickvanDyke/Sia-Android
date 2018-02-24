@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger
 
 /** This class attempts to simulate the API endpoints and internal behavior of the Sia node.
  * It's far from exact, but enough that it can be used as a replacement when testing. */
-class MockSiaApi : SiaApiInterface {
+class MockSiaApi : SiaApi {
     // obviously using a nonce when setting up internal values won't give very reproducible tests. Should do some other way.
     // maybe throw in some real data or something
     // maybe have some factory functions that initialize to often-used values, like with a wallet already created
