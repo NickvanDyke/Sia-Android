@@ -5,6 +5,7 @@
 package com.vandyke.sia.data.repository
 
 import com.vandyke.sia.data.local.AppDatabase
+import com.vandyke.sia.data.models.renter.RenterSettingsAllowanceData
 import com.vandyke.sia.data.remote.SiaApi
 import io.reactivex.Completable
 import java.math.BigDecimal
@@ -14,10 +15,11 @@ import javax.inject.Singleton
 @Singleton
 class RenterRepository
 @Inject constructor(
-        val api: SiaApi,
-        val db: AppDatabase
+        private val api: SiaApi,
+        private val db: AppDatabase
 ) {
-    fun setAllowance(funds: BigDecimal, hosts: Int, period: Int, renewWindow: Int) = api.renter(funds, hosts, period, renewWindow)
+    fun setAllowance(funds: BigDecimal, hosts: Int, period: Int, renewWindow: Int): Completable = api.renter(funds, hosts, period, renewWindow)
+            .doOnComplete { db.allowanceDao().insertReplaceOnConflict(RenterSettingsAllowanceData(funds, hosts, period, renewWindow)) }
 
     fun updateAllowanceAndMetrics(): Completable = api.renter()
             .doOnSuccess {

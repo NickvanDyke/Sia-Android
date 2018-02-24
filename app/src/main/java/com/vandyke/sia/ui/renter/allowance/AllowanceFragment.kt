@@ -23,6 +23,7 @@ import com.github.mikephil.charting.utils.ColorTemplate
 import com.vandyke.sia.R
 import com.vandyke.sia.appComponent
 import com.vandyke.sia.dagger.SiaViewModelFactory
+import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.siad.SiadStatus
 import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.ui.renter.allowance.AllowanceViewModel.Currency
@@ -158,6 +159,7 @@ class AllowanceFragment : BaseFragment() {
         }
 
         vm.allowance.observe(this) {
+            // TODO: show day equivalents of block values
             with(it) {
                 fundsValue.text = funds.toSC().format() + " SC"
                 hostsValue.text = hosts.format()
@@ -177,7 +179,7 @@ class AllowanceFragment : BaseFragment() {
         }
 
         vm.currentMetricValues.observe(this) { (price, spent, purchasable) ->
-            val currency = " " + vm.currency.value.text
+            val currency = " " + if (vm.currency.value == Currency.SC) "SC" else Prefs.fiatCurrency
             val metric = vm.currentMetric.value
             
             if (metric == UNSPENT) {
@@ -253,7 +255,7 @@ class AllowanceFragment : BaseFragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         vm.currency.value = when (item.itemId) {
             R.id.currency_sc -> Currency.SC
-            R.id.currency_usd -> Currency.USD
+            R.id.currency_fiat -> Currency.FIAT
             else -> return false
         }
         return true

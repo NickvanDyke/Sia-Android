@@ -5,6 +5,7 @@
 package com.vandyke.sia.ui.main
 
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
@@ -52,6 +53,10 @@ class MainActivity : AppCompatActivity() {
 
         if (!BuildConfig.DEBUG)
             checkPurchases()
+
+        /* allow rotation in debug builds, for easy recreation testing */
+        if (BuildConfig.DEBUG)
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
 
         AppCompatDelegate.setDefaultNightMode(
                 if (Prefs.darkMode)

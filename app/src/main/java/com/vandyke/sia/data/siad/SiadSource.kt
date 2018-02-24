@@ -19,7 +19,7 @@ import javax.inject.Singleton
   * Should really only be used in SiadService. */
 @Singleton
 class SiadSource
-@Inject constructor(val application: Application) {
+@Inject constructor(private val application: Application) {
 
     val allConditionsGood = NonNullLiveData(false)
     val restart = SingleLiveEvent<Boolean>()

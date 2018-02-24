@@ -9,10 +9,10 @@
         <menu>
             <item
                 android:id="@+id/currency_sc"
-                android:title="SC" />
+                android:title="Siacoin" />
             <item
-                android:id="@+id/currency_usd"
-                android:title="USD" />
+                android:id="@+id/currency_fiat"
+                android:title="Fiat" />
         </menu>
     </item>
 </menu>

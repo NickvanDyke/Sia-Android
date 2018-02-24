@@ -13,8 +13,8 @@ import com.vandyke.sia.data.models.renter.RenterSettingsAllowanceData
 import com.vandyke.sia.data.models.wallet.ScValueData
 import com.vandyke.sia.data.repository.RenterRepository
 import com.vandyke.sia.data.repository.ScValueRepository
+import com.vandyke.sia.ui.renter.allowance.AllowanceViewModel.Currency.FIAT
 import com.vandyke.sia.ui.renter.allowance.AllowanceViewModel.Currency.SC
-import com.vandyke.sia.ui.renter.allowance.AllowanceViewModel.Currency.USD
 import com.vandyke.sia.ui.renter.allowance.AllowanceViewModel.Metrics.*
 import com.vandyke.sia.util.rx.*
 import io.reactivex.Completable
@@ -88,8 +88,10 @@ class AllowanceViewModel
                      hosts: Int? = allowance.value?.hosts,
                      period: Int? = allowance.value?.period,
                      renewWindow: Int? = allowance.value?.renewwindow) {
-        if (funds == null || hosts == null || period == null || renewWindow == null)
-            throw IllegalArgumentException("Passed null values to setAllowance()")
+        if (funds == null || hosts == null || period == null || renewWindow == null) {
+            onError(IllegalArgumentException("Null values passed to setAllowance"))
+            return
+        }
 
         renterRepository.setAllowance(funds, hosts, period, renewWindow)
                 .io()
@@ -102,7 +104,7 @@ class AllowanceViewModel
         val conversionRate = with(scValue.value ?: return) {
             when (currency.value) {
                 SC -> BigDecimal("1.00") /* using the ONE constant results in rounding when dividing later. Don't know why */
-                USD -> Usd
+                FIAT -> getValueForCurrency(Prefs.fiatCurrency)
             }
         }
 
@@ -150,9 +152,9 @@ class AllowanceViewModel
         UNSPENT("Unspent")
     }
 
-    enum class Currency(val text: String) {
-        SC("SC"),
-        USD("USD")
+    enum class Currency {
+        SC,
+        FIAT
     }
 
     data class MetricValues(val price: BigDecimal, val spent: BigDecimal, val purchasable: BigDecimal)
