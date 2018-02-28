@@ -6,7 +6,6 @@ package com.vandyke.sia.dagger
 
 import android.util.Base64
 import com.vandyke.sia.data.local.Prefs
-import com.vandyke.sia.data.remote.MockSiaApi
 import com.vandyke.sia.data.remote.SiaApi
 import com.vandyke.sia.data.remote.SiaException
 import com.vandyke.sia.data.remote.SiadNotRunning
@@ -26,7 +25,7 @@ class SiaModule {
     @Provides
     @Singleton
     fun provideSiaApi(): SiaApi {
-        return MockSiaApi()
+//        return MockSiaApi()
         val clientBuilder = OkHttpClient.Builder()
                 .readTimeout(0, TimeUnit.MILLISECONDS) // no timeout because some Sia API calls can take a long time to return
 //                .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))

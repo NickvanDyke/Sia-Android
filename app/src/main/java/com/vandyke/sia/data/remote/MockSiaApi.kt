@@ -42,13 +42,13 @@ class MockSiaApi : SiaApi {
     var seed = ""
     var addresses = listOf("address1", "address2", "address3")
     var confirmedTxs: MutableList<TransactionData> = MutableList(7, { index ->
-        val inputs = listOf(TransactionInputData(walletaddress = nonce % 2 == 0, value = BigDecimal(nonce * 2) * HASTINGS_PER_SC))
-        val outputs = listOf(TransactionOutputData(walletaddress = nonce % 2 == 1, value = BigDecimal(nonce) * HASTINGS_PER_SC))
+        val inputs = listOf(TransactionInputData("1231231", "Siacoin", nonce % 2 == 0, "sfwerwer", BigDecimal(nonce * 2) * HASTINGS_PER_SC))
+        val outputs = listOf(TransactionOutputData("1231231", "Siacoin", BigDecimal("1234"), nonce % 2 == 0, "sfwerwer", BigDecimal(nonce * 2) * HASTINGS_PER_SC))
         TransactionData(nonce.toString(), BigDecimal(nonce * 10), BigDecimal(nonce * 100), inputs, outputs)
     })
     var unconfirmedTxs: MutableList<TransactionData> = MutableList(2, { index ->
-        val inputs = listOf(TransactionInputData(walletaddress = nonce % 2 == 1, value = BigDecimal(nonce) * HASTINGS_PER_SC))
-        val outputs = listOf(TransactionOutputData(walletaddress = nonce % 2 == 0, value = BigDecimal(nonce * 3) * HASTINGS_PER_SC))
+        val inputs = listOf(TransactionInputData("1231231", "Siacoin", nonce % 2 == 0, "sfwerwer", BigDecimal(nonce * 2) * HASTINGS_PER_SC))
+        val outputs = listOf(TransactionOutputData("1231231", "Siacoin", BigDecimal("1234"), nonce % 2 == 0, "sfwerwer", BigDecimal(nonce * 2) * HASTINGS_PER_SC))
         TransactionData(nonce.toString(), BigDecimal(nonce * 10), UNCONFIRMED_TX_TIMESTAMP, inputs, outputs)
     })
 
@@ -98,8 +98,8 @@ class MockSiaApi : SiaApi {
 
     override fun walletSiacoins(amount: String, destination: String): Completable {
         return Completable.fromAction {
-            val input = TransactionInputData(walletaddress = true, value = BigDecimal(amount))
-            val output = TransactionOutputData(walletaddress = false, value = BigDecimal(amount))
+            val input = TransactionInputData("1231231", "Siacoin", nonce % 2 == 0, "sfwerwer", BigDecimal(nonce * 2) * HASTINGS_PER_SC)
+            val output = TransactionOutputData("1231231", "Siacoin", BigDecimal("1234"), nonce % 2 == 0, "sfwerwer", BigDecimal(nonce * 2) * HASTINGS_PER_SC)
             unconfirmedTxs.add(TransactionData(nonce.toString(), BigDecimal(nonce),
                     UNCONFIRMED_TX_TIMESTAMP, listOf(input), listOf(output)))
         }
