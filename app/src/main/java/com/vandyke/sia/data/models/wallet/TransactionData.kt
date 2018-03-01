@@ -7,28 +7,25 @@ package com.vandyke.sia.data.models.wallet
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.Ignore
 import android.arch.persistence.room.PrimaryKey
-import com.fasterxml.jackson.annotation.JsonCreator
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import com.fasterxml.jackson.annotation.JsonProperty
+import com.squareup.moshi.Json
 import com.vandyke.sia.util.UNCONFIRMED_TX_TIMESTAMP
 import java.math.BigDecimal
 import java.util.*
 
 @Entity(tableName = "transactions")
-@JsonIgnoreProperties(ignoreUnknown = true)
-data class TransactionData @JsonCreator constructor(
+data class TransactionData(
         @PrimaryKey
-        @JsonProperty(value = "transactionid")
+        @Json(name = "transactionid")
         val transactionId: String,
-        @JsonProperty(value = "confirmationheight")
+        @Json(name = "confirmationheight")
         val confirmationHeight: BigDecimal,
-        @JsonProperty(value = "confirmationtimestamp")
+        @Json(name = "confirmationtimestamp")
         val confirmationTimestamp: BigDecimal,
         @Ignore
-        @JsonProperty(value = "inputs")
+        @Json(name = "inputs")
         val inputs: List<TransactionInputData>? = null,
         @Ignore
-        @JsonProperty(value = "outputs")
+        @Json(name = "outputs")
         val outputs: List<TransactionOutputData>? = null) {
 
 
@@ -37,9 +34,11 @@ data class TransactionData @JsonCreator constructor(
                 confirmationTimestamp: BigDecimal) :
             this(transactionId, confirmationHeight, confirmationTimestamp, null, null)
 
+    @Transient
     var confirmed: Boolean = confirmationTimestamp != UNCONFIRMED_TX_TIMESTAMP
 
     // TODO: I'm pretty sure this gets calculated even when the object is loaded from the database. Not ideal.
+    @Transient
     var netValue: BigDecimal = run {
         var net = BigDecimal.ZERO
         inputs?.filter { it.walletaddress }?.forEach { net -= it.value }

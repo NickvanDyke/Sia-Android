@@ -4,10 +4,5 @@
 
 package com.vandyke.sia.data.models.wallet
 
-import com.fasterxml.jackson.annotation.JsonCreator
-import com.fasterxml.jackson.annotation.JsonProperty
-
-data class WalletInitData
-@JsonCreator constructor(
-        @JsonProperty(value = "primaryseed")
+data class WalletInitData(
         val primaryseed: String)

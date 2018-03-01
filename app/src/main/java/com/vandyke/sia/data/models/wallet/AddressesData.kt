@@ -4,4 +4,4 @@
 
 package com.vandyke.sia.data.models.wallet
 
-data class AddressesData(val addresses: List<String> = listOf())
+data class AddressesData(val addresses: List<String>)

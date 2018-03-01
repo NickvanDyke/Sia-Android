@@ -6,32 +6,30 @@ package com.vandyke.sia.data.models.renter
 
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
-import com.fasterxml.jackson.annotation.JsonCreator
-import com.fasterxml.jackson.annotation.JsonProperty
+import com.squareup.moshi.Json
 import com.vandyke.sia.data.local.models.renter.Node
 import java.math.BigDecimal
 
 @Entity(tableName = "files")
-data class RenterFileData
-@JsonCreator constructor(
+data class RenterFileData(
         @PrimaryKey
-        @JsonProperty(value = "siapath")
+        @Json(name = "siapath")
         override val path: String,
-        @JsonProperty(value = "localpath")
+        @Json(name = "localpath")
         val localpath: String,
-        @JsonProperty(value = "filesize")
+        @Json(name = "filesize")
         override val size: BigDecimal, // bytes
-        @JsonProperty(value = "available")
+        @Json(name = "available")
         val available: Boolean,
-        @JsonProperty(value = "renewing")
+        @Json(name = "renewing")
         val renewing: Boolean,
-        @JsonProperty(value = "redundancy")
+        @Json(name = "redundancy")
         val redundancy: Double,
-        @JsonProperty(value = "uploadedbytes")
+        @Json(name = "uploadedbytes")
         val uploadedBytes: Long,
-        @JsonProperty(value = "uploadprogress")
+        @Json(name = "uploadprogress")
         val uploadProgress: Int,
-        @JsonProperty(value = "expiration")
+        @Json(name = "expiration")
         val expiration: Long) : Node() {
 
     override val parent: String

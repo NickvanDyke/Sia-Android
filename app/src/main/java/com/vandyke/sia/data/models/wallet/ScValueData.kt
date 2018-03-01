@@ -4,48 +4,47 @@
 
 package com.vandyke.sia.data.models.wallet
 
+import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
-import com.fasterxml.jackson.annotation.JsonCreator
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import com.fasterxml.jackson.annotation.JsonProperty
+import com.squareup.moshi.Json
 import java.math.BigDecimal
 
 @Entity(tableName = "scValue")
-@JsonIgnoreProperties(ignoreUnknown = true)
-data class ScValueData
-@JsonCreator constructor(
-        @JsonProperty(value = "USD")
+data class ScValueData(
+        @Json(name = "USD")
         val Usd: BigDecimal,
 
-        @JsonProperty(value = "EUR")
+        @Json(name = "EUR")
         val Eur: BigDecimal,
 
-        @JsonProperty(value = "GBP")
+        @Json(name = "GBP")
         val Gbp: BigDecimal,
 
-        @JsonProperty(value = "CHF")
+        @Json(name = "CHF")
         val Chf: BigDecimal,
 
-        @JsonProperty(value = "CAD")
+        @Json(name = "CAD")
         val Cad: BigDecimal,
 
-        @JsonProperty(value = "AUD")
+        @Json(name = "AUD")
         val Aud: BigDecimal,
 
-        @JsonProperty(value = "CNY")
+        @Json(name = "CNY")
         val Cny: BigDecimal,
 
-        @JsonProperty(value = "JPY")
+        @Json(name = "JPY")
         val Jpy: BigDecimal,
 
-        @JsonProperty(value = "INR")
+        @Json(name = "INR")
         val Inr: BigDecimal,
 
-        @JsonProperty(value = "BRL")
+        @Json(name = "BRL")
         val Brl: BigDecimal
 ) {
     @PrimaryKey
+    @Transient
+    @ColumnInfo(name = "timestamp")
     var timestamp = System.currentTimeMillis()
 
     fun getValueForCurrency(currency: String): BigDecimal = when (currency) {

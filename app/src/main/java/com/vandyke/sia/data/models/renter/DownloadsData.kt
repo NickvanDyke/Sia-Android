@@ -4,4 +4,4 @@
 
 package com.vandyke.sia.data.models.renter
 
-data class DownloadsData(val downloads: List<DownloadData> = listOf())
+data class DownloadsData(val downloads: List<DownloadData>)

@@ -4,40 +4,38 @@
 
 package com.vandyke.sia.data.models.wallet
 
+import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
-import com.fasterxml.jackson.annotation.JsonCreator
-import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import com.fasterxml.jackson.annotation.JsonProperty
+import com.squareup.moshi.Json
 import java.math.BigDecimal
 
 @Entity(tableName = "wallet")
-@JsonIgnoreProperties(ignoreUnknown = true)
-data class WalletData @JsonCreator constructor(
-        @JsonProperty(value = "encrypted")
+data class WalletData(
+        @Json(name = "encrypted")
         val encrypted: Boolean = false,
-        @JsonProperty(value = "unlocked")
+        @Json(name = "unlocked")
         val unlocked: Boolean = false,
-        @JsonProperty(value = "rescanning")
+        @Json(name = "rescanning")
         val rescanning: Boolean = false,
-        @JsonProperty(value = "confirmedsiacoinbalance")
+        @Json(name = "confirmedsiacoinbalance")
         val confirmedSiacoinBalance: BigDecimal,
-        @JsonProperty(value = "unconfirmedoutgoingsiacoins")
+        @Json(name = "unconfirmedoutgoingsiacoins")
         val unconfirmedOutgoingSiacoins: BigDecimal,
-        @JsonProperty(value = "unconfirmedincomingsiacoins")
+        @Json(name = "unconfirmedincomingsiacoins")
         val unconfirmedIncomingSiacoins: BigDecimal,
-        @JsonProperty(value = "siafundbalance")
+        @Json(name = "siafundbalance")
         val siafundBalance: Int = 0,
-        @JsonProperty(value = "siacoinclaimbalance")
+        @Json(name = "siacoinclaimbalance")
         val siacoinClaimBalance: BigDecimal,
-        @JsonProperty(value = "dustthreshold")
+        @Json(name = "dustthreshold")
         val dustThreshold: BigDecimal) {
 
-    @JsonIgnore(value = true)
+    @Transient
     var unconfirmedSiacoinBalance: BigDecimal = unconfirmedIncomingSiacoins - unconfirmedOutgoingSiacoins
 
+    @Transient
     @PrimaryKey
-    @JsonIgnore(value = true)
+    @ColumnInfo(name = "timestamp")
     var timestamp = System.currentTimeMillis()
 }

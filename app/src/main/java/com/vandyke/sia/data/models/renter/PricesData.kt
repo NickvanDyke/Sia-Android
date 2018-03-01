@@ -4,9 +4,9 @@
 
 package com.vandyke.sia.data.models.renter
 
+import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
-import com.fasterxml.jackson.annotation.JsonIgnore
 import java.math.BigDecimal
 
 @Entity(tableName = "prices")
@@ -17,6 +17,7 @@ data class PricesData(
         val uploadterabyte: BigDecimal
 ) {
     @PrimaryKey
-    @JsonIgnore(value = true)
+    @Transient
+    @ColumnInfo(name = "timestamp")
     var timestamp = System.currentTimeMillis()
 }

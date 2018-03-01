@@ -124,11 +124,9 @@ dependencies {
     kapt 'com.google.dagger:dagger-compiler:2.12'
     implementation 'com.google.dagger:dagger-android-support:2.12'
 
-    /* Jackson (JSON converter) */
-    implementation 'com.fasterxml.jackson.core:jackson-core:2.8.11'
-    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.8.11'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.8.11'
-    implementation 'com.squareup.retrofit2:converter-jackson:2.3.0'
+    /* Moshi (JSON converter) */
+    implementation 'com.squareup.moshi:moshi:1.5.0'
+    implementation 'com.squareup.retrofit2:converter-moshi:2.3.0'
 
     /* for crash reporting/analytics */
     implementation 'com.google.firebase:firebase-crash:11.8.0'

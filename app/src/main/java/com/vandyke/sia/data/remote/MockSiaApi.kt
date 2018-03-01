@@ -83,7 +83,8 @@ class MockSiaApi : SiaApi {
                     BigDecimal("690").toHastings(),
                     BigDecimal("274").toHastings(),
                     BigDecimal("1085").toHastings()
-            )
+            ),
+            100
     )
 
     override fun daemonStop(): Completable {
@@ -119,7 +120,7 @@ class MockSiaApi : SiaApi {
     override fun walletSeeds(dictionary: String): Single<SeedsData> {
         return Single.fromCallable {
             checkUnlocked()
-            SeedsData(seed)
+            SeedsData(seed, 100, listOf(seed))
         }
     }
 
@@ -130,7 +131,7 @@ class MockSiaApi : SiaApi {
     override fun walletTransactions(startHeight: String, endHeight: String): Single<TransactionsData> {
         return Single.fromCallable {
             if (!encrypted)
-                TransactionsData()
+                TransactionsData(null, null)
             else
                 TransactionsData(confirmedTxs, unconfirmedTxs)
         }
