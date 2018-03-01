@@ -31,7 +31,7 @@ class SiaModule {
         val clientBuilder = OkHttpClient.Builder()
                 .readTimeout(0, TimeUnit.MILLISECONDS) // no timeout because some Sia API calls can take a long time to return
 //                .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
-                .addInterceptor({
+                .addInterceptor {
                     val original: Request = it.request()
                     val request: Request = original.newBuilder()
                             .header("User-agent", "Sia-Agent")
@@ -53,14 +53,14 @@ class SiaModule {
                         else
                             throw e
                     }
-                })
+                }
 
         return Retrofit.Builder()
                 .addConverterFactory(MoshiConverterFactory.create(Moshi.Builder().add(BigDecimalAdapter()).build()))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .client(clientBuilder.build())
-                .baseUrl("http://10.0.22.238:9980/")
-//                .baseUrl("http://localhost:9980/")
+//                .baseUrl("http://10.0.22.238:9980/")
+                .baseUrl("http://localhost:9980/")
                 .build()
                 .create(SiaApi::class.java)
     }
