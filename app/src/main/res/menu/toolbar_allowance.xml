@@ -6,13 +6,5 @@
         android:id="@+id/currency_button"
         android:title="Currency"
         app:showAsAction="ifRoom">
-        <menu>
-            <item
-                android:id="@+id/currency_sc"
-                android:title="Siacoin" />
-            <item
-                android:id="@+id/currency_fiat"
-                android:title="Fiat" />
-        </menu>
     </item>
 </menu>

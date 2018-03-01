@@ -47,8 +47,6 @@ class AllowanceFragment : BaseFragment() {
     @Inject
     lateinit var siadStatus: SiadStatus
 
-    private var currencyButton: MenuItem? = null
-
     private var highlightedX = -1f
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -61,11 +59,11 @@ class AllowanceFragment : BaseFragment() {
 
         /* chart setup */
         val dataSet = PieDataSet(listOf(
-                PieEntry(0f, context!!.getDrawable(R.drawable.ic_cloud_upload)),
-                PieEntry(0f, context!!.getDrawable(R.drawable.ic_cloud_download)),
-                PieEntry(0f, context!!.getDrawable(R.drawable.ic_storage)),
-                PieEntry(0f, context!!.getDrawable(R.drawable.ic_file)),
-                PieEntry(0f, context!!.getDrawable(R.drawable.ic_money))),
+                PieEntry(1f, context!!.getDrawable(R.drawable.ic_cloud_upload)),
+                PieEntry(1f, context!!.getDrawable(R.drawable.ic_cloud_download)),
+                PieEntry(1f, context!!.getDrawable(R.drawable.ic_storage)),
+                PieEntry(1f, context!!.getDrawable(R.drawable.ic_file)),
+                PieEntry(1f, context!!.getDrawable(R.drawable.ic_money))),
                 "Spending")
         val colors = ColorTemplate.MATERIAL_COLORS.toMutableList()
         colors.add(0, context!!.getColorRes(android.R.color.holo_purple))
@@ -215,6 +213,7 @@ class AllowanceFragment : BaseFragment() {
         }
 
         vm.spending.observe(this) {
+            println("spending changed")
             dataSet.values[0].y = it.uploadspending.toSC().toFloat()
             dataSet.values[1].y = it.downloadspending.toSC().toFloat()
             dataSet.values[2].y = it.storagespending.toSC().toFloat()
@@ -229,6 +228,7 @@ class AllowanceFragment : BaseFragment() {
 //                pieChart.highlightValue(x, 0)
 //            }
 
+            pieChart.notifyDataSetChanged()
             pieChart.invalidate()
         }
 
@@ -249,13 +249,11 @@ class AllowanceFragment : BaseFragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.toolbar_allowance, menu)
-        currencyButton = menu.findItem(R.id.currency_sc)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        vm.currency.value = when (item.itemId) {
-            R.id.currency_sc -> Currency.SC
-            R.id.currency_fiat -> Currency.FIAT
+        when (item.itemId) {
+            R.id.currency_button -> vm.toggleDisplayedCurrency()
             else -> return false
         }
         return true
