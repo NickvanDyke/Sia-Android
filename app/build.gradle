@@ -55,7 +55,7 @@ android {
 }
 
 dependencies {
-    ext.support_version = "27.0.2"
+    ext.support_version = "27.1.0"
     
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
@@ -65,7 +65,7 @@ dependencies {
     implementation 'androidx.core:core-ktx:0.1'
 
     /* testing */
-    androidTestImplementation 'com.android.support:support-annotations:27.0.2'
+    androidTestImplementation 'com.android.support:support-annotations:27.1.0'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     testImplementation 'junit:junit:4.12'
     testImplementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -127,6 +127,7 @@ dependencies {
     /* Moshi (JSON converter) */
     implementation 'com.squareup.moshi:moshi:1.5.0'
     implementation 'com.squareup.retrofit2:converter-moshi:2.3.0'
+    implementation 'com.squareup.moshi:moshi-kotlin:1.5.0'
 
     /* for crash reporting/analytics */
     implementation 'com.google.firebase:firebase-crash:11.8.0'

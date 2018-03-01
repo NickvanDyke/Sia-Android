@@ -32,7 +32,7 @@ class TransactionAdapter : RecyclerView.Adapter<TransactionHolder>() {
 
     inner class TxDiffUtil(private val oldList: List<TransactionData>, private val newList: List<TransactionData>) : DiffUtil.Callback() {
         override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) =
-                oldList[oldItemPosition].transactionId == newList[newItemPosition].transactionId
+                oldList[oldItemPosition].transactionid == newList[newItemPosition].transactionid
 
         override fun getOldListSize() = oldList.size
 
@@ -41,7 +41,7 @@ class TransactionAdapter : RecyclerView.Adapter<TransactionHolder>() {
         override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
             val old = oldList[oldItemPosition]
             val new = newList[newItemPosition]
-            return old.transactionId == new.transactionId
+            return old.transactionid == new.transactionid
                     && old.confirmationDate == new.confirmationDate
                     && old.netValue == new.netValue
         }

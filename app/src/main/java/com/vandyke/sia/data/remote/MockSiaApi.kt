@@ -41,15 +41,15 @@ class MockSiaApi : SiaApi {
     var siafundBalance = 0
     var seed = ""
     var addresses = listOf("address1", "address2", "address3")
-    var confirmedTxs: MutableList<TransactionData> = MutableList(7, { index ->
+    var confirmedTxs: MutableList<TransactionDataApi> = MutableList(7, { index ->
         val inputs = listOf(TransactionInputData("1231231", "Siacoin", nonce % 2 == 0, "sfwerwer", BigDecimal(nonce * 2) * HASTINGS_PER_SC))
         val outputs = listOf(TransactionOutputData("1231231", "Siacoin", BigDecimal("1234"), nonce % 2 == 0, "sfwerwer", BigDecimal(nonce * 2) * HASTINGS_PER_SC))
-        TransactionData(nonce.toString(), BigDecimal(nonce * 10), BigDecimal(nonce * 100), inputs, outputs)
+        TransactionDataApi(nonce.toString(), BigDecimal(nonce * 10), BigDecimal(nonce * 100), inputs, outputs)
     })
-    var unconfirmedTxs: MutableList<TransactionData> = MutableList(2, { index ->
+    var unconfirmedTxs: MutableList<TransactionDataApi> = MutableList(2, { index ->
         val inputs = listOf(TransactionInputData("1231231", "Siacoin", nonce % 2 == 0, "sfwerwer", BigDecimal(nonce * 2) * HASTINGS_PER_SC))
         val outputs = listOf(TransactionOutputData("1231231", "Siacoin", BigDecimal("1234"), nonce % 2 == 0, "sfwerwer", BigDecimal(nonce * 2) * HASTINGS_PER_SC))
-        TransactionData(nonce.toString(), BigDecimal(nonce * 10), UNCONFIRMED_TX_TIMESTAMP, inputs, outputs)
+        TransactionDataApi(nonce.toString(), BigDecimal(nonce * 10), UNCONFIRMED_TX_TIMESTAMP, inputs, outputs)
     })
 
     private val files = mutableListOf(
@@ -101,7 +101,7 @@ class MockSiaApi : SiaApi {
         return Completable.fromAction {
             val input = TransactionInputData("1231231", "Siacoin", nonce % 2 == 0, "sfwerwer", BigDecimal(nonce * 2) * HASTINGS_PER_SC)
             val output = TransactionOutputData("1231231", "Siacoin", BigDecimal("1234"), nonce % 2 == 0, "sfwerwer", BigDecimal(nonce * 2) * HASTINGS_PER_SC)
-            unconfirmedTxs.add(TransactionData(nonce.toString(), BigDecimal(nonce),
+            unconfirmedTxs.add(TransactionDataApi(nonce.toString(), BigDecimal(nonce),
                     UNCONFIRMED_TX_TIMESTAMP, listOf(input), listOf(output)))
         }
     }

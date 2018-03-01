@@ -69,3 +69,11 @@ fun SwipeRefreshLayout.setColors(context: Context) {
     array.recycle()
     this.setProgressBackgroundColorSchemeColor(backgroundColor)
 }
+
+inline fun <T> Iterable<T>.sumByBigDecimal(selector: (T) -> BigDecimal): BigDecimal {
+    var sum = BigDecimal.ZERO
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}

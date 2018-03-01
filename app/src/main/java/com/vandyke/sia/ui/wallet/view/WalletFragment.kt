@@ -89,7 +89,7 @@ class WalletFragment : BaseFragment() {
         balanceText.setOnClickListener { v ->
             AlertDialog.Builder(v.context)
                     .setTitle("Exact Balance")
-                    .setMessage("${viewModel.wallet.value?.confirmedSiacoinBalance?.toSC()?.toPlainString()
+                    .setMessage("${viewModel.wallet.value?.confirmedsiacoinbalance?.toSC()?.toPlainString()
                             ?: 0} Siacoins")
                     .setPositiveButton("Close", null)
                     .show()
@@ -114,9 +114,9 @@ class WalletFragment : BaseFragment() {
 
         /* observe data in the viewModel */
         viewModel.wallet.observe(this) {
-            balanceText.text = it.confirmedSiacoinBalance.toSC().format()
-            if (it.unconfirmedSiacoinBalance != BigDecimal.ZERO) {
-                balanceUnconfirmedText.text = ("${it.unconfirmedSiacoinBalance.toSC().format()} unconfirmed")
+            balanceText.text = it.confirmedsiacoinbalance.toSC().format()
+            if (it.unconfirmedsiacoinbalance != BigDecimal.ZERO) {
+                balanceUnconfirmedText.text = ("${it.unconfirmedsiacoinbalance.toSC().format()} unconfirmed")
                 balanceUnconfirmedText.visibility = View.VISIBLE
             } else {
                 balanceUnconfirmedText.visibility = View.INVISIBLE
@@ -150,6 +150,7 @@ class WalletFragment : BaseFragment() {
         }
 
         viewModel.error.observe(this) {
+            it.printStackTrace()
             it.snackbar(wallet_coordinator)
             if (it is WalletLocked)
                 expandFrame(WalletUnlockDialog())
@@ -226,7 +227,7 @@ class WalletFragment : BaseFragment() {
 
     private fun updateFiatValue() {
         if (viewModel.wallet.value != null && viewModel.scValue.value != null)
-            balanceUsdText.text = ("${(viewModel.wallet.value!!.confirmedSiacoinBalance.toSC()
+            balanceUsdText.text = ("${(viewModel.wallet.value!!.confirmedsiacoinbalance.toSC()
                     * viewModel.scValue.value!!.getValueForCurrency(Prefs.fiatCurrency))
                     .format()} ${Prefs.fiatCurrency}")
     }
@@ -310,7 +311,7 @@ class WalletFragment : BaseFragment() {
 //        viewModel.walletMonthHistory.observe(this) {
 //            // TODO: still not completely sure this is working as I want it to... seems to be quirky
 //            lineDataSet.values = it.map { walletData ->
-//                Entry(walletData.timestamp.toFloat(), walletData.confirmedSiacoinBalance.toSC().toFloat())
+//                Entry(walletData.timestamp.toFloat(), walletData.confirmedsiacoinbalance.toSC().toFloat())
 //            }
 //            /* causes a crash if the dataset is empty, so we add an empty one. Bug with the lib it seems, based off googling */
 //            if (lineDataSet.values.isEmpty())

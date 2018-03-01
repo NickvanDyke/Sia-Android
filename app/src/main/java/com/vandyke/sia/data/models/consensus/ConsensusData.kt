@@ -14,7 +14,7 @@ import java.math.BigDecimal
 data class ConsensusData(
         val synced: Boolean,
         val height: Int,
-        val currentBlock: String,
+        val currentblock: String,
         val difficulty: BigDecimal) {
 
     @Transient

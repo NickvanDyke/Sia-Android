@@ -30,7 +30,7 @@ class TransactionHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             transactionStatus.setTextColor(transactionId.currentTextColor)
         }
 
-        transactionId.text = transaction.transactionId
+        transactionId.text = transaction.transactionid
 
         var valueText = transaction.netValue.toSC().format()
         transactionValue.setTextColor(when {
@@ -44,7 +44,7 @@ class TransactionHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         transactionValue.text = valueText
 
         itemView.setOnClickListener {
-            GenUtil.launchCustomTabs(itemView.context, "https://explore.sia.tech/hashes/${transaction.transactionId}")
+            GenUtil.launchCustomTabs(itemView.context, "https://explore.sia.tech/hashes/${transaction.transactionid}")
         }
     }
 
