@@ -59,7 +59,7 @@ class SiaModule {
                 .addConverterFactory(MoshiConverterFactory.create(Moshi.Builder().add(BigDecimalAdapter()).build()))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .client(clientBuilder.build())
-                .baseUrl("http://10.0.22.238:9980/")
+                .baseUrl("http://localhost:9980/")
                 .build()
                 .create(SiaApi::class.java)
     }
