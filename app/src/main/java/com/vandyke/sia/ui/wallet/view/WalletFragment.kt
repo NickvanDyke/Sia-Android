@@ -18,11 +18,11 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import com.vandyke.sia.R
-import com.vandyke.sia.appComponent
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.models.consensus.ConsensusData
 import com.vandyke.sia.data.remote.WalletLocked
 import com.vandyke.sia.data.siad.SiadStatus
+import com.vandyke.sia.getAppComponent
 import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.ui.wallet.view.childfragments.*
 import com.vandyke.sia.ui.wallet.view.transactionslist.TransactionAdapter
@@ -52,7 +52,7 @@ class WalletFragment : BaseFragment() {
     private var statusButton: MenuItem? = null
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        appComponent.inject(this)
+        context!!.getAppComponent().inject(this)
 
         viewModel = ViewModelProviders.of(this, factory).get(WalletViewModel::class.java)
 

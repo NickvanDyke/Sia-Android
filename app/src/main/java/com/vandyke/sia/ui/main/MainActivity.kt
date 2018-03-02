@@ -35,6 +35,7 @@ import com.vandyke.sia.ui.terminal.TerminalFragment
 import com.vandyke.sia.ui.wallet.view.WalletFragment
 import com.vandyke.sia.util.DialogUtil
 import com.vandyke.sia.util.SiaUtil
+import com.vandyke.sia.util.getAttrColor
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -58,13 +59,8 @@ class MainActivity : AppCompatActivity() {
         if (BuildConfig.DEBUG)
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
 
-        AppCompatDelegate.setDefaultNightMode(
-                if (Prefs.darkMode)
-                    AppCompatDelegate.MODE_NIGHT_YES
-                else
-                    AppCompatDelegate.MODE_NIGHT_NO
-        )
-        setTheme(R.style.AppTheme_DayNight)
+        AppCompatDelegate.setDefaultNightMode(if (Prefs.darkMode) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO)
+        setTheme(if (Prefs.oldSiaColors) R.style.AppTheme_DayNight_OldSiaColors else R.style.AppTheme_DayNight)
         setContentView(R.layout.activity_main)
 
         if (!BuildConfig.DEBUG && !SiaUtil.isSiadSupported) {
@@ -156,6 +152,8 @@ class MainActivity : AppCompatActivity() {
     private fun setupDrawer() {
         setSupportActionBar(toolbar)
 
+        val colorPrimary = getAttrColor(R.attr.colorPrimary)
+
         drawer = drawer {
             headerViewRes = R.layout.drawer_header
             translucentStatusBar = false
@@ -173,11 +171,15 @@ class MainActivity : AppCompatActivity() {
                             .withName("Status")
                             .withIcon(R.drawable.ic_short_text)
                             .withIconTintingEnabled(true)
+                            .withSelectedIconColor(colorPrimary)
+                            .withSelectedTextColor(colorPrimary)
                             .withOnDrawerItemClickListener { _, _, _ -> displayFragment(NodeStatusFragment::class.java); false },
                     SecondaryDrawerItem()
                             .withName("Settings")
                             .withIcon(R.drawable.ic_settings)
                             .withIconTintingEnabled(true)
+                            .withSelectedIconColor(colorPrimary)
+                            .withSelectedTextColor(colorPrimary)
                             .withOnDrawerItemClickListener { _, _, _ -> displayFragment(NodeSettingsFragmentContainer::class.java); false })
 
             divider {  }
@@ -193,6 +195,8 @@ class MainActivity : AppCompatActivity() {
                             .withName("Files")
                             .withIcon(R.drawable.ic_folder)
                             .withIconTintingEnabled(true)
+                            .withSelectedIconColor(colorPrimary)
+                            .withSelectedTextColor(colorPrimary)
                             .withIdentifier(0)
                             .withOnDrawerItemClickListener { _, _, _ -> displayFragment(if (BuildConfig.DEBUG)
                                 FilesFragment::class.java
@@ -204,6 +208,8 @@ class MainActivity : AppCompatActivity() {
                             .withName("Allowance")
                             .withIcon(R.drawable.ic_money)
                             .withIconTintingEnabled(true)
+                            .withSelectedIconColor(colorPrimary)
+                            .withSelectedTextColor(colorPrimary)
                             .withIdentifier(1)
                             .withOnDrawerItemClickListener { _, _, _ -> displayFragment(if (BuildConfig.DEBUG)
                                 AllowanceFragment::class.java
@@ -216,6 +222,8 @@ class MainActivity : AppCompatActivity() {
                 name = "Wallet"
                 icon = R.drawable.ic_account_balance_wallet
                 iconTintingEnabled = true
+                selectedIconColor = colorPrimary.toLong()
+                selectedTextColor = colorPrimary.toLong()
                 identifier = 3
                 onClick { view -> displayFragment(WalletFragment::class.java); false }
             }
@@ -224,6 +232,8 @@ class MainActivity : AppCompatActivity() {
                 name = "Terminal"
                 icon = R.drawable.icon_terminal
                 iconTintingEnabled = true
+                selectedIconColor = colorPrimary.toLong()
+                selectedTextColor = colorPrimary.toLong()
                 identifier = 4
                 onClick { view -> displayFragment(TerminalFragment::class.java); false }
             }
@@ -233,6 +243,8 @@ class MainActivity : AppCompatActivity() {
             primaryItem {
                 name = "Settings"
                 icon = R.drawable.ic_settings
+                selectedIconColor = colorPrimary.toLong()
+                selectedTextColor = colorPrimary.toLong()
                 iconTintingEnabled = true
                 onClick { view -> displayFragment(SettingsFragmentContainer::class.java); false }
             }
@@ -240,6 +252,8 @@ class MainActivity : AppCompatActivity() {
             primaryItem {
                 name = "About"
                 icon = R.drawable.ic_info_outline
+                selectedIconColor = colorPrimary.toLong()
+                selectedTextColor = colorPrimary.toLong()
                 iconTintingEnabled = true
                 onClick { view -> displayFragment(AboutFragment::class.java); false }
             }

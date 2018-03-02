@@ -52,7 +52,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
          * be unregistered/destroyed. */
         prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
             when (key) {
-                "darkMode" -> activity!!.recreate()
+                "darkMode", "oldSiaColors" -> activity!!.recreate()
             }
         }
         Prefs.preferences.registerOnSharedPreferenceChangeListener(prefsListener)

@@ -15,10 +15,11 @@ import android.os.Binder
 import android.os.Handler
 import android.os.IBinder
 import android.support.v4.app.NotificationCompat
+import android.util.Log
 import com.vandyke.sia.R
-import com.vandyke.sia.appComponent
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.siad.SiadStatus.State
+import com.vandyke.sia.getAppComponent
 import com.vandyke.sia.ui.main.MainActivity
 import com.vandyke.sia.util.ExternalStorageError
 import com.vandyke.sia.util.NotificationUtil
@@ -47,7 +48,8 @@ class SiadService : LifecycleService() {
 
     override fun onCreate() {
         super.onCreate()
-        appComponent.inject(this)
+        this.getAppComponent().inject(this)
+
         // TODO: should also check for and delete older versions of Sia
         siadFile = StorageUtil.copyFromAssetsToAppStorage("siad-${Prefs.siaVersion}", this)
 
@@ -101,7 +103,7 @@ class SiadService : LifecycleService() {
         }
 
         try {
-            siadProcess = pb.start() // TODO: this causes the application to skip about a second of frames when starting at the same time as the app. Preventable?
+            siadProcess = pb.start() // TODO: this causes the application to skip about a second of frames when starting at the same time as the app. Preventable? Background thread?
             siadStatus.state.value = State.SIAD_LOADING
 
             startForeground(SIAD_NOTIFICATION, siadNotification("Starting Sia node..."))
@@ -126,7 +128,7 @@ class SiadService : LifecycleService() {
                     }
                     inputReader.close()
                 } catch (e: IOException) {
-                    e.printStackTrace()
+                    Log.d("SiadService", "Sia process reading interrupted")
                 }
             }
         } catch (e: IOException) {

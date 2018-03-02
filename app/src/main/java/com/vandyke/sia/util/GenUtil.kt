@@ -11,6 +11,7 @@ import android.net.Uri
 import android.support.customtabs.CustomTabsIntent
 import android.support.v4.content.ContextCompat
 import android.support.v4.widget.SwipeRefreshLayout
+import android.util.TypedValue
 import com.vandyke.sia.R
 import com.vandyke.sia.data.local.Prefs
 import java.math.BigDecimal
@@ -43,7 +44,7 @@ object GenUtil {
 
     fun launchCustomTabs(context: Context, url: String) {
         CustomTabsIntent.Builder()
-                .setToolbarColor(ContextCompat.getColor(context, R.color.colorPrimary))
+                .setToolbarColor(context.getAttrColor(R.attr.colorPrimary))
                 .build()
                 .launchUrl(context, Uri.parse(url))
     }
@@ -62,12 +63,21 @@ fun Context.bitmapFromVector(drawableId: Int): Bitmap {
 
 fun Context.getColorRes(resId: Int) = ContextCompat.getColor(this, resId)
 
+fun Context.getAttrColor(attrResId: Int): Int {
+    val typedValue = TypedValue()
+    this.theme.resolveAttribute(attrResId, typedValue, true)
+    return typedValue.data
+}
+
+fun Context.getAttrColors(vararg attrResIds: Int): List<Int> {
+    val array = this.theme.obtainStyledAttributes(attrResIds)
+    return List(attrResIds.size, { index -> array.getColor(index, 0xFF0FF) })
+}
+
 fun SwipeRefreshLayout.setColors(context: Context) {
-    this.setColorSchemeResources(R.color.colorAccent)
-    val array = context.theme.obtainStyledAttributes(intArrayOf(android.R.attr.windowBackground))
-    val backgroundColor = array.getColor(0, 0xFF00FF)
-    array.recycle()
-    this.setProgressBackgroundColorSchemeColor(backgroundColor)
+    val colors = context.getAttrColors(R.attr.colorAccent, android.R.attr.windowBackground)
+    this.setColorSchemeColors(colors[0])
+    this.setProgressBackgroundColorSchemeColor(colors[1])
 }
 
 inline fun <T> Iterable<T>.sumByBigDecimal(selector: (T) -> BigDecimal): BigDecimal {

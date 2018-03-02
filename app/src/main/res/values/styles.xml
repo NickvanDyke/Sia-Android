@@ -14,6 +14,12 @@
         <item name="colorButtonNormal">@color/negativeTransaction</item>
     </style>
 
+    <style name="AppTheme.DayNight.OldSiaColors">
+        <item name="colorPrimary">@color/colorPrimaryOld</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkOld</item>
+        <item name="colorAccent">@color/colorAccentOld</item>
+    </style>
+
     <!--startup splash screen-->
     <style name="splashScreenTheme" parent="AppTheme.DayNight">
         <item name="android:windowBackground">@drawable/splash_screen</item>

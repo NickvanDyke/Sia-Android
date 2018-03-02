@@ -16,6 +16,10 @@
             android:key="darkMode"
             android:title="Dark mode" />
         <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="oldSiaColors"
+            android:title="Use pre-rebrand Sia colors" />
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="hideZero"
             android:title="Hide net-zero transactions" />
