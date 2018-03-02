@@ -150,7 +150,6 @@ class WalletFragment : BaseFragment() {
         }
 
         viewModel.error.observe(this) {
-            it.printStackTrace()
             it.snackbar(wallet_coordinator)
             if (it is WalletLocked)
                 expandFrame(WalletUnlockDialog())

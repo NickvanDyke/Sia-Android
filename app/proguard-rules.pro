@@ -19,3 +19,7 @@
 -dontoptimize
 -dontwarn
 -keep class android.support.v7.widget.SearchView { *; }
+
+-keepclasseswithmembers class * {
+    @com.squareup.moshi.* <methods>;
+}

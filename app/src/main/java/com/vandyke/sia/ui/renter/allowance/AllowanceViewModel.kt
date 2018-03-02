@@ -89,7 +89,7 @@ class AllowanceViewModel
                      period: Int? = allowance.value?.period,
                      renewWindow: Int? = allowance.value?.renewwindow) {
         if (funds == null || hosts == null || period == null || renewWindow == null) {
-            onError(IllegalArgumentException("Null values passed to setAllowance"))
+            onError(IllegalArgumentException("Null value passed to setAllowance"))
             return
         }
 
@@ -100,13 +100,20 @@ class AllowanceViewModel
                 .subscribe(::refresh, ::onError)
     }
 
+    fun toggleDisplayedCurrency() {
+        currency.value = if (currency.value == SC) FIAT else SC
+    }
+
     private fun setDisplayedMetrics() {
-        val conversionRate = with(scValue.value ?: return) {
-            when (currency.value) {
-                SC -> BigDecimal("1.00") /* using the ONE constant results in rounding when dividing later. Don't know why */
-                FIAT -> getValueForCurrency(Prefs.fiatCurrency)
+        val conversionRate = if (currency.value == SC)
+            BigDecimal("1.00")
+        else
+            with(scValue.value ?: return) {
+                when (currency.value) {
+                    SC -> BigDecimal("1.00") /* using the ONE constant results in rounding when dividing later. Don't know why */
+                    FIAT -> getValueForCurrency(Prefs.fiatCurrency)
+                }
             }
-        }
 
         val price = with(prices.value ?: return) {
             when (currentMetric.value) {
