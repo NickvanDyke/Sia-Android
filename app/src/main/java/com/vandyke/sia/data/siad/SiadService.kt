@@ -21,7 +21,7 @@ import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.siad.SiadStatus.State
 import com.vandyke.sia.getAppComponent
 import com.vandyke.sia.ui.main.MainActivity
-import com.vandyke.sia.util.ExternalStorageError
+import com.vandyke.sia.util.ExternalStorageException
 import com.vandyke.sia.util.NotificationUtil
 import com.vandyke.sia.util.StorageUtil
 import com.vandyke.sia.util.bitmapFromVector
@@ -81,7 +81,7 @@ class SiadService : LifecycleService() {
 
         siadStatus.state.value = State.PROCESS_STARTING
 
-        val pb = ProcessBuilder(siadFile!!.absolutePath, "-M", "gctw") // TODO: maybe let user set which modules to load?
+        val pb = ProcessBuilder(siadFile!!.absolutePath, "-M", Prefs.modulesString) // TODO: maybe let user set which modules to load?
         pb.redirectErrorStream(true)
 
         /* start the node with an api password if it's not set to something empty */
@@ -94,7 +94,7 @@ class SiadService : LifecycleService() {
         if (Prefs.useExternal) {
             try {
                 pb.directory(StorageUtil.getExternalStorage(this))
-            } catch (e: ExternalStorageError) {
+            } catch (e: ExternalStorageException) {
                 siadStatus.siadOutput(e.localizedMessage)
                 return
             }

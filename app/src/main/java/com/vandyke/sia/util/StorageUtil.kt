@@ -39,17 +39,17 @@ object StorageUtil {
     fun getExternalStorage(context: Context): File {
         val dirs = context.getExternalFilesDirs(null)
         if (dirs.isEmpty())
-            throw ExternalStorageError("No external storage available")
+            throw ExternalStorageException("No external storage available")
 
         /* dirs[1] will be removable storage, which we prefer over emulated external storage, which dirs[0] will be */
         val dir = if (dirs.size > 1) dirs[1] else dirs[0]
 
         val state = Environment.getExternalStorageState(dir)
         if (state != Environment.MEDIA_MOUNTED)
-            throw ExternalStorageError("External storage error: $state")
+            throw ExternalStorageException("External storage error: $state")
 
         return dir
     }
 }
 
-class ExternalStorageError(msg: String) : Exception(msg)
+class ExternalStorageException(msg: String) : Exception(msg)

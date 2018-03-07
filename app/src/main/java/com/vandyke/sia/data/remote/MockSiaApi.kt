@@ -41,15 +41,12 @@ class MockSiaApi : SiaApi {
     var siafundBalance = 0
     var seed = ""
     var addresses = listOf("address1", "address2", "address3")
-    var confirmedTxs: MutableList<TransactionDataApi> = MutableList(7, { index ->
-        val inputs = listOf(TransactionInputData("1231231", "Siacoin", nonce % 2 == 0, "sfwerwer", BigDecimal(nonce * 2) * HASTINGS_PER_SC))
-        val outputs = listOf(TransactionOutputData("1231231", "Siacoin", BigDecimal("1234"), nonce % 2 == 0, "sfwerwer", BigDecimal(nonce * 2) * HASTINGS_PER_SC))
-        TransactionDataApi(nonce.toString(), BigDecimal(nonce * 10), BigDecimal(nonce * 100), inputs, outputs)
+    var confirmedTxs: MutableList<TransactionData> = MutableList(7, { index ->
+        TransactionData(nonce.toString(), BigDecimal(nonce * 10), BigDecimal(nonce * 100), BigDecimal("12312").toHastings())
     })
-    var unconfirmedTxs: MutableList<TransactionDataApi> = MutableList(2, { index ->
-        val inputs = listOf(TransactionInputData("1231231", "Siacoin", nonce % 2 == 0, "sfwerwer", BigDecimal(nonce * 2) * HASTINGS_PER_SC))
-        val outputs = listOf(TransactionOutputData("1231231", "Siacoin", BigDecimal("1234"), nonce % 2 == 0, "sfwerwer", BigDecimal(nonce * 2) * HASTINGS_PER_SC))
-        TransactionDataApi(nonce.toString(), BigDecimal(nonce * 10), UNCONFIRMED_TX_TIMESTAMP, inputs, outputs)
+    var unconfirmedTxs: MutableList<TransactionData> = MutableList(2, { index ->
+        TransactionData(nonce.toString(), BigDecimal(nonce * 10), BigDecimal(nonce * 100), BigDecimal("12").toHastings())
+
     })
 
     private val files = mutableListOf(
@@ -78,6 +75,7 @@ class MockSiaApi : SiaApi {
                     3024
             )),
             RenterFinancialMetricsData(
+                    System.currentTimeMillis(),
                     BigDecimal("167").toHastings(),
                     BigDecimal("154").toHastings(),
                     BigDecimal("690").toHastings(),
@@ -93,16 +91,14 @@ class MockSiaApi : SiaApi {
 
     override fun wallet(): Single<WalletData> {
         return Single.just(
-            WalletData(encrypted, unlocked, rescanning, confirmedSiacoinBalance, unconfirmedOutgoingSiacoins,
+            WalletData(System.currentTimeMillis(), encrypted, unlocked, rescanning, confirmedSiacoinBalance, unconfirmedOutgoingSiacoins,
                     unconfirmedIncomingSiacoins, siafundBalance, siacoinClaimBalance, dustThreshold))
     }
 
     override fun walletSiacoins(amount: String, destination: String): Completable {
         return Completable.fromAction {
-            val input = TransactionInputData("1231231", "Siacoin", nonce % 2 == 0, "sfwerwer", BigDecimal(nonce * 2) * HASTINGS_PER_SC)
-            val output = TransactionOutputData("1231231", "Siacoin", BigDecimal("1234"), nonce % 2 == 0, "sfwerwer", BigDecimal(nonce * 2) * HASTINGS_PER_SC)
-            unconfirmedTxs.add(TransactionDataApi(nonce.toString(), BigDecimal(nonce),
-                    UNCONFIRMED_TX_TIMESTAMP, listOf(input), listOf(output)))
+            unconfirmedTxs.add(TransactionData(nonce.toString(), BigDecimal(nonce),
+                    UNCONFIRMED_TX_TIMESTAMP, amount.toBigDecimal()))
         }
     }
 
@@ -125,7 +121,7 @@ class MockSiaApi : SiaApi {
     }
 
     override fun walletSweepSeed(dictionary: String, seed: String): Completable {
-        TODO("not implemented")
+        return Completable.error(NotImplementedError())
     }
 
     override fun walletTransactions(startHeight: String, endHeight: String): Single<TransactionsData> {
@@ -181,7 +177,7 @@ class MockSiaApi : SiaApi {
         }
     }
     override fun getScPrice(url: String): Single<ScValueData> {
-        return Single.just(ScValueData(
+        return Single.just(ScValueData(System.currentTimeMillis(),
             BigDecimal("0.01"), BigDecimal("0.02"), BigDecimal("0.03"),
             BigDecimal("0.04"), BigDecimal("0.05"), BigDecimal("0.06"),
             BigDecimal("0.07"), BigDecimal("0.08"), BigDecimal("0.09"),
@@ -202,11 +198,11 @@ class MockSiaApi : SiaApi {
     }
 
     override fun renterContracts(): Single<ContractsData> {
-        TODO("not implemented")
+        return Single.error(NotImplementedError())
     }
 
     override fun renterDownloads(): Single<DownloadsData> {
-        TODO("not implemented")
+        return Single.error(NotImplementedError())
     }
 
     override fun renterFiles(): Single<RenterFilesData> {
@@ -215,6 +211,7 @@ class MockSiaApi : SiaApi {
 
     override fun renterPrices(): Single<PricesData> {
         return Single.just(PricesData(
+                System.currentTimeMillis(),
                 BigDecimal("26").toHastings(),
                 BigDecimal("100").toHastings(),
                 BigDecimal("200").toHastings(),
@@ -248,10 +245,12 @@ class MockSiaApi : SiaApi {
     }
 
     override fun renterDownload(siapath: String, destination: String): Completable {
-        TODO("not implemented")
+        return Completable.error(NotImplementedError())
     }
 
-    override fun renterDownloadAsync(siapath: String, destination: String) = Completable.complete()!!
+    override fun renterDownloadAsync(siapath: String, destination: String): Completable {
+        return Completable.error(NotImplementedError())
+    }
 
     override fun gateway(): Single<GatewayData> {
         return Single.just(GatewayData("536.623.53.8", listOf(
@@ -263,7 +262,7 @@ class MockSiaApi : SiaApi {
     }
 
     override fun consensus(): Single<ConsensusData> {
-        return Single.just(ConsensusData(false, 135371, nonce.toString(), BigDecimal(nonce)))
+        return Single.just(ConsensusData(System.currentTimeMillis(), false, 135371, nonce.toString(), BigDecimal(nonce)))
     }
 
     override fun txPoolFee(): Single<FeeData> {

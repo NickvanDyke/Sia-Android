@@ -178,7 +178,7 @@ class FilesFragment : BaseFragment() {
         }
 
         viewModel.displayedNodes.observe(this) {
-            nodesAdapter.display(it)
+            nodesAdapter.submitList(it)
         }
 
         viewModel.viewAsList.observe(this) {

@@ -213,7 +213,8 @@ class AllowanceFragment : BaseFragment() {
         }
 
         vm.spending.observe(this) {
-            println("spending changed")
+            // TODO: use some Math.max or min here so that when they're all zero, there's still some data,
+            // and so that ones that are zero can still be seen when the others aren't zero
             dataSet.values[0].y = it.uploadspending.toSC().toFloat()
             dataSet.values[1].y = it.downloadspending.toSC().toFloat()
             dataSet.values[2].y = it.storagespending.toSC().toFloat()

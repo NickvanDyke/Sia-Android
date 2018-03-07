@@ -26,6 +26,7 @@ import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.ui.common.ComingSoonFragment
 import com.vandyke.sia.ui.node.NodeSettingsFragmentContainer
 import com.vandyke.sia.ui.node.NodeStatusFragment
+import com.vandyke.sia.ui.node.modules.NodeModulesFragment
 import com.vandyke.sia.ui.onboarding.IntroActivity
 import com.vandyke.sia.ui.onboarding.PurchaseActivity
 import com.vandyke.sia.ui.renter.allowance.AllowanceFragment
@@ -174,6 +175,13 @@ class MainActivity : AppCompatActivity() {
                             .withSelectedIconColor(colorPrimary)
                             .withSelectedTextColor(colorPrimary)
                             .withOnDrawerItemClickListener { _, _, _ -> displayFragment(NodeStatusFragment::class.java); false },
+                    SecondaryDrawerItem()
+                            .withName("Modules")
+                            .withIcon(R.drawable.ic_storage)
+                            .withIconTintingEnabled(true)
+                            .withSelectedIconColor(colorPrimary)
+                            .withSelectedTextColor(colorPrimary)
+                            .withOnDrawerItemClickListener { _, _, _ -> displayFragment(NodeModulesFragment::class.java); false },
                     SecondaryDrawerItem()
                             .withName("Settings")
                             .withIcon(R.drawable.ic_settings)

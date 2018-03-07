@@ -4,46 +4,34 @@
 
 package com.vandyke.sia.ui.wallet.view.transactionslist
 
+import android.support.v7.recyclerview.extensions.ListAdapter
 import android.support.v7.util.DiffUtil
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.vandyke.sia.R
 import com.vandyke.sia.data.models.wallet.TransactionData
 
-class TransactionAdapter : RecyclerView.Adapter<TransactionHolder>() {
-    var transactions: List<TransactionData> = listOf()
+class TransactionAdapter : ListAdapter<TransactionData, TransactionHolder>(DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TransactionHolder {
         return TransactionHolder(LayoutInflater.from(parent.context).inflate(R.layout.holder_transaction, parent, false))
     }
 
     override fun onBindViewHolder(holder: TransactionHolder, position: Int) {
-        holder.bind(transactions[position])
+        holder.bind(getItem(position))
     }
 
-    override fun getItemCount(): Int = transactions.size
+    companion object {
+        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<TransactionData>() {
+            override fun areItemsTheSame(oldItem: TransactionData, newItem: TransactionData): Boolean {
+                return oldItem.transactionid == newItem.transactionid
+            }
 
-    fun update(txs: List<TransactionData>) {
-        val diffResult = DiffUtil.calculateDiff(TxDiffUtil(transactions, txs))
-        transactions = txs
-        diffResult.dispatchUpdatesTo(this)
-    }
-
-    inner class TxDiffUtil(private val oldList: List<TransactionData>, private val newList: List<TransactionData>) : DiffUtil.Callback() {
-        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) =
-                oldList[oldItemPosition].transactionid == newList[newItemPosition].transactionid
-
-        override fun getOldListSize() = oldList.size
-
-        override fun getNewListSize() = newList.size
-
-        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            val old = oldList[oldItemPosition]
-            val new = newList[newItemPosition]
-            return old.transactionid == new.transactionid
-                    && old.confirmationDate == new.confirmationDate
-                    && old.netValue == new.netValue
+            override fun areContentsTheSame(oldItem: TransactionData, newItem: TransactionData): Boolean {
+                return oldItem.transactionid == newItem.transactionid
+                        && oldItem.confirmationDate == newItem.confirmationDate
+                        && oldItem.netValue == newItem.netValue
+            }
         }
     }
 }

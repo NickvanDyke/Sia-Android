@@ -52,6 +52,10 @@ android {
             path 'CMakeLists.txt'
         }
     }
+
+    androidExtensions {
+        experimental = true
+    }
 }
 
 dependencies {

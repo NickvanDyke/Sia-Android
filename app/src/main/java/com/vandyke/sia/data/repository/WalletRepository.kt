@@ -28,7 +28,7 @@ class WalletRepository
             .toCompletable()
 
     private fun updateTransactions() = api.walletTransactions()
-            .map { it.alltransactions.map { it.toDbTransaction() } }
+            .map { it.alltransactions }
             .zipWith(db.transactionDao().getAll())
             .doOnSuccess { (apiTxs, dbTxs) ->
                 /* delete all db transactions that aren't in the api response */

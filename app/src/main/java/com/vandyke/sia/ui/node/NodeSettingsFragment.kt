@@ -5,7 +5,7 @@ import android.support.design.widget.Snackbar
 import android.support.v7.preference.Preference
 import android.support.v7.preference.PreferenceFragmentCompat
 import com.vandyke.sia.R
-import com.vandyke.sia.util.ExternalStorageError
+import com.vandyke.sia.util.ExternalStorageException
 import com.vandyke.sia.util.StorageUtil
 import com.vandyke.sia.util.snackbar
 
@@ -21,7 +21,7 @@ class NodeSettingsFragment : PreferenceFragmentCompat() {
                 try {
                     StorageUtil.getExternalStorage(context!!)
                     return@OnPreferenceChangeListener true
-                } catch (e: ExternalStorageError) {
+                } catch (e: ExternalStorageException) {
                     e.snackbar(view!!, Snackbar.LENGTH_LONG)
                     return@OnPreferenceChangeListener false
                 }

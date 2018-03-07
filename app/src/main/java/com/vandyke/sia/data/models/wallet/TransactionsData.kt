@@ -5,9 +5,9 @@
 package com.vandyke.sia.data.models.wallet
 
 data class TransactionsData(
-        val confirmedtransactions: List<TransactionDataApi>?,
-        val unconfirmedtransactions: List<TransactionDataApi>?
+        val confirmedtransactions: List<TransactionData>?,
+        val unconfirmedtransactions: List<TransactionData>?
 ) {
-    val alltransactions: List<TransactionDataApi>
+    val alltransactions: List<TransactionData>
         get() = (confirmedtransactions ?: listOf()) + (unconfirmedtransactions ?: listOf())
 }

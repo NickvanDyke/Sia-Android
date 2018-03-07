@@ -19,7 +19,6 @@ import android.view.MenuItem
 import android.view.View
 import com.vandyke.sia.R
 import com.vandyke.sia.data.local.Prefs
-import com.vandyke.sia.data.models.consensus.ConsensusData
 import com.vandyke.sia.data.remote.WalletLocked
 import com.vandyke.sia.data.siad.SiadStatus
 import com.vandyke.sia.getAppComponent
@@ -133,7 +132,7 @@ class WalletFragment : BaseFragment() {
         viewModel.transactions.observe(this) {
             if (it.isNotEmpty())
                 Prefs.displayedTransaction = true
-            adapter.update(it.filterNot { Prefs.hideZero && it.isNetZero })
+            adapter.submitList(it.filterNot { Prefs.hideZero && it.isNetZero })
         }
 
         viewModel.consensus.observe(this) {
@@ -245,15 +244,15 @@ class WalletFragment : BaseFragment() {
     }
 
     private fun setSyncStatus() {
-        val consensus = viewModel.consensus.value ?: ConsensusData(false, 0, "", BigDecimal.ZERO)
-        val height = NumberFormat.getInstance().format(consensus.height)
+        val consensus = viewModel.consensus.value
+        val height = NumberFormat.getInstance().format(consensus?.height ?: 0)
         if (viewModel.numPeers.value == 0) {
-            syncText.text = ("Not syncing: $height (${consensus.syncProgress.toInt()}%)")
+            syncText.text = ("Not syncing: $height (${consensus?.syncProgress?.toInt() ?: 0}%)")
         } else {
-            if (consensus.synced) {
+            if (consensus?.synced == true) {
                 syncText.text = ("${getString(R.string.synced)}: $height")
             } else {
-                syncText.text = ("${getString(R.string.syncing)}: $height (${consensus.syncProgress.toInt()}%)")
+                syncText.text = ("${getString(R.string.syncing)}: $height (${consensus?.syncProgress?.toInt() ?: 0}%)")
             }
         }
     }

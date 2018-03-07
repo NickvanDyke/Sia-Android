@@ -7,10 +7,7 @@ package com.vandyke.sia.dagger
 import android.util.Base64
 import com.squareup.moshi.Moshi
 import com.vandyke.sia.data.local.Prefs
-import com.vandyke.sia.data.remote.BigDecimalAdapter
-import com.vandyke.sia.data.remote.SiaApi
-import com.vandyke.sia.data.remote.SiaException
-import com.vandyke.sia.data.remote.SiadNotRunning
+import com.vandyke.sia.data.remote.*
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
@@ -56,10 +53,10 @@ class SiaModule {
                 }
 
         return Retrofit.Builder()
-                .addConverterFactory(MoshiConverterFactory.create(Moshi.Builder().add(BigDecimalAdapter()).build()))
+                .addConverterFactory(MoshiConverterFactory.create(Moshi.Builder().add(BigDecimalAdapter()).add(DataAdapters()).build()))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .client(clientBuilder.build())
-//                .baseUrl("http://10.0.22.238:9980/")
+//                .baseUrl("http://10.0.22.248:9980/")
                 .baseUrl("http://localhost:9980/")
                 .build()
                 .create(SiaApi::class.java)

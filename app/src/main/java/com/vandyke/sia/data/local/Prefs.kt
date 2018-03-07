@@ -38,6 +38,7 @@ object Prefs : KotprefModel() {
     var runSiaOnData by booleanPref(false)
     var apiPassword by stringPref()
     var useExternal by booleanPref(false)
+    var modulesString by stringPref("gctw")
 
     var viewAsList by booleanPref(true)
     var ascending by booleanPref(true)

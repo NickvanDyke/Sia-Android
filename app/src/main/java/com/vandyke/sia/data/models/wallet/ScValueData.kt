@@ -4,13 +4,14 @@
 
 package com.vandyke.sia.data.models.wallet
 
-import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
 import java.math.BigDecimal
 
 @Entity(tableName = "scValue")
 data class ScValueData(
+        @PrimaryKey
+        val timestamp: Long,
         val USD: BigDecimal,
         val EUR: BigDecimal,
         val GBP: BigDecimal,
@@ -22,11 +23,6 @@ data class ScValueData(
         val INR: BigDecimal,
         val BRL: BigDecimal
 ) {
-    @PrimaryKey
-    @Transient
-    @ColumnInfo(name = "timestamp")
-    var timestamp = System.currentTimeMillis()
-
     fun getValueForCurrency(currency: String): BigDecimal = when (currency) {
         "USD" -> USD
         "EUR" -> EUR
@@ -41,3 +37,15 @@ data class ScValueData(
         else -> throw IllegalArgumentException("Invalid currency passed to getValueForCurrency: $currency")
     }
 }
+
+data class ScValueDataJson(
+        val USD: BigDecimal,
+        val EUR: BigDecimal,
+        val GBP: BigDecimal,
+        val CHF: BigDecimal,
+        val CAD: BigDecimal,
+        val AUD: BigDecimal,
+        val CNY: BigDecimal,
+        val JPY: BigDecimal,
+        val INR: BigDecimal,
+        val BRL: BigDecimal)
