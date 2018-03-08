@@ -24,9 +24,9 @@ import com.vandyke.sia.data.siad.SiadService
 import com.vandyke.sia.ui.about.AboutFragment
 import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.ui.common.ComingSoonFragment
-import com.vandyke.sia.ui.node.NodeSettingsFragmentContainer
 import com.vandyke.sia.ui.node.NodeStatusFragment
 import com.vandyke.sia.ui.node.modules.NodeModulesFragment
+import com.vandyke.sia.ui.node.settings.NodeSettingsFragmentContainer
 import com.vandyke.sia.ui.onboarding.IntroActivity
 import com.vandyke.sia.ui.onboarding.PurchaseActivity
 import com.vandyke.sia.ui.renter.allowance.AllowanceFragment

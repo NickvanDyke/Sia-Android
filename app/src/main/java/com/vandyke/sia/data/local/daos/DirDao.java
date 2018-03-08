@@ -7,7 +7,6 @@ import android.arch.persistence.room.RawQuery;
 
 import com.vandyke.sia.data.local.models.renter.Dir;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import io.reactivex.Flowable;
@@ -22,7 +21,7 @@ public interface DirDao extends BaseDao<Dir> {
     void updatePath(String path, String newPath);
 
     @Query("UPDATE dirs SET size = :newSize WHERE path == :path")
-    void updateSize(String path, BigDecimal newSize);
+    void updateSize(String path, Long newSize);
 
     @Query("SELECT * FROM dirs")
     Flowable<List<Dir>> all();

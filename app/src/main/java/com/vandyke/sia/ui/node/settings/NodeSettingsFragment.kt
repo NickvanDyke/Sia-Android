@@ -1,4 +1,4 @@
-package com.vandyke.sia.ui.node
+package com.vandyke.sia.ui.node.settings
 
 import android.os.Bundle
 import android.support.design.widget.Snackbar

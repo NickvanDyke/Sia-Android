@@ -21,7 +21,6 @@ import io.reactivex.rxkotlin.toObservable
 import io.reactivex.rxkotlin.zipWith
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.launch
-import java.math.BigDecimal
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -34,7 +33,7 @@ class FilesRepository
     init {
         launch(CommonPool) {
             /* want to always have at least a root directory */
-            db.dirDao().insertIgnoreOnConflict(Dir("", BigDecimal.ZERO))
+            db.dirDao().insertIgnoreOnConflict(Dir("", 0))
         }
     }
 
@@ -63,7 +62,7 @@ class FilesRepository
                             if (index != 0)
                                 pathSoFar += "/"
                             pathSoFar += pathElement
-                            db.dirDao().insertIgnoreOnConflict(Dir(pathSoFar, BigDecimal.ZERO))
+                            db.dirDao().insertIgnoreOnConflict(Dir(pathSoFar, 0))
                         }
                     }
                     .ignoreElements(),
@@ -104,7 +103,7 @@ class FilesRepository
     fun createDir(path: String) = db.fileDao().getFilesUnder(path)
             .flatMapCompletable { filesInNewDir ->
                 Completable.fromAction {
-                    var size = BigDecimal.ZERO
+                    var size = 0L
                     filesInNewDir.forEach {
                         size += it.size
                     }
@@ -138,10 +137,10 @@ class FilesRepository
          * If the before/after path is the same, we don't set it's size to zero first, because files' sizes will be subtracted from it also. */
         if (dir.path != newPath)
             completable = completable.startWith(Completable.mergeArray(
-                    Completable.fromAction { db.dirDao().updateSize(dir.path, BigDecimal.ZERO) },
+                    Completable.fromAction { db.dirDao().updateSize(dir.path, 0) },
                     db.dirDao().getDirsUnder(dir.path)
                             .toElementsObservable()
-                            .flatMapCompletable { childDir -> Completable.fromAction { db.dirDao().updateSize(childDir.path, BigDecimal.ZERO) } }))
+                            .flatMapCompletable { childDir -> Completable.fromAction { db.dirDao().updateSize(childDir.path, 0) } }))
 
         return completable.inDbTransaction(db)
     }
@@ -155,7 +154,7 @@ class FilesRepository
                         db.fileDao().insertReplaceOnConflict(RenterFileData(
                                 siapath,
                                 source,
-                                BigDecimal.ZERO,
+                                0,
                                 false,
                                 false,
                                 0.0,

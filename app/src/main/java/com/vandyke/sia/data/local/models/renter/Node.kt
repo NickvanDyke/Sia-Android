@@ -4,11 +4,9 @@
 
 package com.vandyke.sia.data.local.models.renter
 
-import java.math.BigDecimal
-
 abstract class Node {
     abstract val path: String
-    abstract val size: BigDecimal
+    abstract val size: Long
     abstract val parent: String?
 
     val name: String
@@ -19,8 +17,8 @@ fun String.withTrailingSlashIfNotEmpty() = if (this.isNotEmpty()) "$this/" else 
 
 fun String.name(): String = this.substring(this.lastIndexOf('/') + 1)
 
-fun List<Node>.sumSize(): BigDecimal {
-    var size = BigDecimal.ZERO
+fun List<Node>.sumSize(): Long {
+    var size = 0L
     this.forEach { node ->
         size += node.size
     }

@@ -8,7 +8,6 @@ import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
 import com.squareup.moshi.Json
 import com.vandyke.sia.data.local.models.renter.Node
-import java.math.BigDecimal
 
 @Entity(tableName = "files")
 data class RenterFileData(
@@ -18,7 +17,7 @@ data class RenterFileData(
         @Json(name = "localpath")
         val localpath: String,
         @Json(name = "filesize")
-        override val size: BigDecimal, // bytes
+        override val size: Long, // bytes
         @Json(name = "available")
         val available: Boolean,
         @Json(name = "renewing")

@@ -11,10 +11,10 @@ import android.os.FileObserver
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.util.ExternalStorageException
 import com.vandyke.sia.util.StorageUtil
+import com.vandyke.sia.util.recursiveLength
 import com.vandyke.sia.util.rx.NonNullLiveData
 import com.vandyke.sia.util.rx.SingleLiveEvent
 import java.io.File
-import java.math.BigDecimal
 
 class NodeModulesViewModel(app: Application) : AndroidViewModel(app) {
     val modules = NonNullLiveData(listOf(
@@ -39,11 +39,11 @@ class NodeModulesViewModel(app: Application) : AndroidViewModel(app) {
     private val prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
         if (key == "modulesString") {
             val modulesString = Prefs.modulesString
-            updateModule(Module.CONSENSUS, on = modulesString.contains('c', true))
-            updateModule(Module.WALLET, on = modulesString.contains('w', true))
-            updateModule(Module.TRANSACTIONPOOL, on = modulesString.contains('t', true))
-            updateModule(Module.RENTER, on = modulesString.contains('r', true))
             updateModule(Module.GATEWAY, on = modulesString.contains('g', true))
+            updateModule(Module.CONSENSUS, on = modulesString.contains('c', true))
+            updateModule(Module.TRANSACTIONPOOL, on = modulesString.contains('t', true))
+            updateModule(Module.WALLET, on = modulesString.contains('w', true))
+            updateModule(Module.RENTER, on = modulesString.contains('r', true))
         }
     }
 
@@ -64,10 +64,9 @@ class NodeModulesViewModel(app: Application) : AndroidViewModel(app) {
         observers.forEach { it.stopWatching() }
     }
 
-    private fun updateModule(module: Module, on: Boolean? = null, internalSize: BigDecimal? = null, externalSize: BigDecimal? = null, cachedSize: BigDecimal? = null) {
+    private fun updateModule(module: Module, on: Boolean? = null, internalSize: Long? = null, externalSize: Long? = null) {
         val currentList = modules.value
-        modules.value = currentList.toMutableList().apply {
-            // might have to post value instead
+        modules.postValue(currentList.toMutableList().apply {
             val index = indexOfFirst { it.type == module }
             val current = this[index]
             if (on != null && internalSize != null) {
@@ -79,16 +78,16 @@ class NodeModulesViewModel(app: Application) : AndroidViewModel(app) {
             } else if (externalSize != null) {
                 this[index] = current.copy(externalSize = externalSize)
             }
-        }
+        })
     }
 
     fun deleteModule(module: Module, internal: Boolean) {
-        val file = File((if (internal) internalRootPath else externalRootPath) + "/${module.text.toLowerCase()}")
+        val file = File((if (internal) internalRootPath else externalRootPath) + "/${module.name.toLowerCase()}")
         val result = file.deleteRecursively()
         if (result)
-            success.value = "Deleted ${module.text} files"
-            else
-            error.value = "Error deleting ${module.text} files"
+            success.value = "Deleted ${module.text} files from ${if (internal) "internal" else "external"} storage"
+        else
+            error.value = "Error deleting ${module.text} files from ${if (internal) "internal" else "external"} storage"
     }
 
     inner class ModuleObserver(val module: Module) {
@@ -99,18 +98,21 @@ class NodeModulesViewModel(app: Application) : AndroidViewModel(app) {
 
         private val internalDirObserver = object : FileObserver(internalDir.absolutePath) {
             override fun onEvent(event: Int, path: String?) {
-                updateModule(module, internalSize = internalDir.length().toBigDecimal())
+                updateModule(module, internalSize = internalDir.recursiveLength())
             }
         }
         private val externalDirObserver = object : FileObserver(externalDir.absolutePath) {
             override fun onEvent(event: Int, path: String?) {
-                updateModule(module, externalSize = externalDir.length().toBigDecimal())
+                updateModule(module, externalSize = externalDir.recursiveLength())
             }
         }
 
         init {
-            updateModule(module, internalSize = internalDir.length().toBigDecimal())
-            updateModule(module, externalSize = externalDir.length().toBigDecimal())
+            // TODO: these don't set sizes - seems that listFiles() on the dirs returns null at this point?
+            // delaying by 2000ms didn't help either. Results in reporting 0 size until
+            // fileobserver is triggered
+            updateModule(module, internalSize = internalDir.recursiveLength())
+            updateModule(module, externalSize = externalDir.recursiveLength())
         }
 
         fun startWatching() {

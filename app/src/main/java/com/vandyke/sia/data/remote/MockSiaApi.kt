@@ -50,21 +50,21 @@ class MockSiaApi : SiaApi {
     })
 
     private val files = mutableListOf(
-            RenterFileData("legos/brick/picture.jpg", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534),
-            RenterFileData("legos/brick/manual", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534),
-            RenterFileData("legos/brick/blueprint.b", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534),
-            RenterFileData("legos/brick/draft.txt", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534),
-            RenterFileData("legos/brick/ad.doc", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534),
-            RenterFileData("legos/brick/writeup.txt", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534),
-            RenterFileData("legos/brick/buyers.db", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534),
-            RenterFileData("legos/brick/listing.html", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534),
-            RenterFileData("legos/brick/colors.rgb", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534),
-            RenterFileData("legos/block/picture.jpg", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534),
-            RenterFileData("legos/block/blueprint", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534),
-            RenterFileData("legos/block/vector.svg", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534),
-            RenterFileData("legos/block/colors.rgb", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534),
-            RenterFileData("legos/blue/brick/picture.jpg", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534),
-            RenterFileData("my/type/is/nick/and/this/is/my/story.txt", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534)
+            RenterFileData("legos/brick/picture.jpg", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
+            RenterFileData("legos/brick/manual", "eh", 56743, true, false, 2.0, 663453, 100, 1235534),
+            RenterFileData("legos/brick/blueprint.b", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
+            RenterFileData("legos/brick/draft.txt", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
+            RenterFileData("legos/brick/ad.doc", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
+            RenterFileData("legos/brick/writeup.txt", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
+            RenterFileData("legos/brick/buyers.db", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
+            RenterFileData("legos/brick/listing.html", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
+            RenterFileData("legos/brick/colors.rgb", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
+            RenterFileData("legos/block/picture.jpg", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
+            RenterFileData("legos/block/blueprint", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
+            RenterFileData("legos/block/vector.svg", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
+            RenterFileData("legos/block/colors.rgb", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
+            RenterFileData("legos/blue/brick/picture.jpg", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
+            RenterFileData("my/type/is/nick/and/this/is/my/story.txt", "eh", 156743, true, false, 2.0, 663453, 100, 1235534)
     )
 
     private var renterData = RenterData(
@@ -239,7 +239,7 @@ class MockSiaApi : SiaApi {
 
     override fun renterUpload(siapath: String, source: String, dataPieces: Int, parityPieces: Int): Completable {
         return Completable.fromAction {
-            files.add(RenterFileData(siapath, source, BigDecimal("156743"), true, false,
+            files.add(RenterFileData(siapath, source, 156743, true, false,
                     2.0, 663453, 100, 1235534))
         }
     }

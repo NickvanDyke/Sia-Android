@@ -12,7 +12,7 @@ import com.vandyke.sia.R
 import com.vandyke.sia.data.local.models.renter.Dir
 import com.vandyke.sia.data.local.models.renter.Node
 import com.vandyke.sia.ui.renter.files.viewmodel.FilesViewModel
-import com.vandyke.sia.util.GenUtil
+import com.vandyke.sia.util.StorageUtil
 
 class DirHolder(itemView: View, val viewModel: FilesViewModel) : NodeHolder(itemView) {
     private val image: ImageView = itemView.findViewById(R.id.dirImage)
@@ -46,6 +46,6 @@ class DirHolder(itemView: View, val viewModel: FilesViewModel) : NodeHolder(item
         viewModel.selectedNodes.removeObserver(obs)
         viewModel.selectedNodes.observeForever(obs)
         name.text = dir.name
-        size.text = GenUtil.readableFilesizeString(dir.size)
+        size.text = StorageUtil.readableFilesizeString(dir.size)
     }
 }

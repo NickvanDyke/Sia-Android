@@ -7,8 +7,6 @@ package com.vandyke.sia.ui.node.modules
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.design.widget.Snackbar
-import android.support.v7.recyclerview.extensions.ListAdapter
-import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -16,7 +14,7 @@ import android.view.ViewGroup
 import com.vandyke.sia.R
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.ui.common.BaseFragment
-import com.vandyke.sia.util.GenUtil
+import com.vandyke.sia.util.StorageUtil
 import io.github.tonnyl.light.Light
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.fragment_node_modules.*
@@ -37,11 +35,11 @@ class NodeModulesFragment : BaseFragment() {
         vm.modules.observe(this, adapter::submitList)
 
         vm.success.observe(this) {
-            Light.success(view, it, Snackbar.LENGTH_SHORT)
+            Light.success(view, it, Snackbar.LENGTH_LONG).show()
         }
 
         vm.error.observe(this) {
-            Light.error(view, it, Snackbar.LENGTH_SHORT)
+            Light.error(view, it, Snackbar.LENGTH_LONG).show()
         }
     }
 
@@ -55,22 +53,36 @@ class NodeModulesFragment : BaseFragment() {
         vm.onHide()
     }
 
-    inner class ModulesAdapter : ListAdapter<ModuleData, ModuleHolder>(
-            object : DiffUtil.ItemCallback<ModuleData>() {
-                override fun areItemsTheSame(oldItem: ModuleData, newItem: ModuleData): Boolean {
-                    return oldItem.type == newItem.type
-                }
+    inner class ModulesAdapter : RecyclerView.Adapter<ModuleHolder>() {
+        private var list = listOf<ModuleData>()
+        private var loadedModules = false
+        private val holders = mutableListOf<ModuleHolder>()
 
-                override fun areContentsTheSame(oldItem: ModuleData, newItem: ModuleData): Boolean {
-                    return oldItem.type == newItem.type && oldItem.on == newItem.on && oldItem.internalSize == newItem.internalSize
-                }
-            }) {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ModuleHolder {
-            return ModuleHolder(LayoutInflater.from(parent.context).inflate(R.layout.holder_module, parent, false))
+            val holder = ModuleHolder(LayoutInflater.from(parent.context).inflate(R.layout.holder_module, parent, false))
+            holders.add(holder)
+            return holder
         }
 
         override fun onBindViewHolder(holder: ModuleHolder, position: Int) {
-            holder.bind(getItem(position))
+            holder.bind(list[position])
+        }
+
+        override fun getItemCount() = list.size
+
+        /* We have our own implementation because using ListAdapter and DiffUtil would cause the
+         * view holder to flash every time it updated, which is very often in this case */
+        fun submitList(newList: List<ModuleData>) {
+            if (!loadedModules) {
+                this.list = newList
+                notifyDataSetChanged()
+                loadedModules = true
+            } else {
+                for (i in 0..4)
+                    if (list[i] != newList[i])
+                        holders[i].bind(newList[i])
+                this.list = newList
+            }
         }
     }
 
@@ -91,6 +103,7 @@ class NodeModulesFragment : BaseFragment() {
             // so turns out that you can delete node module folders while it's running, but it
             // won't take effect until after restarting the node. Observe the folders from
             // SiadSource and watch for delete event? Or just call restart here?
+            // TODO: show confirmation before deleting
             module_delete_internal.setOnClickListener {
                 vm.deleteModule(module, true)
             }
@@ -106,8 +119,28 @@ class NodeModulesFragment : BaseFragment() {
             this.module = module.type
             module_name.text = module.type.text
             module_switch.isChecked = module.on
-            module_internal_size.text = GenUtil.readableFilesizeString(module.internalSize)
-            module_external_size.text = GenUtil.readableFilesizeString(module.externalSize)
+
+            if (module.internalSize > 0) {
+                module_internal_size.text = StorageUtil.readableFilesizeString(module.internalSize)
+                module_internal_size.visibility = View.VISIBLE
+                internal_storage_header.visibility = View.VISIBLE
+                module_delete_internal.visibility = View.VISIBLE
+            } else {
+                module_internal_size.visibility = View.GONE
+                internal_storage_header.visibility = View.GONE
+                module_delete_internal.visibility = View.GONE
+            }
+
+            if (module.externalSize > 0) {
+                module_external_size.text = StorageUtil.readableFilesizeString(module.externalSize)
+                module_external_size.visibility = View.VISIBLE
+                external_storage_header.visibility = View.VISIBLE
+                module_delete_external.visibility = View.VISIBLE
+            } else {
+                module_external_size.visibility = View.GONE
+                external_storage_header.visibility = View.GONE
+                module_delete_external.visibility = View.GONE
+            }
         }
     }
 }

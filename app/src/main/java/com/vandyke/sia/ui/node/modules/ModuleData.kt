@@ -4,13 +4,11 @@
 
 package com.vandyke.sia.ui.node.modules
 
-import java.math.BigDecimal
-
 data class ModuleData(
         val type: Module,
         val on: Boolean,
-        val internalSize: BigDecimal = BigDecimal.ZERO,
-        val externalSize: BigDecimal = BigDecimal.ZERO)
+        val internalSize: Long = 0,
+        val externalSize: Long = 0)
 
 enum class Module(val text: String) {
     WALLET("Wallet"),

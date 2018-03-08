@@ -13,7 +13,6 @@ import com.vandyke.sia.data.models.renter.RenterFileData
 import com.vandyke.sia.data.repository.FilesRepository
 import com.vandyke.sia.util.rx.*
 import io.reactivex.disposables.Disposable
-import java.math.BigDecimal
 import javax.inject.Inject
 
 class FilesViewModel
@@ -21,7 +20,7 @@ class FilesViewModel
         private val filesRepository: FilesRepository
 ) : ViewModel() {
     // TODO: show progress of operations
-    val currentDir = NonNullLiveData<Dir>(Dir("", BigDecimal.ZERO))
+    val currentDir = NonNullLiveData<Dir>(Dir("", 0))
     val displayedNodes = NonNullLiveData<List<Node>>(listOf())
 
     val searching = NonNullLiveData(false)

@@ -12,6 +12,28 @@ import java.io.IOException
 
 
 object StorageUtil {
+    fun readableFilesizeString(filesize: Long): String {
+        var size = filesize.toDouble()
+        var i = 0
+        val kilo = 1024
+        while (size > kilo && i < 6) {
+            size /= kilo
+            i++
+        }
+        val sizeString = when (i) {
+            0 -> "B"
+            1 -> "KB"
+            2 -> "MB"
+            3 -> "GB"
+            4 -> "TB"
+            5 -> "PB"
+            6 -> "EB"
+            else -> "Super big"
+        }
+
+        return "${size.format()} $sizeString"
+    }
+
     fun copyFromAssetsToAppStorage(filename: String, context: Context): File? {
         try {
             val inputStream = context.assets.open(filename)
@@ -53,3 +75,14 @@ object StorageUtil {
 }
 
 class ExternalStorageException(msg: String) : Exception(msg)
+
+fun File.recursiveLength(): Long {
+    var size = this.length()
+    this.listFiles()?.forEach {
+        size += if (it.isDirectory)
+            it.recursiveLength()
+        else
+            it.length()
+    }
+    return size
+}

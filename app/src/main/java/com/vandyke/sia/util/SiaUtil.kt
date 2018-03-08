@@ -24,13 +24,27 @@ fun BigDecimal.toHastings(): BigDecimal = this.multiply(HASTINGS_PER_SC)
 fun String.toHastings(): BigDecimal = if (this.isBlank()) BigDecimal.ZERO else BigDecimal(this).multiply(HASTINGS_PER_SC)
 
 fun BigDecimal.format(): String {
-    val nf = NumberFormat.getNumberInstance()
+    val nf = NumberFormat.getInstance()
     nf.maximumFractionDigits = Prefs.displayedDecimalPrecision
     return nf.format(this)
 }
 
 fun Int.format(): String {
-    return NumberFormat.getInstance().format(this)
+    val nf = NumberFormat.getInstance()
+    nf.maximumFractionDigits = Prefs.displayedDecimalPrecision
+    return nf.format(this)
+}
+
+fun Long.format(): String {
+    val nf = NumberFormat.getInstance()
+    nf.maximumFractionDigits = Prefs.displayedDecimalPrecision
+    return nf.format(this)
+}
+
+fun Double.format(): String {
+    val nf = NumberFormat.getInstance()
+    nf.maximumFractionDigits = Prefs.displayedDecimalPrecision
+    return nf.format(this)
 }
 
 object SiaUtil {
