@@ -7,7 +7,15 @@ package com.vandyke.sia.ui.node.modules
 import java.math.BigDecimal
 
 data class ModuleData(
-        val name: String,
+        val type: Module,
         val on: Boolean,
-        val size: BigDecimal
-)
+        val internalSize: BigDecimal = BigDecimal.ZERO,
+        val externalSize: BigDecimal = BigDecimal.ZERO)
+
+enum class Module(val text: String) {
+    WALLET("Wallet"),
+    RENTER("Renter"),
+    CONSENSUS("Consensus"),
+    GATEWAY("Gateway"),
+    TRANSACTION_POOL("Transaction pool")
+}

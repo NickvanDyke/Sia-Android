@@ -64,7 +64,7 @@ class MockSiaApi : SiaApi {
             RenterFileData("legos/block/vector.svg", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534),
             RenterFileData("legos/block/colors.rgb", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534),
             RenterFileData("legos/blue/brick/picture.jpg", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534),
-            RenterFileData("my/name/is/nick/and/this/is/my/story.txt", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534)
+            RenterFileData("my/type/is/nick/and/this/is/my/story.txt", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534)
     )
 
     private var renterData = RenterData(

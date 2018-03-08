@@ -15,4 +15,6 @@
     <color name="colorPrimaryOld">#00cb9e</color>
     <color name="colorPrimaryDarkOld">#24b293</color>
     <color name="colorAccentOld">#00cb9e</color>
+
+    <color name="ic_launcher_background">#20EE82</color>
 </resources>

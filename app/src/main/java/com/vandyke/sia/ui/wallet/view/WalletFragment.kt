@@ -282,7 +282,7 @@ class WalletFragment : BaseFragment() {
     private fun setupChart() {
 //        /* set up the chart and its data set */
 //        val lineDataSet = LineDataSet(null, "")
-//        with(lineDataSet) {
+//        lineDataSet.apply {
 //            setDrawCircles(false)
 //            setDrawValues(false)
 //            setDrawFilled(true)
@@ -292,7 +292,7 @@ class WalletFragment : BaseFragment() {
 //            /* causes a crash if the dataset is empty, so we add an empty one. Bug with the lib it seems, based off googling */
 //            addEntry(Entry(0f, 0f))
 //        }
-//        with(siaChart) {
+//        siaChart.apply {
 //            setViewPortOffsets(0f, 0f, 0f, 0f)
 //            data = LineData(lineDataSet)
 //            isDragEnabled = false

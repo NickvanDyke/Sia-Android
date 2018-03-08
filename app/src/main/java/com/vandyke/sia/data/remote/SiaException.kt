@@ -49,7 +49,7 @@ sealed class SiaException(msg: String) : Throwable(msg) {
 class SiadNotReady : SiaException("Sia is still loading")
 class SiadNotRunning : SiaException("Sia node isn't running")
 class APIAuthFailed : SiaException("Incorrect API password")
-class Sia404 : SiaException("404 - is the required module running?")
+class Sia404 : SiaException("Required module isn't running")
 
 class WalletAlreadyUnlocked : SiaException("Wallet already unlocked")
 class WalletLocked : SiaException("Please unlock the wallet first")
