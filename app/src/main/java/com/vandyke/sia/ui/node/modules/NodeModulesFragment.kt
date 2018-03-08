@@ -104,15 +104,13 @@ class NodeModulesFragment : BaseFragment() {
             // won't take effect until after restarting the node. Observe the folders from
             // SiadSource and watch for delete event? Or just call restart here?
             // TODO: show confirmation before deleting
-            module_delete_internal.setOnClickListener {
+            module_internal_layout.setOnClickListener {
                 vm.deleteModule(module, true)
             }
 
-            module_delete_external.setOnClickListener {
+            module_external_layout.setOnClickListener {
                 vm.deleteModule(module, false)
             }
-
-//        module_delete_cached.setOnClickListener { } TODO: allow deleting of db stuff. Should it go here?
         }
 
         fun bind(module: ModuleData) {
@@ -124,22 +122,22 @@ class NodeModulesFragment : BaseFragment() {
                 module_internal_size.text = StorageUtil.readableFilesizeString(module.internalSize)
                 module_internal_size.visibility = View.VISIBLE
                 internal_storage_header.visibility = View.VISIBLE
-                module_delete_internal.visibility = View.VISIBLE
+                module_internal_layout.visibility = View.VISIBLE
             } else {
                 module_internal_size.visibility = View.GONE
                 internal_storage_header.visibility = View.GONE
-                module_delete_internal.visibility = View.GONE
+                module_internal_layout.visibility = View.GONE
             }
 
             if (module.externalSize > 0) {
                 module_external_size.text = StorageUtil.readableFilesizeString(module.externalSize)
                 module_external_size.visibility = View.VISIBLE
                 external_storage_header.visibility = View.VISIBLE
-                module_delete_external.visibility = View.VISIBLE
+                module_external_layout.visibility = View.VISIBLE
             } else {
                 module_external_size.visibility = View.GONE
                 external_storage_header.visibility = View.GONE
-                module_delete_external.visibility = View.GONE
+                module_external_layout.visibility = View.GONE
             }
         }
     }
