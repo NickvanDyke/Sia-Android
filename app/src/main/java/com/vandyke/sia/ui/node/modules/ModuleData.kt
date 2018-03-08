@@ -17,5 +17,5 @@ enum class Module(val text: String) {
     RENTER("Renter"),
     CONSENSUS("Consensus"),
     GATEWAY("Gateway"),
-    TRANSACTION_POOL("Transaction pool")
+    TRANSACTIONPOOL("Transaction pool")
 }

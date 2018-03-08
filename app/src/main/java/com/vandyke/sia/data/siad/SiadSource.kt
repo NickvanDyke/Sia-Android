@@ -39,7 +39,7 @@ class SiadSource
     private val prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
         when (key) {
             "runSiaOnData", "runSiaInBackground", "siaManuallyStopped" -> setConditions()
-            "useExternal", "apiPassword" -> restart.value = true
+            "useExternal", "apiPassword", "modulesString" -> restart.value = true
         }
     }
 

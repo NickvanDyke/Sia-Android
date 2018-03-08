@@ -6,6 +6,7 @@ package com.vandyke.sia.ui.node.modules
 
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v7.recyclerview.extensions.ListAdapter
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
@@ -16,6 +17,7 @@ import com.vandyke.sia.R
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.util.GenUtil
+import io.github.tonnyl.light.Light
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.fragment_node_modules.*
 import kotlinx.android.synthetic.main.holder_module.*
@@ -33,6 +35,24 @@ class NodeModulesFragment : BaseFragment() {
         vm = ViewModelProviders.of(this).get(NodeModulesViewModel::class.java)
 
         vm.modules.observe(this, adapter::submitList)
+
+        vm.success.observe(this) {
+            Light.success(view, it, Snackbar.LENGTH_SHORT)
+        }
+
+        vm.error.observe(this) {
+            Light.error(view, it, Snackbar.LENGTH_SHORT)
+        }
+    }
+
+    override fun onShow() {
+        super.onShow()
+        vm.onShow()
+    }
+
+    override fun onHide() {
+        super.onHide()
+        vm.onHide()
     }
 
     inner class ModulesAdapter : ListAdapter<ModuleData, ModuleHolder>(
@@ -63,12 +83,15 @@ class NodeModulesFragment : BaseFragment() {
             module_switch.setOnCheckedChangeListener { buttonView, isChecked ->
                 if (!isChecked) {
                     Prefs.modulesString = Prefs.modulesString.replace(module.text[0].toString(), "", true)
-                } else {
+                } else if (!Prefs.modulesString.contains(module.text[0], true)) {
                     Prefs.modulesString += module.text[0].toLowerCase()
                 }
             }
 
-            module_delete_internal.setOnClickListener { // might have to stop before deleting and then start after
+            // so turns out that you can delete node module folders while it's running, but it
+            // won't take effect until after restarting the node. Observe the folders from
+            // SiadSource and watch for delete event? Or just call restart here?
+            module_delete_internal.setOnClickListener {
                 vm.deleteModule(module, true)
             }
 
