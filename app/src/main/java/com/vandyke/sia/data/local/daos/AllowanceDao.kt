@@ -13,4 +13,7 @@ import io.reactivex.Flowable
 interface AllowanceDao : BaseDao<RenterSettingsAllowanceData> {
     @Query("SELECT * FROM allowance LIMIT 1")
     fun onlyEntry(): Flowable<RenterSettingsAllowanceData>
+
+    @Query("DELETE FROM scValue")
+    fun deleteAll()
 }

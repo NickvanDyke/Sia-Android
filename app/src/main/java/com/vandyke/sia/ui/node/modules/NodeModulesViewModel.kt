@@ -69,14 +69,11 @@ class NodeModulesViewModel(app: Application) : AndroidViewModel(app) {
         modules.postValue(currentList.toMutableList().apply {
             val index = indexOfFirst { it.type == module }
             val current = this[index]
-            if (on != null && internalSize != null) {
-                this[index] = current.copy(on = on, internalSize = internalSize)
-            } else if (on != null) {
-                this[index] = current.copy(on = on)
-            } else if (internalSize != null) {
-                this[index] = current.copy(internalSize = internalSize)
-            } else if (externalSize != null) {
-                this[index] = current.copy(externalSize = externalSize)
+            this[index] = when {
+                on != null -> current.copy(on = on)
+                internalSize != null -> current.copy(internalSize = internalSize)
+                externalSize != null -> current.copy(externalSize = externalSize)
+                else -> throw IllegalArgumentException()
             }
         })
     }

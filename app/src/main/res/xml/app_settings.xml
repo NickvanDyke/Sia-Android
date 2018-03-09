@@ -42,8 +42,10 @@
             android:key="viewSubscription"
             android:title="View subscription" />
         <Preference
+            android:key="clearDatabase"
+            android:title="Clear cached data" />
+        <Preference
             android:key="openAppSettings"
-            android:summary="You can clear all of the Sia node's data from here, such as the blockchain. Doing that will delete ALL of Sia's data, including any wallet files - write down your seed(s) first."
             android:title="Open Application Info page for Sia" />
     </PreferenceCategory>
 </PreferenceScreen>

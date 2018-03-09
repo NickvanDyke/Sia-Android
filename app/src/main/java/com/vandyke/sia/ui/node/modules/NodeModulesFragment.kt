@@ -7,6 +7,7 @@ package com.vandyke.sia.ui.node.modules
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.design.widget.Snackbar
+import android.support.v7.app.AlertDialog
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -53,6 +54,20 @@ class NodeModulesFragment : BaseFragment() {
         vm.onHide()
     }
 
+    private fun showDeleteConfirmationDialog(module: Module, internal: Boolean) {
+        AlertDialog.Builder(context!!)
+                .setTitle("Confirm")
+                .setMessage(
+                        "Are you sure you want to delete all ${module.text} files from ${if (internal) "internal" else "external"} storage?"
+                                + when (module) {
+                            Module.WALLET -> "Ensure your wallet seed is recorded elsewhere first."
+                            Module.CONSENSUS -> "You'll have to re-sync the blockchain."
+                            else -> ""
+                        })
+                .setPositiveButton("Yes") { _, _ -> vm.deleteModule(module, internal) }
+                .setNegativeButton("No", null)
+    }
+
     inner class ModulesAdapter : RecyclerView.Adapter<ModuleHolder>() {
         private var list = listOf<ModuleData>()
         private var loadedModules = false
@@ -94,22 +109,21 @@ class NodeModulesFragment : BaseFragment() {
         init {
             module_switch.setOnCheckedChangeListener { buttonView, isChecked ->
                 if (!isChecked) {
-                    Prefs.modulesString = Prefs.modulesString.replace(module.text[0].toString(), "", true)
-                } else if (!Prefs.modulesString.contains(module.text[0], true)) {
-                    Prefs.modulesString += module.text[0].toLowerCase()
+                    Prefs.modulesString = Prefs.modulesString.replace(module.name[0].toString(), "", true)
+                } else if (!Prefs.modulesString.contains(module.name[0], true)) {
+                    Prefs.modulesString += module.name[0].toLowerCase()
                 }
             }
 
             // so turns out that you can delete node module folders while it's running, but it
             // won't take effect until after restarting the node. Observe the folders from
             // SiadSource and watch for delete event? Or just call restart here?
-            // TODO: show confirmation before deleting
             module_internal_layout.setOnClickListener {
-                vm.deleteModule(module, true)
+                showDeleteConfirmationDialog(module, true)
             }
 
             module_external_layout.setOnClickListener {
-                vm.deleteModule(module, false)
+                showDeleteConfirmationDialog(module, false)
             }
         }
 
