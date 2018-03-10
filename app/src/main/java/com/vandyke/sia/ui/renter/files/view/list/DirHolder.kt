@@ -9,8 +9,8 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.vandyke.sia.R
-import com.vandyke.sia.data.local.models.renter.Dir
-import com.vandyke.sia.data.local.models.renter.Node
+import com.vandyke.sia.data.models.renter.Dir
+import com.vandyke.sia.data.models.renter.Node
 import com.vandyke.sia.ui.renter.files.viewmodel.FilesViewModel
 import com.vandyke.sia.util.StorageUtil
 

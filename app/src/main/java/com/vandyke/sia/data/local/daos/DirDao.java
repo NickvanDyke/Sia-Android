@@ -5,7 +5,7 @@ import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.RawQuery;
 
-import com.vandyke.sia.data.local.models.renter.Dir;
+import com.vandyke.sia.data.models.renter.Dir;
 
 import java.util.List;
 

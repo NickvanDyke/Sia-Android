@@ -1,8 +1,8 @@
 package com.vandyke.sia.data.local.daos
 
 import android.arch.persistence.db.SimpleSQLiteQuery
-import com.vandyke.sia.data.local.models.renter.Dir
-import com.vandyke.sia.data.models.renter.RenterFileData
+import com.vandyke.sia.data.models.renter.Dir
+import com.vandyke.sia.data.models.renter.SiaFile
 import com.vandyke.sia.data.repository.FilesRepository
 import io.reactivex.Flowable
 
@@ -33,7 +33,7 @@ fun DirDao.getDirs(path: String, name: String? = null, orderBy: FilesRepository.
 }
 
 /** When a name is passed, it searches all files under the given path. Without a name, it searches only immediate children of the given path */
-fun FileDao.getFiles(path: String, name: String? = null, orderBy: FilesRepository.OrderBy? = null, ascending: Boolean = true): Flowable<List<RenterFileData>> {
+fun FileDao.getFiles(path: String, name: String? = null, orderBy: FilesRepository.OrderBy? = null, ascending: Boolean = true): Flowable<List<SiaFile>> {
     var query = when {
         path.isEmpty() && name?.isEmpty() == true -> "SELECT * FROM files"
         path.isNotEmpty() && name?.isEmpty() == true -> "SELECT * FROM files WHERE path LIKE '$path/%'"

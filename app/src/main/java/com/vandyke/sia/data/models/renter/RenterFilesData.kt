@@ -4,4 +4,4 @@
 
 package com.vandyke.sia.data.models.renter
 
-data class RenterFilesData(val files: List<RenterFileData>)
+data class RenterFilesData(val files: List<SiaFile>)

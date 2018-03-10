@@ -9,9 +9,9 @@ import android.support.v7.util.DiffUtil
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.vandyke.sia.R
-import com.vandyke.sia.data.local.models.renter.Dir
-import com.vandyke.sia.data.local.models.renter.Node
-import com.vandyke.sia.data.models.renter.RenterFileData
+import com.vandyke.sia.data.models.renter.Dir
+import com.vandyke.sia.data.models.renter.Node
+import com.vandyke.sia.data.models.renter.SiaFile
 import com.vandyke.sia.ui.renter.files.viewmodel.FilesViewModel
 
 class NodesAdapter(val viewModel: FilesViewModel) : ListAdapter<Node, NodeHolder>(DIFF_CALLBACK) {
@@ -43,7 +43,7 @@ class NodesAdapter(val viewModel: FilesViewModel) : ListAdapter<Node, NodeHolder
         if (holder is DirHolder)
             holder.bind(getItem(position) as Dir)
         else if (holder is FileHolder)
-            holder.bind(getItem(position) as RenterFileData)
+            holder.bind(getItem(position) as SiaFile)
     }
 
     override fun getItemViewType(position: Int) = if (getItem(position) is Dir) DIR else FILE

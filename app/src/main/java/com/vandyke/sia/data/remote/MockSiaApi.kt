@@ -50,21 +50,21 @@ class MockSiaApi : SiaApi {
     })
 
     private val files = mutableListOf(
-            RenterFileData("legos/brick/picture.jpg", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
-            RenterFileData("legos/brick/manual", "eh", 56743, true, false, 2.0, 663453, 100, 1235534),
-            RenterFileData("legos/brick/blueprint.b", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
-            RenterFileData("legos/brick/draft.txt", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
-            RenterFileData("legos/brick/ad.doc", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
-            RenterFileData("legos/brick/writeup.txt", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
-            RenterFileData("legos/brick/buyers.db", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
-            RenterFileData("legos/brick/listing.html", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
-            RenterFileData("legos/brick/colors.rgb", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
-            RenterFileData("legos/block/picture.jpg", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
-            RenterFileData("legos/block/blueprint", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
-            RenterFileData("legos/block/vector.svg", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
-            RenterFileData("legos/block/colors.rgb", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
-            RenterFileData("legos/blue/brick/picture.jpg", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
-            RenterFileData("my/type/is/nick/and/this/is/my/story.txt", "eh", 156743, true, false, 2.0, 663453, 100, 1235534)
+            SiaFile("legos/brick/picture.jpg", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
+            SiaFile("legos/brick/manual", "eh", 56743, true, false, 2.0, 663453, 100, 1235534),
+            SiaFile("legos/brick/blueprint.b", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
+            SiaFile("legos/brick/draft.txt", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
+            SiaFile("legos/brick/ad.doc", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
+            SiaFile("legos/brick/writeup.txt", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
+            SiaFile("legos/brick/buyers.db", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
+            SiaFile("legos/brick/listing.html", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
+            SiaFile("legos/brick/colors.rgb", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
+            SiaFile("legos/block/picture.jpg", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
+            SiaFile("legos/block/blueprint", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
+            SiaFile("legos/block/vector.svg", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
+            SiaFile("legos/block/colors.rgb", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
+            SiaFile("legos/blue/brick/picture.jpg", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
+            SiaFile("my/type/is/nick/and/this/is/my/story.txt", "eh", 156743, true, false, 2.0, 663453, 100, 1235534)
     )
 
     private var renterData = RenterData(
@@ -226,7 +226,7 @@ class MockSiaApi : SiaApi {
 
     override fun renterDelete(siapath: String): Completable {
         return Completable.fromAction {
-            var removed: RenterFileData? = null
+            var removed: SiaFile? = null
             files.forEach {
                 if (it.path == siapath) {
                     removed = it
@@ -239,17 +239,17 @@ class MockSiaApi : SiaApi {
 
     override fun renterUpload(siapath: String, source: String, dataPieces: Int, parityPieces: Int): Completable {
         return Completable.fromAction {
-            files.add(RenterFileData(siapath, source, 156743, true, false,
+            files.add(SiaFile(siapath, source, 156743, true, false,
                     2.0, 663453, 100, 1235534))
         }
     }
 
     override fun renterDownload(siapath: String, destination: String): Completable {
-        return Completable.error(NotImplementedError())
+        return Completable.fromAction { Thread.sleep(1000) }
     }
 
     override fun renterDownloadAsync(siapath: String, destination: String): Completable {
-        return Completable.error(NotImplementedError())
+        return Completable.complete()
     }
 
     override fun gateway(): Single<GatewayData> {

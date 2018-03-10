@@ -6,10 +6,10 @@ package com.vandyke.sia.ui.renter.files.viewmodel
 
 import android.arch.lifecycle.ViewModel
 import com.vandyke.sia.data.local.Prefs
-import com.vandyke.sia.data.local.models.renter.Dir
-import com.vandyke.sia.data.local.models.renter.Node
-import com.vandyke.sia.data.local.models.renter.withTrailingSlashIfNotEmpty
-import com.vandyke.sia.data.models.renter.RenterFileData
+import com.vandyke.sia.data.models.renter.Dir
+import com.vandyke.sia.data.models.renter.Node
+import com.vandyke.sia.data.models.renter.SiaFile
+import com.vandyke.sia.data.models.renter.withTrailingSlashIfNotEmpty
 import com.vandyke.sia.data.repository.FilesRepository
 import com.vandyke.sia.util.rx.*
 import io.reactivex.disposables.Disposable
@@ -121,7 +121,7 @@ class FilesViewModel
             select(node)
     }
 
-    fun multiDelete() {
+    fun deleteSelected() {
         filesRepository.multiDelete(selectedNodes.value)
                 .io()
                 .main()
@@ -129,15 +129,15 @@ class FilesViewModel
                 .subscribe(::deselectAll, ::onError)
     }
 
-    fun multiDownload() {
-        filesRepository.multiDownload(selectedNodes.value)
+    fun downloadSelected(destination: String) {
+        filesRepository.multiDownload(selectedNodes.value, destination)
                 .io()
                 .main()
                 .track(activeTasks)
                 .subscribe(::deselectAll, ::onError)
     }
 
-    fun multiMove() {
+    fun moveSelectedToCurrentDir() {
         filesRepository.multiMove(selectedNodes.value, currentDirPath)
                 .io()
                 .main()
@@ -163,7 +163,7 @@ class FilesViewModel
                 .subscribe({}, ::onError)
     }
 
-    fun renameFile(file: RenterFileData, newName: String) {
+    fun renameFile(file: SiaFile, newName: String) {
         val parentPath = file.parent.withTrailingSlashIfNotEmpty()
         filesRepository.moveFile(file, "$parentPath$newName")
                 .io()

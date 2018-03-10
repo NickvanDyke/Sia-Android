@@ -25,8 +25,8 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import com.vandyke.sia.R
-import com.vandyke.sia.data.local.models.renter.Dir
-import com.vandyke.sia.data.models.renter.RenterFileData
+import com.vandyke.sia.data.models.renter.Dir
+import com.vandyke.sia.data.models.renter.SiaFile
 import com.vandyke.sia.data.repository.FilesRepository.OrderBy
 import com.vandyke.sia.data.siad.SiadStatus
 import com.vandyke.sia.getAppComponent
@@ -129,7 +129,7 @@ class FilesFragment : BaseFragment() {
                             "Rename",
                             {
                                 val newName = it.text.toString()
-                                if (node is RenterFileData)
+                                if (node is SiaFile)
                                     viewModel.renameFile(node, newName)
                                 else if (node is Dir)
                                     viewModel.renameDir(node, newName)
@@ -141,16 +141,16 @@ class FilesFragment : BaseFragment() {
                             .showDialogAndKeyboard()
                 }
             } else {
-                viewModel.multiMove()
+                viewModel.moveSelectedToCurrentDir()
             }
         }
 
         multiDownload.setOnClickListener {
-            viewModel.multiDownload()
+            viewModel.downloadSelected(TODO())
         }
 
         multiDelete.setOnClickListener {
-            viewModel.multiDelete()
+            viewModel.deleteSelected()
         }
 
         multiDeselect.setOnClickListener {
