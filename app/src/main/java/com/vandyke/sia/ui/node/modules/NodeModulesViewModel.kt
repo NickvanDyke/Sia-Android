@@ -4,19 +4,25 @@
 
 package com.vandyke.sia.ui.node.modules
 
-import android.app.Application
-import android.arch.lifecycle.AndroidViewModel
+import android.arch.lifecycle.ViewModel
+import android.content.Context
 import android.content.SharedPreferences
 import android.os.FileObserver
 import com.vandyke.sia.data.local.Prefs
+import com.vandyke.sia.data.siad.SiadSource
 import com.vandyke.sia.util.ExternalStorageException
 import com.vandyke.sia.util.StorageUtil
 import com.vandyke.sia.util.recursiveLength
 import com.vandyke.sia.util.rx.NonNullLiveData
 import com.vandyke.sia.util.rx.SingleLiveEvent
 import java.io.File
+import javax.inject.Inject
 
-class NodeModulesViewModel(app: Application) : AndroidViewModel(app) {
+class NodeModulesViewModel
+@Inject constructor(
+        context: Context,
+        val siadSource: SiadSource
+) : ViewModel() {
     val modules = NonNullLiveData(listOf(
             ModuleData(Module.GATEWAY, Prefs.modulesString.contains('g', true)),
             ModuleData(Module.CONSENSUS, Prefs.modulesString.contains('c', true)),
@@ -27,9 +33,9 @@ class NodeModulesViewModel(app: Application) : AndroidViewModel(app) {
     val success = SingleLiveEvent<String>()
     val error = SingleLiveEvent<String>()
 
-    private val internalRootPath = app.filesDir.path
+    private val internalRootPath = context.filesDir.path
     private val externalRootPath = try {
-        StorageUtil.getExternalStorage(app).path
+        StorageUtil.getExternalStorage(context).path
     } catch (e: ExternalStorageException) {
         "" // is this correct?
     }
@@ -82,9 +88,10 @@ class NodeModulesViewModel(app: Application) : AndroidViewModel(app) {
         val file = File((if (internal) internalRootPath else externalRootPath) + "/${module.name.toLowerCase()}")
         val result = file.deleteRecursively()
         if (result)
-            success.value = "Deleted ${module.text} files from ${if (internal) "internal" else "external"} storage"
+            success.value = "Deleted ${module.text} files from ${if (internal) "internal" else "external"} storage. Restarting Sia node..."
         else
             error.value = "Error deleting ${module.text} files from ${if (internal) "internal" else "external"} storage"
+        siadSource.signalRestart()
     }
 
     inner class ModuleObserver(val module: Module) {

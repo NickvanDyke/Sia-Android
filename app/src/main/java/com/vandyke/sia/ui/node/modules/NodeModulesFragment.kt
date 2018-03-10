@@ -9,29 +9,36 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import com.vandyke.sia.R
+import com.vandyke.sia.dagger.SiaViewModelFactory
 import com.vandyke.sia.data.local.Prefs
+import com.vandyke.sia.getAppComponent
 import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.util.StorageUtil
+import com.vandyke.sia.util.visibleIf
 import io.github.tonnyl.light.Light
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.fragment_node_modules.*
 import kotlinx.android.synthetic.main.holder_module.*
+import javax.inject.Inject
 
 class NodeModulesFragment : BaseFragment() {
     override val title: String = "Node Modules"
     override val layoutResId: Int = R.layout.fragment_node_modules
+    override val hasOptionsMenu: Boolean = true
 
+    @Inject
+    lateinit var factory: SiaViewModelFactory
     private lateinit var vm: NodeModulesViewModel
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        context!!.getAppComponent().inject(this)
+
         val adapter = ModulesAdapter()
         modules_list.adapter = adapter
 
-        vm = ViewModelProviders.of(this).get(NodeModulesViewModel::class.java)
+        vm = ViewModelProviders.of(this, factory).get(NodeModulesViewModel::class.java)
 
         vm.modules.observe(this, adapter::submitList)
 
@@ -66,6 +73,25 @@ class NodeModulesFragment : BaseFragment() {
                         })
                 .setPositiveButton("Yes") { _, _ -> vm.deleteModule(module, internal) }
                 .setNegativeButton("No", null)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.toolbar_node_modules, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return if (item.itemId == R.id.modules_info) {
+            AlertDialog.Builder(context!!)
+                    .setTitle("Modules info")
+                    .setMessage("The switch enables/disables the module on the Sia node. Internal/External storage indicates " +
+                            "how much storage space that module is using on your device - tap to delete the files from that module. " +
+                            "The Sia node will automatically restart after deleting module files.")
+                    .setPositiveButton(android.R.string.ok, null)
+                    .show()
+            true
+        } else {
+            super.onOptionsItemSelected(item)
+        }
     }
 
     inner class ModulesAdapter : RecyclerView.Adapter<ModuleHolder>() {
@@ -117,7 +143,7 @@ class NodeModulesFragment : BaseFragment() {
 
             // so turns out that you can delete node module folders while it's running, but it
             // won't take effect until after restarting the node. Observe the folders from
-            // SiadSource and watch for delete event? Or just call restart here?
+            // SiadSource and watch for delete event? Or just call restart on it in the vm?
             module_internal_layout.setOnClickListener {
                 showDeleteConfirmationDialog(module, true)
             }
@@ -132,27 +158,11 @@ class NodeModulesFragment : BaseFragment() {
             module_name.text = module.type.text
             module_switch.isChecked = module.on
 
-            if (module.internalSize > 0) {
-                module_internal_size.text = StorageUtil.readableFilesizeString(module.internalSize)
-                module_internal_size.visibility = View.VISIBLE
-                internal_storage_header.visibility = View.VISIBLE
-                module_internal_layout.visibility = View.VISIBLE
-            } else {
-                module_internal_size.visibility = View.GONE
-                internal_storage_header.visibility = View.GONE
-                module_internal_layout.visibility = View.GONE
-            }
+            module_internal_size.text = StorageUtil.readableFilesizeString(module.internalSize)
+            module_internal_layout.visibleIf(module.internalSize > 0)
 
-            if (module.externalSize > 0) {
-                module_external_size.text = StorageUtil.readableFilesizeString(module.externalSize)
-                module_external_size.visibility = View.VISIBLE
-                external_storage_header.visibility = View.VISIBLE
-                module_external_layout.visibility = View.VISIBLE
-            } else {
-                module_external_size.visibility = View.GONE
-                external_storage_header.visibility = View.GONE
-                module_external_layout.visibility = View.GONE
-            }
+            module_external_size.text = StorageUtil.readableFilesizeString(module.externalSize)
+            module_external_layout.visibleIf(module.externalSize > 0)
         }
     }
 }

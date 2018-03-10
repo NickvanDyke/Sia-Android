@@ -32,7 +32,6 @@ import com.vandyke.sia.ui.onboarding.PurchaseActivity
 import com.vandyke.sia.ui.renter.allowance.AllowanceFragment
 import com.vandyke.sia.ui.renter.files.view.FilesFragment
 import com.vandyke.sia.ui.settings.SettingsFragmentContainer
-import com.vandyke.sia.ui.terminal.TerminalFragment
 import com.vandyke.sia.ui.wallet.view.WalletFragment
 import com.vandyke.sia.util.DialogUtil
 import com.vandyke.sia.util.SiaUtil
@@ -85,7 +84,6 @@ class MainActivity : AppCompatActivity() {
                     0L // doesn't fire the listener? Maybe since it's in a submenu. So we set it manually above
                 }
                 "wallet" -> 3L
-                "terminal" -> 4L
                 else -> throw IllegalArgumentException("Invalid startup page: ${Prefs.startupPage}")
             }, true)
         } else {
@@ -101,7 +99,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun displayFragment(clazz: Class<*>) {
+    fun displayFragment(clazz: Class<*>) {
         /* return if the currently visible fragment is the same class as the one we want to display */
         if (clazz == visibleFragment?.javaClass)
             return
@@ -236,16 +234,6 @@ class MainActivity : AppCompatActivity() {
                 onClick { view -> displayFragment(WalletFragment::class.java); false }
             }
 
-            primaryItem {
-                name = "Terminal"
-                icon = R.drawable.icon_terminal
-                iconTintingEnabled = true
-                selectedIconColor = colorPrimary.toLong()
-                selectedTextColor = colorPrimary.toLong()
-                identifier = 4
-                onClick { view -> displayFragment(TerminalFragment::class.java); false }
-            }
-
             divider {  }
 
             primaryItem {
@@ -266,6 +254,10 @@ class MainActivity : AppCompatActivity() {
                 onClick { view -> displayFragment(AboutFragment::class.java); false }
             }
         }
+    }
+
+    fun deselectDrawer() {
+        drawer.deselect()
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {

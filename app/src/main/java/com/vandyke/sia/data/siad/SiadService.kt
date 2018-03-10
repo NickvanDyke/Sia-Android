@@ -42,6 +42,7 @@ class SiadService : LifecycleService() {
 
     private var siadFile: File? = null
     private var siadProcess: java.lang.Process? = null
+    private lateinit var handler: Handler
 
     val siadProcessIsRunning: Boolean
         get() = siadProcess != null
@@ -52,6 +53,8 @@ class SiadService : LifecycleService() {
 
         // TODO: should also check for and delete older versions of Sia
         siadFile = StorageUtil.copyFromAssetsToAppStorage("siad-${Prefs.siaVersion}", this)
+
+        handler = Handler(mainLooper)
 
         siadSource.onCreate()
 
@@ -148,8 +151,10 @@ class SiadService : LifecycleService() {
     fun restartSiad() {
         if (siadProcessIsRunning) {
             stopSiad()
+            /* first remove any pending starts */
+            handler.removeCallbacksAndMessages(null)
             /* need to wait a little bit, otherwise siad will report that the address is already in use */
-            Handler(mainLooper).postDelayed(::startSiad, 1000)
+            handler.postDelayed(::startSiad, 1000)
         }
     }
 
@@ -187,21 +192,12 @@ class SiadService : LifecycleService() {
         val contentPI = PendingIntent.getActivity(this, 0, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT)
         builder.setContentIntent(contentPI)
 
-        /* the action to open settings for Sia node running conditions */
-        // TODO
-
         /* the action to stop/start the Sia node */
         if (siadProcessIsRunning) {
             val stopIntent = Intent(SiadSource.STOP_SIAD)
-//            stopIntent.setClass(this, SiadReceiver::class.java)
             val stopPI = PendingIntent.getBroadcast(this, 0, stopIntent, PendingIntent.FLAG_UPDATE_CURRENT)
             builder.addAction(R.drawable.sia_new_circle_logo_transparent_white, "Stop", stopPI)
-        }// else {
-//            val startIntent = Intent(SiadReceiver.START_SIAD)
-//            startIntent.setClass(this, SiadReceiver::class.java)
-//            val startPI = PendingIntent.getBroadcast(this, 0, startIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-//            builder.addAction(R.drawable.siacoin_logo_svg_white, "Start", startPI)
-//        }
+        }
 
         return builder.build()
     }

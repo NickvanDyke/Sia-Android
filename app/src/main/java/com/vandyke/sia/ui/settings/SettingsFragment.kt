@@ -16,6 +16,8 @@ import com.vandyke.sia.R
 import com.vandyke.sia.data.local.AppDatabase
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.getAppComponent
+import com.vandyke.sia.ui.main.MainActivity
+import com.vandyke.sia.ui.terminal.TerminalFragment
 import com.vandyke.sia.util.GenUtil
 import com.vandyke.sia.util.rx.io
 import com.vandyke.sia.util.rx.main
@@ -53,6 +55,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         findPreference("viewSubscription").onPreferenceClickListener = Preference.OnPreferenceClickListener {
             GenUtil.launchCustomTabs(context!!, "https://play.google.com/store/account/subscriptions")
+            false
+        }
+
+        findPreference("openTerminal").onPreferenceClickListener = Preference.OnPreferenceClickListener {
+            (activity as MainActivity).apply {
+                displayFragment(TerminalFragment::class.java)
+                deselectDrawer()
+            }
             false
         }
 

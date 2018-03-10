@@ -37,6 +37,11 @@
             android:numeric="integer"
             android:title="Displayed decimal precision" />
     </PreferenceCategory>
+    <PreferenceCategory android:title="Advanced">
+        <Preference
+            android:key="openTerminal"
+            android:title="Open terminal" />
+    </PreferenceCategory>
     <PreferenceCategory android:title="Misc">
         <Preference
             android:key="viewSubscription"
