@@ -81,9 +81,9 @@ class MainActivity : AppCompatActivity() {
             drawer.setSelection(when (Prefs.startupPage) {
                 "files" -> {
                     displayFragment(if (BuildConfig.DEBUG) FilesFragment::class.java else ComingSoonFragment::class.java)
-                    0L // doesn't fire the listener? Maybe since it's in a submenu. So we set it manually above
+                    3L // doesn't fire the listener? Maybe since it's in a submenu. So we set it manually above TODO: isn't selecting the drawer item
                 }
-                "wallet" -> 3L
+                "wallet" -> 2L
                 else -> throw IllegalArgumentException("Invalid startup page: ${Prefs.startupPage}")
             }, true)
         } else {
@@ -194,7 +194,6 @@ class MainActivity : AppCompatActivity() {
                 name = "Renter"
                 icon = R.drawable.ic_cloud
                 iconTintingEnabled = true
-                identifier = 2
                 selectable = false
             }.withSubItems(
                     SecondaryDrawerItem()
@@ -203,7 +202,7 @@ class MainActivity : AppCompatActivity() {
                             .withIconTintingEnabled(true)
                             .withSelectedIconColor(colorPrimary)
                             .withSelectedTextColor(colorPrimary)
-                            .withIdentifier(0)
+                            .withIdentifier(3)
                             .withOnDrawerItemClickListener { _, _, _ -> displayFragment(if (BuildConfig.DEBUG)
                                 FilesFragment::class.java
                             else
@@ -230,7 +229,7 @@ class MainActivity : AppCompatActivity() {
                 iconTintingEnabled = true
                 selectedIconColor = colorPrimary.toLong()
                 selectedTextColor = colorPrimary.toLong()
-                identifier = 3
+                identifier = 2
                 onClick { view -> displayFragment(WalletFragment::class.java); false }
             }
 

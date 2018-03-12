@@ -13,12 +13,13 @@ sealed class Node {
     abstract val size: Long
     abstract val parent: String?
 
-    val name: String by lazy { this.path.name() }
+    val name: String
+        get() = this.path.name()
 }
 
 /** We use this because generally when using the node's path as a parent path, or adding to it,
-  * we add a slash to the end of the path. But if this node resides in the root directory,
-  * then it's parent is the empty string, which we don't want to add a slash to. */
+ * we add a slash to the end of the path. But if this node resides in the root directory,
+ * then it's parent is the empty string, which we don't want to add a slash to. */
 fun String.withTrailingSlashIfNotEmpty() = if (this.isNotEmpty()) "$this/" else this
 
 fun String.name(): String = this.substring(this.lastIndexOf('/') + 1)

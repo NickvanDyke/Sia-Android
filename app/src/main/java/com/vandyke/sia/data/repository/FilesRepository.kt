@@ -207,6 +207,9 @@ class FilesRepository
             }
             .inDbTransaction(db)
 
+    // TODO: if a dir is selected and so are dirs/files inside of it, then some things will be downloaded multiple times.
+    // could check all nodes and eliminate ones that are within/under any selected dirs, then proceed with downloading the
+    // remaining nodes
     fun multiDownload(nodes: List<Node>, destination: String) = nodes.toObservable()
             .flatMapCompletable { node ->
                 if (node is Dir)

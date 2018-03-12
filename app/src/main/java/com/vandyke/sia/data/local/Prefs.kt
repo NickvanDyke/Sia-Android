@@ -33,6 +33,7 @@ object Prefs : KotprefModel() {
     var startupPage by stringPref("wallet")
     var displayedDecimalPrecision by intPref(2)
 
+    var siaWorkingDirectory by stringPref(context.filesDir.absolutePath)
     var siaManuallyStopped by booleanPref(false)
     var runSiaInBackground by booleanPref(true)
     var runSiaOnData by booleanPref(false)

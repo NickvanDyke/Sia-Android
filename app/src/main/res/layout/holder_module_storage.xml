@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/module_storage_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?android:attr/selectableItemBackground"
+    app:layout_constraintTop_toBottomOf="@+id/module_storage_list">
+
+    <TextView
+        android:id="@+id/module_storage_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:text="Internal storage"
+        android:textColor="?android:attr/textColorTertiary"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/module_storage_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/module_storage_header"
+        android:layout_below="@+id/module_storage_header"
+        android:layout_marginBottom="8dp"
+        android:text="Size"
+        android:textColor="?android:attr/textColorSecondary"
+        android:textSize="18sp" />
+</RelativeLayout>

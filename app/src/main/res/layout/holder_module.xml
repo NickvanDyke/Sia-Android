@@ -50,83 +50,12 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/module_switch" />
 
-        <RelativeLayout
-            android:id="@+id/module_internal_layout"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/module_storage_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?android:attr/selectableItemBackground"
-            app:layout_constraintTop_toBottomOf="@+id/view">
-
-            <TextView
-                android:id="@+id/internal_storage_header"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:text="Internal storage"
-                android:textColor="?android:attr/textColorTertiary"
-                android:textSize="14sp" />
-
-            <TextView
-                android:id="@+id/module_internal_size"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignStart="@+id/internal_storage_header"
-                android:layout_below="@+id/internal_storage_header"
-                android:layout_marginBottom="8dp"
-                android:text="Size"
-                android:textColor="?android:attr/textColorSecondary"
-                android:textSize="18sp" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/module_external_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?android:attr/selectableItemBackground"
-            app:layout_constraintTop_toBottomOf="@+id/module_internal_layout">
-
-            <TextView
-                android:id="@+id/external_storage_header"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:text="External storage"
-                android:textColor="?android:attr/textColorTertiary"
-                android:textSize="14sp" />
-
-            <TextView
-                android:id="@+id/module_external_size"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignStart="@+id/external_storage_header"
-                android:layout_below="@+id/external_storage_header"
-                android:layout_marginBottom="8dp"
-                android:text="Size"
-                android:textColor="?android:attr/textColorSecondary"
-                android:textSize="18sp" />
-
-        </RelativeLayout>
-
-
-        <!--<TextView-->
-        <!--android:id="@+id/module_delete_cached"-->
-        <!--android:layout_width="0dp"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_marginTop="8dp"-->
-        <!--android:background="?android:attr/selectableItemBackground"-->
-        <!--android:gravity="start"-->
-        <!--android:paddingStart="16dp"-->
-        <!--android:paddingBottom="16dp"-->
-        <!--android:paddingTop="8dp"-->
-        <!--android:text="Clear cached data"-->
-        <!--android:textColor="?android:attr/textColorSecondary"-->
-        <!--android:textSize="18sp"-->
-        <!--app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--app:layout_constraintEnd_toEndOf="parent"-->
-        <!--app:layout_constraintStart_toStartOf="parent"-->
-        <!--app:layout_constraintTop_toBottomOf="@+id/module_external_size" />-->
+            app:layoutManager="LinearLayoutManager"
+            app:layout_constraintTop_toBottomOf="@id/view"/>
 
     </android.support.constraint.ConstraintLayout>
 

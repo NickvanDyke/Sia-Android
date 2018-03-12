@@ -4,11 +4,12 @@
 
 package com.vandyke.sia.ui.node.modules
 
+import java.io.File
+
 data class ModuleData(
         val type: Module,
-        val on: Boolean,
-        val internalSize: Long = 0,
-        val externalSize: Long = 0)
+        val enabled: Boolean,
+        val directories: List<File>)
 
 enum class Module(val text: String) {
     WALLET("Wallet"),

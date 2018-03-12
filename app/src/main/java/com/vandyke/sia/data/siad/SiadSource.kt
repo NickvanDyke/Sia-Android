@@ -16,7 +16,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /** This class is used as a singleton that aggregates all factors of whether siad should be running.
-  * Should really only be used in SiadService. */
+ * Should really only be used in SiadService. */
 @Singleton
 class SiadSource
 @Inject constructor(private val application: Application) {
@@ -39,7 +39,7 @@ class SiadSource
     private val prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
         when (key) {
             "runSiaOnData", "runSiaInBackground", "siaManuallyStopped" -> setConditions()
-            "useExternal", "apiPassword", "modulesString" -> signalRestart()
+            "siaWorkingDirectory", "apiPassword", "modulesString" -> signalRestart()
         }
     }
 
@@ -77,10 +77,13 @@ class SiadSource
         Prefs.preferences.registerOnSharedPreferenceChangeListener(prefsListener)
         application.registerActivityLifecycleCallbacks(lifecycleCallbacks)
 
-        val filter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
-        filter.addAction(START_SIAD)
-        filter.addAction(STOP_SIAD)
-        application.registerReceiver(receiver, filter)
+        application.registerReceiver(
+                receiver,
+                IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
+                        .apply {
+                            addAction(START_SIAD)
+                            addAction(STOP_SIAD)
+                        })
     }
 
     fun onDestroy() {
@@ -106,7 +109,7 @@ class SiadSource
 
     /* broadcast intents */
     companion object {
-        val START_SIAD = "start_siad"
-        val STOP_SIAD = "stop_siad"
+        val START_SIAD = "START_SIAD"
+        val STOP_SIAD = "STOP_SIAD"
     }
 }

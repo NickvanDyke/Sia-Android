@@ -74,6 +74,8 @@ object StorageUtil {
     }
 }
 
+fun Context.getAllFilesDirs(): List<File> = getExternalFilesDirs(null).toMutableList().apply { add(0, filesDir) }
+
 class ExternalStorageException(msg: String) : Exception(msg)
 
 fun File.recursiveLength(): Long {

@@ -67,18 +67,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
 
         findPreference("clearDatabase").onPreferenceClickListener = Preference.OnPreferenceClickListener {
-            Completable.fromAction {
-                db.dirDao().deleteAll()
-                db.fileDao().deleteAll()
-                db.consensusDao().deleteAll()
-                db.addressDao().deleteAll()
-                db.allowanceDao().deleteAll()
-                db.pricesDao().deleteAll()
-                db.spendingDao().deleteAll()
-                db.transactionDao().deleteAll()
-                db.walletDao().deleteAll()
-                db.scValueDao().deleteAll()
-            }
+            Completable.fromAction { db.clearAllTables() }
                     .io()
                     .main()
                     .subscribe({ Light.success(view!!, "Cleared cached data", Snackbar.LENGTH_SHORT).show() },

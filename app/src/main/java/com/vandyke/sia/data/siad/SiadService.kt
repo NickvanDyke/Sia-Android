@@ -12,6 +12,7 @@ import android.arch.lifecycle.LifecycleService
 import android.content.Context
 import android.content.Intent
 import android.os.Binder
+import android.os.Environment
 import android.os.Handler
 import android.os.IBinder
 import android.support.v4.app.NotificationCompat
@@ -21,7 +22,6 @@ import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.siad.SiadStatus.State
 import com.vandyke.sia.getAppComponent
 import com.vandyke.sia.ui.main.MainActivity
-import com.vandyke.sia.util.ExternalStorageException
 import com.vandyke.sia.util.NotificationUtil
 import com.vandyke.sia.util.StorageUtil
 import com.vandyke.sia.util.bitmapFromVector
@@ -74,7 +74,7 @@ class SiadService : LifecycleService() {
         }
     }
 
-    fun startSiad() {
+    private fun startSiad() {
         if (siadProcessIsRunning) {
             return
         } else if (siadFile == null) {
@@ -93,16 +93,20 @@ class SiadService : LifecycleService() {
             pb.environment()["SIA_API_PASSWORD"] = Prefs.apiPassword
         }
 
-        /* determine what directory Sia should use. Display notification with errors if external storage is set and not working */
-        if (Prefs.useExternal) {
-            try {
-                pb.directory(StorageUtil.getExternalStorage(this))
-            } catch (e: ExternalStorageException) {
-                siadStatus.siadOutput(e.localizedMessage)
+        // TODO: getting permission denied when trying to run siad in the working directory. Even when using getFilesDir()
+        val dir = File(Prefs.siaWorkingDirectory)
+        if (!dir.exists()) {
+            siadStatus.siadOutput("Error: set working directory doesn't exist")
+            return
+        } else if (dir.absolutePath != filesDir.absolutePath) {
+            if (Environment.getExternalStorageState(dir) != Environment.MEDIA_MOUNTED) {
+                siadStatus.siadOutput("Error with external storage: ${Environment.getExternalStorageState(dir)}")
                 return
+            } else {
+                pb.directory(dir)
             }
         } else {
-            pb.directory(filesDir)
+            pb.directory(dir)
         }
 
         try {
@@ -118,7 +122,12 @@ class SiadService : LifecycleService() {
                     val inputReader = BufferedReader(InputStreamReader(siadProcess!!.inputStream))
                     var line: String? = inputReader.readLine()
                     while (line != null) {
-                        /* sometimes the phone runs a portscan, and siad receives an HTTP request from it, and outputs a weird
+                        if (line.contains("Cannot run program")) {
+                            siadStatus.siadOutput(line)
+                            stopSiad()
+                            return@launch
+                        }
+                        /* seems that sometimes the phone runs a portscan, and siad receives an HTTP request from it, and outputs a weird
                          * error message thingy. It doesn't affect operation at all, and we don't want the user to see it since
                          * it'd just be confusing */
                         if (!line.contains("Unsolicited response received on idle HTTP channel starting with"))
@@ -139,7 +148,7 @@ class SiadService : LifecycleService() {
         }
     }
 
-    fun stopSiad() {
+    private fun stopSiad() {
         // TODO: maybe shut it down using http stop request instead? Takes ages sometimes. Might be advantageous though
         siadProcess?.destroy()
         siadProcess = null
@@ -148,7 +157,7 @@ class SiadService : LifecycleService() {
     }
 
     /** restarts siad, but only if it's already running */
-    fun restartSiad() {
+    private fun restartSiad() {
         if (siadProcessIsRunning) {
             stopSiad()
             /* first remove any pending starts */

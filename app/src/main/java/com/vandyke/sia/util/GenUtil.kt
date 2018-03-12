@@ -5,6 +5,7 @@
 package com.vandyke.sia.util
 
 import android.content.Context
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.net.Uri
@@ -50,6 +51,10 @@ fun Context.getAttrColor(attrResId: Int): Int {
 fun Context.getAttrColors(vararg attrResIds: Int): List<Int> {
     val array = this.theme.obtainStyledAttributes(attrResIds)
     return List(attrResIds.size, { index -> array.getColor(index, 0xFF0FF) })
+}
+
+fun Context.havePermission(permission: String): Boolean {
+    return ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
 }
 
 fun SwipeRefreshLayout.setColors(context: Context) {

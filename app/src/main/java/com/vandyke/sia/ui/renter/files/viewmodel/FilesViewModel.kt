@@ -5,6 +5,7 @@
 package com.vandyke.sia.ui.renter.files.viewmodel
 
 import android.arch.lifecycle.ViewModel
+import android.arch.persistence.room.EmptyResultSetException
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.models.renter.Dir
 import com.vandyke.sia.data.models.renter.Node
@@ -94,9 +95,16 @@ class FilesViewModel
                     currentDir.value = it
                     setDisplayedNodes()
                 }, {
-                    /* presumably the only error would be an empty result set from querying for the dir. In which case we go home */
-                    changeDir()
-                    onError(it)
+                    /* presumably the only error would be an empty result set from querying for the dir */
+                    if (it is EmptyResultSetException) {
+                        onError(EmptyResultSetException("No directory exists at path: $path"))
+                    } else {
+                        onError(it)
+                    }
+                    /* we set the value to itself so that the view will be notified and reset
+                     * anything that changed from attempting to set the directory to a non-existent one,
+                     * such as the selected item on the spinner */
+                    currentDir.value = currentDir.value
                 })
     }
 

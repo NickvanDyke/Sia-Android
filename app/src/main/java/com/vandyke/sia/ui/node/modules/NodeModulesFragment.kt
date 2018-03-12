@@ -15,12 +15,11 @@ import com.vandyke.sia.dagger.SiaViewModelFactory
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.getAppComponent
 import com.vandyke.sia.ui.common.BaseFragment
-import com.vandyke.sia.util.StorageUtil
-import com.vandyke.sia.util.visibleIf
 import io.github.tonnyl.light.Light
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.fragment_node_modules.*
 import kotlinx.android.synthetic.main.holder_module.*
+import java.io.File
 import javax.inject.Inject
 
 class NodeModulesFragment : BaseFragment() {
@@ -40,7 +39,7 @@ class NodeModulesFragment : BaseFragment() {
 
         vm = ViewModelProviders.of(this, factory).get(NodeModulesViewModel::class.java)
 
-        vm.modules.observe(this, adapter::submitList)
+        vm.moduleUpdated.observe(this, adapter::notifyUpdate)
 
         vm.success.observe(this) {
             Light.success(view, it, Snackbar.LENGTH_LONG).show()
@@ -71,7 +70,7 @@ class NodeModulesFragment : BaseFragment() {
                             Module.CONSENSUS -> "You'll have to re-sync the blockchain."
                             else -> ""
                         })
-                .setPositiveButton("Yes") { _, _ -> vm.deleteModule(module, internal) }
+                .setPositiveButton("Yes") { _, _ -> vm.deleteDir(module, File("")) }
                 .setNegativeButton("No", null)
     }
 
@@ -83,9 +82,7 @@ class NodeModulesFragment : BaseFragment() {
         return if (item.itemId == R.id.modules_info) {
             AlertDialog.Builder(context!!)
                     .setTitle("Modules info")
-                    .setMessage("The switch enables/disables the module on the Sia node. Internal/External storage indicates " +
-                            "how much storage space that module is using on your device - tap to delete the files from that module. " +
-                            "The Sia node will automatically restart after deleting module files.")
+                    .setMessage("The switch enables/disables the module on the Sia node. ")
                     .setPositiveButton(android.R.string.ok, null)
                     .show()
             true
@@ -95,8 +92,6 @@ class NodeModulesFragment : BaseFragment() {
     }
 
     inner class ModulesAdapter : RecyclerView.Adapter<ModuleHolder>() {
-        private var list = listOf<ModuleData>()
-        private var loadedModules = false
         private val holders = mutableListOf<ModuleHolder>()
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ModuleHolder {
@@ -106,31 +101,23 @@ class NodeModulesFragment : BaseFragment() {
         }
 
         override fun onBindViewHolder(holder: ModuleHolder, position: Int) {
-            holder.bind(list[position])
+            holder.bind(vm.modules[position])
         }
 
-        override fun getItemCount() = list.size
+        override fun getItemCount() = vm.modules.size
 
-        /* We have our own implementation because using ListAdapter and DiffUtil would cause the
-         * view holder to flash every time it updated, which is very often in this case */
-        fun submitList(newList: List<ModuleData>) {
-            if (!loadedModules) {
-                this.list = newList
-                notifyDataSetChanged()
-                loadedModules = true
-            } else {
-                for (i in 0..4)
-                    if (list[i] != newList[i])
-                        holders[i].bind(newList[i])
-                this.list = newList
-            }
+        fun notifyUpdate(module: Module) {
+            val data = vm.modules.find { it.type == module }
+            val holder = holders.find { it.module == module }
+            holder?.bind(data!!)
         }
     }
 
     inner class ModuleHolder(itemView: View) : RecyclerView.ViewHolder(itemView), LayoutContainer {
         override val containerView: View? = itemView
 
-        private lateinit var module: Module
+        lateinit var module: Module
+        private val storageAdapter = ModuleStorageAdapter()
 
         init {
             module_switch.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -141,28 +128,22 @@ class NodeModulesFragment : BaseFragment() {
                 }
             }
 
+            module_switch.setOnClickListener {
+                Light.success(view!!, "${module.text} module ${if (module_switch.isChecked) "enabled" else "disabled"}, restarting Sia node...", Snackbar.LENGTH_LONG).show()
+            }
+
             // so turns out that you can delete node module folders while it's running, but it
             // won't take effect until after restarting the node. Observe the folders from
             // SiadSource and watch for delete event? Or just call restart on it in the vm?
-            module_internal_layout.setOnClickListener {
-                showDeleteConfirmationDialog(module, true)
-            }
-
-            module_external_layout.setOnClickListener {
-                showDeleteConfirmationDialog(module, false)
-            }
         }
 
         fun bind(module: ModuleData) {
             this.module = module.type
             module_name.text = module.type.text
-            module_switch.isChecked = module.on
+            module_switch.isChecked = module.enabled
 
-            module_internal_size.text = StorageUtil.readableFilesizeString(module.internalSize)
-            module_internal_layout.visibleIf(module.internalSize > 0)
-
-            module_external_size.text = StorageUtil.readableFilesizeString(module.externalSize)
-            module_external_layout.visibleIf(module.externalSize > 0)
+            storageAdapter.dirs = module.directories
+            storageAdapter.notifyDataSetChanged()
         }
     }
 }

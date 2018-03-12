@@ -12,7 +12,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.PorterDuff
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
+import android.os.Environment
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
@@ -96,12 +96,8 @@ class FilesFragment : BaseFragment() {
 
         /* FAB stuff */
         fabAddFile.setOnClickListener {
+            launchSafChooseFile()
             fabFilesMenu.close(true)
-            if (ContextCompat.checkSelfPermission(context!!, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_READ_EXTERNAL_STORAGE)
-            } else {
-                launchSAF()
-            }
         }
 
         fabAddDir.setOnClickListener {
@@ -146,7 +142,7 @@ class FilesFragment : BaseFragment() {
         }
 
         multiDownload.setOnClickListener {
-            viewModel.downloadSelected(TODO())
+            downloadSelected()
         }
 
         multiDelete.setOnClickListener {
@@ -169,9 +165,7 @@ class FilesFragment : BaseFragment() {
             else
                 mutableListOf()
             path.add(0, "Home")
-            path.forEach {
-                pathAdapter.add(it)
-            }
+            pathAdapter.addAll(path)
             spinnerView.setSelection(path.size - 1)
             setSearchHint()
             setMultiMoveImage()
@@ -251,9 +245,23 @@ class FilesFragment : BaseFragment() {
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        if (requestCode == REQUEST_READ_EXTERNAL_STORAGE) {
+        if (requestCode == REQUEST_READ_PERMISSION) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                launchSAF()
+                launchSafChooseFile()
+            } else {
+                AlertDialog.Builder(context!!)
+                        .setMessage("Sia needs read access to your storage in order to upload your chosen files to the Sia network")
+                        .setPositiveButton(android.R.string.ok, null)
+                        .show()
+            }
+        } else if (requestCode == REQUEST_WRITE_PERMISSION) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                downloadSelected()
+            } else {
+                AlertDialog.Builder(context!!)
+                        .setMessage("Sia needs write access to your storage in order to download your files from the Sia network to your device's storage")
+                        .setPositiveButton(android.R.string.ok, null)
+                        .show()
             }
         }
     }
@@ -329,7 +337,7 @@ class FilesFragment : BaseFragment() {
         else -> super.onOptionsItemSelected(item)
     }
 
-    /** The order of the OrderBy enum values and the order of the sort by options in the list must be the same for this to work */
+    /* The order of the OrderBy enum values and the order of the sort by options in the list must be the same for this to work */
     private fun setCheckedOrderByItem() {
         val orderBy = viewModel.orderBy.value
         orderByItems.forEachIndexed { i, item ->
@@ -358,12 +366,24 @@ class FilesFragment : BaseFragment() {
                     R.drawable.ic_move_to_inbox)
     }
 
-    private fun launchSAF() {
+    private fun launchSafChooseFile() {
+        if (!context!!.havePermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_READ_PERMISSION)
+            return
+        }
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true)
         intent.putExtra(Intent.CATEGORY_OPENABLE, true)
         intent.type = "*/*"
         startActivityForResult(Intent.createChooser(intent, "Upload a file"), FILE_REQUEST_CODE)
+    }
+
+    private fun downloadSelected() {
+        if (!context!!.havePermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), REQUEST_WRITE_PERMISSION)
+            return
+        }
+        viewModel.downloadSelected(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).absolutePath)
     }
 
     override fun onBackPressed(): Boolean {
@@ -385,6 +405,7 @@ class FilesFragment : BaseFragment() {
 
     companion object {
         private const val FILE_REQUEST_CODE = 5424
-        private const val REQUEST_READ_EXTERNAL_STORAGE = 70
+        private const val REQUEST_READ_PERMISSION = 1212
+        private const val REQUEST_WRITE_PERMISSION = 1212
     }
 }
