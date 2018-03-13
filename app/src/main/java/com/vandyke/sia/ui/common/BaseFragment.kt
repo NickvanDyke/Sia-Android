@@ -27,7 +27,7 @@ abstract class BaseFragment : Fragment() {
     val actionBar: ActionBar
         get() = (activity as AppCompatActivity).supportActionBar!!
 
-    val mainActivity
+    val mainActivity: MainActivity
         get() = activity as MainActivity
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -41,13 +41,16 @@ abstract class BaseFragment : Fragment() {
     /** returns true if the back press was consumed/used by this fragment, otherwise false */
     open fun onBackPressed(): Boolean = false
 
+    // am very rarely having onShow called when it shouldn't be, by fragments in the background... not sure why
     private fun onShowHelper() {
+//        println("${this.javaClass.simpleName} onShowHelper")
         userVisibleHint = true
         logScreen()
         onShow()
     }
 
     private fun onHideHelper() {
+//        println("${this.javaClass.simpleName} onHideHelper")
         userVisibleHint = false
         onHide()
     }
@@ -59,6 +62,7 @@ abstract class BaseFragment : Fragment() {
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
+//        println("${this.javaClass.simpleName} onHiddenChanged. hidden: $hidden")
         if (!hidden) {
             onShowHelper()
             activity!!.invalidateOptionsMenu()
@@ -68,6 +72,7 @@ abstract class BaseFragment : Fragment() {
     }
 
     override fun onStart() {
+//        println("${this.javaClass.simpleName} onStart. userVisibleHint: $userVisibleHint; isVisible: $isVisible")
         super.onStart()
         activity!!.invalidateOptionsMenu()
         if (userVisibleHint || isVisible)
@@ -75,6 +80,7 @@ abstract class BaseFragment : Fragment() {
     }
 
     override fun onStop() {
+//        println("${this.javaClass.simpleName} onStop. userVisibleHint: $userVisibleHint; isVisible: $isVisible")
         super.onStop()
         if (userVisibleHint)
             onHideHelper()

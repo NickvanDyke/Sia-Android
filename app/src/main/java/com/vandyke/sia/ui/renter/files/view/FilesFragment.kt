@@ -213,6 +213,10 @@ class FilesFragment : BaseFragment() {
             nodesListRefresh.isRefreshing = it
         }
 
+        viewModel.activeTasks.observe(this) {
+            // TODO
+        }
+
         viewModel.error.observe(this) {
             it.snackbar(coordinator)
             nodesListRefresh.isRefreshing = false

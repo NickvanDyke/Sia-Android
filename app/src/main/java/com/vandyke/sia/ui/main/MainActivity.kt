@@ -35,6 +35,7 @@ import com.vandyke.sia.ui.settings.SettingsFragmentContainer
 import com.vandyke.sia.ui.wallet.view.WalletFragment
 import com.vandyke.sia.util.DialogUtil
 import com.vandyke.sia.util.SiaUtil
+import com.vandyke.sia.util.StorageUtil
 import com.vandyke.sia.util.getAttrColor
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -58,6 +59,13 @@ class MainActivity : AppCompatActivity() {
         /* allow rotation in debug builds, for easy recreation testing */
         if (BuildConfig.DEBUG)
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+
+        /* migrate from the old use-external-storage method if necessary.
+         * We can delete Prefs.useExternal and StorageUtil.getExternalStorage when this is no longer needed */
+        if (Prefs.useExternal) {
+            Prefs.siaWorkingDirectory = StorageUtil.getExternalStorage(this).absolutePath
+            Prefs.useExternal = false
+        }
 
         AppCompatDelegate.setDefaultNightMode(if (Prefs.darkMode) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO)
         setTheme(if (Prefs.oldSiaColors) R.style.AppTheme_DayNight_OldSiaColors else R.style.AppTheme_DayNight)

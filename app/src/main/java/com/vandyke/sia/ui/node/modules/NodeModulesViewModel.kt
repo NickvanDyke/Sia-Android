@@ -72,10 +72,12 @@ class NodeModulesViewModel
 
     fun deleteDir(module: Module, dir: File) {
         val result = dir.deleteRecursively()
+        val shouldRestart = dir.parent == Prefs.siaWorkingDirectory
         if (result)
-            success.value = "Deleted ${module.text} files from ${dir.absolutePath}. Restarting Sia node..."
+            success.value = "Deleted ${module.text} files from ${dir.absolutePath}${if (shouldRestart) ". Restarting Sia node..." else ""}"
         else
             error.value = "Error deleting ${module.text} files from ${dir.absolutePath}"
-        siadSource.signalRestart()
+        if (shouldRestart)
+            siadSource.signalRestart()
     }
 }

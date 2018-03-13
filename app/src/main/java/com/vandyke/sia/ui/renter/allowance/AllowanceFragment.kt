@@ -34,7 +34,7 @@ import kotlinx.android.synthetic.main.fragment_allowance.*
 import javax.inject.Inject
 
 // TODO: handle when there's no initial data from the db and the node isn't running yet. i.e. if you call setAllowance it'll crash
-// because it'll have null values. And graph will be empty
+// because it'll have null values
 class AllowanceFragment : BaseFragment() {
     override val layoutResId = R.layout.fragment_allowance
     override val hasOptionsMenu = true
@@ -73,7 +73,7 @@ class AllowanceFragment : BaseFragment() {
         val data = PieData(dataSet)
         data.setDrawValues(false)
 
-        with(pieChart) {
+        pieChart.apply {
             this.data = data
             isRotationEnabled = false
             description.isEnabled = false
@@ -91,9 +91,7 @@ class AllowanceFragment : BaseFragment() {
                 }
             })
 
-            invalidate() // TODO: pie chart is invisible until after recreation, or unless
-            // displayFragment(AllowanceFragment::class.java) is called at the end of MainActivity onCreate.
-            // why??? hopefully will discover while working on other stuff here
+            invalidate()
         }
 
         /* metric spinner setup */
@@ -158,12 +156,10 @@ class AllowanceFragment : BaseFragment() {
 
         vm.allowance.observe(this) {
             // TODO: show day equivalents of block values
-            with(it) {
-                fundsValue.text = funds.toSC().format() + " SC"
-                hostsValue.text = hosts.format()
-                periodValue.text = period.format() + " blocks"
-                renewWindowValue.text = renewwindow.format() + " blocks"
-            }
+                fundsValue.text = it.funds.toSC().format() + " SC"
+                hostsValue.text = it.hosts.format()
+                periodValue.text = it.period.format() + " blocks"
+                renewWindowValue.text = it.renewwindow.format() + " blocks"
         }
 
         vm.currentMetric.observe(this) {
@@ -179,20 +175,16 @@ class AllowanceFragment : BaseFragment() {
         vm.currentMetricValues.observe(this) { (price, spent, purchasable) ->
             val currency = " " + if (vm.currency.value == Currency.SC) "SC" else Prefs.fiatCurrency
             val metric = vm.currentMetric.value
-            
+
+            estPriceHeader.visibleIf(metric != UNSPENT)
+            tvPrice.visibleIf(metric != UNSPENT)
+            purchasableHeader.visibleIf(metric != UNSPENT)
+            tvPurchaseable.visibleIf(metric != UNSPENT)
             if (metric == UNSPENT) {
                 spentHeader.text = "Remaining funds"
                 tvSpent.text = spent.toSC().format() + currency
-                estPriceHeader.visibility = View.INVISIBLE
-                tvPrice.visibility = View.INVISIBLE
-                purchasableHeader.visibility = View.INVISIBLE
-                tvPurchaseable.visibility = View.INVISIBLE
             } else {
                 spentHeader.text = "Spent"
-                estPriceHeader.visibility = View.VISIBLE
-                tvPrice.visibility = View.VISIBLE
-                purchasableHeader.visibility = View.VISIBLE
-                tvPurchaseable.visibility = View.VISIBLE
                 if (metric == STORAGE) {
                     estPriceHeader.text = "Est. price/TB/month"
                     purchasableHeader.text = "Purchasable (1 month)"

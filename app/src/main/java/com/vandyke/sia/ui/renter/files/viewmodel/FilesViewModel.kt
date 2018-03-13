@@ -20,7 +20,6 @@ class FilesViewModel
 @Inject constructor(
         private val filesRepository: FilesRepository
 ) : ViewModel() {
-    // TODO: show progress of operations
     val currentDir = NonNullLiveData<Dir>(Dir("", 0))
     val displayedNodes = NonNullLiveData<List<Node>>(listOf())
 

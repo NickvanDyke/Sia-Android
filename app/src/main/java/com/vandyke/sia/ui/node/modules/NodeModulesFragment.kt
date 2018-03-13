@@ -63,8 +63,8 @@ class NodeModulesFragment : BaseFragment() {
                 .setMessage(
                         "Are you sure you want to delete all ${module.text} files at ${dir.absolutePath}?"
                                 + when (module) {
-                            Module.WALLET -> "Ensure your wallet seed is recorded elsewhere first."
-                            Module.CONSENSUS -> "You'll have to re-sync the blockchain."
+                            Module.WALLET -> " Ensure your wallet seed is recorded elsewhere first."
+                            Module.CONSENSUS -> " You'll have to re-sync the blockchain."
                             else -> ""
                         })
                 .setPositiveButton("Yes") { _, _ -> vm.deleteDir(module, dir) }

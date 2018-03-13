@@ -84,7 +84,7 @@ class SiadService : LifecycleService() {
 
         siadStatus.state.value = State.PROCESS_STARTING
 
-        val pb = ProcessBuilder(siadFile!!.absolutePath, "-M", Prefs.modulesString) // TODO: maybe let user set which modules to load?
+        val pb = ProcessBuilder(siadFile!!.absolutePath, "-M", Prefs.modulesString)
         pb.redirectErrorStream(true)
 
         /* start the node with an api password if it's not set to something empty */

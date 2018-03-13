@@ -12,14 +12,6 @@ class ModuleObserver(moduleData: ModuleData, notifier: MutableLiveData<Module>) 
         }
     }
 
-    init {
-        // TODO: these don't set sizes - seems that listFiles() on the dirs returns null at this point?
-        // delaying by 2000ms didn't help either. Results in reporting 0 size until
-        // fileobserver is triggered
-//            updateModule(module, internalSize = internalDir.recursiveLength())
-//            updateModule(module, externalSize = externalDir.recursiveLength())
-    }
-
     fun startWatching() {
         observers.forEach { it.startWatching() }
     }

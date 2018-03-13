@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--TODO: top/bottom spacing of this could be better. Using padding in the parent means that the ripple doesn't expand all the way to the top/bottom of it-->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:paddingTop="6dp"
-    android:paddingBottom="6dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/module_storage_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground"
+    android:paddingBottom="4dp"
     app:layout_constraintTop_toBottomOf="@+id/module_storage_list">
 
     <TextView
