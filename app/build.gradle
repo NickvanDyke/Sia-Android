@@ -14,8 +14,8 @@ android {
         applicationId "com.vandyke.sia"
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 205
-        versionName "0.2.5"
+        versionCode 206
+        versionName "0.2.6"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         /* lets us not shrink debug builds, for faster build times. Not necessary for release builds, since we shrink those */
         multiDexEnabled true

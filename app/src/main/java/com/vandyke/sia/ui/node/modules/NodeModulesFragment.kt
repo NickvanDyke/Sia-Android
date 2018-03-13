@@ -31,10 +31,11 @@ class NodeModulesFragment : BaseFragment() {
     lateinit var factory: SiaViewModelFactory
     private lateinit var vm: NodeModulesViewModel
 
+    private val adapter = ModulesAdapter()
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         context!!.getAppComponent().inject(this)
 
-        val adapter = ModulesAdapter()
         modules_list.adapter = adapter
 
         vm = ViewModelProviders.of(this, factory).get(NodeModulesViewModel::class.java)
@@ -51,6 +52,10 @@ class NodeModulesFragment : BaseFragment() {
     }
 
     override fun onShow() {
+        /* send an update notification for each module, so that the module's files' size will be
+         * accurately reflected upon showing the modules page without needing the FileObservers
+         * to fire an event first */
+        Module.values().forEach { adapter.notifyUpdate(it) }
         vm.onShow()
     }
 
