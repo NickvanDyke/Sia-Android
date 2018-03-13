@@ -51,27 +51,25 @@ class NodeModulesFragment : BaseFragment() {
     }
 
     override fun onShow() {
-        super.onShow()
         vm.onShow()
     }
 
     override fun onHide() {
-        super.onHide()
         vm.onHide()
     }
 
-    private fun showDeleteConfirmationDialog(module: Module, internal: Boolean) {
+    fun showDeleteConfirmationDialog(module: Module, dir: File) {
         AlertDialog.Builder(context!!)
-                .setTitle("Confirm")
                 .setMessage(
-                        "Are you sure you want to delete all ${module.text} files from ${if (internal) "internal" else "external"} storage?"
+                        "Are you sure you want to delete all ${module.text} files at ${dir.absolutePath}?"
                                 + when (module) {
                             Module.WALLET -> "Ensure your wallet seed is recorded elsewhere first."
                             Module.CONSENSUS -> "You'll have to re-sync the blockchain."
                             else -> ""
                         })
-                .setPositiveButton("Yes") { _, _ -> vm.deleteDir(module, File("")) }
+                .setPositiveButton("Yes") { _, _ -> vm.deleteDir(module, dir) }
                 .setNegativeButton("No", null)
+                .show()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -82,7 +80,7 @@ class NodeModulesFragment : BaseFragment() {
         return if (item.itemId == R.id.modules_info) {
             AlertDialog.Builder(context!!)
                     .setTitle("Modules info")
-                    .setMessage("The switch enables/disables the module on the Sia node. ")
+                    .setMessage("The switch enables/disables the module on the Sia node. Each module's storage usage is also shown - tap to delete.")
                     .setPositiveButton(android.R.string.ok, null)
                     .show()
             true
@@ -117,7 +115,7 @@ class NodeModulesFragment : BaseFragment() {
         override val containerView: View? = itemView
 
         lateinit var module: Module
-        private val storageAdapter = ModuleStorageAdapter()
+        private var storageAdapter: ModuleStorageAdapter? = null
 
         init {
             module_switch.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -131,19 +129,19 @@ class NodeModulesFragment : BaseFragment() {
             module_switch.setOnClickListener {
                 Light.success(view!!, "${module.text} module ${if (module_switch.isChecked) "enabled" else "disabled"}, restarting Sia node...", Snackbar.LENGTH_LONG).show()
             }
-
-            // so turns out that you can delete node module folders while it's running, but it
-            // won't take effect until after restarting the node. Observe the folders from
-            // SiadSource and watch for delete event? Or just call restart on it in the vm?
         }
 
         fun bind(module: ModuleData) {
+            if (storageAdapter == null) {
+                storageAdapter = ModuleStorageAdapter(module, this@NodeModulesFragment)
+                module_storage_list.adapter = storageAdapter
+            }
+
             this.module = module.type
             module_name.text = module.type.text
             module_switch.isChecked = module.enabled
 
-            storageAdapter.dirs = module.directories
-            storageAdapter.notifyDataSetChanged()
+            storageAdapter!!.notifyUpdate()
         }
     }
 }

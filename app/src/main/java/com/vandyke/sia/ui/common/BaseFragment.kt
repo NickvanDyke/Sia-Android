@@ -30,7 +30,6 @@ abstract class BaseFragment : Fragment() {
     val mainActivity
         get() = activity as MainActivity
 
-    /** call through to the super implementation when overriding */
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         setHasOptionsMenu(hasOptionsMenu)
         return if (layoutResId != -1)
@@ -42,39 +41,43 @@ abstract class BaseFragment : Fragment() {
     /** returns true if the back press was consumed/used by this fragment, otherwise false */
     open fun onBackPressed(): Boolean = false
 
-    /** called in onResume and in onHiddenChanged when hidden is false. Basically, called whenever
-     * the fragment is newly visible to the user. */
-    open fun onShow() {
+    private fun onShowHelper() {
         userVisibleHint = true
         logScreen()
+        onShow()
+    }
+
+    private fun onHideHelper() {
+        userVisibleHint = false
+        onHide()
+    }
+
+    open fun onShow() {
     }
 
     open fun onHide() {
-        userVisibleHint = false
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
         if (!hidden) {
-            onShow()
+            onShowHelper()
             activity!!.invalidateOptionsMenu()
         } else {
-            onHide()
+            onHideHelper()
         }
     }
 
-    /** call through to the super implementation when overriding */
     override fun onStart() {
         super.onStart()
         activity!!.invalidateOptionsMenu()
         if (userVisibleHint || isVisible)
-            onShow()
+            onShowHelper()
     }
 
-    /** call through to the super implementation when overriding */
     override fun onStop() {
         super.onStop()
         if (userVisibleHint)
-            onHide()
+            onHideHelper()
     }
 
     private fun logScreen() {

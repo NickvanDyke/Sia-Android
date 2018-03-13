@@ -16,7 +16,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /** This class is used as a singleton that aggregates all factors of whether siad should be running.
- * Should really only be used in SiadService. */
+ * Should mostly only be used in SiadService, and maaaaybe elsewhere if triggering a restart is needed. */
 @Singleton
 class SiadSource
 @Inject constructor(private val application: Application) {
@@ -30,6 +30,10 @@ class SiadSource
             setConditions()
         }
 
+    // TODO: could have better detection here. For example, currently opening a Chrome custom tab makes this false
+    // Might also be good to have a ~minute delay before shutting down the node once this changes, so that
+    // it's not turning on and off a ton if the user is switching back and forth between this and other apps quickly
+    // Should be easy to implement that in SiadService using Handler#postDelayed
     private var appInForeground = true /* initial value is true because onActivityResumed was already called for MainActivity at this point */
         set(value) {
             field = value

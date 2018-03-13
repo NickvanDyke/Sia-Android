@@ -207,13 +207,11 @@ class WalletFragment : BaseFragment() {
     }
 
     override fun onShow() {
-        super.onShow()
         actionBar.elevation = 0f
         viewModel.refreshAll()
     }
 
     override fun onHide() {
-        super.onHide()
         actionBar.elevation = 12f
     }
 

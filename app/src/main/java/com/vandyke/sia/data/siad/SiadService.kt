@@ -93,7 +93,6 @@ class SiadService : LifecycleService() {
             pb.environment()["SIA_API_PASSWORD"] = Prefs.apiPassword
         }
 
-        // TODO: getting permission denied when trying to run siad in the working directory. Even when using getFilesDir()
         val dir = File(Prefs.siaWorkingDirectory)
         if (!dir.exists()) {
             siadStatus.siadOutput("Error: set working directory doesn't exist")

@@ -391,14 +391,12 @@ class FilesFragment : BaseFragment() {
     }
 
     override fun onShow() {
-        super.onShow()
         toolbar.addView(spinnerView)
         actionBar.setDisplayShowTitleEnabled(false)
         viewModel.refresh()
     }
 
     override fun onHide() {
-        super.onHide()
         toolbar.removeView(spinnerView)
         actionBar.setDisplayShowTitleEnabled(true)
     }
