@@ -56,6 +56,11 @@ data class SiaFile(
 
     override val parent: String
         get() = this.path.filePathParent()
+
+    companion object {
+        /** Convenience method that returns a SiaFile with the given path and default values for other fields  */
+        fun withPath(path: String) = SiaFile(path, "", 0, false, false, 0.0, 0, 0, 0)
+    }
 }
 
 fun String.filePathParent(): String {

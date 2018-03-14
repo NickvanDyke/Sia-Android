@@ -205,8 +205,11 @@ class FilesViewModel
         nodesSubscription =
                 if (searching.value) {
                     filesRepository.search(searchTerm.value, currentDirPath, orderBy.value, ascending.value)
+                            .map { nodes -> nodes.filterNot { node -> node is Dir && node.path.isEmpty() } }
+                            /* mapping is because we don't want to show the root dir which has an empty path */
                 } else {
                     filesRepository.immediateNodes(currentDirPath, orderBy.value, ascending.value)
+                            .map { nodes -> nodes.filterNot { node -> node is Dir && node.path.isEmpty() } }
                 }
                         .io()
                         .main()

@@ -17,6 +17,9 @@ interface BaseDao<in T> {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertAllIgnoreOnConflict(items: List<T>)
 
+    @Insert(onConflict = OnConflictStrategy.ABORT)
+    fun insertAllAbortOnConflict(items: List<T>)
+
     @Delete
     fun delete(item: T)
 }

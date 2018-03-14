@@ -15,7 +15,7 @@ import io.reactivex.Single;
 @Dao
 public interface DirDao extends BaseDao<Dir> {
     @RawQuery(observedEntities = Dir.class)
-    Flowable<List<Dir>> customQuery(final SupportSQLiteQuery query);
+    Flowable<List<Dir>> customQueryFlowable(final SupportSQLiteQuery query);
 
     @Query("UPDATE dirs SET path = REPLACE(SUBSTR(path, 0, LENGTH(:path) + 1), :path, :newPath) || SUBSTR(path, LENGTH(:path) + 1) WHERE path == :path OR path LIKE :path || '/%'")
     void updatePath(String path, String newPath);

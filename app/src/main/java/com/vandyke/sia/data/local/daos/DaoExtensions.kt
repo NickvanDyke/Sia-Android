@@ -3,53 +3,82 @@ package com.vandyke.sia.data.local.daos
 import android.arch.persistence.db.SimpleSQLiteQuery
 import com.vandyke.sia.data.models.renter.Dir
 import com.vandyke.sia.data.models.renter.SiaFile
-import com.vandyke.sia.data.repository.FilesRepository
+import com.vandyke.sia.data.repository.FilesRepository.OrderBy
 import io.reactivex.Flowable
+import io.reactivex.Single
 
 /* Reason for this class, and FileDao and DirDao being Java files: When they were Kotlin files, Room
  * would generate the @RawQuery code in such a way that caused compilation errors. Using Java files instead fixed it.
  * TODO: change back to Kotlin files once it's fixed. */
 
-/** When a name is passed, it searches all directories under the given path. Without a name, it searches only immediate children of the given path */
-fun DirDao.getDirs(path: String, name: String? = null, orderBy: FilesRepository.OrderBy? = null, ascending: Boolean = true): Flowable<List<Dir>> {
-    var query = when {
-        path.isEmpty() && name?.isEmpty() == true -> "SELECT * FROM dirs WHERE path != ''"
-        path.isNotEmpty() && name?.isEmpty() == true -> "SELECT * FROM dirs WHERE path LIKE '$path/%'"
-        path.isNotEmpty() && name != null -> "SELECT * FROM dirs WHERE path LIKE '$path/%$name%' AND path NOT LIKE '$path/%$name%/%'"
-        path.isNotEmpty() && name == null -> "SELECT * FROM dirs WHERE path LIKE '$path/%' AND path NOT LIKE '$path/%/%'"
-        path.isEmpty() && name == null -> "SELECT * FROM dirs WHERE path NOT LIKE '%/%' AND path != ''"
-        path.isEmpty() && name != null -> "SELECT * FROM dirs WHERE ((path LIKE '$path/%$name%' AND path NOT LIKE '$path/%$name%/%') OR (path LIKE '%$name%' AND path NOT LIKE '%$name%/%')) AND path != ''"
-        else -> throw IllegalArgumentException()
-    }
-
-    if (orderBy != null) { // maybe include secondary sorting
-        query += " ORDER BY ${orderBy.text}"
-        if (!ascending) {
-            query += " DESC"
-        }
-    }
-
-    return customQuery(SimpleSQLiteQuery(query))
+fun DirDao.dirsUnderDir(dirPath: String, orderBy: OrderBy = OrderBy.PATH, ascending: Boolean = true): Flowable<List<Dir>> {
+    return customQueryFlowable(SimpleSQLiteQuery(underDirQuery("dirs", dirPath, orderBy, ascending)))
 }
 
-/** When a name is passed, it searches all files under the given path. Without a name, it searches only immediate children of the given path */
-fun FileDao.getFiles(path: String, name: String? = null, orderBy: FilesRepository.OrderBy? = null, ascending: Boolean = true): Flowable<List<SiaFile>> {
+fun DirDao.dirsUnderDirWithName(dirPath: String, name: String, orderBy: OrderBy = OrderBy.PATH, ascending: Boolean = true): Flowable<List<Dir>> {
+    return customQueryFlowable(SimpleSQLiteQuery(underDirWithNameQuery("dirs", name, dirPath, orderBy, ascending)))
+}
+
+fun DirDao.dirsInDir(dirPath: String, orderBy: OrderBy = OrderBy.PATH, ascending: Boolean = true): Flowable<List<Dir>> {
+    return customQueryFlowable(SimpleSQLiteQuery(inDirQuery("dirs", dirPath, orderBy, ascending)))
+}
+
+/* Not sure why, but using firstOrError() on filesUnderDir never emits, so have a Single version of it instead */
+fun FileDao.getFilesUnderDir(dirPath: String, orderBy: OrderBy = OrderBy.PATH, ascending: Boolean = true): Single<List<SiaFile>> {
+    return customQuerySingle(SimpleSQLiteQuery(underDirQuery("files", dirPath, orderBy, ascending)))
+}
+
+fun FileDao.filesUnderDir(dirPath: String, orderBy: OrderBy = OrderBy.PATH, ascending: Boolean = true): Flowable<List<SiaFile>> {
+    return customQueryFlowable(SimpleSQLiteQuery(underDirQuery("files", dirPath, orderBy, ascending)))
+}
+
+fun FileDao.filesUnderDirWithName(dirPath: String, name: String, orderBy: OrderBy = OrderBy.PATH, ascending: Boolean = true): Flowable<List<SiaFile>> {
+    return customQueryFlowable(SimpleSQLiteQuery(underDirWithNameQuery("files", dirPath, name, orderBy, ascending)))
+}
+
+fun FileDao.filesInDir(dirPath: String, orderBy: OrderBy = OrderBy.PATH, ascending: Boolean = true): Flowable<List<SiaFile>> {
+    return customQueryFlowable(SimpleSQLiteQuery(inDirQuery("files", dirPath, orderBy, ascending)))
+}
+
+
+private fun inDirQuery(tableName: String, dirPath: String, orderBy: OrderBy = OrderBy.PATH, ascending: Boolean = true): String {
+    var query = if (dirPath.isEmpty())
+        "SELECT * FROM $tableName WHERE path NOT LIKE '%/%'"
+    else
+        "SELECT * FROM $tableName WHERE path LIKE '$dirPath/%' AND path NOT LIKE '$dirPath/%/%'"
+
+    // maybe include secondary sorting
+    query += " ORDER BY ${orderBy.text}"
+    if (!ascending)
+        query += " DESC"
+
+    return query
+}
+
+private fun underDirQuery(tableName: String, dirPath: String, orderBy: OrderBy = OrderBy.PATH, ascending: Boolean = true): String {
+    var query = "SELECT * FROM $tableName"
+    if (dirPath.isNotEmpty())
+        query += " WHERE path LIKE '$dirPath/%'"
+
+    query += " ORDER BY ${orderBy.text}"
+    if (!ascending)
+        query += " DESC"
+
+    return query
+}
+
+private fun underDirWithNameQuery(tableName: String, dirPath: String, name: String, orderBy: OrderBy = OrderBy.PATH, ascending: Boolean = true): String {
     var query = when {
-        path.isEmpty() && name?.isEmpty() == true -> "SELECT * FROM files"
-        path.isNotEmpty() && name?.isEmpty() == true -> "SELECT * FROM files WHERE path LIKE '$path/%'"
-        path.isNotEmpty() && name != null -> "SELECT * FROM files WHERE path LIKE '$path/%$name%' AND path NOT LIKE '$path/%$name%/%'"
-        path.isNotEmpty() && name == null -> "SELECT * FROM files WHERE path LIKE '$path/%' AND path NOT LIKE '$path/%/%'"
-        path.isEmpty() && name == null -> "SELECT * FROM files WHERE path NOT LIKE '%/%'"
-        path.isEmpty() && name != null -> "SELECT * FROM files WHERE ((path LIKE '$path/%$name%' AND path NOT LIKE '$path/%$name%/%') OR (path LIKE '%$name%' AND path NOT LIKE '%$name%/%'))"
+        dirPath.isEmpty() && name.isEmpty() -> "SELECT * FROM $tableName"
+        dirPath.isNotEmpty() && name.isEmpty() -> "SELECT * FROM $tableName WHERE path LIKE '$dirPath/%'"
+        dirPath.isNotEmpty() -> "SELECT * FROM $tableName WHERE path LIKE '$dirPath/%$name%' AND path NOT LIKE '$dirPath/%$name%/%'"
+        dirPath.isEmpty() -> "SELECT * FROM $tableName WHERE ((path LIKE '$dirPath/%$name%' AND path NOT LIKE '$dirPath/%$name%/%') OR (path LIKE '%$name%' AND path NOT LIKE '%$name%/%'))"
         else -> throw IllegalArgumentException()
     }
 
-    if (orderBy != null) { // maybe include secondary sorting
-        query += " ORDER BY ${orderBy.text}"
-        if (!ascending) {
-            query += " DESC"
-        }
-    }
+    query += " ORDER BY ${orderBy.text}"
+    if (!ascending)
+        query += " DESC"
 
-    return customQuery(SimpleSQLiteQuery(query))
+    return query
 }

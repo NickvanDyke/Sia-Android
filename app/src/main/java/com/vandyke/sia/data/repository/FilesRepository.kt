@@ -6,8 +6,7 @@ package com.vandyke.sia.data.repository
 
 import android.database.sqlite.SQLiteConstraintException
 import com.vandyke.sia.data.local.AppDatabase
-import com.vandyke.sia.data.local.daos.getDirs
-import com.vandyke.sia.data.local.daos.getFiles
+import com.vandyke.sia.data.local.daos.*
 import com.vandyke.sia.data.models.renter.*
 import com.vandyke.sia.data.remote.SiaApi
 import com.vandyke.sia.util.rx.inDbTransaction
@@ -71,7 +70,7 @@ class FilesRepository
                     .flatMapSingle { dir ->
                         Single.zip(
                                 Single.just(dir),
-                                db.fileDao().getFilesUnder(dir.path),
+                                db.fileDao().getFilesUnderDir(dir.path),
                                 BiFunction<Dir, List<SiaFile>, Pair<Dir, List<SiaFile>>> { theDir, itsFiles ->
                                     Pair(theDir, itsFiles)
                                 })
@@ -86,20 +85,20 @@ class FilesRepository
     fun dir(path: String) = db.dirDao().dir(path)
 
     fun immediateNodes(path: String, orderBy: OrderBy, ascending: Boolean) = Flowable.combineLatest(
-            db.dirDao().getDirs(path, orderBy = orderBy, ascending = ascending),
-            db.fileDao().getFiles(path, orderBy = orderBy, ascending = ascending),
+            db.dirDao().dirsInDir(path, orderBy = orderBy, ascending = ascending),
+            db.fileDao().filesInDir(path, orderBy, ascending),
             BiFunction<List<Dir>, List<SiaFile>, List<Node>> { dir, file ->
                 return@BiFunction dir + file
             })!!
 
     fun search(name: String, path: String, orderBy: OrderBy, ascending: Boolean) = Flowable.combineLatest(
-            db.dirDao().getDirs(path, name, orderBy, ascending),
-            db.fileDao().getFiles(path, name, orderBy, ascending),
+            db.dirDao().dirsUnderDirWithName(path, name, orderBy, ascending),
+            db.fileDao().filesUnderDirWithName(path, name, orderBy, ascending),
             BiFunction<List<Dir>, List<SiaFile>, List<Node>> { dir, file ->
                 return@BiFunction dir + file
             })!!
 
-    fun createDir(path: String) = db.fileDao().getFilesUnder(path)
+    fun createDir(path: String) = db.fileDao().getFilesUnderDir(path)
             .flatMapCompletable { filesInNewDir ->
                 Completable.fromAction {
                     var size = 0L
@@ -113,11 +112,12 @@ class FilesRepository
             .onErrorResumeNext {
                 Completable.error(if (it is SQLiteConstraintException) DirAlreadyExists(path.name()) else it)
             }!!
+            .inDbTransaction(db)
 
     fun deleteDir(dir: Dir) = Completable.concatArray(
             Completable.fromAction { db.dirDao().delete(dir) },
             Completable.fromAction { db.dirDao().deleteDirsUnder(dir.path) },
-            db.fileDao().getFilesUnder(dir.path)
+            db.fileDao().getFilesUnderDir(dir.path)
                     .toElementsObservable()
                     .flatMapCompletable { deleteFile(it) })
             .inDbTransaction(db)
@@ -128,7 +128,7 @@ class FilesRepository
                         .onErrorResumeNext {
                             Completable.error(if (it is SQLiteConstraintException) DirAlreadyExists(newPath.name()) else it)
                         },
-                db.fileDao().getFilesUnder(dir.path)
+                db.fileDao().getFilesUnderDir(dir.path)
                         .toElementsObservable()
                         .flatMapCompletable { file -> moveFile(file, file.path.replaceFirst(dir.path, newPath)) })
 
@@ -145,7 +145,7 @@ class FilesRepository
     }
 
 
-    fun downloadDir(dir: Dir, destination: String) = db.fileDao().getFilesUnder(dir.path)
+    fun downloadDir(dir: Dir, destination: String) = db.fileDao().getFilesUnderDir(dir.path)
             .toElementsObservable()
             .flatMapCompletable { downloadFile(it.path, destination) }
 
