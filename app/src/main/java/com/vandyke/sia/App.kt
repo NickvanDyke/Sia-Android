@@ -20,7 +20,7 @@ class App : Application() {
     override fun onCreate() {
         NotificationUtil.createSiaNodeNotificationChannel(this)
 
-        /* init singletons */
+        /* init singletons. TODO: make them injected instead */
         Kotpref.init(this)
         Analytics.init(this)
 

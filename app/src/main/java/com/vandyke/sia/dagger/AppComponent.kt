@@ -20,7 +20,7 @@ import javax.inject.Singleton
 // https://github.com/googlesamples/android-architecture-components/tree/master/GithubBrowserSample/app/src/main/java/com/android/example/github/di
 @Singleton
 @Component(modules = [
-    SiaModule::class,
+    ApiModule::class,
     DbModule::class,
     AppModule::class,
     ViewModelModule::class

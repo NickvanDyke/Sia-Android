@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
-class SiaModule {
+class ApiModule {
     @Provides
     @Singleton
     fun provideSiaApi(): SiaApi {

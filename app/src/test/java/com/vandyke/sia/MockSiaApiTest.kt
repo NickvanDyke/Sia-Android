@@ -6,6 +6,7 @@ package com.vandyke.sia
 
 import com.vandyke.sia.data.remote.MockSiaApi
 import org.amshove.kluent.shouldEqual
+import org.amshove.kluent.shouldNotBeBlank
 import org.junit.Test
 
 /** Some basic tests for the class that mocks Sia's API endpoints and internal behavior */
@@ -16,7 +17,7 @@ class MockSiaApiTest {
     fun create() {
         api.walletInit("password", "english", false).blockingGet()
         api.password shouldEqual "password"
-        api.seed.isNotBlank() shouldEqual true
+        api.seed.shouldNotBeBlank()
         api.encrypted shouldEqual true
         api.unlocked shouldEqual false
     }

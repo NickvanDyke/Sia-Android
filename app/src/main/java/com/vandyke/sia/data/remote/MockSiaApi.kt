@@ -19,7 +19,7 @@ import java.math.BigDecimal
 import java.util.concurrent.atomic.AtomicInteger
 
 /** This class attempts to simulate the API endpoints and internal behavior of the Sia node.
- * It's far from exact, but enough that it can be used as a replacement when testing. */
+ * It's far from exact, but enough that it can usually be used as a replacement when testing. */
 class MockSiaApi : SiaApi {
     // obviously using a nonce when setting up internal values won't give very reproducible tests. Should do some other way.
     // maybe throw in some real data or something
@@ -219,9 +219,9 @@ class MockSiaApi : SiaApi {
     }
 
     override fun renterRename(siapath: String, newSiaPath: String) = Completable.fromAction {
-        val file = files.find { it.path == siapath } ?: return@fromAction
-        files.remove(file)
-        files.add(file.copy(path = newSiaPath))
+        val index = files.indexOfFirst { it.path == siapath }
+        if (index != -1)
+            files[index] = files[index].copy(path = newSiaPath)
     }!!
 
     override fun renterDelete(siapath: String): Completable {
