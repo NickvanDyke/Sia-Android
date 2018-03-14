@@ -13,4 +13,7 @@ import io.reactivex.Flowable
 interface ScValueDao : BaseDao<ScValueData> {
     @Query("SELECT a.* FROM scValue a LEFT OUTER JOIN scValue b ON a.timestamp < b.timestamp WHERE b.timestamp IS NULL")
     fun mostRecent(): Flowable<ScValueData>
+
+    @Query("DELETE FROM scValue")
+    fun deleteAll()
 }

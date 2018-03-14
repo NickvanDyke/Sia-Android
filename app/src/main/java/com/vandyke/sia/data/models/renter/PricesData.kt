@@ -6,17 +6,19 @@ package com.vandyke.sia.data.models.renter
 
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
-import com.fasterxml.jackson.annotation.JsonIgnore
 import java.math.BigDecimal
 
 @Entity(tableName = "prices")
 data class PricesData(
+        @PrimaryKey
+        val timestamp: Long,
         val downloadterabyte: BigDecimal,
         val formcontracts: BigDecimal,
         val storageterabytemonth: BigDecimal,
-        val uploadterabyte: BigDecimal
-) {
-    @PrimaryKey
-    @JsonIgnore(value = true)
-    var timestamp = System.currentTimeMillis()
-}
+        val uploadterabyte: BigDecimal)
+
+data class PricesDataJson(
+        val downloadterabyte: BigDecimal,
+        val formcontracts: BigDecimal,
+        val storageterabytemonth: BigDecimal,
+        val uploadterabyte: BigDecimal)

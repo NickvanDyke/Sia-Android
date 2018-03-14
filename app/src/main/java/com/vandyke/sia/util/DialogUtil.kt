@@ -19,7 +19,7 @@ object DialogUtil {
     fun showRateDialog(context: Context) {
         AlertDialog.Builder(context)
                 .setTitle("Liking Sia for Android?")
-                .setPositiveButton("Yes") { _, _ ->
+                .setPositiveButton(android.R.string.yes) { _, _ ->
                     AlertDialog.Builder(context)
                             .setMessage("Would you like to leave a rating? I'd really appreciate it.")
                             .setPositiveButton("Sure") { _, _ ->
@@ -33,10 +33,10 @@ object DialogUtil {
                             .show()
                 }.setNeutralButton("Ask again later") { _, _ ->
                     Prefs.shownFeedbackDialog = false
-                }.setNegativeButton("No") { _, _ ->
+                }.setNegativeButton(android.R.string.no) { _, _ ->
                     AlertDialog.Builder(context)
                             .setMessage("Would you like to give feedback on why?")
-                            .setPositiveButton("Yes") { _, _ ->
+                            .setPositiveButton(android.R.string.yes) { _, _ ->
                                 Analytics.likingSiaForAndroid(false, true)
                                 context.startActivity(Intents.emailMe
                                         .putExtra(Intent.EXTRA_SUBJECT, "Feedback"))

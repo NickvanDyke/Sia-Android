@@ -4,4 +4,4 @@
 
 package com.vandyke.sia.data.models.renter
 
-data class ContractsData(val contracts: List<ContractData> = listOf())
+data class ContractsData(val contracts: List<ContractData>)

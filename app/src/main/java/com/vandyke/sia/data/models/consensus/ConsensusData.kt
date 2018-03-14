@@ -6,27 +6,24 @@ package com.vandyke.sia.data.models.consensus
 
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
-import com.fasterxml.jackson.annotation.JsonCreator
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.vandyke.sia.util.SiaUtil
 import java.math.BigDecimal
 
 @Entity(tableName = "consensus")
-@JsonIgnoreProperties(ignoreUnknown = true)
-data class ConsensusData @JsonCreator constructor(
-        @JsonProperty(value = "synced")
+data class ConsensusData(
+        @PrimaryKey
+        val timestamp: Long,
         val synced: Boolean,
-        @JsonProperty(value = "height")
         val height: Int,
-        @JsonProperty(value = "currentblock")
-        val currentBlock: String,
-        @JsonProperty(value = "difficulty")
+        val currentblock: String,
         val difficulty: BigDecimal) {
-
-    @PrimaryKey
-    var timestamp = System.currentTimeMillis()
 
     val syncProgress: Double
         get() = height.toDouble() / SiaUtil.estimatedBlockHeightAt(System.currentTimeMillis() / 1000) * 100
 }
+
+data class ConsensusDataJson(
+        val synced: Boolean,
+        val height: Int,
+        val currentblock: String,
+        val difficulty: BigDecimal)

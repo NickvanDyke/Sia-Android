@@ -8,9 +8,8 @@ import android.database.sqlite.SQLiteConstraintException
 import com.vandyke.sia.data.local.AppDatabase
 import com.vandyke.sia.data.local.daos.getDirs
 import com.vandyke.sia.data.local.daos.getFiles
-import com.vandyke.sia.data.local.models.renter.*
-import com.vandyke.sia.data.models.renter.RenterFileData
-import com.vandyke.sia.data.remote.SiaApiInterface
+import com.vandyke.sia.data.models.renter.*
+import com.vandyke.sia.data.remote.SiaApi
 import com.vandyke.sia.util.rx.inDbTransaction
 import com.vandyke.sia.util.rx.toElementsObservable
 import io.reactivex.Completable
@@ -21,20 +20,19 @@ import io.reactivex.rxkotlin.toObservable
 import io.reactivex.rxkotlin.zipWith
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.launch
-import java.math.BigDecimal
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class FilesRepository
 @Inject constructor(
-        private val api: SiaApiInterface,
+        private val api: SiaApi,
         private val db: AppDatabase
 ) {
     init {
         launch(CommonPool) {
             /* want to always have at least a root directory */
-            db.dirDao().insertIgnoreOnConflict(Dir("", BigDecimal.ZERO))
+            db.dirDao().insertIgnoreOnConflict(Dir("", 0))
         }
     }
 
@@ -63,7 +61,7 @@ class FilesRepository
                             if (index != 0)
                                 pathSoFar += "/"
                             pathSoFar += pathElement
-                            db.dirDao().insertIgnoreOnConflict(Dir(pathSoFar, BigDecimal.ZERO))
+                            db.dirDao().insertIgnoreOnConflict(Dir(pathSoFar, 0))
                         }
                     }
                     .ignoreElements(),
@@ -74,7 +72,7 @@ class FilesRepository
                         Single.zip(
                                 Single.just(dir),
                                 db.fileDao().getFilesUnder(dir.path),
-                                BiFunction<Dir, List<RenterFileData>, Pair<Dir, List<RenterFileData>>> { theDir, itsFiles ->
+                                BiFunction<Dir, List<SiaFile>, Pair<Dir, List<SiaFile>>> { theDir, itsFiles ->
                                     Pair(theDir, itsFiles)
                                 })
                     }
@@ -90,21 +88,21 @@ class FilesRepository
     fun immediateNodes(path: String, orderBy: OrderBy, ascending: Boolean) = Flowable.combineLatest(
             db.dirDao().getDirs(path, orderBy = orderBy, ascending = ascending),
             db.fileDao().getFiles(path, orderBy = orderBy, ascending = ascending),
-            BiFunction<List<Dir>, List<RenterFileData>, List<Node>> { dir, file ->
+            BiFunction<List<Dir>, List<SiaFile>, List<Node>> { dir, file ->
                 return@BiFunction dir + file
             })!!
 
     fun search(name: String, path: String, orderBy: OrderBy, ascending: Boolean) = Flowable.combineLatest(
             db.dirDao().getDirs(path, name, orderBy, ascending),
             db.fileDao().getFiles(path, name, orderBy, ascending),
-            BiFunction<List<Dir>, List<RenterFileData>, List<Node>> { dir, file ->
+            BiFunction<List<Dir>, List<SiaFile>, List<Node>> { dir, file ->
                 return@BiFunction dir + file
             })!!
 
     fun createDir(path: String) = db.fileDao().getFilesUnder(path)
             .flatMapCompletable { filesInNewDir ->
                 Completable.fromAction {
-                    var size = BigDecimal.ZERO
+                    var size = 0L
                     filesInNewDir.forEach {
                         size += it.size
                     }
@@ -138,24 +136,27 @@ class FilesRepository
          * If the before/after path is the same, we don't set it's size to zero first, because files' sizes will be subtracted from it also. */
         if (dir.path != newPath)
             completable = completable.startWith(Completable.mergeArray(
-                    Completable.fromAction { db.dirDao().updateSize(dir.path, BigDecimal.ZERO) },
+                    Completable.fromAction { db.dirDao().updateSize(dir.path, 0) },
                     db.dirDao().getDirsUnder(dir.path)
                             .toElementsObservable()
-                            .flatMapCompletable { childDir -> Completable.fromAction { db.dirDao().updateSize(childDir.path, BigDecimal.ZERO) } }))
+                            .flatMapCompletable { childDir -> Completable.fromAction { db.dirDao().updateSize(childDir.path, 0) } }))
 
         return completable.inDbTransaction(db)
     }
 
-    fun downloadDir(dir: Dir) = Completable.fromAction { TODO() }
+
+    fun downloadDir(dir: Dir, destination: String) = db.fileDao().getFilesUnder(dir.path)
+            .toElementsObservable()
+            .flatMapCompletable { downloadFile(it.path, destination) }
 
     // should I be inserting an empty file here? Or just let updating handle it?
     fun uploadFile(siapath: String, source: String, dataPieces: Int, parityPieces: Int) =
             api.renterUpload(siapath, source, dataPieces, parityPieces)
                     .doOnComplete {
-                        db.fileDao().insertReplaceOnConflict(RenterFileData(
+                        db.fileDao().insertReplaceOnConflict(SiaFile(
                                 siapath,
                                 source,
-                                BigDecimal.ZERO,
+                                0,
                                 false,
                                 false,
                                 0.0,
@@ -165,7 +166,7 @@ class FilesRepository
                         ))
                     }
 
-    fun deleteFile(file: RenterFileData): Completable = Completable.concatArray(
+    fun deleteFile(file: SiaFile): Completable = Completable.concatArray(
             Completable.fromAction { db.fileDao().delete(file) },
             db.dirDao().getDirsContainingFile(file.path)
                     .toElementsObservable()
@@ -175,7 +176,7 @@ class FilesRepository
             api.renterDelete(file.path))
             .inDbTransaction(db)
 
-    fun moveFile(file: RenterFileData, newSiapath: String) = Completable.concatArray(
+    fun moveFile(file: SiaFile, newSiapath: String) = Completable.concatArray(
             Completable.fromAction { db.fileDao().updatePath(file.path, newSiapath) }
                     .onErrorResumeNext {
                         Completable.error(if (it is SQLiteConstraintException) FileAlreadyExists(newSiapath.name()) else it)
@@ -195,37 +196,44 @@ class FilesRepository
             api.renterRename(file.path, newSiapath))
             .inDbTransaction(db)
 
-    fun downloadFile(file: RenterFileData) = Completable.fromAction { TODO() }
+    fun downloadFile(path: String, destination: String) = api.renterDownloadAsync(path, destination)
 
     fun multiDelete(nodes: List<Node>) = nodes.toObservable()
             .flatMapCompletable {
                 if (it is Dir)
                     deleteDir(it)
                 else
-                    deleteFile(it as RenterFileData)
+                    deleteFile(it as SiaFile)
             }
             .inDbTransaction(db)
 
-    fun multiDownload(nodes: List<Node>) = Completable.fromAction {
-        TODO()
-    }!!
+    // TODO: if a dir is selected and so are dirs/files inside of it, then some things will be downloaded multiple times.
+    // could check all nodes and eliminate ones that are within/under any selected dirs, then proceed with downloading the
+    // remaining nodes
+    fun multiDownload(nodes: List<Node>, destination: String) = nodes.toObservable()
+            .flatMapCompletable { node ->
+                if (node is Dir)
+                    downloadDir(node, destination)
+                else
+                    downloadFile(node.path, destination)
+            }
 
     /* we don't execute this in a db transaction because if early-on moves succeed but later ones
      * fail (due to duplicate paths), we don't want to rollback the early ones, since those files
      * will have already been moved in the api. */
-    fun multiMove(nodes: List<Node>, to: String): Completable = Completable.concatArray(
+    fun multiMove(nodes: List<Node>, destination: String): Completable = Completable.concatArray(
             nodes.toObservable()
                     .filter { it is Dir }
                     .doOnNext {
-                        if (to.indexOf(it.path) == 0)
+                        if (destination.indexOf(it.path) == 0)
                             throw DirMovedInsideItself(it.name)
                     }.flatMapCompletable {
-                        moveDir(it as Dir, to.withTrailingSlashIfNotEmpty() + it.name)
+                        moveDir(it as Dir, destination.withTrailingSlashIfNotEmpty() + it.name)
                     },
             nodes.toObservable()
-                    .filter { it is RenterFileData }
+                    .filter { it is SiaFile }
                     .flatMapCompletable {
-                        moveFile(it as RenterFileData, to.withTrailingSlashIfNotEmpty() + it.name)
+                        moveFile(it as SiaFile, destination.withTrailingSlashIfNotEmpty() + it.name)
                     })
 
     enum class OrderBy(val text: String) {

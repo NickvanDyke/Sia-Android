@@ -6,38 +6,34 @@ package com.vandyke.sia.data.models.wallet
 
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
-import com.fasterxml.jackson.annotation.JsonCreator
-import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import com.fasterxml.jackson.annotation.JsonProperty
 import java.math.BigDecimal
 
 @Entity(tableName = "wallet")
-@JsonIgnoreProperties(ignoreUnknown = true)
-data class WalletData @JsonCreator constructor(
-        @JsonProperty(value = "encrypted")
-        val encrypted: Boolean = false,
-        @JsonProperty(value = "unlocked")
-        val unlocked: Boolean = false,
-        @JsonProperty(value = "rescanning")
-        val rescanning: Boolean = false,
-        @JsonProperty(value = "confirmedsiacoinbalance")
-        val confirmedSiacoinBalance: BigDecimal,
-        @JsonProperty(value = "unconfirmedoutgoingsiacoins")
-        val unconfirmedOutgoingSiacoins: BigDecimal,
-        @JsonProperty(value = "unconfirmedincomingsiacoins")
-        val unconfirmedIncomingSiacoins: BigDecimal,
-        @JsonProperty(value = "siafundbalance")
-        val siafundBalance: Int = 0,
-        @JsonProperty(value = "siacoinclaimbalance")
-        val siacoinClaimBalance: BigDecimal,
-        @JsonProperty(value = "dustthreshold")
-        val dustThreshold: BigDecimal) {
+data class WalletData(
+        @PrimaryKey
+        val timestamp: Long,
+        val encrypted: Boolean,
+        val unlocked: Boolean,
+        val rescanning: Boolean,
+        val confirmedsiacoinbalance: BigDecimal,
+        val unconfirmedoutgoingsiacoins: BigDecimal,
+        val unconfirmedincomingsiacoins: BigDecimal,
+        val siafundbalance: Int,
+        val siacoinclaimbalance: BigDecimal,
+        val dustthreshold: BigDecimal) {
 
-    @JsonIgnore(value = true)
-    var unconfirmedSiacoinBalance: BigDecimal = unconfirmedIncomingSiacoins - unconfirmedOutgoingSiacoins
-
-    @PrimaryKey
-    @JsonIgnore(value = true)
-    var timestamp = System.currentTimeMillis()
+    @Transient
+    var unconfirmedsiacoinbalance: BigDecimal = unconfirmedincomingsiacoins - unconfirmedoutgoingsiacoins
 }
+
+/** The intermediate class used when Moshi deserializes /wallet Json. See DataAdapters for more */
+data class WalletDataJson(
+        val encrypted: Boolean,
+        val unlocked: Boolean,
+        val rescanning: Boolean,
+        val confirmedsiacoinbalance: BigDecimal,
+        val unconfirmedoutgoingsiacoins: BigDecimal,
+        val unconfirmedincomingsiacoins: BigDecimal,
+        val siafundbalance: Int,
+        val siacoinclaimbalance: BigDecimal,
+        val dustthreshold: BigDecimal)

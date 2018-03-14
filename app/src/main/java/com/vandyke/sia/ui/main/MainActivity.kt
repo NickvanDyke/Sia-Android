@@ -5,6 +5,7 @@
 package com.vandyke.sia.ui.main
 
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
@@ -23,17 +24,18 @@ import com.vandyke.sia.data.siad.SiadService
 import com.vandyke.sia.ui.about.AboutFragment
 import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.ui.common.ComingSoonFragment
-import com.vandyke.sia.ui.node.NodeSettingsFragmentContainer
 import com.vandyke.sia.ui.node.NodeStatusFragment
+import com.vandyke.sia.ui.node.modules.NodeModulesFragment
+import com.vandyke.sia.ui.node.settings.NodeSettingsFragmentContainer
 import com.vandyke.sia.ui.onboarding.IntroActivity
 import com.vandyke.sia.ui.onboarding.PurchaseActivity
 import com.vandyke.sia.ui.renter.allowance.AllowanceFragment
 import com.vandyke.sia.ui.renter.files.view.FilesFragment
 import com.vandyke.sia.ui.settings.SettingsFragmentContainer
-import com.vandyke.sia.ui.terminal.TerminalFragment
 import com.vandyke.sia.ui.wallet.view.WalletFragment
 import com.vandyke.sia.util.DialogUtil
 import com.vandyke.sia.util.SiaUtil
+import com.vandyke.sia.util.getAttrColor
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -53,13 +55,12 @@ class MainActivity : AppCompatActivity() {
         if (!BuildConfig.DEBUG)
             checkPurchases()
 
-        AppCompatDelegate.setDefaultNightMode(
-                if (Prefs.darkMode)
-                    AppCompatDelegate.MODE_NIGHT_YES
-                else
-                    AppCompatDelegate.MODE_NIGHT_NO
-        )
-        setTheme(R.style.AppTheme_DayNight)
+        /* allow rotation in debug builds, for easy recreation testing */
+        if (BuildConfig.DEBUG)
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+
+        AppCompatDelegate.setDefaultNightMode(if (Prefs.darkMode) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO)
+        setTheme(if (Prefs.oldSiaColors) R.style.AppTheme_DayNight_OldSiaColors else R.style.AppTheme_DayNight)
         setContentView(R.layout.activity_main)
 
         if (!BuildConfig.DEBUG && !SiaUtil.isSiadSupported) {
@@ -80,10 +81,9 @@ class MainActivity : AppCompatActivity() {
             drawer.setSelection(when (Prefs.startupPage) {
                 "files" -> {
                     displayFragment(if (BuildConfig.DEBUG) FilesFragment::class.java else ComingSoonFragment::class.java)
-                    0L // doesn't fire the listener? Maybe since it's in a submenu. So we set it manually above
+                    3L // doesn't fire the listener? Maybe since it's in a submenu. So we set it manually above TODO: isn't selecting the drawer item
                 }
-                "wallet" -> 3L
-                "terminal" -> 4L
+                "wallet" -> 2L
                 else -> throw IllegalArgumentException("Invalid startup page: ${Prefs.startupPage}")
             }, true)
         } else {
@@ -99,7 +99,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun displayFragment(clazz: Class<*>) {
+    fun displayFragment(clazz: Class<*>) {
         /* return if the currently visible fragment is the same class as the one we want to display */
         if (clazz == visibleFragment?.javaClass)
             return
@@ -151,6 +151,8 @@ class MainActivity : AppCompatActivity() {
     private fun setupDrawer() {
         setSupportActionBar(toolbar)
 
+        val colorPrimary = getAttrColor(R.attr.colorPrimary)
+
         drawer = drawer {
             headerViewRes = R.layout.drawer_header
             translucentStatusBar = false
@@ -168,11 +170,22 @@ class MainActivity : AppCompatActivity() {
                             .withName("Status")
                             .withIcon(R.drawable.ic_short_text)
                             .withIconTintingEnabled(true)
+                            .withSelectedIconColor(colorPrimary)
+                            .withSelectedTextColor(colorPrimary)
                             .withOnDrawerItemClickListener { _, _, _ -> displayFragment(NodeStatusFragment::class.java); false },
+                    SecondaryDrawerItem()
+                            .withName("Modules")
+                            .withIcon(R.drawable.ic_storage)
+                            .withIconTintingEnabled(true)
+                            .withSelectedIconColor(colorPrimary)
+                            .withSelectedTextColor(colorPrimary)
+                            .withOnDrawerItemClickListener { _, _, _ -> displayFragment(NodeModulesFragment::class.java); false },
                     SecondaryDrawerItem()
                             .withName("Settings")
                             .withIcon(R.drawable.ic_settings)
                             .withIconTintingEnabled(true)
+                            .withSelectedIconColor(colorPrimary)
+                            .withSelectedTextColor(colorPrimary)
                             .withOnDrawerItemClickListener { _, _, _ -> displayFragment(NodeSettingsFragmentContainer::class.java); false })
 
             divider {  }
@@ -181,14 +194,15 @@ class MainActivity : AppCompatActivity() {
                 name = "Renter"
                 icon = R.drawable.ic_cloud
                 iconTintingEnabled = true
-                identifier = 2
                 selectable = false
             }.withSubItems(
                     SecondaryDrawerItem()
                             .withName("Files")
                             .withIcon(R.drawable.ic_folder)
                             .withIconTintingEnabled(true)
-                            .withIdentifier(0)
+                            .withSelectedIconColor(colorPrimary)
+                            .withSelectedTextColor(colorPrimary)
+                            .withIdentifier(3)
                             .withOnDrawerItemClickListener { _, _, _ -> displayFragment(if (BuildConfig.DEBUG)
                                 FilesFragment::class.java
                             else
@@ -199,6 +213,8 @@ class MainActivity : AppCompatActivity() {
                             .withName("Allowance")
                             .withIcon(R.drawable.ic_money)
                             .withIconTintingEnabled(true)
+                            .withSelectedIconColor(colorPrimary)
+                            .withSelectedTextColor(colorPrimary)
                             .withIdentifier(1)
                             .withOnDrawerItemClickListener { _, _, _ -> displayFragment(if (BuildConfig.DEBUG)
                                 AllowanceFragment::class.java
@@ -211,16 +227,10 @@ class MainActivity : AppCompatActivity() {
                 name = "Wallet"
                 icon = R.drawable.ic_account_balance_wallet
                 iconTintingEnabled = true
-                identifier = 3
+                selectedIconColor = colorPrimary.toLong()
+                selectedTextColor = colorPrimary.toLong()
+                identifier = 2
                 onClick { view -> displayFragment(WalletFragment::class.java); false }
-            }
-
-            primaryItem {
-                name = "Terminal"
-                icon = R.drawable.icon_terminal
-                iconTintingEnabled = true
-                identifier = 4
-                onClick { view -> displayFragment(TerminalFragment::class.java); false }
             }
 
             divider {  }
@@ -228,6 +238,8 @@ class MainActivity : AppCompatActivity() {
             primaryItem {
                 name = "Settings"
                 icon = R.drawable.ic_settings
+                selectedIconColor = colorPrimary.toLong()
+                selectedTextColor = colorPrimary.toLong()
                 iconTintingEnabled = true
                 onClick { view -> displayFragment(SettingsFragmentContainer::class.java); false }
             }
@@ -235,10 +247,16 @@ class MainActivity : AppCompatActivity() {
             primaryItem {
                 name = "About"
                 icon = R.drawable.ic_info_outline
+                selectedIconColor = colorPrimary.toLong()
+                selectedTextColor = colorPrimary.toLong()
                 iconTintingEnabled = true
                 onClick { view -> displayFragment(AboutFragment::class.java); false }
             }
         }
+    }
+
+    fun deselectDrawer() {
+        drawer.deselect()
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {

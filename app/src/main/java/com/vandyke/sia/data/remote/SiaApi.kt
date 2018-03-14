@@ -14,7 +14,7 @@ import io.reactivex.Single
 import retrofit2.http.*
 import java.math.BigDecimal
 
-interface SiaApiInterface {
+interface SiaApi {
     /* daemon API */
     @GET("daemon/stop")
     fun daemonStop(): Completable

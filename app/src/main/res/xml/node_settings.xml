@@ -13,24 +13,13 @@
             android:title="On mobile data" />
     </PreferenceCategory>
     <PreferenceCategory android:title="Configuration">
-        <SwitchPreferenceCompat
-            android:defaultValue="false"
-            android:key="useExternal"
-            android:summary="The Sia node will restart after changing this."
-            android:title="Use external storage" />
+        <ListPreference
+            android:key="siaWorkingDirectory"
+            android:summary="The location that the Sia node will store all of its needed data in. The Sia node will restart after changing this."
+            android:title="Storage location" />
         <EditTextPreference
             android:key="apiPassword"
             android:summary="API password to set on the Sia node, so that only this app can interact with it. Optional, but recommended. The Sia node will restart after changing this."
             android:title="API password" />
     </PreferenceCategory>
-    <!--<PreferenceCategory android:title="Modules">-->
-        <!--<SwitchPreferenceCompat-->
-            <!--android:defaultValue="true"-->
-            <!--android:key="loadWalletModule"-->
-            <!--android:title="Wallet" />-->
-        <!--<SwitchPreferenceCompat-->
-            <!--android:defaultValue="false"-->
-            <!--android:key="loadRenterModule"-->
-            <!--android:title="Renter" />-->
-    <!--</PreferenceCategory>-->
 </PreferenceScreen>

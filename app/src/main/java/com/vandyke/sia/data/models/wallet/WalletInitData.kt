@@ -4,4 +4,5 @@
 
 package com.vandyke.sia.data.models.wallet
 
-data class WalletInitData(val primaryseed: String = "")
+data class WalletInitData(
+        val primaryseed: String)

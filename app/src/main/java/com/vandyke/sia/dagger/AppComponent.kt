@@ -7,8 +7,10 @@ package com.vandyke.sia.dagger
 import com.vandyke.sia.App
 import com.vandyke.sia.data.siad.SiadService
 import com.vandyke.sia.ui.node.NodeStatusFragment
+import com.vandyke.sia.ui.node.modules.NodeModulesFragment
 import com.vandyke.sia.ui.renter.allowance.AllowanceFragment
 import com.vandyke.sia.ui.renter.files.view.FilesFragment
+import com.vandyke.sia.ui.settings.SettingsFragment
 import com.vandyke.sia.ui.terminal.TerminalFragment
 import com.vandyke.sia.ui.wallet.view.WalletFragment
 import dagger.Component
@@ -29,6 +31,8 @@ interface AppComponent {
     fun inject(terminalFragment: TerminalFragment)
     fun inject(allowanceFragment: AllowanceFragment)
     fun inject(nodeStatusFragment: NodeStatusFragment)
+    fun inject(nodeModulesFragment: NodeModulesFragment)
+    fun inject(settingsFragment: SettingsFragment)
     fun inject(siadService: SiadService)
     fun inject(app: App)
 }

@@ -9,6 +9,7 @@ import com.chibatching.kotpref.enumpref.enumOrdinalPref
 import com.vandyke.sia.data.repository.FilesRepository
 import com.vandyke.sia.ui.renter.allowance.AllowanceViewModel
 
+// TODO: inject instead of being a global singleton
 object Prefs : KotprefModel() {
     override val kotprefName: String = "${context.packageName}_preferences"
 
@@ -26,16 +27,19 @@ object Prefs : KotprefModel() {
 
     var viewedOnboarding by booleanPref(false)
 
+    var oldSiaColors by booleanPref(false)
     var darkMode by booleanPref(false)
     var hideZero by booleanPref(true)
     var startupPage by stringPref("wallet")
     var displayedDecimalPrecision by intPref(2)
 
+    var siaWorkingDirectory by stringPref(context.filesDir.absolutePath)
     var siaManuallyStopped by booleanPref(false)
     var runSiaInBackground by booleanPref(true)
     var runSiaOnData by booleanPref(false)
     var apiPassword by stringPref()
     var useExternal by booleanPref(false)
+    var modulesString by stringPref("gctw")
 
     var viewAsList by booleanPref(true)
     var ascending by booleanPref(true)

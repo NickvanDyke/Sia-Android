@@ -12,6 +12,28 @@ import java.io.IOException
 
 
 object StorageUtil {
+    fun readableFilesizeString(filesize: Long): String {
+        var size = filesize.toDouble()
+        var i = 0
+        val kilo = 1024
+        while (size > kilo && i < 6) {
+            size /= kilo
+            i++
+        }
+        val sizeString = when (i) {
+            0 -> "B"
+            1 -> "KB"
+            2 -> "MB"
+            3 -> "GB"
+            4 -> "TB"
+            5 -> "PB"
+            6 -> "EB"
+            else -> "Super big"
+        }
+
+        return "${size.format()} $sizeString"
+    }
+
     fun copyFromAssetsToAppStorage(filename: String, context: Context): File? {
         try {
             val inputStream = context.assets.open(filename)
@@ -39,17 +61,30 @@ object StorageUtil {
     fun getExternalStorage(context: Context): File {
         val dirs = context.getExternalFilesDirs(null)
         if (dirs.isEmpty())
-            throw ExternalStorageError("No external storage available")
+            throw ExternalStorageException("No external storage available")
 
         /* dirs[1] will be removable storage, which we prefer over emulated external storage, which dirs[0] will be */
         val dir = if (dirs.size > 1) dirs[1] else dirs[0]
 
         val state = Environment.getExternalStorageState(dir)
         if (state != Environment.MEDIA_MOUNTED)
-            throw ExternalStorageError("External storage error: $state")
+            throw ExternalStorageException("External storage error: $state")
 
         return dir
     }
 }
 
-class ExternalStorageError(msg: String) : Exception(msg)
+fun Context.getAllFilesDirs(): List<File> = getExternalFilesDirs(null).toMutableList().apply { add(0, filesDir) }
+
+class ExternalStorageException(msg: String) : Exception(msg)
+
+fun File.recursiveLength(): Long {
+    var size = this.length()
+    this.listFiles()?.forEach {
+        size += if (it.isDirectory)
+            it.recursiveLength()
+        else
+            it.length()
+    }
+    return size
+}

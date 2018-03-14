@@ -14,8 +14,8 @@ android {
         applicationId "com.vandyke.sia"
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 200
-        versionName "0.2.0"
+        versionCode 205
+        versionName "0.2.5"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         /* lets us not shrink debug builds, for faster build times. Not necessary for release builds, since we shrink those */
         multiDexEnabled true
@@ -52,20 +52,24 @@ android {
             path 'CMakeLists.txt'
         }
     }
+
+    androidExtensions {
+        experimental = true
+    }
 }
 
 dependencies {
-    ext.support_version = "27.0.2"
+    ext.support_version = "27.1.0"
     
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
     /* kotlin stdlib and coroutines */
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.21'
-    implementation 'androidx.core:core-ktx:0.1'
+    implementation 'androidx.core:core-ktx:0.2'
 
     /* testing */
-    androidTestImplementation 'com.android.support:support-annotations:27.0.2'
+    androidTestImplementation 'com.android.support:support-annotations:27.1.0'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     testImplementation 'junit:junit:4.12'
     testImplementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -114,9 +118,9 @@ dependencies {
     kapt 'android.arch.lifecycle:compiler:1.1.0'
 
     /* Room, for local data persistence */
-    implementation "android.arch.persistence.room:runtime:1.1.0-alpha2"
-    implementation "android.arch.persistence.room:rxjava2:1.1.0-alpha2"
-    kapt "android.arch.persistence.room:compiler:1.1.0-alpha2"
+    implementation "android.arch.persistence.room:runtime:1.1.0-alpha3"
+    implementation "android.arch.persistence.room:rxjava2:1.1.0-alpha3"
+    kapt "android.arch.persistence.room:compiler:1.1.0-alpha3"
 
     /* Dagger, for DI */
     implementation 'com.google.dagger:dagger:2.12'
@@ -124,11 +128,10 @@ dependencies {
     kapt 'com.google.dagger:dagger-compiler:2.12'
     implementation 'com.google.dagger:dagger-android-support:2.12'
 
-    /* Jackson (JSON converter) */
-    implementation 'com.fasterxml.jackson.core:jackson-core:2.8.11'
-    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.8.11'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.8.11'
-    implementation 'com.squareup.retrofit2:converter-jackson:2.3.0'
+    /* Moshi (JSON converter) */
+    implementation 'com.squareup.moshi:moshi:1.5.0'
+    implementation 'com.squareup.retrofit2:converter-moshi:2.3.0'
+    implementation 'com.squareup.moshi:moshi-kotlin:1.5.0'
 
     /* for crash reporting/analytics */
     implementation 'com.google.firebase:firebase-crash:11.8.0'

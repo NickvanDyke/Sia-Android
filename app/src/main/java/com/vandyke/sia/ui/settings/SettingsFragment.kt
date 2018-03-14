@@ -8,19 +8,34 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v7.preference.Preference
 import android.support.v7.preference.PreferenceFragmentCompat
 import com.vandyke.sia.BuildConfig
 import com.vandyke.sia.R
+import com.vandyke.sia.data.local.AppDatabase
 import com.vandyke.sia.data.local.Prefs
+import com.vandyke.sia.getAppComponent
+import com.vandyke.sia.ui.main.MainActivity
+import com.vandyke.sia.ui.terminal.TerminalFragment
 import com.vandyke.sia.util.GenUtil
+import com.vandyke.sia.util.rx.io
+import com.vandyke.sia.util.rx.main
+import io.github.tonnyl.light.Light
+import io.reactivex.Completable
+import javax.inject.Inject
 
 /* the actual settings fragment, contained within SettingsFragmentContainer */
 class SettingsFragment : PreferenceFragmentCompat() {
 
+    @Inject
+    lateinit var db: AppDatabase
+
     private var prefsListener: SharedPreferences.OnSharedPreferenceChangeListener? = null
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        context!!.getAppComponent().inject(this)
+
         addPreferencesFromResource(R.xml.app_settings)
 
         findPreference("displayedDecimalPrecision").onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, newValue ->
@@ -42,8 +57,24 @@ class SettingsFragment : PreferenceFragmentCompat() {
             GenUtil.launchCustomTabs(context!!, "https://play.google.com/store/account/subscriptions")
             false
         }
-    }
 
+        findPreference("openTerminal").onPreferenceClickListener = Preference.OnPreferenceClickListener {
+            (activity as MainActivity).apply {
+                displayFragment(TerminalFragment::class.java)
+                deselectDrawer()
+            }
+            false
+        }
+
+        findPreference("clearDatabase").onPreferenceClickListener = Preference.OnPreferenceClickListener {
+            Completable.fromAction { db.clearAllTables() }
+                    .io()
+                    .main()
+                    .subscribe({ Light.success(view!!, "Cleared cached data", Snackbar.LENGTH_SHORT).show() },
+                            { Light.success(view!!, "Error clearing cached data: ${it.localizedMessage}", Snackbar.LENGTH_LONG).show() })
+            false
+        }
+    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -52,7 +83,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
          * be unregistered/destroyed. */
         prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
             when (key) {
-                "darkMode" -> activity!!.recreate()
+                "darkMode", "oldSiaColors" -> activity!!.recreate()
             }
         }
         Prefs.preferences.registerOnSharedPreferenceChangeListener(prefsListener)

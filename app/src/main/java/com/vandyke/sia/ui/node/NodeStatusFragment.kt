@@ -4,10 +4,10 @@ import android.os.Bundle
 import android.text.method.ScrollingMovementMethod
 import android.view.View
 import com.vandyke.sia.R
-import com.vandyke.sia.appComponent
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.siad.SiadStatus
 import com.vandyke.sia.data.siad.SiadStatus.State.*
+import com.vandyke.sia.getAppComponent
 import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.util.rx.main
 import io.reactivex.disposables.Disposable
@@ -24,7 +24,7 @@ class NodeStatusFragment : BaseFragment() {
     private lateinit var subscription: Disposable
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        appComponent.inject(this)
+        context!!.getAppComponent().inject(this)
 
         siaOutput.movementMethod = ScrollingMovementMethod()
 

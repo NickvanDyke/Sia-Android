@@ -6,13 +6,5 @@
         android:id="@+id/currency_button"
         android:title="Currency"
         app:showAsAction="ifRoom">
-        <menu>
-            <item
-                android:id="@+id/currency_sc"
-                android:title="SC" />
-            <item
-                android:id="@+id/currency_usd"
-                android:title="USD" />
-        </menu>
     </item>
 </menu>

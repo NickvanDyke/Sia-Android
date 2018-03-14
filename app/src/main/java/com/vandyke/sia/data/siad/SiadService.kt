@@ -12,15 +12,16 @@ import android.arch.lifecycle.LifecycleService
 import android.content.Context
 import android.content.Intent
 import android.os.Binder
+import android.os.Environment
 import android.os.Handler
 import android.os.IBinder
 import android.support.v4.app.NotificationCompat
+import android.util.Log
 import com.vandyke.sia.R
-import com.vandyke.sia.appComponent
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.siad.SiadStatus.State
+import com.vandyke.sia.getAppComponent
 import com.vandyke.sia.ui.main.MainActivity
-import com.vandyke.sia.util.ExternalStorageError
 import com.vandyke.sia.util.NotificationUtil
 import com.vandyke.sia.util.StorageUtil
 import com.vandyke.sia.util.bitmapFromVector
@@ -41,15 +42,21 @@ class SiadService : LifecycleService() {
 
     private var siadFile: File? = null
     private var siadProcess: java.lang.Process? = null
+    private lateinit var handler: Handler
 
     val siadProcessIsRunning: Boolean
         get() = siadProcess != null
 
     override fun onCreate() {
         super.onCreate()
-        appComponent.inject(this)
+        this.getAppComponent().inject(this)
+
         // TODO: should also check for and delete older versions of Sia
         siadFile = StorageUtil.copyFromAssetsToAppStorage("siad-${Prefs.siaVersion}", this)
+
+        handler = Handler(mainLooper)
+
+        siadSource.onCreate()
 
         siadSource.allConditionsGood.observe(this) {
             if (it)
@@ -67,7 +74,7 @@ class SiadService : LifecycleService() {
         }
     }
 
-    fun startSiad() {
+    private fun startSiad() {
         if (siadProcessIsRunning) {
             return
         } else if (siadFile == null) {
@@ -77,7 +84,7 @@ class SiadService : LifecycleService() {
 
         siadStatus.state.value = State.PROCESS_STARTING
 
-        val pb = ProcessBuilder(siadFile!!.absolutePath, "-M", "gctw") // TODO: maybe let user set which modules to load?
+        val pb = ProcessBuilder(siadFile!!.absolutePath, "-M", Prefs.modulesString) // TODO: maybe let user set which modules to load?
         pb.redirectErrorStream(true)
 
         /* start the node with an api password if it's not set to something empty */
@@ -86,20 +93,24 @@ class SiadService : LifecycleService() {
             pb.environment()["SIA_API_PASSWORD"] = Prefs.apiPassword
         }
 
-        /* determine what directory Sia should use. Display notification with errors if external storage is set and not working */
-        if (Prefs.useExternal) {
-            try {
-                pb.directory(StorageUtil.getExternalStorage(this))
-            } catch (e: ExternalStorageError) {
-                siadStatus.siadOutput(e.localizedMessage)
+        // TODO: getting permission denied when trying to run siad in the working directory. Even when using getFilesDir()
+        val dir = File(Prefs.siaWorkingDirectory)
+        if (!dir.exists()) {
+            siadStatus.siadOutput("Error: set working directory doesn't exist")
+            return
+        } else if (dir.absolutePath != filesDir.absolutePath) {
+            if (Environment.getExternalStorageState(dir) != Environment.MEDIA_MOUNTED) {
+                siadStatus.siadOutput("Error with external storage: ${Environment.getExternalStorageState(dir)}")
                 return
+            } else {
+                pb.directory(dir)
             }
         } else {
-            pb.directory(filesDir)
+            pb.directory(dir)
         }
 
         try {
-            siadProcess = pb.start() // TODO: this causes the application to skip about a second of frames when starting at the same time as the app. Preventable?
+            siadProcess = pb.start() // TODO: this causes the application to skip about a second of frames when starting at the same time as the app. Preventable? Background thread?
             siadStatus.state.value = State.SIAD_LOADING
 
             startForeground(SIAD_NOTIFICATION, siadNotification("Starting Sia node..."))
@@ -111,21 +122,25 @@ class SiadService : LifecycleService() {
                     val inputReader = BufferedReader(InputStreamReader(siadProcess!!.inputStream))
                     var line: String? = inputReader.readLine()
                     while (line != null) {
-                        /* sometimes the phone runs a portscan, and siad receives an HTTP request from it, and outputs a weird
+                        if (line.contains("Cannot run program")) {
+                            siadStatus.siadOutput(line)
+                            stopSiad()
+                            return@launch
+                        }
+                        /* seems that sometimes the phone runs a portscan, and siad receives an HTTP request from it, and outputs a weird
                          * error message thingy. It doesn't affect operation at all, and we don't want the user to see it since
                          * it'd just be confusing */
                         if (!line.contains("Unsolicited response received on idle HTTP channel starting with"))
                             siadStatus.siadOutput(line)
 
-                        if (line.contains("Finished loading")) {
+                        if (line.contains("Finished loading"))
                             siadStatus.state.postValue(State.SIAD_LOADED)
-                        }
 
                         line = inputReader.readLine()
                     }
                     inputReader.close()
                 } catch (e: IOException) {
-                    e.printStackTrace()
+                    Log.d("SiadService", "Sia process reading interrupted")
                 }
             }
         } catch (e: IOException) {
@@ -133,7 +148,7 @@ class SiadService : LifecycleService() {
         }
     }
 
-    fun stopSiad() {
+    private fun stopSiad() {
         // TODO: maybe shut it down using http stop request instead? Takes ages sometimes. Might be advantageous though
         siadProcess?.destroy()
         siadProcess = null
@@ -142,11 +157,13 @@ class SiadService : LifecycleService() {
     }
 
     /** restarts siad, but only if it's already running */
-    fun restartSiad() {
+    private fun restartSiad() {
         if (siadProcessIsRunning) {
             stopSiad()
+            /* first remove any pending starts */
+            handler.removeCallbacksAndMessages(null)
             /* need to wait a little bit, otherwise siad will report that the address is already in use */
-            Handler(mainLooper).postDelayed(::startSiad, 1000)
+            handler.postDelayed(::startSiad, 1000)
         }
     }
 
@@ -184,21 +201,12 @@ class SiadService : LifecycleService() {
         val contentPI = PendingIntent.getActivity(this, 0, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT)
         builder.setContentIntent(contentPI)
 
-        /* the action to open settings for Sia node running conditions */
-        // TODO
-
         /* the action to stop/start the Sia node */
         if (siadProcessIsRunning) {
             val stopIntent = Intent(SiadSource.STOP_SIAD)
-//            stopIntent.setClass(this, SiadReceiver::class.java)
             val stopPI = PendingIntent.getBroadcast(this, 0, stopIntent, PendingIntent.FLAG_UPDATE_CURRENT)
             builder.addAction(R.drawable.sia_new_circle_logo_transparent_white, "Stop", stopPI)
-        }// else {
-//            val startIntent = Intent(SiadReceiver.START_SIAD)
-//            startIntent.setClass(this, SiadReceiver::class.java)
-//            val startPI = PendingIntent.getBroadcast(this, 0, startIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-//            builder.addAction(R.drawable.siacoin_logo_svg_white, "Start", startPI)
-//        }
+        }
 
         return builder.build()
     }

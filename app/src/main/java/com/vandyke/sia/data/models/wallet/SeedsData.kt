@@ -4,12 +4,7 @@
 
 package com.vandyke.sia.data.models.wallet
 
-import com.fasterxml.jackson.annotation.JsonCreator
-import com.fasterxml.jackson.annotation.JsonProperty
-
-data class SeedsData @JsonCreator constructor(@JsonProperty(value = "primaryseed")
-                                              val primaryseed: String = "",
-                                              @JsonProperty(value = "addressesremaining")
-                                              val addressesremaining: Int = 0,
-                                              @JsonProperty(value = "allseeds")
-                                              val allseeds: List<String> = listOf())
+data class SeedsData(
+        val primaryseed: String,
+        val addressesremaining: Int,
+        val allseeds: List<String>)

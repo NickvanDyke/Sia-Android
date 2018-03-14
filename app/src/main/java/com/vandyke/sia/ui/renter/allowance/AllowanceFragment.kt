@@ -21,9 +21,10 @@ import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.github.mikephil.charting.utils.ColorTemplate
 import com.vandyke.sia.R
-import com.vandyke.sia.appComponent
 import com.vandyke.sia.dagger.SiaViewModelFactory
+import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.siad.SiadStatus
+import com.vandyke.sia.getAppComponent
 import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.ui.renter.allowance.AllowanceViewModel.Currency
 import com.vandyke.sia.ui.renter.allowance.AllowanceViewModel.Metrics.*
@@ -46,12 +47,10 @@ class AllowanceFragment : BaseFragment() {
     @Inject
     lateinit var siadStatus: SiadStatus
 
-    private var currencyButton: MenuItem? = null
-
     private var highlightedX = -1f
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        appComponent.inject(this)
+        context!!.getAppComponent().inject(this)
 
         vm = ViewModelProviders.of(this, factory).get(AllowanceViewModel::class.java)
 
@@ -60,11 +59,11 @@ class AllowanceFragment : BaseFragment() {
 
         /* chart setup */
         val dataSet = PieDataSet(listOf(
-                PieEntry(0f, context!!.getDrawable(R.drawable.ic_cloud_upload)),
-                PieEntry(0f, context!!.getDrawable(R.drawable.ic_cloud_download)),
-                PieEntry(0f, context!!.getDrawable(R.drawable.ic_storage)),
-                PieEntry(0f, context!!.getDrawable(R.drawable.ic_file)),
-                PieEntry(0f, context!!.getDrawable(R.drawable.ic_money))),
+                PieEntry(1f, context!!.getDrawable(R.drawable.ic_cloud_upload)),
+                PieEntry(1f, context!!.getDrawable(R.drawable.ic_cloud_download)),
+                PieEntry(1f, context!!.getDrawable(R.drawable.ic_storage)),
+                PieEntry(1f, context!!.getDrawable(R.drawable.ic_file)),
+                PieEntry(1f, context!!.getDrawable(R.drawable.ic_money))),
                 "Spending")
         val colors = ColorTemplate.MATERIAL_COLORS.toMutableList()
         colors.add(0, context!!.getColorRes(android.R.color.holo_purple))
@@ -158,6 +157,7 @@ class AllowanceFragment : BaseFragment() {
         }
 
         vm.allowance.observe(this) {
+            // TODO: show day equivalents of block values
             with(it) {
                 fundsValue.text = funds.toSC().format() + " SC"
                 hostsValue.text = hosts.format()
@@ -177,7 +177,7 @@ class AllowanceFragment : BaseFragment() {
         }
 
         vm.currentMetricValues.observe(this) { (price, spent, purchasable) ->
-            val currency = " " + vm.currency.value.text
+            val currency = " " + if (vm.currency.value == Currency.SC) "SC" else Prefs.fiatCurrency
             val metric = vm.currentMetric.value
             
             if (metric == UNSPENT) {
@@ -213,6 +213,8 @@ class AllowanceFragment : BaseFragment() {
         }
 
         vm.spending.observe(this) {
+            // TODO: use some Math.max or min here so that when they're all zero, there's still some data,
+            // and so that ones that are zero can still be seen when the others aren't zero
             dataSet.values[0].y = it.uploadspending.toSC().toFloat()
             dataSet.values[1].y = it.downloadspending.toSC().toFloat()
             dataSet.values[2].y = it.storagespending.toSC().toFloat()
@@ -227,6 +229,7 @@ class AllowanceFragment : BaseFragment() {
 //                pieChart.highlightValue(x, 0)
 //            }
 
+            pieChart.notifyDataSetChanged()
             pieChart.invalidate()
         }
 
@@ -247,13 +250,11 @@ class AllowanceFragment : BaseFragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.toolbar_allowance, menu)
-        currencyButton = menu.findItem(R.id.currency_sc)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        vm.currency.value = when (item.itemId) {
-            R.id.currency_sc -> Currency.SC
-            R.id.currency_usd -> Currency.USD
+        when (item.itemId) {
+            R.id.currency_button -> vm.toggleDisplayedCurrency()
             else -> return false
         }
         return true

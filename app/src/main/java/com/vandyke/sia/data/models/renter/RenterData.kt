@@ -4,6 +4,7 @@
 
 package com.vandyke.sia.data.models.renter
 
-data class RenterData(val settings: RenterSettingsData,
-                      val financialmetrics: RenterFinancialMetricsData,
-                      val currentperiod: Int = 0)
+data class RenterData(
+        val settings: RenterSettingsData,
+        val financialmetrics: RenterFinancialMetricsData,
+        val currentperiod: Int)

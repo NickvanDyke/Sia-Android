@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger
 
 /** This class attempts to simulate the API endpoints and internal behavior of the Sia node.
  * It's far from exact, but enough that it can be used as a replacement when testing. */
-class MockSiaApi : SiaApiInterface {
+class MockSiaApi : SiaApi {
     // obviously using a nonce when setting up internal values won't give very reproducible tests. Should do some other way.
     // maybe throw in some real data or something
     // maybe have some factory functions that initialize to often-used values, like with a wallet already created
@@ -42,32 +42,29 @@ class MockSiaApi : SiaApiInterface {
     var seed = ""
     var addresses = listOf("address1", "address2", "address3")
     var confirmedTxs: MutableList<TransactionData> = MutableList(7, { index ->
-        val inputs = listOf(TransactionInputData(walletaddress = nonce % 2 == 0, value = BigDecimal(nonce * 2) * HASTINGS_PER_SC))
-        val outputs = listOf(TransactionOutputData(walletaddress = nonce % 2 == 1, value = BigDecimal(nonce) * HASTINGS_PER_SC))
-        TransactionData(nonce.toString(), BigDecimal(nonce * 10), BigDecimal(nonce * 100), inputs, outputs)
+        TransactionData(nonce.toString(), BigDecimal(nonce * 10), BigDecimal(nonce * 100), BigDecimal("12312").toHastings())
     })
     var unconfirmedTxs: MutableList<TransactionData> = MutableList(2, { index ->
-        val inputs = listOf(TransactionInputData(walletaddress = nonce % 2 == 1, value = BigDecimal(nonce) * HASTINGS_PER_SC))
-        val outputs = listOf(TransactionOutputData(walletaddress = nonce % 2 == 0, value = BigDecimal(nonce * 3) * HASTINGS_PER_SC))
-        TransactionData(nonce.toString(), BigDecimal(nonce * 10), UNCONFIRMED_TX_TIMESTAMP, inputs, outputs)
+        TransactionData(nonce.toString(), BigDecimal(nonce * 10), BigDecimal(nonce * 100), BigDecimal("12").toHastings())
+
     })
 
     private val files = mutableListOf(
-            RenterFileData("legos/brick/picture.jpg", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534),
-            RenterFileData("legos/brick/manual", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534),
-            RenterFileData("legos/brick/blueprint.b", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534),
-            RenterFileData("legos/brick/draft.txt", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534),
-            RenterFileData("legos/brick/ad.doc", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534),
-            RenterFileData("legos/brick/writeup.txt", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534),
-            RenterFileData("legos/brick/buyers.db", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534),
-            RenterFileData("legos/brick/listing.html", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534),
-            RenterFileData("legos/brick/colors.rgb", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534),
-            RenterFileData("legos/block/picture.jpg", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534),
-            RenterFileData("legos/block/blueprint", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534),
-            RenterFileData("legos/block/vector.svg", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534),
-            RenterFileData("legos/block/colors.rgb", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534),
-            RenterFileData("legos/blue/brick/picture.jpg", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534),
-            RenterFileData("my/name/is/nick/and/this/is/my/story.txt", "eh", BigDecimal("156743"), true, false, 2.0, 663453, 100, 1235534)
+            SiaFile("legos/brick/picture.jpg", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
+            SiaFile("legos/brick/manual", "eh", 56743, true, false, 2.0, 663453, 100, 1235534),
+            SiaFile("legos/brick/blueprint.b", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
+            SiaFile("legos/brick/draft.txt", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
+            SiaFile("legos/brick/ad.doc", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
+            SiaFile("legos/brick/writeup.txt", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
+            SiaFile("legos/brick/buyers.db", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
+            SiaFile("legos/brick/listing.html", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
+            SiaFile("legos/brick/colors.rgb", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
+            SiaFile("legos/block/picture.jpg", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
+            SiaFile("legos/block/blueprint", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
+            SiaFile("legos/block/vector.svg", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
+            SiaFile("legos/block/colors.rgb", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
+            SiaFile("legos/blue/brick/picture.jpg", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
+            SiaFile("my/type/is/nick/and/this/is/my/story.txt", "eh", 156743, true, false, 2.0, 663453, 100, 1235534)
     )
 
     private var renterData = RenterData(
@@ -78,12 +75,14 @@ class MockSiaApi : SiaApiInterface {
                     3024
             )),
             RenterFinancialMetricsData(
+                    System.currentTimeMillis(),
                     BigDecimal("167").toHastings(),
                     BigDecimal("154").toHastings(),
                     BigDecimal("690").toHastings(),
                     BigDecimal("274").toHastings(),
                     BigDecimal("1085").toHastings()
-            )
+            ),
+            100
     )
 
     override fun daemonStop(): Completable {
@@ -92,16 +91,14 @@ class MockSiaApi : SiaApiInterface {
 
     override fun wallet(): Single<WalletData> {
         return Single.just(
-            WalletData(encrypted, unlocked, rescanning, confirmedSiacoinBalance, unconfirmedOutgoingSiacoins,
+            WalletData(System.currentTimeMillis(), encrypted, unlocked, rescanning, confirmedSiacoinBalance, unconfirmedOutgoingSiacoins,
                     unconfirmedIncomingSiacoins, siafundBalance, siacoinClaimBalance, dustThreshold))
     }
 
     override fun walletSiacoins(amount: String, destination: String): Completable {
         return Completable.fromAction {
-            val input = TransactionInputData(walletaddress = true, value = BigDecimal(amount))
-            val output = TransactionOutputData(walletaddress = false, value = BigDecimal(amount))
             unconfirmedTxs.add(TransactionData(nonce.toString(), BigDecimal(nonce),
-                    UNCONFIRMED_TX_TIMESTAMP, listOf(input), listOf(output)))
+                    UNCONFIRMED_TX_TIMESTAMP, amount.toBigDecimal()))
         }
     }
 
@@ -119,18 +116,18 @@ class MockSiaApi : SiaApiInterface {
     override fun walletSeeds(dictionary: String): Single<SeedsData> {
         return Single.fromCallable {
             checkUnlocked()
-            SeedsData(seed)
+            SeedsData(seed, 100, listOf(seed))
         }
     }
 
     override fun walletSweepSeed(dictionary: String, seed: String): Completable {
-        TODO("not implemented")
+        return Completable.error(NotImplementedError())
     }
 
     override fun walletTransactions(startHeight: String, endHeight: String): Single<TransactionsData> {
         return Single.fromCallable {
             if (!encrypted)
-                TransactionsData()
+                TransactionsData(null, null)
             else
                 TransactionsData(confirmedTxs, unconfirmedTxs)
         }
@@ -180,7 +177,7 @@ class MockSiaApi : SiaApiInterface {
         }
     }
     override fun getScPrice(url: String): Single<ScValueData> {
-        return Single.just(ScValueData(
+        return Single.just(ScValueData(System.currentTimeMillis(),
             BigDecimal("0.01"), BigDecimal("0.02"), BigDecimal("0.03"),
             BigDecimal("0.04"), BigDecimal("0.05"), BigDecimal("0.06"),
             BigDecimal("0.07"), BigDecimal("0.08"), BigDecimal("0.09"),
@@ -201,11 +198,11 @@ class MockSiaApi : SiaApiInterface {
     }
 
     override fun renterContracts(): Single<ContractsData> {
-        TODO("not implemented")
+        return Single.error(NotImplementedError())
     }
 
     override fun renterDownloads(): Single<DownloadsData> {
-        TODO("not implemented")
+        return Single.error(NotImplementedError())
     }
 
     override fun renterFiles(): Single<RenterFilesData> {
@@ -214,6 +211,7 @@ class MockSiaApi : SiaApiInterface {
 
     override fun renterPrices(): Single<PricesData> {
         return Single.just(PricesData(
+                System.currentTimeMillis(),
                 BigDecimal("26").toHastings(),
                 BigDecimal("100").toHastings(),
                 BigDecimal("200").toHastings(),
@@ -228,7 +226,7 @@ class MockSiaApi : SiaApiInterface {
 
     override fun renterDelete(siapath: String): Completable {
         return Completable.fromAction {
-            var removed: RenterFileData? = null
+            var removed: SiaFile? = null
             files.forEach {
                 if (it.path == siapath) {
                     removed = it
@@ -241,16 +239,18 @@ class MockSiaApi : SiaApiInterface {
 
     override fun renterUpload(siapath: String, source: String, dataPieces: Int, parityPieces: Int): Completable {
         return Completable.fromAction {
-            files.add(RenterFileData(siapath, source, BigDecimal("156743"), true, false,
+            files.add(SiaFile(siapath, source, 156743, true, false,
                     2.0, 663453, 100, 1235534))
         }
     }
 
     override fun renterDownload(siapath: String, destination: String): Completable {
-        TODO("not implemented")
+        return Completable.fromAction { Thread.sleep(1000) }
     }
 
-    override fun renterDownloadAsync(siapath: String, destination: String) = Completable.complete()!!
+    override fun renterDownloadAsync(siapath: String, destination: String): Completable {
+        return Completable.complete()
+    }
 
     override fun gateway(): Single<GatewayData> {
         return Single.just(GatewayData("536.623.53.8", listOf(
@@ -262,7 +262,7 @@ class MockSiaApi : SiaApiInterface {
     }
 
     override fun consensus(): Single<ConsensusData> {
-        return Single.just(ConsensusData(false, 135371, nonce.toString(), BigDecimal(nonce)))
+        return Single.just(ConsensusData(System.currentTimeMillis(), false, 135371, nonce.toString(), BigDecimal(nonce)))
     }
 
     override fun txPoolFee(): Single<FeeData> {

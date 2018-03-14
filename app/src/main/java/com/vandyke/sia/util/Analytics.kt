@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment
 import com.google.firebase.analytics.FirebaseAnalytics
 import java.math.BigDecimal
 
+// TODO: inject instead of being a global singleton
 object Analytics {
     private lateinit var fb: FirebaseAnalytics
 

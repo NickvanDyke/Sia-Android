@@ -6,9 +6,10 @@ package com.vandyke.sia.data.models.wallet
 
 import java.math.BigDecimal
 
-data class TransactionOutputData(val id: String = "",
-                                 val fundtype: String = "",
-                                 val maturityheight: BigDecimal = BigDecimal.ZERO,
-                                 val walletaddress: Boolean = false,
-                                 val relatedaddress: String = "",
-                                 val value: BigDecimal = BigDecimal.ZERO)
+data class TransactionOutputData(
+        val id: String,
+        val fundtype: String,
+        val maturityheight: BigDecimal,
+        val walletaddress: Boolean,
+        val relatedaddress: String,
+        val value: BigDecimal)

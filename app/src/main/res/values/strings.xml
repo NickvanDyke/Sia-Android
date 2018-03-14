@@ -49,7 +49,9 @@
 
     <string name="purchase_explanation">Sia for Android operates on subscriptions, and is still in heavy
         development. By subscribing, you\'ll support development, and gain access to all features,
-        including new ones as they\'re added. 7 day free trial. Easily cancelable at any time from Settings.</string>
+        including new ones as they\'re added. 7 day free trial. Easily cancellable at any time from Settings.</string>
+
+    <string name="purchase_explanation_extra">Note: this is independent of any costs incurred by the Sia network, such as transaction and renting fees.</string>
 
     <!--<string name="purchase_explanation">Sia for Android operates on subscriptions. It\'s still in heavy -->
         <!--development, with an end goal of being a Sia cloud storage app, at which point this will make more sense. But I didn\'t want to catch existing users off-guard when that time comes, and so decided to have it from the beginning.\n\nBy subscribing, you\'ll support development, and gain access to all features, -->

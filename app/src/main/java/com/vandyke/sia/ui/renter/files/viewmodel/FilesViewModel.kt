@@ -5,15 +5,15 @@
 package com.vandyke.sia.ui.renter.files.viewmodel
 
 import android.arch.lifecycle.ViewModel
+import android.arch.persistence.room.EmptyResultSetException
 import com.vandyke.sia.data.local.Prefs
-import com.vandyke.sia.data.local.models.renter.Dir
-import com.vandyke.sia.data.local.models.renter.Node
-import com.vandyke.sia.data.local.models.renter.withTrailingSlashIfNotEmpty
-import com.vandyke.sia.data.models.renter.RenterFileData
+import com.vandyke.sia.data.models.renter.Dir
+import com.vandyke.sia.data.models.renter.Node
+import com.vandyke.sia.data.models.renter.SiaFile
+import com.vandyke.sia.data.models.renter.withTrailingSlashIfNotEmpty
 import com.vandyke.sia.data.repository.FilesRepository
 import com.vandyke.sia.util.rx.*
 import io.reactivex.disposables.Disposable
-import java.math.BigDecimal
 import javax.inject.Inject
 
 class FilesViewModel
@@ -21,7 +21,7 @@ class FilesViewModel
         private val filesRepository: FilesRepository
 ) : ViewModel() {
     // TODO: show progress of operations
-    val currentDir = NonNullLiveData<Dir>(Dir("", BigDecimal.ZERO))
+    val currentDir = NonNullLiveData<Dir>(Dir("", 0))
     val displayedNodes = NonNullLiveData<List<Node>>(listOf())
 
     val searching = NonNullLiveData(false)
@@ -95,9 +95,16 @@ class FilesViewModel
                     currentDir.value = it
                     setDisplayedNodes()
                 }, {
-                    /* presumably the only error would be an empty result set from querying for the dir. In which case we go home */
-                    changeDir()
-                    onError(it)
+                    /* presumably the only error would be an empty result set from querying for the dir */
+                    if (it is EmptyResultSetException) {
+                        onError(EmptyResultSetException("No directory exists at path: $path"))
+                    } else {
+                        onError(it)
+                    }
+                    /* we set the value to itself so that the view will be notified and reset
+                     * anything that changed from attempting to set the directory to a non-existent one,
+                     * such as the selected item on the spinner */
+                    currentDir.value = currentDir.value
                 })
     }
 
@@ -122,7 +129,7 @@ class FilesViewModel
             select(node)
     }
 
-    fun multiDelete() {
+    fun deleteSelected() {
         filesRepository.multiDelete(selectedNodes.value)
                 .io()
                 .main()
@@ -130,15 +137,15 @@ class FilesViewModel
                 .subscribe(::deselectAll, ::onError)
     }
 
-    fun multiDownload() {
-        filesRepository.multiDownload(selectedNodes.value)
+    fun downloadSelected(destination: String) {
+        filesRepository.multiDownload(selectedNodes.value, destination)
                 .io()
                 .main()
                 .track(activeTasks)
                 .subscribe(::deselectAll, ::onError)
     }
 
-    fun multiMove() {
+    fun moveSelectedToCurrentDir() {
         filesRepository.multiMove(selectedNodes.value, currentDirPath)
                 .io()
                 .main()
@@ -164,7 +171,7 @@ class FilesViewModel
                 .subscribe({}, ::onError)
     }
 
-    fun renameFile(file: RenterFileData, newName: String) {
+    fun renameFile(file: SiaFile, newName: String) {
         val parentPath = file.parent.withTrailingSlashIfNotEmpty()
         filesRepository.moveFile(file, "$parentPath$newName")
                 .io()

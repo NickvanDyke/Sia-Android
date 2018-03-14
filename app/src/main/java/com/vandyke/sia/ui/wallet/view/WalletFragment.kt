@@ -18,11 +18,10 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import com.vandyke.sia.R
-import com.vandyke.sia.appComponent
 import com.vandyke.sia.data.local.Prefs
-import com.vandyke.sia.data.models.consensus.ConsensusData
 import com.vandyke.sia.data.remote.WalletLocked
 import com.vandyke.sia.data.siad.SiadStatus
+import com.vandyke.sia.getAppComponent
 import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.ui.wallet.view.childfragments.*
 import com.vandyke.sia.ui.wallet.view.transactionslist.TransactionAdapter
@@ -52,7 +51,7 @@ class WalletFragment : BaseFragment() {
     private var statusButton: MenuItem? = null
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        appComponent.inject(this)
+        context!!.getAppComponent().inject(this)
 
         viewModel = ViewModelProviders.of(this, factory).get(WalletViewModel::class.java)
 
@@ -89,7 +88,7 @@ class WalletFragment : BaseFragment() {
         balanceText.setOnClickListener { v ->
             AlertDialog.Builder(v.context)
                     .setTitle("Exact Balance")
-                    .setMessage("${viewModel.wallet.value?.confirmedSiacoinBalance?.toSC()?.toPlainString()
+                    .setMessage("${viewModel.wallet.value?.confirmedsiacoinbalance?.toSC()?.toPlainString()
                             ?: 0} Siacoins")
                     .setPositiveButton("Close", null)
                     .show()
@@ -114,9 +113,9 @@ class WalletFragment : BaseFragment() {
 
         /* observe data in the viewModel */
         viewModel.wallet.observe(this) {
-            balanceText.text = it.confirmedSiacoinBalance.toSC().format()
-            if (it.unconfirmedSiacoinBalance != BigDecimal.ZERO) {
-                balanceUnconfirmedText.text = ("${it.unconfirmedSiacoinBalance.toSC().format()} unconfirmed")
+            balanceText.text = it.confirmedsiacoinbalance.toSC().format()
+            if (it.unconfirmedsiacoinbalance != BigDecimal.ZERO) {
+                balanceUnconfirmedText.text = ("${it.unconfirmedsiacoinbalance.toSC().format()} unconfirmed")
                 balanceUnconfirmedText.visibility = View.VISIBLE
             } else {
                 balanceUnconfirmedText.visibility = View.INVISIBLE
@@ -133,7 +132,7 @@ class WalletFragment : BaseFragment() {
         viewModel.transactions.observe(this) {
             if (it.isNotEmpty())
                 Prefs.displayedTransaction = true
-            adapter.update(it.filterNot { Prefs.hideZero && it.isNetZero })
+            adapter.submitList(it.filterNot { Prefs.hideZero && it.isNetZero })
         }
 
         viewModel.consensus.observe(this) {
@@ -226,7 +225,7 @@ class WalletFragment : BaseFragment() {
 
     private fun updateFiatValue() {
         if (viewModel.wallet.value != null && viewModel.scValue.value != null)
-            balanceUsdText.text = ("${(viewModel.wallet.value!!.confirmedSiacoinBalance.toSC()
+            balanceUsdText.text = ("${(viewModel.wallet.value!!.confirmedsiacoinbalance.toSC()
                     * viewModel.scValue.value!!.getValueForCurrency(Prefs.fiatCurrency))
                     .format()} ${Prefs.fiatCurrency}")
     }
@@ -245,15 +244,15 @@ class WalletFragment : BaseFragment() {
     }
 
     private fun setSyncStatus() {
-        val consensus = viewModel.consensus.value ?: ConsensusData(false, 0, "", BigDecimal.ZERO)
-        val height = NumberFormat.getInstance().format(consensus.height)
+        val consensus = viewModel.consensus.value
+        val height = NumberFormat.getInstance().format(consensus?.height ?: 0)
         if (viewModel.numPeers.value == 0) {
-            syncText.text = ("Not syncing: $height (${consensus.syncProgress.toInt()}%)")
+            syncText.text = ("Not syncing: $height (${consensus?.syncProgress?.toInt() ?: 0}%)")
         } else {
-            if (consensus.synced) {
+            if (consensus?.synced == true) {
                 syncText.text = ("${getString(R.string.synced)}: $height")
             } else {
-                syncText.text = ("${getString(R.string.syncing)}: $height (${consensus.syncProgress.toInt()}%)")
+                syncText.text = ("${getString(R.string.syncing)}: $height (${consensus?.syncProgress?.toInt() ?: 0}%)")
             }
         }
     }
@@ -283,7 +282,7 @@ class WalletFragment : BaseFragment() {
     private fun setupChart() {
 //        /* set up the chart and its data set */
 //        val lineDataSet = LineDataSet(null, "")
-//        with(lineDataSet) {
+//        lineDataSet.apply {
 //            setDrawCircles(false)
 //            setDrawValues(false)
 //            setDrawFilled(true)
@@ -293,7 +292,7 @@ class WalletFragment : BaseFragment() {
 //            /* causes a crash if the dataset is empty, so we add an empty one. Bug with the lib it seems, based off googling */
 //            addEntry(Entry(0f, 0f))
 //        }
-//        with(siaChart) {
+//        siaChart.apply {
 //            setViewPortOffsets(0f, 0f, 0f, 0f)
 //            data = LineData(lineDataSet)
 //            isDragEnabled = false
@@ -310,7 +309,7 @@ class WalletFragment : BaseFragment() {
 //        viewModel.walletMonthHistory.observe(this) {
 //            // TODO: still not completely sure this is working as I want it to... seems to be quirky
 //            lineDataSet.values = it.map { walletData ->
-//                Entry(walletData.timestamp.toFloat(), walletData.confirmedSiacoinBalance.toSC().toFloat())
+//                Entry(walletData.timestamp.toFloat(), walletData.confirmedsiacoinbalance.toSC().toFloat())
 //            }
 //            /* causes a crash if the dataset is empty, so we add an empty one. Bug with the lib it seems, based off googling */
 //            if (lineDataSet.values.isEmpty())

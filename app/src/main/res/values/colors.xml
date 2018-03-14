@@ -10,4 +10,11 @@
     <color name="positiveTransaction">@color/colorPrimaryDark</color>
     <color name="negativeTransaction">#ee3820</color>
     <color name="cardNightColor">#424242</color>
+
+    <!--Old sia colors, before the rebrand-->
+    <color name="colorPrimaryOld">#00cb9e</color>
+    <color name="colorPrimaryDarkOld">#24b293</color>
+    <color name="colorAccentOld">#00cb9e</color>
+
+    <color name="ic_launcher_background">#20EE82</color>
 </resources>

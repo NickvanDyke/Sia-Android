@@ -7,7 +7,7 @@ package com.vandyke.sia.data.repository
 import com.vandyke.sia.data.local.AppDatabase
 import com.vandyke.sia.data.models.wallet.AddressData
 import com.vandyke.sia.data.remote.NoWallet
-import com.vandyke.sia.data.remote.SiaApiInterface
+import com.vandyke.sia.data.remote.SiaApi
 import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.rxkotlin.zipWith
@@ -17,7 +17,7 @@ import javax.inject.Singleton
 @Singleton
 class WalletRepository
 @Inject constructor(
-        private val api: SiaApiInterface,
+        private val api: SiaApi,
         private val db: AppDatabase
 ) {
     /* Functions that update the local database from the Sia node */
@@ -32,8 +32,8 @@ class WalletRepository
             .zipWith(db.transactionDao().getAll())
             .doOnSuccess { (apiTxs, dbTxs) ->
                 /* delete all db transactions that aren't in the api response */
-                dbTxs.filter { dbTx -> apiTxs.find { it.transactionId == dbTx.transactionId } == null }
-                        .forEach { db.transactionDao().delete(it.transactionId) }
+                dbTxs.filter { dbTx -> apiTxs.find { it.transactionid == dbTx.transactionid } == null }
+                        .forEach { db.transactionDao().delete(it.transactionid) }
 
                 apiTxs.forEach { db.transactionDao().insertReplaceOnConflict(it) }
                 // TODO: is there a more efficient way to sync the db transactions to the api txs?
@@ -68,9 +68,9 @@ class WalletRepository
     fun getAddresses(): Single<List<AddressData>> = api.walletAddresses()
             .map {
                 it.addresses.map { AddressData(it) }
-            }.doOnSuccess {
-                db.addressDao().insertAllIgnoreOnConflict(it)
-            }.onErrorResumeNext {
+            }
+            .doOnSuccess { db.addressDao().insertAllIgnoreOnConflict(it) }
+            .onErrorResumeNext {
                 /* fallback to db, but only if the reason for the failure was not due to the absence of a wallet */
                 if (it !is NoWallet)
                     db.addressDao().getAll().onErrorResumeNext(Single.error(it))

@@ -9,17 +9,17 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.vandyke.sia.R
-import com.vandyke.sia.data.local.models.renter.Node
-import com.vandyke.sia.data.models.renter.RenterFileData
+import com.vandyke.sia.data.models.renter.Node
+import com.vandyke.sia.data.models.renter.SiaFile
 import com.vandyke.sia.ui.renter.files.viewmodel.FilesViewModel
-import com.vandyke.sia.util.GenUtil
+import com.vandyke.sia.util.StorageUtil
 
 class FileHolder(itemView: View, val viewModel: FilesViewModel) : NodeHolder(itemView) {
     private val image: ImageView = itemView.findViewById(R.id.fileImage)
     private val name: TextView = itemView.findViewById(R.id.fileName)
     private val size: TextView = itemView.findViewById(R.id.fileSize)
 
-    private lateinit var file: RenterFileData
+    private lateinit var file: SiaFile
 
     private val obs = Observer<List<Node>> {
         if (it?.find { it.path == file.path} != null) {
@@ -37,11 +37,11 @@ class FileHolder(itemView: View, val viewModel: FilesViewModel) : NodeHolder(ite
         }
     }
 
-    fun bind(file: RenterFileData) {
+    fun bind(file: SiaFile) {
         this.file = file
         viewModel.selectedNodes.removeObserver(obs)
         viewModel.selectedNodes.observeForever(obs)
         name.text = file.name
-        size.text = GenUtil.readableFilesizeString(file.size)
+        size.text = StorageUtil.readableFilesizeString(file.size)
     }
 }

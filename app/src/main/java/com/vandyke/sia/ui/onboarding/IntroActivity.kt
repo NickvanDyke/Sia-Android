@@ -17,7 +17,7 @@ class IntroActivity : AhoyOnboarderActivity() {
         super.onCreate(savedInstanceState)
 
         val explanationCard = AhoyOnboarderCard("Android Sia client",
-                "Sia for Android runs a Sia node - which interacts with the Sia network - on your device, and lets " +
+                "Sia for Android runs a Sia node on your device which interacts with the Sia network, and lets " +
                         "you interface with it, and therefore the network.",
                 R.drawable.sia_new_circle_logo_transparent)
         val syncCard = AhoyOnboarderCard("Blockchain syncing",

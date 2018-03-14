@@ -39,51 +39,51 @@
             android:id="@+id/numSelected"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:gravity="center_vertical"
             android:layout_marginStart="16dp"
             android:layout_weight="1"
+            android:gravity="center_vertical"
             android:text="0 items"
             android:textSize="18sp" />
 
         <ImageButton
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
             android:id="@+id/multiMove"
             android:layout_width="wrap_content"
-            android:tint="@android:color/darker_gray"
             android:layout_height="match_parent"
             android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_move_to_inbox" />
+            android:paddingEnd="8dp"
+            android:paddingStart="8dp"
+            android:src="@drawable/ic_move_to_inbox"
+            android:tint="@android:color/darker_gray" />
 
         <ImageButton
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
             android:id="@+id/multiDownload"
             android:layout_width="wrap_content"
-            android:tint="@android:color/darker_gray"
             android:layout_height="match_parent"
             android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_file_download" />
-
-        <ImageButton
-            android:paddingStart="8dp"
             android:paddingEnd="8dp"
-            android:id="@+id/multiDelete"
-            android:tint="@android:color/darker_gray"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_delete" />
+            android:paddingStart="8dp"
+            android:src="@drawable/ic_file_download"
+            android:tint="@android:color/darker_gray" />
 
         <ImageButton
-            android:paddingStart="8dp"
-            android:paddingEnd="16dp"
-            android:id="@+id/multiDeselect"
-            android:tint="@android:color/darker_gray"
+            android:id="@+id/multiDelete"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_clear" />
+            android:paddingEnd="8dp"
+            android:paddingStart="8dp"
+            android:src="@drawable/ic_delete"
+            android:tint="@android:color/darker_gray" />
+
+        <ImageButton
+            android:id="@+id/multiDeselect"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:paddingEnd="16dp"
+            android:paddingStart="8dp"
+            android:src="@drawable/ic_clear"
+            android:tint="@android:color/darker_gray" />
 
     </LinearLayout>
 
@@ -96,25 +96,25 @@
         android:layout_marginEnd="16dp"
         android:src="@drawable/ic_add"
         app:layout_behavior="com.vandyke.sia.ui.common.SnackbarRaiseBehavior"
-        app:menu_colorNormal="@color/colorPrimary"
-        app:menu_colorPressed="@color/colorPrimaryDark"
-        app:menu_colorRipple="@color/colorPrimaryDark">
+        app:menu_colorNormal="?attr/colorPrimary"
+        app:menu_colorPressed="?attr/colorPrimaryDark"
+        app:menu_colorRipple="?attr/colorPrimaryDark">
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fabAddFile"
             android:layout_width="@dimen/fab_size_normal"
             android:layout_height="@dimen/fab_size_normal"
             android:src="@drawable/ic_file"
-            app:fab_colorNormal="@color/colorPrimary"
-            app:fab_colorPressed="@color/colorPrimaryDark" />
+            app:fab_colorNormal="?attr/colorPrimary"
+            app:fab_colorPressed="?attr/colorPrimaryDark" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fabAddDir"
             android:layout_width="@dimen/fab_size_normal"
             android:layout_height="@dimen/fab_size_normal"
             android:src="@drawable/ic_folder"
-            app:fab_colorNormal="@color/colorPrimary"
-            app:fab_colorPressed="@color/colorPrimaryDark" />
+            app:fab_colorNormal="?attr/colorPrimary"
+            app:fab_colorPressed="?attr/colorPrimaryDark" />
 
     </com.github.clans.fab.FloatingActionMenu>
 

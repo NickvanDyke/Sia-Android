@@ -26,12 +26,12 @@ interface TransactionDao {
     @Query("SELECT * FROM transactions")
     fun getAll(): Single<List<TransactionData>>
 
-    @Query("SELECT * FROM transactions ORDER BY confirmationTimestamp DESC")
+    @Query("SELECT * FROM transactions ORDER BY confirmationtimestamp DESC")
     fun allByMostRecent(): Flowable<List<TransactionData>>
 
     @Query("DELETE FROM transactions")
     fun deleteAll()
 
-    @Query("DELETE FROM transactions WHERE transactionId == :id")
+    @Query("DELETE FROM transactions WHERE transactionid == :id")
     fun delete(id: String)
 }
