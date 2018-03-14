@@ -14,14 +14,27 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:layout_marginTop="16dp"
         android:ems="10"
         android:gravity="center"
         android:hint="@string/recipient_address"
         android:inputType="textNoSuggestions|textVisiblePassword"
-        app:layout_constraintEnd_toStartOf="@+id/walletScan"
+        app:layout_constraintEnd_toStartOf="@+id/pasteClipboard"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/pasteClipboard"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:adjustViewBounds="true"
+        android:layout_marginEnd="8dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_content_paste_black"
+        app:layout_constraintEnd_toStartOf="@+id/walletScan"
+        app:layout_constraintBottom_toBottomOf="@id/sendRecipient"
+        android:background="?android:attr/selectableItemBackgroundBorderless" />
 
     <EditText
         android:id="@+id/sendAmount"
