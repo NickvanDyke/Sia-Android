@@ -17,7 +17,7 @@ import com.vandyke.sia.util.sumByBigDecimal
 import java.math.BigDecimal
 
 /** Sometimes the data returned by the API isn't in the ideal form for us. In that case, we have an
-  * intermediate class representing exactly the JSON that's returned. Moshi deserializes the JSON into
+  * intermediate class representing exactly the JSON that's returned. Moshi first deserializes the JSON into
   * that intermediate class, and then uses these adapters to convert it to the type that we specify
   * in the Retrofit interface.
   *
@@ -83,13 +83,13 @@ class DataAdapters {
         return PricesData(System.currentTimeMillis(), data.downloadterabyte, data.formcontracts, data.storageterabytemonth, data.uploadterabyte)
     }
 
-    @FromJson
-    fun renterFinancialMetricsDataFromJson(data: RenterFinancialMetricsDataJson): RenterFinancialMetricsData {
-        return RenterFinancialMetricsData(System.currentTimeMillis(), data.contractspending, data.downloadspending, data.storagespending, data.uploadspending, data.unspent)
-    }
-
     @ToJson
     fun renterFinancialMetricsDataToJson(data: RenterFinancialMetricsData): RenterFinancialMetricsDataJson {
         return RenterFinancialMetricsDataJson(data.contractspending, data.downloadspending, data.storagespending, data.uploadspending, data.unspent)
+    }
+
+    @FromJson
+    fun renterFinancialMetricsDataFromJson(data: RenterFinancialMetricsDataJson): RenterFinancialMetricsData {
+        return RenterFinancialMetricsData(System.currentTimeMillis(), data.contractspending, data.downloadspending, data.storagespending, data.uploadspending, data.unspent)
     }
 }

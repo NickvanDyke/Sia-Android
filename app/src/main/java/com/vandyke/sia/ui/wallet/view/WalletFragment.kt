@@ -49,7 +49,7 @@ class WalletFragment : BaseFragment() {
     private val adapter = TransactionAdapter()
     private var expandedFragment: BaseWalletFragment? = null
     private var statusButton: MenuItem? = null
-    
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         context!!.getAppComponent().inject(this)
 
@@ -88,8 +88,7 @@ class WalletFragment : BaseFragment() {
         balanceText.setOnClickListener { v ->
             AlertDialog.Builder(v.context)
                     .setTitle("Exact Balance")
-                    .setMessage("${viewModel.wallet.value?.confirmedsiacoinbalance?.toSC()?.toPlainString()
-                            ?: 0} Siacoins")
+                    .setMessage("${viewModel.wallet.value?.confirmedsiacoinbalance?.toSC()?.toPlainString() ?: 0} Siacoins")
                     .setPositiveButton("Close", null)
                     .show()
         }
@@ -101,14 +100,14 @@ class WalletFragment : BaseFragment() {
         expandableFrame.onSwipeUp = ::collapseFrame
 
         // setupChart() TODO: confirm/deny that this is working right and how I want it to
-        
+
         /* observe VM stuff */
         viewModel.refreshing.observe(this, transactionListSwipe::setRefreshing)
 
         viewModel.activeTasks.observe(this) {
             // TODO: when being made visible, the bar flickers at the location it was at last, before restarting
             // Tried a few potential solutions, none worked
-            progressBar.visibility = if (it > 0) View.VISIBLE else View.INVISIBLE
+            progressBar.visibleIf(it > 0)
         }
 
         /* observe data in the viewModel */
@@ -250,7 +249,8 @@ class WalletFragment : BaseFragment() {
             if (consensus?.synced == true) {
                 syncText.text = ("${getString(R.string.synced)}: $height")
             } else {
-                syncText.text = ("${getString(R.string.syncing)}: $height (${consensus?.syncProgress?.toInt() ?: 0}%)")
+                syncText.text = ("${getString(R.string.syncing)}: $height (${consensus?.syncProgress?.toInt()
+                        ?: 0}%)")
             }
         }
     }

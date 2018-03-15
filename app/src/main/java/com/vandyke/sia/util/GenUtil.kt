@@ -70,3 +70,4 @@ inline fun <T> Iterable<T>.sumByBigDecimal(selector: (T) -> BigDecimal): BigDeci
     }
     return sum
 }
+

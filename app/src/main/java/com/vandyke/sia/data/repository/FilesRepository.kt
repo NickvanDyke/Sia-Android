@@ -42,12 +42,10 @@ class FilesRepository
             api.renterFiles()
                     .map { it.files }
                     .zipWith(db.fileDao().getAll())
-                    /* remove files that are in the local database but not in the Sia API response */
+                    /* remove files that are in the local database but not in the Sia API response (by path) */
                     .doOnSuccess { (apiFiles, dbFiles) ->
-                        dbFiles.retainAll { it !in apiFiles }
-                        dbFiles.forEach {
-                            db.fileDao().delete(it)
-                        }
+                        dbFiles.filter { dbFile -> apiFiles.find { apiFile -> apiFile.path == dbFile.path } == null }
+                                .forEach { db.fileDao().delete(it) }
                     }
                     .flatMapObservable { (apiFiles) -> apiFiles.toObservable() }
                     /* insert each file into the db and also every dir that leads up to it */
@@ -123,6 +121,7 @@ class FilesRepository
             .inDbTransaction(db)
 
     fun moveDir(dir: Dir, newPath: String): Completable {
+        /* we first move the dir and then the files under it */
         var completable = Completable.concatArray(
                 Completable.fromAction { db.dirDao().updatePath(dir.path, newPath) }
                         .onErrorResumeNext {

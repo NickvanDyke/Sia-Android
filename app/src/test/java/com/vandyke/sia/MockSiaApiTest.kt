@@ -5,6 +5,8 @@
 package com.vandyke.sia
 
 import com.vandyke.sia.data.remote.MockSiaApi
+import org.amshove.kluent.shouldBeFalse
+import org.amshove.kluent.shouldBeTrue
 import org.amshove.kluent.shouldEqual
 import org.amshove.kluent.shouldNotBeBlank
 import org.junit.Test
@@ -18,8 +20,8 @@ class MockSiaApiTest {
         api.walletInit("password", "english", false).blockingGet()
         api.password shouldEqual "password"
         api.seed.shouldNotBeBlank()
-        api.encrypted shouldEqual true
-        api.unlocked shouldEqual false
+        api.encrypted.shouldBeTrue()
+        api.unlocked.shouldBeTrue()
     }
 
     @Test
@@ -27,11 +29,11 @@ class MockSiaApiTest {
         api.encrypted = true
         api.unlocked = false
         api.password = "password"
-        api.wallet().blockingGet().unlocked shouldEqual false
+        api.wallet().blockingGet().unlocked.shouldBeFalse()
         api.walletUnlock("password").blockingAwait()
-        api.unlocked shouldEqual true
-        api.wallet().blockingGet().unlocked shouldEqual true
+        api.unlocked.shouldBeTrue()
+        api.wallet().blockingGet().unlocked.shouldBeTrue()
         api.walletLock().blockingAwait()
-        api.unlocked shouldEqual false
+        api.unlocked.shouldBeTrue()
     }
 }

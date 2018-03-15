@@ -33,7 +33,7 @@ class WalletRepository
             .doOnSuccess { (apiTxs, dbTxs) ->
                 /* delete all db transactions that aren't in the api response */
                 dbTxs.filter { dbTx -> apiTxs.find { it.transactionid == dbTx.transactionid } == null }
-                        .forEach { db.transactionDao().delete(it.transactionid) }
+                        .forEach { db.transactionDao().delete(it) }
 
                 apiTxs.forEach { db.transactionDao().insertReplaceOnConflict(it) }
                 // TODO: is there a more efficient way to sync the db transactions to the api txs?
@@ -100,7 +100,7 @@ class WalletRepository
 
     fun sweep(dictionary: String, seed: String) = api.walletSweepSeed(dictionary, seed)
 
-    fun clearWalletDb() = Completable.fromCallable {
+    private fun clearWalletDb() = Completable.fromCallable {
         db.walletDao().deleteAll()
         db.transactionDao().deleteAll()
         db.addressDao().deleteAll()

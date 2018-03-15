@@ -214,7 +214,7 @@ class FilesFragment : BaseFragment() {
         }
 
         viewModel.activeTasks.observe(this) {
-            // TODO
+            progressBar.visibleIf(it > 0)
         }
 
         viewModel.error.observe(this) {
@@ -385,9 +385,9 @@ class FilesFragment : BaseFragment() {
     private fun downloadSelected() {
         if (!context!!.havePermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), REQUEST_WRITE_PERMISSION)
-            return
+        } else {
+            viewModel.downloadSelected(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).absolutePath)
         }
-        viewModel.downloadSelected(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).absolutePath)
     }
 
     override fun onBackPressed(): Boolean {

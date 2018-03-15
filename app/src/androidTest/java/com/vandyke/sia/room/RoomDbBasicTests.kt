@@ -2,7 +2,7 @@
  * Copyright (c) 2017 Nicholas van Dyke. All rights reserved.
  */
 
-package com.vandyke.sia
+package com.vandyke.sia.room
 
 /*
  * Copyright (c) 2017 Nicholas van Dyke. All rights reserved.
@@ -74,7 +74,7 @@ open class RoomDbBasicTests {
         db.addressDao().insertAllAbortOnConflict(list)
         val fromDb = db.addressDao().getAll().blockingGet()
         fromDb.size shouldEqual list.size
-        list shouldEqual fromDb
+        fromDb shouldEqual list
     }
 
     @Test
