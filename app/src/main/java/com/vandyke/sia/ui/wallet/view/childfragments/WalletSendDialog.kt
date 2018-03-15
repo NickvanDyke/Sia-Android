@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.view.View
 import com.vandyke.sia.R
 import com.vandyke.sia.ui.wallet.view.ScannerActivity
+import com.vandyke.sia.util.ClipboardServiceUtil
 import com.vandyke.sia.util.toHastings
 import kotlinx.android.synthetic.main.fragment_wallet_send.*
 
@@ -18,6 +19,10 @@ class WalletSendDialog : BaseWalletFragment() {
 
     override fun create(view: View, savedInstanceState: Bundle?) {
         walletScan.setOnClickListener { startScannerActivity() }
+
+        pasteClipboard.setOnClickListener {
+            sendRecipient.setText(ClipboardServiceUtil.getPrimaryText(context!!))
+        }
     }
 
     private fun startScannerActivity() {
