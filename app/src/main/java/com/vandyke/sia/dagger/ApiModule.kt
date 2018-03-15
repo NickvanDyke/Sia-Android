@@ -24,7 +24,7 @@ class ApiModule {
     @Provides
     @Singleton
     fun provideSiaApi(): SiaApi {
-        return MockSiaApi()
+//        return MockSiaApi()
         val clientBuilder = OkHttpClient.Builder()
                 .readTimeout(0, TimeUnit.MILLISECONDS) // no timeout because some Sia API calls can take a long time to return
 //                .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
@@ -53,7 +53,12 @@ class ApiModule {
                 }
 
         return Retrofit.Builder()
-                .addConverterFactory(MoshiConverterFactory.create(Moshi.Builder().add(BigDecimalAdapter()).add(DataAdapters()).build()))
+                .addConverterFactory(
+                        MoshiConverterFactory.create(
+                                Moshi.Builder()
+                                        .add(BigDecimalAdapter())
+                                        .add(DataAdapters())
+                                        .build()))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .client(clientBuilder.build())
 //                .baseUrl("http://10.0.22.248:9980/")

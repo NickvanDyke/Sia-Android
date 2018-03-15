@@ -14,8 +14,8 @@ android {
         applicationId "com.vandyke.sia"
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 206
-        versionName "0.2.6"
+        versionCode 207
+        versionName "0.2.7"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         /* lets us not shrink debug builds, for faster build times. Not necessary for release builds, since we shrink those */
         multiDexEnabled true
@@ -126,14 +126,11 @@ dependencies {
 
     /* Dagger, for DI */
     implementation 'com.google.dagger:dagger:2.12'
-    kapt "com.google.dagger:dagger-android-processor:2.12"
     kapt 'com.google.dagger:dagger-compiler:2.12'
-    implementation 'com.google.dagger:dagger-android-support:2.12'
 
     /* Moshi (JSON converter) */
     implementation 'com.squareup.moshi:moshi:1.5.0'
     implementation 'com.squareup.retrofit2:converter-moshi:2.3.0'
-    implementation 'com.squareup.moshi:moshi-kotlin:1.5.0'
 
     /* for crash reporting/analytics */
     implementation 'com.google.firebase:firebase-crash:11.8.0'

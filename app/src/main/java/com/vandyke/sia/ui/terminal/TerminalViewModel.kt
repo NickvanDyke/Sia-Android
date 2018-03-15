@@ -9,6 +9,7 @@ import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.MutableLiveData
 import com.vandyke.sia.App
 import com.vandyke.sia.R
+import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.util.StorageUtil
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.launch
@@ -25,10 +26,10 @@ class TerminalViewModel(application: Application) : AndroidViewModel(application
 
     init {
         output.value = getApplication<App>().getString(R.string.terminal_warning)
-        siacFile = StorageUtil.copyFromAssetsToAppStorage("siac", application)
+        siacFile = StorageUtil.copyFromAssetsToAppStorage("siac-${Prefs.siaVersion}", application)
     }
 
-    fun appendToOutput(text: String) {
+    private fun appendToOutput(text: String) {
         output.postValue(text + "\n")
     }
 
@@ -37,7 +38,7 @@ class TerminalViewModel(application: Application) : AndroidViewModel(application
             appendToOutput("\nCould not run siac.\n")
             return
         }
-        val fullCommand = command.split(" ".toRegex()).toMutableList()
+        val fullCommand = command.split(" ").toMutableList()
         fullCommand.add(0, siacFile!!.absolutePath)
         val pb = ProcessBuilder(fullCommand)
         pb.redirectErrorStream(true)
