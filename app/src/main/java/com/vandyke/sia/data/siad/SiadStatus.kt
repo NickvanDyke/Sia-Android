@@ -18,7 +18,7 @@ class SiadStatus
     val mostRecentSiadOutput = MutableLiveData<String>()
 
     /** Don't modify directly. Call siadOutput() */
-    val allSiadOutput = ReplaySubject.create<String>()
+    val allSiadOutput = ReplaySubject.create<String>()!!
 
     val state = NonNullLiveData(State.STOPPED)
 

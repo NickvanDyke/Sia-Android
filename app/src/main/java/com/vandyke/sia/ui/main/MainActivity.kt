@@ -144,6 +144,7 @@ class MainActivity : AppCompatActivity() {
                         if (!purchased && System.currentTimeMillis() > Prefs.requirePurchaseAt) {
                             finish()
                             startActivity(Intent(this@MainActivity, PurchaseActivity::class.java))
+                            // TODO: maybe stop SiadService here? Because due to the time that checking purchases takes, it will have started by now
                         }
                     }
                 }

@@ -110,6 +110,12 @@ class SiadService : LifecycleService() {
 
         try {
             siadProcess = pb.start() // TODO: this causes the application to skip about a second of frames when starting at the same time as the app. Preventable? Background thread?
+            if (siadProcess == null) {
+                siadStatus.state.value = State.STOPPED
+                siadStatus.siadOutput("Error starting Sia process")
+                return
+            }
+
             siadStatus.state.value = State.SIAD_LOADING
 
             startForeground(SIAD_NOTIFICATION, siadNotification("Starting Sia node..."))
@@ -143,7 +149,7 @@ class SiadService : LifecycleService() {
                 }
             }
         } catch (e: IOException) {
-            showSiadNotification(e.localizedMessage ?: "Error starting Sia node")
+            siadStatus.siadOutput(e.localizedMessage ?: "Error starting Sia process")
         }
     }
 

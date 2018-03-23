@@ -14,6 +14,8 @@ import com.vandyke.sia.util.rx.SingleLiveEvent
 import java.io.File
 import javax.inject.Inject
 
+// TODO: very rarely, when dagger attempts to create this class, it throws:
+// Exception java.lang.RuntimeException: java.lang.NullPointerException: Attempt to invoke virtual method 'java.lang.String java.io.File.getAbsolutePath()' on a null object reference
 class NodeModulesViewModel
 @Inject constructor(
         context: Context,
@@ -38,12 +40,9 @@ class NodeModulesViewModel
 
     private val prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
         if (key == "modulesString") {
-            val modulesString = Prefs.modulesString
-            updateModuleEnabled(Module.GATEWAY, modulesString.contains('g', true))
-            updateModuleEnabled(Module.CONSENSUS, modulesString.contains('c', true))
-            updateModuleEnabled(Module.TRANSACTIONPOOL, modulesString.contains('t', true))
-            updateModuleEnabled(Module.WALLET, modulesString.contains('w', true))
-            updateModuleEnabled(Module.RENTER, modulesString.contains('r', true))
+            modules.forEach {
+                updateModuleEnabled(it.type, Prefs.modulesString.contains(it.type.name[0], true))
+            }
         }
     }
 

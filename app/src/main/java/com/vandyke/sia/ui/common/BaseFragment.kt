@@ -62,6 +62,7 @@ abstract class BaseFragment : Fragment() {
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
 //        println("${this.javaClass.simpleName} onHiddenChanged. hidden: $hidden")
         if (!hidden) {
             onShowHelper()
@@ -88,9 +89,5 @@ abstract class BaseFragment : Fragment() {
 
     private fun logScreen() {
         Analytics.setCurrentScreen(this)
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-
     }
 }

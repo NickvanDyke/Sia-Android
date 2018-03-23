@@ -22,6 +22,7 @@ import kotlinx.android.synthetic.main.holder_module.*
 import java.io.File
 import javax.inject.Inject
 
+// TODO: the View portion of the modules page could be made less messy
 class NodeModulesFragment : BaseFragment() {
     override val title: String = "Node Modules"
     override val layoutResId: Int = R.layout.fragment_node_modules

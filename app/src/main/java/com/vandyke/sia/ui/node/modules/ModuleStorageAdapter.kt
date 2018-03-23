@@ -34,11 +34,11 @@ class ModuleStorageAdapter(val module: ModuleData, val fragment: NodeModulesFrag
 
     inner class ModuleStorageHolder(itemView: View) : RecyclerView.ViewHolder(itemView), LayoutContainer {
         override val containerView: View? = itemView
-        private lateinit var dir: File
+        private var dir: File? = null
 
         init {
             itemView.setOnClickListener {
-                fragment.showDeleteConfirmationDialog(module.type, dir)
+                fragment.showDeleteConfirmationDialog(module.type, dir!!)
             }
         }
 
@@ -49,8 +49,10 @@ class ModuleStorageAdapter(val module: ModuleData, val fragment: NodeModulesFrag
         }
 
         fun update() {
-            module_storage_header.text = dir.absolutePath
-            module_storage_size.text = StorageUtil.readableFilesizeString(dir.recursiveLength())
+            dir?.let {
+                module_storage_header.text = it.absolutePath
+                module_storage_size.text = StorageUtil.readableFilesizeString(it.recursiveLength())
+            }
         }
     }
 }

@@ -58,6 +58,8 @@ object StorageUtil {
         return null
     }
 
+    /** This isn't actually in use anymore. It's still here solely for updating apps that used the
+     *  external storage dir returned by this, to the new method */
     fun getExternalStorage(context: Context): File {
         val dirs = context.getExternalFilesDirs(null)
         if (dirs.isEmpty())
@@ -74,7 +76,7 @@ object StorageUtil {
     }
 }
 
-fun Context.getAllFilesDirs(): List<File> = getExternalFilesDirs(null).toMutableList().apply { add(0, filesDir) }
+fun Context.getAllFilesDirs(): List<File> = mutableListOf(filesDir).apply { addAll(getExternalFilesDirs(null)) }
 
 class ExternalStorageException(msg: String) : Exception(msg)
 
