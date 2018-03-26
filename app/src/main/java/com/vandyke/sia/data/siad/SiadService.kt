@@ -51,7 +51,7 @@ class SiadService : LifecycleService() {
         super.onCreate()
         this.getAppComponent().inject(this)
 
-        // TODO: should also check for and delete older versions of Sia
+        // TODO: should also check for and delete older versions of siad. Same with siac
         siadFile = StorageUtil.copyFromAssetsToAppStorage("siad-${Prefs.siaVersion}", this)
 
         handler = Handler(mainLooper)
@@ -93,23 +93,22 @@ class SiadService : LifecycleService() {
             pb.environment()["SIA_API_PASSWORD"] = Prefs.apiPassword
         }
 
+        /* set the working directory for the siad process, checking for error cases */
         val dir = File(Prefs.siaWorkingDirectory)
         if (!dir.exists()) {
             siadStatus.siadOutput("Error: set working directory doesn't exist")
             return
-        } else if (dir.absolutePath != filesDir.absolutePath) {
-            if (Environment.getExternalStorageState(dir) != Environment.MEDIA_MOUNTED) {
-                siadStatus.siadOutput("Error with external storage: ${Environment.getExternalStorageState(dir)}")
-                return
-            } else {
-                pb.directory(dir)
-            }
+        } else if (dir.absolutePath != filesDir.absolutePath && Environment.getExternalStorageState(dir) != Environment.MEDIA_MOUNTED) {
+            siadStatus.siadOutput("Error with external storage: ${Environment.getExternalStorageState(dir)}")
+            return
         } else {
             pb.directory(dir)
         }
 
         try {
             siadProcess = pb.start() // TODO: this causes the application to skip about a second of frames when starting at the same time as the app. Preventable? Background thread?
+            /* don't think start() can return null, but I've had a couple crash reports with KotlinNPE at the line that calls siadProcess!!.inputStream
+             * so I'm putting it here to possibly fix it. The crash is extremely rare. Maybe it's a race condition or lifecycle related. */
             if (siadProcess == null) {
                 siadStatus.state.value = State.STOPPED
                 siadStatus.siadOutput("Error starting Sia process")
@@ -145,6 +144,7 @@ class SiadService : LifecycleService() {
                     }
                     inputReader.close()
                 } catch (e: IOException) {
+                    /* note that this is expected to happen when siadProcess.destroy() is called */
                     Log.d("SiadService", "Sia process reading interrupted")
                 }
             }
@@ -167,7 +167,7 @@ class SiadService : LifecycleService() {
             stopSiad()
             /* first remove any pending starts */
             handler.removeCallbacksAndMessages(null)
-            /* need to wait a little bit, otherwise siad will report that the address is already in use */
+            /* need to wait a little bit before starting again, otherwise siad will report that the address is already in use */
             handler.postDelayed(::startSiad, 1000)
         }
     }
