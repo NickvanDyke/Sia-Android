@@ -302,7 +302,7 @@ class FilesFragment : BaseFragment() {
             }
 
             override fun onQueryTextSubmit(query: String): Boolean {
-                KeyboardUtil.hideKeyboard(activity)
+                KeyboardUtil.hideKeyboard(activity!!)
                 return true
             }
         })

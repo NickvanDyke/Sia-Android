@@ -11,7 +11,7 @@ import android.content.Context
 import android.os.Build
 
 object NotificationUtil {
-    val SIA_NODE_CHANNEL = "Sia node"
+    const val SIA_NODE_CHANNEL = "Sia node"
 
     fun cancelNotification(context: Context, id: Int) {
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

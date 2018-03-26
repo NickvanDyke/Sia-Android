@@ -18,9 +18,6 @@ import java.math.BigDecimal
 
 
 object GenUtil {
-
-
-
     fun launchCustomTabs(context: Context, url: String) {
         CustomTabsIntent.Builder()
                 .setToolbarColor(context.getAttrColor(R.attr.colorPrimary))

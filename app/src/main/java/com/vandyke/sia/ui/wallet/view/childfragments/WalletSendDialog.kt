@@ -7,26 +7,28 @@ package com.vandyke.sia.ui.wallet.view.childfragments
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.view.View
 import com.vandyke.sia.R
 import com.vandyke.sia.ui.wallet.view.ScannerActivity
-import com.vandyke.sia.util.ClipboardServiceUtil
+import com.vandyke.sia.util.KeyboardUtil
 import com.vandyke.sia.util.toHastings
+import io.github.tonnyl.light.Light
 import kotlinx.android.synthetic.main.fragment_wallet_send.*
 
 class WalletSendDialog : BaseWalletFragment() {
     override val layout: Int = R.layout.fragment_wallet_send
 
     override fun create(view: View, savedInstanceState: Bundle?) {
-        walletScan.setOnClickListener { startScannerActivity() }
+        walletScan.setOnClickListener {
+            startActivityForResult(Intent(activity, ScannerActivity::class.java), SCAN_REQUEST)
+        }
 
         pasteClipboard.setOnClickListener {
-            sendRecipient.setText(ClipboardServiceUtil.getPrimaryText(context!!))
+            KeyboardUtil.getClipboardPrimaryText(context!!)?.let {
+                sendRecipient.setText(it)
+            } ?: Light.error(view, "No text on clipboard to paste", Snackbar.LENGTH_SHORT).show()
         }
-    }
-
-    private fun startScannerActivity() {
-        startActivityForResult(Intent(activity, ScannerActivity::class.java), SCAN_REQUEST)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

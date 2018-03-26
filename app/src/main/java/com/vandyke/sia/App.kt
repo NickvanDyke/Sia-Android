@@ -16,11 +16,12 @@ import com.vandyke.sia.util.NotificationUtil
 class App : Application() {
 
     lateinit var appComponent: AppComponent
+        private set
 
     override fun onCreate() {
         NotificationUtil.createSiaNodeNotificationChannel(this)
 
-        /* init singletons. TODO: make them injected instead */
+        /* init singletons. TODO: inject them instead */
         Kotpref.init(this)
         Analytics.init(this)
 

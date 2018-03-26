@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.ScrollView
 import com.vandyke.sia.BuildConfig
 import com.vandyke.sia.R
 import com.vandyke.sia.data.local.Prefs
@@ -103,9 +104,11 @@ class AboutFragment : BaseFragment() {
                 .create()
 
         /* get the divider and the LinearLayout that holds the image and description, and hide them, since we don't want them */
-        val rootLinear = (page.rootView as ViewGroup).getChildAt(0) as LinearLayout
-        rootLinear.getChildAt(0).visibility = View.GONE
-        rootLinear.getChildAt(1).visibility = View.GONE
+        val root = page.rootView as ScrollView
+        root.isVerticalScrollBarEnabled = false
+        val linear = root.getChildAt(0) as LinearLayout
+        linear.getChildAt(0).visibility = View.GONE
+        linear.getChildAt(1).visibility = View.GONE
 
         return page
     }
