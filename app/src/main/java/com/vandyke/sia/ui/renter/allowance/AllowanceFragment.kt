@@ -201,21 +201,14 @@ class AllowanceFragment : BaseFragment() {
 
         vm.spending.observe(this) { (_, upload, download, storage, contract, unspent) ->
             /* we want a minimum value so that even if the value is zero, it will still show on the chart */
-            val minValue = (upload.toSC() + download.toSC() + storage.toSC() + contract.toSC() + unspent.toSC()).toFloat() * 0.15f
-            dataSet.values[0].y = Math.max(upload.toSC().toFloat(), minValue)
-            dataSet.values[1].y = Math.max(download.toSC().toFloat(), minValue)
-            dataSet.values[2].y = Math.max(storage.toSC().toFloat(), minValue)
-            dataSet.values[3].y = Math.max(contract.toSC().toFloat(), minValue)
-            dataSet.values[4].y = Math.max(unspent.toSC().toFloat(), minValue)
+            val total = (upload + download + storage + contract + unspent).toFloat()
+            val minValue = if (total == 0f) 1f else total * 0.15f
+            dataSet.values[0].y = Math.max(upload.toFloat(), minValue)
+            dataSet.values[1].y = Math.max(download.toFloat(), minValue)
+            dataSet.values[2].y = Math.max(storage.toFloat(), minValue)
+            dataSet.values[3].y = Math.max(contract.toFloat(), minValue)
+            dataSet.values[4].y = Math.max(unspent.toFloat(), minValue)
             dataSet.notifyDataSetChanged()
-
-            // should I be doing this here too?
-//            val x = vm.currentMetric.value.ordinal.toFloat()
-//            if (highlightedX != x) {
-//                highlightedX = x
-//                pieChart.highlightValue(x, 0)
-//            }
-
             pieChart.notifyDataSetChanged()
             pieChart.invalidate()
         }

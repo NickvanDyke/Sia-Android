@@ -51,7 +51,7 @@ class SiadNotRunning : SiaException("Sia node isn't running")
 class APIAuthFailed : SiaException("Incorrect API password")
 class Sia404 : SiaException("Required module isn't running")
 
-class WalletAlreadyUnlocked : SiaException("Wallet already unlocked")
+class WalletAlreadyUnlocked : SiaException("Wallet is already unlocked")
 class WalletLocked : SiaException("Please unlock the wallet first")
 class WalletPasswordIncorrect : SiaException("Incorrect wallet password")
 class CouldNotReadAmount : SiaException("Invalid amount")

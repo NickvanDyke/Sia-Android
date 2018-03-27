@@ -24,7 +24,7 @@ class SiadStatus
 
     fun siadOutput(output: String) {
         if (output.contains("Finished loading"))
-            state.value = State.SIAD_LOADED
+            state.postValue(State.SIAD_LOADED)
         mostRecentSiadOutput.postValue(output)
         allSiadOutput.onNext(output)
     }
