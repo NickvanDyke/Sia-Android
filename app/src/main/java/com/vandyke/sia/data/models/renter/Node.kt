@@ -73,7 +73,7 @@ fun String.filePathParent(): String {
 }
 
 @Entity(tableName = "dirs")
-class Dir(
+data class Dir(
         @PrimaryKey
         override val path: String,
         override val size: Long

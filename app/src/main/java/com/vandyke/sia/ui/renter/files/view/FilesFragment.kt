@@ -71,28 +71,29 @@ class FilesFragment : BaseFragment() {
 
         /* set up nodes list */
         nodesAdapter = NodesAdapter(viewModel)
-        nodesList.adapter = nodesAdapter
+        nodes_list.adapter = nodesAdapter
 
         pathAdapter = ArrayAdapter(context, R.layout.spinner_selected_item_white)
         pathAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
         /* set up path spinner */
-        spinnerView = Spinner(context)
-        spinnerView.minimumWidth = 400
-        spinnerView.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-            }
+        spinnerView = Spinner(context).apply {
+            minimumWidth = 400
+            onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                }
 
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                viewModel.goToIndexInPath(position)
+                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                    viewModel.goToIndexInPath(position)
+                }
             }
+            adapter = pathAdapter
+            background.setColorFilter(context!!.getColorRes(android.R.color.white), PorterDuff.Mode.SRC_ATOP)
         }
-        spinnerView.adapter = pathAdapter
-        spinnerView.background.setColorFilter(context!!.getColorRes(android.R.color.white), PorterDuff.Mode.SRC_ATOP)
 
         /* pull-to-refresh stuff */
-        nodesListRefresh.setColors(context!!)
-        nodesListRefresh.setOnRefreshListener { viewModel.refresh() }
+        nodes_list_swiperefresh.setColors(context!!)
+        nodes_list_swiperefresh.setOnRefreshListener { viewModel.refresh() }
 
         /* FAB stuff */
         fabAddFile.setOnClickListener {
@@ -179,13 +180,13 @@ class FilesFragment : BaseFragment() {
             if (it) {
                 viewTypeItem?.setIcon(R.drawable.ic_view_list)
                 viewTypeItem?.title = "View as grid"
-                nodesList.layoutManager = LinearLayoutManager(context)
+                nodes_list.layoutManager = LinearLayoutManager(context)
             } else {
                 viewTypeItem?.setIcon(R.drawable.ic_view_module)
                 viewTypeItem?.title = "View as list"
-                nodesList.layoutManager = GridLayoutManager(context, LayoutUtil.calculateNoOfColumns(context!!))
+                nodes_list.layoutManager = GridLayoutManager(context, LayoutUtil.calculateNoOfColumns(context!!))
             }
-            nodesList.recycledViewPool.clear()
+            nodes_list.recycledViewPool.clear()
         }
 
         viewModel.selectedNodes.observe(this) {
@@ -209,17 +210,15 @@ class FilesFragment : BaseFragment() {
                 searchItem?.collapseActionView()
         }
 
-        viewModel.refreshing.observe(this) {
-            nodesListRefresh.isRefreshing = it
-        }
+        viewModel.refreshing.observe(this, nodes_list_swiperefresh::setRefreshing)
 
         viewModel.activeTasks.observe(this) {
-            progressBar.visibleIf(it > 0)
+            progress_bar.visibleIf(it > 0)
         }
 
         viewModel.error.observe(this) {
             it.snackbar(coordinator)
-            nodesListRefresh.isRefreshing = false
+            nodes_list_swiperefresh.isRefreshing = false
         }
 
         siadStatus.state.observe(this) {

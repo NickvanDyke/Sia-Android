@@ -107,7 +107,7 @@ class WalletFragment : BaseFragment() {
         viewModel.activeTasks.observe(this) {
             // TODO: when being made visible, the bar flickers at the location it was at last, before restarting
             // Tried a few potential solutions, none worked
-            progressBar.visibleIf(it > 0)
+            progress_bar.visibleIf(it > 0)
         }
 
         /* observe data in the viewModel */
@@ -265,7 +265,7 @@ class WalletFragment : BaseFragment() {
     }
 
     private fun setProgressColor(resId: Int) {
-        progressBar.indeterminateDrawable.setColorFilter(ContextCompat.getColor(context!!, resId), PorterDuff.Mode.SRC_IN)
+        progress_bar.indeterminateDrawable.setColorFilter(ContextCompat.getColor(context!!, resId), PorterDuff.Mode.SRC_IN)
     }
 
     private fun setFabIcon() {

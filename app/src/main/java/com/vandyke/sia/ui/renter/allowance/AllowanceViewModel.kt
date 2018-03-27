@@ -65,6 +65,15 @@ class AllowanceViewModel
 
         currency.observeForevs { Prefs.allowanceCurrency = it; setDisplayedMetrics() }
         currentMetric.observeForevs { setDisplayedMetrics() }
+
+        /* if one of the must-be-non-zero allowance values is zero, set it to a default value */
+        allowance.observeForevs { (amt, hosts, period, renew) ->
+            if (hosts == 0 || period == 0 || renew == 0)
+                setAllowance(amt,
+                        if (hosts == 0) 24 else hosts,
+                        if (period == 0) 6048 else period,
+                        if (renew == 0) 3024 else renew)
+        }
     }
 
     fun refresh() {
@@ -155,7 +164,7 @@ class AllowanceViewModel
         UPLOAD("Uploading"),
         DOWNLOAD("Downloading"),
         STORAGE("Storage"),
-        CONTRACT("Form contracts"),
+        CONTRACT("Contracts"),
         UNSPENT("Unspent")
     }
 

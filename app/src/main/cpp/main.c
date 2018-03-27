@@ -17,6 +17,9 @@
 // lot of work though. But maybe down the road. It might also enable running
 // siad from within an iOS app, which isn't possible using an executable
 // due to tighter restrictions.
+//
+// Note that I've already attempted to use gomobile for the above purpose, but it doesn't
+// support int64 types currently and so didn't work.
 
 int main() {
     return 0;

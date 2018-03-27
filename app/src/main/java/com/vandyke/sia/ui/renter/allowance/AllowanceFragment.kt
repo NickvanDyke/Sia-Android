@@ -33,8 +33,6 @@ import com.vandyke.sia.util.rx.observe
 import kotlinx.android.synthetic.main.fragment_allowance.*
 import javax.inject.Inject
 
-// TODO: handle when there's no initial data from the db and the node isn't running yet. i.e. if you call setAllowance it'll crash
-// because it'll have null values
 class AllowanceFragment : BaseFragment() {
     override val layoutResId = R.layout.fragment_allowance
     override val hasOptionsMenu = true
@@ -54,8 +52,8 @@ class AllowanceFragment : BaseFragment() {
 
         vm = ViewModelProviders.of(this, factory).get(AllowanceViewModel::class.java)
 
-        allowanceSwipe.setOnRefreshListener { vm.refresh() }
-        allowanceSwipe.setColors(context!!)
+        allowance_swiperefresh.setOnRefreshListener(vm::refresh)
+        allowance_swiperefresh.setColors(context!!)
 
         /* chart setup */
         val dataSet = PieDataSet(listOf(
@@ -65,9 +63,8 @@ class AllowanceFragment : BaseFragment() {
                 PieEntry(1f, context!!.getDrawable(R.drawable.ic_file)),
                 PieEntry(1f, context!!.getDrawable(R.drawable.ic_money))),
                 "Spending")
-        val colors = ColorTemplate.MATERIAL_COLORS.toMutableList()
-        colors.add(0, context!!.getColorRes(android.R.color.holo_purple))
-        dataSet.colors = colors
+        dataSet.colors = mutableListOf(context!!.getColorRes(android.R.color.holo_purple))
+                .apply { addAll(ColorTemplate.MATERIAL_COLORS.asList()) }
         dataSet.sliceSpace = 1.5f
 
         val data = PieData(dataSet)
@@ -150,16 +147,14 @@ class AllowanceFragment : BaseFragment() {
         }
 
         /* viewModel observation */
-        vm.refreshing.observe(this) {
-            allowanceSwipe.isRefreshing = it
-        }
+        vm.refreshing.observe(this, allowance_swiperefresh::setRefreshing)
 
         vm.allowance.observe(this) {
             // TODO: show day equivalents of block values
-                fundsValue.text = it.funds.toSC().format() + " SC"
-                hostsValue.text = it.hosts.format()
-                periodValue.text = it.period.format() + " blocks"
-                renewWindowValue.text = it.renewwindow.format() + " blocks"
+            fundsValue.text = it.funds.toSC().format() + " SC"
+            hostsValue.text = it.hosts.format()
+            periodValue.text = it.period.format() + " blocks"
+            renewWindowValue.text = it.renewwindow.format() + " blocks"
         }
 
         vm.currentMetric.observe(this) {
@@ -204,14 +199,14 @@ class AllowanceFragment : BaseFragment() {
             }
         }
 
-        vm.spending.observe(this) {
-            // TODO: use some Math.max or min here so that when they're all zero, there's still some data,
-            // and so that ones that are zero can still be seen when the others aren't zero
-            dataSet.values[0].y = it.uploadspending.toSC().toFloat()
-            dataSet.values[1].y = it.downloadspending.toSC().toFloat()
-            dataSet.values[2].y = it.storagespending.toSC().toFloat()
-            dataSet.values[3].y = it.contractspending.toSC().toFloat()
-            dataSet.values[4].y = it.unspent.toSC().toFloat()
+        vm.spending.observe(this) { (_, upload, download, storage, contract, unspent) ->
+            /* we want a minimum value so that even if the value is zero, it will still show on the chart */
+            val minValue = (upload.toSC() + download.toSC() + storage.toSC() + contract.toSC() + unspent.toSC()).toFloat() * 0.15f
+            dataSet.values[0].y = Math.max(upload.toSC().toFloat(), minValue)
+            dataSet.values[1].y = Math.max(download.toSC().toFloat(), minValue)
+            dataSet.values[2].y = Math.max(storage.toSC().toFloat(), minValue)
+            dataSet.values[3].y = Math.max(contract.toSC().toFloat(), minValue)
+            dataSet.values[4].y = Math.max(unspent.toSC().toFloat(), minValue)
             dataSet.notifyDataSetChanged()
 
             // should I be doing this here too?
@@ -226,7 +221,7 @@ class AllowanceFragment : BaseFragment() {
         }
 
         vm.error.observe(this) {
-            it.snackbar(view)
+            it.snackbar(allowance_swiperefresh)
         }
 
         siadStatus.state.observe(this) {

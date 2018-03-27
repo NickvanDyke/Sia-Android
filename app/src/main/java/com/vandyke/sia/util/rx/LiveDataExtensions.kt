@@ -15,6 +15,15 @@ fun <T> LiveData<T>.observe(owner: LifecycleOwner, onChanged: (T) -> Unit) {
     })
 }
 
+fun <T> LiveData<T>.observeForevs(onChanged: (T) -> Unit) {
+    this.observeForever {
+        if (it == null)
+            throw IllegalStateException()
+        else
+            onChanged(it)
+    }
+}
+
 fun NonNullLiveData<Int>.increment() {
     this.value = this.value + 1
 }

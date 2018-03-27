@@ -98,7 +98,7 @@
             <!--app:layout_constraintTop_toTopOf="parent" />-->
 
         <me.zhanghai.android.materialprogressbar.MaterialProgressBar
-            android:id="@+id/progressBar"
+            android:id="@+id/progress_bar"
             style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal"
             android:layout_width="0dp"
             android:layout_height="2dp"

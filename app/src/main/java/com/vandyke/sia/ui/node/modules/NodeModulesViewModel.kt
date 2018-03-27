@@ -55,13 +55,9 @@ class NodeModulesViewModel
         Prefs.preferences.unregisterOnSharedPreferenceChangeListener(prefsListener)
     }
 
-    fun onShow() {
-        moduleObservers.forEach { it.startWatching() }
-    }
+    fun onShow() = moduleObservers.forEach { it.startWatching() }
 
-    fun onHide() {
-        moduleObservers.forEach { it.stopWatching() }
-    }
+    fun onHide() = moduleObservers.forEach { it.stopWatching() }
 
     private fun updateModuleEnabled(module: Module, enabled: Boolean) {
         val index = modules.indexOfFirst { it.type == module }

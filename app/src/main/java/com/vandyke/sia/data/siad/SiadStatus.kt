@@ -23,6 +23,8 @@ class SiadStatus
     val state = NonNullLiveData(State.STOPPED)
 
     fun siadOutput(output: String) {
+        if (output.contains("Finished loading"))
+            state.value = State.SIAD_LOADED
         mostRecentSiadOutput.postValue(output)
         allSiadOutput.onNext(output)
     }

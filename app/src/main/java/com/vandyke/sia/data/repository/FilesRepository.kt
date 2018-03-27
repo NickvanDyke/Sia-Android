@@ -40,7 +40,7 @@ class FilesRepository
             /* get the list of files from the Sia node, delete db files that aren't
              * in the response, and insert each file and the dirs containing it */
             api.renterFiles()
-                    .map { it.files }
+                    .map { it.files ?: listOf() }
                     .zipWith(db.fileDao().getAll())
                     /* remove files that are in the local database but not in the Sia API response (by path) */
                     .doOnSuccess { (apiFiles, dbFiles) ->

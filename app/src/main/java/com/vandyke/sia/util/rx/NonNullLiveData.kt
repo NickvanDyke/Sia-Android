@@ -25,7 +25,7 @@ class NonNullLiveData<T>(initialValue: T) : LiveData<T>() {
     fun observeForevs(onChanged: (T) -> Unit) {
         this.observeForever {
             if (it == null)
-                throw Exception()
+                throw IllegalStateException()
             else
                 onChanged(it)
         }

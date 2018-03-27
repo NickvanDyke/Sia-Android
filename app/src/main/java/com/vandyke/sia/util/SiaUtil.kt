@@ -9,6 +9,8 @@ import com.vandyke.sia.data.local.Prefs
 import java.math.BigDecimal
 import java.text.NumberFormat
 
+val BLOCKTIME = 600 // seconds
+
 val HASTINGS_PER_SC = BigDecimal("1000000000000000000000000")
 
 const val BLOCK_139949_TIMESTAMP = 1517519551
@@ -56,10 +58,12 @@ object SiaUtil {
 
     fun estimatedTimeAtBlock(height: Long): Long {
         val blockTime = 10
-        val heightDiff = height - 100000
+        val heightDiff = height - 139949
         val timeDiff = heightDiff * blockTime
         return (BLOCK_139949_TIMESTAMP + timeDiff * 60)
     }
+
+    fun blocksToDays(blocks: Int) = (blocks * BLOCKTIME).toFloat() / (24 * 60 * 60)
 
     val isSiadSupported = Build.SUPPORTED_64_BIT_ABIS.any { it == "arm64-v8a" }
 }

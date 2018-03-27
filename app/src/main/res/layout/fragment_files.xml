@@ -8,12 +8,12 @@
     android:layout_height="match_parent">
 
     <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/nodesListRefresh"
+        android:id="@+id/nodes_list_swiperefresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/nodesList"
+            android:id="@+id/nodes_list"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:orientation="vertical"
@@ -119,7 +119,7 @@
     </com.github.clans.fab.FloatingActionMenu>
 
     <me.zhanghai.android.materialprogressbar.MaterialProgressBar
-        android:id="@+id/progressBar"
+        android:id="@+id/progress_bar"
         style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal"
         android:layout_width="match_parent"
         android:layout_height="3dp"

@@ -12,7 +12,7 @@ import kotlinx.android.synthetic.main.holder_module_storage.*
 import java.io.File
 
 /* we use unusual-ish ways of updating the holders because calling the usual notifyDataSetChanged or
- * notifyItemChanged etc. would cause difficulties clicking the items because of how often they'd re-bind */
+ * notifyItemChanged or DiffUtil etc. would cause difficulties clicking the items because of how often they'd re-bind */
 class ModuleStorageAdapter(val module: ModuleData, val fragment: NodeModulesFragment) : RecyclerView.Adapter<ModuleStorageAdapter.ModuleStorageHolder>() {
     private val holders = mutableListOf<ModuleStorageHolder>()
 

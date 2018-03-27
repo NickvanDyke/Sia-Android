@@ -71,6 +71,7 @@ class NodeModulesFragment : BaseFragment() {
                                 + when (module) {
                             Module.WALLET -> " Ensure your wallet seed is recorded elsewhere first."
                             Module.CONSENSUS -> " You'll have to re-sync the blockchain."
+                            Module.RENTER -> " You'll lose all your contracts, and therefore access to all your files on the Sia network."
                             else -> ""
                         })
                 .setPositiveButton("Yes") { _, _ -> vm.deleteDir(module, dir) }
@@ -110,6 +111,9 @@ class NodeModulesFragment : BaseFragment() {
 
         override fun getItemCount() = vm.modules.size
 
+        /* note that we update items in a sort of custom way, because using DiffUtil or calling notifyItem* on the adapter
+         * causes very frequent rebinding, since the data is updating so often. This rebinding makes it extremely
+         * difficult to click the items */
         fun notifyUpdate(module: Module) {
             val data = vm.modules.find { it.type == module }
             val holder = holders.find { it.module == module }

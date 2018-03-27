@@ -93,7 +93,7 @@ class SiadService : LifecycleService() {
             pb.environment()["SIA_API_PASSWORD"] = Prefs.apiPassword
         }
 
-        /* set the working directory for the siad process, checking for error cases */
+        /* set the working directory for the siad process, checking for and handling error cases */
         val dir = File(Prefs.siaWorkingDirectory)
         if (!dir.exists()) {
             siadStatus.siadOutput("Error: set working directory doesn't exist")
@@ -106,7 +106,7 @@ class SiadService : LifecycleService() {
         }
 
         try {
-            siadProcess = pb.start() // TODO: this causes the application to skip about a second of frames when starting at the same time as the app. Preventable? Background thread?
+            siadProcess = pb.start() // TODO: this causes the application to skip about a second of frames when starting at the same time as the app. Preventable? How?
             /* don't think start() can return null, but I've had a couple crash reports with KotlinNPE at the line that calls siadProcess!!.inputStream
              * so I'm putting it here to possibly fix it. The crash is extremely rare. Maybe it's a race condition or lifecycle related. */
             if (siadProcess == null) {
@@ -137,9 +137,6 @@ class SiadService : LifecycleService() {
                         if (!line.contains("Unsolicited response received on idle HTTP channel starting with"))
                             siadStatus.siadOutput(line)
 
-                        if (line.contains("Finished loading"))
-                            siadStatus.state.postValue(State.SIAD_LOADED)
-
                         line = inputReader.readLine()
                     }
                     inputReader.close()
@@ -149,7 +146,7 @@ class SiadService : LifecycleService() {
                 }
             }
         } catch (e: IOException) {
-            siadStatus.siadOutput(e.localizedMessage ?: "Error starting Sia process")
+            siadStatus.siadOutput("Error starting Sia process: ${e.localizedMessage}")
         }
     }
 
