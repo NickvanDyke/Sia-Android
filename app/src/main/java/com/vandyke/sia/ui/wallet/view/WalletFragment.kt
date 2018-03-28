@@ -107,14 +107,16 @@ class WalletFragment : BaseFragment() {
         viewModel.activeTasks.observe(this) {
             // TODO: when being made visible, the bar flickers at the location it was at last, before restarting
             // Tried a few potential solutions, none worked
-            progress_bar.visibleIf(it > 0)
+            progress_bar.goneUnless(it > 0)
         }
 
         /* observe data in the viewModel */
         viewModel.wallet.observe(this) {
             balanceText.text = it.confirmedsiacoinbalance.toSC().format()
             if (it.unconfirmedsiacoinbalance != BigDecimal.ZERO) {
-                balanceUnconfirmedText.text = ("${it.unconfirmedsiacoinbalance.toSC().format()} unconfirmed")
+                balanceUnconfirmedText.text =
+                        "${if (it.unconfirmedsiacoinbalance > BigDecimal.ZERO) "+" else ""}" +
+                                "${it.unconfirmedsiacoinbalance.toSC().format()} unconfirmed"
                 balanceUnconfirmedText.visibility = View.VISIBLE
             } else {
                 balanceUnconfirmedText.visibility = View.INVISIBLE
@@ -157,7 +159,7 @@ class WalletFragment : BaseFragment() {
             WalletCreateDialog.showSeed(it, context!!)
         }
 
-        siadStatus.state.observe(this) {
+        siadStatus.stateEvent.observe(this) {
             if (it == SiadStatus.State.SIAD_LOADED)
                 viewModel.refreshAll()
         }

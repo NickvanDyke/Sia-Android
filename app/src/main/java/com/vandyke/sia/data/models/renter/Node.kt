@@ -37,21 +37,14 @@ data class SiaFile(
         @PrimaryKey
         @Json(name = "siapath")
         override val path: String,
-        @Json(name = "localpath")
         val localpath: String,
         @Json(name = "filesize")
         override val size: Long, // bytes
-        @Json(name = "available")
         val available: Boolean,
-        @Json(name = "renewing")
         val renewing: Boolean,
-        @Json(name = "redundancy")
         val redundancy: Double,
-        @Json(name = "uploadedbytes")
-        val uploadedBytes: Long,
-        @Json(name = "uploadprogress")
-        val uploadProgress: Int,
-        @Json(name = "expiration")
+        val uploadedbytes: Long,
+        val uploadprogress: Float,
         val expiration: Long) : Node() {
 
     override val parent: String
@@ -59,7 +52,7 @@ data class SiaFile(
 
     companion object {
         /** Convenience method that returns a SiaFile with the given path and default values for other fields  */
-        fun withPath(path: String) = SiaFile(path, "", 0, false, false, 0.0, 0, 0, 0)
+        fun withPath(path: String) = SiaFile(path, "", 0, false, false, 0.0, 0, 0f, 0)
     }
 }
 

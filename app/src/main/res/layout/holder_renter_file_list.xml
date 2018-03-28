@@ -5,40 +5,33 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/fileLayout"
     android:layout_width="match_parent"
-    android:layout_height="72dp"
+    android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground">
 
-    <TextView
-        android:id="@+id/fileName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Name"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@+id/fileSize"
-        app:layout_constraintStart_toEndOf="@+id/fileImage"
-        app:layout_constraintTop_toTopOf="parent" />
+    <include layout="@layout/holder_renter_node" />
 
     <ImageView
-        android:id="@+id/fileImage"
-        android:layout_width="72dp"
-        android:layout_height="0dp"
-        android:paddingEnd="16dp"
-        android:paddingStart="16dp"
-        android:src="@drawable/ic_file"
+        android:id="@+id/file_redundancy_image"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginEnd="16dp"
+        android:src="@drawable/ic_layers"
         android:tint="@android:color/darker_gray"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBottom_toTopOf="@id/file_redundancy"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
 
     <TextView
-        android:id="@+id/fileSize"
+        android:id="@+id/file_redundancy"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:text="Size"
-        android:textSize="14sp"
+        android:text="0x"
+        android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/fileName"
-        app:layout_constraintTop_toBottomOf="@+id/fileName" />
+        app:layout_constraintEnd_toEndOf="@+id/file_redundancy_image"
+        app:layout_constraintHorizontal_bias="0.533"
+        app:layout_constraintStart_toStartOf="@+id/file_redundancy_image"
+        app:layout_constraintTop_toBottomOf="@id/file_redundancy_image" />
+
 </android.support.constraint.ConstraintLayout>

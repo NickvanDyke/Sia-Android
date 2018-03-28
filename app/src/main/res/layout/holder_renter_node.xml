@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:id="@+id/node_image"
+        android:layout_width="72dp"
+        android:layout_height="0dp"
+        android:paddingEnd="16dp"
+        android:paddingStart="16dp"
+        android:src="@drawable/ic_folder"
+        android:tint="@android:color/darker_gray"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/node_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Name"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/node_size"
+        app:layout_constraintStart_toEndOf="@+id/node_image"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"/>
+
+
+    <TextView
+        android:id="@+id/node_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="Size"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/node_name"
+        app:layout_constraintTop_toBottomOf="@+id/node_name" />
+</merge>

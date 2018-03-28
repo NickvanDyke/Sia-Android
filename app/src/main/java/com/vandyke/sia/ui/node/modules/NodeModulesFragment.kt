@@ -23,6 +23,8 @@ import java.io.File
 import javax.inject.Inject
 
 // TODO: the View portion of the modules page could be made less messy
+// should definitely split things into their own files. Way too many inner classes going on.
+// The scrolling is also often strange. Maybe due to nester RVs
 class NodeModulesFragment : BaseFragment() {
     override val title: String = "Node Modules"
     override val layoutResId: Int = R.layout.fragment_node_modules

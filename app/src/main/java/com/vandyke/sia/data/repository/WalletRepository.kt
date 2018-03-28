@@ -27,7 +27,7 @@ class WalletRepository
             .doOnSuccess { db.walletDao().insertReplaceOnConflict(it) }
             .toCompletable()
 
-    private fun updateTransactions() = api.walletTransactions()
+    private fun updateTransactions() = api.walletTransactions(0, Int.MAX_VALUE)
             .map { it.alltransactions }
             .zipWith(db.transactionDao().getAll())
             .doOnSuccess { (apiTxs, dbTxs) ->
@@ -35,7 +35,11 @@ class WalletRepository
                 dbTxs.filter { dbTx -> apiTxs.find { it.transactionid == dbTx.transactionid } == null }
                         .forEach { db.transactionDao().delete(it) }
 
-                apiTxs.forEach { db.transactionDao().insertReplaceOnConflict(it) }
+                /* insert into the db any new txs. Using ReplaceOnConflict doesn't work, as it will
+                 * trigger an update even if the new and old values are the exact same, which causes
+                 * weird stuff in the UI that's observing the db. So instead we check first, and only
+                 * insert if it's not already there */
+                apiTxs.forEach { if (it !in dbTxs) db.transactionDao().insertAbortOnConflict(it) }
                 // TODO: is there a more efficient way to sync the db transactions to the api txs?
                 // Over time, the Sia node will be returning a LOT of transactions
             }

@@ -5,6 +5,7 @@
 package com.vandyke.sia.dagger
 
 import android.util.Base64
+import com.squareup.moshi.KotlinJsonAdapterFactory
 import com.squareup.moshi.Moshi
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.remote.*
@@ -39,9 +40,7 @@ class ApiModule {
                         val response = it.proceed(request)
                         if (!response.isSuccessful) {
                             val errorMsg = response.peekBody(256).string()
-                            val siaException = SiaException.fromError(errorMsg)
-                            if (siaException != null)
-                                throw siaException
+                            SiaException.fromError(errorMsg)?.let { throw it }
                         }
                         return@addInterceptor response
                     } catch (e: ConnectException) {
@@ -58,10 +57,10 @@ class ApiModule {
                                 Moshi.Builder()
                                         .add(BigDecimalAdapter())
                                         .add(DataAdapters())
+                                        .add(KotlinJsonAdapterFactory())
                                         .build()))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .client(clientBuilder.build())
-//                .baseUrl("http://10.0.22.248:9980/")
                 .baseUrl("http://localhost:9980/")
                 .build()
                 .create(SiaApi::class.java)

@@ -62,6 +62,7 @@ class FilesViewModel
             Prefs.orderBy = it
             setDisplayedNodes()
         }
+
         changeDir()
     }
 
@@ -141,7 +142,7 @@ class FilesViewModel
                 .io()
                 .main()
                 .track(activeTasks)
-                .subscribe(::deselectAll, ::onError)
+                .subscribe({}, ::onError)
     }
 
     fun moveSelectedToCurrentDir() {

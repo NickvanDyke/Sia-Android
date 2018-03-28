@@ -42,6 +42,9 @@ class FilesRepository
             api.renterFiles()
                     .map { it.files ?: listOf() }
                     .zipWith(db.fileDao().getAll())
+                    // TODO: might have to change the way db and api files are brought into sync, similar
+                    // to in WalletRepository, since apparently ReplaceOnConflict triggers flowable updates even when
+                    // the two items are the exact same
                     /* remove files that are in the local database but not in the Sia API response (by path) */
                     .doOnSuccess { (apiFiles, dbFiles) ->
                         dbFiles.filter { dbFile -> apiFiles.find { apiFile -> apiFile.path == dbFile.path } == null }
@@ -143,27 +146,13 @@ class FilesRepository
         return completable.inDbTransaction(db)
     }
 
-
+    /** destination should be a directory */
     fun downloadDir(dir: Dir, destination: String) = db.fileDao().getFilesUnderDir(dir.path)
             .toElementsObservable()
-            .flatMapCompletable { downloadFile(it.path, destination) }
+            .flatMapCompletable { downloadFile(it, destination) }
 
-    // should I be inserting an empty file here? Or just let updating handle it?
     fun uploadFile(siapath: String, source: String, dataPieces: Int, parityPieces: Int) =
             api.renterUpload(siapath, source, dataPieces, parityPieces)
-                    .doOnComplete {
-                        db.fileDao().insertReplaceOnConflict(SiaFile(
-                                siapath,
-                                source,
-                                0,
-                                false,
-                                false,
-                                0.0,
-                                0,
-                                0,
-                                0
-                        ))
-                    }
 
     fun deleteFile(file: SiaFile): Completable = Completable.concatArray(
             Completable.fromAction { db.fileDao().delete(file) },
@@ -195,7 +184,8 @@ class FilesRepository
             api.renterRename(file.path, newSiapath))
             .inDbTransaction(db)
 
-    fun downloadFile(path: String, destination: String) = api.renterDownloadAsync(path, destination)
+    /** destination should be a directory */
+    fun downloadFile(file: SiaFile, destination: String): Completable = api.renterDownload(file.path, "$destination/${file.name}")
 
     fun multiDelete(nodes: List<Node>) = nodes.toObservable()
             .flatMapCompletable {
@@ -209,12 +199,12 @@ class FilesRepository
     // TODO: if a dir is selected and so are dirs/files inside of it, then some things will be downloaded multiple times.
     // could check all nodes and eliminate ones that are within/under any selected dirs, then proceed with downloading the
     // remaining nodes
-    fun multiDownload(nodes: List<Node>, destination: String) = nodes.toObservable()
+    fun multiDownload(nodes: List<Node>, destination: String): Completable = nodes.toObservable()
             .flatMapCompletable { node ->
                 if (node is Dir)
                     downloadDir(node, destination)
                 else
-                    downloadFile(node.path, destination)
+                    downloadFile(node as SiaFile, destination)
             }
 
     /* we don't execute this in a db transaction because if early-on moves succeed but later ones

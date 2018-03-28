@@ -171,27 +171,33 @@ class AllowanceFragment : BaseFragment() {
             val currency = " " + if (vm.currency.value == Currency.SC) "SC" else Prefs.fiatCurrency
             val metric = vm.currentMetric.value
 
-            estPriceHeader.visibleIf(metric != UNSPENT)
-            tvPrice.visibleIf(metric != UNSPENT)
-            purchasableHeader.visibleIf(metric != UNSPENT)
-            tvPurchaseable.visibleIf(metric != UNSPENT)
+            (metric != UNSPENT).let {
+                estPriceHeader.goneUnless(it)
+                tvPrice.goneUnless(it)
+                purchasableHeader.goneUnless(it)
+                tvPurchaseable.goneUnless(it)
+            }
             if (metric == UNSPENT) {
                 spentHeader.text = "Remaining funds"
                 tvSpent.text = spent.toSC().format() + currency
             } else {
                 spentHeader.text = "Spent"
-                if (metric == STORAGE) {
-                    estPriceHeader.text = "Est. price/TB/month"
-                    purchasableHeader.text = "Purchasable (1 month)"
-                    tvPurchaseable.text = purchasable.format() + " TB"
-                } else if (metric == UPLOAD || metric == DOWNLOAD) {
-                    estPriceHeader.text = "Est. price/TB"
-                    purchasableHeader.text = "Purchasable"
-                    tvPurchaseable.text = purchasable.format() + " TB"
-                } else if (metric == CONTRACT) {
-                    estPriceHeader.text = "Est. price"
-                    purchasableHeader.text = "Purchasable"
-                    tvPurchaseable.text = purchasable.format()
+                when (metric) {
+                    STORAGE -> {
+                        estPriceHeader.text = "Est. price/TB/month"
+                        purchasableHeader.text = "Purchasable (1 month)"
+                        tvPurchaseable.text = purchasable.format() + " TB"
+                    }
+                    UPLOAD, DOWNLOAD -> {
+                        estPriceHeader.text = "Est. price/TB"
+                        purchasableHeader.text = "Purchasable"
+                        tvPurchaseable.text = purchasable.format() + " TB"
+                    }
+                    CONTRACT -> {
+                        estPriceHeader.text = "Est. price"
+                        purchasableHeader.text = "Purchasable"
+                        tvPurchaseable.text = purchasable.format()
+                    }
                 }
 
                 tvPrice.text = price.toSC().format() + currency
@@ -200,6 +206,7 @@ class AllowanceFragment : BaseFragment() {
         }
 
         vm.spending.observe(this) { (_, upload, download, storage, contract, unspent) ->
+            // TODO: stuff is definitely funky here
             /* we want a minimum value so that even if the value is zero, it will still show on the chart */
             val total = (upload + download + storage + contract + unspent).toFloat()
             val minValue = if (total == 0f) 1f else total * 0.15f
@@ -213,11 +220,15 @@ class AllowanceFragment : BaseFragment() {
             pieChart.invalidate()
         }
 
+        vm.activeTasks.observe(this) {
+            progress_bar.hiddenUnless(it > 0)
+        }
+
         vm.error.observe(this) {
             it.snackbar(allowance_swiperefresh)
         }
 
-        siadStatus.state.observe(this) {
+        siadStatus.stateEvent.observe(this) {
             if (it == SiadStatus.State.SIAD_LOADED)
                 vm.refresh()
         }

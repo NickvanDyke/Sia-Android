@@ -50,21 +50,21 @@ class MockSiaApi : SiaApi {
     })
 
     private val files = mutableListOf(
-            SiaFile("legos/brick/picture.jpg", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
-            SiaFile("legos/brick/manual", "eh", 56743, true, false, 2.0, 663453, 100, 1235534),
-            SiaFile("legos/brick/blueprint.b", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
-            SiaFile("legos/brick/draft.txt", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
-            SiaFile("legos/brick/ad.doc", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
-            SiaFile("legos/brick/writeup.txt", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
-            SiaFile("legos/brick/buyers.db", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
-            SiaFile("legos/brick/listing.html", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
-            SiaFile("legos/brick/colors.rgb", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
-            SiaFile("legos/block/picture.jpg", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
-            SiaFile("legos/block/blueprint", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
-            SiaFile("legos/block/vector.svg", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
-            SiaFile("legos/block/colors.rgb", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
-            SiaFile("legos/blue/brick/picture.jpg", "eh", 156743, true, false, 2.0, 663453, 100, 1235534),
-            SiaFile("my/type/is/nick/and/this/is/my/story.txt", "eh", 156743, true, false, 2.0, 663453, 100, 1235534)
+            SiaFile("legos/brick/picture.jpg", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
+            SiaFile("legos/brick/manual", "eh", 56743, true, false, 2.0, 663453, 100f, 1235534),
+            SiaFile("legos/brick/blueprint.b", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
+            SiaFile("legos/brick/draft.txt", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
+            SiaFile("legos/brick/ad.doc", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
+            SiaFile("legos/brick/writeup.txt", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
+            SiaFile("legos/brick/buyers.db", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
+            SiaFile("legos/brick/listing.html", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
+            SiaFile("legos/brick/colors.rgb", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
+            SiaFile("legos/block/picture.jpg", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
+            SiaFile("legos/block/blueprint", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
+            SiaFile("legos/block/vector.svg", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
+            SiaFile("legos/block/colors.rgb", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
+            SiaFile("legos/blue/brick/picture.jpg", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
+            SiaFile("my/name/is/nick/and/this/is/my/story.txt", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534)
     )
 
     private var renterData = RenterData(
@@ -124,7 +124,7 @@ class MockSiaApi : SiaApi {
         return Completable.error(NotImplementedError())
     }
 
-    override fun walletTransactions(startHeight: String, endHeight: String): Single<TransactionsData> {
+    override fun walletTransactions(startHeight: Int, endHeight: Int): Single<TransactionsData> {
         return Single.fromCallable {
             if (!encrypted)
                 TransactionsData(null, null)
@@ -240,7 +240,7 @@ class MockSiaApi : SiaApi {
     override fun renterUpload(siapath: String, source: String, dataPieces: Int, parityPieces: Int): Completable {
         return Completable.fromAction {
             files.add(SiaFile(siapath, source, 156743, true, false,
-                    2.0, 663453, 100, 1235534))
+                    2.0, 663453, 100f, 1235534))
         }
     }
 

@@ -2,49 +2,9 @@
   ~ Copyright (c) 2017 Nicholas van Dyke. All rights reserved.
   -->
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="72dp"
     android:background="?android:attr/selectableItemBackground">
 
-    <TextView
-        android:id="@+id/dirName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Name"
-        app:layout_constraintBottom_toTopOf="@+id/dirSize"
-        app:layout_constraintStart_toEndOf="@+id/dirImage"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:id="@+id/dirImage"
-        android:layout_width="72dp"
-        android:layout_height="0dp"
-        android:src="@drawable/ic_folder"
-        android:tint="@android:color/darker_gray"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/dirSize"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:text="Size"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/dirName"
-        app:layout_constraintTop_toBottomOf="@+id/dirName" />
-
-    <!--<View-->
-        <!--android:layout_width="0dp"-->
-        <!--android:layout_height="1dp"-->
-        <!--android:layout_marginStart="8dp"-->
-        <!--app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--app:layout_constraintEnd_toEndOf="parent"-->
-        <!--app:layout_constraintStart_toEndOf="@+id/dirImage" />-->
+    <include layout="@layout/holder_renter_node" />
 </android.support.constraint.ConstraintLayout>

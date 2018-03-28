@@ -7,6 +7,7 @@ package com.vandyke.sia.util
 import android.support.design.widget.Snackbar
 import android.util.Log
 import android.view.View
+import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.remote.SiaException
 import io.github.tonnyl.light.Light
 import io.reactivex.exceptions.CompositeException
@@ -38,5 +39,8 @@ fun Throwable.customMsg(): String {
 }
 
 fun Throwable.snackbar(view: View, length: Int = Snackbar.LENGTH_SHORT) {
-    Light.error(view, this.customMsg(), length).show()
+    Light.error(view, this.customMsg(), length).apply {
+        if (Prefs.siaManuallyStopped)
+            setAction("Start") { Prefs.siaManuallyStopped = false }
+    }.show()
 }

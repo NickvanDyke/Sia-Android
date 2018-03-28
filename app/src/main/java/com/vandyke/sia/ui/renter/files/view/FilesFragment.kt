@@ -147,7 +147,12 @@ class FilesFragment : BaseFragment() {
         }
 
         multiDelete.setOnClickListener {
-            viewModel.deleteSelected()
+            AlertDialog.Builder(context!!)
+                    .setTitle("Confirm delete")
+                    .setMessage("Are you sure?")
+                    .setPositiveButton(android.R.string.yes) { _, _ -> viewModel.deleteSelected() }
+                    .setNegativeButton(android.R.string.no, null)
+                    .show()
         }
 
         multiDeselect.setOnClickListener {
@@ -213,7 +218,7 @@ class FilesFragment : BaseFragment() {
         viewModel.refreshing.observe(this, nodes_list_swiperefresh::setRefreshing)
 
         viewModel.activeTasks.observe(this) {
-            progress_bar.visibleIf(it > 0)
+            progress_bar.goneUnless(it > 0)
         }
 
         viewModel.error.observe(this) {
@@ -221,7 +226,7 @@ class FilesFragment : BaseFragment() {
             nodes_list_swiperefresh.isRefreshing = false
         }
 
-        siadStatus.state.observe(this) {
+        siadStatus.stateEvent.observe(this) {
             if (it == SiadStatus.State.SIAD_LOADED)
                 viewModel.refresh()
         }

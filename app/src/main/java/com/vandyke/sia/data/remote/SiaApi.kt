@@ -24,7 +24,10 @@ interface SiaApi {
     fun wallet(): Single<WalletData>
 
     @POST("wallet/siacoins")
-    fun walletSiacoins(@Query("amount") amount: String, @Query("destination") destination: String): Completable
+    fun walletSiacoins(
+            @Query("amount") amount: String,
+            @Query("destination") destination: String
+    ): Completable
 
     @GET("wallet/address")
     fun walletAddress(): Single<AddressData>
@@ -33,19 +36,34 @@ interface SiaApi {
     fun walletAddresses(): Single<AddressesData>
 
     @GET("wallet/seeds")
-    fun walletSeeds(@Query("dictionary") dictionary: String = "english"): Single<SeedsData>
+    fun walletSeeds(@Query("dictionary") dictionary: String): Single<SeedsData>
 
     @POST("wallet/sweep/seed")
-    fun walletSweepSeed(@Query("dictionary") dictionary: String, @Query("seed") seed: String): Completable
+    fun walletSweepSeed(
+            @Query("dictionary") dictionary: String,
+            @Query("seed") seed: String
+    ): Completable
 
     @GET("wallet/transactions")
-    fun walletTransactions(@Query("startheight") startHeight: String = "0", @Query("endheight") endHeight: String = "2000000000"): Single<TransactionsData>
+    fun walletTransactions(
+            @Query("startheight") startHeight: Int,
+            @Query("endheight") endHeight: Int
+    ): Single<TransactionsData>
 
     @POST("wallet/init")
-    fun walletInit(@Query("encryptionpassword") password: String, @Query("dictionary") dictionary: String, @Query("force") force: Boolean): Single<WalletInitData>
+    fun walletInit(
+            @Query("encryptionpassword") password: String,
+            @Query("dictionary") dictionary: String,
+            @Query("force") force: Boolean
+    ): Single<WalletInitData>
 
     @POST("wallet/init/seed")
-    fun walletInitSeed(@Query("encryptionpassword") password: String, @Query("dictionary") dictionary: String, @Query("seed") seed: String, @Query("force") force: Boolean): Completable
+    fun walletInitSeed(
+            @Query("encryptionpassword") password: String,
+            @Query("dictionary") dictionary: String,
+            @Query("seed") seed: String,
+            @Query("force") force: Boolean
+    ): Completable
 
     @POST("wallet/lock")
     fun walletLock(): Completable
@@ -54,7 +72,10 @@ interface SiaApi {
     fun walletUnlock(@Query("encryptionpassword") password: String): Completable
 
     @POST("wallet/changepassword")
-    fun walletChangePassword(@Query("encryptionpassword") password: String, @Query("newpassword") newPassword: String): Completable
+    fun walletChangePassword(
+            @Query("encryptionpassword") password: String,
+            @Query("newpassword") newPassword: String
+    ): Completable
 
     @GET
     fun getScPrice(@Url url: String = "https://min-api.cryptocompare.com/data/price?fsym=SC&tsyms=EUR,USD,GBP,CHF,CAD,AUD,CNY,JPY,INR,BRL"): Single<ScValueData>
@@ -64,7 +85,12 @@ interface SiaApi {
     fun renter(): Single<RenterData>
 
     @POST("renter")
-    fun renter(@Query("funds") funds: BigDecimal, @Query("hosts") hosts: Int, @Query("period") period: Int, @Query("renewwindow") renewwindow: Int): Completable
+    fun renter(
+            @Query("funds") funds: BigDecimal,
+            @Query("hosts") hosts: Int,
+            @Query("period") period: Int,
+            @Query("renewwindow") renewwindow: Int
+    ): Completable
 
     @GET("renter/contracts")
     fun renterContracts(): Single<ContractsData>
@@ -79,19 +105,33 @@ interface SiaApi {
     fun renterPrices(): Single<PricesData>
 
     @POST("renter/rename/{siapath}")
-    fun renterRename(@Path("siapath") siapath: String, @Query("newsiapath") newSiaPath: String): Completable
+    fun renterRename(
+            @Path("siapath") siapath: String,
+            @Query("newsiapath") newSiaPath: String
+    ): Completable
 
     @POST("renter/delete/{siapath}")
     fun renterDelete(@Path("siapath") siapath: String): Completable
 
     @POST("renter/upload/{siapath}")
-    fun renterUpload(@Path("siapath") siapath: String, @Query("source") source: String, @Query("datapieces") dataPieces: Int, @Query("paritypieces") parityPieces: Int): Completable
+    fun renterUpload(
+            @Path("siapath") siapath: String,
+            @Query("source") source: String,
+            @Query("datapieces") dataPieces: Int,
+            @Query("paritypieces") parityPieces: Int
+    ): Completable
 
     @GET("renter/download/{siapath}")
-    fun renterDownload(@Path("siapath") siapath: String, @Query("destination") destination: String): Completable
+    fun renterDownload(
+            @Path("siapath") siapath: String,
+            @Query("destination") destination: String
+    ): Completable
 
     @GET("renter/downloadasync/{siapath}")
-    fun renterDownloadAsync(@Path("siapath") siapath: String, @Query("destination") destination: String): Completable
+    fun renterDownloadAsync(
+            @Path("siapath") siapath: String,
+            @Query("destination") destination: String
+    ): Completable
 
     /* gateway API */
     @GET("gateway")

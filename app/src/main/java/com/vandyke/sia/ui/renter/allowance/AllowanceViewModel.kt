@@ -51,28 +51,28 @@ class AllowanceViewModel
         renterRepository.mostRecentPrices()
                 .io()
                 .main()
-                .subscribe({ prices.value = it; setDisplayedMetrics() }, ::onError)
+                .subscribe({ prices.value = it; setDisplayedMetricValues() }, ::onError)
 
         renterRepository.mostRecentSpending()
                 .io()
                 .main()
-                .subscribe({ spending.value = it; setDisplayedMetrics() }, ::onError)
+                .subscribe({ spending.value = it; setDisplayedMetricValues() }, ::onError)
 
         scValueRepository.mostRecent()
                 .io()
                 .main()
-                .subscribe({ scValue.value = it; setDisplayedMetrics() }, ::onError)
+                .subscribe({ scValue.value = it; setDisplayedMetricValues() }, ::onError)
 
-        currency.observeForevs { Prefs.allowanceCurrency = it; setDisplayedMetrics() }
-        currentMetric.observeForevs { setDisplayedMetrics() }
+        currency.observeForevs { Prefs.allowanceCurrency = it; setDisplayedMetricValues() }
+        currentMetric.observeForevs { setDisplayedMetricValues() }
 
         /* if one of the must-be-non-zero allowance values is zero, set it to a default value */
         allowance.observeForevs { (amt, hosts, period, renew) ->
             if (hosts == 0 || period == 0 || renew == 0)
                 setAllowance(amt,
-                        if (hosts == 0) 24 else hosts,
-                        if (period == 0) 6048 else period,
-                        if (renew == 0) 3024 else renew)
+                        if (hosts == 0) 50 else hosts,
+                        if (period == 0) 12000 else period,
+                        if (renew == 0) 4000 else renew)
         }
     }
 
@@ -113,7 +113,7 @@ class AllowanceViewModel
         currency.value = if (currency.value == SC) FIAT else SC
     }
 
-    private fun setDisplayedMetrics() {
+    private fun setDisplayedMetricValues() {
         val conversionRate = if (currency.value == SC)
             BigDecimal("1.00")
         else

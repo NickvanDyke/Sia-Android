@@ -10,19 +10,32 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:animateLayoutChanges="true">
+        android:orientation="vertical">
+
+        <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+            android:id="@+id/progress_bar"
+            style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:layout_gravity="top"
+            android:indeterminate="true"
+            app:mpb_indeterminateTint="?attr/colorPrimary"
+            app:mpb_progressStyle="horizontal"
+            app:mpb_showProgressBackground="false"
+            app:mpb_useIntrinsicPadding="false" />
 
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp">
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp">
 
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/spendingCard"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:animateLayoutChanges="true">
+                android:layout_height="match_parent">
 
                 <com.github.mikephil.charting.charts.PieChart
                     android:id="@+id/pieChart"
@@ -275,7 +288,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="16dp"
                         android:layout_marginEnd="24dp"
-                        android:text="The renter will renew contracts when the current block height + the renew window is >= their expiration date. It must be running to do so."
+                        android:text="The renter will renew contracts when the current block height + the renew window is >= their expiration date. It must be running, and the wallet unlocked, to do so."
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/renewWindowValue"
                         app:layout_constraintStart_toStartOf="@+id/textView20"

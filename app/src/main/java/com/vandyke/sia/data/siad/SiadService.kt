@@ -82,7 +82,7 @@ class SiadService : LifecycleService() {
             return
         }
 
-        siadStatus.state.value = State.PROCESS_STARTING
+        siadStatus.siadState(State.PROCESS_STARTING)
 
         val pb = ProcessBuilder(siadFile!!.absolutePath, "-M", Prefs.modulesString)
         pb.redirectErrorStream(true)
@@ -110,12 +110,12 @@ class SiadService : LifecycleService() {
             /* don't think start() can return null, but I've had a couple crash reports with KotlinNPE at the line that calls siadProcess!!.inputStream
              * so I'm putting it here to possibly fix it. The crash is extremely rare. Maybe it's a race condition or lifecycle related. */
             if (siadProcess == null) {
-                siadStatus.state.value = State.STOPPED
+                siadStatus.siadState(State.STOPPED)
                 siadStatus.siadOutput("Error starting Sia process")
                 return
             }
 
-            siadStatus.state.value = State.SIAD_LOADING
+            siadStatus.siadState(State.SIAD_LOADING)
 
             startForeground(SIAD_NOTIFICATION, siadNotification("Starting Sia node..."))
 
@@ -154,7 +154,7 @@ class SiadService : LifecycleService() {
         // TODO: maybe shut it down using http stop request instead? Takes ages sometimes. Might be advantageous though
         siadProcess?.destroy()
         siadProcess = null
-        siadStatus.state.value = State.STOPPED
+        siadStatus.siadState(State.STOPPED)
         stopForeground(true)
     }
 
