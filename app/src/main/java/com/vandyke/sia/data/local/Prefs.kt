@@ -38,6 +38,7 @@ object Prefs : KotprefModel() {
     var runSiaInBackground by booleanPref(true)
     var runSiaOnData by booleanPref(false)
     var apiPassword by stringPref()
+    var walletPassword by stringPref()
     var useExternal by booleanPref(false)
     var modulesString by stringPref("gctw")
 

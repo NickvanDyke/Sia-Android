@@ -1,5 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="Configuration">
+        <ListPreference
+            android:key="siaWorkingDirectory"
+            android:summary="The location that the Sia node will store all of its needed data in. The Sia node will restart after changing this."
+            android:title="Storage location" />
+        <EditTextPreference
+            android:inputType="textPassword"
+            android:key="apiPassword"
+            android:summary="API password to set on the Sia node, so that only this app can interact with it. Optional, but recommended. Can be anything you want. The Sia node will restart after changing this."
+            android:title="API password" />
+        <EditTextPreference
+            android:inputType="textPassword"
+            android:key="walletPassword"
+            android:summary="Enter your wallet password here to have it unlock automatically on startup. Leave blank if not desired."
+            android:title="Unlock wallet automatically" />
+    </PreferenceCategory>
     <PreferenceCategory android:title="Run when...">
         <SwitchPreferenceCompat
             android:defaultValue="true"
@@ -12,14 +28,5 @@
             android:summary="The Sia node uploads and downloads a significant amount of data while running."
             android:title="On mobile data" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="Configuration">
-        <ListPreference
-            android:key="siaWorkingDirectory"
-            android:summary="The location that the Sia node will store all of its needed data in. The Sia node will restart after changing this."
-            android:title="Storage location" />
-        <EditTextPreference
-            android:key="apiPassword"
-            android:summary="API password to set on the Sia node, so that only this app can interact with it. Optional, but recommended. The Sia node will restart after changing this."
-            android:title="API password" />
-    </PreferenceCategory>
+
 </PreferenceScreen>

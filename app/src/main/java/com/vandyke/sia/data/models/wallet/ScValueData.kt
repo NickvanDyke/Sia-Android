@@ -23,7 +23,7 @@ data class ScValueData(
         val INR: BigDecimal,
         val BRL: BigDecimal
 ) {
-    fun getValueForCurrency(currency: String): BigDecimal = when (currency) {
+    operator fun get(currency: String)= when (currency) {
         "USD" -> USD
         "EUR" -> EUR
         "GBP" -> GBP

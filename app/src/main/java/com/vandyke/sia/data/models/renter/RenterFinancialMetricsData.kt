@@ -12,10 +12,10 @@ import java.math.BigDecimal
 data class RenterFinancialMetricsData(
         @PrimaryKey
         val timestamp: Long,
-        val contractspending: BigDecimal,
+        val uploadspending: BigDecimal,
         val downloadspending: BigDecimal,
         val storagespending: BigDecimal,
-        val uploadspending: BigDecimal,
+        val contractspending: BigDecimal,
         val unspent: BigDecimal)
 
 data class RenterFinancialMetricsDataJson(

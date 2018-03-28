@@ -21,7 +21,7 @@ class MockSiaApiTest {
         api.password shouldEqual "password"
         api.seed.shouldNotBeBlank()
         api.encrypted.shouldBeTrue()
-        api.unlocked.shouldBeTrue()
+        api.unlocked.shouldBeFalse()
     }
 
     @Test
@@ -34,6 +34,6 @@ class MockSiaApiTest {
         api.unlocked.shouldBeTrue()
         api.wallet().blockingGet().unlocked.shouldBeTrue()
         api.walletLock().blockingAwait()
-        api.unlocked.shouldBeTrue()
+        api.unlocked.shouldBeFalse()
     }
 }

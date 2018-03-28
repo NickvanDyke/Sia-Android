@@ -10,7 +10,10 @@ import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.preference.Preference
-import android.support.v7.preference.PreferenceFragmentCompat
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompatDividers
 import com.vandyke.sia.BuildConfig
 import com.vandyke.sia.R
 import com.vandyke.sia.data.local.AppDatabase
@@ -26,14 +29,13 @@ import io.reactivex.Completable
 import javax.inject.Inject
 
 /* the actual settings fragment, contained within SettingsFragmentContainer */
-class SettingsFragment : PreferenceFragmentCompat() {
-
+class SettingsFragment : PreferenceFragmentCompatDividers() {
     @Inject
     lateinit var db: AppDatabase
 
     private var prefsListener: SharedPreferences.OnSharedPreferenceChangeListener? = null
 
-    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+    override fun onCreatePreferencesFix(savedInstanceState: Bundle?, rootKey: String?) {
         context!!.getAppComponent().inject(this)
 
         addPreferencesFromResource(R.xml.app_settings)
@@ -78,9 +80,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        /* create and register a SharedPrefs PreferenceChangeListener that'll take appropriate action
-         * when certain settings are changed. We are supposed to keep a reference, otherwise it could
-         * be unregistered/destroyed. */
         prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
             when (key) {
                 "darkMode", "oldSiaColors" -> activity!!.recreate()
@@ -92,5 +91,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
     override fun onDestroy() {
         super.onDestroy()
         Prefs.preferences.unregisterOnSharedPreferenceChangeListener(prefsListener)
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        try {
+            return super.onCreateView(inflater, container, savedInstanceState)
+        } finally {
+            setDividerPreferences(PreferenceFragmentCompatDividers.DIVIDER_OFFICIAL)
+        }
     }
 }

@@ -66,6 +66,7 @@ dependencies {
     /* kotlin stdlib and coroutines */
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.21'
+    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
     implementation 'androidx.core:core-ktx:0.2'
 
     /* testing */
@@ -75,8 +76,6 @@ dependencies {
     testImplementation 'org.amshove.kluent:kluent:1.35'
     testImplementation 'junit:junit:4.12'
     testImplementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    // TODO: check that tests still work after moving kotlin-reflect to testImplementation, since apparently it's 1.7mb (and so I don't want it in normal the app)
-    testImplementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
     testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
 
     /* support library */
@@ -84,9 +83,8 @@ dependencies {
     implementation "com.android.support:design:$support_version"
     implementation "com.android.support:recyclerview-v7:$support_version"
     implementation "com.android.support:cardview-v7:$support_version"
-    implementation "com.android.support:preference-v14:$support_version"
     implementation "com.android.support:customtabs:$support_version"
-    implementation 'com.android.support.constraint:constraint-layout:1.1.0-beta5'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.0-beta6'
 
     /* UI */
     implementation("com.mikepenz:materialdrawer:6.0.6@aar") { transitive = true }
@@ -100,9 +98,11 @@ dependencies {
     implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
     implementation 'io.github.tonnyl:light:1.0.0'
 
-    /* simplified SharedPreferences */
+    /* simplified preferences */
     implementation 'com.chibatching.kotpref:kotpref:2.2.0'
     implementation 'com.chibatching.kotpref:enum-support:2.2.0'
+    implementation 'com.takisoft.fix:preference-v7-simplemenu:27.1.0.0'
+    implementation 'com.takisoft.fix:preference-v7:27.1.0.0'
 
     /* networking */
     implementation 'com.squareup.retrofit2:retrofit:2.3.0'

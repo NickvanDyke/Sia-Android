@@ -120,7 +120,7 @@ class AllowanceViewModel
             with(scValue.value ?: return) {
                 when (currency.value) {
                     SC -> BigDecimal("1.00") /* using the ONE constant results in rounding when dividing later. Don't know why */
-                    FIAT -> getValueForCurrency(Prefs.fiatCurrency)
+                    FIAT -> this[Prefs.fiatCurrency]
                 }
             }
 

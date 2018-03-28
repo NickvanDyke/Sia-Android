@@ -168,7 +168,7 @@ class FilesViewModel
                 .io()
                 .main()
                 .track(activeTasks)
-                .subscribe({}, ::onError)
+                .subscribe(::refresh, ::onError)
     }
 
     fun renameFile(file: SiaFile, newName: String) {

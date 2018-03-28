@@ -150,8 +150,8 @@ class FilesFragment : BaseFragment() {
             AlertDialog.Builder(context!!)
                     .setTitle("Confirm delete")
                     .setMessage("Are you sure?")
-                    .setPositiveButton(android.R.string.yes) { _, _ -> viewModel.deleteSelected() }
-                    .setNegativeButton(android.R.string.no, null)
+                    .setPositiveButton("Yes") { _, _ -> viewModel.deleteSelected() }
+                    .setNegativeButton("No", null)
                     .show()
         }
 

@@ -206,7 +206,6 @@ class AllowanceFragment : BaseFragment() {
         }
 
         vm.spending.observe(this) { (_, upload, download, storage, contract, unspent) ->
-            // TODO: stuff is definitely funky here
             /* we want a minimum value so that even if the value is zero, it will still show on the chart */
             val total = (upload + download + storage + contract + unspent).toFloat()
             val minValue = if (total == 0f) 1f else total * 0.15f

@@ -58,8 +58,12 @@ class NodesAdapter(val viewModel: FilesViewModel) : ListAdapter<Node, NodeHolder
             }
 
             override fun areContentsTheSame(oldItem: Node, newItem: Node): Boolean {
-                return oldItem.name == newItem.name
-                        && oldItem.size == newItem.size
+                return when {
+                    oldItem is Dir && newItem is Dir -> oldItem.name == newItem.name && oldItem.size == newItem.size
+                    oldItem is SiaFile && newItem is SiaFile -> oldItem.name == newItem.name && oldItem.size == newItem.size
+                            && oldItem.redundancy == newItem.redundancy
+                    else -> false
+                }
             }
         }
     }

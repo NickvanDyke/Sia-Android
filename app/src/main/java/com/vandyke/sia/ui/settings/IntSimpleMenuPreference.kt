@@ -5,10 +5,10 @@
 package com.vandyke.sia.ui.settings
 
 import android.content.Context
-import android.support.v7.preference.EditTextPreference
 import android.util.AttributeSet
+import com.takisoft.fix.support.v7.preference.SimpleMenuPreference
 
-class IntEditTextPreference : EditTextPreference {
+class IntSimpleMenuPreference : SimpleMenuPreference {
 
     constructor(context: Context) : super(context)
 

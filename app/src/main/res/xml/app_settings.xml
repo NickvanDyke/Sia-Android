@@ -29,12 +29,10 @@
             android:entryValues="@array/startup_values"
             android:key="startupPage"
             android:title="Launch screen" />
-        <com.vandyke.sia.ui.settings.IntEditTextPreference
-            android:defaultValue="2"
-            android:gravity="center"
+        <com.vandyke.sia.ui.settings.IntSimpleMenuPreference
+            android:entries="@array/displayed_decimal_entries"
+            android:entryValues="@array/displayed_decimal_values"
             android:key="displayedDecimalPrecision"
-            android:maxLength="1"
-            android:numeric="integer"
             android:title="Displayed decimal precision" />
     </PreferenceCategory>
     <PreferenceCategory android:title="Advanced">

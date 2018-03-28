@@ -225,7 +225,7 @@ class WalletFragment : BaseFragment() {
     private fun updateFiatValue() {
         if (viewModel.wallet.value != null && viewModel.scValue.value != null)
             balanceUsdText.text = ("${(viewModel.wallet.value!!.confirmedsiacoinbalance.toSC()
-                    * viewModel.scValue.value!!.getValueForCurrency(Prefs.fiatCurrency))
+                    * viewModel.scValue.value!![Prefs.fiatCurrency])
                     .format()} ${Prefs.fiatCurrency}")
     }
 

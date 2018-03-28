@@ -93,6 +93,10 @@ class SiadService : LifecycleService() {
             pb.environment()["SIA_API_PASSWORD"] = Prefs.apiPassword
         }
 
+        if (Prefs.walletPassword.isNotEmpty()) {
+            pb.environment()["SIA_WALLET_PASSWORD"] = Prefs.walletPassword
+        }
+
         /* set the working directory for the siad process, checking for and handling error cases */
         val dir = File(Prefs.siaWorkingDirectory)
         if (!dir.exists()) {
