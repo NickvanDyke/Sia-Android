@@ -10,7 +10,7 @@ import android.content.SharedPreferences
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.siad.SiadSource
 import com.vandyke.sia.util.getAllFilesDirs
-import com.vandyke.sia.util.rx.SingleLiveEvent
+import com.vandyke.sia.util.rx.MutableSingleLiveEvent
 import java.io.File
 import javax.inject.Inject
 
@@ -31,10 +31,10 @@ class NodeModulesViewModel
             ModuleData(Module.WALLET, Prefs.modulesString.contains('w', true), storageDirs.map { File(it.absolutePath, "wallet") }),
             ModuleData(Module.RENTER, Prefs.modulesString.contains('r', true), storageDirs.map { File(it.absolutePath, "renter") }))
 
-    val moduleUpdated = SingleLiveEvent<Module>()
+    val moduleUpdated = MutableSingleLiveEvent<Module>()
 
-    val success = SingleLiveEvent<String>()
-    val error = SingleLiveEvent<String>()
+    val success = MutableSingleLiveEvent<String>()
+    val error = MutableSingleLiveEvent<String>()
 
     private val moduleObservers: List<ModuleObserver> = modules.map { ModuleObserver(it, moduleUpdated) }
 

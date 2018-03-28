@@ -5,11 +5,10 @@
 package com.vandyke.sia.util.rx
 
 import android.arch.lifecycle.LifecycleOwner
-import android.arch.lifecycle.MutableLiveData
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
 import android.support.annotation.MainThread
 import android.util.Log
-
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -23,10 +22,11 @@ import java.util.concurrent.atomic.AtomicBoolean
  *
  *
  * Note that only one observer is going to be notified of changes.
+ * Use (Mutable)LiveEvent for the same event behavior but with multiple observers.
  */
-class SingleLiveEvent<T> : MutableLiveData<T>() {
+open class SingleLiveEvent<T> : LiveData<T>() {
 
-    private val pending = AtomicBoolean(false)
+    protected val pending = AtomicBoolean(false)
 
     @MainThread
     fun observe(owner: LifecycleOwner, onChanged: (T) -> Unit) {
@@ -34,7 +34,6 @@ class SingleLiveEvent<T> : MutableLiveData<T>() {
             Log.w(TAG, "Multiple observers registered but only one will be notified of changes.")
         }
 
-        // Observe the internal MutableLiveData
         super.observe(owner, Observer { t ->
             if (pending.compareAndSet(true, false)) {
                 onChanged(t!!)
@@ -42,11 +41,6 @@ class SingleLiveEvent<T> : MutableLiveData<T>() {
         })
     }
 
-    @MainThread
-    override fun setValue(t: T?) {
-        pending.set(true)
-        super.setValue(t)
-    }
 
     companion object {
         private const val TAG = "SingleLiveEvent"

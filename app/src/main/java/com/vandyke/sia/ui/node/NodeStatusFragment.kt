@@ -10,6 +10,7 @@ import com.vandyke.sia.data.siad.SiadStatus.State.*
 import com.vandyke.sia.getAppComponent
 import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.util.rx.main
+import com.vandyke.sia.util.rx.observe
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.fragment_node_status.*
 import javax.inject.Inject

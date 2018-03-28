@@ -10,10 +10,13 @@ import android.content.*
 import android.net.ConnectivityManager
 import android.os.Bundle
 import com.vandyke.sia.data.local.Prefs
+import com.vandyke.sia.util.rx.MutableNonNullLiveData
+import com.vandyke.sia.util.rx.MutableSingleLiveEvent
 import com.vandyke.sia.util.rx.NonNullLiveData
 import com.vandyke.sia.util.rx.SingleLiveEvent
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.properties.Delegates
 
 /** This class is used as a singleton that aggregates all factors of whether siad should be running.
  * Should mostly only be used in SiadService, and maaaaybe elsewhere if triggering a restart is needed. */
@@ -21,24 +24,26 @@ import javax.inject.Singleton
 class SiadSource
 @Inject constructor(private val application: Application) {
 
-    val allConditionsGood = NonNullLiveData(false)
-    val restart = SingleLiveEvent<Boolean>()
+    val allConditionsGood
+        get() = allConditionsGoodInternal as NonNullLiveData<Boolean>
+    private val allConditionsGoodInternal = MutableNonNullLiveData(false)
 
-    private var activeNetworkType: Int? = null
-        set(value) {
-            field = value
-            setConditions()
-        }
+    val restart
+        get() = restartInternal as SingleLiveEvent<Boolean>
+    private val restartInternal = MutableSingleLiveEvent<Boolean>()
+
+    private var activeNetworkType: Int? by Delegates.observable<Int?>(null) { _, _, _ ->
+        setConditions()
+    }
 
     // TODO: could have better detection here. For example, currently opening a Chrome custom tab makes this false
     // Might also be good to have a ~minute delay before shutting down the node once this changes, so that
     // it's not turning on and off a ton if the user is switching back and forth between this and other apps quickly
     // Should be easy to implement that in SiadService using Handler#postDelayed
-    private var appInForeground = true /* initial value is true because onActivityResumed was already called for MainActivity at this point */
-        set(value) {
-            field = value
-            setConditions()
-        }
+    /* initial value is true because onActivityResumed was already called for MainActivity at this point */
+    private var appInForeground by Delegates.observable(true) { _, _, _ ->
+        setConditions()
+    }
 
     private val prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
         when (key) {
@@ -97,7 +102,7 @@ class SiadSource
     }
 
     private fun setConditions() {
-        allConditionsGood.value = checkConditions()
+        allConditionsGoodInternal.value = checkConditions()
     }
 
     private fun checkConditions(): Boolean = when {
@@ -108,12 +113,12 @@ class SiadSource
     }
 
     fun signalRestart() {
-        restart.value = true
+        restartInternal.value = true
     }
 
     /* broadcast intents */
     companion object {
-        val START_SIAD = "START_SIAD"
-        val STOP_SIAD = "STOP_SIAD"
+        const val START_SIAD = "START_SIAD"
+        const val STOP_SIAD = "STOP_SIAD"
     }
 }

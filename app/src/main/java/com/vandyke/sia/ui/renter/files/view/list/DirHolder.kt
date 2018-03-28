@@ -6,14 +6,14 @@ package com.vandyke.sia.ui.renter.files.view.list
 
 import android.view.View
 import com.vandyke.sia.data.models.renter.Dir
-import com.vandyke.sia.ui.renter.files.viewmodel.FilesViewModel
+import com.vandyke.sia.ui.renter.files.view.FilesFragment
 
-class DirHolder(itemView: View, viewModel: FilesViewModel) : NodeHolder(itemView, viewModel) {
+class DirHolder(itemView: View, filesFragment: FilesFragment) : NodeHolder(itemView, filesFragment) {
     private lateinit var dir: Dir
 
     init {
         itemView.setOnClickListener {
-            viewModel.changeDir(dir.path)
+            vm.changeDir(dir.path)
         }
     }
 

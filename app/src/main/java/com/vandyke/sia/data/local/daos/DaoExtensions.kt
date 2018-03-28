@@ -16,7 +16,7 @@ fun DirDao.dirsUnderDir(dirPath: String, orderBy: OrderBy = OrderBy.PATH, ascend
 }
 
 fun DirDao.dirsUnderDirWithName(dirPath: String, name: String, orderBy: OrderBy = OrderBy.PATH, ascending: Boolean = true): Flowable<List<Dir>> {
-    return customQueryFlowable(SimpleSQLiteQuery(underDirWithNameQuery("dirs", name, dirPath, orderBy, ascending)))
+    return customQueryFlowable(SimpleSQLiteQuery(underDirWithNameQuery("dirs", dirPath, name, orderBy, ascending)))
 }
 
 fun DirDao.dirsInDir(dirPath: String, orderBy: OrderBy = OrderBy.PATH, ascending: Boolean = true): Flowable<List<Dir>> {

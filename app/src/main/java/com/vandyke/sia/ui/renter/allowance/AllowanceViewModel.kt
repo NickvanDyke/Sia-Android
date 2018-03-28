@@ -27,9 +27,9 @@ class AllowanceViewModel
         private val renterRepository: RenterRepository,
         private val scValueRepository: ScValueRepository
 ) : ViewModel() {
-    val currency = NonNullLiveData(Prefs.allowanceCurrency)
+    val currency = MutableNonNullLiveData(Prefs.allowanceCurrency)
 
-    val currentMetric = NonNullLiveData(STORAGE)
+    val currentMetric = MutableNonNullLiveData(STORAGE)
     val currentMetricValues = MutableLiveData<MetricValues>()
 
     val allowance = MutableLiveData<RenterSettingsAllowanceData>()
@@ -37,9 +37,9 @@ class AllowanceViewModel
     val prices = MutableLiveData<PricesData>()
     val scValue = MutableLiveData<ScValueData>()
 
-    val activeTasks = NonNullLiveData(0)
-    val refreshing = NonNullLiveData(false)
-    val error = SingleLiveEvent<Throwable>()
+    val activeTasks = MutableNonNullLiveData(0)
+    val refreshing = MutableNonNullLiveData(false)
+    val error = MutableSingleLiveEvent<Throwable>()
 
     init {
         // maybe merge these together

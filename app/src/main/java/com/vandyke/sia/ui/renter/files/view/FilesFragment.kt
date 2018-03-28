@@ -34,6 +34,7 @@ import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.ui.renter.files.view.list.NodesAdapter
 import com.vandyke.sia.ui.renter.files.viewmodel.FilesViewModel
 import com.vandyke.sia.util.*
+import com.vandyke.sia.util.rx.observe
 import kotlinx.android.synthetic.main.fragment_files.*
 import javax.inject.Inject
 
@@ -70,7 +71,7 @@ class FilesFragment : BaseFragment() {
         viewModel = ViewModelProviders.of(this, factory).get(FilesViewModel::class.java)
 
         /* set up nodes list */
-        nodesAdapter = NodesAdapter(viewModel)
+        nodesAdapter = NodesAdapter(this)
         nodes_list.adapter = nodesAdapter
 
         pathAdapter = ArrayAdapter(context, R.layout.spinner_selected_item_white)
@@ -292,7 +293,6 @@ class FilesFragment : BaseFragment() {
 
             override fun onMenuItemActionExpand(item: MenuItem): Boolean {
                 searchIsExpanded = true
-                viewModel.searching.value = true
                 viewModel.search(searchView?.query?.toString() ?: "")
                 return true
             }

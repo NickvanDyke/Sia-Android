@@ -15,40 +15,40 @@ import com.vandyke.sia.data.repository.FilesRepository
 import com.vandyke.sia.util.rx.*
 import io.reactivex.disposables.Disposable
 import javax.inject.Inject
+import kotlin.properties.Delegates
 
 class FilesViewModel
 @Inject constructor(
         private val filesRepository: FilesRepository
 ) : ViewModel() {
-    val currentDir = NonNullLiveData<Dir>(Dir("", 0))
-    val displayedNodes = NonNullLiveData<List<Node>>(listOf())
+    val currentDir = MutableNonNullLiveData<Dir>(Dir("", 0))
+    val displayedNodes = MutableNonNullLiveData<List<Node>>(listOf())
 
-    val searching = NonNullLiveData(false)
-    val searchTerm = NonNullLiveData("")
+    val searching = MutableNonNullLiveData(false)
+    val searchTerm = MutableNonNullLiveData("")
 
-    val viewAsList = NonNullLiveData(Prefs.viewAsList)
-    val ascending = NonNullLiveData(Prefs.ascending)
-    val orderBy = NonNullLiveData(Prefs.orderBy)
+    val viewAsList = MutableNonNullLiveData(Prefs.viewAsList)
+    val ascending = MutableNonNullLiveData(Prefs.ascending)
+    val orderBy = MutableNonNullLiveData(Prefs.orderBy)
 
-    val activeTasks = NonNullLiveData(0)
-    val refreshing = NonNullLiveData(false)
-    val error = SingleLiveEvent<Throwable>()
+    val activeTasks = MutableNonNullLiveData(0)
+    val refreshing = MutableNonNullLiveData(false)
+    val error = MutableSingleLiveEvent<Throwable>()
 
     val currentDirPath
         get() = currentDir.value.path
 
-    val selectedNodes = NonNullLiveData(listOf<Node>())
+    val selectedNodes = MutableNonNullLiveData(listOf<Node>())
     val selecting
         get() = selectedNodes.value.isNotEmpty()
     val allSelectedAreInCurrentDir
         get() = selectedNodes.value.all { it.parent == currentDirPath }
 
     /** the subscription to the database flowable that emits items in the current path */
-    private var nodesSubscription: Disposable? = null
-        set(value) {
-            field?.dispose()
-            field = value
-        }
+    private var nodesSubscription: Disposable? by Delegates.observable<Disposable?>(null) {
+        property, oldValue, newValue ->
+        oldValue?.dispose()
+    }
 
     init {
         viewAsList.observeForevs {
@@ -142,7 +142,7 @@ class FilesViewModel
                 .io()
                 .main()
                 .track(activeTasks)
-                .subscribe({}, ::onError)
+                .subscribe(::deselectAll, ::onError)
     }
 
     fun moveSelectedToCurrentDir() {

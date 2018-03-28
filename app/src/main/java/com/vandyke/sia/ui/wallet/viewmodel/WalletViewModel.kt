@@ -31,14 +31,14 @@ class WalletViewModel
     val scValue = MutableLiveData<ScValueData>()
     val consensus = MutableLiveData<ConsensusData>()
     val transactions = MutableLiveData<List<TransactionData>>()
-    val activeTasks = NonNullLiveData(0)
-    val refreshing = NonNullLiveData(false)
-    val numPeers = NonNullLiveData(0)
-    val success = SingleLiveEvent<String>()
-    val error = SingleLiveEvent<Throwable>()
+    val activeTasks = MutableNonNullLiveData(0)
+    val refreshing = MutableNonNullLiveData(false)
+    val numPeers = MutableNonNullLiveData(0)
+    val success = MutableSingleLiveEvent<String>()
+    val error = MutableSingleLiveEvent<Throwable>()
 
     /* seed is used specifically for when a new wallet is created - not for when calling /wallet/seeds */
-    val seed = SingleLiveEvent<String>()
+    val seed = MutableSingleLiveEvent<String>()
 
     init {
         /* subscribe to flowables from the repositories. Note that since they're flowables,

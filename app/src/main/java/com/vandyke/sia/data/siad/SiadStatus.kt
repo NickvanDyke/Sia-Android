@@ -4,9 +4,13 @@
 
 package com.vandyke.sia.data.siad
 
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
+import com.vandyke.sia.util.rx.LiveEvent
+import com.vandyke.sia.util.rx.MutableLiveEvent
+import com.vandyke.sia.util.rx.MutableNonNullLiveData
 import com.vandyke.sia.util.rx.NonNullLiveData
-import com.vandyke.sia.util.rx.SingleLiveEvent
+import io.reactivex.Observable
 import io.reactivex.subjects.ReplaySubject
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -15,28 +19,36 @@ import javax.inject.Singleton
 @Singleton
 class SiadStatus
 @Inject constructor() {
-    /** Don't modify directly. Call siadOutput() */
-    val mostRecentSiadOutput = MutableLiveData<String>()
-    /** Don't modify directly. Call siadOutput() */
-    val allSiadOutput = ReplaySubject.create<String>()!!
+    /* reason for all these getters and casts: so that values can only be modified within this class
+     * by calling siadOutput and siadState externally */
+    val mostRecentSiadOutput
+        get() = mostRecentSiadOutputInternal as LiveData<String>
+    private val mostRecentSiadOutputInternal = MutableLiveData<String>()
 
-    /** Don't modify directly. Call siadState() */
-    val state = NonNullLiveData(State.STOPPED)
-    /** Don't modify directly. Call siadState() */
-    val stateEvent = SingleLiveEvent<State>()
+    val allSiadOutput
+        get() = allSiadOutputInternal as Observable<String>
+    private val allSiadOutputInternal = ReplaySubject.create<String>()!!
+
+    val state
+        get() = stateInternal as NonNullLiveData<State>
+    private val stateInternal = MutableNonNullLiveData(State.STOPPED)
+
+    val stateEvent
+        get() = stateEventInternal as LiveEvent<State>
+    private val stateEventInternal = MutableLiveEvent<State>()
 
     fun siadOutput(output: String) {
         if (output.contains("Finished loading")) {
-            stateEvent.postValue(State.SIAD_LOADED)
-            state.postValue(State.SIAD_LOADED)
+            stateEventInternal.postValue(State.SIAD_LOADED)
+            stateInternal.postValue(State.SIAD_LOADED)
         }
-        mostRecentSiadOutput.postValue(output)
-        allSiadOutput.onNext(output)
+        mostRecentSiadOutputInternal.postValue(output)
+        allSiadOutputInternal.onNext(output)
     }
 
     fun siadState(state: State) {
-        stateEvent.value = state
-        this.state.value = state
+        stateEventInternal.value = state
+        this.stateInternal.value = state
     }
 
     enum class State {

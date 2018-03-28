@@ -1,9 +1,9 @@
 package com.vandyke.sia.ui.node.modules
 
-import android.arch.lifecycle.MutableLiveData
 import android.os.FileObserver
+import com.vandyke.sia.util.rx.MutableSingleLiveEvent
 
-class ModuleObserver(moduleData: ModuleData, notifier: MutableLiveData<Module>) {
+class ModuleObserver(moduleData: ModuleData, notifier: MutableSingleLiveEvent<Module>) {
     private val observers: List<FileObserver> = moduleData.directories.map {
         object : FileObserver(it.absolutePath) {
             override fun onEvent(event: Int, path: String?) {

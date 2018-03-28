@@ -24,11 +24,11 @@ fun <T> LiveData<T>.observeForevs(onChanged: (T) -> Unit) {
     }
 }
 
-fun NonNullLiveData<Int>.increment() {
+fun MutableNonNullLiveData<Int>.increment() {
     this.value = this.value + 1
 }
 
-fun NonNullLiveData<Int>.decrementZeroMin() {
+fun MutableNonNullLiveData<Int>.decrementZeroMin() {
     if (this.value > 0)
         this.value = this.value - 1
 }

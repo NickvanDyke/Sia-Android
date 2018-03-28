@@ -20,24 +20,24 @@ fun Completable.inDbTransaction(db: AppDatabase): Completable =
                 .doFinally { db.endTransaction() }
 
 
-fun <T : Any> Single<List<T>>.toElementsObservable(): Observable<T> = this.flatMapObservable<T> { it.toObservable() }
+fun <T : Any, R : Iterable<T>> Single<R>.toElementsObservable(): Observable<T> = this.flatMapObservable<T> { it.toObservable() }
 
 
-fun Completable.track(tracker: NonNullLiveData<Int>): Completable =
+fun Completable.track(tracker: MutableNonNullLiveData<Int>): Completable =
         this.doOnSubscribe { tracker.increment() }
                 .doFinally { tracker.decrementZeroMin() }
 
-fun <T> Single<T>.track(tracker: NonNullLiveData<Int>): Single<T> =
+fun <T> Single<T>.track(tracker: MutableNonNullLiveData<Int>): Single<T> =
         this.doOnSubscribe { tracker.increment() }
                 .doFinally { tracker.decrementZeroMin() }
 
 @JvmName("trackBool")
-fun Completable.track(tracker: NonNullLiveData<Boolean>): Completable =
+fun Completable.track(tracker: MutableNonNullLiveData<Boolean>): Completable =
         this.doOnSubscribe { tracker.value = true }
                 .doFinally { tracker.value = false }
 
 @JvmName("trackBool")
-fun <T> Single<T>.track(tracker: NonNullLiveData<Boolean>): Single<T> =
+fun <T> Single<T>.track(tracker: MutableNonNullLiveData<Boolean>): Single<T> =
         this.doOnSubscribe { tracker.value = true }
                 .doFinally { tracker.value = false }
 

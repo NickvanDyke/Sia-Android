@@ -88,7 +88,7 @@ class FilesRepository
     fun immediateNodes(path: String, orderBy: OrderBy, ascending: Boolean) = Flowable.combineLatest(
             db.dirDao().dirsInDir(path, orderBy = orderBy, ascending = ascending),
             db.fileDao().filesInDir(path, orderBy, ascending),
-            BiFunction<List<Dir>, List<SiaFile>, List<Node>> { dir, file ->
+            BiFunction<List<Dir>, List<SiaFile>, List<Node>> { dir: List<Dir>, file: List<SiaFile> ->
                 return@BiFunction dir + file
             })!!
 
@@ -120,11 +120,11 @@ class FilesRepository
             Completable.fromAction { db.dirDao().deleteDirsUnder(dir.path) },
             db.fileDao().getFilesUnderDir(dir.path)
                     .toElementsObservable()
-                    .flatMapCompletable { deleteFile(it) })
+                    .flatMapCompletable(::deleteFile))
             .inDbTransaction(db)
 
     fun moveDir(dir: Dir, newPath: String): Completable {
-        /* we first move the dir and then the files under it */
+        /* we move the dir first and then the files under it */
         var completable = Completable.concatArray(
                 Completable.fromAction { db.dirDao().updatePath(dir.path, newPath) }
                         .onErrorResumeNext {
@@ -180,12 +180,12 @@ class FilesRepository
                         Completable.fromAction { db.dirDao().updateSize(dir.path, dir.size + file.size) }
                     },
             /* we move the file in the api last because if we move it first and then db actions fail, we
-             * can't rollback the move in the api the same way we can roll it back in the db */
+             * can't rollback the move in the api as easily as we can roll it back in the db */
             api.renterRename(file.path, newSiapath))
             .inDbTransaction(db)
 
     /** destination should be a directory */
-    fun downloadFile(file: SiaFile, destination: String): Completable = api.renterDownload(file.path, "$destination/${file.name}")
+    fun downloadFile(file: SiaFile, destination: String): Completable = api.renterDownloadAsync(file.path, "$destination/${file.name}")
 
     fun multiDelete(nodes: List<Node>) = nodes.toObservable()
             .flatMapCompletable {
@@ -196,16 +196,12 @@ class FilesRepository
             }
             .inDbTransaction(db)
 
-    // TODO: if a dir is selected and so are dirs/files inside of it, then some things will be downloaded multiple times.
-    // could check all nodes and eliminate ones that are within/under any selected dirs, then proceed with downloading the
-    // remaining nodes
     fun multiDownload(nodes: List<Node>, destination: String): Completable = nodes.toObservable()
-            .flatMapCompletable { node ->
-                if (node is Dir)
-                    downloadDir(node, destination)
-                else
-                    downloadFile(node as SiaFile, destination)
-            }
+            .filter { it is Dir }
+            .flatMap { db.fileDao().getFilesUnderDir(it.path).toElementsObservable() }
+            .startWith(nodes.filter { it is SiaFile } as List<SiaFile>)
+            .distinct(SiaFile::path)
+            .flatMapCompletable { downloadFile(it, destination) }
 
     /* we don't execute this in a db transaction because if early-on moves succeed but later ones
      * fail (due to duplicate paths), we don't want to rollback the early ones, since those files
@@ -214,9 +210,10 @@ class FilesRepository
             nodes.toObservable()
                     .filter { it is Dir }
                     .doOnNext {
-                        if (destination.indexOf(it.path) == 0)
+                        if (destination.startsWith(it.path) && destination != it.path)
                             throw DirMovedInsideItself(it.name)
-                    }.flatMapCompletable {
+                    }
+                    .flatMapCompletable {
                         moveDir(it as Dir, destination.withTrailingSlashIfNotEmpty() + it.name)
                     },
             nodes.toObservable()

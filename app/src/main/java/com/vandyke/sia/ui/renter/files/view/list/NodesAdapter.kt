@@ -12,9 +12,9 @@ import com.vandyke.sia.R
 import com.vandyke.sia.data.models.renter.Dir
 import com.vandyke.sia.data.models.renter.Node
 import com.vandyke.sia.data.models.renter.SiaFile
-import com.vandyke.sia.ui.renter.files.viewmodel.FilesViewModel
+import com.vandyke.sia.ui.renter.files.view.FilesFragment
 
-class NodesAdapter(val viewModel: FilesViewModel) : ListAdapter<Node, NodeHolder>(DIFF_CALLBACK) {
+class NodesAdapter(private val filesFragment: FilesFragment) : ListAdapter<Node, NodeHolder>(DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NodeHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -26,16 +26,16 @@ class NodesAdapter(val viewModel: FilesViewModel) : ListAdapter<Node, NodeHolder
 //                            else
 //                                R.layout.holder_renter_dir_grid,
                             parent, false),
-                    viewModel)
+                    filesFragment)
         } else {
             FileHolder(
                     inflater.inflate(
-                            if (viewModel.viewAsList.value)
-                                R.layout.holder_renter_file_list
-                            else
-                                R.layout.holder_renter_file_grid,
+//                            if (viewModel.viewAsList.value)
+                                R.layout.holder_renter_file_list,
+//                            else
+//                                R.layout.holder_renter_file_grid,
                             parent, false),
-                    viewModel)
+                    filesFragment)
         }
     }
 

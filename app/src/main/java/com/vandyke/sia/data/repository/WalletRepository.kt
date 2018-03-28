@@ -39,6 +39,7 @@ class WalletRepository
                  * trigger an update even if the new and old values are the exact same, which causes
                  * weird stuff in the UI that's observing the db. So instead we check first, and only
                  * insert if it's not already there */
+                // TODO: UNIQUE constraint fails here sometimes (aka it's trying to insert a tx id that's already in the db)
                 apiTxs.forEach { if (it !in dbTxs) db.transactionDao().insertAbortOnConflict(it) }
                 // TODO: is there a more efficient way to sync the db transactions to the api txs?
                 // Over time, the Sia node will be returning a LOT of transactions
