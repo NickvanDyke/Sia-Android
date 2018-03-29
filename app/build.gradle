@@ -6,6 +6,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'io.fabric'
 
 android {
     compileSdkVersion 27
@@ -14,8 +15,8 @@ android {
         applicationId "com.vandyke.sia"
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 207
-        versionName "0.2.7"
+        versionCode 208
+        versionName "0.2.8"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         /* lets us not shrink debug builds, for faster build times. Not necessary for release builds, since we shrink those */
         multiDexEnabled true
@@ -63,7 +64,7 @@ dependencies {
     
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
-    /* kotlin stdlib and coroutines */
+    /* kotlin stuff */
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.21'
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
@@ -134,7 +135,9 @@ dependencies {
     implementation 'com.squareup.moshi:moshi-kotlin:1.5.0'
 
     /* for crash reporting/analytics */
-    implementation 'com.google.firebase:firebase-crash:12.0.0'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.1'
+    implementation 'com.google.firebase:firebase-core:12.0.1'
+
     implementation 'com.android.billingclient:billing:1.0'
 }
 

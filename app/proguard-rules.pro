@@ -24,3 +24,12 @@
 -keepclasseswithmembers class * {
     @com.squareup.moshi.* <methods>;
 }
+
+# below is required for moshi-kotlin
+-keep class kotlin.reflect.jvm.internal.** { *; }
+-dontwarn org.jetbrains.annotations.**
+-keep class kotlin.Metadata { *; }
+-keepclassmembers class com.vandyke.sia.data.models.** {
+  <init>(...);
+  <fields>;
+}
