@@ -4,17 +4,13 @@
 
 package com.vandyke.sia.data.siad
 
-import android.app.Notification
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.app.Service
+import android.app.*
 import android.arch.lifecycle.LifecycleService
 import android.content.Context
 import android.content.Intent
-import android.os.Binder
+import android.os.Build
 import android.os.Environment
 import android.os.Handler
-import android.os.IBinder
 import android.support.v4.app.NotificationCompat
 import android.util.Log
 import com.vandyke.sia.R
@@ -26,6 +22,7 @@ import com.vandyke.sia.util.NotificationUtil
 import com.vandyke.sia.util.StorageUtil
 import com.vandyke.sia.util.bitmapFromVector
 import com.vandyke.sia.util.rx.observe
+import com.vandyke.sia.util.show
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.launch
 import java.io.BufferedReader
@@ -43,20 +40,26 @@ class SiadService : LifecycleService() {
     private var siadFile: File? = null
     private var siadProcess: java.lang.Process? = null
     private lateinit var handler: Handler
+    private lateinit var builder: NotificationCompat.Builder
 
     val siadProcessIsRunning: Boolean
         get() = siadProcess != null
 
     override fun onCreate() {
         super.onCreate()
-        this.getAppComponent().inject(this)
+        getAppComponent().inject(this)
 
         // TODO: should also check for and delete older versions of siad. Same with siac
         siadFile = StorageUtil.copyFromAssetsToAppStorage("siad-${Prefs.siaVersion}", this)
-
         handler = Handler(mainLooper)
 
-        siadSource.onCreate()
+        setupNotificationBuilder()
+        siadSource.setup()
+        createSiaNodeNotificationChannel()
+
+        siadStatus.mostRecentSiadOutput.observe(this) {
+            showSiadNotification(it)
+        }
 
         siadSource.allConditionsGood.observe(this) {
             if (it)
@@ -67,10 +70,6 @@ class SiadService : LifecycleService() {
 
         siadSource.restart.observe(this) {
             restartSiad()
-        }
-
-        siadStatus.mostRecentSiadOutput.observe(this) {
-            showSiadNotification(it)
         }
     }
 
@@ -121,7 +120,7 @@ class SiadService : LifecycleService() {
 
             siadStatus.siadState(State.SIAD_LOADING)
 
-            startForeground(SIAD_NOTIFICATION, siadNotification("Starting Sia node..."))
+            startForeground(SIAD_NOTIFICATION, buildSiadNotification("Starting Sia node..."))
 
             /* launch a coroutine that will read output from the siad process, and update siad observables from it's output */
             launch(CommonPool) {
@@ -190,24 +189,14 @@ class SiadService : LifecycleService() {
     }
 
     private fun showSiadNotification(text: String) {
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.notify(SIAD_NOTIFICATION, siadNotification(text))
+        buildSiadNotification(text).show(this, SIAD_NOTIFICATION)
     }
 
-    private fun siadNotification(text: String): Notification {
-        val builder = NotificationCompat.Builder(this, NotificationUtil.SIA_NODE_CHANNEL)
-                .setSmallIcon(R.drawable.sia_new_circle_logo_transparent_white)
-                .setLargeIcon(bitmapFromVector(R.drawable.sia_new_circle_logo_transparent))
-                .setContentTitle("Sia node")
-                .setContentText(text)
+    private fun buildSiadNotification(text: String): Notification {
+        builder.setContentText(text)
                 .setStyle(NotificationCompat.BigTextStyle().bigText(text))
 
-        /* the intent that launches MainActivity when the notification is selected */
-        val contentIntent = Intent(this, MainActivity::class.java)
-        val contentPI = PendingIntent.getActivity(this, 0, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-        builder.setContentIntent(contentPI)
-
-        /* the action to stop/start the Sia node */
+        builder.mActions.clear()
         if (siadProcessIsRunning) {
             val stopIntent = Intent(SiadSource.STOP_SIAD)
             val stopPI = PendingIntent.getBroadcast(this, 0, stopIntent, PendingIntent.FLAG_UPDATE_CURRENT)
@@ -217,20 +206,29 @@ class SiadService : LifecycleService() {
         return builder.build()
     }
 
+    private fun setupNotificationBuilder() {
+        builder = NotificationCompat.Builder(this, SIA_NODE_CHANNEL)
+                .setSmallIcon(R.drawable.sia_new_circle_logo_transparent_white)
+                .setLargeIcon(bitmapFromVector(R.drawable.sia_new_circle_logo_transparent))
+                .setContentTitle("Sia node")
+
+        /* the intent that launches MainActivity when the notification is selected */
+        val contentIntent = Intent(this, MainActivity::class.java)
+        val contentPI = PendingIntent.getActivity(this, 0, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        builder.setContentIntent(contentPI)
+    }
+
+    private fun createSiaNodeNotificationChannel() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
+            return
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val channel = NotificationChannel(SIA_NODE_CHANNEL, "Sia node", NotificationManager.IMPORTANCE_LOW)
+        channel.vibrationPattern = null
+        notificationManager.createNotificationChannel(channel)
+    }
+
     companion object {
-        const val SIAD_NOTIFICATION = 3
-    }
-
-    /* binding stuff */
-    private val binder = LocalBinder()
-
-    override fun onBind(intent: Intent): IBinder {
-        super.onBind(intent)
-        return binder
-    }
-
-    inner class LocalBinder : Binder() {
-        val service: SiadService
-            get() = this@SiadService
+        private const val SIAD_NOTIFICATION = 3
+        private const val SIA_NODE_CHANNEL = "SIA_NODE_CHANNEL"
     }
 }

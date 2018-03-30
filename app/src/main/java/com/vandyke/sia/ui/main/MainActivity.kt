@@ -85,6 +85,7 @@ class MainActivity : AppCompatActivity() {
 
         setupDrawer()
 
+        /* display the appropriate initial fragment */
         if (savedInstanceState == null) {
             drawer.setSelection(when (Prefs.startupPage) {
                 "files" -> {

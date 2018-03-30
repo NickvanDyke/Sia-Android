@@ -65,6 +65,15 @@ fun String.filePathParent(): String {
     }
 }
 
+fun String.fileExtension(): String {
+    val dotIndex = this.lastIndexOf('.')
+    return when (dotIndex) {
+        -1 -> "" // do I want null here instead?
+        this.length - 1 -> ""
+        else -> this.substring(dotIndex + 1) /* don't include the dot in the returned extension */
+    }
+}
+
 @Entity(tableName = "dirs")
 data class Dir(
         @PrimaryKey

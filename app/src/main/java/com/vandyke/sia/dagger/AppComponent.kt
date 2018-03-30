@@ -5,6 +5,8 @@
 package com.vandyke.sia.dagger
 
 import com.vandyke.sia.App
+import com.vandyke.sia.data.siad.DownloadMonitorService
+import com.vandyke.sia.data.siad.RetryDownloadReceiver
 import com.vandyke.sia.data.siad.SiadService
 import com.vandyke.sia.ui.node.NodeStatusFragment
 import com.vandyke.sia.ui.node.modules.NodeModulesFragment
@@ -34,5 +36,7 @@ interface AppComponent {
     fun inject(nodeModulesFragment: NodeModulesFragment)
     fun inject(settingsFragment: SettingsFragment)
     fun inject(siadService: SiadService)
+    fun inject(downloadMonitorService: DownloadMonitorService)
+    fun inject(retryDownloadReceiver: RetryDownloadReceiver)
     fun inject(app: App)
 }

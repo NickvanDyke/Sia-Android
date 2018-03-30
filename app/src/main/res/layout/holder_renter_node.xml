@@ -13,18 +13,19 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
+    <!--TODO: need to stop short of icons on the right, such as redundancy. How to do, since it's included?-->
     <TextView
         android:id="@+id/node_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="Name"
+        android:textColor="?android:attr/textColorPrimary"
         android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/node_size"
         app:layout_constraintStart_toEndOf="@+id/node_image"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed"/>
+        app:layout_constraintVertical_chainStyle="packed" />
 
 
     <TextView
@@ -33,6 +34,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:text="Size"
+        android:textColor="?android:attr/textColorSecondary"
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/node_name"

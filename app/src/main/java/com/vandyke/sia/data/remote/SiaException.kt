@@ -38,6 +38,8 @@ sealed class SiaException(msg: String) : Throwable(msg) {
                 msg.contains("word not found in dictionary for given language") -> WordNotFoundInDictionary()
                 msg.contains("seed failed checksum verification") -> SeedFailedChecksum()
 
+                msg.contains("download failed: no file with that path") -> NoFileWithThatPath(msg.substring(42))
+
                 msg.contains("unrecognized hash used as input to /explorer/hash") -> ExplorerUnrecognizedHash()
 
                 else -> UncaughtSiaError(msg)
@@ -67,6 +69,8 @@ class CannotSweepUntilSynced : SiaException("Cannot sweep until synced")
 class NothingToSweep : SiaException("Seed has nothing to sweep")
 class WordNotFoundInDictionary : SiaException("Word not found in dictionary for given language")
 class SeedFailedChecksum : SiaException("Seed failed checksum verification - verify it's correct")
+
+class NoFileWithThatPath(filepath: String) : SiaException("Download failed: no file with path $filepath")
 
 class ExplorerUnrecognizedHash : SiaException("Unrecognized hash")
 

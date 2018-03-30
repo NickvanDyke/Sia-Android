@@ -42,5 +42,6 @@ fun Throwable.snackbar(view: View, length: Int = Snackbar.LENGTH_SHORT) {
     Light.error(view, this.customMsg(), length).apply {
         if (Prefs.siaManuallyStopped)
             setAction("Start") { Prefs.siaManuallyStopped = false }
+        setActionTextColor(view.context.getColorRes(android.R.color.white))
     }.show()
 }

@@ -20,15 +20,25 @@
         android:theme="@style/AppTheme.DayNight">
 
         <service android:name="com.vandyke.sia.data.siad.SiadService" />
+        <service android:name=".data.siad.DownloadMonitorService" />
+
+        <receiver
+            android:name=".data.siad.RetryDownloadReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.vandyke.sia.RETRY_DOWNLOAD" />
+            </intent-filter>
+        </receiver>
 
         <activity
             android:name="com.vandyke.sia.ui.main.MainActivity"
             android:launchMode="singleTask"
-            android:theme="@style/splashScreenTheme"
             android:screenOrientation="portrait"
+            android:theme="@style/splashScreenTheme"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>

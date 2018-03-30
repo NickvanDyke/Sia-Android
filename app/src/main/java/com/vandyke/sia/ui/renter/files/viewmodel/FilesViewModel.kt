@@ -4,14 +4,17 @@
 
 package com.vandyke.sia.ui.renter.files.viewmodel
 
+import android.app.Application
 import android.arch.lifecycle.ViewModel
 import android.arch.persistence.room.EmptyResultSetException
+import android.content.Intent
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.models.renter.Dir
 import com.vandyke.sia.data.models.renter.Node
 import com.vandyke.sia.data.models.renter.SiaFile
 import com.vandyke.sia.data.models.renter.withTrailingSlashIfNotEmpty
 import com.vandyke.sia.data.repository.FilesRepository
+import com.vandyke.sia.data.siad.DownloadMonitorService
 import com.vandyke.sia.util.rx.*
 import io.reactivex.disposables.Disposable
 import javax.inject.Inject
@@ -19,7 +22,8 @@ import kotlin.properties.Delegates
 
 class FilesViewModel
 @Inject constructor(
-        private val filesRepository: FilesRepository
+        private val filesRepository: FilesRepository,
+        private val application: Application
 ) : ViewModel() {
     val currentDir = MutableNonNullLiveData<Dir>(Dir("", 0))
     val displayedNodes = MutableNonNullLiveData<List<Node>>(listOf())
@@ -33,6 +37,7 @@ class FilesViewModel
 
     val activeTasks = MutableNonNullLiveData(0)
     val refreshing = MutableNonNullLiveData(false)
+    val success = MutableSingleLiveEvent<String>()
     val error = MutableSingleLiveEvent<Throwable>()
 
     val currentDirPath
@@ -142,7 +147,14 @@ class FilesViewModel
                 .io()
                 .main()
                 .track(activeTasks)
-                .subscribe(::deselectAll, ::onError)
+                .subscribe({
+                    /* start the service that will display notifications for active downloads. It'll stop itself when all are complete. */
+                    application.startService(Intent(application, DownloadMonitorService::class.java))
+                    val size = selectedNodes.value.size
+                    success.value = "$size ${if (size > 1) "files" else "file"} will be downloaded. " +
+                            "Check ${if (size > 1) "notifications" else "notification"} for details."
+                    deselectAll()
+                }, ::onError)
     }
 
     fun moveSelectedToCurrentDir() {

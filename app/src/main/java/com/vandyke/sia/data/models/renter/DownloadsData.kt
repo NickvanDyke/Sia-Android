@@ -4,4 +4,4 @@
 
 package com.vandyke.sia.data.models.renter
 
-data class DownloadsData(val downloads: List<DownloadData>)
+data class DownloadsData(val downloads: List<DownloadData>?)

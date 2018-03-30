@@ -9,6 +9,7 @@ import com.vandyke.sia.data.local.AppDatabase
 import com.vandyke.sia.data.local.daos.*
 import com.vandyke.sia.data.models.renter.*
 import com.vandyke.sia.data.remote.SiaApi
+import com.vandyke.sia.util.replaceLast
 import com.vandyke.sia.util.rx.inDbTransaction
 import com.vandyke.sia.util.rx.toElementsObservable
 import io.reactivex.Completable
@@ -19,6 +20,7 @@ import io.reactivex.rxkotlin.toObservable
 import io.reactivex.rxkotlin.zipWith
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.launch
+import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -185,7 +187,30 @@ class FilesRepository
             .inDbTransaction(db)
 
     /** destination should be a directory */
-    fun downloadFile(file: SiaFile, destination: String): Completable = api.renterDownloadAsync(file.path, "$destination/${file.name}")
+    fun downloadFile(file: SiaFile, destinationDir: String): Completable = Single.fromCallable {
+        var dest = "$destinationDir/${file.name}"
+        /* ensure that the file will be downloaded to a location that doesn't already exist
+         * by appending a parenthesized number to the name if necessary */
+        var destFile = File(dest)
+        var i = 1
+        while (destFile.exists()) {
+            val dotIndex = dest.lastIndexOf('.')
+            dest = if (dotIndex == -1) {
+                if (i == 1)
+                    "$dest ($i)"
+                else
+                    dest.replaceLast("(${i - 1})", "($i)")
+            } else {
+                if (i == 1)
+                    dest.replaceLast(".", " ($i).")
+                else
+                    dest.replaceLast("(${i - 1}).", "($i).")
+            }
+            destFile = File(dest)
+            i++
+        }
+        dest
+    }.flatMapCompletable { api.renterDownloadAsync(file.path, it) }
 
     fun multiDelete(nodes: List<Node>) = nodes.toObservable()
             .flatMapCompletable {
@@ -196,12 +221,12 @@ class FilesRepository
             }
             .inDbTransaction(db)
 
-    fun multiDownload(nodes: List<Node>, destination: String): Completable = nodes.toObservable()
+    fun multiDownload(nodes: List<Node>, destinationDir: String): Completable = nodes.toObservable()
             .filter { it is Dir }
             .flatMap { db.fileDao().getFilesUnderDir(it.path).toElementsObservable() }
             .startWith(nodes.filter { it is SiaFile } as List<SiaFile>)
             .distinct(SiaFile::path)
-            .flatMapCompletable { downloadFile(it, destination) }
+            .flatMapCompletable { downloadFile(it, destinationDir) }
 
     /* we don't execute this in a db transaction because if early-on moves succeed but later ones
      * fail (due to duplicate paths), we don't want to rollback the early ones, since those files

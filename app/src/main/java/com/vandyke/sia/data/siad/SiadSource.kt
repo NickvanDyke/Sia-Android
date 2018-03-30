@@ -82,7 +82,7 @@ class SiadSource
     }
 
     /* methods to be called in the matching SiadService lifecycle callbacks */
-    fun onCreate() {
+    fun setup() {
         Prefs.preferences.registerOnSharedPreferenceChangeListener(prefsListener)
         application.registerActivityLifecycleCallbacks(lifecycleCallbacks)
 

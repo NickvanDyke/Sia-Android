@@ -194,6 +194,8 @@ class AllowanceFragment : BaseFragment() {
                         tvPurchaseable.text = purchasable.format() + " TB"
                     }
                     CONTRACT -> {
+                        // TODO: I think the estimated price returned for contracts is how much it'd cost
+                        // to form 50. So using that, I could calc how much it'd cost for one.
                         estPriceHeader.text = "Est. price"
                         purchasableHeader.text = "Purchasable"
                         tvPurchaseable.text = purchasable.format()
@@ -209,11 +211,11 @@ class AllowanceFragment : BaseFragment() {
             /* we want a minimum value so that even if the value is zero, it will still show on the chart */
             val total = (upload + download + storage + contract + unspent).toFloat()
             val minValue = if (total == 0f) 1f else total * 0.15f
-            dataSet.values[0].y = Math.max(upload.toFloat(), minValue)
-            dataSet.values[1].y = Math.max(download.toFloat(), minValue)
-            dataSet.values[2].y = Math.max(storage.toFloat(), minValue)
-            dataSet.values[3].y = Math.max(contract.toFloat(), minValue)
-            dataSet.values[4].y = Math.max(unspent.toFloat(), minValue)
+            dataSet.values[0].y = upload.toFloat().coerceAtLeast(minValue)
+            dataSet.values[1].y = download.toFloat().coerceAtLeast(minValue)
+            dataSet.values[2].y = storage.toFloat().coerceAtLeast(minValue)
+            dataSet.values[3].y = contract.toFloat().coerceAtLeast(minValue)
+            dataSet.values[4].y = unspent.toFloat().coerceAtLeast(minValue)
             dataSet.notifyDataSetChanged()
             pieChart.notifyDataSetChanged()
             pieChart.invalidate()

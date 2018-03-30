@@ -31,9 +31,9 @@ class DataAdapters {
     @FromJson
     fun transactionDataFromJson(data: TransactionDataJson): TransactionData {
         return TransactionData(data.transactionid, data.confirmationheight, data.confirmationtimestamp,
-                (data.outputs?.filter { it.walletaddress }?.sumByBigDecimal { it.value }
+                (data.outputs?.filter { it.walletaddress }?.sumByBigDecimal(TransactionOutputData::value)
                         ?: BigDecimal.ZERO) -
-                        (data.inputs?.filter { it.walletaddress }?.sumByBigDecimal { it.value }
+                        (data.inputs?.filter { it.walletaddress }?.sumByBigDecimal(TransactionInputData::value)
                                 ?: BigDecimal.ZERO))
     }
 
@@ -85,11 +85,11 @@ class DataAdapters {
 
     @ToJson
     fun renterFinancialMetricsDataToJson(data: RenterFinancialMetricsData): RenterFinancialMetricsDataJson {
-        return RenterFinancialMetricsDataJson(data.contractspending, data.downloadspending, data.storagespending, data.uploadspending, data.unspent)
+        return RenterFinancialMetricsDataJson(data.uploadspending, data.downloadspending, data.storagespending, data.contractspending, data.unspent)
     }
 
     @FromJson
     fun renterFinancialMetricsDataFromJson(data: RenterFinancialMetricsDataJson): RenterFinancialMetricsData {
-        return RenterFinancialMetricsData(System.currentTimeMillis(), data.contractspending, data.downloadspending, data.storagespending, data.uploadspending, data.unspent)
+        return RenterFinancialMetricsData(System.currentTimeMillis(), data.uploadspending, data.downloadspending, data.storagespending, data.contractspending, data.unspent)
     }
 }

@@ -19,8 +19,8 @@ data class RenterFinancialMetricsData(
         val unspent: BigDecimal)
 
 data class RenterFinancialMetricsDataJson(
-        val contractspending: BigDecimal,
+        val uploadspending: BigDecimal,
         val downloadspending: BigDecimal,
         val storagespending: BigDecimal,
-        val uploadspending: BigDecimal,
+        val contractspending: BigDecimal,
         val unspent: BigDecimal)

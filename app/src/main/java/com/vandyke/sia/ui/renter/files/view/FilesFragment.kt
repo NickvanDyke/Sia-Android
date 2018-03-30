@@ -13,6 +13,7 @@ import android.content.pm.PackageManager
 import android.graphics.PorterDuff
 import android.os.Bundle
 import android.os.Environment
+import android.support.design.widget.Snackbar
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
@@ -35,6 +36,7 @@ import com.vandyke.sia.ui.renter.files.view.list.NodesAdapter
 import com.vandyke.sia.ui.renter.files.viewmodel.FilesViewModel
 import com.vandyke.sia.util.*
 import com.vandyke.sia.util.rx.observe
+import io.github.tonnyl.light.Light
 import kotlinx.android.synthetic.main.fragment_files.*
 import javax.inject.Inject
 
@@ -135,7 +137,11 @@ class FilesFragment : BaseFragment() {
                             },
                             "Cancel",
                             { viewModel.deselect(node) },
-                            { hint = "Name" })
+                            {
+                                setText(node.name)
+                                selectAll()
+                                hint = "Name"
+                            })
                             .showDialogAndKeyboard()
                 }
             } else {
@@ -197,8 +203,12 @@ class FilesFragment : BaseFragment() {
 
         viewModel.selectedNodes.observe(this) {
             setMultiMoveImage()
-            selectedMenu.visibility = if (it.isEmpty()) View.GONE else View.VISIBLE
-            numSelected.text = ("${it.size} ${if (it.size == 1) "item" else "items"}") // maybe have an image with a # over it instead of text?
+            if (it.isEmpty()) {
+                selectedMenu.fadeToGone(300)
+            } else {
+                numSelected.text = ("${it.size} ${if (it.size == 1) "item" else "items"}") // maybe have an image with a # over it instead of text?
+                selectedMenu.fadeToVisible(200)
+            }
         }
 
         viewModel.ascending.observe(this) {
@@ -220,6 +230,10 @@ class FilesFragment : BaseFragment() {
 
         viewModel.activeTasks.observe(this) {
             progress_bar.goneUnless(it > 0)
+        }
+
+        viewModel.success.observe(this) {
+            Light.success(coordinator, it, Snackbar.LENGTH_SHORT).show()
         }
 
         viewModel.error.observe(this) {
