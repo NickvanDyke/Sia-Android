@@ -67,11 +67,6 @@ class DownloadMonitorService : LifecycleService() {
     }
 
     private fun update() {
-        // if I later want to store current downloads in the db, I should be able to pretty easily
-        // switch this to subscribe to a flowable from the db that returns a list of all dls in it,
-        // and then just update the db. That way, active downloads would be shown on app startup,
-        // even when the node hasn't loaded yet. Is that the behavior I want though? Could say that
-        // they're paused in the notification until the node loads
         api.renterDownloads()
                 .io()
                 .main()
@@ -111,7 +106,7 @@ class DownloadMonitorService : LifecycleService() {
                         stopSelf()
                         return@subscribe
                     }
-                }, {}) // is there some action that should be taken on errors?
+                }, {}) // is there some action that should be taken on errors? Maybe show an error notification?
     }
 
     private fun loopUpdate() {
@@ -220,9 +215,7 @@ class DownloadMonitorService : LifecycleService() {
         /* cancel the repeating updates. When/if siad is loaded again, update will begin due to observing its state */
         handler.removeCallbacksAndMessages(null)
 
-        /* if we get this error, then we know siad has either stopped or crashed.
-         * siad does not support resuming downloads, so we must mark all in-progress downloads
-         * as failed. */
+         /* siad does not support resuming downloads, so we mark all in-progress downloads as failed. */
         trackedDownloads.filter { it.status == Status.IN_PROGRESS }
                 .forEach { updateTrackedDownload(it.copy(completed = true, error = "Sia node stopped")) }
 

@@ -190,11 +190,11 @@ class FilesFragment : BaseFragment() {
 
         viewModel.viewAsList.observe(this) {
             if (it) {
-                viewTypeItem?.setIcon(R.drawable.ic_view_list)
+                viewTypeItem?.setIcon(R.drawable.ic_view_list_white)
                 viewTypeItem?.title = "View as grid"
                 nodes_list.layoutManager = LinearLayoutManager(context)
             } else {
-                viewTypeItem?.setIcon(R.drawable.ic_view_module)
+                viewTypeItem?.setIcon(R.drawable.ic_view_module_white)
                 viewTypeItem?.title = "View as list"
                 nodes_list.layoutManager = GridLayoutManager(context, LayoutUtil.calculateNoOfColumns(context!!))
             }
@@ -326,7 +326,7 @@ class FilesFragment : BaseFragment() {
         })
 
         viewTypeItem = menu.findItem(R.id.viewType)
-        viewTypeItem!!.setIcon(if (viewModel.viewAsList.value) R.drawable.ic_view_list else R.drawable.ic_view_module)
+        viewTypeItem!!.setIcon(if (viewModel.viewAsList.value) R.drawable.ic_view_list_white else R.drawable.ic_view_module_white)
 
         ascendingItem = menu.findItem(R.id.ascendingToggle)
         ascendingItem!!.isChecked = viewModel.ascending.value
@@ -383,9 +383,9 @@ class FilesFragment : BaseFragment() {
     private fun setMultiMoveImage() {
         multiMove.setImageResource(
                 if (viewModel.allSelectedAreInCurrentDir)
-                    R.drawable.ic_edit
+                    R.drawable.ic_edit_black
                 else
-                    R.drawable.ic_move_to_inbox)
+                    R.drawable.ic_move_to_inbox_black)
     }
 
     private fun launchSafChooseFile() {

@@ -9,13 +9,13 @@ import com.vandyke.sia.data.local.Prefs
 import java.math.BigDecimal
 import java.text.NumberFormat
 
-val BLOCKTIME = 600 // seconds
+const val BLOCKTIME = 600 // seconds
 
 val HASTINGS_PER_SC = BigDecimal("1000000000000000000000000")
 
 const val BLOCK_139949_TIMESTAMP = 1517519551
 
-val UNCONFIRMED_TX_TIMESTAMP = BigDecimal("18446744073709551615")
+val UNCONFIRMED_TX_TIMESTAMP = BigDecimal("18446744073709551615") // need to use BigDecimal because it's out of range of Long
 
 fun BigDecimal.toSC(): BigDecimal = this.divide(HASTINGS_PER_SC)
 
@@ -26,24 +26,6 @@ fun BigDecimal.toHastings(): BigDecimal = this.multiply(HASTINGS_PER_SC)
 fun String.toHastings(): BigDecimal = if (this.isBlank()) BigDecimal.ZERO else BigDecimal(this).multiply(HASTINGS_PER_SC)
 
 fun BigDecimal.format(): String {
-    val nf = NumberFormat.getInstance()
-    nf.maximumFractionDigits = Prefs.displayedDecimalPrecision
-    return nf.format(this)
-}
-
-fun Int.format(): String {
-    val nf = NumberFormat.getInstance()
-    nf.maximumFractionDigits = Prefs.displayedDecimalPrecision
-    return nf.format(this)
-}
-
-fun Long.format(): String {
-    val nf = NumberFormat.getInstance()
-    nf.maximumFractionDigits = Prefs.displayedDecimalPrecision
-    return nf.format(this)
-}
-
-fun Double.format(): String {
     val nf = NumberFormat.getInstance()
     nf.maximumFractionDigits = Prefs.displayedDecimalPrecision
     return nf.format(this)

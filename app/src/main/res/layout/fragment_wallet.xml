@@ -151,7 +151,7 @@
         android:layout_gravity="bottom|end"
         android:layout_marginBottom="16dp"
         android:layout_marginEnd="16dp"
-        android:src="@drawable/ic_add"
+        android:src="@drawable/ic_add_white"
         app:layout_behavior="com.vandyke.sia.ui.common.SnackbarRaiseBehavior"
         app:menu_colorNormal="?attr/colorPrimary"
         app:menu_colorPressed="?attr/colorPrimaryDark">
@@ -160,7 +160,7 @@
             android:id="@+id/fabSend"
             android:layout_width="@dimen/fab_size_normal"
             android:layout_height="@dimen/fab_size_normal"
-            android:src="@drawable/ic_send"
+            android:src="@drawable/ic_send_white"
             app:fab_colorNormal="?attr/colorPrimary"
             app:fab_colorPressed="?attr/colorPrimaryDark" />
 
@@ -168,7 +168,7 @@
             android:id="@+id/fabReceive"
             android:layout_width="@dimen/fab_size_normal"
             android:layout_height="@dimen/fab_size_normal"
-            android:src="@drawable/ic_file_download"
+            android:src="@drawable/ic_download_white"
             app:fab_colorNormal="?attr/colorPrimary"
             app:fab_colorPressed="?attr/colorPrimaryDark" />
 

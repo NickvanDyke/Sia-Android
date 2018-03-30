@@ -29,10 +29,10 @@ class IntroActivity : AhoyOnboarderActivity() {
                 mehdi.sakout.aboutpage.R.drawable.about_icon_github)
         val underDevCard = AhoyOnboarderCard("In development",
                 "Sia for Android and Sia are both still under heavy development, and will continue to improve.",
-                R.drawable.ic_code)
+                R.drawable.ic_code_black)
         val independentCard = AhoyOnboarderCard("Independent",
                 "Sia for Android is developed independently by me, an individual, and is not affiliated with Nebulous Labs.",
-                R.drawable.ic_person_outline)
+                R.drawable.ic_person_outline_black)
         val emailMeCard = AhoyOnboarderCard("Contact me!",
                 "I respond to each and every email. Please email me from the About page if you " +
                         "have any feedback or questions. Enjoy!",

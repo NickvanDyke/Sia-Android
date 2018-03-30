@@ -4,21 +4,22 @@
 
 package com.vandyke.sia.ui.wallet.view.transactionslist
 
-import android.support.v7.recyclerview.extensions.ListAdapter
+import android.arch.paging.PagedListAdapter
 import android.support.v7.util.DiffUtil
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.vandyke.sia.R
 import com.vandyke.sia.data.models.wallet.TransactionData
 
-class TransactionAdapter : ListAdapter<TransactionData, TransactionHolder>(DIFF_CALLBACK) {
+// should be able to disable move detection. Not sure if I can with PagedListAdapter though
+class TransactionAdapter : PagedListAdapter<TransactionData, TransactionHolder>(DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TransactionHolder {
         return TransactionHolder(LayoutInflater.from(parent.context).inflate(R.layout.holder_transaction, parent, false))
     }
 
     override fun onBindViewHolder(holder: TransactionHolder, position: Int) {
-        holder.bind(getItem(position))
+        holder.bind(getItem(position) ?: return)
     }
 
     companion object {

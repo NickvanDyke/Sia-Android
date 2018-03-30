@@ -4,8 +4,10 @@
 
 package com.vandyke.sia.ui.wallet.viewmodel
 
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
+import android.arch.paging.PagedList
 import com.vandyke.sia.data.models.consensus.ConsensusData
 import com.vandyke.sia.data.models.wallet.*
 import com.vandyke.sia.data.repository.ConsensusRepository
@@ -30,7 +32,7 @@ class WalletViewModel
     val walletMonthHistory = MutableLiveData<List<WalletData>>()
     val scValue = MutableLiveData<ScValueData>()
     val consensus = MutableLiveData<ConsensusData>()
-    val transactions = MutableLiveData<List<TransactionData>>()
+    val transactions: LiveData<PagedList<TransactionData>>
     val activeTasks = MutableNonNullLiveData(0)
     val refreshing = MutableNonNullLiveData(false)
     val numPeers = MutableNonNullLiveData(0)
@@ -53,10 +55,7 @@ class WalletViewModel
                 .main()
                 .subscribe(walletMonthHistory::setValue, ::onError)
       
-        walletRepository.transactions()
-                .io()
-                .main()
-                .subscribe(transactions::setValue, ::onError)
+        transactions = walletRepository.transactions
 
         consensusRepository.consensus()
                 .io()

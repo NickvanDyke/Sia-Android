@@ -62,6 +62,7 @@ class NodesAdapter(private val filesFragment: FilesFragment) : ListAdapter<Node,
                     oldItem is Dir && newItem is Dir -> oldItem.name == newItem.name && oldItem.size == newItem.size
                     oldItem is SiaFile && newItem is SiaFile -> oldItem.name == newItem.name && oldItem.size == newItem.size
                             && oldItem.redundancy == newItem.redundancy
+                            && oldItem.uploadprogress == newItem.uploadprogress
                     else -> false
                 }
             }

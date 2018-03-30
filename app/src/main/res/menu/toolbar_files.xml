@@ -7,19 +7,19 @@
 
     <item
         android:id="@+id/search"
-        android:icon="@drawable/ic_search"
+        android:icon="@drawable/ic_search_white"
         android:title="Search"
         app:actionViewClass="android.support.v7.widget.SearchView"
         app:showAsAction="collapseActionView|always" />
 
     <item
         android:id="@+id/viewType"
-        android:icon="@drawable/ic_view_list"
+        android:icon="@drawable/ic_view_list_white"
         android:title="Toggle grid"
         app:showAsAction="ifRoom" />
 
     <item
-        android:icon="@drawable/ic_sort"
+        android:icon="@drawable/ic_sort_white"
         android:title="Order by"
         app:showAsAction="ifRoom">
         <menu>

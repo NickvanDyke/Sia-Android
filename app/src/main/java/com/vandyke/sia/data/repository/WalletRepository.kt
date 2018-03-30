@@ -4,10 +4,14 @@
 
 package com.vandyke.sia.data.repository
 
+import android.arch.paging.LivePagedListBuilder
+import android.support.v7.util.DiffUtil
 import com.vandyke.sia.data.local.AppDatabase
 import com.vandyke.sia.data.models.wallet.AddressData
+import com.vandyke.sia.data.models.wallet.TransactionData
 import com.vandyke.sia.data.remote.NoWallet
 import com.vandyke.sia.data.remote.SiaApi
+import com.vandyke.sia.util.diffWith
 import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.rxkotlin.zipWith
@@ -28,21 +32,23 @@ class WalletRepository
             .toCompletable()
 
     private fun updateTransactions() = api.walletTransactions(0, Int.MAX_VALUE)
-            .map { it.alltransactions }
-            .zipWith(db.transactionDao().getAll())
+            .map { it.alltransactions.sortedBy(TransactionData::transactionid) }
+            .zipWith(db.transactionDao().getAllById())
             .doOnSuccess { (apiTxs, dbTxs) ->
-                /* delete all db transactions that aren't in the api response */
-                dbTxs.filter { dbTx -> apiTxs.find { it.transactionid == dbTx.transactionid } == null }
-                        .forEach { db.transactionDao().delete(it) }
-
-                /* insert into the db any new txs. Using ReplaceOnConflict doesn't work, as it will
-                 * trigger an update even if the new and old values are the exact same, which causes
-                 * weird stuff in the UI that's observing the db. So instead we check first, and only
-                 * insert if it's not already there */
-                // TODO: UNIQUE constraint fails here sometimes (aka it's trying to insert a tx id that's already in the db)
-                apiTxs.forEach { if (it !in dbTxs) db.transactionDao().insertAbortOnConflict(it) }
-                // TODO: is there a more efficient way to sync the db transactions to the api txs?
-                // Over time, the Sia node will be returning a LOT of transactions
+                apiTxs.diffWith(
+                        dbTxs,
+                        TransactionData::transactionid,
+                        { apiTx, dbTx ->
+                            if (apiTx != dbTx)
+                                db.transactionDao().insertReplaceOnConflict(apiTx)
+                        },
+                        {
+                            db.transactionDao().insertAbortOnConflict(it)
+                        },
+                        {
+                            db.transactionDao().delete(it)
+                        }
+                )
             }
             .toCompletable()
 
@@ -55,7 +61,9 @@ class WalletRepository
 
     fun walletMonthHistory() = db.walletDao().allLastMonth()
 
-    fun transactions() = db.transactionDao().allByMostRecent()
+    val transactions by lazy {
+        LivePagedListBuilder(db.transactionDao().allByMostRecent(), 20).build()
+    }
 
     fun addresses() = db.addressDao().all()
 
@@ -110,4 +118,16 @@ class WalletRepository
         db.transactionDao().deleteAll()
         db.addressDao().deleteAll()
     }!!
+
+    companion object {
+        private val DIFF_CALLBACK: DiffUtil.ItemCallback<TransactionData> = object : DiffUtil.ItemCallback<TransactionData>() {
+            override fun areItemsTheSame(oldItem: TransactionData, newItem: TransactionData): Boolean {
+                return oldItem.transactionid == newItem.transactionid
+            }
+
+            override fun areContentsTheSame(oldItem: TransactionData?, newItem: TransactionData?): Boolean {
+                return oldItem == newItem
+            }
+        }
+    }
 }

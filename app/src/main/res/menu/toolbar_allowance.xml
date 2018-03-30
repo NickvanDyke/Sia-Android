@@ -2,9 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:icon="@drawable/ic_money"
+        android:icon="@drawable/ic_swap_horiz_white"
         android:id="@+id/currency_button"
-        android:title="Currency"
+        android:title="Swap displayed currency"
         app:showAsAction="ifRoom">
     </item>
 </menu>

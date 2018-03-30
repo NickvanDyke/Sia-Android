@@ -124,6 +124,7 @@ dependencies {
     implementation "android.arch.persistence.room:runtime:1.1.0-beta1"
     implementation "android.arch.persistence.room:rxjava2:1.1.0-beta1"
     kapt "android.arch.persistence.room:compiler:1.1.0-beta1"
+    implementation "android.arch.paging:runtime:1.0.0-alpha7"
 
     /* Dagger, for DI */
     implementation 'com.google.dagger:dagger:2.12'

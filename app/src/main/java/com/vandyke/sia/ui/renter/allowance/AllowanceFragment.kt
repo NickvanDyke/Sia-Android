@@ -57,11 +57,11 @@ class AllowanceFragment : BaseFragment() {
 
         /* chart setup */
         val dataSet = PieDataSet(listOf(
-                PieEntry(1f, context!!.getDrawable(R.drawable.ic_cloud_upload)),
-                PieEntry(1f, context!!.getDrawable(R.drawable.ic_cloud_download)),
-                PieEntry(1f, context!!.getDrawable(R.drawable.ic_storage)),
-                PieEntry(1f, context!!.getDrawable(R.drawable.ic_file)),
-                PieEntry(1f, context!!.getDrawable(R.drawable.ic_money))),
+                PieEntry(1f, context!!.getDrawable(R.drawable.ic_cloud_upload_white)),
+                PieEntry(1f, context!!.getDrawable(R.drawable.ic_cloud_download_white)),
+                PieEntry(1f, context!!.getDrawable(R.drawable.ic_storage_white)),
+                PieEntry(1f, context!!.getDrawable(R.drawable.ic_file_white)),
+                PieEntry(1f, context!!.getDrawable(R.drawable.ic_money_white))),
                 "Spending")
         dataSet.colors = mutableListOf(context!!.getColorRes(android.R.color.holo_purple))
                 .apply { addAll(ColorTemplate.MATERIAL_COLORS.asList()) }

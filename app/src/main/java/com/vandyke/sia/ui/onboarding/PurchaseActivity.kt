@@ -32,7 +32,7 @@ class PurchaseActivity : AppCompatActivity(), PurchasesUpdatedListener {
                 if (responseCode == BillingClient.BillingResponse.OK) {
                     val purchases = client.queryPurchases(BillingClient.SkuType.SUBS)
                     if (purchases.responseCode == BillingClient.BillingResponse.OK) {
-                        val purchased = purchases.purchasesList?.find { it.sku == overall_sub_sku } != null
+                        val purchased = purchases.purchasesList?.any { it.sku == overall_sub_sku } == true
                         if (purchased) {
                             Prefs.requirePurchaseAt = 0
                             goToMainActivity()
@@ -70,8 +70,8 @@ class PurchaseActivity : AppCompatActivity(), PurchasesUpdatedListener {
 
     override fun onPurchasesUpdated(responseCode: Int, purchases: MutableList<Purchase>?) {
         if (responseCode == BillingClient.BillingResponse.ITEM_ALREADY_OWNED
-                || purchases?.find { it.sku == overall_sub_sku } != null
-                || client.queryPurchases(BillingClient.SkuType.SUBS).purchasesList.find { it.sku == overall_sub_sku } != null) {
+                || purchases?.any { it.sku == overall_sub_sku } == true
+                || client.queryPurchases(BillingClient.SkuType.SUBS).purchasesList.any { it.sku == overall_sub_sku }) {
             Prefs.requirePurchaseAt = 0
             Toast.makeText(this, "Thanks, enjoy! I look forward to bringing you updates.", Toast.LENGTH_LONG).show()
             Analytics.subscribe()

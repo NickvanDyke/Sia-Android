@@ -6,10 +6,8 @@ package com.vandyke.sia.ui.wallet.view
 
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
-import android.graphics.PorterDuff
 import android.os.Bundle
 import android.support.design.widget.Snackbar
-import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
@@ -131,9 +129,9 @@ class WalletFragment : BaseFragment() {
         }
 
         viewModel.transactions.observe(this) {
+            adapter.submitList(it)
             if (it.isNotEmpty())
                 Prefs.displayedTransaction = true
-            adapter.submitList(it.filterNot { Prefs.hideZero && it.isNetZero })
         }
 
         viewModel.consensus.observe(this) {
@@ -191,7 +189,7 @@ class WalletFragment : BaseFragment() {
         childFragmentManager.executePendingTransactions()
         expandedFragment = fragment
         expandableFrame.expandVertically(fragment.height)
-        setProgressColor(R.color.colorPrimary)
+        progress_bar.setIndeterminateColorRes(R.color.colorPrimary)
         setFabIcon()
     }
 
@@ -202,7 +200,7 @@ class WalletFragment : BaseFragment() {
             val currentChildFragment = childFragmentManager.findFragmentById(R.id.expandableFrame)
             if (currentChildFragment != null)
                 childFragmentManager.beginTransaction().remove(currentChildFragment).commit()
-            setProgressColor(android.R.color.white)
+            progress_bar.setIndeterminateColorRes(android.R.color.white)
         })
         KeyboardUtil.hideKeyboard(activity!!)
     }
@@ -232,12 +230,12 @@ class WalletFragment : BaseFragment() {
     private fun setStatusIcon() {
         statusButton?.setIcon(
                 when (viewModel.wallet.value?.encrypted == true || viewModel.wallet.value?.rescanning == true) {
-                    false -> R.drawable.ic_add
+                    false -> R.drawable.ic_add_white
                     true -> {
                         if (!viewModel.wallet.value!!.unlocked)
-                            R.drawable.ic_lock_outline
+                            R.drawable.ic_lock_outline_white
                         else
-                            R.drawable.ic_lock_open
+                            R.drawable.ic_lock_open_white
                     }
                 })
     }
@@ -266,16 +264,12 @@ class WalletFragment : BaseFragment() {
         }
     }
 
-    private fun setProgressColor(resId: Int) {
-        progress_bar.indeterminateDrawable.setColorFilter(ContextCompat.getColor(context!!, resId), PorterDuff.Mode.SRC_IN)
-    }
-
     private fun setFabIcon() {
         val wallet = viewModel.wallet.value
         fabWalletMenu.menuIconView.setImageResource(when {
-            expandedFragment != null -> R.drawable.ic_check
-            wallet?.unlocked == false && wallet.encrypted == true -> R.drawable.ic_lock_open
-            else -> R.drawable.ic_add
+            expandedFragment != null -> R.drawable.ic_check_white
+            wallet?.unlocked == false && wallet.encrypted == true -> R.drawable.ic_lock_open_white
+            else -> R.drawable.ic_add_white
         })
     }
 

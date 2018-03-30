@@ -139,7 +139,7 @@ class MainActivity : AppCompatActivity() {
                 if (responseCode == BillingClient.BillingResponse.OK) {
                     val purchases = client.queryPurchases(BillingClient.SkuType.SUBS)
                     if (purchases.responseCode == BillingClient.BillingResponse.OK) {
-                        val purchased = purchases.purchasesList?.find { it.sku == PurchaseActivity.overall_sub_sku } != null
+                        val purchased = purchases.purchasesList?.any { it.sku == PurchaseActivity.overall_sub_sku } == true
                         if (purchased)
                             Prefs.requirePurchaseAt = 0
                         if (!purchased && System.currentTimeMillis() > Prefs.requirePurchaseAt) {
@@ -172,27 +172,27 @@ class MainActivity : AppCompatActivity() {
 
             primaryItem {
                 name = "Node"
-                icon = R.drawable.ic_dns
+                icon = R.drawable.ic_dns_white
                 iconTintingEnabled = true
                 selectable = false
             }.withSubItems(
                     SecondaryDrawerItem()
                             .withName("Status")
-                            .withIcon(R.drawable.ic_short_text)
+                            .withIcon(R.drawable.ic_short_text_black)
                             .withIconTintingEnabled(true)
                             .withSelectedIconColor(colorPrimary)
                             .withSelectedTextColor(colorPrimary)
                             .withOnDrawerItemClickListener { _, _, _ -> displayFragment(NodeStatusFragment::class.java); false },
                     SecondaryDrawerItem()
                             .withName("Modules")
-                            .withIcon(R.drawable.ic_storage)
+                            .withIcon(R.drawable.ic_storage_white)
                             .withIconTintingEnabled(true)
                             .withSelectedIconColor(colorPrimary)
                             .withSelectedTextColor(colorPrimary)
                             .withOnDrawerItemClickListener { _, _, _ -> displayFragment(NodeModulesFragment::class.java); false },
                     SecondaryDrawerItem()
                             .withName("Settings")
-                            .withIcon(R.drawable.ic_settings)
+                            .withIcon(R.drawable.ic_settings_black)
                             .withIconTintingEnabled(true)
                             .withSelectedIconColor(colorPrimary)
                             .withSelectedTextColor(colorPrimary)
@@ -202,13 +202,13 @@ class MainActivity : AppCompatActivity() {
 
             primaryItem {
                 name = "Renter"
-                icon = R.drawable.ic_cloud
+                icon = R.drawable.ic_cloud_black
                 iconTintingEnabled = true
                 selectable = false
             }.withSubItems(
                     SecondaryDrawerItem()
                             .withName("Files")
-                            .withIcon(R.drawable.ic_folder)
+                            .withIcon(R.drawable.ic_folder_white)
                             .withIconTintingEnabled(true)
                             .withSelectedIconColor(colorPrimary)
                             .withSelectedTextColor(colorPrimary)
@@ -221,7 +221,7 @@ class MainActivity : AppCompatActivity() {
                             },
                     SecondaryDrawerItem()
                             .withName("Allowance")
-                            .withIcon(R.drawable.ic_money)
+                            .withIcon(R.drawable.ic_money_white)
                             .withIconTintingEnabled(true)
                             .withSelectedIconColor(colorPrimary)
                             .withSelectedTextColor(colorPrimary)
@@ -235,7 +235,7 @@ class MainActivity : AppCompatActivity() {
 
             primaryItem {
                 name = "Wallet"
-                icon = R.drawable.ic_account_balance_wallet
+                icon = R.drawable.ic_account_balance_wallet_white
                 iconTintingEnabled = true
                 selectedIconColor = colorPrimary.toLong()
                 selectedTextColor = colorPrimary.toLong()
@@ -247,7 +247,7 @@ class MainActivity : AppCompatActivity() {
 
             primaryItem {
                 name = "Settings"
-                icon = R.drawable.ic_settings
+                icon = R.drawable.ic_settings_black
                 selectedIconColor = colorPrimary.toLong()
                 selectedTextColor = colorPrimary.toLong()
                 iconTintingEnabled = true
@@ -256,7 +256,7 @@ class MainActivity : AppCompatActivity() {
 
             primaryItem {
                 name = "About"
-                icon = R.drawable.ic_info_outline
+                icon = R.drawable.ic_info_outline_black
                 selectedIconColor = colorPrimary.toLong()
                 selectedTextColor = colorPrimary.toLong()
                 iconTintingEnabled = true

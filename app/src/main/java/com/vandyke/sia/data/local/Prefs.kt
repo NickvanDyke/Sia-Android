@@ -29,7 +29,6 @@ object Prefs : KotprefModel() {
 
     var oldSiaColors by booleanPref(false)
     var darkMode by booleanPref(false)
-    var hideZero by booleanPref(true)
     var startupPage by stringPref("wallet")
     var displayedDecimalPrecision by intPref(2)
 

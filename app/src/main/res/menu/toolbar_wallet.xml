@@ -8,7 +8,7 @@
     <item
         android:title="Status"
         app:showAsAction="always"
-        android:icon="@drawable/ic_add"
+        android:icon="@drawable/ic_add_white"
         android:id="@+id/actionStatus"/>
     <item
         android:title="@string/unlock_wallet"

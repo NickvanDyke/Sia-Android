@@ -48,7 +48,7 @@ abstract class NodeHolder(itemView: View, filesFragment: FilesFragment) : Recycl
     }
 
     private fun determineSelected(nodes: List<Node>) {
-        if (nodes.find { it.path == node.path } != null)
+        if (nodes.any { it.path == node.path })
             select()
         else
             deselect()

@@ -9,6 +9,7 @@ import com.vandyke.sia.data.local.AppDatabase
 import com.vandyke.sia.data.local.daos.*
 import com.vandyke.sia.data.models.renter.*
 import com.vandyke.sia.data.remote.SiaApi
+import com.vandyke.sia.util.diffWith
 import com.vandyke.sia.util.replaceLast
 import com.vandyke.sia.util.rx.inDbTransaction
 import com.vandyke.sia.util.rx.toElementsObservable
@@ -38,50 +39,58 @@ class FilesRepository
     }
 
     /** Queries the list of files from the Sia node, and updates local database from it */
-    fun updateFilesAndDirs(): Completable = Completable.concatArray(
+    fun updateFilesAndDirs(): Completable = api.renterFiles()
             /* get the list of files from the Sia node, delete db files that aren't
              * in the response, and insert each file and the dirs containing it */
-            api.renterFiles()
-                    .map { it.files ?: listOf() }
-                    .zipWith(db.fileDao().getAll())
-                    // TODO: might have to change the way db and api files are brought into sync, similar
-                    // to in WalletRepository, since apparently ReplaceOnConflict triggers flowable updates even when
-                    // the two items are the exact same
-                    /* remove files that are in the local database but not in the Sia API response (by path) */
-                    .doOnSuccess { (apiFiles, dbFiles) ->
-                        dbFiles.filter { dbFile -> apiFiles.find { apiFile -> apiFile.path == dbFile.path } == null }
-                                .forEach { db.fileDao().delete(it) }
-                    }
-                    .flatMapObservable { (apiFiles) -> apiFiles.toObservable() }
-                    /* insert each file into the db and also every dir that leads up to it */
-                    .doOnNext { file ->
-                        db.fileDao().insertReplaceOnConflict(file)
-                        /* also add all the dirs leading up to the file */
-                        var pathSoFar = ""
-                        val dirPath = file.parent.split("/")
-                        dirPath.forEachIndexed { index, pathElement ->
-                            if (index != 0)
-                                pathSoFar += "/"
-                            pathSoFar += pathElement
-                            db.dirDao().insertIgnoreOnConflict(Dir(pathSoFar, 0))
-                        }
-                    }
-                    .ignoreElements(),
-            /* loop through all the dirs containing each file and calculate their values (size, etc.) */
-            db.dirDao().getAll()
-                    .toElementsObservable()
-                    .flatMapSingle { dir ->
-                        Single.zip(
-                                Single.just(dir),
-                                db.fileDao().getFilesUnderDir(dir.path),
-                                BiFunction<Dir, List<SiaFile>, Pair<Dir, List<SiaFile>>> { theDir, itsFiles ->
-                                    Pair(theDir, itsFiles)
-                                })
-                    }
-                    .doOnNext { (dir, itsFiles) -> db.dirDao().updateSize(dir.path, itsFiles.sumSize()) }
-                    .ignoreElements())
+            .map { it.files?.sortedBy(SiaFile::path) ?: listOf() }
+            .zipWith(db.fileDao().getAll())
+            .flatMapObservable { (apiFiles, dbFiles) ->
+                val updatedFiles = mutableListOf<SiaFile>()
+
+                apiFiles.diffWith(
+                        dbFiles,
+                        SiaFile::path,
+                        { apiFile, dbFile ->
+                            if (apiFile != dbFile) {
+                                db.fileDao().insertReplaceOnConflict(apiFile)
+                                updatedFiles.add(apiFile)
+                            }
+                        }, {
+                    insertFileAndItsParentDirs(it)
+                    updatedFiles.add(it)
+                }, {
+                    db.fileDao().delete(it)
+                    updatedFiles.add(it)
+                })
+
+                /* pass the updated files downstream so we can update the dirs containing them */
+                updatedFiles.toObservable()
+            }
+            .flatMap { db.dirDao().getDirsContainingFile(it.path).toElementsObservable() }
+            .distinct()
+            .flatMapSingle { dir ->
+                db.dirDao()
+                Single.zip(
+                        Single.just(dir),
+                        db.fileDao().getFilesUnderDir(dir.path),
+                        BiFunction<Dir, List<SiaFile>, Pair<Dir, List<SiaFile>>> { theDir, itsFiles -> theDir to itsFiles })
+            }
+            /* update the dir */
+            .doOnNext { (dir, itsFiles) -> db.dirDao().updateSize(dir.path, itsFiles.sumSize()) }
+            .ignoreElements()
             .inDbTransaction(db)
 
+    private fun insertFileAndItsParentDirs(file: SiaFile) {
+        db.fileDao().insertAbortOnConflict(file)
+        var pathSoFar = ""
+        val dirPath = file.parent.split("/")
+        dirPath.forEachIndexed { index, pathElement ->
+            if (index != 0)
+                pathSoFar += "/"
+            pathSoFar += pathElement
+            db.dirDao().insertIgnoreOnConflict(Dir(pathSoFar, 0))
+        }
+    }
 
     fun getDir(path: String) = db.dirDao().getDir(path)
 

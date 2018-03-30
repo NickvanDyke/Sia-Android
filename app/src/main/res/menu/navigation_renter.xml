@@ -7,9 +7,9 @@
     <item
         android:id="@+id/navigation_renter_files"
         android:title="Files"
-        android:icon="@drawable/ic_file"/>
+        android:icon="@drawable/ic_file_white"/>
     <item
         android:id="@+id/navigation_renter_allowance"
         android:title="Allowance"
-        android:icon="@drawable/ic_account_balance_wallet"/>
+        android:icon="@drawable/ic_account_balance_wallet_white"/>
 </menu>

@@ -28,12 +28,12 @@ class AboutFragment : BaseFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
 
-        val appVersion = Element("Version ${BuildConfig.VERSION_NAME}", R.drawable.ic_format_list_bulleted)
+        val appVersion = Element("Version ${BuildConfig.VERSION_NAME}", R.drawable.ic_format_list_bulleted_black)
                 .setOnClickListener {
                     GenUtil.launchCustomTabs(context!!, "https://github.com/NickvanDyke/Sia-Android/releases")
                 }
 
-        val siaVersion = Element("Version ${Prefs.siaVersion}", R.drawable.ic_format_list_bulleted)
+        val siaVersion = Element("Version ${Prefs.siaVersion}", R.drawable.ic_format_list_bulleted_black)
                 .setOnClickListener {
                     GenUtil.launchCustomTabs(context!!, "https://github.com/NebulousLabs/Sia/releases")
                 }
@@ -48,7 +48,7 @@ class AboutFragment : BaseFragment() {
                     GenUtil.launchCustomTabs(context!!, "https://github.com/NebulousLabs/Sia")
                 }
 
-        val siaHelp = Element("Help", R.drawable.ic_help_outline)
+        val siaHelp = Element("Help", R.drawable.ic_help_outline_black)
                 .setOnClickListener {
                     GenUtil.launchCustomTabs(context!!, "https://support.sia.tech/help_center")
                 }
@@ -62,15 +62,15 @@ class AboutFragment : BaseFragment() {
                 Intent(Intent.ACTION_SEND)
                         .setType("text/plain")
                         .putExtra(Intent.EXTRA_TEXT, "https://play.google.com/store/apps/details?id=com.vandyke.sia"), "Share Sia")
-        val share = Element("Share", R.drawable.ic_share)
+        val share = Element("Share", R.drawable.ic_share_black)
                 .setIntent(shareIntent)
 
-        val onboarding = Element("Intro", R.drawable.ic_view_carousel)
+        val onboarding = Element("Intro", R.drawable.ic_view_carousel_black)
                 .setIntent(Intent(context!!, IntroActivity::class.java))
 
         // maybe I shouldn't have these links here? I don't want people going there for support, since this isn't an official Sia product.
         // It's nice to have them other than that though. I'll see what ends up happening and remove if necessary.
-        val discord = Element("Discord", R.drawable.discord_logo_black)
+        val discord = Element("Discord", R.drawable.ic_discord_logo_black)
                 .setOnClickListener {
                     GenUtil.launchCustomTabs(context!!, "https://discord.gg/sFCT3Ar")
                 }

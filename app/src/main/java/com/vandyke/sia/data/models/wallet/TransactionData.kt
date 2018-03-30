@@ -15,8 +15,8 @@ import java.util.*
 data class TransactionData(
         @PrimaryKey
         val transactionid: String,
-        val confirmationheight: BigDecimal,
-        val confirmationtimestamp: BigDecimal,
+        val confirmationheight: BigDecimal, // have to use BigDecimal for these two because if it's unconfirmed,
+        val confirmationtimestamp: BigDecimal, // their values are the max value of an unsigned long, which is too big for Java's signed longs
         val netValue: BigDecimal
 ) {
     @Ignore

@@ -128,7 +128,7 @@ class FilesViewModel
     }
 
     fun toggleSelect(node: Node) {
-        if (selectedNodes.value.find { it.path == node.path } != null)
+        if (selectedNodes.value.any { it.path == node.path })
             deselect(node)
         else
             select(node)
