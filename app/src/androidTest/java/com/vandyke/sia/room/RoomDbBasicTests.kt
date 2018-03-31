@@ -46,7 +46,7 @@ open class RoomDbBasicTests {
     fun insert() {
         val addressData = AddressData("hi")
         db.addressDao().insertAbortOnConflict(addressData)
-        val list = db.addressDao().getAllSorted().blockingGet()
+        val list = db.addressDao().getAll().blockingGet()
         list.size shouldEqual 1
         list[0] shouldEqual addressData
     }
@@ -72,7 +72,7 @@ open class RoomDbBasicTests {
                 AddressData("two"),
                 AddressData("three"))
         db.addressDao().insertAllAbortOnConflict(list)
-        val fromDb = db.addressDao().getAllSorted().blockingGet()
+        val fromDb = db.addressDao().getAll().blockingGet()
         fromDb.size shouldEqual list.size
         fromDb shouldEqual list
     }
@@ -82,7 +82,7 @@ open class RoomDbBasicTests {
         val addressData = AddressData("hi")
         db.addressDao().insertAbortOnConflict(addressData)
         db.addressDao().delete(addressData)
-        db.addressDao().getAllSorted().blockingGet().shouldBeEmpty()
+        db.addressDao().getAll().blockingGet().shouldBeEmpty()
     }
 
     @Test
@@ -91,7 +91,7 @@ open class RoomDbBasicTests {
         db.addressDao().insertAbortOnConflict(AddressData("hello"))
         db.addressDao().insertAbortOnConflict(AddressData("whats up"))
         db.addressDao().deleteAll()
-        db.addressDao().getAllSorted().blockingGet().shouldBeEmpty()
+        db.addressDao().getAll().blockingGet().shouldBeEmpty()
     }
 
     @Test

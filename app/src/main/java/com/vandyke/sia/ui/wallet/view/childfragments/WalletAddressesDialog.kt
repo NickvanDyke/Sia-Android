@@ -26,14 +26,9 @@ class WalletAddressesDialog : BaseWalletFragment() {
         addressesList.addItemDecoration(DividerItemDecoration(addressesList.context, layoutManager.orientation))
         addressesList.adapter = adapter
 
-        subscription = viewModel.getAddresses().subscribe({ addresses ->
+        viewModel.getAddresses().subscribe({ addresses ->
             adapter.data = addresses.map { it.address }
             adapter.notifyDataSetChanged()
         }, {})
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        subscription.dispose()
     }
 }

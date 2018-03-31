@@ -50,8 +50,7 @@ class FilesViewModel
         get() = selectedNodes.value.all { it.parent == currentDirPath }
 
     /** the subscription to the database flowable that emits items in the current path */
-    private var nodesSubscription: Disposable? by Delegates.observable<Disposable?>(null) {
-        property, oldValue, newValue ->
+    private var nodesSubscription: Disposable? by Delegates.observable<Disposable?>(null) { property, oldValue, newValue ->
         oldValue?.dispose()
     }
 
@@ -158,8 +157,8 @@ class FilesViewModel
     }
 
     fun moveSelectedToCurrentDir() {
-        // TODO: repository stuff should emit names of nodes as they're moved, so that we can deselect them.
-        // would be useful for other methods too
+        // TODO: repository stuff should emit names of nodes as they're moved, so that we can
+        // deselect them as they are. Would be useful for other multi methods too
         filesRepository.multiMove(selectedNodes.value, currentDirPath)
                 .io()
                 .main()
@@ -191,7 +190,7 @@ class FilesViewModel
                 .io()
                 .main()
                 .track(activeTasks)
-                .subscribe({}, ::onError)
+                .subscribe({ deselect(file) }, ::onError)
     }
 
     fun renameDir(dir: Dir, newName: String) {
@@ -200,7 +199,7 @@ class FilesViewModel
                 .io()
                 .main()
                 .track(activeTasks)
-                .subscribe({}, ::onError)
+                .subscribe({ deselect(dir) }, ::onError)
     }
 
     fun search(name: String) {
@@ -217,15 +216,13 @@ class FilesViewModel
 
     /** subscribes to the proper source for the displayed nodes, depending on the state of the viewmodel */
     private fun setDisplayedNodes() {
-        nodesSubscription =
-                if (searching.value) {
+        nodesSubscription = if (searching.value) {
                     filesRepository.search(searchTerm.value, currentDirPath, orderBy.value, ascending.value)
-                            .map { nodes -> nodes.filterNot { node -> node is Dir && node.path.isEmpty() } }
-                            /* mapping is because we don't want to show the root dir which has an empty path */
                 } else {
                     filesRepository.immediateNodes(currentDirPath, orderBy.value, ascending.value)
-                            .map { nodes -> nodes.filterNot { node -> node is Dir && node.path.isEmpty() } }
                 }
+                        /* mapping is because we don't want to show the root dir which has an empty path */
+                        .map { nodes -> nodes.filterNot { node -> node is Dir && node.path.isEmpty() } }
                         .io()
                         .main()
                         .subscribe(displayedNodes::setValue, ::onError)

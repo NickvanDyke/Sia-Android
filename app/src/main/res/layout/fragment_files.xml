@@ -53,7 +53,7 @@
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:paddingEnd="8dp"
             android:paddingStart="8dp"
-            android:src="@drawable/ic_move_to_inbox_black"
+            android:src="@drawable/ic_edit_black"
             android:tint="@android:color/darker_gray" />
 
         <ImageButton

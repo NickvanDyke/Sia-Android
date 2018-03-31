@@ -67,6 +67,8 @@ class FilesFragment : BaseFragment() {
 
     private lateinit var nodesAdapter: NodesAdapter
 
+    private var currentMultiMoveResId: Int = R.drawable.ic_edit_black
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         context!!.getAppComponent().inject(this)
 
@@ -136,8 +138,7 @@ class FilesFragment : BaseFragment() {
                                 viewModel.deselect(node)
                             },
                             "Cancel",
-                            { viewModel.deselect(node) },
-                            {
+                            editTextFunc = {
                                 setText(node.name)
                                 selectAll()
                                 hint = "Name"
@@ -202,12 +203,12 @@ class FilesFragment : BaseFragment() {
         }
 
         viewModel.selectedNodes.observe(this) {
-            setMultiMoveImage()
             if (it.isEmpty()) {
                 selectedMenu.fadeToGone(300)
             } else {
+                setMultiMoveImage()
                 numSelected.text = ("${it.size} ${if (it.size == 1) "item" else "items"}") // maybe have an image with a # over it instead of text?
-                selectedMenu.fadeToVisible(200)
+                selectedMenu.fadeToVisible(300)
             }
         }
 
@@ -381,11 +382,26 @@ class FilesFragment : BaseFragment() {
     }
 
     private fun setMultiMoveImage() {
-        multiMove.setImageResource(
-                if (viewModel.allSelectedAreInCurrentDir)
-                    R.drawable.ic_edit_black
-                else
-                    R.drawable.ic_move_to_inbox_black)
+        val newResId = if (viewModel.allSelectedAreInCurrentDir)
+            R.drawable.ic_edit_black
+        else
+            R.drawable.ic_move_to_inbox_black
+
+        if (currentMultiMoveResId == newResId)
+            return
+
+        multiMove.animate()
+                .alpha(0f)
+                .setDuration(100)
+                .withEndAction {
+                    multiMove.setImageResource(newResId)
+                    currentMultiMoveResId = newResId
+                    multiMove.animate()
+                            .alpha(1f)
+                            .setDuration(100)
+                            .start()
+                }
+                .start()
     }
 
     private fun launchSafChooseFile() {

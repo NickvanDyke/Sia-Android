@@ -33,5 +33,5 @@ fun View.fadeToVisible(duration: Long) {
     this.animate()
             .setDuration(duration)
             .alpha(1f)
-            .withEndAction { this.visibility = View.VISIBLE }
+            .withStartAction { this.visibility = View.VISIBLE }
 }

@@ -210,8 +210,8 @@ class WalletViewModel
                 .doOnError(::onError)
     }
 
-    fun getSeeds(): Single<SeedsData> {
-        return walletRepository.getSeeds()
+    fun getSeeds(): Single<List<SeedData>> {
+        return walletRepository.getSeeds("english")
                 .io()
                 .main()
                 .track(activeTasks)

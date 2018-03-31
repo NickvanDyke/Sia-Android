@@ -7,7 +7,6 @@ package com.vandyke.sia.data.local.daos
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Query
 import com.vandyke.sia.data.models.wallet.AddressData
-import io.reactivex.Flowable
 import io.reactivex.Single
 
 @Dao
@@ -16,10 +15,7 @@ interface AddressDao : BaseDao<AddressData> {
     fun getAddress(): Single<AddressData>
 
     @Query("SELECT * FROM addresses")
-    fun all(): Flowable<List<AddressData>>
-
-    @Query("SELECT * FROM addresses")
-    fun getAllSorted(): Single<List<AddressData>>
+    fun getAll(): Single<List<AddressData>>
 
     @Query("DELETE FROM addresses")
     fun deleteAll()

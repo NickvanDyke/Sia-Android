@@ -19,6 +19,10 @@ fun Completable.inDbTransaction(db: AppDatabase): Completable =
                 .doOnComplete { db.setTransactionSuccessful() }
                 .doFinally { db.endTransaction() }
 
+fun <T> Single<T>.inDbTransaction(db: AppDatabase): Single<T> =
+        this.doOnSubscribe { db.beginTransaction() }
+                .doOnSuccess { db.setTransactionSuccessful() }
+                .doFinally { db.endTransaction() }
 
 fun <T : Any, R : Iterable<T>> Single<R>.toElementsObservable(): Observable<T> = this.flatMapObservable<T> { it.toObservable() }
 

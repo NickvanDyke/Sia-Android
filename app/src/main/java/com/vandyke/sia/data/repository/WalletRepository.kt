@@ -7,9 +7,12 @@ package com.vandyke.sia.data.repository
 import android.arch.paging.LivePagedListBuilder
 import com.vandyke.sia.data.local.AppDatabase
 import com.vandyke.sia.data.models.wallet.AddressData
+import com.vandyke.sia.data.models.wallet.SeedData
 import com.vandyke.sia.data.models.wallet.TransactionData
+import com.vandyke.sia.data.models.wallet.WalletInitData
 import com.vandyke.sia.data.remote.NoWallet
 import com.vandyke.sia.data.remote.SiaApi
+import com.vandyke.sia.data.remote.WalletLocked
 import com.vandyke.sia.util.diffWith
 import com.vandyke.sia.util.rx.inDbTransaction
 import io.reactivex.Completable
@@ -25,7 +28,7 @@ class WalletRepository
         private val db: AppDatabase
 ) {
     /* Functions that update the local database from the Sia node */
-    fun updateAll() = Completable.mergeArray(updateWallet(), updateTransactions(), updateAddresses())!!
+    fun updateAll() = Completable.mergeArray(updateWallet(), updateTransactions())!!
 
     private fun updateWallet() = api.wallet()
             .doOnSuccess { db.walletDao().insertReplaceOnConflict(it) }
@@ -48,25 +51,6 @@ class WalletRepository
             .toCompletable()
             .inDbTransaction(db)
 
-    private fun updateAddresses() = api.walletAddresses()
-//            .flatMapObservable { it.addresses.toObservable() }
-//            .map { AddressData(it) }
-//            .doOnNext { db.addressDao().insertIgnoreOnConflict(it) }
-//            .ignoreElements()
-            .map { it.addresses.sortedBy { it } }
-            .map { addrs -> addrs.map { AddressData(it) } }
-            .zipWith(db.addressDao().getAllSorted())
-            .doOnSuccess { (apiAddrs, dbAddrs) ->
-                apiAddrs.diffWith(
-                        dbAddrs,
-                        AddressData::address,
-                        { apiAddr, dbAddr -> },
-                        { db.addressDao().insertAbortOnConflict(it) },
-                        { db.addressDao().delete(it) })
-            }
-            .toCompletable()
-            .inDbTransaction(db)
-
     /* database flowables to be subscribed to */
     fun wallet() = db.walletDao().mostRecent()
 
@@ -75,8 +59,6 @@ class WalletRepository
     val transactions by lazy {
         LivePagedListBuilder(db.transactionDao().allByMostRecent(), 20).build()
     }
-
-    fun addresses() = db.addressDao().all()
 
     /* singles */
     fun getAddress() = api.walletAddress()
@@ -93,30 +75,49 @@ class WalletRepository
             .map {
                 it.addresses.map { AddressData(it) }
             }
-            .doOnSuccess { db.addressDao().insertAllIgnoreOnConflict(it) }
+            .doOnSuccess {
+                /* easier and faster to just do this. And nothing is subscribed to flowables from this
+                 * table so it doesn't matter if we do it this way */
+                db.addressDao().deleteAll()
+                db.addressDao().insertAllAbortOnConflict(it)
+            }
             .onErrorResumeNext {
                 /* fallback to db, but only if the reason for the failure was not due to the absence of a wallet */
                 if (it !is NoWallet)
-                    db.addressDao().getAllSorted().onErrorResumeNext(Single.error(it))
+                    db.addressDao().getAll().onErrorResumeNext(Single.error(it))
                 else
                     Single.error(it)
             }!!
 
-    // chose not to store the seeds in a database for security reasons I guess? Maybe I should
-    fun getSeeds(dictionary: String = "english") = api.walletSeeds(dictionary)
+    fun getSeeds(dictionary: String): Single<List<SeedData>> = api.walletSeeds(dictionary)
+            .map {
+                it.allseeds.map { SeedData(it) }
+            }
+            .doOnSuccess {
+                db.seedDao().deleteAll()
+                db.seedDao().insertAllAbortOnConflict(it)
+            }
+            .onErrorResumeNext {
+                if (it !is NoWallet && it !is WalletLocked)
+                    db.seedDao().getAll().onErrorResumeNext(Single.error(it))
+                else
+                    Single.error(it)
+            }
 
     fun unlock(password: String) = api.walletUnlock(password)
 
     fun lock() = api.walletLock()
 
-    fun init(password: String, dictionary: String, force: Boolean) = api.walletInit(password, dictionary, force)
-            .doAfterSuccess {
-                clearWalletDb().subscribe()
-            }!!
+    fun init(password: String, dictionary: String, force: Boolean): Single<WalletInitData> = api.walletInit(password, dictionary, force)
+            .doOnSuccess {
+                clearWalletDb()
+                db.seedDao().insertAbortOnConflict(SeedData(it.primaryseed))
+            }
 
-    fun initSeed(password: String, dictionary: String, seed: String, force: Boolean) =
+    fun initSeed(password: String, dictionary: String, seed: String, force: Boolean): Completable =
             api.walletInitSeed(password, dictionary, seed, force)
-                    .concatWith(clearWalletDb())
+                    .concatWith(Completable.fromAction { clearWalletDb() })
+                    .doOnComplete { db.seedDao().insertAbortOnConflict(SeedData(seed)) }
 
     fun send(amount: String, destination: String) = api.walletSiacoins(amount, destination)
 
@@ -124,9 +125,9 @@ class WalletRepository
 
     fun sweep(dictionary: String, seed: String) = api.walletSweepSeed(dictionary, seed)
 
-    private fun clearWalletDb() = Completable.fromCallable {
+    private fun clearWalletDb() {
         db.walletDao().deleteAll()
         db.transactionDao().deleteAll()
         db.addressDao().deleteAll()
-    }!!
+    }
 }

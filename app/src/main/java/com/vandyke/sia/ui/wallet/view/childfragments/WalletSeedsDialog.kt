@@ -24,9 +24,7 @@ class WalletSeedsDialog : BaseWalletFragment() {
         seedsList.adapter = adapter
 
         viewModel.getSeeds().subscribe({ seeds ->
-            val list = mutableListOf<String>()
-            list.addAll(seeds.allseeds)
-            adapter.data = list
+            adapter.data = seeds.map { it.seed }
             adapter.notifyDataSetChanged()
         }, {})
     }
