@@ -55,13 +55,15 @@ class FilesRepository
                                 db.fileDao().insertReplaceOnConflict(apiFile)
                                 updatedFiles.add(apiFile)
                             }
-                        }, {
-                    insertFileAndItsParentDirs(it)
-                    updatedFiles.add(it)
-                }, {
-                    db.fileDao().delete(it)
-                    updatedFiles.add(it)
-                })
+                        },
+                        {
+                            insertFileAndItsParentDirs(it)
+                            updatedFiles.add(it)
+                        },
+                        {
+                            db.fileDao().delete(it)
+                            updatedFiles.add(it)
+                        })
 
                 /* pass the updated files downstream so we can update the dirs containing them */
                 updatedFiles.toObservable()
@@ -69,7 +71,6 @@ class FilesRepository
             .flatMap { db.dirDao().getDirsContainingFile(it.path).toElementsObservable() }
             .distinct()
             .flatMapSingle { dir ->
-                db.dirDao()
                 Single.zip(
                         Single.just(dir),
                         db.fileDao().getFilesUnderDir(dir.path),

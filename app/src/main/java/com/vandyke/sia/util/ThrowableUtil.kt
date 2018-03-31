@@ -30,6 +30,7 @@ fun Throwable.customMsg(): String {
                 msg
             }
         }
+//        is SQLiteConstraintException -> "Database conflict. Try clearing cached data from settings if this persists."
         else -> {
             if (this !is SiaException)
                 Log.d("CustomMsg", "customMsg() called on ${this.javaClass.simpleName} without a custom text implemented")

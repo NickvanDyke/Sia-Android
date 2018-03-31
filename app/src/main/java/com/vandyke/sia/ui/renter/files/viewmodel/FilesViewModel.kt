@@ -158,6 +158,8 @@ class FilesViewModel
     }
 
     fun moveSelectedToCurrentDir() {
+        // TODO: repository stuff should emit names of nodes as they're moved, so that we can deselect them.
+        // would be useful for other methods too
         filesRepository.multiMove(selectedNodes.value, currentDirPath)
                 .io()
                 .main()

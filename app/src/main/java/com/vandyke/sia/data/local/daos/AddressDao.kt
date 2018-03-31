@@ -19,7 +19,7 @@ interface AddressDao : BaseDao<AddressData> {
     fun all(): Flowable<List<AddressData>>
 
     @Query("SELECT * FROM addresses")
-    fun getAll(): Single<List<AddressData>>
+    fun getAllSorted(): Single<List<AddressData>>
 
     @Query("DELETE FROM addresses")
     fun deleteAll()

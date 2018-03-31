@@ -5,13 +5,13 @@
 package com.vandyke.sia.data.repository
 
 import android.arch.paging.LivePagedListBuilder
-import android.support.v7.util.DiffUtil
 import com.vandyke.sia.data.local.AppDatabase
 import com.vandyke.sia.data.models.wallet.AddressData
 import com.vandyke.sia.data.models.wallet.TransactionData
 import com.vandyke.sia.data.remote.NoWallet
 import com.vandyke.sia.data.remote.SiaApi
 import com.vandyke.sia.util.diffWith
+import com.vandyke.sia.util.rx.inDbTransaction
 import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.rxkotlin.zipWith
@@ -42,19 +42,30 @@ class WalletRepository
                             if (apiTx != dbTx)
                                 db.transactionDao().insertReplaceOnConflict(apiTx)
                         },
-                        {
-                            db.transactionDao().insertAbortOnConflict(it)
-                        },
-                        {
-                            db.transactionDao().delete(it)
-                        }
-                )
+                        { db.transactionDao().insertAbortOnConflict(it) },
+                        { db.transactionDao().delete(it) })
             }
             .toCompletable()
+            .inDbTransaction(db)
 
     private fun updateAddresses() = api.walletAddresses()
-            .doOnSuccess { db.addressDao().insertAllIgnoreOnConflict(it.addresses.map { AddressData(it) }) }
+//            .flatMapObservable { it.addresses.toObservable() }
+//            .map { AddressData(it) }
+//            .doOnNext { db.addressDao().insertIgnoreOnConflict(it) }
+//            .ignoreElements()
+            .map { it.addresses.sortedBy { it } }
+            .map { addrs -> addrs.map { AddressData(it) } }
+            .zipWith(db.addressDao().getAllSorted())
+            .doOnSuccess { (apiAddrs, dbAddrs) ->
+                apiAddrs.diffWith(
+                        dbAddrs,
+                        AddressData::address,
+                        { apiAddr, dbAddr -> },
+                        { db.addressDao().insertAbortOnConflict(it) },
+                        { db.addressDao().delete(it) })
+            }
             .toCompletable()
+            .inDbTransaction(db)
 
     /* database flowables to be subscribed to */
     fun wallet() = db.walletDao().mostRecent()
@@ -86,7 +97,7 @@ class WalletRepository
             .onErrorResumeNext {
                 /* fallback to db, but only if the reason for the failure was not due to the absence of a wallet */
                 if (it !is NoWallet)
-                    db.addressDao().getAll().onErrorResumeNext(Single.error(it))
+                    db.addressDao().getAllSorted().onErrorResumeNext(Single.error(it))
                 else
                     Single.error(it)
             }!!
@@ -118,16 +129,4 @@ class WalletRepository
         db.transactionDao().deleteAll()
         db.addressDao().deleteAll()
     }!!
-
-    companion object {
-        private val DIFF_CALLBACK: DiffUtil.ItemCallback<TransactionData> = object : DiffUtil.ItemCallback<TransactionData>() {
-            override fun areItemsTheSame(oldItem: TransactionData, newItem: TransactionData): Boolean {
-                return oldItem.transactionid == newItem.transactionid
-            }
-
-            override fun areContentsTheSame(oldItem: TransactionData?, newItem: TransactionData?): Boolean {
-                return oldItem == newItem
-            }
-        }
-    }
 }
