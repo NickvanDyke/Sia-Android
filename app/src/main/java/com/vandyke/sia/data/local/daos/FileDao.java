@@ -24,8 +24,8 @@ public interface FileDao extends BaseDao<SiaFile> {
     @Query("UPDATE files SET path = REPLACE(SUBSTR(path, 0, LENGTH(:path) + 1), :path, :newPath) || SUBSTR(path, LENGTH(:path) + 1) WHERE path == :path")
     void updatePath(String path, String newPath);
 
-    @Query("SELECT * FROM files")
-    Single<List<SiaFile>> getAll();
+    @Query("SELECT * FROM files ORDER BY path")
+    Single<List<SiaFile>> getAllByPath();
 
     @Query("DELETE FROM files")
     void deleteAll();

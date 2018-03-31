@@ -85,7 +85,7 @@ open class RoomDbDirAndFileDaoTests {
         db.fileDao().updatePath(currPath1, newPath1)
         db.fileDao().updatePath(currPath2, newPath2)
         db.fileDao().updatePath(currPath3, newPath3)
-        db.fileDao().getAll().blockingGet().paths()
+        db.fileDao().getAllByPath().blockingGet().paths()
                 .shouldContain(newPath1)
                 .shouldContain(newPath2)
                 .shouldContain(newPath3)

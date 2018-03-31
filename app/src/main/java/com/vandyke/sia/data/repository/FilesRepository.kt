@@ -43,7 +43,7 @@ class FilesRepository
             /* get the list of files from the Sia node, delete db files that aren't
              * in the response, and insert each file and the dirs containing it */
             .map { it.files?.sortedBy(SiaFile::path) ?: listOf() }
-            .zipWith(db.fileDao().getAll())
+            .zipWith(db.fileDao().getAllByPath())
             .flatMapObservable { (apiFiles, dbFiles) ->
                 val updatedFiles = mutableListOf<SiaFile>()
 

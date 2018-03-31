@@ -30,7 +30,7 @@ object GenUtil {
 
 /** steps through each list, calling the supplied functions depending on their contents relative to each other.
   * Both lists MUST be sorted in the same order by the same criteria for this to work properly. */
-/* This is used by both the Files and Wallet Repository to bring db txs/addresses/files into line with api txs/addresses/files.
+/* This is used by both the Files and Wallet Repository to bring db txs/files into line with api txs/files.
  * I'm fairly confident that it's close to the most efficient way to do that. Over time, the number of transactions, addresses,
  * (and possibly files) will continue to grow, so I wanted an efficient way to do this. I considered DiffUtil,
  * but based on its documentation, that would have been much more complex, and maybe not even faster (if at all). */
@@ -45,7 +45,6 @@ inline fun <T, R : Comparable<*>> List<T>.diffWith(
     var index1 = 0
     var index2 = 0
     while (index1 < this.size && index2 < other.size) {
-        println("api size: ${this.size}; db size: ${other.size}; api index: $index1; db index: $index2")
         val item1 = this[index1]
         val item2 = other[index2]
         val compare = comparator.compare(item1, item2)
@@ -70,7 +69,6 @@ inline fun <T, R : Comparable<*>> List<T>.diffWith(
             }
         }
     }
-    println("outside while loop")
 
     for (i in index1 until this.size)
         onThisHas(this[i])

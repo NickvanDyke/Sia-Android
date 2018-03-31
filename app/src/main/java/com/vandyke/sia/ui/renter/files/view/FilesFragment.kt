@@ -390,15 +390,16 @@ class FilesFragment : BaseFragment() {
         if (currentMultiMoveResId == newResId)
             return
 
+        /* fade out, switch to new image, fade in */
         multiMove.animate()
                 .alpha(0f)
-                .setDuration(100)
+                .setDuration(150)
                 .withEndAction {
                     multiMove.setImageResource(newResId)
                     currentMultiMoveResId = newResId
                     multiMove.animate()
                             .alpha(1f)
-                            .setDuration(100)
+                            .setDuration(150)
                             .start()
                 }
                 .start()
