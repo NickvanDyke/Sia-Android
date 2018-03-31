@@ -15,7 +15,7 @@ class WalletUnlockDialog : BaseWalletFragment() {
 
     override fun create(view: View, savedInstanceState: Bundle?) {
         walletPassword.setOnEditorActionListener { v, actionId, event ->
-            viewModel.unlock(walletPassword.text.toString())
+            vm.unlock(walletPassword.text.toString())
             true
         }
 
@@ -24,7 +24,7 @@ class WalletUnlockDialog : BaseWalletFragment() {
     }
 
     override fun onCheckPressed(): Boolean {
-        viewModel.unlock(walletPassword.text.toString())
+        vm.unlock(walletPassword.text.toString())
         return true
     }
 }

@@ -48,7 +48,7 @@ class FilesFragment : BaseFragment() {
 
     @Inject
     lateinit var factory: ViewModelProvider.Factory
-    private lateinit var viewModel: FilesViewModel
+    private lateinit var vm: FilesViewModel
     @Inject
     lateinit var siadStatus: SiadStatus
 
@@ -72,7 +72,7 @@ class FilesFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         context!!.getAppComponent().inject(this)
 
-        viewModel = ViewModelProviders.of(this, factory).get(FilesViewModel::class.java)
+        vm = ViewModelProviders.of(this, factory).get(FilesViewModel::class.java)
 
         /* set up nodes list */
         nodesAdapter = NodesAdapter(this)
@@ -89,7 +89,7 @@ class FilesFragment : BaseFragment() {
                 }
 
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                    viewModel.goToIndexInPath(position)
+                    vm.goToIndexInPath(position)
                 }
             }
             adapter = pathAdapter
@@ -98,7 +98,7 @@ class FilesFragment : BaseFragment() {
 
         /* pull-to-refresh stuff */
         nodes_list_swiperefresh.setColors(context!!)
-        nodes_list_swiperefresh.setOnRefreshListener { viewModel.refresh() }
+        nodes_list_swiperefresh.setOnRefreshListener(vm::refresh)
 
         /* FAB stuff */
         fabAddFile.setOnClickListener {
@@ -111,7 +111,7 @@ class FilesFragment : BaseFragment() {
             DialogUtil.editTextDialog(context!!,
                     "New directory",
                     "Create",
-                    { viewModel.createDir(it.text.toString()) },
+                    { vm.createDir(it.text.toString()) },
                     "Cancel",
                     editTextFunc = { hint = "Name" })
                     .showDialogAndKeyboard()
@@ -119,23 +119,23 @@ class FilesFragment : BaseFragment() {
 
         /* multi select stuff */
         multiMove.setOnClickListener {
-            if (viewModel.allSelectedAreInCurrentDir) {
+            if (vm.allSelectedAreInCurrentDir) {
                 /* depending on how many nodes are selected, creating all these dialogs can have
                  * a noticeable delay. It could probably also crash if enough are created -
                  * each dialog uses about 20MB of memory. Maybe limit and show warning instead if # is too high?
                  * I tried creating one dialog, and then modifying it between uses and then reshowing
                  * it, but calling show() wouldn't show it after pressing one of the buttons hid it. Not sure why. */
-                viewModel.selectedNodes.value.forEach { node ->
+                vm.selectedNodes.value.forEach { node ->
                     DialogUtil.editTextDialog(context!!,
                             "Rename ${node.name}",
                             "Rename",
                             {
                                 val newName = it.text.toString()
                                 if (node is SiaFile)
-                                    viewModel.renameFile(node, newName)
+                                    vm.renameFile(node, newName)
                                 else if (node is Dir)
-                                    viewModel.renameDir(node, newName)
-                                viewModel.deselect(node)
+                                    vm.renameDir(node, newName)
+                                vm.deselect(node)
                             },
                             "Cancel",
                             editTextFunc = {
@@ -146,7 +146,7 @@ class FilesFragment : BaseFragment() {
                             .showDialogAndKeyboard()
                 }
             } else {
-                viewModel.moveSelectedToCurrentDir()
+                vm.moveSelectedToCurrentDir()
             }
         }
 
@@ -158,17 +158,17 @@ class FilesFragment : BaseFragment() {
             AlertDialog.Builder(context!!)
                     .setTitle("Confirm delete")
                     .setMessage("Are you sure?")
-                    .setPositiveButton("Yes") { _, _ -> viewModel.deleteSelected() }
+                    .setPositiveButton("Yes") { _, _ -> vm.deleteSelected() }
                     .setNegativeButton("No", null)
                     .show()
         }
 
         multiDeselect.setOnClickListener {
-            viewModel.deselectAll()
+            vm.deselectAll()
         }
 
         /* observe viewModel stuff */
-        viewModel.currentDir.observe(this) {
+        vm.currentDir.observe(this) {
             // if I make the currentDir in the VM a flowable, then I probably need to do this
             // differently, by determining the breakpoint like before and adding/removing before/after it
             // instead of clearing it all
@@ -185,11 +185,11 @@ class FilesFragment : BaseFragment() {
             setMultiMoveImage()
         }
 
-        viewModel.displayedNodes.observe(this) {
+        vm.displayedNodes.observe(this) {
             nodesAdapter.submitList(it)
         }
 
-        viewModel.viewAsList.observe(this) {
+        vm.viewAsList.observe(this) {
             if (it) {
                 viewTypeItem?.setIcon(R.drawable.ic_view_list_white)
                 viewTypeItem?.title = "View as grid"
@@ -202,7 +202,7 @@ class FilesFragment : BaseFragment() {
             nodes_list.recycledViewPool.clear()
         }
 
-        viewModel.selectedNodes.observe(this) {
+        vm.selectedNodes.observe(this) {
             if (it.isEmpty()) {
                 selectedMenu.fadeToGone(300)
             } else {
@@ -212,39 +212,39 @@ class FilesFragment : BaseFragment() {
             }
         }
 
-        viewModel.ascending.observe(this) {
+        vm.ascending.observe(this) {
             ascendingItem?.isChecked = it
         }
 
-        viewModel.orderBy.observe(this) {
+        vm.orderBy.observe(this) {
             setCheckedOrderByItem()
         }
 
-        viewModel.searching.observe(this) {
+        vm.searching.observe(this) {
             if (it && !searchIsExpanded)
                 searchItem?.expandActionView()
             else if (!it && searchIsExpanded)
                 searchItem?.collapseActionView()
         }
 
-        viewModel.refreshing.observe(this, nodes_list_swiperefresh::setRefreshing)
+        vm.refreshing.observe(this, nodes_list_swiperefresh::setRefreshing)
 
-        viewModel.activeTasks.observe(this) {
+        vm.activeTasks.observe(this) {
             progress_bar.goneUnless(it > 0)
         }
 
-        viewModel.success.observe(this) {
+        vm.success.observe(this) {
             Light.success(coordinator, it, Snackbar.LENGTH_SHORT).show()
         }
 
-        viewModel.error.observe(this) {
+        vm.error.observe(this) {
             it.snackbar(coordinator)
             nodes_list_swiperefresh.isRefreshing = false
         }
 
         siadStatus.stateEvent.observe(this) {
             if (it == SiadStatus.State.SIAD_LOADED)
-                viewModel.refresh()
+                vm.refresh()
         }
     }
 
@@ -263,7 +263,7 @@ class FilesFragment : BaseFragment() {
                         .setPositiveButton("Close", null)
                         .show()
             } else {
-                viewModel.uploadFile(path)
+                vm.uploadFile(path)
             }
         }
     }
@@ -301,22 +301,22 @@ class FilesFragment : BaseFragment() {
         searchItem!!.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
             override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
                 searchIsExpanded = false
-                if (viewModel.searching.value)
-                    viewModel.cancelSearch()
+                if (vm.searching.value)
+                    vm.cancelSearch()
                 return true
             }
 
             override fun onMenuItemActionExpand(item: MenuItem): Boolean {
                 searchIsExpanded = true
-                viewModel.search(searchView?.query?.toString() ?: "")
+                vm.search(searchView?.query?.toString() ?: "")
                 return true
             }
         })
         searchView!!.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextChange(newText: String): Boolean {
                 /* need to check because collapsing the SearchView will clear it's text and trigger this after it's collapsed */
-                if (viewModel.searching.value)
-                    viewModel.search(newText)
+                if (vm.searching.value)
+                    vm.search(newText)
                 return true
             }
 
@@ -327,10 +327,10 @@ class FilesFragment : BaseFragment() {
         })
 
         viewTypeItem = menu.findItem(R.id.viewType)
-        viewTypeItem!!.setIcon(if (viewModel.viewAsList.value) R.drawable.ic_view_list_white else R.drawable.ic_view_module_white)
+        viewTypeItem!!.setIcon(if (vm.viewAsList.value) R.drawable.ic_view_list_white else R.drawable.ic_view_module_white)
 
         ascendingItem = menu.findItem(R.id.ascendingToggle)
-        ascendingItem!!.isChecked = viewModel.ascending.value
+        ascendingItem!!.isChecked = vm.ascending.value
 
         /* must add the items in the same order as they appear in the enum values for the function after to work */
         orderByItems.clear()
@@ -342,19 +342,19 @@ class FilesFragment : BaseFragment() {
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.ascendingToggle -> {
             item.isChecked = !item.isChecked
-            viewModel.ascending.value = item.isChecked
+            vm.ascending.value = item.isChecked
             true
         }
         R.id.orderByName -> {
-            viewModel.orderBy.value = OrderBy.PATH
+            vm.orderBy.value = OrderBy.PATH
             true
         }
         R.id.orderBySize -> {
-            viewModel.orderBy.value = OrderBy.SIZE
+            vm.orderBy.value = OrderBy.SIZE
             true
         }
         R.id.viewType -> {
-            viewModel.viewAsList.value = !viewModel.viewAsList.value
+            vm.viewAsList.value = !vm.viewAsList.value
             true
         }
         else -> super.onOptionsItemSelected(item)
@@ -362,7 +362,7 @@ class FilesFragment : BaseFragment() {
 
     /* The order of the OrderBy enum values and the order of the sort by options in the list must be the same for this to work */
     private fun setCheckedOrderByItem() {
-        val orderBy = viewModel.orderBy.value
+        val orderBy = vm.orderBy.value
         orderByItems.forEachIndexed { i, item ->
             if (i == orderBy.ordinal) {
                 item.isChecked = true
@@ -375,14 +375,14 @@ class FilesFragment : BaseFragment() {
     }
 
     private fun setSearchHint() {
-        if (viewModel.currentDirPath.isEmpty())
+        if (vm.currentDirPath.isEmpty())
             searchView?.queryHint = "Search..."
         else
-            searchView?.queryHint = "Search ${viewModel.currentDir.value.name}..."
+            searchView?.queryHint = "Search ${vm.currentDir.value.name}..."
     }
 
     private fun setMultiMoveImage() {
-        val newResId = if (viewModel.allSelectedAreInCurrentDir)
+        val newResId = if (vm.allSelectedAreInCurrentDir)
             R.drawable.ic_edit_black
         else
             R.drawable.ic_move_to_inbox_black
@@ -421,18 +421,17 @@ class FilesFragment : BaseFragment() {
         if (!context!!.havePermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), REQUEST_WRITE_PERMISSION)
         } else {
-            viewModel.downloadSelected(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).absolutePath)
+            vm.downloadSelected(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).absolutePath)
         }
     }
 
     override fun onBackPressed(): Boolean {
-        return viewModel.goUpDir()
+        return vm.goUpDir()
     }
 
     override fun onShow() {
         toolbar.addView(spinnerView)
         actionBar.setDisplayShowTitleEnabled(false)
-        viewModel.refresh()
     }
 
     override fun onHide() {

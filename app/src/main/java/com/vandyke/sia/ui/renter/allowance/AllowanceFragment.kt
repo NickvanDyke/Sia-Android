@@ -235,10 +235,6 @@ class AllowanceFragment : BaseFragment() {
         }
     }
 
-    override fun onShow() {
-        vm.refresh()
-    }
-
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.toolbar_allowance, menu)
     }

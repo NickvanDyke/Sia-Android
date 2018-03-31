@@ -55,7 +55,7 @@
             android:paddingEnd="8dp"
             android:paddingStart="8dp"
             android:src="@drawable/ic_edit_black"
-            android:tint="?android:attr/textColorSecondary" />
+            android:tint="@android:color/darker_gray" />
 
         <ImageButton
             android:id="@+id/multiDownload"
@@ -65,7 +65,7 @@
             android:paddingEnd="8dp"
             android:paddingStart="8dp"
             android:src="@drawable/ic_cloud_download_black"
-            android:tint="?android:attr/textColorSecondary" />
+            android:tint="@android:color/darker_gray" />
 
         <ImageButton
             android:id="@+id/multiDelete"
@@ -75,7 +75,7 @@
             android:paddingEnd="8dp"
             android:paddingStart="8dp"
             android:src="@drawable/ic_delete_black"
-            android:tint="?android:attr/textColorSecondary" />
+            android:tint="@android:color/darker_gray" />
 
         <ImageButton
             android:id="@+id/multiDeselect"
@@ -85,7 +85,7 @@
             android:paddingEnd="16dp"
             android:paddingStart="8dp"
             android:src="@drawable/ic_clear_black"
-            android:tint="?android:attr/textColorSecondary" />
+            android:tint="@android:color/darker_gray" />
 
     </LinearLayout>
 

@@ -14,7 +14,7 @@ import com.vandyke.sia.ui.wallet.viewmodel.WalletViewModel
 
 abstract class BaseWalletFragment : Fragment() {
     protected abstract val layout: Int
-    protected lateinit var viewModel: WalletViewModel
+    protected lateinit var vm: WalletViewModel
     var height = 0
 
     open fun create(view: View, savedInstanceState: Bundle?) {}
@@ -37,7 +37,7 @@ abstract class BaseWalletFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProviders.of(parentFragment!!).get(WalletViewModel::class.java)
+        vm = ViewModelProviders.of(parentFragment!!).get(WalletViewModel::class.java)
         create(view, savedInstanceState)
     }
 }

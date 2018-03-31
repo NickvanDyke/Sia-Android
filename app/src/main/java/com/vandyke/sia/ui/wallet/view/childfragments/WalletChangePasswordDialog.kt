@@ -19,7 +19,7 @@ class WalletChangePasswordDialog : BaseWalletFragment() {
             return true
         }
 
-        viewModel.changePassword(currentPassword.text.toString(), newPassword)
+        vm.changePassword(currentPassword.text.toString(), newPassword)
         return true
     }
 }

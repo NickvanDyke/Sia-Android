@@ -23,7 +23,7 @@ class WalletSeedsDialog : BaseWalletFragment() {
         seedsList.addItemDecoration(DividerItemDecoration(seedsList.context, layoutManager.orientation))
         seedsList.adapter = adapter
 
-        viewModel.getSeeds().subscribe({ seeds ->
+        vm.getSeeds().subscribe({ seeds ->
             adapter.data = seeds.map { it.seed }
             adapter.notifyDataSetChanged()
         }, {})

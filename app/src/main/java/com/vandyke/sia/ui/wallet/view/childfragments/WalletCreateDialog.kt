@@ -44,9 +44,9 @@ class WalletCreateDialog : BaseWalletFragment() {
         }
         val force = walletCreateForce.isChecked
         if (!walletCreateFromSeed.isChecked) {
-            viewModel.create(password, force)
+            vm.create(password, force)
         } else {
-            viewModel.create(password, force, walletCreateSeed.text.toString())
+            vm.create(password, force, walletCreateSeed.text.toString())
         }
         return true
     }

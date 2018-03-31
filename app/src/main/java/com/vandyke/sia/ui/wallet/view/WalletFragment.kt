@@ -42,7 +42,7 @@ class WalletFragment : BaseFragment() {
     lateinit var siadStatus: SiadStatus
     @Inject
     lateinit var factory: ViewModelProvider.Factory
-    private lateinit var viewModel: WalletViewModel
+    private lateinit var vm: WalletViewModel
 
     private val adapter = TransactionAdapter()
     private var expandedFragment: BaseWalletFragment? = null
@@ -51,7 +51,7 @@ class WalletFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         context!!.getAppComponent().inject(this)
 
-        viewModel = ViewModelProviders.of(this, factory).get(WalletViewModel::class.java)
+        vm = ViewModelProviders.of(this, factory).get(WalletViewModel::class.java)
 
         /* set up recyclerview for transactions */
         transactionList.addItemDecoration(DividerItemDecoration(transactionList.context,
@@ -64,9 +64,9 @@ class WalletFragment : BaseFragment() {
                 if (expandedFragment != null) {
                     if (expandedFragment?.onCheckPressed() == false)
                         collapseFrame()
-                } else if (viewModel.wallet.value?.encrypted == false) {
+                } else if (vm.wallet.value?.encrypted == false) {
                     expandFrame(WalletCreateDialog())
-                } else if (viewModel.wallet.value?.unlocked == false) {
+                } else if (vm.wallet.value?.unlocked == false) {
                     expandFrame(WalletUnlockDialog())
                 } else {
                     fabWalletMenu.open(true)
@@ -86,13 +86,13 @@ class WalletFragment : BaseFragment() {
         balanceText.setOnClickListener { v ->
             AlertDialog.Builder(v.context)
                     .setTitle("Exact Balance")
-                    .setMessage("${viewModel.wallet.value?.confirmedsiacoinbalance?.toSC()?.toPlainString() ?: 0} Siacoins")
+                    .setMessage("${vm.wallet.value?.confirmedsiacoinbalance?.toSC()?.toPlainString() ?: 0} Siacoins")
                     .setPositiveButton("Close", null)
                     .show()
         }
 
         /* set swipe-down stuff */
-        transactionListSwipe.setOnRefreshListener(viewModel::refreshAll)
+        transactionListSwipe.setOnRefreshListener(vm::refreshAll)
         transactionListSwipe.setColors(context!!)
 
         expandableFrame.onSwipeUp = ::collapseFrame
@@ -100,16 +100,16 @@ class WalletFragment : BaseFragment() {
         // setupChart() TODO: confirm/deny that this is working right and how I want it to
 
         /* observe VM stuff */
-        viewModel.refreshing.observe(this, transactionListSwipe::setRefreshing)
+        vm.refreshing.observe(this, transactionListSwipe::setRefreshing)
 
-        viewModel.activeTasks.observe(this) {
+        vm.activeTasks.observe(this) {
             // TODO: when being made visible, the bar flickers at the location it was at last, before restarting
             // Tried a few potential solutions, none worked
             progress_bar.goneUnless(it > 0)
         }
 
         /* observe data in the viewModel */
-        viewModel.wallet.observe(this) {
+        vm.wallet.observe(this) {
             balanceText.text = it.confirmedsiacoinbalance.toSC().format()
             if (it.unconfirmedsiacoinbalance != BigDecimal.ZERO) {
                 balanceUnconfirmedText.text =
@@ -124,56 +124,56 @@ class WalletFragment : BaseFragment() {
             updateFiatValue()
         }
 
-        viewModel.scValue.observe(this) {
+        vm.scValue.observe(this) {
             updateFiatValue()
         }
 
-        viewModel.transactions.observe(this) {
+        vm.transactions.observe(this) {
             adapter.submitList(it)
             if (it.isNotEmpty())
                 Prefs.displayedTransaction = true
         }
 
-        viewModel.consensus.observe(this) {
+        vm.consensus.observe(this) {
             setSyncStatus()
         }
 
-        viewModel.numPeers.observe(this) {
+        vm.numPeers.observe(this) {
             setSyncStatus()
         }
 
-        viewModel.success.observe(this) {
+        vm.success.observe(this) {
             Light.success(wallet_coordinator, it, Snackbar.LENGTH_SHORT).show()
             collapseFrame()
         }
 
-        viewModel.error.observe(this) {
+        vm.error.observe(this) {
             it.snackbar(wallet_coordinator)
             if (it is WalletLocked)
                 expandFrame(WalletUnlockDialog())
         }
 
-        viewModel.seed.observe(this) {
+        vm.seed.observe(this) {
             WalletCreateDialog.showSeed(it, context!!)
         }
 
         siadStatus.stateEvent.observe(this) {
             if (it == SiadStatus.State.SIAD_LOADED)
-                viewModel.refreshAll()
+                vm.refreshAll()
         }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.actionStatus -> {
-                when (viewModel.wallet.value?.encrypted ?: false || viewModel.wallet.value?.rescanning ?: false) {
+                when (vm.wallet.value?.encrypted ?: false || vm.wallet.value?.rescanning ?: false) {
                     false -> expandFrame(WalletCreateDialog())
-                    true -> if (!viewModel.wallet.value!!.unlocked) expandFrame(WalletUnlockDialog())
-                    else viewModel.lock()
+                    true -> if (!vm.wallet.value!!.unlocked) expandFrame(WalletUnlockDialog())
+                    else vm.lock()
                 }
             }
             R.id.actionUnlock -> expandFrame(WalletUnlockDialog())
-            R.id.actionLock -> viewModel.lock()
+            R.id.actionLock -> vm.lock()
             R.id.actionChangePassword -> expandFrame(WalletChangePasswordDialog())
             R.id.actionViewSeeds -> expandFrame(WalletSeedsDialog())
             R.id.actionCreateWallet -> expandFrame(WalletCreateDialog())
@@ -207,7 +207,6 @@ class WalletFragment : BaseFragment() {
 
     override fun onShow() {
         actionBar.elevation = 0f
-        viewModel.refreshAll()
     }
 
     override fun onHide() {
@@ -221,18 +220,18 @@ class WalletFragment : BaseFragment() {
     }
 
     private fun updateFiatValue() {
-        if (viewModel.wallet.value != null && viewModel.scValue.value != null)
-            balanceUsdText.text = ("${(viewModel.wallet.value!!.confirmedsiacoinbalance.toSC()
-                    * viewModel.scValue.value!![Prefs.fiatCurrency])
+        if (vm.wallet.value != null && vm.scValue.value != null)
+            balanceUsdText.text = ("${(vm.wallet.value!!.confirmedsiacoinbalance.toSC()
+                    * vm.scValue.value!![Prefs.fiatCurrency])
                     .format()} ${Prefs.fiatCurrency}")
     }
 
     private fun setStatusIcon() {
         statusButton?.setIcon(
-                when (viewModel.wallet.value?.encrypted == true || viewModel.wallet.value?.rescanning == true) {
+                when (vm.wallet.value?.encrypted == true || vm.wallet.value?.rescanning == true) {
                     false -> R.drawable.ic_add_white
                     true -> {
-                        if (!viewModel.wallet.value!!.unlocked)
+                        if (!vm.wallet.value!!.unlocked)
                             R.drawable.ic_lock_outline_white
                         else
                             R.drawable.ic_lock_open_white
@@ -241,9 +240,9 @@ class WalletFragment : BaseFragment() {
     }
 
     private fun setSyncStatus() {
-        val consensus = viewModel.consensus.value
+        val consensus = vm.consensus.value
         val height = NumberFormat.getInstance().format(consensus?.height ?: 0)
-        if (viewModel.numPeers.value == 0) {
+        if (vm.numPeers.value == 0) {
             syncText.text = ("Not syncing: $height (${consensus?.syncProgress?.toInt() ?: 0}%)")
         } else {
             if (consensus?.synced == true) {
@@ -265,7 +264,7 @@ class WalletFragment : BaseFragment() {
     }
 
     private fun setFabIcon() {
-        val wallet = viewModel.wallet.value
+        val wallet = vm.wallet.value
         fabWalletMenu.menuIconView.setImageResource(when {
             expandedFragment != null -> R.drawable.ic_check_white
             wallet?.unlocked == false && wallet.encrypted == true -> R.drawable.ic_lock_open_white

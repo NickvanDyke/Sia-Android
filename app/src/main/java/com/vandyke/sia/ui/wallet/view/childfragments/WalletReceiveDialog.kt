@@ -18,7 +18,7 @@ class WalletReceiveDialog : BaseWalletFragment() {
     override val layout: Int = R.layout.fragment_wallet_receive
 
     override fun create(view: View, savedInstanceState: Bundle?) {
-        viewModel.getAddress().subscribe({ address ->
+        vm.getAddress().subscribe({ address ->
             if (isVisible) {
                 receiveAddress.text = address.address
                 setQrCode(address.address)

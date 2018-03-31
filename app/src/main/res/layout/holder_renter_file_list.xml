@@ -31,13 +31,14 @@
         app:layout_constraintTop_toTopOf="@+id/file_redundancy_image"
         app:mpb_progressTint="?attr/colorPrimary" />
 
+    <!--TODO: get tinting/coloring right and all these buttons and icons on this page-->
     <ImageView
         android:id="@+id/file_redundancy_image"
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:layout_marginEnd="16dp"
         android:src="@drawable/ic_layers_black"
-        android:tint="?android:attr/textColorSecondary"
+        android:tint="@android:color/darker_gray"
         app:layout_constraintBottom_toTopOf="@id/file_redundancy"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"

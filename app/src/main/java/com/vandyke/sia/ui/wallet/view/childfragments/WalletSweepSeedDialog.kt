@@ -11,7 +11,7 @@ class WalletSweepSeedDialog : BaseWalletFragment() {
     override val layout: Int = R.layout.fragment_wallet_sweep
 
     override fun onCheckPressed(): Boolean {
-        viewModel.sweep(walletSweepSeed.text.toString())
+        vm.sweep(walletSweepSeed.text.toString())
         return true
     }
 }

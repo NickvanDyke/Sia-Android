@@ -40,7 +40,7 @@ class WalletSendDialog : BaseWalletFragment() {
 
     override fun onCheckPressed(): Boolean {
         val sendAmount = sendAmount.text.toString().toHastings().toPlainString()
-        viewModel.send(sendAmount, sendRecipient.text.toString())
+        vm.send(sendAmount, sendRecipient.text.toString())
         return true
     }
 

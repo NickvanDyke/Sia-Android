@@ -17,20 +17,20 @@ class TerminalFragment : BaseFragment() {
     override val layoutResId: Int = R.layout.fragment_terminal
     override val title: String = "Terminal"
 
-    private lateinit var viewModel: TerminalViewModel
+    private lateinit var vm: TerminalViewModel
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        viewModel = ViewModelProviders.of(this).get(TerminalViewModel::class.java)
+        vm = ViewModelProviders.of(this).get(TerminalViewModel::class.java)
 
         terminalText.movementMethod = ScrollingMovementMethod()
 
         input.setOnEditorActionListener { v, _, _ ->
-            viewModel.runSiacCommand(v.text.toString())
+            vm.runSiacCommand(v.text.toString())
             v.text = ""
             true
         }
 
-        viewModel.output.observe(this) {
+        vm.output.observe(this) {
             terminalText.append(it)
         }
     }
