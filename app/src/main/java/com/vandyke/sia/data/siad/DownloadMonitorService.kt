@@ -4,16 +4,21 @@ import android.app.*
 import android.arch.lifecycle.LifecycleService
 import android.content.Context
 import android.content.Intent
+import android.graphics.Typeface
 import android.os.Build
 import android.os.Handler
 import android.support.v4.app.NotificationCompat
+import android.text.SpannableString
+import android.text.style.StyleSpan
 import com.vandyke.sia.R
 import com.vandyke.sia.data.models.renter.DownloadData
 import com.vandyke.sia.data.models.renter.DownloadData.Status
 import com.vandyke.sia.data.models.renter.name
 import com.vandyke.sia.data.remote.SiaApi
+import com.vandyke.sia.data.siad.SiadStatus.State.*
 import com.vandyke.sia.getAppComponent
 import com.vandyke.sia.util.bitmapFromVector
+import com.vandyke.sia.util.pluralize
 import com.vandyke.sia.util.rx.io
 import com.vandyke.sia.util.rx.main
 import com.vandyke.sia.util.rx.observe
@@ -31,9 +36,12 @@ class DownloadMonitorService : LifecycleService() {
     private lateinit var handler: Handler
     private lateinit var builder: NotificationCompat.Builder
 
-    private val trackedDownloads = mutableListOf<DownloadData>()
-    /** we only want to display notifications for completed downloads once, so we keep track of ones that have been shown */
+    private val inProgressDls = mutableListOf<DownloadData>()
+    /** holds dls that were in siad's download queue and completed upon starting the service, so that we don't track them */
     private val dontTrack = mutableListOf<DownloadData>()
+    /** completed downloads (both success + error), so that we can continue including them in summary notifications,
+     * and only show an individual notification for them once */
+    private val completedDls = mutableListOf<DownloadData>()
     private var firstUpdate = true
 
     override fun onCreate() {
@@ -51,12 +59,12 @@ class DownloadMonitorService : LifecycleService() {
 //        addTrackedDownload(DownloadData("", "", 1000, 0, "three", false, "", "", 500, "", 0L))
 //        addTrackedDownload(DownloadData("", "", 1000, 0, "four", false, "", "", 500, "", 0L))
 //        loopSum()
-        if (siadStatus.state.value == SiadStatus.State.SIAD_LOADED)
+        if (siadStatus.state.value == SIAD_LOADED)
             loopUpdate()
         siadStatus.stateEvent.observe(this) {
             when (it) {
-                SiadStatus.State.SIAD_LOADED -> loopUpdate()
-                SiadStatus.State.STOPPED -> onSiadStopped()
+                SIAD_LOADED -> loopUpdate()
+                CRASHED, MANUALLY_STOPPED, RESTARTING, SERVICE_STOPPED, UNMET_CONDITIONS -> onSiadStopped()
             }
         }
     }
@@ -91,8 +99,8 @@ class DownloadMonitorService : LifecycleService() {
 
                     downloads.filter { it.destinationtype.isEmpty() || it.destinationtype == "file" } /* we only want to display notifications for DLs to disk */
                             .forEach { download ->
-                                if (download !in dontTrack) {
-                                    if (download !in trackedDownloads) {
+                                if (download !in dontTrack && download !in completedDls) {
+                                    if (download !in inProgressDls) {
                                         addTrackedDownload(download)
                                     } else {
                                         updateTrackedDownload(download)
@@ -102,7 +110,7 @@ class DownloadMonitorService : LifecycleService() {
 
                     summaryNotification()
 
-                    if (downloads.all { it.completed }) {
+                    if (downloads.all(DownloadData::completed)) {
                         stopSelf()
                         return@subscribe
                     }
@@ -115,23 +123,24 @@ class DownloadMonitorService : LifecycleService() {
     }
 
     private fun addTrackedDownload(download: DownloadData) {
-        trackedDownloads.add(download)
+        inProgressDls.add(download)
         downloadNotification(download)
     }
 
     private fun updateTrackedDownload(download: DownloadData) {
-        val index = trackedDownloads.indexOf(download)
-        trackedDownloads[index] = download
+        val index = inProgressDls.indexOf(download)
+        inProgressDls[index] = download
         downloadNotification(download)
         if (download.completed) {
-            dontTrack.add(download)
-            trackedDownloads.removeAt(index)
+            completedDls.add(download)
+            inProgressDls.removeAt(index)
         }
     }
 
     private fun downloadNotification(download: DownloadData) {
         builder.setContentTitle(download.destination.name())
                 .setGroupSummary(false)
+                .setStyle(null)
                 .mActions.clear()
 
         when (download.status) {
@@ -179,36 +188,52 @@ class DownloadMonitorService : LifecycleService() {
     // Going to three from two makes it stop. Using a separate builder didn't fix it.
     // It also doesn't flicker when expanded into the individual notifications.
     private fun summaryNotification() {
-        val progress = trackedDownloads.sumBy(DownloadData::progress) / trackedDownloads.size.coerceAtLeast(1)
+        val dls = inProgressDls + completedDls
+        if (dls.isEmpty())
+            return
+        val numInProgress = inProgressDls.size
+        val progress = dls.sumBy(DownloadData::progress) / dls.size
+        val numErrors = completedDls.count { it.error.isNotEmpty() }
+
+        val style = NotificationCompat.InboxStyle()
+        /* add lines for each download */
+        dls.forEach { download ->
+            val str = SpannableString("${download.destination.name()} " + when (download.status) {
+                Status.COMPLETED_SUCCESSFULLY -> "Completed"
+                Status.IN_PROGRESS -> "${download.progress}%"
+                Status.ERROR_OCCURRED -> "Error: ${download.error}"
+            })
+            str.setSpan(StyleSpan(Typeface.BOLD), 0, download.destination.name().length, 0)
+            style.addLine(str)
+        }
+
         builder.setGroupSummary(true)
-                .setContentIntent(null)
+                .setContentIntent(PendingIntent.getActivity(this, 0, Intent(DownloadManager.ACTION_VIEW_DOWNLOADS), PendingIntent.FLAG_UPDATE_CURRENT))
                 .mActions.clear()
 
-        when {
-            trackedDownloads.all { it.status == Status.COMPLETED_SUCCESSFULLY } -> {
-                builder.setLargeIcon(bitmapFromVector(R.drawable.ic_check_circle_green))
-                        .setOngoing(false)
-                        .setContentTitle("All downloads complete")
-                        .setContentText(null)
-                        .setProgress(0, 0, false)
-            }
-            trackedDownloads.all { it.status == Status.IN_PROGRESS } -> {
-                val size = trackedDownloads.filter { it.status == Status.IN_PROGRESS }.size
-                builder.setLargeIcon(bitmapFromVector(R.drawable.ic_cloud_download_siagreen))
-                        .setOngoing(true)
-                        .setContentTitle("Downloading $size ${if (size > 1) "files" else "file"}")
-                        .setContentText("$progress%")
-                        .setProgress(100, progress, false)
-            }
-            trackedDownloads.any { it.status == Status.ERROR_OCCURRED } -> {
+        if (numInProgress > 0) {
+            val title = "Downloading $numInProgress ${"file".pluralize(numInProgress)}${if (numErrors > 0) " ($numErrors ${"error".pluralize(numErrors)})" else ""}"
+            style.setBigContentTitle(title)
+            builder.setContentTitle(title)
+                    .setContentText("$progress%")
+                    .setProgress(100, progress, false)
+                    .setOngoing(true)
+                    .setLargeIcon(bitmapFromVector(R.drawable.ic_cloud_download_siagreen))
+        } else {
+            val title = "${dls.size} downloads completed"
+            style.setBigContentTitle("$title ($numErrors ${"error".pluralize(numErrors)})")
+            builder.setContentTitle(title)
+                    .setContentText("$numErrors ${"error".pluralize(numErrors)}")
+                    .setProgress(0, 0, false)
+                    .setOngoing(false)
+            if (numErrors > 0) {
                 builder.setLargeIcon(bitmapFromVector(R.drawable.ic_error_red))
-                        .setOngoing(!trackedDownloads.all { it.status == Status.ERROR_OCCURRED })
-                        .setContentTitle("Error occurred in all downloads.")
-                        .setContentText("$progress%")
-                        .setProgress(100, progress, false)
+            } else {
+                builder.setLargeIcon(bitmapFromVector(R.drawable.ic_check_circle_green))
             }
         }
 
+        builder.setStyle(style)
         builder.show(this, SUMMARY_ID)
     }
 
@@ -216,15 +241,16 @@ class DownloadMonitorService : LifecycleService() {
         /* cancel the repeating updates. When/if siad is loaded again, update will begin due to observing its state */
         handler.removeCallbacksAndMessages(null)
 
-         /* siad does not support resuming downloads, so we mark all in-progress downloads as failed. */
-        trackedDownloads.filter { it.status == Status.IN_PROGRESS }
+        /* siad does not support resuming downloads, so we mark all in-progress downloads as failed. */
+        inProgressDls.filter { it.status == Status.IN_PROGRESS }
                 .forEach { updateTrackedDownload(it.copy(completed = true, error = "Sia node stopped")) }
 
-        if (trackedDownloads.isNotEmpty())
+        if (inProgressDls.isNotEmpty() || completedDls.isNotEmpty())
             summaryNotification()
 
         /* we then clear the tracked downloads, because when siad is started again, its download queue will be empty */
-        trackedDownloads.clear()
+        inProgressDls.clear()
+        completedDls.clear()
         dontTrack.clear()
     }
 

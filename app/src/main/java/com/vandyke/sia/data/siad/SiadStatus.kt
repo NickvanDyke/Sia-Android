@@ -8,8 +8,6 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import com.vandyke.sia.util.rx.LiveEvent
 import com.vandyke.sia.util.rx.MutableLiveEvent
-import com.vandyke.sia.util.rx.MutableNonNullLiveData
-import com.vandyke.sia.util.rx.NonNullLiveData
 import io.reactivex.Observable
 import io.reactivex.subjects.ReplaySubject
 import javax.inject.Inject
@@ -30,13 +28,14 @@ class SiadStatus
     private val allSiadOutputInternal = ReplaySubject.create<String>()!!
 
     val state
-        get() = stateInternal as NonNullLiveData<State>
-    private val stateInternal = MutableNonNullLiveData(State.STOPPED)
+        get() = stateInternal as LiveData<State>
+    private val stateInternal = MutableLiveData<State>()
 
     val stateEvent
         get() = stateEventInternal as LiveEvent<State>
     private val stateEventInternal = MutableLiveEvent<State>()
 
+    /** Should really only be called from SiadService */
     fun siadOutput(output: String) {
         if (output.contains("Finished loading")) {
             stateEventInternal.postValue(State.SIAD_LOADED)
@@ -46,16 +45,31 @@ class SiadStatus
         allSiadOutputInternal.onNext(output)
     }
 
+    /** Should really only be called from SiadService */
     fun siadState(state: State) {
         stateEventInternal.value = state
         this.stateInternal.value = state
     }
 
+    /** if you want specifics, check SiadService and see where each of these is set as the current state to see what causes each one */
     enum class State {
-        STOPPING,
-        STOPPED,
-        PROCESS_STARTING,
+        /* the below three all occur when attempting to configure and start the siad process */
+        COULDNT_COPY_BINARY,
+        WORKING_DIRECTORY_DOESNT_EXIST,
+        EXTERNAL_STORAGE_ERROR,
+        /** SiadService has started */
+        SERVICE_STARTED,
+        /** the siad process is being configured (working directory, environment variables, etc.) and started */
+        STARTING_PROCESS,
+        COULDNT_START_PROCESS,
+        /* in both below states, the process has successfully started */
         SIAD_LOADING,
-        SIAD_LOADED
+        SIAD_LOADED,
+        /* the following are all states in which siad was previously running and has stopped */
+        UNMET_CONDITIONS,
+        CRASHED,
+        MANUALLY_STOPPED,
+        RESTARTING,
+        SERVICE_STOPPED,
     }
 }

@@ -106,7 +106,7 @@ abstract class NodeHolder(itemView: View, filesFragment: FilesFragment) : Recycl
         selectAnimator?.cancel()
         if (animate) {
             deselectAnimator = ValueAnimator.ofArgb(currentColor, normalColor).apply {
-                duration = 1000
+                duration = 700
                 addUpdateListener { setBackgroundColor(it.animatedValue as Int) }
                 start()
             }

@@ -134,6 +134,9 @@ fun String.replaceLast(oldValue: String, newValue: String): String {
         this
 }
 
+/** obviously should only be used with words that are pluralized by only adding an s */
+fun String.pluralize(num: Int) = if (num == 1) this else "${this}s"
+
 fun ProgressBar.setIndeterminateColorRes(colorRes: Int) {
     this.indeterminateDrawable.setColorFilter(ContextCompat.getColor(context!!, colorRes), PorterDuff.Mode.SRC_IN)
 }

@@ -87,11 +87,10 @@ class MainActivity : AppCompatActivity() {
 
         /* display the appropriate initial fragment */
         if (savedInstanceState == null) {
-            // TODO: Node > Status is selected on startup lately when it should be files
             drawer.setSelection(when (Prefs.startupPage) {
                 "files" -> {
                     displayFragment(if (BuildConfig.DEBUG) FilesFragment::class.java else ComingSoonFragment::class.java)
-                    3L // doesn't fire the listener? Maybe since it's in a submenu. So we set it manually above TODO: isn't selecting the drawer item
+                    3L // doesn't fire the listener? Maybe since it's in a submenu. So we set it manually above
                 }
                 "wallet" -> 2L
                 else -> throw IllegalArgumentException("Invalid startup page: ${Prefs.startupPage}")

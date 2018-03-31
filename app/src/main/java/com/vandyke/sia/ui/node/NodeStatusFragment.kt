@@ -5,6 +5,7 @@ import android.text.method.ScrollingMovementMethod
 import android.view.View
 import com.vandyke.sia.R
 import com.vandyke.sia.data.local.Prefs
+import com.vandyke.sia.data.siad.SiadSource
 import com.vandyke.sia.data.siad.SiadStatus
 import com.vandyke.sia.data.siad.SiadStatus.State.*
 import com.vandyke.sia.getAppComponent
@@ -21,6 +22,8 @@ class NodeStatusFragment : BaseFragment() {
 
     @Inject
     lateinit var siadStatus: SiadStatus
+    @Inject
+    lateinit var siadSource: SiadSource
 
     private lateinit var subscription: Disposable
 
@@ -30,26 +33,31 @@ class NodeStatusFragment : BaseFragment() {
         siaOutput.movementMethod = ScrollingMovementMethod()
 
         siaButton.setOnClickListener {
-            Prefs.siaManuallyStopped = !Prefs.siaManuallyStopped
+            if (siadStatus.state.value == CRASHED)
+                siadSource.signalRestart()
+            else
+                Prefs.siaManuallyStopped = !Prefs.siaManuallyStopped
         }
 
         siadStatus.state.observe(this) {
             siaButton.text = when (it) {
-                STOPPING -> "Stopping..."
-                STOPPED -> {
-                    if (Prefs.siaManuallyStopped) {
-                        "Manually stopped"
-                    } else {
-                        "Stopped - run conditions not met"
-                    }
-                }
-                PROCESS_STARTING -> "Starting..."
-                SIAD_LOADING -> "Loading..."
+                COULDNT_COPY_BINARY -> "Couldn't copy Sia executable"
+                SERVICE_STARTED -> "Service started"
+                CRASHED -> "Crashed - tap to restart"
+                STARTING_PROCESS -> "Starting Sia process..."
+                SIAD_LOADING -> "Sia is loading..."
                 SIAD_LOADED -> "Running..."
+                SERVICE_STOPPED -> "Service isn't running"
+                UNMET_CONDITIONS -> "Run conditions not met. Changeable in Node > Settings."
+                RESTARTING -> "Restarting..."
+                MANUALLY_STOPPED -> "Manually stopped"
+                COULDNT_START_PROCESS -> "Couldn't start process"
+                WORKING_DIRECTORY_DOESNT_EXIST -> "Set working directory doesn't exist"
+                EXTERNAL_STORAGE_ERROR -> "Error with external storage"
             }
 
             siaButton.isEnabled = when (it) {
-                STOPPED -> Prefs.siaManuallyStopped
+                MANUALLY_STOPPED -> true
                 else -> true
             }
         }

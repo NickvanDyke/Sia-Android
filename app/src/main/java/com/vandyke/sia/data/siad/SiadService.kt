@@ -65,7 +65,7 @@ class SiadService : LifecycleService() {
             if (it)
                 startSiad()
             else
-                stopSiad()
+                stopSiad(if (Prefs.siaManuallyStopped) State.MANUALLY_STOPPED else State.UNMET_CONDITIONS)
         }
 
         siadSource.restart.observe(this) {
@@ -78,10 +78,11 @@ class SiadService : LifecycleService() {
             return
         } else if (siadFile == null) {
             siadStatus.siadOutput("Couldn't copy siad from assets to app storage")
+            siadStatus.siadState(State.COULDNT_COPY_BINARY)
             return
         }
 
-        siadStatus.siadState(State.PROCESS_STARTING)
+        siadStatus.siadState(State.STARTING_PROCESS)
 
         val pb = ProcessBuilder(siadFile!!.absolutePath, "-M", Prefs.modulesString)
         pb.redirectErrorStream(true)
@@ -100,9 +101,11 @@ class SiadService : LifecycleService() {
         val dir = File(Prefs.siaWorkingDirectory)
         if (!dir.exists()) {
             siadStatus.siadOutput("Error: set working directory doesn't exist")
+            siadStatus.siadState(State.WORKING_DIRECTORY_DOESNT_EXIST)
             return
         } else if (dir.absolutePath != filesDir.absolutePath && Environment.getExternalStorageState(dir) != Environment.MEDIA_MOUNTED) {
             siadStatus.siadOutput("Error with external storage: ${Environment.getExternalStorageState(dir)}")
+            siadStatus.siadState(State.EXTERNAL_STORAGE_ERROR)
             return
         } else {
             pb.directory(dir)
@@ -113,8 +116,8 @@ class SiadService : LifecycleService() {
             /* don't think start() can return null, but I've had a couple crash reports with KotlinNPE at the line that calls siadProcess!!.inputStream
              * so I'm putting it here to possibly fix it. The crash is extremely rare. Maybe it's a race condition or lifecycle related. */
             if (siadProcess == null) {
-                siadStatus.siadState(State.STOPPED)
                 siadStatus.siadOutput("Error starting Sia process")
+                siadStatus.siadState(State.COULDNT_START_PROCESS)
                 return
             }
 
@@ -131,14 +134,18 @@ class SiadService : LifecycleService() {
                     while (line != null) {
                         if (line.contains("Cannot run program")) {
                             siadStatus.siadOutput(line)
-                            stopSiad()
+                            stopSiad(State.COULDNT_START_PROCESS)
                             return@launch
-                        }
+                        } else if (line.contains("panic")) {
+                            siadStatus.siadOutput(line)
+                            stopSiad(State.CRASHED)
+                        } else
                         /* seems that sometimes the phone runs a portscan, and siad receives an HTTP request from it, and outputs a weird
                          * error message thingy. It doesn't affect operation at all, and we don't want the user to see it since
                          * it'd just be confusing */
-                        if (!line.contains("Unsolicited response received on idle HTTP channel starting with"))
+                        if (!line.contains("Unsolicited response received on idle HTTP channel starting with")) {
                             siadStatus.siadOutput(line)
+                        }
 
                         line = inputReader.readLine()
                     }
@@ -150,21 +157,22 @@ class SiadService : LifecycleService() {
             }
         } catch (e: IOException) {
             siadStatus.siadOutput("Error starting Sia process: ${e.localizedMessage}")
+            siadStatus.siadState(State.COULDNT_START_PROCESS)
         }
     }
 
-    private fun stopSiad() {
+    private fun stopSiad(state: State) {
         // TODO: maybe shut it down using http stop request instead? Takes ages sometimes. Might be advantageous though
         siadProcess?.destroy()
         siadProcess = null
-        siadStatus.siadState(State.STOPPED)
+        siadStatus.siadState(state)
         stopForeground(true)
     }
 
     /** restarts siad, but only if it's already running */
     private fun restartSiad() {
         if (siadProcessIsRunning) {
-            stopSiad()
+            stopSiad(State.RESTARTING)
             /* first remove any pending starts */
             handler.removeCallbacksAndMessages(null)
             /* need to wait a little bit before starting again, otherwise siad will report that the address is already in use */
@@ -184,7 +192,7 @@ class SiadService : LifecycleService() {
     override fun onDestroy() {
         super.onDestroy()
         siadSource.onDestroy()
-        stopSiad()
+        stopSiad(State.SERVICE_STOPPED)
         NotificationUtil.cancelNotification(this, SIAD_NOTIFICATION)
     }
 
