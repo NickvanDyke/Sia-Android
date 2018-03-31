@@ -9,6 +9,7 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.PorterDuff
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.support.customtabs.CustomTabsIntent
 import android.support.v4.content.ContextCompat
@@ -93,6 +94,13 @@ fun Context.getAttrColor(attrResId: Int): Int {
     val typedValue = TypedValue()
     this.theme.resolveAttribute(attrResId, typedValue, true)
     return typedValue.data
+}
+
+fun Context.getAttrDrawable(attrResId: Int): Drawable {
+    val ta = this.theme.obtainStyledAttributes(intArrayOf(attrResId))
+    val result = ta.getDrawable(0)
+    ta.recycle()
+    return result
 }
 
 fun Context.getAttrColors(vararg attrResIds: Int): List<Int> {

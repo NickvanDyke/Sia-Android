@@ -23,7 +23,6 @@
     </android.support.v4.widget.SwipeRefreshLayout>
 
     <LinearLayout
-        android:visibility="gone"
         android:id="@+id/selectedMenu"
         android:layout_width="match_parent"
         android:layout_height="@dimen/fab_size_normal"
@@ -34,6 +33,7 @@
         android:background="@drawable/selected_items_bg"
         android:elevation="3dp"
         android:orientation="horizontal"
+        android:visibility="gone"
         app:layout_behavior="com.vandyke.sia.ui.common.SnackbarRaiseBehavior">
 
         <TextView
@@ -44,6 +44,7 @@
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:text="0 items"
+            android:textColor="?android:attr/textColorSecondary"
             android:textSize="18sp" />
 
         <ImageButton
@@ -54,7 +55,7 @@
             android:paddingEnd="8dp"
             android:paddingStart="8dp"
             android:src="@drawable/ic_edit_black"
-            android:tint="@android:color/darker_gray" />
+            android:tint="?android:attr/textColorSecondary" />
 
         <ImageButton
             android:id="@+id/multiDownload"
@@ -63,8 +64,8 @@
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:paddingEnd="8dp"
             android:paddingStart="8dp"
-            android:src="@drawable/ic_download_white"
-            android:tint="@android:color/darker_gray" />
+            android:src="@drawable/ic_cloud_download_black"
+            android:tint="?android:attr/textColorSecondary" />
 
         <ImageButton
             android:id="@+id/multiDelete"
@@ -74,7 +75,7 @@
             android:paddingEnd="8dp"
             android:paddingStart="8dp"
             android:src="@drawable/ic_delete_black"
-            android:tint="@android:color/darker_gray" />
+            android:tint="?android:attr/textColorSecondary" />
 
         <ImageButton
             android:id="@+id/multiDeselect"
@@ -84,7 +85,7 @@
             android:paddingEnd="16dp"
             android:paddingStart="8dp"
             android:src="@drawable/ic_clear_black"
-            android:tint="@android:color/darker_gray" />
+            android:tint="?android:attr/textColorSecondary" />
 
     </LinearLayout>
 

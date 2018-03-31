@@ -6,15 +6,17 @@
     <color name="colorPrimary">#20ee82</color>
     <color name="colorPrimaryDark">#1dd674</color>
     <color name="colorAccent">#20ee82</color>
-
-    <color name="positiveTransaction">@color/colorPrimaryDark</color>
-    <color name="negativeTransaction">#ee3820</color>
-    <color name="cardNightColor">#424242</color>
+    <color name="selectedBg">#3220ee82</color>
 
     <!--Old sia colors, before the rebrand-->
     <color name="colorPrimaryOld">#00cb9e</color>
     <color name="colorPrimaryDarkOld">#24b293</color>
     <color name="colorAccentOld">#00cb9e</color>
+    <color name="selectedBgOld">#3200cb9e</color>
 
     <color name="ic_launcher_background">#20EE82</color>
+
+    <color name="positiveTransaction">@color/colorPrimaryDark</color>
+    <color name="negativeTransaction">#ee3820</color>
+    <color name="cardNightColor">#424242</color>
 </resources>

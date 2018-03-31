@@ -6,7 +6,7 @@
     android:id="@+id/fileLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?android:attr/selectableItemBackground">
+    android:foreground="?android:attr/selectableItemBackground">
 
     <include
         layout="@layout/holder_renter_node"
