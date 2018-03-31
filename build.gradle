@@ -8,6 +8,7 @@ buildscript {
     ext.kotlin_version = '1.2.0'
     repositories {
         jcenter()
+        google()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.0.1'
@@ -27,6 +28,7 @@ allprojects {
         flatDir {
             dirs 'libs'
         }
+        google()
     }
 }
 

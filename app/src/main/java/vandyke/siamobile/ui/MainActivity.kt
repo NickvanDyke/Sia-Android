@@ -174,13 +174,11 @@ class MainActivity : AppCompatActivity() {
                     .setMessage("I've released a hugely revamped and improved Android app for Sia. " +
                             "You'll be taken to it upon closing this. I highly recommend switching to it from Sia Mobile. " +
                             "All development efforts are being focused on it - Sia Mobile likely will not receive any more updates. " +
-                            "Thank you for using my app.")
+                            "Thank you.")
                     .setPositiveButton("Okay") { dialogInterface, i ->
                         startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.vandyke.sia")))
                     }
-                    .setOnDismissListener {
-                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.vandyke.sia")))
-                    }
+                    .setCancelable(false)
                     .show()
         }
     }

@@ -36,7 +36,6 @@ class AboutFragment : Fragment() {
                 .addAction(R.drawable.github_logo, "Source code", Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/NickvanDyke/Sia-Mobile")))
                 .addChangeLogAction { ChangelogDialog.createAndShow(fragmentManager) }
                 .addFeedbackAction("siamobiledev@gmail.com")
-                .addDonateAction { DonateDialog.createAndShow(fragmentManager) }
                 .build()
     }
 }
