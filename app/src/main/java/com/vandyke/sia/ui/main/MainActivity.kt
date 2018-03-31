@@ -87,6 +87,7 @@ class MainActivity : AppCompatActivity() {
 
         /* display the appropriate initial fragment */
         if (savedInstanceState == null) {
+            // TODO: Node > Status is selected on startup lately when it should be files
             drawer.setSelection(when (Prefs.startupPage) {
                 "files" -> {
                     displayFragment(if (BuildConfig.DEBUG) FilesFragment::class.java else ComingSoonFragment::class.java)

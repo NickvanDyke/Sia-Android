@@ -17,14 +17,17 @@ class SnackbarRaiseBehavior(context: Context, attributeSet: AttributeSet) : Coor
     private var animation: ViewPropertyAnimator? = null
 
     override fun onDependentViewChanged(parent: CoordinatorLayout, child: View, dependency: View): Boolean {
-        animation?.cancel()
+        /* need to check referential equality so that we don't cancel other animations on the view */
+        if (animation != null && child.animation === animation) {
+            animation!!.cancel()
+            animation = null
+        }
         child.translationY = Math.min(0f, dependency.translationY - dependency.height)
         return true
     }
 
     override fun onDependentViewRemoved(parent: CoordinatorLayout, child: View, dependency: View) {
         animation = child.animate().translationY(0f).setDuration(350)
-        animation!!.start()
     }
 
     override fun layoutDependsOn(parent: CoordinatorLayout, child: View, dependency: View): Boolean {

@@ -132,6 +132,7 @@ class DownloadMonitorService : LifecycleService() {
     private fun downloadNotification(download: DownloadData) {
         builder.setContentTitle(download.destination.name())
                 .setGroupSummary(false)
+                .mActions.clear()
 
         when (download.status) {
             Status.COMPLETED_SUCCESSFULLY -> {
@@ -141,7 +142,6 @@ class DownloadMonitorService : LifecycleService() {
                         .setAutoCancel(true)
                         .setProgress(0, 0, false)
                         .setOngoing(false)
-                        .mActions.clear()
             }
 
             Status.IN_PROGRESS -> {
@@ -151,7 +151,6 @@ class DownloadMonitorService : LifecycleService() {
                         .setAutoCancel(false)
                         .setProgress(100, download.progress, false)
                         .setOngoing(true)
-                        .mActions.clear()
             }
 
             Status.ERROR_OCCURRED -> {
@@ -165,7 +164,8 @@ class DownloadMonitorService : LifecycleService() {
                     putExtra(RetryDownloadReceiver.RETRY_INTENT_KEY_SIAPATH, download.siapath)
                     putExtra(RetryDownloadReceiver.RETRY_INTENT_KEY_DESTINATION, download.destination)
                 }
-                builder.addAction(R.drawable.ic_refresh_white, "Retry", PendingIntent.getBroadcast(this, 0, intent, 0))
+                val pi = PendingIntent.getBroadcast(this, download.destination.hashCode(), intent, 0)
+                builder.addAction(R.drawable.ic_refresh_white, "Retry", pi)
             }
         }
 
@@ -177,6 +177,7 @@ class DownloadMonitorService : LifecycleService() {
     // TODO: whenever there are two download notifications showing, the summary notification
     // flickers when it's refreshed. Starting with one and going to two makes it happen.
     // Going to three from two makes it stop. Using a separate builder didn't fix it.
+    // It also doesn't flicker when expanded into the individual notifications.
     private fun summaryNotification() {
         val progress = trackedDownloads.sumBy(DownloadData::progress) / trackedDownloads.size.coerceAtLeast(1)
         builder.setGroupSummary(true)
@@ -222,7 +223,7 @@ class DownloadMonitorService : LifecycleService() {
         if (trackedDownloads.isNotEmpty())
             summaryNotification()
 
-        /* we then clear the tracked downloads, because when siad is started again, it's download queue will be empty */
+        /* we then clear the tracked downloads, because when siad is started again, its download queue will be empty */
         trackedDownloads.clear()
         dontTrack.clear()
     }
@@ -252,8 +253,8 @@ class DownloadMonitorService : LifecycleService() {
 
     companion object {
         private const val SUMMARY_ID = 9876
-        private const val GROUP_KEY = "DOWNLOADS"
-        private const val DOWNLOADS_CHANNEL = "DOWNLOADS_CHANNEL"
+        const val GROUP_KEY = "DOWNLOADS"
+        const val DOWNLOADS_CHANNEL = "DOWNLOADS_CHANNEL"
 
     }
 }

@@ -242,7 +242,7 @@ class FilesFragment : BaseFragment() {
             nodes_list_swiperefresh.isRefreshing = false
         }
 
-        siadStatus.stateEvent.observe(this) {
+        siadStatus.state.observe(this) {
             if (it == SiadStatus.State.SIAD_LOADED)
                 vm.refresh()
         }
@@ -259,7 +259,7 @@ class FilesFragment : BaseFragment() {
                 Analytics.unsupportedDataSource(uri)
                 AlertDialog.Builder(context!!)
                         .setTitle("Unsupported")
-                        .setMessage("Sia for Android doesn't currently support uploading files from that source, sorry.")
+                        .setMessage("Sia for Android doesn't currently support uploading files from that location, sorry.")
                         .setPositiveButton("Close", null)
                         .show()
             } else {
@@ -426,7 +426,12 @@ class FilesFragment : BaseFragment() {
     }
 
     override fun onBackPressed(): Boolean {
-        return vm.goUpDir()
+        return if (fabFilesMenu.isOpened) {
+            fabFilesMenu.close(true)
+            true
+        } else {
+            vm.goUpDir()
+        }
     }
 
     override fun onShow() {

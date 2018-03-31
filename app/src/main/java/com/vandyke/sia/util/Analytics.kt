@@ -53,6 +53,7 @@ object Analytics {
 
     fun unsupportedDataSource(uri: Uri) {
         val bundle = Bundle()
+        bundle.putString("uri", uri.toString())
         bundle.putString("uri_path", uri.path)
         fb.logEvent("unsupported_data_source", bundle)
     }

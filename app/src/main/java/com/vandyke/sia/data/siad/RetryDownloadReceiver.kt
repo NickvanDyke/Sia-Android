@@ -18,17 +18,16 @@ class RetryDownloadReceiver : BroadcastReceiver() {
 
         if (intent.action != RETRY_INTENT)
             throw Exception()
-        // TODO: this extra is returning null, no idea why. I've checked it immediately after adding it and it's there
-        println(intent.getStringExtra(RETRY_INTENT_KEY_DESTINATION))
 
-        api.renterDownloadAsync(
-                intent.getStringExtra(RETRY_INTENT_KEY_SIAPATH) ?: throw Exception(),
-                intent.getStringExtra(RETRY_INTENT_KEY_DESTINATION) ?: throw Exception())
+        val siapath = intent.getStringExtra(RETRY_INTENT_KEY_SIAPATH) ?: throw Exception()
+        val destinaton = intent.getStringExtra(RETRY_INTENT_KEY_DESTINATION) ?: throw Exception()
+
+        api.renterDownloadAsync(siapath, destinaton)
                 .io()
                 .main()
                 .subscribe({
                     context.startService(Intent(context, DownloadMonitorService::class.java))
-                }, Throwable::printStackTrace) // TODO: if restarting fails, could update the notification that retry was pressed on with the reason why. "Retry failed: $reason"
+                }, {}) // TODO: sometimes after failing to retry the download, the downloads summary notification appears and is ongoing
     }
 
     companion object {

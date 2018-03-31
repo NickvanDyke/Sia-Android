@@ -229,7 +229,7 @@ class AllowanceFragment : BaseFragment() {
             it.snackbar(allowance_swiperefresh)
         }
 
-        siadStatus.stateEvent.observe(this) {
+        siadStatus.state.observe(this) {
             if (it == SiadStatus.State.SIAD_LOADED)
                 vm.refresh()
         }

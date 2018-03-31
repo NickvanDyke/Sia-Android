@@ -150,8 +150,8 @@ class FilesViewModel
                     /* start the service that will display notifications for active downloads. It'll stop itself when all are complete. */
                     application.startService(Intent(application, DownloadMonitorService::class.java))
                     val size = selectedNodes.value.size
-                    success.value = "$size ${if (size > 1) "files" else "file"} will be downloaded. " +
-                            "Check ${if (size > 1) "notifications" else "notification"} for details."
+                    success.value = "$size ${if (size == 1) "file" else "files"} will be downloaded. " +
+                            "Check ${if (size == 1) "notification" else "notifications"} for details."
                     deselectAll()
                 }, ::onError)
     }

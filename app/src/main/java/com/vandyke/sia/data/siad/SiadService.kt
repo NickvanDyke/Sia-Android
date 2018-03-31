@@ -195,8 +195,8 @@ class SiadService : LifecycleService() {
     private fun buildSiadNotification(text: String): Notification {
         builder.setContentText(text)
                 .setStyle(NotificationCompat.BigTextStyle().bigText(text))
+                .mActions.clear()
 
-        builder.mActions.clear()
         if (siadProcessIsRunning) {
             val stopIntent = Intent(SiadSource.STOP_SIAD)
             val stopPI = PendingIntent.getBroadcast(this, 0, stopIntent, PendingIntent.FLAG_UPDATE_CURRENT)

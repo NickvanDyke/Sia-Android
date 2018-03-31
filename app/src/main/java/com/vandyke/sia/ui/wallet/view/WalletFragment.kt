@@ -157,7 +157,7 @@ class WalletFragment : BaseFragment() {
             WalletCreateDialog.showSeed(it, context!!)
         }
 
-        siadStatus.stateEvent.observe(this) {
+        siadStatus.state.observe(this) {
             if (it == SiadStatus.State.SIAD_LOADED)
                 vm.refreshAll()
         }
@@ -255,11 +255,16 @@ class WalletFragment : BaseFragment() {
     }
 
     override fun onBackPressed(): Boolean {
-        return if (expandableFrame.height != 0) {
-            collapseFrame()
-            true
-        } else {
-            false
+        return when {
+            expandableFrame.height != 0 -> {
+                collapseFrame()
+                true
+            }
+            fabWalletMenu.isOpened -> {
+                fabWalletMenu.close(true)
+                true
+            }
+            else -> false
         }
     }
 

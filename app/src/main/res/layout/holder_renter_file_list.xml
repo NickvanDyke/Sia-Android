@@ -10,7 +10,7 @@
 
     <include
         layout="@layout/holder_renter_node"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/file_upload_progressbar"
@@ -31,7 +31,18 @@
         app:layout_constraintTop_toTopOf="@+id/file_redundancy_image"
         app:mpb_progressTint="?attr/colorPrimary" />
 
-    <!--TODO: get tinting/coloring right and all these buttons and icons on this page-->
+    <TextView
+        android:id="@+id/file_upload_progress_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0%"
+        android:textColor="?android:attr/textColorSecondary"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="@+id/file_upload_progressbar"
+        app:layout_constraintStart_toStartOf="@+id/file_upload_progressbar"
+        app:layout_constraintTop_toBottomOf="@+id/file_upload_progressbar" />
+
+    <!--TODO: get tinting/coloring right on all these buttons and icons on this page-->
     <ImageView
         android:id="@+id/file_redundancy_image"
         android:layout_width="20dp"
@@ -56,15 +67,5 @@
         app:layout_constraintHorizontal_bias="0.533"
         app:layout_constraintStart_toStartOf="@+id/file_redundancy_image"
         app:layout_constraintTop_toBottomOf="@id/file_redundancy_image" />
-
-    <TextView
-        android:id="@+id/file_upload_progress_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="0%"
-        android:textSize="12sp"
-        app:layout_constraintEnd_toEndOf="@+id/file_upload_progressbar"
-        app:layout_constraintStart_toStartOf="@+id/file_upload_progressbar"
-        app:layout_constraintTop_toBottomOf="@+id/file_upload_progressbar" />
 
 </android.support.constraint.ConstraintLayout>
