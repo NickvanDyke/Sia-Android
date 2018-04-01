@@ -47,21 +47,21 @@ class SiadStatus
 
     /** Should really only be called from SiadService */
     fun siadState(state: State) {
-        stateEventInternal.value = state
-        this.stateInternal.value = state
+        stateEventInternal.postValue(state)
+        stateInternal.postValue(state)
     }
 
     /** if you want specifics, check SiadService and see where each of these is set as the current state to see what causes each one */
     enum class State {
-        /* the below three all occur when attempting to configure and start the siad process */
+        /** SiadService has started */
+        SERVICE_STARTED,
+        /* the below four all occur when attempting to configure the siad process */
         COULDNT_COPY_BINARY,
         WORKING_DIRECTORY_DOESNT_EXIST,
         EXTERNAL_STORAGE_ERROR,
-        /** SiadService has started */
-        SERVICE_STARTED,
+        COULDNT_START_PROCESS,
         /** the siad process is being configured (working directory, environment variables, etc.) and started */
         STARTING_PROCESS,
-        COULDNT_START_PROCESS,
         /* in both below states, the process has successfully started */
         SIAD_LOADING,
         SIAD_LOADED,

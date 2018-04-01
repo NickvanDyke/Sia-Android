@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.siad.SiadSource
+import com.vandyke.sia.data.siad.SiadStatus
 import com.vandyke.sia.util.getAllFilesDirs
 import com.vandyke.sia.util.rx.MutableSingleLiveEvent
 import java.io.File
@@ -19,7 +20,8 @@ import javax.inject.Inject
 class NodeModulesViewModel
 @Inject constructor(
         context: Context,
-        private val siadSource: SiadSource
+        private val siadSource: SiadSource,
+        private val siadStatus: SiadStatus
 ) : ViewModel() {
 
     private val storageDirs = context.getAllFilesDirs()
@@ -67,7 +69,7 @@ class NodeModulesViewModel
 
     fun deleteDir(module: Module, dir: File) {
         val result = dir.deleteRecursively()
-        val shouldRestart = dir.parent == Prefs.siaWorkingDirectory
+        val shouldRestart = dir.parent == Prefs.siaWorkingDirectory && siadStatus.state.value == SiadStatus.State.SIAD_LOADED
         if (result)
             success.value = "Deleted ${module.text} files from ${dir.absolutePath}${if (shouldRestart) ". Restarting Sia node..." else ""}"
         else

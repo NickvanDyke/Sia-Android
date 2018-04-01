@@ -25,7 +25,7 @@ class WalletReceiveFragment : BaseWalletFragment() {
             }
         }, {
             if (isVisible) {
-                receiveAddress.text = it.customMsg()
+                receiveAddress.text = "Error: ${it.customMsg()}"
             }
         })
 

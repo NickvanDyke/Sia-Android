@@ -31,14 +31,13 @@ import io.github.tonnyl.light.Light
 import kotlinx.android.synthetic.main.fragment_wallet.*
 import net.cachapa.expandablelayout.ExpandableLayout
 import java.math.BigDecimal
-import java.text.NumberFormat
 import javax.inject.Inject
 
 
 class WalletFragment : BaseFragment() {
-    override val layoutResId: Int = R.layout.fragment_wallet
+    override val layoutResId = R.layout.fragment_wallet
     override val hasOptionsMenu = true
-    override val title: String = "Wallet"
+    override val title = "Wallet"
 
     @Inject
     lateinit var siadStatus: SiadStatus
@@ -46,7 +45,6 @@ class WalletFragment : BaseFragment() {
     lateinit var factory: ViewModelProvider.Factory
     private lateinit var vm: WalletViewModel
 
-    private val adapter = TransactionAdapter()
     private var childFragment: BaseWalletFragment? = null
     private var fragmentToBeExpanded: BaseWalletFragment? = null
     private var statusButton: MenuItem? = null
@@ -57,6 +55,7 @@ class WalletFragment : BaseFragment() {
         vm = ViewModelProviders.of(this, factory).get(WalletViewModel::class.java)
 
         /* set up recyclerview for transactions */
+        val adapter = TransactionAdapter()
         transactionList.addItemDecoration(DividerItemDecoration(transactionList.context,
                 (transactionList.layoutManager as LinearLayoutManager).orientation))
         transactionList.adapter = adapter
@@ -65,9 +64,7 @@ class WalletFragment : BaseFragment() {
         fabWalletMenu.setOnMenuButtonClickListener {
             if (!fabWalletMenu.isOpened) {
                 when {
-                    childFragment != null -> if (childFragment?.onCheckPressed() == false) {
-                        collapseFrame()
-                    }
+                    childFragment != null -> if (childFragment?.onCheckPressed() == false) collapseFrame()
                     vm.wallet.value?.encrypted == false -> expandFrame(WalletCreateFragment())
                     vm.wallet.value?.unlocked == false -> expandFrame(WalletUnlockFragment())
                     else -> fabWalletMenu.open(true)
@@ -87,7 +84,8 @@ class WalletFragment : BaseFragment() {
         balanceText.setOnClickListener { v ->
             AlertDialog.Builder(v.context)
                     .setTitle("Exact Balance")
-                    .setMessage("${vm.wallet.value?.confirmedsiacoinbalance?.toSC()?.toPlainString() ?: 0} Siacoins")
+                    .setMessage("${vm.wallet.value?.confirmedsiacoinbalance?.toSC()?.toPlainString()
+                            ?: 0} Siacoins")
                     .setPositiveButton("Close", null)
                     .show()
         }
@@ -124,8 +122,6 @@ class WalletFragment : BaseFragment() {
             }
         }
 
-        // setupChart() TODO: confirm/deny that this is working right and how I want it to
-
         /* observe VM stuff */
         vm.refreshing.observe(this, transactionListSwipe::setRefreshing)
 
@@ -142,10 +138,10 @@ class WalletFragment : BaseFragment() {
             if (it.unconfirmedsiacoinbalance != BigDecimal.ZERO) {
                 balanceUnconfirmedText.text =
                         "${if (it.unconfirmedsiacoinbalance > BigDecimal.ZERO) "+" else ""}" +
-                                "${it.unconfirmedsiacoinbalance.toSC().format()} unconfirmed"
-                balanceUnconfirmedText.visibility = View.VISIBLE
+                        "${it.unconfirmedsiacoinbalance.toSC().format()} unconfirmed"
+                balanceUnconfirmedText.visible()
             } else {
-                balanceUnconfirmedText.visibility = View.INVISIBLE
+                balanceUnconfirmedText.invisible()
             }
             setFabIcon()
             setStatusIcon()
@@ -176,7 +172,7 @@ class WalletFragment : BaseFragment() {
         }
 
         vm.error.observe(this) {
-            it.snackbar(wallet_coordinator)
+            it.snackbar(wallet_coordinator, siadStatus.state.value!!)
             if (it is WalletLocked)
                 expandFrame(WalletUnlockFragment())
         }
@@ -189,8 +185,6 @@ class WalletFragment : BaseFragment() {
             if (it == SiadStatus.State.SIAD_LOADED)
                 vm.refreshAll()
         }
-
-
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -215,7 +209,7 @@ class WalletFragment : BaseFragment() {
     }
 
     private fun expandFrame(fragment: BaseWalletFragment) {
-        if (expandableFrame.isExpanded) {
+        if (expandableFrame.state != ExpandableLayout.State.COLLAPSED) {
             fragmentToBeExpanded = fragment
             expandableFrame.collapse(true)
         } else {
@@ -249,10 +243,10 @@ class WalletFragment : BaseFragment() {
     }
 
     private fun updateFiatValue() {
-        if (vm.wallet.value != null && vm.scValue.value != null)
-            balanceUsdText.text = ("${(vm.wallet.value!!.confirmedsiacoinbalance.toSC()
-                    * vm.scValue.value!![Prefs.fiatCurrency])
-                    .format()} ${Prefs.fiatCurrency}")
+        val balance = vm.wallet.value?.confirmedsiacoinbalance?.toSC() ?: return
+        val scValue = vm.scValue.value?.get(Prefs.fiatCurrency) ?: return
+        val fiatValue = balance * scValue
+        balanceUsdText.text = ("${fiatValue.format()} ${Prefs.fiatCurrency}")
     }
 
     private fun setStatusIcon() {
@@ -270,15 +264,15 @@ class WalletFragment : BaseFragment() {
 
     private fun setSyncStatus() {
         val consensus = vm.consensus.value
-        val height = NumberFormat.getInstance().format(consensus?.height ?: 0)
+        val height = consensus?.height?.format() ?: 0
+        val progress = consensus?.syncProgress?.toInt() ?: 0
         if (vm.numPeers.value == 0) {
-            syncText.text = ("Not syncing: $height (${consensus?.syncProgress?.toInt() ?: 0}%)")
+            syncText.text = ("Not syncing: $height ($progress%)")
         } else {
             if (consensus?.synced == true) {
                 syncText.text = ("${getString(R.string.synced)}: $height")
             } else {
-                syncText.text = ("${getString(R.string.syncing)}: $height (${consensus?.syncProgress?.toInt()
-                        ?: 0}%)")
+                syncText.text = ("${getString(R.string.syncing)}: $height ($progress%)")
             }
         }
     }
@@ -304,47 +298,5 @@ class WalletFragment : BaseFragment() {
             }
             else -> false
         }
-    }
-
-    private fun setupChart() {
-//        /* set up the chart and its data set */
-//        val lineDataSet = LineDataSet(null, "")
-//        lineDataSet.apply {
-//            setDrawCircles(false)
-//            setDrawValues(false)
-//            setDrawFilled(true)
-//            isHighlightEnabled = false
-//            color = Color.TRANSPARENT
-//            fillColor = context!!.getColorRes(R.color.colorPrimaryDark)
-//            /* causes a crash if the dataset is empty, so we add an empty one. Bug with the lib it seems, based off googling */
-//            addEntry(Entry(0f, 0f))
-//        }
-//        siaChart.apply {
-//            setViewPortOffsets(0f, 0f, 0f, 0f)
-//            data = LineData(lineDataSet)
-//            isDragEnabled = false
-//            setScaleEnabled(false)
-//            legend.isEnabled = false
-//            description.isEnabled = false
-//            setDrawGridBackground(false)
-//            xAxis.isEnabled = false
-//            axisLeft.isEnabled = false
-//            axisRight.isEnabled = false
-//            invalidate()
-//        }
-//
-//        viewModel.walletMonthHistory.observe(this) {
-//            // TODO: still not completely sure this is working as I want it to... seems to be quirky
-//            lineDataSet.values = it.map { walletData ->
-//                Entry(walletData.timestamp.toFloat(), walletData.confirmedsiacoinbalance.toSC().toFloat())
-//            }
-//            /* causes a crash if the dataset is empty, so we add an empty one. Bug with the lib it seems, based off googling */
-//            if (lineDataSet.values.isEmpty())
-//                lineDataSet.addEntry(Entry(0f, 0f))
-//            lineDataSet.notifyDataSetChanged()
-//            siaChart.data.notifyDataChanged()
-//            siaChart.notifyDataSetChanged()
-//            siaChart.invalidate()
-//        }
     }
 }

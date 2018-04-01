@@ -11,6 +11,8 @@ import android.view.View
 import com.vandyke.sia.BuildConfig
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.remote.SiaException
+import com.vandyke.sia.data.remote.SiadNotRunning
+import com.vandyke.sia.data.siad.SiadStatus
 import io.github.tonnyl.light.Light
 import io.reactivex.exceptions.CompositeException
 
@@ -46,10 +48,14 @@ fun Throwable.customMsg(): String? {
     }
 }
 
-fun Throwable.snackbar(view: View, length: Int = Snackbar.LENGTH_SHORT) {
+fun CompositeException.all(clazz: Class<*>) = this.exceptions.all { it.javaClass == clazz }
+
+fun Throwable.snackbar(view: View, state: SiadStatus.State, length: Int = Snackbar.LENGTH_SHORT) {
     Light.error(view, this.customMsg() ?: "Error", length).apply {
-        if (Prefs.siaManuallyStopped) // TODO: ideally, check state, and if it's MANUALLY_STOPPED, then put this here. Not sure how to access that from here though. Can I still inject?
-            setAction("Start") { Prefs.siaManuallyStopped = false } // because right now, if there's another reason it's stopped, pressing Start won't start it
-        setActionTextColor(view.context.getColorRes(android.R.color.white))
+        if ((this@snackbar is SiadNotRunning || (this@snackbar as? CompositeException)?.all(SiadNotRunning::class.java) == true)
+                && state == SiadStatus.State.MANUALLY_STOPPED) {
+            setAction("Start") { Prefs.siaManuallyStopped = false }
+            setActionTextColor(view.context.getColorRes(android.R.color.white))
+        }
     }.show()
 }

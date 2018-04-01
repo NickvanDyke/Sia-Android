@@ -116,6 +116,8 @@ class SiadService : LifecycleService() {
             /* don't think start() can return null, but I've had a couple crash reports with KotlinNPE at the line that calls siadProcess!!.inputStream
              * so I'm putting it here to possibly fix it. The crash is extremely rare. Maybe it's a race condition or lifecycle related. */
             if (siadProcess == null) {
+                // TODO: should I be outputting this? I think I should maybe just be updating state, and leave siadOutput for only output of the siad process
+                // if I still want it to appear in the notification then I can just call that directly
                 siadStatus.siadOutput("Error starting Sia process")
                 siadStatus.siadState(State.COULDNT_START_PROCESS)
                 return
@@ -132,7 +134,7 @@ class SiadService : LifecycleService() {
                     val inputReader = BufferedReader(InputStreamReader(siadProcess!!.inputStream))
                     var line: String? = inputReader.readLine()
                     while (line != null) {
-                        if (line.contains("Cannot run program")) {
+                        if (line.contains("Cannot run program") || line.contains("syntax error: unexpected")) {
                             siadStatus.siadOutput(line)
                             stopSiad(State.COULDNT_START_PROCESS)
                             return@launch
@@ -161,6 +163,7 @@ class SiadService : LifecycleService() {
         }
     }
 
+    /** @param state The state to emit while stopping (generally the reason for stopping) */
     private fun stopSiad(state: State) {
         // TODO: maybe shut it down using http stop request instead? Takes ages sometimes. Might be advantageous though
         siadProcess?.destroy()

@@ -51,6 +51,9 @@ class ApiModule {
                     }
                 }
 
+        // TODO: if the first (and only first) Retrofit usage is a ConnectException error
+        // (and I think only a ConnectException - I've tested with SiaExceptions and it was fine. Haven't tried others),
+        // it causes significant UI lag. No idea why.
         return Retrofit.Builder()
                 .addConverterFactory(
                         MoshiConverterFactory.create(

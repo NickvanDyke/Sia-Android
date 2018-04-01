@@ -226,7 +226,7 @@ class AllowanceFragment : BaseFragment() {
         }
 
         vm.error.observe(this) {
-            it.snackbar(allowance_swiperefresh)
+            it.snackbar(allowance_swiperefresh, siadStatus.state.value!!)
         }
 
         siadStatus.state.observe(this) {

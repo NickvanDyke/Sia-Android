@@ -238,8 +238,7 @@ class FilesFragment : BaseFragment() {
         }
 
         vm.error.observe(this) {
-            it.snackbar(coordinator)
-            nodes_list_swiperefresh.isRefreshing = false
+            it.snackbar(coordinator, siadStatus.state.value!!)
         }
 
         siadStatus.state.observe(this) {

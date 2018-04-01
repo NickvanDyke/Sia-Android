@@ -7,10 +7,14 @@ package com.vandyke.sia
 import android.app.Application
 import android.content.Context
 import com.chibatching.kotpref.Kotpref
+import com.crashlytics.android.Crashlytics
+import com.crashlytics.android.core.CrashlyticsCore
 import com.vandyke.sia.dagger.AppComponent
 import com.vandyke.sia.dagger.AppModule
 import com.vandyke.sia.dagger.DaggerAppComponent
 import com.vandyke.sia.util.Analytics
+import io.fabric.sdk.android.Fabric
+
 
 class App : Application() {
 
@@ -18,6 +22,13 @@ class App : Application() {
         private set
 
     override fun onCreate() {
+        /* disable crash reporting for debug builds */
+        Fabric.with(this, Crashlytics.Builder()
+                .core(CrashlyticsCore.Builder()
+                        .disabled(BuildConfig.DEBUG)
+                        .build())
+                .build())
+
         /* init singletons. TODO: inject them instead */
         Kotpref.init(this)
         Analytics.init(this)
