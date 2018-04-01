@@ -19,7 +19,7 @@ import io.reactivex.exceptions.CompositeException
  * localized/translated strings too. If this is a SiaException, then should
  * call a method on it that takes a context and uses it to call getString with
  * a string resource identifier that it's passed in its constructor */
-fun Throwable.customMsg(): String {
+fun Throwable.customMsg(): String? {
     return when (this) {
         is CompositeException -> {
             if (exceptions.all { it.javaClass == exceptions[0].javaClass }) {
@@ -47,9 +47,9 @@ fun Throwable.customMsg(): String {
 }
 
 fun Throwable.snackbar(view: View, length: Int = Snackbar.LENGTH_SHORT) {
-    Light.error(view, this.customMsg(), length).apply {
-        if (Prefs.siaManuallyStopped)
-            setAction("Start") { Prefs.siaManuallyStopped = false }
+    Light.error(view, this.customMsg() ?: "Error", length).apply {
+        if (Prefs.siaManuallyStopped) // TODO: ideally, check state, and if it's MANUALLY_STOPPED, then put this here. Not sure how to access that from here though. Can I still inject?
+            setAction("Start") { Prefs.siaManuallyStopped = false } // because right now, if there's another reason it's stopped, pressing Start won't start it
         setActionTextColor(view.context.getColorRes(android.R.color.white))
     }.show()
 }

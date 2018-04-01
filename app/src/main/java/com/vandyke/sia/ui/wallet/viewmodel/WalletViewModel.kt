@@ -54,7 +54,7 @@ class WalletViewModel
                 .io()
                 .main()
                 .subscribe(walletMonthHistory::setValue, ::onError)
-      
+
         transactions = walletRepository.transactions
 
         consensusRepository.consensus()

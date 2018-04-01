@@ -18,7 +18,7 @@ class SnackbarRaiseBehavior(context: Context, attributeSet: AttributeSet) : Coor
 
     override fun onDependentViewChanged(parent: CoordinatorLayout, child: View, dependency: View): Boolean {
         /* need to check referential equality so that we don't cancel other animations on the view */
-        if (animation != null && child.animation === animation) {
+        if (animation != null) {// && child.animation === animation) {
             animation!!.cancel()
             animation = null
         }

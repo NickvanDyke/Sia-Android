@@ -18,11 +18,6 @@ class WalletReceiveFragment : BaseWalletFragment() {
     override val layout: Int = R.layout.fragment_wallet_receive
 
     override fun create(view: View, savedInstanceState: Bundle?) {
-        // TODO: the first time a fragment that calls a vm observable is opened/created, it expands weirdly and stuff.
-        // successive openings/creatings of them are fine. I know it's related to the VM (and therefore maybe repository) call, because
-        // I've tried creating a separate delayed observable and doing the same thing upon it emitting a string
-        // and it works fine.
-        // this applies to this fragment, WalletSeedsFragment, and WalletAddressesFragment
         vm.getAddress().subscribe({ address ->
             if (isVisible) {
                 receiveAddress.text = address.address
