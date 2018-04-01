@@ -13,7 +13,7 @@ import com.vandyke.sia.ui.common.TextCopyAdapter
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.fragment_wallet_addresses.*
 
-class WalletAddressesDialog : BaseWalletFragment() {
+class WalletAddressesFragment : BaseWalletFragment() {
     override val layout: Int = R.layout.fragment_wallet_addresses
 
     private lateinit var subscription: Disposable

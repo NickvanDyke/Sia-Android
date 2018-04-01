@@ -12,7 +12,7 @@ import com.vandyke.sia.R
 import com.vandyke.sia.ui.common.TextCopyAdapter
 import kotlinx.android.synthetic.main.fragment_wallet_seeds.*
 
-class WalletSeedsDialog : BaseWalletFragment() {
+class WalletSeedsFragment : BaseWalletFragment() {
     override val layout: Int = R.layout.fragment_wallet_seeds
 
     override fun create(view: View, savedInstanceState: Bundle?) {

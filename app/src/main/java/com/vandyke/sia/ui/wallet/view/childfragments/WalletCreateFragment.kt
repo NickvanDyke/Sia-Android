@@ -15,7 +15,7 @@ import com.vandyke.sia.util.KeyboardUtil
 import io.github.tonnyl.light.Light
 import kotlinx.android.synthetic.main.fragment_wallet_create.*
 
-class WalletCreateDialog : BaseWalletFragment() {
+class WalletCreateFragment : BaseWalletFragment() {
     override val layout: Int = R.layout.fragment_wallet_create
 
     override fun create(view: View, savedInstanceState: Bundle?) {

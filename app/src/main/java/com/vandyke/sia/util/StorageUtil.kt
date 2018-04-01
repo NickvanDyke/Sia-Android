@@ -76,7 +76,7 @@ object StorageUtil {
     }
 }
 
-fun Context.getAllFilesDirs(): List<File> = mutableListOf(filesDir).apply { addAll(getExternalFilesDirs(null)) }
+fun Context.getAllFilesDirs(): List<File> = mutableListOf(filesDir).apply { addAll(getExternalFilesDirs(null)) }.filterNotNull()
 
 class ExternalStorageException(msg: String) : Exception(msg)
 

@@ -15,24 +15,14 @@ import com.vandyke.sia.ui.wallet.viewmodel.WalletViewModel
 abstract class BaseWalletFragment : Fragment() {
     protected abstract val layout: Int
     protected lateinit var vm: WalletViewModel
-    var height = 0
 
     open fun create(view: View, savedInstanceState: Bundle?) {}
 
-    /** returns true if the fragment consumed the press. Otherwise false, so the WalletFragment can handle it */
+    /** Returns true if the fragment consumed the press. Otherwise false, so the WalletFragment can handle it */
     open fun onCheckPressed(): Boolean = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        val view = inflater.inflate(layout, null)
-        /* set this because the first touch listener to return true receives the rest of the touch events,
-           which we want so that the SwipeableFrameLayout can intercept them and determine swipes */
-        view.setOnTouchListener { v, event ->
-            true
-        }
-        val measureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
-        view.measure(measureSpec, measureSpec)
-        height = view.measuredHeight
-        return view
+        return inflater.inflate(layout, null)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

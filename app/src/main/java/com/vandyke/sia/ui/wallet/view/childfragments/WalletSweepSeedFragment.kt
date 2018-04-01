@@ -7,7 +7,7 @@ package com.vandyke.sia.ui.wallet.view.childfragments
 import com.vandyke.sia.R
 import kotlinx.android.synthetic.main.fragment_wallet_sweep.*
 
-class WalletSweepSeedDialog : BaseWalletFragment() {
+class WalletSweepSeedFragment : BaseWalletFragment() {
     override val layout: Int = R.layout.fragment_wallet_sweep
 
     override fun onCheckPressed(): Boolean {

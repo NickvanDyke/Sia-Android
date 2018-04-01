@@ -56,8 +56,8 @@
             android:layout_marginStart="16dp"
             android:elevation="10dp"
             android:text="0"
-            android:visibility="invisible"
             android:textColor="@android:color/white"
+            android:visibility="invisible"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/balanceText" />
 
@@ -67,6 +67,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:elevation="10dp"
+            android:paddingBottom="16dp"
             android:text="0 USD"
             android:textColor="@android:color/white"
             android:textSize="14sp"
@@ -80,22 +81,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:layout_marginTop="24dp"
             android:elevation="10dp"
-            android:text="@string/loading"
+            android:text="Not syncing: 0 (0%)"
             android:textColor="@android:color/white"
-            app:layout_constraintBottom_toBottomOf="@id/balanceUsdText"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/balanceUsdText" />
 
         <!--<com.github.mikephil.charting.charts.LineChart-->
-            <!--android:id="@+id/siaChart"-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="0dp"-->
-            <!--android:elevation="8dp"-->
-            <!--app:layout_constraintEnd_toEndOf="parent"-->
-            <!--app:layout_constraintStart_toStartOf="parent"-->
-            <!--app:layout_constraintBottom_toTopOf="@+id/expandableFrame"-->
-            <!--app:layout_constraintTop_toTopOf="parent" />-->
+        <!--android:id="@+id/siaChart"-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="0dp"-->
+        <!--android:elevation="8dp"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--app:layout_constraintStart_toStartOf="parent"-->
+        <!--app:layout_constraintBottom_toTopOf="@+id/expandableFrame"-->
+        <!--app:layout_constraintTop_toTopOf="parent" />-->
 
         <me.zhanghai.android.materialprogressbar.MaterialProgressBar
             android:id="@+id/progress_bar"
@@ -107,21 +107,20 @@
             app:layout_constraintBottom_toBottomOf="@+id/expandableFrame"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:mpb_indeterminateTint="@android:color/white"
+            app:mpb_indeterminateTint="?attr/colorPrimary"
             app:mpb_progressStyle="horizontal"
             app:mpb_showProgressBackground="false"
             app:mpb_useIntrinsicPadding="false" />
 
-        <com.vandyke.sia.ui.common.SwipeableFrameLayout
+        <com.vandyke.sia.ui.common.SwipeExpandableLayout
             android:id="@+id/expandableFrame"
             android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginTop="16dp"
+            android:layout_height="wrap_content"
             android:background="?android:attr/windowBackground"
             android:elevation="4dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/syncText" />
+            app:layout_constraintTop_toBottomOf="@+id/balanceUsdText" />
 
         <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/transactionListSwipe"
@@ -133,12 +132,12 @@
             app:layout_constraintTop_toBottomOf="@+id/expandableFrame">
 
             <android.support.v7.widget.RecyclerView
-                tools:listitem="@layout/holder_transaction"
                 android:id="@+id/transactionList"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:scrollbars="vertical"
-                app:layoutManager="LinearLayoutManager" />
+                app:layoutManager="LinearLayoutManager"
+                tools:listitem="@layout/holder_transaction" />
 
         </android.support.v4.widget.SwipeRefreshLayout>
 

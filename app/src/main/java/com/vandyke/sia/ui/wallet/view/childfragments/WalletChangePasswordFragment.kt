@@ -9,7 +9,7 @@ import com.vandyke.sia.R
 import io.github.tonnyl.light.Light
 import kotlinx.android.synthetic.main.fragment_wallet_change_password.*
 
-class WalletChangePasswordDialog : BaseWalletFragment() {
+class WalletChangePasswordFragment : BaseWalletFragment() {
     override val layout: Int = R.layout.fragment_wallet_change_password
 
     override fun onCheckPressed(): Boolean {

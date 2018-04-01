@@ -15,6 +15,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import android.widget.ProgressBar
 import com.vandyke.sia.R
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.remote.WalletLocked
@@ -28,6 +29,7 @@ import com.vandyke.sia.util.*
 import com.vandyke.sia.util.rx.observe
 import io.github.tonnyl.light.Light
 import kotlinx.android.synthetic.main.fragment_wallet.*
+import net.cachapa.expandablelayout.ExpandableLayout
 import java.math.BigDecimal
 import java.text.NumberFormat
 import javax.inject.Inject
@@ -45,7 +47,8 @@ class WalletFragment : BaseFragment() {
     private lateinit var vm: WalletViewModel
 
     private val adapter = TransactionAdapter()
-    private var expandedFragment: BaseWalletFragment? = null
+    private var childFragment: BaseWalletFragment? = null
+    private var fragmentToBeExpanded: BaseWalletFragment? = null
     private var statusButton: MenuItem? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -61,15 +64,13 @@ class WalletFragment : BaseFragment() {
         /* set up click listeners for the big buttons */
         fabWalletMenu.setOnMenuButtonClickListener {
             if (!fabWalletMenu.isOpened) {
-                if (expandedFragment != null) {
-                    if (expandedFragment?.onCheckPressed() == false)
+                when {
+                    childFragment != null -> if (childFragment?.onCheckPressed() == false) {
                         collapseFrame()
-                } else if (vm.wallet.value?.encrypted == false) {
-                    expandFrame(WalletCreateDialog())
-                } else if (vm.wallet.value?.unlocked == false) {
-                    expandFrame(WalletUnlockDialog())
-                } else {
-                    fabWalletMenu.open(true)
+                    }
+                    vm.wallet.value?.encrypted == false -> expandFrame(WalletCreateFragment())
+                    vm.wallet.value?.unlocked == false -> expandFrame(WalletUnlockFragment())
+                    else -> fabWalletMenu.open(true)
                 }
             } else {
                 fabWalletMenu.close(true)
@@ -77,11 +78,11 @@ class WalletFragment : BaseFragment() {
         }
         fabSend.setOnClickListener {
             fabWalletMenu.close(true)
-            expandFrame(WalletSendDialog())
+            expandFrame(WalletSendFragment())
         }
         fabReceive.setOnClickListener {
             fabWalletMenu.close(true)
-            expandFrame(WalletReceiveDialog())
+            expandFrame(WalletReceiveFragment())
         }
         balanceText.setOnClickListener { v ->
             AlertDialog.Builder(v.context)
@@ -94,8 +95,34 @@ class WalletFragment : BaseFragment() {
         /* set swipe-down stuff */
         transactionListSwipe.setOnRefreshListener(vm::refreshAll)
         transactionListSwipe.setColors(context!!)
+        progress_bar.setIndeterminateColorRes(android.R.color.white)
 
-        expandableFrame.onSwipeUp = ::collapseFrame
+        expandableFrame.setOnExpansionUpdateListener { expansionFraction, state ->
+            progress_bar.setIndeterminateColorRes(when (state) {
+                ExpandableLayout.State.COLLAPSED -> android.R.color.white
+                else -> R.color.colorPrimary
+            })
+
+            when (state) {
+                ExpandableLayout.State.COLLAPSED -> {
+                    childFragment = null
+                    if (fragmentToBeExpanded != null) {
+                        replaceExpandedFragment(fragmentToBeExpanded!!)
+                        expandableFrame.expand(true)
+                    } else {
+                        childFragmentManager.findFragmentById(R.id.expandableFrame)?.let {
+                            childFragmentManager.beginTransaction().remove(it).commit()
+                        }
+                    }
+                }
+                ExpandableLayout.State.COLLAPSING -> {
+                    childFragment = null
+                    KeyboardUtil.hideKeyboard(activity!!)
+                    setFabIcon()
+                }
+                ExpandableLayout.State.EXPANDED -> setFabIcon()
+            }
+        }
 
         // setupChart() TODO: confirm/deny that this is working right and how I want it to
 
@@ -106,6 +133,7 @@ class WalletFragment : BaseFragment() {
             // TODO: when being made visible, the bar flickers at the location it was at last, before restarting
             // Tried a few potential solutions, none worked
             progress_bar.goneUnless(it > 0)
+            view.findViewById<ProgressBar>(R.id.progress_bar).goneUnless(it > 0)
         }
 
         /* observe data in the viewModel */
@@ -150,59 +178,60 @@ class WalletFragment : BaseFragment() {
         vm.error.observe(this) {
             it.snackbar(wallet_coordinator)
             if (it is WalletLocked)
-                expandFrame(WalletUnlockDialog())
+                expandFrame(WalletUnlockFragment())
         }
 
         vm.seed.observe(this) {
-            WalletCreateDialog.showSeed(it, context!!)
+            WalletCreateFragment.showSeed(it, context!!)
         }
 
         siadStatus.state.observe(this) {
             if (it == SiadStatus.State.SIAD_LOADED)
                 vm.refreshAll()
         }
+
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.actionStatus -> {
                 when (vm.wallet.value?.encrypted ?: false || vm.wallet.value?.rescanning ?: false) {
-                    false -> expandFrame(WalletCreateDialog())
-                    true -> if (!vm.wallet.value!!.unlocked) expandFrame(WalletUnlockDialog())
+                    false -> expandFrame(WalletCreateFragment())
+                    true -> if (!vm.wallet.value!!.unlocked) expandFrame(WalletUnlockFragment())
                     else vm.lock()
                 }
             }
-            R.id.actionUnlock -> expandFrame(WalletUnlockDialog())
+            R.id.actionUnlock -> expandFrame(WalletUnlockFragment())
             R.id.actionLock -> vm.lock()
-            R.id.actionChangePassword -> expandFrame(WalletChangePasswordDialog())
-            R.id.actionViewSeeds -> expandFrame(WalletSeedsDialog())
-            R.id.actionCreateWallet -> expandFrame(WalletCreateDialog())
-            R.id.actionSweepSeed -> expandFrame(WalletSweepSeedDialog())
-            R.id.actionViewAddresses -> expandFrame(WalletAddressesDialog())
+            R.id.actionChangePassword -> expandFrame(WalletChangePasswordFragment())
+            R.id.actionViewSeeds -> expandFrame(WalletSeedsFragment())
+            R.id.actionCreateWallet -> expandFrame(WalletCreateFragment())
+            R.id.actionSweepSeed -> expandFrame(WalletSweepSeedFragment())
+            R.id.actionViewAddresses -> expandFrame(WalletAddressesFragment())
             else -> return false
         }
         return true
     }
 
-    fun expandFrame(fragment: BaseWalletFragment) {
-        childFragmentManager.beginTransaction().replace(R.id.expandableFrame, fragment).commit()
-        childFragmentManager.executePendingTransactions()
-        expandedFragment = fragment
-        expandableFrame.expandVertically(fragment.height)
-        progress_bar.setIndeterminateColorRes(R.color.colorPrimary)
-        setFabIcon()
+    private fun expandFrame(fragment: BaseWalletFragment) {
+        if (expandableFrame.isExpanded) {
+            fragmentToBeExpanded = fragment
+            expandableFrame.collapse(true)
+        } else {
+            replaceExpandedFragment(fragment)
+            expandableFrame.expand(true)
+        }
     }
 
-    fun collapseFrame() {
-        expandedFragment = null
-        setFabIcon()
-        expandableFrame.collapseVertically({
-            val currentChildFragment = childFragmentManager.findFragmentById(R.id.expandableFrame)
-            if (currentChildFragment != null)
-                childFragmentManager.beginTransaction().remove(currentChildFragment).commit()
-            progress_bar.setIndeterminateColorRes(android.R.color.white)
-        })
-        KeyboardUtil.hideKeyboard(activity!!)
+    private fun collapseFrame() {
+        expandableFrame.collapse(true)
+    }
+
+    private fun replaceExpandedFragment(fragment: BaseWalletFragment) {
+        childFragmentManager.beginTransaction().replace(R.id.expandableFrame, fragment).commit()
+        fragmentToBeExpanded = null
+        childFragment = fragment
     }
 
     override fun onShow() {
@@ -254,9 +283,18 @@ class WalletFragment : BaseFragment() {
         }
     }
 
+    private fun setFabIcon() {
+        val wallet = vm.wallet.value
+        fabWalletMenu.menuIconView.setImageResource(when {
+            childFragment != null -> R.drawable.ic_check_white
+            wallet?.unlocked == false && wallet.encrypted == true -> R.drawable.ic_lock_open_white
+            else -> R.drawable.ic_add_white
+        })
+    }
+
     override fun onBackPressed(): Boolean {
         return when {
-            expandableFrame.height != 0 -> {
+            expandableFrame.state != ExpandableLayout.State.COLLAPSED -> {
                 collapseFrame()
                 true
             }
@@ -266,15 +304,6 @@ class WalletFragment : BaseFragment() {
             }
             else -> false
         }
-    }
-
-    private fun setFabIcon() {
-        val wallet = vm.wallet.value
-        fabWalletMenu.menuIconView.setImageResource(when {
-            expandedFragment != null -> R.drawable.ic_check_white
-            wallet?.unlocked == false && wallet.encrypted == true -> R.drawable.ic_lock_open_white
-            else -> R.drawable.ic_add_white
-        })
     }
 
     private fun setupChart() {

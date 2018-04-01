@@ -13,7 +13,7 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import com.google.zxing.Result
-import com.vandyke.sia.ui.wallet.view.childfragments.WalletSendDialog
+import com.vandyke.sia.ui.wallet.view.childfragments.WalletSendFragment
 import me.dm7.barcodescanner.zxing.ZXingScannerView
 
 class ScannerActivity : AppCompatActivity(), ZXingScannerView.ResultHandler {
@@ -55,7 +55,7 @@ class ScannerActivity : AppCompatActivity(), ZXingScannerView.ResultHandler {
     override fun handleResult(rawResult: Result) {
         val result = rawResult.text
         val returnIntent = Intent()
-        returnIntent.putExtra(WalletSendDialog.SCAN_RESULT_KEY, result)
+        returnIntent.putExtra(WalletSendFragment.SCAN_RESULT_KEY, result)
         setResult(Activity.RESULT_OK, returnIntent)
         finish()
     }

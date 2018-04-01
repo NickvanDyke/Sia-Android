@@ -16,7 +16,7 @@ import com.vandyke.sia.util.toHastings
 import io.github.tonnyl.light.Light
 import kotlinx.android.synthetic.main.fragment_wallet_send.*
 
-class WalletSendDialog : BaseWalletFragment() {
+class WalletSendFragment : BaseWalletFragment() {
     override val layout: Int = R.layout.fragment_wallet_send
 
     override fun create(view: View, savedInstanceState: Bundle?) {

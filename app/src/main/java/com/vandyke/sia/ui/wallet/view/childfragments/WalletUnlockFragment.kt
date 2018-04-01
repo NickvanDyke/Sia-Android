@@ -10,7 +10,7 @@ import com.vandyke.sia.R
 import com.vandyke.sia.util.KeyboardUtil
 import kotlinx.android.synthetic.main.fragment_wallet_unlock.*
 
-class WalletUnlockDialog : BaseWalletFragment() {
+class WalletUnlockFragment : BaseWalletFragment() {
     override val layout: Int = R.layout.fragment_wallet_unlock
 
     override fun create(view: View, savedInstanceState: Bundle?) {

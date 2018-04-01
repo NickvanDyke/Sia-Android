@@ -98,6 +98,7 @@ dependencies {
     implementation 'me.zhanghai.android.materialprogressbar:library:1.4.2'
     implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
     implementation 'io.github.tonnyl:light:1.0.0'
+    implementation 'net.cachapa.expandablelayout:expandablelayout:2.9.2'
 
     /* simplified preferences */
     implementation 'com.chibatching.kotpref:kotpref:2.2.0'
