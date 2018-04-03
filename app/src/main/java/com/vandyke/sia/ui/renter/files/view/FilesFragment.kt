@@ -249,20 +249,36 @@ class FilesFragment : BaseFragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == FILE_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
-            val uri = data.data
-            val path = FileUtils.getPath(context, uri) // TODO: not sure if this will work for all sources of files. Might not for non-primary external storage
-            println(uri)
-            println(uri.path)
-            println(path)
-            if (path == null) {
-                Analytics.unsupportedDataSource(uri)
-                AlertDialog.Builder(context!!)
-                        .setTitle("Unsupported")
-                        .setMessage("Sia for Android doesn't currently support uploading files from that location, sorry.")
-                        .setPositiveButton("Close", null)
-                        .show()
-            } else {
-                vm.uploadFile(path)
+            if (data.data != null) { /* one item was selected */
+                val uri = data.data
+                val path = FileUtils.getPath(context!!, uri) // TODO: not sure if this will work for all sources of files. Might not for non-primary external storage
+                if (path == null) {
+                    Analytics.unsupportedDataSource(uri)
+                    AlertDialog.Builder(context!!)
+                            .setTitle("Unsupported")
+                            .setMessage("Sia for Android doesn't currently support uploading files from that location, sorry.")
+                            .setPositiveButton("Close", null)
+                            .show()
+                } else {
+                    vm.uploadFile(path)
+                }
+            } else if (data.clipData != null) { /* multiple items selected */
+                val clipData = data.clipData!!
+                for (i in 0 until clipData.itemCount) {
+                    val uri = clipData.getItemAt(i).uri
+                    val path = FileUtils.getPath(context!!, uri)
+                    println(path)
+                    if (path == null) {
+                        Analytics.unsupportedDataSource(uri)
+                        AlertDialog.Builder(context!!)
+                                .setTitle("Unsupported")
+                                .setMessage("Sia for Android doesn't currently support uploading files from that location, sorry.")
+                                .setPositiveButton("Close", null)
+                                .show()
+                    } else {
+                        vm.uploadFile(path)
+                    }
+                }
             }
         }
     }
@@ -391,12 +407,14 @@ class FilesFragment : BaseFragment() {
 
         /* fade out, switch to new image, fade in */
         multiMove.animate()
+                .withLayer()
                 .alpha(0f)
                 .setDuration(150)
                 .withEndAction {
                     multiMove.setImageResource(newResId)
                     currentMultiMoveResId = newResId
                     multiMove.animate()
+                            .withLayer()
                             .alpha(1f)
                             .setDuration(150)
                             .start()
@@ -411,7 +429,8 @@ class FilesFragment : BaseFragment() {
         }
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true)
-        intent.putExtra(Intent.CATEGORY_OPENABLE, true)
+                .putExtra(Intent.CATEGORY_OPENABLE, true)
+                .putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
         intent.type = "*/*"
         startActivityForResult(Intent.createChooser(intent, "Upload a file"), FILE_REQUEST_CODE)
     }

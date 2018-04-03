@@ -198,7 +198,7 @@ class MainActivity : AppCompatActivity() {
                             .withSelectedTextColor(colorPrimary)
                             .withOnDrawerItemClickListener { _, _, _ -> displayFragment(NodeSettingsFragmentContainer::class.java); false })
 
-            divider {  }
+            divider { }
 
             primaryItem {
                 name = "Renter"
@@ -213,10 +213,11 @@ class MainActivity : AppCompatActivity() {
                             .withSelectedIconColor(colorPrimary)
                             .withSelectedTextColor(colorPrimary)
                             .withIdentifier(3)
-                            .withOnDrawerItemClickListener { _, _, _ -> displayFragment(if (BuildConfig.DEBUG)
-                                FilesFragment::class.java
-                            else
-                                ComingSoonFragment::class.java)
+                            .withOnDrawerItemClickListener { _, _, _ ->
+                                displayFragment(if (BuildConfig.DEBUG)
+                                    FilesFragment::class.java
+                                else
+                                    ComingSoonFragment::class.java)
                                 false
                             },
                     SecondaryDrawerItem()
@@ -226,10 +227,11 @@ class MainActivity : AppCompatActivity() {
                             .withSelectedIconColor(colorPrimary)
                             .withSelectedTextColor(colorPrimary)
                             .withIdentifier(1)
-                            .withOnDrawerItemClickListener { _, _, _ -> displayFragment(if (BuildConfig.DEBUG)
-                                AllowanceFragment::class.java
-                            else
-                                ComingSoonFragment::class.java)
+                            .withOnDrawerItemClickListener { _, _, _ ->
+                                displayFragment(if (BuildConfig.DEBUG)
+                                    AllowanceFragment::class.java
+                                else
+                                    ComingSoonFragment::class.java)
                                 false
                             })
 
@@ -243,7 +245,7 @@ class MainActivity : AppCompatActivity() {
                 onClick { view -> displayFragment(WalletFragment::class.java); false }
             }
 
-            divider {  }
+            divider { }
 
             primaryItem {
                 name = "Settings"

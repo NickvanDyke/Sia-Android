@@ -25,6 +25,7 @@ fun View.visible() {
 
 fun View.fadeToGone(duration: Long) {
     this.animate()
+            .withLayer()
             .setDuration(duration)
             .alpha(0f)
             .withEndAction { this.visibility = GONE }
@@ -32,6 +33,7 @@ fun View.fadeToGone(duration: Long) {
 
 fun View.fadeToVisible(duration: Long) {
     this.animate()
+            .withLayer()
             .setDuration(duration)
             .alpha(1f)
             .withStartAction { this.visibility = VISIBLE }

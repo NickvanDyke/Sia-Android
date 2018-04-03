@@ -19,7 +19,7 @@ class SnackbarAwareBehavior(context: Context, attributeSet: AttributeSet) : Coor
     }
 
     override fun onDependentViewRemoved(parent: CoordinatorLayout, child: View, dependency: View) {
-        child.animate().translationY(0f).setDuration(350)
+        child.animate().withLayer().translationY(0f).setDuration(350)
     }
 
     override fun layoutDependsOn(parent: CoordinatorLayout, child: View, dependency: View): Boolean {

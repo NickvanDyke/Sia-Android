@@ -19,6 +19,8 @@ public class FileUtils {
      * @author paulburke
      */
     public static String getPath(final Context context, final Uri uri) {
+        if (uri == null)
+            return null;
         // DocumentProvider
         if (DocumentsContract.isDocumentUri(context, uri)) {
             // ExternalStorageProvider
