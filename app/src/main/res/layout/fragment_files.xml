@@ -10,7 +10,8 @@
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/nodes_list_swiperefresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:layout_behavior="com.vandyke.sia.ui.renter.files.view.FilesListBehavior">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/nodes_list"
@@ -22,72 +23,78 @@
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
-    <LinearLayout
+    <net.cachapa.expandablelayout.ExpandableLayout
         android:id="@+id/selectedMenu"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/fab_size_normal"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:layout_marginBottom="23dp"
-        android:layout_marginEnd="90dp"
-        android:layout_marginStart="16dp"
-        android:background="@drawable/selected_items_bg"
-        android:elevation="3dp"
-        android:orientation="horizontal"
-        android:visibility="gone"
-        app:layout_behavior="com.vandyke.sia.ui.common.SnackbarAwareBehavior">
+        android:background="?android:attr/windowBackground"
+        android:elevation="12dp"
+        app:el_parallax="0"
+        app:layout_behavior="com.vandyke.sia.ui.common.SnackbarAwareBehavior"
+        >
 
-        <TextView
-            android:id="@+id/numSelected"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginStart="16dp"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:text="0 items"
-            android:textColor="?android:attr/textColorSecondary"
-            android:textSize="18sp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/fab_size_normal"
+            android:background="@drawable/selected_items_bg"
+            android:elevation="3dp"
+            android:orientation="horizontal">
 
-        <ImageButton
-            android:id="@+id/multiMove"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:paddingEnd="8dp"
-            android:paddingStart="8dp"
-            android:src="@drawable/ic_edit_black"
-            android:tint="@android:color/darker_gray" />
+            <TextView
+                android:id="@+id/numSelected"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="16dp"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:text="0 items"
+                android:textColor="?android:attr/textColorSecondary"
+                android:textSize="18sp" />
 
-        <ImageButton
-            android:id="@+id/multiDownload"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:paddingEnd="8dp"
-            android:paddingStart="8dp"
-            android:src="@drawable/ic_cloud_download_black"
-            android:tint="@android:color/darker_gray" />
+            <ImageButton
+                android:id="@+id/multiMove"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:paddingEnd="8dp"
+                android:paddingStart="8dp"
+                android:src="@drawable/ic_edit_black"
+                android:tint="@android:color/darker_gray" />
 
-        <ImageButton
-            android:id="@+id/multiDelete"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:paddingEnd="8dp"
-            android:paddingStart="8dp"
-            android:src="@drawable/ic_delete_black"
-            android:tint="@android:color/darker_gray" />
+            <ImageButton
+                android:id="@+id/multiDownload"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:paddingEnd="8dp"
+                android:paddingStart="8dp"
+                android:src="@drawable/ic_cloud_download_black"
+                android:tint="@android:color/darker_gray" />
 
-        <ImageButton
-            android:id="@+id/multiDeselect"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:paddingEnd="16dp"
-            android:paddingStart="8dp"
-            android:src="@drawable/ic_clear_black"
-            android:tint="@android:color/darker_gray" />
+            <ImageButton
+                android:id="@+id/multiDelete"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:paddingEnd="8dp"
+                android:paddingStart="8dp"
+                android:src="@drawable/ic_delete_black"
+                android:tint="@android:color/darker_gray" />
 
-    </LinearLayout>
+            <ImageButton
+                android:id="@+id/multiDeselect"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:paddingEnd="16dp"
+                android:paddingStart="8dp"
+                android:src="@drawable/ic_clear_black"
+                android:tint="@android:color/darker_gray" />
+
+        </LinearLayout>
+
+    </net.cachapa.expandablelayout.ExpandableLayout>
 
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/fabFilesMenu"
@@ -99,7 +106,7 @@
         android:src="@drawable/ic_add_white"
         android:transformPivotX="32dp"
         android:transformPivotY="180dp"
-        app:layout_behavior="com.vandyke.sia.ui.common.FabBehavior"
+        app:layout_behavior="com.vandyke.sia.ui.renter.files.view.FilesFabBehavior"
         app:menu_colorNormal="?attr/colorPrimary"
         app:menu_colorPressed="?attr/colorPrimaryDark">
 

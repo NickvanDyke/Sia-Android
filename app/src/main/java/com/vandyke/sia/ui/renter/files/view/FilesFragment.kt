@@ -204,11 +204,11 @@ class FilesFragment : BaseFragment() {
 
         vm.selectedNodes.observe(this) {
             if (it.isEmpty()) {
-                selectedMenu.fadeToGone(300)
+                selectedMenu.collapse()
             } else {
                 setMultiMoveImage()
                 numSelected.text = ("${it.size} ${if (it.size == 1) "item" else "items"}") // maybe have an image with a # over it instead of text?
-                selectedMenu.fadeToVisible(300)
+                selectedMenu.expand()
             }
         }
 
@@ -407,14 +407,12 @@ class FilesFragment : BaseFragment() {
 
         /* fade out, switch to new image, fade in */
         multiMove.animate()
-                .withLayer()
                 .alpha(0f)
                 .setDuration(150)
                 .withEndAction {
                     multiMove.setImageResource(newResId)
                     currentMultiMoveResId = newResId
                     multiMove.animate()
-                            .withLayer()
                             .alpha(1f)
                             .setDuration(150)
                             .start()

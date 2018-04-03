@@ -16,7 +16,6 @@
         android:src="@drawable/ic_folder_white"
         android:tint="@android:color/darker_gray" />
 
-    <!--TODO: if I add a file/dir details, I should limit this to one line and ellipsize in the middle-->
     <!--also, I couldn't find a way to have the text not cut off when included and the parent layout of this was a
         ConstraintLayout instead of a RelativeLayout-->
     <TextView

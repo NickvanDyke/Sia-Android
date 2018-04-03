@@ -143,7 +143,7 @@
         android:src="@drawable/ic_add_white"
         android:transformPivotX="32dp"
         android:transformPivotY="180dp"
-        app:layout_behavior="com.vandyke.sia.ui.common.FabBehavior"
+        app:layout_behavior="com.vandyke.sia.ui.wallet.view.WalletFabBehavior"
         app:menu_colorNormal="?attr/colorPrimary"
         app:menu_colorPressed="?attr/colorPrimaryDark">
 
