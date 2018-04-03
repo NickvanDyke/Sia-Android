@@ -19,7 +19,7 @@ object DialogUtil {
     fun showRateDialog(context: Context) {
         AlertDialog.Builder(context)
                 .setTitle("Liking Sia for Android?")
-                .setPositiveButton(android.R.string.yes) { _, _ ->
+                .setPositiveButton("Yes") { _, _ ->
                     AlertDialog.Builder(context)
                             .setMessage("Would you like to leave a rating? I'd really appreciate it.")
                             .setPositiveButton("Sure") { _, _ ->
@@ -31,12 +31,16 @@ object DialogUtil {
                             }
                             .setCancelable(false)
                             .show()
-                }.setNeutralButton("Ask again later") { _, _ ->
+                }
+                /* the negative button is the middle one, which is where we want this, despite it being
+                 * a more neutral option */
+                .setNegativeButton("Ask again later") { _, _ ->
                     Prefs.shownFeedbackDialog = false
-                }.setNegativeButton(android.R.string.no) { _, _ ->
+                }
+                .setNeutralButton("No") { _, _ ->
                     AlertDialog.Builder(context)
                             .setMessage("Would you like to give feedback on why?")
-                            .setPositiveButton(android.R.string.yes) { _, _ ->
+                            .setPositiveButton("Yes") { _, _ ->
                                 Analytics.likingSiaForAndroid(false, true)
                                 context.startActivity(Intents.emailMe
                                         .putExtra(Intent.EXTRA_SUBJECT, "Feedback"))

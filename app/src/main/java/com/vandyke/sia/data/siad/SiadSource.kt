@@ -81,18 +81,16 @@ class SiadSource
         }
     }
 
-    /* methods to be called in the matching SiadService lifecycle callbacks */
-    fun setup() {
+    /* setup and teardown methods to be called in the matching SiadService lifecycle callbacks */
+    fun onCreate() {
         Prefs.preferences.registerOnSharedPreferenceChangeListener(prefsListener)
         application.registerActivityLifecycleCallbacks(lifecycleCallbacks)
-
         application.registerReceiver(
                 receiver,
-                IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
-                        .apply {
-                            addAction(START_SIAD)
-                            addAction(STOP_SIAD)
-                        })
+                IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION).apply {
+                    addAction(START_SIAD)
+                    addAction(STOP_SIAD)
+                })
     }
 
     fun onDestroy() {

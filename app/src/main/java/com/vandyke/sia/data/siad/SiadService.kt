@@ -54,7 +54,7 @@ class SiadService : LifecycleService() {
         handler = Handler(mainLooper)
 
         setupNotificationBuilder()
-        siadSource.setup()
+        siadSource.onCreate()
         createSiaNodeNotificationChannel()
 
         siadStatus.mostRecentSiadOutput.observe(this) {
@@ -100,6 +100,8 @@ class SiadService : LifecycleService() {
         /* set the working directory for the siad process, checking for and handling error cases */
         val dir = File(Prefs.siaWorkingDirectory)
         if (!dir.exists()) {
+            // TODO: should I be outputting this? I think I should maybe just be updating state, and leave siadOutput for only output of the siad process
+            // if I still want it to appear in the notification then I can just call that directly
             siadStatus.siadOutput("Error: set working directory doesn't exist")
             siadStatus.siadState(State.WORKING_DIRECTORY_DOESNT_EXIST)
             return
@@ -113,24 +115,24 @@ class SiadService : LifecycleService() {
 
         try {
             siadProcess = pb.start() // TODO: this causes the application to skip about a second of frames when starting at the same time as the app. Preventable? How?
-            /* don't think start() can return null, but I've had a couple crash reports with KotlinNPE at the line that calls siadProcess!!.inputStream
-             * so I'm putting it here to possibly fix it. The crash is extremely rare. Maybe it's a race condition or lifecycle related. */
-            if (siadProcess == null) {
-                // TODO: should I be outputting this? I think I should maybe just be updating state, and leave siadOutput for only output of the siad process
-                // if I still want it to appear in the notification then I can just call that directly
-                siadStatus.siadOutput("Error starting Sia process")
-                siadStatus.siadState(State.COULDNT_START_PROCESS)
-                return
-            }
 
             siadStatus.siadState(State.SIAD_LOADING)
 
             startForeground(SIAD_NOTIFICATION, buildSiadNotification("Starting Sia node..."))
 
-            /* launch a coroutine that will read output from the siad process, and update siad observables from it's output */
+            /* launch a coroutine that will read output from the siad process, and update siadStatus observables from it's output */
             launch(CommonPool) {
                 /* need another try-catch block since this is inside a coroutine */
                 try {
+                    /* I've had a few crash reports with NPE on the line that calls siadProcess!!.inputStream.
+                     * No idea how it could be null (ProcessBuilder.start() doesn't return null).
+                     * Maybe a race condition between here and stop/restartSiad(). Probably that siadProcess is set to null in those
+                     * between the call to siadProcess.start() above, and here. In that case, siad should be stopped, which is why
+                     * that's what I'm calling inside the if block. */
+                    if (siadProcess == null) {
+                        stopSiad(State.COULDNT_START_PROCESS)
+                        return@launch
+                    }
                     val inputReader = BufferedReader(InputStreamReader(siadProcess!!.inputStream))
                     var line: String? = inputReader.readLine()
                     while (line != null) {

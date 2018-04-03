@@ -127,6 +127,7 @@ class WalletRepository
 
     private fun clearWalletDb() {
         db.walletDao().deleteAll()
+        db.seedDao().deleteAll()
         db.transactionDao().deleteAll()
         db.addressDao().deleteAll()
     }

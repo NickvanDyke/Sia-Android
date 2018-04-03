@@ -9,10 +9,15 @@ import com.vandyke.sia.data.models.renter.Dir
 import com.vandyke.sia.ui.renter.files.view.FilesFragment
 
 class DirHolder(itemView: View, filesFragment: FilesFragment) : NodeHolder(itemView, filesFragment) {
-    private lateinit var dir: Dir
+
+    init {
+        itemView.setOnClickListener {
+            if (!baseItemViewOnClick())
+                vm.changeDir(node.path)
+        }
+    }
 
     fun bind(dir: Dir) {
         super.bind(dir)
-        this.dir = dir
     }
 }

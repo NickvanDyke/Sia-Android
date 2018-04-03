@@ -34,7 +34,7 @@
         android:elevation="3dp"
         android:orientation="horizontal"
         android:visibility="gone"
-        app:layout_behavior="com.vandyke.sia.ui.common.SnackbarRaiseBehavior">
+        app:layout_behavior="com.vandyke.sia.ui.common.SnackbarAwareBehavior">
 
         <TextView
             android:id="@+id/numSelected"
@@ -97,10 +97,11 @@
         android:layout_marginBottom="16dp"
         android:layout_marginEnd="16dp"
         android:src="@drawable/ic_add_white"
-        app:layout_behavior="com.vandyke.sia.ui.common.SnackbarRaiseBehavior"
+        android:transformPivotX="32dp"
+        android:transformPivotY="180dp"
+        app:layout_behavior="com.vandyke.sia.ui.common.FabBehavior"
         app:menu_colorNormal="?attr/colorPrimary"
-        app:menu_colorPressed="?attr/colorPrimaryDark"
-        app:menu_colorRipple="?attr/colorPrimaryDark">
+        app:menu_colorPressed="?attr/colorPrimaryDark">
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fabAddFile"

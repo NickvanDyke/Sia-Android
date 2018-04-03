@@ -9,17 +9,39 @@ import android.view.View
 import com.vandyke.sia.R
 import com.vandyke.sia.data.models.renter.SiaFile
 import com.vandyke.sia.ui.renter.files.view.FilesFragment
-import com.vandyke.sia.util.format
-import com.vandyke.sia.util.gone
-import com.vandyke.sia.util.setProgressColorRes
-import com.vandyke.sia.util.visible
+import com.vandyke.sia.util.*
 import kotlinx.android.synthetic.main.holder_renter_file_list.*
 import kotlinx.android.synthetic.main.holder_renter_node.*
+import net.cachapa.expandablelayout.ExpandableLayout
 
 class FileHolder(itemView: View, filesFragment: FilesFragment) : NodeHolder(itemView, filesFragment) {
+    val file
+        get() = node as SiaFile
+
+    private var updatedExpandable = false
+
+    init {
+        itemView.setOnClickListener {
+            if (!baseItemViewOnClick())
+                file_expandable.toggle()
+        }
+
+        file_expandable.setOnExpansionUpdateListener { expansionFraction, state ->
+            if (!updatedExpandable && state == ExpandableLayout.State.EXPANDING) {
+                updatedExpandable = true
+                file_uploadedbytes.text = StorageUtil.readableFilesizeString(file.uploadedbytes)
+                file_expiration.text = "Block ${file.expiration.format()} (~${SiaUtil.blockHeightToReadableTimeDiff(file.expiration)})"
+                file_renewing.text = if (file.renewing) "Yes" else "No"
+                file_localpath.text = file.localpath
+            }
+        }
+    }
 
     fun bind(file: SiaFile) {
         super.bind(file)
+        // could keep track in the viewmodel of what nodes are expanded, similar to selected, instead of just always collapsing
+        file_expandable.collapse(false)
+        updatedExpandable = false
 
         file_redundancy.text = file.redundancy.format() + "x"
 

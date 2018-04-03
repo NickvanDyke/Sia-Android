@@ -109,16 +109,16 @@ class WalletFragment : BaseFragment() {
                         expandableFrame.expand(true)
                     } else {
                         childFragmentManager.findFragmentById(R.id.expandableFrame)?.let {
-                            childFragmentManager.beginTransaction().remove(it).commit()
+                            childFragmentManager.beginTransaction().remove(it).commitAllowingStateLoss()
                         }
                     }
                 }
                 ExpandableLayout.State.COLLAPSING -> {
                     childFragment = null
                     KeyboardUtil.hideKeyboard(activity!!)
-                    setFabIcon()
+                    updateFabIcon()
                 }
-                ExpandableLayout.State.EXPANDED -> setFabIcon()
+                ExpandableLayout.State.EXPANDED -> updateFabIcon()
             }
         }
 
@@ -143,8 +143,8 @@ class WalletFragment : BaseFragment() {
             } else {
                 balanceUnconfirmedText.invisible()
             }
-            setFabIcon()
-            setStatusIcon()
+            updateFabIcon()
+            updateStatusIcon()
             updateFiatValue()
         }
 
@@ -159,11 +159,11 @@ class WalletFragment : BaseFragment() {
         }
 
         vm.consensus.observe(this) {
-            setSyncStatus()
+            updateSyncStatus()
         }
 
         vm.numPeers.observe(this) {
-            setSyncStatus()
+            updateSyncStatus()
         }
 
         vm.success.observe(this) {
@@ -223,7 +223,7 @@ class WalletFragment : BaseFragment() {
     }
 
     private fun replaceExpandedFragment(fragment: BaseWalletFragment) {
-        childFragmentManager.beginTransaction().replace(R.id.expandableFrame, fragment).commit()
+        childFragmentManager.beginTransaction().replace(R.id.expandableFrame, fragment).commitAllowingStateLoss()
         fragmentToBeExpanded = null
         childFragment = fragment
     }
@@ -239,17 +239,17 @@ class WalletFragment : BaseFragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.toolbar_wallet, menu)
         statusButton = menu.findItem(R.id.actionStatus)
-        setStatusIcon()
+        updateStatusIcon()
     }
 
     private fun updateFiatValue() {
-        val balance = vm.wallet.value?.confirmedsiacoinbalance?.toSC() ?: return
+        val scBalance = vm.wallet.value?.confirmedsiacoinbalance?.toSC() ?: return
         val scValue = vm.scValue.value?.get(Prefs.fiatCurrency) ?: return
-        val fiatValue = balance * scValue
+        val fiatValue = scBalance * scValue
         balanceUsdText.text = ("${fiatValue.format()} ${Prefs.fiatCurrency}")
     }
 
-    private fun setStatusIcon() {
+    private fun updateStatusIcon() {
         statusButton?.setIcon(
                 when (vm.wallet.value?.encrypted == true || vm.wallet.value?.rescanning == true) {
                     false -> R.drawable.ic_add_white
@@ -262,7 +262,7 @@ class WalletFragment : BaseFragment() {
                 })
     }
 
-    private fun setSyncStatus() {
+    private fun updateSyncStatus() {
         val consensus = vm.consensus.value
         val height = consensus?.height?.format() ?: 0
         val progress = consensus?.syncProgress?.toInt() ?: 0
@@ -277,7 +277,7 @@ class WalletFragment : BaseFragment() {
         }
     }
 
-    private fun setFabIcon() {
+    private fun updateFabIcon() {
         val wallet = vm.wallet.value
         fabWalletMenu.menuIconView.setImageResource(when {
             childFragment != null -> R.drawable.ic_check_white

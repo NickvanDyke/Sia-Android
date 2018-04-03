@@ -41,7 +41,7 @@ class MockSiaApi : SiaApi {
     var siafundBalance = 0
     var seed = ""
     var addresses = listOf("address1", "address2", "address3")
-    var confirmedTxs: MutableList<TransactionData> = MutableList(7, { index ->
+    var confirmedTxs: MutableList<TransactionData> = MutableList(20, { index ->
         TransactionData(nonce.toString(), BigDecimal(nonce * 10), BigDecimal(nonce * 100), BigDecimal("12312").toHastings())
     })
     var unconfirmedTxs: MutableList<TransactionData> = MutableList(2, { index ->
@@ -57,14 +57,14 @@ class MockSiaApi : SiaApi {
             SiaFile("legos/brick/ad.doc", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
             SiaFile("legos/brick/writeup.txt", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
             SiaFile("legos/brick/buyers.db", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
-            SiaFile("legos/brick/listing.html", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
-            SiaFile("legos/brick/colors.rgb", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
-            SiaFile("legos/block/picture.jpg", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
-            SiaFile("legos/block/blueprint", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
-            SiaFile("legos/block/vector.svg", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
-            SiaFile("legos/block/colors.rgb", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
-            SiaFile("legos/blue/brick/picture.jpg", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
-            SiaFile("my/name/is/nick/and/this/is/my/story.txt", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534)
+            SiaFile("picture.jpg", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534), SiaFile("legos/brick/listing.html", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
+            SiaFile("manual", "eh", 56743, true, false, 2.0, 663453, 100f, 1235534), SiaFile("legos/brick/colors.rgb", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
+            SiaFile("blueprint.b", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534), SiaFile("legos/block/picture.jpg", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
+            SiaFile("draft.txt", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534), SiaFile("legos/block/blueprint", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
+            SiaFile("ad.doc", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534), SiaFile("legos/block/vector.svg", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
+            SiaFile("writeup.txt", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534), SiaFile("legos/block/colors.rgb", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
+            SiaFile("buyers.db", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534), SiaFile("legos/blue/brick/picture.jpg", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
+            SiaFile("listing.html", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534), SiaFile("my/name/is/nick/and/this/is/my/story.txt", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534)
     )
 
     private var renterData = RenterData(
@@ -91,8 +91,8 @@ class MockSiaApi : SiaApi {
 
     override fun wallet(): Single<WalletData> {
         return Single.just(
-            WalletData(System.currentTimeMillis(), encrypted, unlocked, rescanning, confirmedSiacoinBalance, unconfirmedOutgoingSiacoins,
-                    unconfirmedIncomingSiacoins, siafundBalance, siacoinClaimBalance, dustThreshold))
+                WalletData(System.currentTimeMillis(), encrypted, unlocked, rescanning, confirmedSiacoinBalance, unconfirmedOutgoingSiacoins,
+                        unconfirmedIncomingSiacoins, siafundBalance, siacoinClaimBalance, dustThreshold))
     }
 
     override fun walletSiacoins(amount: String, destination: String): Completable {
@@ -176,12 +176,13 @@ class MockSiaApi : SiaApi {
             this.password = newPassword
         }
     }
+
     override fun getScPrice(url: String): Single<ScValueData> {
         return Single.just(ScValueData(System.currentTimeMillis(),
-            BigDecimal("0.01"), BigDecimal("0.02"), BigDecimal("0.03"),
-            BigDecimal("0.04"), BigDecimal("0.05"), BigDecimal("0.06"),
-            BigDecimal("0.07"), BigDecimal("0.08"), BigDecimal("0.09"),
-            BigDecimal("0.10")
+                BigDecimal("0.01"), BigDecimal("0.02"), BigDecimal("0.03"),
+                BigDecimal("0.04"), BigDecimal("0.05"), BigDecimal("0.06"),
+                BigDecimal("0.07"), BigDecimal("0.08"), BigDecimal("0.09"),
+                BigDecimal("0.10")
         ))
     }
 

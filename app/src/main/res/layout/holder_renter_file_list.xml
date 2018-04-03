@@ -12,7 +12,6 @@
         layout="@layout/holder_renter_node"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/file_upload_progressbar"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -62,10 +61,99 @@
         android:text="0x"
         android:textColor="?android:attr/textColorSecondary"
         android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/node_common"
         app:layout_constraintEnd_toEndOf="@+id/file_redundancy_image"
         app:layout_constraintHorizontal_bias="0.533"
         app:layout_constraintStart_toStartOf="@+id/file_redundancy_image"
         app:layout_constraintTop_toBottomOf="@id/file_redundancy_image" />
+
+    <net.cachapa.expandablelayout.ExpandableLayout
+        android:id="@+id/file_expandable"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/node_common">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/file_uploadedbytes_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="16dp"
+                android:text="Uploaded"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/file_uploadedbytes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@id/file_uploadedbytes_header"
+                android:layout_below="@id/file_uploadedbytes_header"
+                android:layout_marginBottom="6dp"
+                android:text="500 MB" />
+
+            <TextView
+                android:id="@+id/file_renewing_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@id/file_uploadedbytes"
+                android:layout_below="@id/file_uploadedbytes"
+                android:text="Renewing"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/file_renewing"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@id/file_renewing_header"
+                android:layout_below="@id/file_renewing_header"
+                android:layout_marginBottom="6dp"
+                android:text="Yes" />
+
+            <TextView
+                android:id="@+id/file_expiration_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@id/file_renewing"
+                android:layout_below="@id/file_renewing"
+                android:text="Expiration"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/file_expiration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@id/file_expiration_header"
+                android:layout_below="@id/file_expiration_header"
+                android:layout_marginBottom="6dp"
+                android:text="Block 130924 (~3 days)" />
+
+            <TextView
+                android:id="@+id/file_localpath_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@id/file_expiration"
+                android:layout_below="@id/file_expiration"
+                android:text="Local file"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/file_localpath"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@id/file_localpath_header"
+                android:layout_below="@id/file_localpath_header"
+                android:layout_marginBottom="16dp"
+                android:text="Long path to local file" />
+
+        </RelativeLayout>
+
+    </net.cachapa.expandablelayout.ExpandableLayout>
 
 </android.support.constraint.ConstraintLayout>

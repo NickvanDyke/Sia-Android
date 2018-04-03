@@ -10,7 +10,6 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.vandyke.sia.R
 import com.vandyke.sia.data.local.Prefs
-import com.vandyke.sia.data.models.renter.Dir
 import com.vandyke.sia.data.models.renter.Node
 import com.vandyke.sia.ui.renter.files.view.FilesFragment
 import com.vandyke.sia.ui.renter.files.viewmodel.FilesViewModel
@@ -33,33 +32,24 @@ abstract class NodeHolder(itemView: View, filesFragment: FilesFragment) : Recycl
         get() = vm.selectedNodes.value.any { it.path == node.path }
 
     private var selected = false
-    private var imageTouched = false
+    protected var imageTouched = false
 
-    private var selectAnimator: ValueAnimator? = null
-    private var deselectAnimator: ValueAnimator? = null
+    private var animator: ValueAnimator? = null
     private var currentColor: Int = normalColor
 
-    private lateinit var node: Node
+    protected lateinit var node: Node
 
     init {
-        /* we pass through touch events on the image so that we can still get the ripple effect */
-        node_image.setOnTouchListener { v, event ->
-            imageTouched = true
-            false
-        }
-
-        itemView.setOnClickListener {
-            if (imageTouched) {
-                vm.toggleSelect(node)
-                imageTouched = false
-            } else if (node is Dir) {
-                vm.changeDir(node.path)
-            }
-        }
+        /* we pass through touch events on the image so that we can still get the ripple effect.
+         * However we track that it was the image that was touched, to act accordingly with that. */
+//        node_image.setOnTouchListener { v, event ->
+//            imageTouched = true
+//            false
+//        }
 
         itemView.setOnLongClickListener {
             imageTouched = false
-            select(false)
+//            select(false)
             vm.toggleSelect(node)
             true
         }
@@ -87,9 +77,9 @@ abstract class NodeHolder(itemView: View, filesFragment: FilesFragment) : Recycl
     private fun select(animate: Boolean) {
         if (selected)
             return
-        deselectAnimator?.cancel()
+        animator?.cancel()
         if (animate) {
-            selectAnimator = ValueAnimator.ofArgb(currentColor, selectedColor).apply {
+            animator = ValueAnimator.ofArgb(currentColor, selectedColor).apply {
                 duration = 150
                 addUpdateListener { setBackgroundColor(it.animatedValue as Int) }
                 start()
@@ -103,9 +93,9 @@ abstract class NodeHolder(itemView: View, filesFragment: FilesFragment) : Recycl
     private fun deselect(animate: Boolean) {
         if (!selected)
             return
-        selectAnimator?.cancel()
+        animator?.cancel()
         if (animate) {
-            deselectAnimator = ValueAnimator.ofArgb(currentColor, normalColor).apply {
+            animator = ValueAnimator.ofArgb(currentColor, normalColor).apply {
                 duration = 700
                 addUpdateListener { setBackgroundColor(it.animatedValue as Int) }
                 start()
@@ -114,6 +104,15 @@ abstract class NodeHolder(itemView: View, filesFragment: FilesFragment) : Recycl
             setBackgroundColor(normalColor)
         }
         selected = false
+    }
+
+    protected fun baseItemViewOnClick(): Boolean {
+        val temp = imageTouched
+        if (imageTouched) {
+            vm.toggleSelect(node)
+            imageTouched = false
+        }
+        return temp
     }
 
     private fun setBackgroundColor(color: Int) {
