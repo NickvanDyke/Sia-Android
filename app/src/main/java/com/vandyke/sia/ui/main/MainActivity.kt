@@ -67,8 +67,14 @@ class MainActivity : AppCompatActivity() {
             Prefs.useExternal = false
         }
 
-        AppCompatDelegate.setDefaultNightMode(if (Prefs.darkMode) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO)
-        setTheme(if (Prefs.oldSiaColors) R.style.AppTheme_DayNight_OldSiaColors else R.style.AppTheme_DayNight)
+        AppCompatDelegate.setDefaultNightMode(when {
+            Prefs.darkMode -> AppCompatDelegate.MODE_NIGHT_YES
+            else -> AppCompatDelegate.MODE_NIGHT_NO
+        })
+        setTheme(when {
+            Prefs.oldSiaColors -> R.style.AppTheme_DayNight_OldSiaColors
+            else -> R.style.AppTheme_DayNight
+        })
         setContentView(R.layout.activity_main)
 
         if (!BuildConfig.DEBUG && !SiaUtil.isSiadSupported) {

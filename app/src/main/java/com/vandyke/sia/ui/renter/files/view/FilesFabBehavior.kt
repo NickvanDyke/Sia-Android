@@ -6,62 +6,36 @@ package com.vandyke.sia.ui.renter.files.view
 
 import android.content.Context
 import android.support.design.widget.CoordinatorLayout
-import android.support.v4.view.ViewCompat
+import android.support.design.widget.Snackbar
 import android.util.AttributeSet
 import android.view.View
-import android.view.animation.AccelerateInterpolator
-import android.view.animation.OvershootInterpolator
-import androidx.view.isVisible
-import com.vandyke.sia.util.invisible
-import com.vandyke.sia.util.visible
+import com.github.clans.fab.FloatingActionMenu
 import net.cachapa.expandablelayout.ExpandableLayout
 
-class FilesFabBehavior(context: Context, attributeSet: AttributeSet) : CoordinatorLayout.Behavior<View>(context, attributeSet) {
+class FilesFabBehavior(context: Context, attributeSet: AttributeSet) : CoordinatorLayout.Behavior<FloatingActionMenu>(context, attributeSet) {
+    private var snackbarHeight = 0
+    private var snackbarTranslationY = 0f
+    private var expandableHeight = 0
+    private var expandableTranslationY = 0f
 
-    private var animatingOut = false
+    override fun onDependentViewChanged(parent: CoordinatorLayout, child: FloatingActionMenu, dependency: View): Boolean {
+        if (dependency is ExpandableLayout) {
+            expandableHeight = dependency.height
+            expandableTranslationY = dependency.translationY
+        } else if (dependency is Snackbar.SnackbarLayout) {
+            snackbarHeight = dependency.height
+            snackbarTranslationY = dependency.translationY
+        }
 
-    override fun onDependentViewChanged(parent: CoordinatorLayout, child: View, dependency: View): Boolean {
-        child.translationY = Math.min(0f, dependency.translationY - dependency.height)
+        if (expandableHeight > 0) {
+            child.translationY = Math.min(0f, expandableTranslationY - expandableHeight)
+        } else {
+            child.translationY = Math.min(0f, snackbarTranslationY - snackbarHeight)
+        }
         return true
     }
 
-    override fun layoutDependsOn(parent: CoordinatorLayout, child: View, dependency: View): Boolean {
-        return dependency is ExpandableLayout
-    }
-
-    override fun onStartNestedScroll(coordinatorLayout: CoordinatorLayout, child: View, directTargetChild: View, target: View, axes: Int, type: Int): Boolean {
-        return axes == ViewCompat.SCROLL_AXIS_VERTICAL
-    }
-
-    override fun onNestedScroll(
-            coordinatorLayout: CoordinatorLayout,
-            child: View,
-            target: View,
-            dxConsumed: Int,
-            dyConsumed: Int,
-            dxUnconsumed: Int,
-            dyUnconsumed: Int,
-            type: Int
-    ) {
-        /* scrolled down and FAB is visible, so hide it */
-        if (dyConsumed > 20 && child.isVisible && !animatingOut) {
-            child.animate()
-                    .scaleX(0f)
-                    .scaleY(0f)
-                    .setInterpolator(AccelerateInterpolator())
-                    .setDuration(175)
-                    .withStartAction { animatingOut = true }
-                    .withEndAction {
-                        animatingOut = false
-                        child.invisible()
-                    }
-        } else if (dyConsumed < -20 && !child.isVisible) {
-            child.animate()
-                    .scaleX(1f)
-                    .scaleY(1f)
-                    .setInterpolator(OvershootInterpolator())
-                    .setDuration(250)
-                    .withStartAction(child::visible)
-        }
+    override fun layoutDependsOn(parent: CoordinatorLayout, child: FloatingActionMenu, dependency: View): Boolean {
+        return dependency is ExpandableLayout || dependency is Snackbar.SnackbarLayout
     }
 }

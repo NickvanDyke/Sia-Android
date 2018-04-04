@@ -29,10 +29,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         app:el_parallax="0"
-        android:elevation="12dp"
-        android:background="@android:color/white"
         app:layout_behavior="com.vandyke.sia.ui.common.SnackbarAwareBehavior"
-        >
+        android:elevation="12dp"
+        android:background="@android:color/white" >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -102,8 +101,6 @@
         android:layout_marginBottom="16dp"
         android:layout_marginEnd="16dp"
         android:src="@drawable/ic_add_white"
-        android:transformPivotX="32dp"
-        android:transformPivotY="180dp"
         app:layout_behavior="com.vandyke.sia.ui.renter.files.view.FilesFabBehavior"
         app:menu_colorNormal="?attr/colorPrimary"
         app:menu_colorPressed="?attr/colorPrimaryDark">

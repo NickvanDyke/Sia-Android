@@ -126,7 +126,7 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:scrollbars="vertical"
-                app:layoutManager="LinearLayoutManager"
+                app:layoutManager="android.support.v7.widget.LinearLayoutManager"
                 tools:listitem="@layout/holder_transaction" />
 
         </android.support.v4.widget.SwipeRefreshLayout>
@@ -141,9 +141,7 @@
         android:layout_marginBottom="16dp"
         android:layout_marginEnd="16dp"
         android:src="@drawable/ic_add_white"
-        android:transformPivotX="32dp"
-        android:transformPivotY="180dp"
-        app:layout_behavior="com.vandyke.sia.ui.wallet.view.WalletFabBehavior"
+        app:layout_behavior="com.vandyke.sia.ui.common.SnackbarAwareBehavior"
         app:menu_colorNormal="?attr/colorPrimary"
         app:menu_colorPressed="?attr/colorPrimaryDark">
 
