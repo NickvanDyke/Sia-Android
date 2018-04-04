@@ -22,6 +22,7 @@ import com.vandyke.sia.data.remote.WalletLocked
 import com.vandyke.sia.data.siad.SiadStatus
 import com.vandyke.sia.getAppComponent
 import com.vandyke.sia.ui.common.BaseFragment
+import com.vandyke.sia.ui.common.RecyclerViewHideFabOnScrollListener
 import com.vandyke.sia.ui.wallet.view.childfragments.*
 import com.vandyke.sia.ui.wallet.view.transactionslist.TransactionAdapter
 import com.vandyke.sia.ui.wallet.viewmodel.WalletViewModel
@@ -59,6 +60,7 @@ class WalletFragment : BaseFragment() {
         transactionList.addItemDecoration(DividerItemDecoration(transactionList.context,
                 (transactionList.layoutManager as LinearLayoutManager).orientation))
         transactionList.adapter = adapter
+        transactionList.addOnScrollListener(RecyclerViewHideFabOnScrollListener(fabWalletMenu))
 
         /* set up click listeners for the big buttons */
         fabWalletMenu.setOnMenuButtonClickListener {

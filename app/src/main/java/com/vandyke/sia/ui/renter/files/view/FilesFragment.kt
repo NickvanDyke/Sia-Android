@@ -32,6 +32,7 @@ import com.vandyke.sia.data.repository.FilesRepository.OrderBy
 import com.vandyke.sia.data.siad.SiadStatus
 import com.vandyke.sia.getAppComponent
 import com.vandyke.sia.ui.common.BaseFragment
+import com.vandyke.sia.ui.common.RecyclerViewHideFabOnScrollListener
 import com.vandyke.sia.ui.renter.files.view.list.NodesAdapter
 import com.vandyke.sia.ui.renter.files.viewmodel.FilesViewModel
 import com.vandyke.sia.util.*
@@ -99,6 +100,7 @@ class FilesFragment : BaseFragment() {
         /* pull-to-refresh stuff */
         nodes_list_swiperefresh.setColors(context!!)
         nodes_list_swiperefresh.setOnRefreshListener(vm::refresh)
+        nodes_list.addOnScrollListener(RecyclerViewHideFabOnScrollListener(fabFilesMenu))
 
         /* FAB stuff */
         fabAddFile.setOnClickListener {
@@ -463,6 +465,6 @@ class FilesFragment : BaseFragment() {
     companion object {
         private const val FILE_REQUEST_CODE = 5424
         private const val REQUEST_READ_PERMISSION = 1212
-        private const val REQUEST_WRITE_PERMISSION = 1212
+        private const val REQUEST_WRITE_PERMISSION = 1256
     }
 }

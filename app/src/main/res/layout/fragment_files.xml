@@ -31,8 +31,7 @@
         android:background="?android:attr/windowBackground"
         android:elevation="12dp"
         app:el_parallax="0"
-        app:layout_behavior="com.vandyke.sia.ui.common.SnackbarAwareBehavior"
-        >
+        app:layout_behavior="com.vandyke.sia.ui.common.SnackbarAwareBehavior">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -104,8 +103,6 @@
         android:layout_marginBottom="16dp"
         android:layout_marginEnd="16dp"
         android:src="@drawable/ic_add_white"
-        android:transformPivotX="32dp"
-        android:transformPivotY="180dp"
         app:layout_behavior="com.vandyke.sia.ui.renter.files.view.FilesFabBehavior"
         app:menu_colorNormal="?attr/colorPrimary"
         app:menu_colorPressed="?attr/colorPrimaryDark">
