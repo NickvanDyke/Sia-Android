@@ -13,11 +13,21 @@ import com.vandyke.sia.data.models.renter.*
 import com.vandyke.sia.data.models.wallet.*
 
 @Database(
-        entities = [Dir::class, SiaFile::class, WalletData::class, TransactionData::class,
-            AddressData::class, SeedData::class, ConsensusData::class, ScValueData::class, PricesData::class,
-            RenterFinancialMetricsData::class, RenterSettingsAllowanceData::class
+        entities = [
+            Dir::class,
+            SiaFile::class,
+            WalletData::class,
+            TransactionData::class,
+            AddressData::class,
+            SeedData::class,
+            ConsensusData::class,
+            ScValueData::class,
+            PricesData::class,
+            RenterFinancialMetricsData::class,
+            RenterSettingsAllowanceData::class,
+            CurrentPeriodData::class
         ],
-        version = 42)
+        version = 43)
 @TypeConverters(com.vandyke.sia.data.local.TypeConverters::class)
 abstract class AppDatabase : RoomDatabase() {
     /* renter */
@@ -26,6 +36,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun pricesDao(): PricesDao
     abstract fun spendingDao(): SpendingDao
     abstract fun allowanceDao(): AllowanceDao
+    abstract fun currentPeriodDao(): CurrentPeriodDao
 
     /* wallet */
     abstract fun walletDao(): WalletDao

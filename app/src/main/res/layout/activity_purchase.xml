@@ -77,7 +77,7 @@
         android:layout_marginTop="16dp"
         android:background="?android:attr/selectableItemBackgroundBorderless"
         android:text="Ask me again in three days"
-        android:textColor="?attr/colorPrimary"
+        android:textColor="?colorPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

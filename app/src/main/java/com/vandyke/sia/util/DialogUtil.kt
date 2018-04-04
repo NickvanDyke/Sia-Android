@@ -49,13 +49,14 @@ object DialogUtil {
                             }
                             .setCancelable(false)
                             .show()
-                }.setCancelable(false)
+                }
+                .setCancelable(false)
                 .show()
     }
 
     fun editTextDialog(context: Context, title: String,
-                       positiveText: String? = null, positiveFunc: ((EditText) -> Unit)? = null,
-                       negativeText: String? = null, negativeFunc: ((EditText) -> Unit)? = null,
+                       positiveText: String? = null, positiveFunc: ((String) -> Unit)? = null,
+                       negativeText: String? = null, negativeFunc: ((String) -> Unit)? = null,
                        editTextFunc: (EditText.() -> Unit)? = null): AlertDialog {
         val view = View.inflate(context, R.layout.edit_text_field, null)
         val editText = view.findViewById<EditText>(R.id.field)
@@ -65,14 +66,14 @@ object DialogUtil {
             if (editTextFunc != null) {
                 editText.editTextFunc()
             }
-            positiveText?.let { setPositiveButton(it, { _, _ -> positiveFunc?.invoke(editText) }) }
-            negativeText?.let { setNegativeButton(it, { _, _ -> negativeFunc?.invoke(editText) }) }
+            positiveText?.let { setPositiveButton(it, { _, _ -> positiveFunc?.invoke(editText.text.toString()) }) }
+            negativeText?.let { setNegativeButton(it, { _, _ -> negativeFunc?.invoke(editText.text.toString()) }) }
             create()
         }
         editText.setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 dialog.dismiss()
-                positiveFunc?.invoke(editText)
+                positiveFunc?.invoke(editText.text.toString())
             }
             true
         }

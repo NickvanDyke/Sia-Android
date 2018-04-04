@@ -5,6 +5,7 @@
 package com.vandyke.sia.data.repository
 
 import com.vandyke.sia.data.local.AppDatabase
+import com.vandyke.sia.data.models.renter.CurrentPeriodData
 import com.vandyke.sia.data.models.renter.RenterSettingsAllowanceData
 import com.vandyke.sia.data.remote.SiaApi
 import io.reactivex.Completable
@@ -25,7 +26,7 @@ class RenterRepository
             .doOnSuccess {
                 db.spendingDao().insertReplaceOnConflict(it.financialmetrics)
                 db.allowanceDao().insertReplaceOnConflict(it.settings.allowance)
-                // TODO: what to do with currentperiod? Don't want to need a table just for it...
+                db.currentPeriodDao().insertReplaceOnConflict(CurrentPeriodData(it.currentperiod))
             }
             .toCompletable()
 
@@ -35,7 +36,9 @@ class RenterRepository
 
     fun mostRecentPrices() = db.pricesDao().mostRecent()
 
-    fun mostRecentAllowance() = db.allowanceDao().onlyEntry()
+    fun allowance() = db.allowanceDao().onlyEntry()
 
     fun mostRecentSpending() = db.spendingDao().mostRecent()
+
+    fun currentPeriod() = db.currentPeriodDao().onlyEntry()
 }

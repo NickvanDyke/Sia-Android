@@ -30,7 +30,9 @@ import com.vandyke.sia.ui.renter.allowance.AllowanceViewModel.Currency
 import com.vandyke.sia.ui.renter.allowance.AllowanceViewModel.Metrics.*
 import com.vandyke.sia.util.*
 import com.vandyke.sia.util.rx.observe
+import kotlinx.android.synthetic.main.allowance_setting.view.*
 import kotlinx.android.synthetic.main.fragment_allowance.*
+import java.math.BigDecimal
 import javax.inject.Inject
 
 class AllowanceFragment : BaseFragment() {
@@ -55,6 +57,20 @@ class AllowanceFragment : BaseFragment() {
         allowance_swiperefresh.setOnRefreshListener(vm::refresh)
         allowance_swiperefresh.setColors(context!!)
 
+        /* set text on included layouts */
+        funds.setting_header.text = "Funds"
+        funds.setting_description.text = "The amount the renter can spend in the given period. Spent on contracts, storage, and bandwidth."
+
+        hosts.setting_header.text = "Hosts"
+        hosts.setting_description.text = "The number of hosts to form contracts with and use for storage."
+        hosts.secondary_value.gone()
+
+        period.setting_header.text = "Period"
+        period.setting_description.text = "The duration of contracts formed."
+
+        renew_window.setting_header.text = "Renew window"
+        renew_window.setting_description.text = "The length before the end of a contract that it will be automatically renewed. The renter must be running, and wallet unlocked, to do so."
+
         /* chart setup */
         val dataSet = PieDataSet(listOf(
                 PieEntry(1f, context!!.getDrawable(R.drawable.ic_cloud_upload_white)),
@@ -70,7 +86,7 @@ class AllowanceFragment : BaseFragment() {
         val data = PieData(dataSet)
         data.setDrawValues(false)
 
-        pieChart.apply {
+        pie_chart.apply {
             this.data = data
             isRotationEnabled = false
             description.isEnabled = false
@@ -84,7 +100,7 @@ class AllowanceFragment : BaseFragment() {
                 }
 
                 override fun onNothingSelected() {
-                    pieChart.highlightValue(highlightedX, 0)
+                    pie_chart.highlightValue(highlightedX, 0)
                 }
             })
 
@@ -95,7 +111,7 @@ class AllowanceFragment : BaseFragment() {
         val metricAdapter = ArrayAdapter<String>(context, R.layout.spinner_selected_item)
         metricAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         metricAdapter.addAll(AllowanceViewModel.Metrics.values().map { it.text })
-        metricSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        metric_spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
             }
 
@@ -103,44 +119,44 @@ class AllowanceFragment : BaseFragment() {
                 vm.currentMetric.value = AllowanceViewModel.Metrics.values()[position]
             }
         }
-        metricSpinner.adapter = metricAdapter
+        metric_spinner.adapter = metricAdapter
 
         /* listeners for clicky stuff in settings */
-        fundsClickable.setOnClickListener {
+        funds.setOnClickListener {
             DialogUtil.editTextDialog(context!!,
                     "Funds",
                     "Set",
-                    { vm.setAllowance(it.text.toString().toBigDecimal().toHastings()) },
+                    { vm.setAllowance(it.toBigDecimal().toHastings()) },
                     "Cancel",
                     editTextFunc = { hint = "Amount (SC)"; inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL })
                     .showDialogAndKeyboard()
         }
 
-        hostsClickable.setOnClickListener {
+        hosts.setOnClickListener {
             DialogUtil.editTextDialog(context!!,
                     "Hosts",
                     "Set",
-                    { vm.setAllowance(hosts = it.text.toString().toInt()) },
+                    { vm.setAllowance(hosts = it.toInt()) },
                     "Cancel",
                     editTextFunc = { hint = "Hosts"; inputType = InputType.TYPE_CLASS_NUMBER })
                     .showDialogAndKeyboard()
         }
 
-        periodClickable.setOnClickListener {
+        period.setOnClickListener {
             DialogUtil.editTextDialog(context!!,
                     "Period",
                     "Set",
-                    { vm.setAllowance(period = it.text.toString().toInt()) },
+                    { vm.setAllowance(period = it.toInt()) },
                     "Cancel",
                     editTextFunc = { hint = "Blocks"; inputType = InputType.TYPE_CLASS_NUMBER })
                     .showDialogAndKeyboard()
         }
 
-        renewWindowClickable.setOnClickListener {
+        renew_window.setOnClickListener {
             DialogUtil.editTextDialog(context!!,
                     "Renew window",
                     "Set",
-                    { vm.setAllowance(renewWindow = it.text.toString().toInt()) },
+                    { vm.setAllowance(renewWindow = it.toInt()) },
                     "Cancel",
                     editTextFunc = { hint = "Blocks"; inputType = InputType.TYPE_CLASS_NUMBER })
                     .showDialogAndKeyboard()
@@ -150,21 +166,33 @@ class AllowanceFragment : BaseFragment() {
         vm.refreshing.observe(this, allowance_swiperefresh::setRefreshing)
 
         vm.allowance.observe(this) {
-            // TODO: show day equivalents of block values
-            fundsValue.text = it.funds.toSC().format() + " SC"
-            hostsValue.text = it.hosts.format()
-            periodValue.text = it.period.format() + " blocks"
-            renewWindowValue.text = it.renewwindow.format() + " blocks"
+            funds.primary_value.text = it.funds.toSC().format() + " SC"
+            hosts.primary_value.text = it.hosts.format()
+            period.primary_value.text = it.period.format() + " blocks"
+            renew_window.primary_value.text = it.renewwindow.format() + " blocks"
+
+            updateFundsFiatValue()
+            period.secondary_value.text = "(~${SiaUtil.blocksToDays(it.period).format()} days)"
+            renew_window.secondary_value.text = "(~${SiaUtil.blocksToDays(it.renewwindow).format()} days)"
+        }
+
+        vm.scValue.observe(this) {
+            updateFundsFiatValue()
+        }
+
+        vm.remainingPeriod.observe(this) {
+            // TODO: improve this. Should have header text on left, and value text on right I think
+            current_period_header.text = "Current period - $it blocks remaining"
         }
 
         vm.currentMetric.observe(this) {
             val x = it.ordinal.toFloat()
             if (dataSet.entryCount != 0 && highlightedX != x) {
                 highlightedX = x
-                pieChart.highlightValue(x, 0)
+                pie_chart.highlightValue(x, 0)
             }
 
-            metricSpinner.setSelection(it.ordinal)
+            metric_spinner.setSelection(it.ordinal)
         }
 
         vm.currentMetricValues.observe(this) { (price, spent, purchasable) ->
@@ -172,38 +200,36 @@ class AllowanceFragment : BaseFragment() {
             val metric = vm.currentMetric.value
 
             (metric != UNSPENT).let {
-                estPriceHeader.goneUnless(it)
-                tvPrice.goneUnless(it)
-                purchasableHeader.goneUnless(it)
-                tvPurchaseable.goneUnless(it)
+                est_price_header.goneUnless(it)
+                est_price.goneUnless(it)
+                purchasable_header.goneUnless(it)
+                purchasable_value.goneUnless(it)
             }
             if (metric == UNSPENT) {
-                spentHeader.text = "Remaining funds"
-                tvSpent.text = spent.toSC().format() + currency
+                spent_header.text = "Remaining funds"
+                spent_value.text = spent.toSC().format() + currency
             } else {
-                spentHeader.text = "Spent"
+                spent_header.text = "Spent"
                 when (metric) {
                     STORAGE -> {
-                        estPriceHeader.text = "Est. price/TB/month"
-                        purchasableHeader.text = "Purchasable (1 month)"
-                        tvPurchaseable.text = purchasable.format() + " TB"
+                        est_price_header.text = "Est. price/TB/month"
+                        purchasable_header.text = "Purchasable (1 month)"
+                        purchasable_value.text = purchasable.format() + " TB"
                     }
                     UPLOAD, DOWNLOAD -> {
-                        estPriceHeader.text = "Est. price/TB"
-                        purchasableHeader.text = "Purchasable"
-                        tvPurchaseable.text = purchasable.format() + " TB"
+                        est_price_header.text = "Est. price/TB"
+                        purchasable_header.text = "Purchasable"
+                        purchasable_value.text = purchasable.format() + " TB"
                     }
                     CONTRACT -> {
-                        // TODO: I think the estimated price returned for contracts is how much it'd cost
-                        // to form 50. So using that, I could calc how much it'd cost for one.
-                        estPriceHeader.text = "Est. price"
-                        purchasableHeader.text = "Purchasable"
-                        tvPurchaseable.text = purchasable.format()
+                        est_price_header.text = "Est. price"
+                        purchasable_header.text = "Purchasable"
+                        purchasable_value.text = (purchasable * BigDecimal("50")).format()
                     }
                 }
 
-                tvPrice.text = price.toSC().format() + currency
-                tvSpent.text = spent.toSC().format() + currency
+                est_price.text = price.toSC().format() + currency
+                spent_value.text = spent.toSC().format() + currency
             }
         }
 
@@ -217,12 +243,12 @@ class AllowanceFragment : BaseFragment() {
             dataSet.values[3].y = contract.toFloat().coerceAtLeast(minValue)
             dataSet.values[4].y = unspent.toFloat().coerceAtLeast(minValue)
             dataSet.notifyDataSetChanged()
-            pieChart.notifyDataSetChanged()
-            pieChart.invalidate()
+            pie_chart.notifyDataSetChanged()
+            pie_chart.invalidate()
         }
 
         vm.activeTasks.observe(this) {
-            progress_bar.hiddenUnless(it > 0)
+            progressBar.goneUnless(it > 0)
         }
 
         vm.error.observe(this) {
@@ -235,6 +261,12 @@ class AllowanceFragment : BaseFragment() {
         }
     }
 
+    private fun updateFundsFiatValue() {
+        val scValue = vm.scValue.value ?: return
+        val fundsSc = vm.allowance.value?.funds ?: return
+        funds.secondary_value.text = "(${(scValue[Prefs.fiatCurrency] * fundsSc.toSC()).format()} ${Prefs.fiatCurrency})"
+    }
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.toolbar_allowance, menu)
     }
@@ -245,5 +277,9 @@ class AllowanceFragment : BaseFragment() {
             else -> return false
         }
         return true
+    }
+
+    override fun onShow() {
+        progressBar.goneUnless(vm.activeTasks.value > 0)
     }
 }

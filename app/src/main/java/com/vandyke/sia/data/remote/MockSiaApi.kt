@@ -70,9 +70,9 @@ class MockSiaApi : SiaApi {
     private var renterData = RenterData(
             RenterSettingsData(RenterSettingsAllowanceData(
                     BigDecimal("3629").toHastings(),
-                    24,
-                    6048,
-                    3024
+                    50,
+                    12000,
+                    4000
             )),
             RenterFinancialMetricsData(
                     System.currentTimeMillis(),
@@ -97,6 +97,12 @@ class MockSiaApi : SiaApi {
 
     override fun walletSiacoins(amount: String, destination: String): Completable {
         return Completable.fromAction {
+            checkEncrypted()
+            checkUnlocked()
+            if (amount.toBigDecimal() == BigDecimal.ZERO)
+                throw ZeroAmount()
+            if (destination.isBlank())
+                throw CouldNotReadAddress()
             unconfirmedTxs.add(TransactionData(nonce.toString(), BigDecimal(nonce),
                     UNCONFIRMED_TX_TIMESTAMP, amount.toBigDecimal()))
         }
@@ -104,17 +110,23 @@ class MockSiaApi : SiaApi {
 
     override fun walletAddress(): Single<AddressData> {
         return Single.fromCallable {
+            checkEncrypted()
             checkUnlocked()
             AddressData(addresses[0])
         }
     }
 
     override fun walletAddresses(): Single<AddressesData> {
-        return Single.just(AddressesData(addresses))
+        return Single.fromCallable {
+            checkEncrypted()
+            checkUnlocked()
+            AddressesData(addresses)
+        }
     }
 
     override fun walletSeeds(dictionary: String): Single<SeedsData> {
         return Single.fromCallable {
+            checkEncrypted()
             checkUnlocked()
             SeedsData(seed, 100, listOf(seed))
         }
@@ -125,12 +137,10 @@ class MockSiaApi : SiaApi {
     }
 
     override fun walletTransactions(startHeight: Int, endHeight: Int): Single<TransactionsData> {
-        return Single.fromCallable {
-            if (!encrypted)
-                TransactionsData(null, null)
-            else
-                TransactionsData(confirmedTxs, unconfirmedTxs)
-        }
+        return Single.just(when (encrypted) {
+            false -> TransactionsData(null, null)
+            else -> TransactionsData(confirmedTxs, unconfirmedTxs)
+        })
     }
 
     override fun walletInit(password: String, dictionary: String, force: Boolean): Single<WalletInitData> {
@@ -156,6 +166,7 @@ class MockSiaApi : SiaApi {
 
     override fun walletLock(): Completable {
         return Completable.fromAction {
+            checkEncrypted()
             checkUnlocked()
             unlocked = false
         }

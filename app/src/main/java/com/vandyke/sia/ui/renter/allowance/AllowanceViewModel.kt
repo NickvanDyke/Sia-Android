@@ -7,10 +7,13 @@ package com.vandyke.sia.ui.renter.allowance
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.vandyke.sia.data.local.Prefs
+import com.vandyke.sia.data.models.consensus.ConsensusData
+import com.vandyke.sia.data.models.renter.CurrentPeriodData
 import com.vandyke.sia.data.models.renter.PricesData
 import com.vandyke.sia.data.models.renter.RenterFinancialMetricsData
 import com.vandyke.sia.data.models.renter.RenterSettingsAllowanceData
 import com.vandyke.sia.data.models.wallet.ScValueData
+import com.vandyke.sia.data.repository.ConsensusRepository
 import com.vandyke.sia.data.repository.RenterRepository
 import com.vandyke.sia.data.repository.ScValueRepository
 import com.vandyke.sia.ui.renter.allowance.AllowanceViewModel.Currency.FIAT
@@ -18,6 +21,8 @@ import com.vandyke.sia.ui.renter.allowance.AllowanceViewModel.Currency.SC
 import com.vandyke.sia.ui.renter.allowance.AllowanceViewModel.Metrics.*
 import com.vandyke.sia.util.rx.*
 import io.reactivex.Completable
+import io.reactivex.Flowable
+import io.reactivex.functions.BiFunction
 import java.math.BigDecimal
 import javax.inject.Inject
 
@@ -25,12 +30,14 @@ import javax.inject.Inject
 class AllowanceViewModel
 @Inject constructor(
         private val renterRepository: RenterRepository,
-        private val scValueRepository: ScValueRepository
+        private val scValueRepository: ScValueRepository,
+        private val consensusRepository: ConsensusRepository
 ) : ViewModel() {
     val currency = MutableNonNullLiveData(Prefs.allowanceCurrency)
 
     val currentMetric = MutableNonNullLiveData(STORAGE)
     val currentMetricValues = MutableLiveData<MetricValues>()
+    val remainingPeriod = MutableLiveData<Int>()
 
     val allowance = MutableLiveData<RenterSettingsAllowanceData>()
     val spending = MutableLiveData<RenterFinancialMetricsData>()
@@ -43,7 +50,7 @@ class AllowanceViewModel
 
     init {
         // maybe merge these together
-        renterRepository.mostRecentAllowance()
+        renterRepository.allowance()
                 .io()
                 .main()
                 .subscribe(allowance::setValue, ::onError)
@@ -74,12 +81,25 @@ class AllowanceViewModel
                         if (period == 0) 12000 else period,
                         if (renew == 0) 4000 else renew)
         }
+
+        Flowable.combineLatest(
+                renterRepository.currentPeriod(),
+                consensusRepository.consensus(),
+                BiFunction { currentPeriod: CurrentPeriodData, consensusData: ConsensusData ->
+                    val period = allowance.value?.period ?: return@BiFunction 0
+                    val periodEndsAt = currentPeriod.currentPeriod + period
+                    return@BiFunction periodEndsAt - consensusData.height
+                })
+                .io()
+                .main()
+                .subscribe(remainingPeriod::setValue, ::onError)
     }
 
     fun refresh() {
         Completable.mergeArrayDelayError(
                 renterRepository.updatePrices(),
-                renterRepository.updateAllowanceAndMetrics())
+                renterRepository.updateAllowanceAndMetrics(),
+                consensusRepository.updateConsensus())
                 .io()
                 .main()
                 .track(activeTasks)

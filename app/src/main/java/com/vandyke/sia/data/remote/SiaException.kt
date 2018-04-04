@@ -48,6 +48,7 @@ sealed class SiaException(msg: String) : Throwable(msg) {
     }
 }
 
+// TODO: maybe I should begin all these class names with 'Sia' to make it more clear they're related to this
 class SiadNotReady : SiaException("Sia is still loading")
 class SiadNotRunning : SiaException("Sia node isn't running")
 class APIAuthFailed : SiaException("Incorrect API password")

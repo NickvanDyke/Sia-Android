@@ -10,5 +10,5 @@
     android:paddingTop="48dp"
     android:paddingStart="32dp"
     android:scaleType="fitStart"
-    android:tint="?attr/colorPrimary"
+    android:tint="?colorPrimary"
     android:src="@drawable/sia_new_wordmark_transparent_png" />

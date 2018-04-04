@@ -15,20 +15,24 @@ import android.view.ViewGroup
 import com.vandyke.sia.ui.main.MainActivity
 import com.vandyke.sia.util.Analytics
 import kotlinx.android.synthetic.main.activity_main.*
+import me.zhanghai.android.materialprogressbar.MaterialProgressBar
 
 abstract class BaseFragment : Fragment() {
     open val layoutResId: Int = -1
     open val hasOptionsMenu = false
     abstract val title: String
 
+    val mainActivity: MainActivity
+        get() = activity as MainActivity
+
     val toolbar: Toolbar
-        get() = (activity as MainActivity).toolbar
+        get() = mainActivity.toolbar
 
     val actionBar: ActionBar
         get() = (activity as AppCompatActivity).supportActionBar!!
 
-    val mainActivity: MainActivity
-        get() = activity as MainActivity
+    val progressBar: MaterialProgressBar
+        get() = mainActivity.toolbar_progress_bar
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         setHasOptionsMenu(hasOptionsMenu)
@@ -42,14 +46,15 @@ abstract class BaseFragment : Fragment() {
     open fun onBackPressed(): Boolean = false
 
     // am very rarely having onShow called when it shouldn't be, by fragments in the background... not sure why
-    private fun onShowHelper() {
+    private fun onShowInternal() {
 //        println("${this.javaClass.simpleName} onShowHelper")
         userVisibleHint = true
         logScreen()
         onShow()
     }
 
-    private fun onHideHelper() {
+    private fun onHideInternal() {
+//        progressBar.gone()
 //        println("${this.javaClass.simpleName} onHideHelper")
         userVisibleHint = false
         onHide()
@@ -65,10 +70,10 @@ abstract class BaseFragment : Fragment() {
         super.onHiddenChanged(hidden)
 //        println("${this.javaClass.simpleName} onHiddenChanged. hidden: $hidden")
         if (!hidden) {
-            onShowHelper()
+            onShowInternal()
             activity!!.invalidateOptionsMenu()
         } else {
-            onHideHelper()
+            onHideInternal()
         }
     }
 
@@ -77,14 +82,14 @@ abstract class BaseFragment : Fragment() {
         super.onStart()
         activity!!.invalidateOptionsMenu()
         if (userVisibleHint || isVisible)
-            onShowHelper()
+            onShowInternal()
     }
 
     override fun onStop() {
 //        println("${this.javaClass.simpleName} onStop. userVisibleHint: $userVisibleHint; isVisible: $isVisible")
         super.onStop()
         if (userVisibleHint)
-            onHideHelper()
+            onHideInternal()
     }
 
     private fun logScreen() {

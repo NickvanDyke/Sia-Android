@@ -113,7 +113,7 @@ class FilesFragment : BaseFragment() {
             DialogUtil.editTextDialog(context!!,
                     "New directory",
                     "Create",
-                    { vm.createDir(it.text.toString()) },
+                    { vm.createDir(it) },
                     "Cancel",
                     editTextFunc = { hint = "Name" })
                     .showDialogAndKeyboard()
@@ -131,8 +131,7 @@ class FilesFragment : BaseFragment() {
                     DialogUtil.editTextDialog(context!!,
                             "Rename ${node.name}",
                             "Rename",
-                            {
-                                val newName = it.text.toString()
+                            { newName ->
                                 if (node is SiaFile)
                                     vm.renameFile(node, newName)
                                 else if (node is Dir)
@@ -232,7 +231,7 @@ class FilesFragment : BaseFragment() {
         vm.refreshing.observe(this, nodes_list_swiperefresh::setRefreshing)
 
         vm.activeTasks.observe(this) {
-            progress_bar.goneUnless(it > 0)
+            progressBar.goneUnless(it > 0)
         }
 
         vm.success.observe(this) {
@@ -399,10 +398,10 @@ class FilesFragment : BaseFragment() {
     }
 
     private fun setMultiMoveImage() {
-        val newResId = if (vm.allSelectedAreInCurrentDir)
-            R.drawable.ic_edit_black
-        else
-            R.drawable.ic_move_to_inbox_black
+        val newResId = when {
+            vm.allSelectedAreInCurrentDir -> R.drawable.ic_edit_black
+            else -> R.drawable.ic_move_to_inbox_black
+        }
 
         if (currentMultiMoveResId == newResId)
             return
@@ -455,6 +454,7 @@ class FilesFragment : BaseFragment() {
     override fun onShow() {
         toolbar.addView(spinnerView)
         actionBar.setDisplayShowTitleEnabled(false)
+        progressBar.goneUnless(vm.activeTasks.value > 0)
     }
 
     override fun onHide() {

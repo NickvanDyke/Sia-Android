@@ -28,7 +28,7 @@
         app:layout_constraintBottom_toTopOf="@+id/file_redundancy"
         app:layout_constraintEnd_toStartOf="@+id/file_redundancy_image"
         app:layout_constraintTop_toTopOf="@+id/file_redundancy_image"
-        app:mpb_progressTint="?attr/colorPrimary" />
+        app:mpb_progressTint="?colorPrimary" />
 
     <TextView
         android:id="@+id/file_upload_progress_text"

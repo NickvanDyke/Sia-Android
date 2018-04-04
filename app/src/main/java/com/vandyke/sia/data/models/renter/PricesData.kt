@@ -13,7 +13,7 @@ data class PricesData(
         @PrimaryKey
         val timestamp: Long,
         val downloadterabyte: BigDecimal,
-        val formcontracts: BigDecimal,
+        val formcontracts: BigDecimal, /* this is for forming 50 contracts (the default number) */
         val storageterabytemonth: BigDecimal,
         val uploadterabyte: BigDecimal)
 

@@ -16,7 +16,7 @@
         <View
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:background="?attr/colorPrimary"
+            android:background="?colorPrimary"
             android:elevation="8dp"
             app:layout_constraintBottom_toTopOf="@id/expandableFrame"
             app:layout_constraintEnd_toEndOf="parent"
@@ -97,7 +97,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/expandableFrame"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:mpb_indeterminateTint="?attr/colorPrimary"
+            app:mpb_indeterminateTint="@android:color/white"
             app:mpb_progressStyle="horizontal"
             app:mpb_showProgressBackground="false"
             app:mpb_useIntrinsicPadding="false" />
@@ -122,7 +122,7 @@
             app:layout_constraintTop_toBottomOf="@+id/expandableFrame">
 
             <android.support.v7.widget.RecyclerView
-                android:id="@+id/transactionList"
+                android:id="@+id/transaction_list"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:scrollbars="vertical"
@@ -142,24 +142,24 @@
         android:layout_marginEnd="16dp"
         android:src="@drawable/ic_add_white"
         app:layout_behavior="com.vandyke.sia.ui.common.SnackbarAwareBehavior"
-        app:menu_colorNormal="?attr/colorPrimary"
-        app:menu_colorPressed="?attr/colorPrimaryDark">
+        app:menu_colorNormal="?colorPrimary"
+        app:menu_colorPressed="?colorPrimaryDark">
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fabSend"
             android:layout_width="@dimen/fab_size_normal"
             android:layout_height="@dimen/fab_size_normal"
             android:src="@drawable/ic_send_white"
-            app:fab_colorNormal="?attr/colorPrimary"
-            app:fab_colorPressed="?attr/colorPrimaryDark" />
+            app:fab_colorNormal="?colorPrimary"
+            app:fab_colorPressed="?colorPrimaryDark" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fabReceive"
             android:layout_width="@dimen/fab_size_normal"
             android:layout_height="@dimen/fab_size_normal"
             android:src="@drawable/ic_download_white"
-            app:fab_colorNormal="?attr/colorPrimary"
-            app:fab_colorPressed="?attr/colorPrimaryDark" />
+            app:fab_colorNormal="?colorPrimary"
+            app:fab_colorPressed="?colorPrimaryDark" />
 
     </com.github.clans.fab.FloatingActionMenu>
 

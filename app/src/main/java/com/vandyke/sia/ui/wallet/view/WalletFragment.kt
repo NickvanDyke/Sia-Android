@@ -15,7 +15,6 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import android.widget.ProgressBar
 import com.vandyke.sia.R
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.remote.WalletLocked
@@ -57,10 +56,10 @@ class WalletFragment : BaseFragment() {
 
         /* set up recyclerview for transactions */
         val adapter = TransactionAdapter()
-        transactionList.addItemDecoration(DividerItemDecoration(transactionList.context,
-                (transactionList.layoutManager as LinearLayoutManager).orientation))
-        transactionList.adapter = adapter
-        transactionList.addOnScrollListener(RecyclerViewHideFabOnScrollListener(fabWalletMenu))
+        transaction_list.addItemDecoration(DividerItemDecoration(transaction_list.context,
+                (transaction_list.layoutManager as LinearLayoutManager).orientation))
+        transaction_list.adapter = adapter
+        transaction_list.addOnScrollListener(RecyclerViewHideFabOnScrollListener(fabWalletMenu))
 
         /* set up click listeners for the big buttons */
         fabWalletMenu.setOnMenuButtonClickListener {
@@ -95,10 +94,9 @@ class WalletFragment : BaseFragment() {
         /* set swipe-down stuff */
         transactionListSwipe.setOnRefreshListener(vm::refreshAll)
         transactionListSwipe.setColors(context!!)
-        progress_bar.setIndeterminateColorRes(android.R.color.white)
 
         expandableFrame.setOnExpansionUpdateListener { expansionFraction, state ->
-            progress_bar.setIndeterminateColorRes(when (state) {
+            progress_bar?.setIndeterminateColorRes(when (state) {
                 ExpandableLayout.State.COLLAPSED -> android.R.color.white
                 else -> R.color.colorPrimary
             })
@@ -120,7 +118,7 @@ class WalletFragment : BaseFragment() {
                     KeyboardUtil.hideKeyboard(activity!!)
                     updateFabIcon()
                 }
-                ExpandableLayout.State.EXPANDED -> updateFabIcon()
+                ExpandableLayout.State.EXPANDING -> updateFabIcon()
             }
         }
 
@@ -131,7 +129,6 @@ class WalletFragment : BaseFragment() {
             // TODO: when being made visible, the bar flickers at the location it was at last, before restarting
             // Tried a few potential solutions, none worked
             progress_bar.goneUnless(it > 0)
-            view.findViewById<ProgressBar>(R.id.progress_bar).goneUnless(it > 0)
         }
 
         /* observe data in the viewModel */

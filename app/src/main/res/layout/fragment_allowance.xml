@@ -12,46 +12,56 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <me.zhanghai.android.materialprogressbar.MaterialProgressBar
-            android:id="@+id/progress_bar"
-            style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="3dp"
-            android:layout_gravity="top"
-            android:indeterminate="true"
-            app:mpb_indeterminateTint="?attr/colorPrimary"
-            app:mpb_progressStyle="horizontal"
-            app:mpb_showProgressBackground="false"
-            app:mpb_useIntrinsicPadding="false" />
-
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp">
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="5dp">
 
             <android.support.constraint.ConstraintLayout
-                android:id="@+id/spendingCard"
+                android:id="@+id/spending_card"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
+                <TextView
+                    android:id="@+id/current_period_header"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="12dp"
+                    android:text="Current period - 500 blocks remaining"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textSize="18sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <View
+                    android:id="@+id/period_divider"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:background="?dividerHorizontal"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/current_period_header" />
+
                 <com.github.mikephil.charting.charts.PieChart
-                    android:id="@+id/pieChart"
+                    android:id="@+id/pie_chart"
                     android:layout_width="0dp"
                     android:layout_height="192dp"
                     android:layout_marginBottom="16dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/metricSpinner"
+                    app:layout_constraintEnd_toStartOf="@id/metric_spinner"
                     app:layout_constraintHorizontal_chainStyle="spread_inside"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toBottomOf="@id/period_divider" />
 
                 <Spinner
-                    android:id="@+id/metricSpinner"
+                    android:id="@+id/metric_spinner"
                     android:layout_width="172dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
@@ -61,67 +71,67 @@
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toEndOf="@+id/pieChart"
-                    app:layout_constraintTop_toTopOf="@+id/pieChart" />
+                    app:layout_constraintStart_toEndOf="@+id/pie_chart"
+                    app:layout_constraintTop_toTopOf="@+id/pie_chart" />
 
                 <TextView
-                    android:id="@+id/estPriceHeader"
+                    android:id="@+id/est_price_header"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text="Est. price"
-                    app:layout_constraintStart_toStartOf="@+id/tvSpent"
-                    app:layout_constraintTop_toBottomOf="@+id/tvSpent" />
+                    app:layout_constraintStart_toStartOf="@+id/spent_value"
+                    app:layout_constraintTop_toBottomOf="@+id/spent_value" />
 
                 <TextView
-                    android:id="@+id/tvPrice"
+                    android:id="@+id/est_price"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0"
-                    android:textColor="?attr/colorPrimary"
+                    android:textColor="?colorPrimary"
                     android:textSize="18sp"
-                    app:layout_constraintStart_toStartOf="@+id/estPriceHeader"
-                    app:layout_constraintTop_toBottomOf="@+id/estPriceHeader" />
+                    app:layout_constraintStart_toStartOf="@+id/est_price_header"
+                    app:layout_constraintTop_toBottomOf="@+id/est_price_header" />
 
                 <TextView
-                    android:id="@+id/spentHeader"
+                    android:id="@+id/spent_header"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text="Spent"
-                    app:layout_constraintStart_toStartOf="@+id/metricSpinner"
-                    app:layout_constraintTop_toBottomOf="@+id/metricSpinner" />
+                    app:layout_constraintStart_toStartOf="@+id/metric_spinner"
+                    app:layout_constraintTop_toBottomOf="@+id/metric_spinner" />
 
                 <TextView
-                    android:id="@+id/tvSpent"
+                    android:id="@+id/spent_value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0"
-                    android:textColor="?attr/colorPrimary"
+                    android:textColor="?colorPrimary"
                     android:textSize="18sp"
-                    app:layout_constraintStart_toStartOf="@+id/spentHeader"
-                    app:layout_constraintTop_toBottomOf="@+id/spentHeader" />
+                    app:layout_constraintStart_toStartOf="@+id/spent_header"
+                    app:layout_constraintTop_toBottomOf="@+id/spent_header" />
 
                 <TextView
-                    android:id="@+id/purchasableHeader"
+                    android:id="@+id/purchasable_header"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text="Purchasable"
-                    app:layout_constraintStart_toStartOf="@+id/tvPrice"
-                    app:layout_constraintTop_toBottomOf="@+id/tvPrice" />
+                    app:layout_constraintStart_toStartOf="@+id/est_price"
+                    app:layout_constraintTop_toBottomOf="@+id/est_price" />
 
                 <TextView
-                    android:id="@+id/tvPurchaseable"
+                    android:id="@+id/purchasable_value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
                     android:text="0"
-                    android:textColor="?attr/colorPrimary"
+                    android:textColor="?colorPrimary"
                     android:textSize="18sp"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="@+id/purchasableHeader"
-                    app:layout_constraintTop_toBottomOf="@+id/purchasableHeader"
+                    app:layout_constraintStart_toStartOf="@+id/purchasable_header"
+                    app:layout_constraintTop_toBottomOf="@+id/purchasable_header"
                     app:layout_constraintVertical_bias="0.0" />
             </android.support.constraint.ConstraintLayout>
         </android.support.v7.widget.CardView>
@@ -138,186 +148,40 @@
                 android:layout_height="wrap_content"
                 android:scrollbars="vertical">
 
-                <android.support.constraint.ConstraintLayout
-                    android:id="@+id/allowanceCard"
+                <LinearLayout
+                    android:id="@+id/allowance_card"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/textView11"
-                        android:layout_width="wrap_content"
+                    <include
+                        android:id="@+id/funds"
+                        layout="@layout/allowance_setting"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginTop="16dp"
-                        android:text="Funds"
-                        android:textColor="?android:attr/textColorPrimary"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:layout_marginTop="8dp" />
 
-                    <TextView
-                        android:id="@+id/textView12"
-                        android:layout_width="0dp"
+                    <include
+                        android:id="@+id/hosts"
+                        layout="@layout/allowance_setting" />
+
+                    <include
+                        android:id="@+id/period"
+                        layout="@layout/allowance_setting" />
+
+                    <include
+                        android:id="@+id/renew_window"
+                        layout="@layout/allowance_setting"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="24dp"
-                        android:text="The amount allocated for file contracts in the given period."
-                        app:layout_constraintEnd_toStartOf="@+id/fundsValue"
-                        app:layout_constraintHorizontal_bias="0.0"
-                        app:layout_constraintStart_toStartOf="@+id/textView11"
-                        app:layout_constraintTop_toBottomOf="@+id/textView11" />
+                        android:layout_marginBottom="8dp" />
 
-                    <TextView
-                        android:id="@+id/fundsValue"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="24dp"
-                        android:text="0"
-                        android:textColor="?attr/colorPrimary"
-                        android:textSize="18sp"
-                        app:layout_constraintBottom_toBottomOf="@+id/textView12"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="@+id/textView11" />
+                </LinearLayout>
 
-                    <View
-                        android:id="@+id/fundsClickable"
-                        android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        android:layout_marginBottom="8dp"
-                        android:background="?android:attr/selectableItemBackground"
-                        app:layout_constraintBottom_toTopOf="@+id/textView14"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/textView14"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:text="Hosts"
-                        android:textColor="?android:attr/textColorPrimary"
-                        app:layout_constraintStart_toStartOf="@+id/textView12"
-                        app:layout_constraintTop_toBottomOf="@+id/textView12" />
-
-                    <TextView
-                        android:id="@+id/textView15"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="24dp"
-                        android:text="The number of hosts to form contracts with."
-                        app:layout_constraintEnd_toStartOf="@+id/hostsValue"
-                        app:layout_constraintStart_toStartOf="@+id/textView14"
-                        app:layout_constraintTop_toBottomOf="@id/textView14" />
-
-                    <TextView
-                        android:id="@+id/hostsValue"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="0"
-                        android:textColor="?attr/colorPrimary"
-                        android:textSize="18sp"
-                        app:layout_constraintBottom_toBottomOf="@+id/textView15"
-                        app:layout_constraintEnd_toEndOf="@+id/fundsValue"
-                        app:layout_constraintTop_toTopOf="@+id/textView14" />
-
-                    <View
-                        android:id="@+id/hostsClickable"
-                        android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        android:layout_marginBottom="8dp"
-                        android:background="?android:attr/selectableItemBackground"
-                        app:layout_constraintBottom_toTopOf="@+id/textView17"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/fundsClickable" />
-
-                    <TextView
-                        android:id="@+id/textView17"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:text="Period"
-                        android:textColor="?android:attr/textColorPrimary"
-                        app:layout_constraintStart_toStartOf="@+id/textView15"
-                        app:layout_constraintTop_toBottomOf="@id/textView15" />
-
-                    <TextView
-                        android:id="@+id/textView18"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="24dp"
-                        android:text="Duration of contracts formed. One block is about 10 minutes."
-                        app:layout_constraintEnd_toStartOf="@+id/periodValue"
-                        app:layout_constraintStart_toStartOf="@+id/textView17"
-                        app:layout_constraintTop_toBottomOf="@id/textView17" />
-
-                    <TextView
-                        android:id="@+id/periodValue"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="0"
-                        android:textColor="?attr/colorPrimary"
-                        android:textSize="18sp"
-                        app:layout_constraintBottom_toBottomOf="@+id/textView18"
-                        app:layout_constraintEnd_toEndOf="@+id/hostsValue"
-                        app:layout_constraintTop_toTopOf="@+id/textView17" />
-
-                    <View
-                        android:id="@+id/periodClickable"
-                        android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        android:layout_marginBottom="8dp"
-                        android:background="?android:attr/selectableItemBackground"
-                        app:layout_constraintBottom_toTopOf="@+id/textView20"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/hostsClickable" />
-
-                    <TextView
-                        android:id="@+id/textView20"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:text="Renew window"
-                        android:textColor="?android:attr/textColorPrimary"
-                        app:layout_constraintStart_toStartOf="@+id/textView18"
-                        app:layout_constraintTop_toBottomOf="@+id/textView18" />
-
-                    <TextView
-                        android:id="@+id/textView21"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="16dp"
-                        android:layout_marginEnd="24dp"
-                        android:text="The renter will renew contracts when the current block height + the renew window is >= their expiration date. It must be running, and the wallet unlocked, to do so."
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/renewWindowValue"
-                        app:layout_constraintStart_toStartOf="@+id/textView20"
-                        app:layout_constraintTop_toBottomOf="@+id/textView20" />
-
-                    <TextView
-                        android:id="@+id/renewWindowValue"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="0"
-                        android:textColor="?attr/colorPrimary"
-                        android:textSize="18sp"
-                        app:layout_constraintBottom_toBottomOf="@+id/textView21"
-                        app:layout_constraintEnd_toEndOf="@+id/periodValue"
-                        app:layout_constraintTop_toTopOf="@+id/textView20" />
-
-                    <View
-                        android:id="@+id/renewWindowClickable"
-                        android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        android:background="?android:attr/selectableItemBackground"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/periodClickable" />
-
-                </android.support.constraint.ConstraintLayout>
             </android.support.v4.widget.NestedScrollView>
+
         </android.support.v7.widget.CardView>
 
     </LinearLayout>
+
 </android.support.v4.widget.SwipeRefreshLayout>
