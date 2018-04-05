@@ -82,7 +82,7 @@ class MockSiaApi : SiaApi {
                     BigDecimal("274").toHastings(),
                     BigDecimal("1085").toHastings()
             ),
-            100
+            139000
     )
 
     override fun daemonStop(): Completable {
@@ -274,7 +274,7 @@ class MockSiaApi : SiaApi {
     }
 
     override fun consensus(): Single<ConsensusData> {
-        return Single.just(ConsensusData(System.currentTimeMillis(), false, 135371, nonce.toString(), BigDecimal(nonce)))
+        return Single.just(ConsensusData(System.currentTimeMillis(), false, 140000, nonce.toString(), BigDecimal(nonce)))
     }
 
     override fun txPoolFee(): Single<FeeData> {

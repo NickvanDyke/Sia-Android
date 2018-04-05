@@ -14,6 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.vandyke.sia.ui.main.MainActivity
 import com.vandyke.sia.util.Analytics
+import com.vandyke.sia.util.gone
 import kotlinx.android.synthetic.main.activity_main.*
 import me.zhanghai.android.materialprogressbar.MaterialProgressBar
 
@@ -45,27 +46,6 @@ abstract class BaseFragment : Fragment() {
     /** returns true if the back press was consumed/used by this fragment, otherwise false */
     open fun onBackPressed(): Boolean = false
 
-    // am very rarely having onShow called when it shouldn't be, by fragments in the background... not sure why
-    private fun onShowInternal() {
-//        println("${this.javaClass.simpleName} onShowHelper")
-        userVisibleHint = true
-        logScreen()
-        onShow()
-    }
-
-    private fun onHideInternal() {
-//        progressBar.gone()
-//        println("${this.javaClass.simpleName} onHideHelper")
-        userVisibleHint = false
-        onHide()
-    }
-
-    open fun onShow() {
-    }
-
-    open fun onHide() {
-    }
-
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
 //        println("${this.javaClass.simpleName} onHiddenChanged. hidden: $hidden")
@@ -90,6 +70,27 @@ abstract class BaseFragment : Fragment() {
         super.onStop()
         if (userVisibleHint)
             onHideInternal()
+    }
+
+    // am very rarely having onShow called when it shouldn't be, by fragments in the background... not sure why
+    private fun onShowInternal() {
+//        println("${this.javaClass.simpleName} onShowHelper")
+        userVisibleHint = true
+        logScreen()
+        onShow()
+    }
+
+    private fun onHideInternal() {
+        progressBar.gone()
+//        println("${this.javaClass.simpleName} onHideHelper")
+        userVisibleHint = false
+        onHide()
+    }
+
+    open fun onShow() {
+    }
+
+    open fun onHide() {
     }
 
     private fun logScreen() {

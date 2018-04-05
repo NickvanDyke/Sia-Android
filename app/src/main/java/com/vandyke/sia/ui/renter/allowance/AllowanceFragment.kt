@@ -6,6 +6,7 @@ package com.vandyke.sia.ui.renter.allowance
 
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.text.InputType
 import android.view.Menu
 import android.view.MenuInflater
@@ -30,6 +31,7 @@ import com.vandyke.sia.ui.renter.allowance.AllowanceViewModel.Currency
 import com.vandyke.sia.ui.renter.allowance.AllowanceViewModel.Metrics.*
 import com.vandyke.sia.util.*
 import com.vandyke.sia.util.rx.observe
+import io.github.tonnyl.light.Light
 import kotlinx.android.synthetic.main.allowance_setting.view.*
 import kotlinx.android.synthetic.main.fragment_allowance.*
 import java.math.BigDecimal
@@ -123,12 +125,35 @@ class AllowanceFragment : BaseFragment() {
 
         /* listeners for clicky stuff in settings */
         funds.setOnClickListener {
-            DialogUtil.editTextDialog(context!!,
+            DialogUtil.editTextSpinnerDialog(context!!,
                     "Funds",
                     "Set",
-                    { vm.setAllowance(it.toBigDecimal().toHastings()) },
+                    { text, units ->
+                        vm.setAllowance(when (units) {
+                            "SC" -> text.toBigDecimal().toHastings()
+
+                            Prefs.fiatCurrency -> {
+                                val rate = vm.scValue.value?.get(Prefs.fiatCurrency) ?: run {
+                                    Light.error(allowance_swiperefresh, "Error converting ${Prefs.fiatCurrency} to SC", Snackbar.LENGTH_SHORT).show()
+                                    return@editTextSpinnerDialog
+                                }
+                                val sc = text.toBigDecimal() / rate
+                                sc.toHastings()
+                            }
+
+                            "GB" -> {
+                                val rate = vm.prices.value?.storageterabytemonth ?: run {
+                                    Light.error(allowance_swiperefresh, "Error converting GB to SC", Snackbar.LENGTH_SHORT).show()
+                                    return@editTextSpinnerDialog
+                                }
+                                text.toBigDecimal() / BigDecimal("1024") * rate
+                            }
+                            else -> throw IllegalStateException()
+                        })
+                    },
                     "Cancel",
-                    editTextFunc = { hint = "Amount (SC)"; inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL })
+                    editTextFunc = { inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL },
+                    spinnerItems = listOf("SC", Prefs.fiatCurrency, "GB"))
                     .showDialogAndKeyboard()
         }
 
@@ -143,22 +168,36 @@ class AllowanceFragment : BaseFragment() {
         }
 
         period.setOnClickListener {
-            DialogUtil.editTextDialog(context!!,
+            DialogUtil.editTextSpinnerDialog(context!!,
                     "Period",
                     "Set",
-                    { vm.setAllowance(period = it.toInt()) },
+                    { text, units ->
+                        vm.setAllowance(period = when (units) {
+                            "Blocks" -> text.toInt()
+                            "Days" -> SiaUtil.daysToBlocks(text.toDouble()).toInt()
+                            else -> throw IllegalStateException()
+                        })
+                    },
                     "Cancel",
-                    editTextFunc = { hint = "Blocks"; inputType = InputType.TYPE_CLASS_NUMBER })
+                    editTextFunc = { inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL },
+                    spinnerItems = listOf("Blocks", "Days"))
                     .showDialogAndKeyboard()
         }
 
         renew_window.setOnClickListener {
-            DialogUtil.editTextDialog(context!!,
+            DialogUtil.editTextSpinnerDialog(context!!,
                     "Renew window",
                     "Set",
-                    { vm.setAllowance(renewWindow = it.toInt()) },
+                    { text, units ->
+                        vm.setAllowance(renewWindow = when (units) {
+                            "Blocks" -> text.toInt()
+                            "Days" -> SiaUtil.daysToBlocks(text.toDouble()).toInt()
+                            else -> throw IllegalStateException()
+                        })
+                    },
                     "Cancel",
-                    editTextFunc = { hint = "Blocks"; inputType = InputType.TYPE_CLASS_NUMBER })
+                    editTextFunc = { inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL },
+                    spinnerItems = listOf("Blocks", "Days"))
                     .showDialogAndKeyboard()
         }
 

@@ -10,7 +10,9 @@ import android.support.v7.app.AlertDialog
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
+import android.widget.ArrayAdapter
 import android.widget.EditText
+import android.widget.Spinner
 import android.widget.Toast
 import com.vandyke.sia.R
 import com.vandyke.sia.data.local.Prefs
@@ -54,10 +56,15 @@ object DialogUtil {
                 .show()
     }
 
-    fun editTextDialog(context: Context, title: String,
-                       positiveText: String? = null, positiveFunc: ((String) -> Unit)? = null,
-                       negativeText: String? = null, negativeFunc: ((String) -> Unit)? = null,
-                       editTextFunc: (EditText.() -> Unit)? = null): AlertDialog {
+    fun editTextDialog(
+            context: Context,
+            title: String,
+            positiveText: String? = null,
+            positiveFunc: ((String) -> Unit)? = null,
+            negativeText: String? = null,
+            negativeFunc: ((String) -> Unit)? = null,
+            editTextFunc: (EditText.() -> Unit)? = null
+    ): AlertDialog {
         val view = View.inflate(context, R.layout.edit_text_field, null)
         val editText = view.findViewById<EditText>(R.id.field)
         val dialog = with(AlertDialog.Builder(context)) {
@@ -74,6 +81,43 @@ object DialogUtil {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 dialog.dismiss()
                 positiveFunc?.invoke(editText.text.toString())
+            }
+            true
+        }
+        return dialog
+    }
+
+    fun editTextSpinnerDialog(
+            context: Context,
+            title: String,
+            positiveText: String? = null,
+            positiveFunc: ((String, String) -> Unit)? = null,
+            negativeText: String? = null,
+            negativeFunc: ((String) -> Unit)? = null,
+            editTextFunc: (EditText.() -> Unit)? = null,
+            spinnerItems: List<String>
+    ): AlertDialog {
+        val view = View.inflate(context, R.layout.edit_text_spinner, null)
+        val editText = view.findViewById<EditText>(R.id.field)
+        val spinner = view.findViewById<Spinner>(R.id.spinner)
+        val adapter = ArrayAdapter<String>(context, R.layout.spinner_selected_item)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinner.adapter = adapter
+        val dialog = with(AlertDialog.Builder(context)) {
+            setTitle(title)
+            setView(view)
+            if (editTextFunc != null) {
+                editText.editTextFunc()
+            }
+            adapter.addAll(spinnerItems)
+            positiveText?.let { setPositiveButton(it, { _, _ -> positiveFunc?.invoke(editText.text.toString(), spinner.selectedItem as String) }) }
+            negativeText?.let { setNegativeButton(it, { _, _ -> negativeFunc?.invoke(editText.text.toString()) }) }
+            create()
+        }
+        editText.setOnEditorActionListener { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                dialog.dismiss()
+                positiveFunc?.invoke(editText.text.toString(), spinner.selectedItem as String)
             }
             true
         }

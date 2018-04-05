@@ -22,7 +22,7 @@ import com.vandyke.sia.ui.renter.allowance.AllowanceViewModel.Metrics.*
 import com.vandyke.sia.util.rx.*
 import io.reactivex.Completable
 import io.reactivex.Flowable
-import io.reactivex.functions.BiFunction
+import io.reactivex.functions.Function3
 import java.math.BigDecimal
 import javax.inject.Inject
 
@@ -85,10 +85,10 @@ class AllowanceViewModel
         Flowable.combineLatest(
                 renterRepository.currentPeriod(),
                 consensusRepository.consensus(),
-                BiFunction { currentPeriod: CurrentPeriodData, consensusData: ConsensusData ->
-                    val period = allowance.value?.period ?: return@BiFunction 0
-                    val periodEndsAt = currentPeriod.currentPeriod + period
-                    return@BiFunction periodEndsAt - consensusData.height
+                allowance.toFlowable(),
+                Function3 { currentPeriod: CurrentPeriodData, consensus: ConsensusData, allowance: RenterSettingsAllowanceData ->
+                    val periodEndsAt = currentPeriod.currentPeriod + allowance.period
+                    return@Function3 periodEndsAt - consensus.height
                 })
                 .io()
                 .main()

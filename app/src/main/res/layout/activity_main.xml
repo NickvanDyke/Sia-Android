@@ -28,6 +28,7 @@
         android:layout_width="0dp"
         android:layout_height="2dp"
         android:elevation="12dp"
+        android:visibility="gone"
         android:indeterminate="true"
         app:layout_constraintBottom_toBottomOf="@id/toolbar"
         app:layout_constraintEnd_toEndOf="@id/toolbar"

@@ -7,6 +7,7 @@ package com.vandyke.sia.util.rx
 import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
+import io.reactivex.Flowable
 
 fun <T> LiveData<T>.observe(owner: LifecycleOwner, onChanged: (T) -> Unit) {
     this.observe(owner, Observer {
@@ -31,4 +32,12 @@ fun MutableNonNullLiveData<Int>.increment() {
 fun MutableNonNullLiveData<Int>.decrementZeroMin() {
     if (this.value > 0)
         this.value = this.value - 1
+}
+
+fun <T> LiveData<T>.toFlowable(): Flowable<T> {
+    return Flowable.fromPublisher<T> { subscriber ->
+        this.observeForever {
+            subscriber.onNext(it)
+        }
+    }
 }

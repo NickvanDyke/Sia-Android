@@ -83,5 +83,7 @@ object SiaUtil {
 
     fun blocksToDays(blocks: Int) = (blocks * BLOCKTIME).toFloat() / (24 * 60 * 60)
 
+    fun daysToBlocks(days: Double) = (days * 24 * 60 * 60) / BLOCKTIME
+
     val isSiadSupported = Build.SUPPORTED_64_BIT_ABIS.any { it == "arm64-v8a" }
 }

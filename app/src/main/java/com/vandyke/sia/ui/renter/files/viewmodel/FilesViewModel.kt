@@ -60,11 +60,11 @@ class FilesViewModel
         }
         ascending.observeForevs {
             Prefs.ascending = it
-            setDisplayedNodes()
+            updateNodesSource()
         }
         orderBy.observeForevs {
             Prefs.orderBy = it
-            setDisplayedNodes()
+            updateNodesSource()
         }
 
         changeDir()
@@ -97,7 +97,7 @@ class FilesViewModel
                 .main()
                 .subscribe({
                     currentDir.value = it
-                    setDisplayedNodes()
+                    updateNodesSource()
                 }, {
                     /* presumably the only error would be an empty result set from querying for the dir */
                     if (it is EmptyResultSetException) {
@@ -207,27 +207,26 @@ class FilesViewModel
     fun search(name: String) {
         searching.value = true
         searchTerm.value = name
-        setDisplayedNodes()
+        updateNodesSource()
     }
 
     fun cancelSearch() {
         searching.value = false
         searchTerm.value = ""
-        setDisplayedNodes()
+        updateNodesSource()
     }
 
     /** subscribes to the proper source for the displayed nodes, depending on the state of the viewmodel */
-    private fun setDisplayedNodes() {
-        nodesSubscription = if (searching.value) {
-                    filesRepository.search(searchTerm.value, currentDirPath, orderBy.value, ascending.value)
-                } else {
-                    filesRepository.immediateNodes(currentDirPath, orderBy.value, ascending.value)
-                }
-                        /* mapping is because we don't want to show the root dir which has an empty path */
-                        .map { nodes -> nodes.filterNot { node -> node is Dir && node.path.isEmpty() } }
-                        .io()
-                        .main()
-                        .subscribe(displayedNodes::setValue, ::onError)
+    private fun updateNodesSource() {
+        nodesSubscription = when {
+            searching.value -> filesRepository.search(searchTerm.value, currentDirPath, orderBy.value, ascending.value)
+            else -> filesRepository.immediateNodes(currentDirPath, orderBy.value, ascending.value)
+        }
+                /* mapping is because we don't want to show the root dir which has an empty path */
+                .map { nodes -> nodes.filterNot { node -> node is Dir && node.path.isEmpty() } }
+                .io()
+                .main()
+                .subscribe(displayedNodes::setValue, ::onError)
     }
 
     fun goToIndexInPath(index: Int) {
