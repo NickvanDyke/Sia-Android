@@ -128,12 +128,13 @@ class SiadService : LifecycleService() {
                      * No idea how it could be null (ProcessBuilder.start() doesn't return null).
                      * Maybe a race condition between here and stop/restartSiad(). Probably that siadProcess is set to null in those
                      * between the call to siadProcess.start() above, and here. In that case, siad should be stopped, which is why
-                     * that's what I'm calling inside the if block. */
-                    if (siadProcess == null) {
-                        stopSiad(State.COULDNT_START_PROCESS)
-                        return@launch
-                    }
-                    val inputReader = BufferedReader(InputStreamReader(siadProcess!!.inputStream))
+                     * that's what I'm calling inside the run block. I previously had a null check right before this, and still received
+                     * an NPE crash report when retrieving the input stream, so that's why it uses the elvis operator instead. */
+                    val inputReader = BufferedReader(InputStreamReader(siadProcess?.inputStream
+                            ?: run {
+                                stopSiad(State.COULDNT_START_PROCESS)
+                                return@launch
+                            }))
                     var line: String? = inputReader.readLine()
                     while (line != null) {
                         if (line.contains("Cannot run program") || line.contains("syntax error: unexpected")) {
@@ -147,9 +148,9 @@ class SiadService : LifecycleService() {
                         /* seems that sometimes the phone runs a portscan, and siad receives an HTTP request from it, and outputs a weird
                          * error message thingy. It doesn't affect operation at all, and we don't want the user to see it since
                          * it'd just be confusing */
-                        if (!line.contains("Unsolicited response received on idle HTTP channel starting with")) {
-                            siadStatus.siadOutput(line)
-                        }
+                            if (!line.contains("Unsolicited response received on idle HTTP channel starting with")) {
+                                siadStatus.siadOutput(line)
+                            }
 
                         line = inputReader.readLine()
                     }
