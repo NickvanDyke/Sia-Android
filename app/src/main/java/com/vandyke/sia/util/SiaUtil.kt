@@ -69,14 +69,14 @@ object SiaUtil {
         if (time > 60) {
             if (result.isNotEmpty())
                 result += " "
-            val divisor = time / 3600
+            val divisor = time / 60
             time -= 60 * divisor
             result += "${divisor}m"
         }
         if (time > 60) {
             if (result.isNotEmpty())
                 result += " "
-            result += "${time}ms"
+            result += "${time}s"
         }
         return result
     }

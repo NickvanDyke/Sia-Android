@@ -80,7 +80,7 @@ class AboutFragment : BaseFragment() {
         }
 
         /* creating our own email element because the default one opens a chooser. This one goes straight to email */
-        val email = Element("Email me\n(feedback, help, etc.)", mehdi.sakout.aboutpage.R.drawable.about_icon_email)
+        val email = Element("Email me (feedback, help, etc.)", mehdi.sakout.aboutpage.R.drawable.about_icon_email)
                 .setIntent(Intents.emailMe)
 
         val youtube = Element("Why Sia?", mehdi.sakout.aboutpage.R.drawable.about_icon_youtube)

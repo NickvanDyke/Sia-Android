@@ -225,6 +225,7 @@ class SiadService : LifecycleService() {
                 .setSmallIcon(R.drawable.sia_new_circle_logo_transparent_white)
                 .setLargeIcon(bitmapFromVector(R.drawable.sia_new_circle_logo_transparent))
                 .setContentTitle("Sia node")
+                .setShowWhen(false)
 
         /* the intent that launches MainActivity when the notification is selected */
         val contentIntent = Intent(this, MainActivity::class.java)

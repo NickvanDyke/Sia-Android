@@ -8,7 +8,7 @@ import android.content.Context
 import android.support.design.widget.CoordinatorLayout
 import android.util.AttributeSet
 import android.view.View
-import androidx.view.updatePadding
+import androidx.core.view.updatePadding
 import net.cachapa.expandablelayout.ExpandableLayout
 
 class FilesListBehavior(context: Context, attributeSet: AttributeSet) : CoordinatorLayout.Behavior<View>(context, attributeSet) {

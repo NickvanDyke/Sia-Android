@@ -24,7 +24,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/balanceText"
+            android:id="@+id/balance_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="32dp"
@@ -39,18 +39,18 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/scNote"
+            android:id="@+id/sc_note"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:elevation="10dp"
             android:text="SC"
             android:textColor="@android:color/white"
-            app:layout_constraintBaseline_toBaselineOf="@id/balanceText"
-            app:layout_constraintStart_toEndOf="@+id/balanceText" />
+            app:layout_constraintBaseline_toBaselineOf="@id/balance_text"
+            app:layout_constraintStart_toEndOf="@+id/balance_text" />
 
         <TextView
-            android:id="@+id/balanceUnconfirmedText"
+            android:id="@+id/balance_unconfirmed_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -59,10 +59,10 @@
             android:textColor="@android:color/white"
             android:visibility="invisible"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/balanceText" />
+            app:layout_constraintTop_toBottomOf="@+id/balance_text" />
 
         <TextView
-            android:id="@+id/balanceUsdText"
+            android:id="@+id/balance_usd_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
@@ -71,13 +71,24 @@
             android:text="0 USD"
             android:textColor="@android:color/white"
             android:textSize="14sp"
-            app:layout_constraintEnd_toStartOf="@+id/syncText"
+            app:layout_constraintEnd_toStartOf="@+id/sync_text"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/balanceUnconfirmedText"
-            app:layout_constraintTop_toBottomOf="@id/balanceUnconfirmedText" />
+            app:layout_constraintStart_toStartOf="@+id/balance_unconfirmed_text"
+            app:layout_constraintTop_toBottomOf="@id/balance_unconfirmed_text" />
 
         <TextView
-            android:id="@+id/syncText"
+            android:visibility="gone"
+            android:id="@+id/unlocking_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:elevation="10dp"
+            android:text="Unlocking: 0"
+            android:textColor="@android:color/white"
+            app:layout_constraintBottom_toTopOf="@id/sync_text"
+            app:layout_constraintEnd_toEndOf="@id/sync_text" />
+
+        <TextView
+            android:id="@+id/sync_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
@@ -85,7 +96,7 @@
             android:text="Not syncing: 0 (0%)"
             android:textColor="@android:color/white"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/balanceUsdText" />
+            app:layout_constraintTop_toTopOf="@+id/balance_usd_text" />
 
         <me.zhanghai.android.materialprogressbar.MaterialProgressBar
             android:id="@+id/progress_bar"
@@ -110,10 +121,10 @@
             android:elevation="4dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/balanceUsdText" />
+            app:layout_constraintTop_toBottomOf="@+id/balance_usd_text" />
 
         <android.support.v4.widget.SwipeRefreshLayout
-            android:id="@+id/transactionListSwipe"
+            android:id="@+id/transaction_list_swipe"
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -134,7 +145,7 @@
     </android.support.constraint.ConstraintLayout>
 
     <com.github.clans.fab.FloatingActionMenu
-        android:id="@+id/fabWalletMenu"
+        android:id="@+id/fab_wallet_menu"
         android:layout_width="@dimen/fab_size_normal"
         android:layout_height="@dimen/fab_size_normal"
         android:layout_gravity="bottom|end"
@@ -146,7 +157,7 @@
         app:menu_colorPressed="?colorPrimaryDark">
 
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fabSend"
+            android:id="@+id/fab_send"
             android:layout_width="@dimen/fab_size_normal"
             android:layout_height="@dimen/fab_size_normal"
             android:src="@drawable/ic_send_white"
@@ -154,7 +165,7 @@
             app:fab_colorPressed="?colorPrimaryDark" />
 
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fabReceive"
+            android:id="@+id/fab_receive"
             android:layout_width="@dimen/fab_size_normal"
             android:layout_height="@dimen/fab_size_normal"
             android:src="@drawable/ic_download_white"

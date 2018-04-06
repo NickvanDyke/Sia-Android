@@ -59,30 +59,30 @@ class WalletFragment : BaseFragment() {
         transaction_list.addItemDecoration(DividerItemDecoration(transaction_list.context,
                 (transaction_list.layoutManager as LinearLayoutManager).orientation))
         transaction_list.adapter = adapter
-        transaction_list.addOnScrollListener(RecyclerViewHideFabOnScrollListener(fabWalletMenu))
+        transaction_list.addOnScrollListener(RecyclerViewHideFabOnScrollListener(fab_wallet_menu))
 
         /* set up click listeners for the big buttons */
-        fabWalletMenu.setOnMenuButtonClickListener {
-            if (!fabWalletMenu.isOpened) {
+        fab_wallet_menu.setOnMenuButtonClickListener {
+            if (!fab_wallet_menu.isOpened) {
                 when {
                     childFragment != null -> if (childFragment?.onCheckPressed() == false) collapseFrame()
                     vm.wallet.value?.encrypted == false -> expandFrame(WalletCreateFragment())
                     vm.wallet.value?.unlocked == false -> expandFrame(WalletUnlockFragment())
-                    else -> fabWalletMenu.open(true)
+                    else -> fab_wallet_menu.open(true)
                 }
             } else {
-                fabWalletMenu.close(true)
+                fab_wallet_menu.close(true)
             }
         }
-        fabSend.setOnClickListener {
-            fabWalletMenu.close(true)
+        fab_send.setOnClickListener {
+            fab_wallet_menu.close(true)
             expandFrame(WalletSendFragment())
         }
-        fabReceive.setOnClickListener {
-            fabWalletMenu.close(true)
+        fab_receive.setOnClickListener {
+            fab_wallet_menu.close(true)
             expandFrame(WalletReceiveFragment())
         }
-        balanceText.setOnClickListener { v ->
+        balance_text.setOnClickListener { v ->
             AlertDialog.Builder(v.context)
                     .setTitle("Exact Balance")
                     .setMessage("${vm.wallet.value?.confirmedsiacoinbalance?.toSC()?.toPlainString()
@@ -92,8 +92,8 @@ class WalletFragment : BaseFragment() {
         }
 
         /* set swipe-down stuff */
-        transactionListSwipe.setOnRefreshListener(vm::refreshAll)
-        transactionListSwipe.setColors(context!!)
+        transaction_list_swipe.setOnRefreshListener(vm::refreshAll)
+        transaction_list_swipe.setColors(context!!)
 
         expandableFrame.setOnExpansionUpdateListener { expansionFraction, state ->
             progress_bar?.setIndeterminateColorRes(when (state) {
@@ -123,7 +123,7 @@ class WalletFragment : BaseFragment() {
         }
 
         /* observe VM stuff */
-        vm.refreshing.observe(this, transactionListSwipe::setRefreshing)
+        vm.refreshing.observe(this, transaction_list_swipe::setRefreshing)
 
         vm.activeTasks.observe(this) {
             // TODO: when being made visible, the bar flickers at the location it was at last, before restarting
@@ -133,14 +133,14 @@ class WalletFragment : BaseFragment() {
 
         /* observe data in the viewModel */
         vm.wallet.observe(this) {
-            balanceText.text = it.confirmedsiacoinbalance.toSC().format()
+            balance_text.text = it.confirmedsiacoinbalance.toSC().format()
             if (it.unconfirmedsiacoinbalance != BigDecimal.ZERO) {
-                balanceUnconfirmedText.text =
+                balance_unconfirmed_text.text =
                         "${if (it.unconfirmedsiacoinbalance > BigDecimal.ZERO) "+" else ""}" +
                         "${it.unconfirmedsiacoinbalance.toSC().format()} unconfirmed"
-                balanceUnconfirmedText.visible()
+                balance_unconfirmed_text.visible()
             } else {
-                balanceUnconfirmedText.invisible()
+                balance_unconfirmed_text.invisible()
             }
             updateFabIcon()
             updateStatusIcon()
@@ -183,6 +183,16 @@ class WalletFragment : BaseFragment() {
         siadStatus.state.observe(this) {
             if (it == SiadStatus.State.SIAD_LOADED)
                 vm.refreshAll()
+        }
+
+        siadStatus.mostRecentSiadOutput.observe(this) {
+            if (it.contains("Wallet: scanned to height")) {
+                val height = it.substring(26, it.length - 3).toInt()
+                unlocking_text.text = "Unlocking: ${height.format()}"
+                unlocking_text.visible()
+            } else if (it == "Done!") {
+                unlocking_text.gone()
+            }
         }
     }
 
@@ -245,7 +255,7 @@ class WalletFragment : BaseFragment() {
         val scBalance = vm.wallet.value?.confirmedsiacoinbalance?.toSC() ?: return
         val scValue = vm.scValue.value?.get(Prefs.fiatCurrency) ?: return
         val fiatValue = scBalance * scValue
-        balanceUsdText.text = ("${fiatValue.format()} ${Prefs.fiatCurrency}")
+        balance_usd_text.text = ("${fiatValue.format()} ${Prefs.fiatCurrency}")
     }
 
     private fun updateStatusIcon() {
@@ -266,19 +276,19 @@ class WalletFragment : BaseFragment() {
         val height = consensus?.height?.format() ?: 0
         val progress = consensus?.syncProgress?.toInt() ?: 0
         if (vm.numPeers.value == 0) {
-            syncText.text = ("Not syncing: $height ($progress%)")
+            sync_text.text = ("Not syncing: $height ($progress%)")
         } else {
             if (consensus?.synced == true) {
-                syncText.text = ("${getString(R.string.synced)}: $height")
+                sync_text.text = ("${getString(R.string.synced)}: $height")
             } else {
-                syncText.text = ("${getString(R.string.syncing)}: $height ($progress%)")
+                sync_text.text = ("${getString(R.string.syncing)}: $height ($progress%)")
             }
         }
     }
 
     private fun updateFabIcon() {
         val wallet = vm.wallet.value
-        fabWalletMenu.menuIconView.setImageResource(when {
+        fab_wallet_menu.menuIconView.setImageResource(when {
             childFragment != null -> R.drawable.ic_check_white
             wallet?.unlocked == false && wallet.encrypted == true -> R.drawable.ic_lock_open_white
             else -> R.drawable.ic_add_white
@@ -291,8 +301,8 @@ class WalletFragment : BaseFragment() {
                 collapseFrame()
                 true
             }
-            fabWalletMenu.isOpened -> {
-                fabWalletMenu.close(true)
+            fab_wallet_menu.isOpened -> {
+                fab_wallet_menu.close(true)
                 true
             }
             else -> false

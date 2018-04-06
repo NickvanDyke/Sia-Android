@@ -40,17 +40,14 @@ class NodeStatusFragment : BaseFragment() {
         sia_output.movementMethod = ScrollingMovementMethod()
 
         siaButton.setOnClickListener {
-            if (siadStatus.state.value == CRASHED)
-                siadSource.signalRestart()
-            else
-                Prefs.siaManuallyStopped = !Prefs.siaManuallyStopped
+            Prefs.siaManuallyStopped = !Prefs.siaManuallyStopped
         }
 
         siadStatus.state.observe(this) {
             siaButton.text = when (it) {
                 COULDNT_COPY_BINARY -> "Couldn't copy Sia executable"
                 SERVICE_STARTED -> "Service started"
-                CRASHED -> "Crashed - tap to restart"
+                CRASHED -> "Crashed"
                 STARTING_PROCESS -> "Starting Sia process..."
                 SIAD_LOADING -> "Sia is loading..."
                 SIAD_LOADED -> "Running..."
