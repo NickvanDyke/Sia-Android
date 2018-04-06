@@ -42,8 +42,8 @@
                     android:layout_width="0dp"
                     android:layout_height="1dp"
                     android:layout_marginTop="8dp"
-                    app:layout_constraintEnd_toEndOf="parent"
                     android:background="?dividerHorizontal"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/current_period_header" />
 
@@ -144,8 +144,7 @@
 
             <android.support.v4.widget.NestedScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:scrollbars="vertical">
+                android:layout_height="wrap_content">
 
                 <LinearLayout
                     android:id="@+id/allowance_card"

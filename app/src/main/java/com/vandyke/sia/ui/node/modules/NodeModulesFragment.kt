@@ -13,6 +13,7 @@ import android.view.*
 import com.vandyke.sia.R
 import com.vandyke.sia.dagger.SiaViewModelFactory
 import com.vandyke.sia.data.local.Prefs
+import com.vandyke.sia.data.siad.SiadStatus
 import com.vandyke.sia.getAppComponent
 import com.vandyke.sia.ui.common.BaseFragment
 import io.github.tonnyl.light.Light
@@ -33,6 +34,9 @@ class NodeModulesFragment : BaseFragment() {
     @Inject
     lateinit var factory: SiaViewModelFactory
     private lateinit var vm: NodeModulesViewModel
+
+    @Inject
+    lateinit var siadStatus: SiadStatus
 
     private val adapter = ModulesAdapter()
 
@@ -139,7 +143,10 @@ class NodeModulesFragment : BaseFragment() {
             }
 
             module_switch.setOnClickListener {
-                Light.success(view!!, "${module.text} module ${if (module_switch.isChecked) "enabled" else "disabled"}, restarting Sia node...", Snackbar.LENGTH_LONG).show()
+                Light.success(view!!,
+                        "${module.text} module ${if (module_switch.isChecked) "enabled" else "disabled"}" +
+                                if (siadStatus.state.value!!.processIsRunning) ", restarting Sia node..." else "",
+                        Snackbar.LENGTH_LONG).show()
             }
         }
 

@@ -142,11 +142,13 @@ class AllowanceFragment : BaseFragment() {
                             }
 
                             "GB" -> {
-                                val rate = vm.prices.value?.storageterabytemonth ?: run {
-                                    Light.error(allowance_swiperefresh, "Error converting GB to SC", Snackbar.LENGTH_SHORT).show()
+                                val prices = vm.prices.value ?: run {
+                                    Light.error(allowance_swiperefresh, "Error converting GB to required SC", Snackbar.LENGTH_SHORT).show()
                                     return@editTextSpinnerDialog
                                 }
-                                text.toBigDecimal() / BigDecimal("1024") * rate
+                                val desiredTb = text.toBigDecimal() / BigDecimal("1024")
+                                val totalPricePerTb = prices.downloadterabyte + prices.uploadterabyte + prices.storageterabytemonth
+                                desiredTb * totalPricePerTb + prices.formcontracts
                             }
                             else -> throw IllegalStateException()
                         })

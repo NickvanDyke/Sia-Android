@@ -74,7 +74,7 @@ class FilesRepository
                 Single.zip(
                         Single.just(dir),
                         db.fileDao().getFilesUnderDir(dir.path),
-                        BiFunction<Dir, List<SiaFile>, Pair<Dir, List<SiaFile>>> { theDir, itsFiles -> theDir to itsFiles })
+                        BiFunction { theDir: Dir, itsFiles: List<SiaFile> -> theDir to itsFiles })
             }
             /* update the dir */
             .doOnNext { (dir, itsFiles) -> db.dirDao().updateSize(dir.path, itsFiles.sumSize()) }
@@ -100,15 +100,15 @@ class FilesRepository
     fun immediateNodes(path: String, orderBy: OrderBy, ascending: Boolean) = Flowable.combineLatest(
             db.dirDao().dirsInDir(path, orderBy = orderBy, ascending = ascending),
             db.fileDao().filesInDir(path, orderBy, ascending),
-            BiFunction<List<Dir>, List<SiaFile>, List<Node>> { dir: List<Dir>, file: List<SiaFile> ->
+            BiFunction { dir: List<Dir>, file: List<SiaFile> ->
                 return@BiFunction dir + file
             })!!
 
     fun search(name: String, path: String, orderBy: OrderBy, ascending: Boolean) = Flowable.combineLatest(
             db.dirDao().dirsUnderDirWithName(path, name, orderBy, ascending),
             db.fileDao().filesUnderDirWithName(path, name, orderBy, ascending),
-            BiFunction<List<Dir>, List<SiaFile>, List<Node>> { dir, file ->
-                return@BiFunction dir + file
+            BiFunction { dirs: List<Dir>, files: List<SiaFile> ->
+                return@BiFunction dirs + files
             })!!
 
     fun createDir(path: String) = db.fileDao().getFilesUnderDir(path)

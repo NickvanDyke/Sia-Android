@@ -27,7 +27,7 @@ class ApiModule {
     @Singleton
     fun provideSiaApi(): SiaApi {
         /* always return the actual api if it's a release build, so I don't accidentally release an update that uses the mock api */
-        return if (!BuildConfig.DEBUG || false) {
+        return if (!BuildConfig.DEBUG || true) {
             val clientBuilder = OkHttpClient.Builder()
                     .readTimeout(0, TimeUnit.MILLISECONDS) // no timeout because some Sia API calls can take a long time to return
 //                .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))

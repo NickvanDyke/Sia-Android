@@ -60,16 +60,18 @@ class SiadStatus
         WORKING_DIRECTORY_DOESNT_EXIST,
         EXTERNAL_STORAGE_ERROR,
         COULDNT_START_PROCESS,
-        /** the siad process is being configured (working directory, environment variables, etc.) and started */
+        /** the siad process is being configured (working directory, environment variables, etc.) and will then be started */
         STARTING_PROCESS,
         /* in both below states, the process has successfully started */
-        SIAD_LOADING,
-        SIAD_LOADED,
+        SIAD_LOADING { override val processIsRunning = true },
+        SIAD_LOADED { override val processIsRunning = true },
         /* the following are all states in which siad was previously running and has stopped */
         UNMET_CONDITIONS,
         CRASHED,
         MANUALLY_STOPPED,
         RESTARTING,
-        SERVICE_STOPPED,
+        SERVICE_STOPPED;
+
+        open val processIsRunning = false
     }
 }
