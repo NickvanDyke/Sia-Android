@@ -16,6 +16,8 @@ import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.siad.SiadStatus
 import com.vandyke.sia.getAppComponent
 import com.vandyke.sia.ui.common.BaseFragment
+import com.vandyke.sia.util.addIfNotPresent
+import com.vandyke.sia.util.remove
 import io.github.tonnyl.light.Light
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.fragment_node_modules.*
@@ -93,7 +95,7 @@ class NodeModulesFragment : BaseFragment() {
         return if (item.itemId == R.id.modules_info) {
             AlertDialog.Builder(context!!)
                     .setTitle("Modules info")
-                    .setMessage("The switch enables/disables the module on the Sia node. Each module's storage usage is also shown - tap to delete.")
+                    .setMessage("Each module on the list depends on the modules above it. The switch enables/disables the given module on the Sia node. Each module's storage usage is also shown - tap to delete.")
                     .setPositiveButton(android.R.string.ok, null)
                     .show()
             true
@@ -136,9 +138,9 @@ class NodeModulesFragment : BaseFragment() {
         init {
             module_switch.setOnCheckedChangeListener { buttonView, isChecked ->
                 if (!isChecked) {
-                    Prefs.modulesString = Prefs.modulesString.replace(module.name[0].toString(), "", true)
-                } else if (!Prefs.modulesString.contains(module.name[0], true)) {
-                    Prefs.modulesString += module.name[0].toLowerCase()
+                    Prefs.modulesString = Prefs.modulesString.remove(module.name[0].toString(), true)
+                } else {
+                    Prefs.modulesString = Prefs.modulesString.addIfNotPresent(module.name[0].toLowerCase().toString(), true)
                 }
             }
 

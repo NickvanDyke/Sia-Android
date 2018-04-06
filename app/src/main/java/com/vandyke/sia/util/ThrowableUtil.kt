@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.View
 import com.vandyke.sia.BuildConfig
 import com.vandyke.sia.data.local.Prefs
+import com.vandyke.sia.data.remote.ModuleNotEnabled
 import com.vandyke.sia.data.remote.SiaException
 import com.vandyke.sia.data.remote.SiadNotRunning
 import com.vandyke.sia.data.siad.SiadStatus
@@ -56,11 +57,23 @@ fun Throwable.customMsg(): String? {
 
 fun CompositeException.all(clazz: Class<*>) = this.exceptions.all { it.javaClass == clazz }
 
+fun Throwable.isOrAll(clazz: Class<*>) = this.javaClass == clazz || (this as? CompositeException)?.all(clazz) == true
+
 fun Throwable.snackbar(view: View, state: SiadStatus.State, length: Int = Snackbar.LENGTH_SHORT) {
     Light.error(view, this.customMsg() ?: "Error", length).apply {
-        if ((this@snackbar is SiadNotRunning || (this@snackbar as? CompositeException)?.all(SiadNotRunning::class.java) == true)
-                && state == SiadStatus.State.MANUALLY_STOPPED) {
+        if (this@snackbar.isOrAll(SiadNotRunning::class.java) && state == SiadStatus.State.MANUALLY_STOPPED) {
             setAction("Start") { Prefs.siaManuallyStopped = false }
+            setActionTextColor(view.context.getColorRes(android.R.color.white))
+        } else if (this@snackbar.isOrAll(ModuleNotEnabled::class.java)) {
+            val module = when {
+                this@snackbar is ModuleNotEnabled -> this@snackbar.module
+                this@snackbar is CompositeException -> (this@snackbar.exceptions[0] as ModuleNotEnabled).module
+                else -> throw IllegalStateException()
+            }
+            setAction("Enable") {
+                Prefs.modulesString = Prefs.modulesString.addIfNotPresent(module[0].toString())
+                Light.success(view, "Enabled module: $module, restarting Sia node...", Snackbar.LENGTH_SHORT).show()
+            }
             setActionTextColor(view.context.getColorRes(android.R.color.white))
         }
     }.show()

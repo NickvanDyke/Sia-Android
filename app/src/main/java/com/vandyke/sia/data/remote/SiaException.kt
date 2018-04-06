@@ -19,7 +19,7 @@ sealed class SiaException(msg: String) : Throwable(msg) {
             return when {
                 msg.contains("siad is not ready") -> SiadNotReady()
                 msg.contains("API authentication failed") -> APIAuthFailed()
-                msg.contains("404 - Refer to API.md") -> Sia404()
+                msg.contains("404 - Refer to API.md") -> ModuleNotEnabled("null")
 
                 msg.contains("wallet has already been unlocked") -> WalletAlreadyUnlocked()
                 msg.contains("wallet must be unlocked before it can be used") -> WalletLocked()
@@ -52,7 +52,7 @@ sealed class SiaException(msg: String) : Throwable(msg) {
 class SiadNotReady : SiaException("Sia is still loading")
 class SiadNotRunning : SiaException("Sia node isn't running")
 class APIAuthFailed : SiaException("Incorrect API password")
-class Sia404 : SiaException("Required module isn't running")
+class ModuleNotEnabled(val module: String) : SiaException("Required module isn't enabled: $module")
 
 class WalletAlreadyUnlocked : SiaException("Wallet is already unlocked")
 class WalletLocked : SiaException("Please unlock the wallet first")

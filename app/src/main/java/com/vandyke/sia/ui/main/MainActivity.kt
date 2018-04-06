@@ -96,9 +96,9 @@ class MainActivity : AppCompatActivity() {
             drawer.setSelection(when (Prefs.startupPage) {
                 "files" -> {
                     displayFragment(if (BuildConfig.DEBUG) FilesFragment::class.java else ComingSoonFragment::class.java)
-                    3L // doesn't fire the listener? Maybe since it's in a submenu. So we set it manually above
+                    DRAWER_ID_FILES // doesn't fire the listener? Maybe since it's in a submenu. So we set it manually above
                 }
-                "wallet" -> 2L
+                "wallet" -> DRAWER_ID_WALLET
                 else -> throw IllegalArgumentException("Invalid startup page: ${Prefs.startupPage}")
             }, true)
         } else {
@@ -146,9 +146,9 @@ class MainActivity : AppCompatActivity() {
                     val purchases = client.queryPurchases(BillingClient.SkuType.SUBS)
                     if (purchases.responseCode == BillingClient.BillingResponse.OK) {
                         val purchased = purchases.purchasesList?.any { it.sku == PurchaseActivity.overall_sub_sku } == true
-                        if (purchased)
+                        if (purchased) {
                             Prefs.requirePurchaseAt = 0
-                        if (!purchased && System.currentTimeMillis() > Prefs.requirePurchaseAt) {
+                        } else if (System.currentTimeMillis() > Prefs.requirePurchaseAt) {
                             finish()
                             startActivity(Intent(this@MainActivity, PurchaseActivity::class.java))
                             // TODO: maybe stop SiadService here? Because due to the time that checking purchases takes, it will have started by now
@@ -218,7 +218,7 @@ class MainActivity : AppCompatActivity() {
                             .withIconTintingEnabled(true)
                             .withSelectedIconColor(colorPrimary)
                             .withSelectedTextColor(colorPrimary)
-                            .withIdentifier(3)
+                            .withIdentifier(DRAWER_ID_FILES)
                             .withOnDrawerItemClickListener { _, _, _ ->
                                 displayFragment(if (BuildConfig.DEBUG)
                                     FilesFragment::class.java
@@ -232,7 +232,7 @@ class MainActivity : AppCompatActivity() {
                             .withIconTintingEnabled(true)
                             .withSelectedIconColor(colorPrimary)
                             .withSelectedTextColor(colorPrimary)
-                            .withIdentifier(1)
+                            .withIdentifier(DRAWER_ID_ALLOWANCE)
                             .withOnDrawerItemClickListener { _, _, _ ->
                                 displayFragment(if (BuildConfig.DEBUG)
                                     AllowanceFragment::class.java
@@ -247,7 +247,7 @@ class MainActivity : AppCompatActivity() {
                 iconTintingEnabled = true
                 selectedIconColor = colorPrimary.toLong()
                 selectedTextColor = colorPrimary.toLong()
-                identifier = 2
+                identifier = DRAWER_ID_WALLET
                 onClick { view -> displayFragment(WalletFragment::class.java); false }
             }
 
@@ -291,5 +291,11 @@ class MainActivity : AppCompatActivity() {
         } else if (visibleFragment?.onBackPressed() != true) {
             super.onBackPressed()
         }
+    }
+
+    companion object {
+        const val DRAWER_ID_FILES = 1L
+        const val DRAWER_ID_ALLOWANCE = 2L
+        const val DRAWER_ID_WALLET = 3L
     }
 }

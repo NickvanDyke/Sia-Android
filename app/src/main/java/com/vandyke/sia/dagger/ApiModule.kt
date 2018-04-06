@@ -39,8 +39,7 @@ class ApiModule {
                         val newRequest = request.newBuilder()
                                 .removeHeader("READ_TIMEOUT")
                                 .build()
-                        println(readTimeout)
-                        it.withReadTimeout(readTimeout, TimeUnit.MILLISECONDS)
+                        return@addInterceptor it.withReadTimeout(readTimeout, TimeUnit.MILLISECONDS)
                                 .proceed(newRequest)
                     }
                     /* check non-success responses for Sia-specific errors and throw the appropriate exception */
@@ -55,7 +54,13 @@ class ApiModule {
                             val response = it.proceed(request)
                             if (!response.isSuccessful) {
                                 val errorMsg = response.peekBody(256).string()
-                                SiaException.fromError(errorMsg)?.let { throw it }
+                                val e = SiaException.fromError(errorMsg)
+                                if (e is ModuleNotEnabled) {
+                                    val module = original.url().pathSegments()[0]
+                                    throw ModuleNotEnabled(module)
+                                } else if (e != null) {
+                                    throw e
+                                }
                             }
                             return@addInterceptor response
                         } catch (e: ConnectException) {

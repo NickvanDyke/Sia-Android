@@ -208,7 +208,7 @@ class FilesFragment : BaseFragment() {
                 selectedMenu.collapse()
             } else {
                 setMultiMoveImage()
-                numSelected.text = ("${it.size} ${if (it.size == 1) "item" else "items"}") // maybe have an image with a # over it instead of text?
+                num_selected.text = "${it.size} ${"item".pluralize(it.size)}"
                 selectedMenu.expand()
             }
         }
@@ -391,10 +391,7 @@ class FilesFragment : BaseFragment() {
     }
 
     private fun setSearchHint() {
-        if (vm.currentDirPath.isEmpty())
-            searchView?.queryHint = "Search..."
-        else
-            searchView?.queryHint = "Search ${vm.currentDir.value.name}..."
+        searchView?.queryHint = "Search${if (vm.currentDirPath.isNotEmpty()) " ${vm.currentDir.value.name}" else ""}..."
     }
 
     private fun setMultiMoveImage() {

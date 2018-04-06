@@ -10,7 +10,7 @@
         android:gravity="bottom"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        android:id="@+id/siaOutput"
+        android:id="@+id/sia_output"
         android:typeface="monospace"
         android:layout_width="match_parent"
         android:layout_height="0dp"

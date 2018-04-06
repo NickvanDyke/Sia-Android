@@ -1,7 +1,10 @@
 package com.vandyke.sia.ui.node
 
+import android.graphics.Typeface
 import android.os.Bundle
+import android.text.SpannableString
 import android.text.method.ScrollingMovementMethod
+import android.text.style.StyleSpan
 import android.view.View
 import com.vandyke.sia.R
 import com.vandyke.sia.data.local.Prefs
@@ -14,11 +17,15 @@ import com.vandyke.sia.util.rx.main
 import com.vandyke.sia.util.rx.observe
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.fragment_node_status.*
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
 
 class NodeStatusFragment : BaseFragment() {
     override val layoutResId: Int = R.layout.fragment_node_status
     override val title: String = "Node Status"
+
+    private val df = SimpleDateFormat.getTimeInstance()
 
     @Inject
     lateinit var siadStatus: SiadStatus
@@ -30,7 +37,7 @@ class NodeStatusFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         context!!.getAppComponent().inject(this)
 
-        siaOutput.movementMethod = ScrollingMovementMethod()
+        sia_output.movementMethod = ScrollingMovementMethod()
 
         siaButton.setOnClickListener {
             if (siadStatus.state.value == CRASHED)
@@ -65,7 +72,10 @@ class NodeStatusFragment : BaseFragment() {
         subscription = siadStatus.allSiadOutput
                 .main()
                 .subscribe {
-                    siaOutput.append(it + "\n")
+                    val time = df.format(Date())
+                    val str = SpannableString("$time $it\n")
+                    str.setSpan(StyleSpan(Typeface.BOLD), 0, time.length, 0)
+                    sia_output.append(str)
                 }
     }
 

@@ -137,6 +137,10 @@ fun String.replaceLast(oldValue: String, newValue: String): String {
 /** obviously should only be used with words that are pluralized by only adding an s */
 fun String.pluralize(num: Int) = if (num == 1) this else "${this}s"
 
+fun String.remove(string: String, ignoreCase: Boolean = false) = this.replace(string, "", ignoreCase)
+
+fun String.addIfNotPresent(string: String, ignoreCase: Boolean = false) = if (this.contains(string, ignoreCase)) this else this + string
+
 fun ProgressBar.setIndeterminateColorRes(colorRes: Int) {
     this.indeterminateDrawable.setColorFilter(ContextCompat.getColor(context!!, colorRes), PorterDuff.Mode.SRC_IN)
 }

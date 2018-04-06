@@ -28,10 +28,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        app:el_parallax="0"
-        app:layout_behavior="com.vandyke.sia.ui.common.SnackbarAwareBehavior"
+        android:background="@android:color/white"
         android:elevation="12dp"
-        android:background="@android:color/white" >
+        app:el_parallax="0"
+        app:layout_behavior="com.vandyke.sia.ui.common.SnackbarAwareBehavior">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -40,13 +40,14 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/numSelected"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginStart="16dp"
+                android:paddingStart="16dp"
                 android:layout_weight="1"
-                android:gravity="center_vertical"
-                android:text="0 items"
+                android:id="@+id/num_selected"
+                android:paddingEnd="16dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="1 item"
                 android:textColor="?android:attr/textColorSecondary"
                 android:textSize="18sp" />
 

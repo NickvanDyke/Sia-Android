@@ -36,7 +36,7 @@ fun MutableNonNullLiveData<Int>.decrementZeroMin() {
 
 fun <T> LiveData<T>.toFlowable(): Flowable<T> {
     return Flowable.fromPublisher<T> { subscriber ->
-        this.observeForever {
+        this.observeForevs {
             subscriber.onNext(it)
         }
     }
