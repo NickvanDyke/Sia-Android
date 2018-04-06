@@ -29,8 +29,21 @@ class ApiModule {
         /* always return the actual api if it's a release build, so I don't accidentally release an update that uses the mock api */
         return if (!BuildConfig.DEBUG || true) {
             val clientBuilder = OkHttpClient.Builder()
-                    .readTimeout(0, TimeUnit.MILLISECONDS) // no timeout because some Sia API calls can take a long time to return
 //                .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
+                    /* no read timeout because some Sia API calls can take a long time to return/respond */
+                    .readTimeout(0, TimeUnit.MILLISECONDS)
+                    /* check for a different timeout on this endpoint, for requests made to endpoints other than siad */
+                    .addInterceptor {
+                        val request = it.request()
+                        val readTimeout = request.header("READ_TIMEOUT")?.toIntOrNull() ?: it.readTimeoutMillis()
+                        val newRequest = request.newBuilder()
+                                .removeHeader("READ_TIMEOUT")
+                                .build()
+                        println(readTimeout)
+                        it.withReadTimeout(readTimeout, TimeUnit.MILLISECONDS)
+                                .proceed(newRequest)
+                    }
+                    /* check non-success responses for Sia-specific errors and throw the appropriate exception */
                     .addInterceptor {
                         val original: Request = it.request()
                         val request: Request = original.newBuilder()
@@ -52,6 +65,7 @@ class ApiModule {
                                 throw e
                         }
                     }
+
 
             // TODO: if the first (and only first) Retrofit usage on a page is a ConnectException error
             // (and I think only a ConnectException - I've tested with SiaExceptions and it was fine. Haven't tried others),

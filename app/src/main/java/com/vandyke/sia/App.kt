@@ -9,6 +9,8 @@ import android.content.Context
 import com.chibatching.kotpref.Kotpref
 import com.crashlytics.android.Crashlytics
 import com.crashlytics.android.core.CrashlyticsCore
+import com.squareup.leakcanary.LeakCanary
+import com.squareup.leakcanary.RefWatcher
 import com.vandyke.sia.dagger.AppComponent
 import com.vandyke.sia.dagger.AppModule
 import com.vandyke.sia.dagger.DaggerAppComponent
@@ -18,10 +20,16 @@ import io.fabric.sdk.android.Fabric
 
 class App : Application() {
 
+    lateinit var refWatcher: RefWatcher
+        private set
     lateinit var appComponent: AppComponent
         private set
 
     override fun onCreate() {
+        if (LeakCanary.isInAnalyzerProcess(this))
+            return
+        refWatcher = LeakCanary.install(this)
+
         /* disable crash reporting for debug builds */
         Fabric.with(this, Crashlytics.Builder()
                 .core(CrashlyticsCore.Builder()
@@ -41,5 +49,6 @@ class App : Application() {
     }
 }
 
-/* extension function for more conveniently retrieving the appComponent for injecting */
+/* extension functions for more conveniently retrieving this class's members */
 fun Context.getAppComponent(): AppComponent = (this.applicationContext as App).appComponent
+fun Context.getRefWatcher(): RefWatcher = (this.applicationContext as App).refWatcher

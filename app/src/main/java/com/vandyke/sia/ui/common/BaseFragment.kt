@@ -12,6 +12,7 @@ import android.support.v7.widget.Toolbar
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.vandyke.sia.getRefWatcher
 import com.vandyke.sia.ui.main.MainActivity
 import com.vandyke.sia.util.Analytics
 import com.vandyke.sia.util.gone
@@ -85,6 +86,11 @@ abstract class BaseFragment : Fragment() {
 //        println("${this.javaClass.simpleName} onHideHelper")
         userVisibleHint = false
         onHide()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        context!!.getRefWatcher().watch(this)
     }
 
     open fun onShow() {

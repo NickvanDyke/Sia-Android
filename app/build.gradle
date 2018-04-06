@@ -143,10 +143,25 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:12.0.1'
 
     implementation 'com.android.billingclient:billing:1.0'
+
+    /* check for leaks */
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'
+    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
 }
 
 repositories {
     mavenCentral()
+}
+
+/* ensure the no-op leakcanary dependency is always used in unit tests */
+configurations.all { config ->
+    if (config.name.contains('UnitTest')) {
+        config.resolutionStrategy.eachDependency { details ->
+            if (details.requested.group == 'com.squareup.leakcanary' && details.requested.name == 'leakcanary-android') {
+                details.useTarget(group: details.requested.group, name: 'leakcanary-android-no-op', version: details.requested.version)
+            }
+        }
+    }
 }
 
 apply plugin: 'com.google.gms.google-services'

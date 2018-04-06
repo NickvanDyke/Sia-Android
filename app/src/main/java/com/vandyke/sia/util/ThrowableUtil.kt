@@ -15,6 +15,7 @@ import com.vandyke.sia.data.remote.SiadNotRunning
 import com.vandyke.sia.data.siad.SiadStatus
 import io.github.tonnyl.light.Light
 import io.reactivex.exceptions.CompositeException
+import java.net.UnknownHostException
 
 /* so that we can customize error messages for non-SiaExceptions.
  * Could probably require a context here and then be able to retrieve
@@ -38,7 +39,12 @@ fun Throwable.customMsg(): String? {
             if (BuildConfig.DEBUG)
                 localizedMessage
             else
-                "Database conflict. Try clearing cached data from settings if this persists."
+                "Database conflict. Try Settings > Clear cached data if this persists."
+        }
+        is UnknownHostException -> {
+            val msg = this.message ?: return null
+            val address = msg.substring(msg.indexOf('"') + 1, msg.lastIndexOf('"'))
+            return "Couldn't resolve hostname \"$address\""
         }
         else -> {
             if (this !is SiaException)

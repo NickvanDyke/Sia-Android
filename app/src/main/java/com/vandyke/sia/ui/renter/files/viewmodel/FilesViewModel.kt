@@ -15,6 +15,7 @@ import com.vandyke.sia.data.models.renter.SiaFile
 import com.vandyke.sia.data.models.renter.withTrailingSlashIfNotEmpty
 import com.vandyke.sia.data.repository.FilesRepository
 import com.vandyke.sia.data.siad.DownloadMonitorService
+import com.vandyke.sia.util.pluralize
 import com.vandyke.sia.util.rx.*
 import io.reactivex.disposables.Disposable
 import javax.inject.Inject
@@ -150,8 +151,8 @@ class FilesViewModel
                     /* start the service that will display notifications for active downloads. It'll stop itself when all are complete. */
                     application.startService(Intent(application, DownloadMonitorService::class.java))
                     val size = selectedNodes.value.size
-                    success.value = "$size ${if (size == 1) "file" else "files"} will be downloaded. " +
-                            "Check ${if (size == 1) "notification" else "notifications"} for details."
+                    success.value = "$size ${"file".pluralize(size)} will be downloaded. " +
+                            "Check ${"notification".pluralize(size)} for details."
                     deselectAll()
                 }, ::onError)
     }
@@ -161,6 +162,9 @@ class FilesViewModel
         // deselect them as they are. Would be useful for other multi methods too.
         // Currently if there's an error during moving (i.e. duplicate in destinate),
         // then some nodes might move before the error, but they won't be deselected.
+        // This results in a "file doesn't exist" error when attempting to move the same
+        // selection, since some of them have already moved, and so some of the selected nodes don't
+        // exist anymore.
         filesRepository.multiMove(selectedNodes.value, currentDirPath)
                 .io()
                 .main()
