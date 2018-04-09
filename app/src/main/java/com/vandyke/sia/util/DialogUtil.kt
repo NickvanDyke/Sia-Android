@@ -126,9 +126,7 @@ object DialogUtil {
 }
 
 fun AlertDialog.Builder.showDialogAndKeyboard() {
-    val dialog = this.create()
-    dialog.show()
-    dialog.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+    this.show().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
 }
 
 fun AlertDialog.showDialogAndKeyboard() {

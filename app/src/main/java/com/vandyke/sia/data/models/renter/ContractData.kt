@@ -5,20 +5,22 @@
 package com.vandyke.sia.data.models.renter
 
 import android.arch.persistence.room.Entity
+import android.arch.persistence.room.PrimaryKey
 import java.math.BigDecimal
 
 @Entity(tableName = "contracts")
 data class ContractData(
-        val downloadspending: BigDecimal,
-        val endheight: Int,
-        val fees: BigDecimal,
+        @PrimaryKey
         val id: String,
-        val netaddress: String,
-        val renterfunds: BigDecimal,
-        val size: BigDecimal,
-        val startheight: Int,
+        val uploadspending: BigDecimal,
+        val downloadspending: BigDecimal,
         val storagespending: BigDecimal,
         val totalcost: BigDecimal,
-        val uploadspending: BigDecimal,
+        val fees: BigDecimal,
+        val renterfunds: BigDecimal,
+        val startheight: Int,
+        val endheight: Int,
+        val netaddress: String,
+        val size: BigDecimal,
         val goodforupload: Boolean,
         val goodforrenew: Boolean)

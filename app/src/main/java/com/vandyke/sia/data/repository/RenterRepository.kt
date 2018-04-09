@@ -5,10 +5,14 @@
 package com.vandyke.sia.data.repository
 
 import com.vandyke.sia.data.local.AppDatabase
+import com.vandyke.sia.data.models.renter.ContractData
 import com.vandyke.sia.data.models.renter.CurrentPeriodData
 import com.vandyke.sia.data.models.renter.RenterSettingsAllowanceData
 import com.vandyke.sia.data.remote.SiaApi
+import com.vandyke.sia.util.diffWith
+import com.vandyke.sia.util.rx.inDbTransaction
 import io.reactivex.Completable
+import io.reactivex.rxkotlin.zipWith
 import java.math.BigDecimal
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -34,6 +38,23 @@ class RenterRepository
             .doOnSuccess { db.pricesDao().insertReplaceOnConflict(it) }
             .toCompletable()
 
+    fun updateContracts(): Completable = api.renterContracts()
+            .map { it.contracts.sortedBy(ContractData::id) }
+            .zipWith(db.contractDao().getAllById())
+            .doOnSuccess { (apiContracts, dbContracts) ->
+                apiContracts.diffWith(
+                        dbContracts,
+                        ContractData::id,
+                        { apiContract, dbContract ->
+                            if (apiContract != dbContract)
+                                db.contractDao().insertReplaceOnConflict(apiContract)
+                        },
+                        { db.contractDao().insertAbortOnConflict(it) },
+                        { db.contractDao().delete(it) })
+            }
+            .toCompletable()
+            .inDbTransaction(db)
+
     fun mostRecentPrices() = db.pricesDao().mostRecent()
 
     fun allowance() = db.allowanceDao().onlyEntry()
@@ -41,4 +62,6 @@ class RenterRepository
     fun mostRecentSpending() = db.spendingDao().mostRecent()
 
     fun currentPeriod() = db.currentPeriodDao().onlyEntry()
+
+    fun contracts() = db.contractDao().all()
 }

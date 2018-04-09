@@ -5,6 +5,7 @@
 package com.vandyke.sia.ui.main
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
@@ -30,6 +31,7 @@ import com.vandyke.sia.ui.node.settings.NodeSettingsFragmentContainer
 import com.vandyke.sia.ui.onboarding.IntroActivity
 import com.vandyke.sia.ui.onboarding.PurchaseActivity
 import com.vandyke.sia.ui.renter.allowance.AllowanceFragment
+import com.vandyke.sia.ui.renter.contracts.view.ContractsFragment
 import com.vandyke.sia.ui.renter.files.view.FilesFragment
 import com.vandyke.sia.ui.settings.SettingsFragmentContainer
 import com.vandyke.sia.ui.wallet.view.WalletFragment
@@ -43,6 +45,10 @@ class MainActivity : AppCompatActivity() {
 
     private var visibleFragment: BaseFragment? = null
     private lateinit var drawer: Drawer
+    private val prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+        if (key.contains('r') && !Prefs.viewedFirstTimeRenter)
+            showFirstTimeRenter()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -102,16 +108,17 @@ class MainActivity : AppCompatActivity() {
                 else -> throw IllegalArgumentException("Invalid startup page: ${Prefs.startupPage}")
             }, true)
         } else {
-            /* find the fragment currently visible stored in the savedInstanceState */
-            val storedFragmentClass = supportFragmentManager.findFragmentByTag(savedInstanceState.getString("visibleFragment")).javaClass
+            val storedFragmentClass = supportFragmentManager.findFragmentByTag(savedInstanceState.getString(VISIBLE_FRAGMENT_KEY)).javaClass
             displayFragment(storedFragmentClass)
-            drawer.setSelection(savedInstanceState.getLong("drawerSelectedId"), false)
+            drawer.setSelection(savedInstanceState.getLong(DRAWER_SELECTED_ID_KEY), false)
         }
 
         if (Prefs.displayedTransaction && !Prefs.shownFeedbackDialog) {
             DialogUtil.showRateDialog(this)
             Prefs.shownFeedbackDialog = true
         }
+
+        Prefs.preferences.registerOnSharedPreferenceChangeListener(prefsListener)
     }
 
     fun displayFragment(clazz: Class<*>) {
@@ -239,6 +246,19 @@ class MainActivity : AppCompatActivity() {
                                 else
                                     ComingSoonFragment::class.java)
                                 false
+                            },
+                    SecondaryDrawerItem()
+                            .withName("Contracts")
+                            .withIcon(R.drawable.ic_file_white)
+                            .withIconTintingEnabled(true)
+                            .withSelectedIconColor(colorPrimary)
+                            .withSelectedTextColor(colorPrimary)
+                            .withOnDrawerItemClickListener { _, _, _ ->
+                                displayFragment(if (BuildConfig.DEBUG)
+                                    ContractsFragment::class.java
+                                else
+                                    ComingSoonFragment::class.java)
+                                false
                             })
 
             primaryItem {
@@ -281,8 +301,8 @@ class MainActivity : AppCompatActivity() {
         super.onSaveInstanceState(outState)
         /* save the visible fragment, to be retrieved in onCreate */
         if (visibleFragment != null)
-            outState?.putString("visibleFragment", visibleFragment!!.javaClass.simpleName)
-        outState?.putLong("drawerSelectedId", drawer.currentSelection)
+            outState?.putString(VISIBLE_FRAGMENT_KEY, visibleFragment!!.javaClass.simpleName)
+        outState?.putLong(DRAWER_SELECTED_ID_KEY, drawer.currentSelection)
     }
 
     override fun onBackPressed() {
@@ -293,9 +313,29 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun showFirstTimeRenter() {
+        AlertDialog.Builder(this)
+                .setTitle("Renter")
+                .setMessage("This is your first time loading the renter module, which will" +
+                        " take a significant amount of time; possibly over an hour. This is normal, and" +
+                        " subsequent starts of the renter module will be much, much quicker. You are free" +
+                        " to keep Sia in the background while it loads. Thanks for your patience!")
+                .setPositiveButton(android.R.string.ok) { _, _ -> Prefs.viewedFirstTimeRenter = true }
+                .setCancelable(false)
+                .show()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Prefs.preferences.unregisterOnSharedPreferenceChangeListener(prefsListener)
+    }
+
     companion object {
         const val DRAWER_ID_FILES = 1L
         const val DRAWER_ID_ALLOWANCE = 2L
         const val DRAWER_ID_WALLET = 3L
+
+        private const val VISIBLE_FRAGMENT_KEY = "VISIBLE_FRAGMENT"
+        private const val DRAWER_SELECTED_ID_KEY = "DRAWER_SELECTED_KEY_ID"
     }
 }

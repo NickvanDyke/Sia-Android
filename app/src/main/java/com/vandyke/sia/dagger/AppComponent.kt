@@ -11,6 +11,7 @@ import com.vandyke.sia.data.siad.SiadService
 import com.vandyke.sia.ui.node.NodeStatusFragment
 import com.vandyke.sia.ui.node.modules.NodeModulesFragment
 import com.vandyke.sia.ui.renter.allowance.AllowanceFragment
+import com.vandyke.sia.ui.renter.contracts.view.ContractsFragment
 import com.vandyke.sia.ui.renter.files.view.FilesFragment
 import com.vandyke.sia.ui.settings.SettingsFragment
 import com.vandyke.sia.ui.terminal.TerminalFragment
@@ -35,6 +36,7 @@ interface AppComponent {
     fun inject(nodeStatusFragment: NodeStatusFragment)
     fun inject(nodeModulesFragment: NodeModulesFragment)
     fun inject(settingsFragment: SettingsFragment)
+    fun inject(contractsFragment: ContractsFragment)
     fun inject(siadService: SiadService)
     fun inject(downloadMonitorService: DownloadMonitorService)
     fun inject(retryDownloadReceiver: RetryDownloadReceiver)

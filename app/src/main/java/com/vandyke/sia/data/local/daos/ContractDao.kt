@@ -5,7 +5,16 @@
 package com.vandyke.sia.data.local.daos
 
 import android.arch.persistence.room.Dao
+import android.arch.persistence.room.Query
 import com.vandyke.sia.data.models.renter.ContractData
+import io.reactivex.Flowable
+import io.reactivex.Single
 
 @Dao
-interface ContractDao : BaseDao<ContractData>
+interface ContractDao : BaseDao<ContractData> {
+    @Query("SELECT * FROM contracts")
+    fun all(): Flowable<List<ContractData>>
+
+    @Query("SELECT * FROM contracts ORDER BY id")
+    fun getAllById(): Single<List<ContractData>>
+}

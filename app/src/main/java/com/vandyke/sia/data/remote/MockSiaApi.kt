@@ -85,6 +85,12 @@ class MockSiaApi : SiaApi {
             139000
     )
 
+    private val contracts = listOf(
+            ContractData("dkvjsadkljfoweinfskjdnf", BigDecimal("143").toHastings(), BigDecimal("100").toHastings(), BigDecimal("156").toHastings(), BigDecimal("463").toHastings(),
+                    BigDecimal("56").toHastings(), BigDecimal("673").toHastings(), 130000, 200000,
+                    "56.127.97.231", BigDecimal("6324677445"), true, true)
+    )
+
     override fun daemonStop(): Completable {
         TODO("not implemented")
     }
@@ -210,7 +216,7 @@ class MockSiaApi : SiaApi {
     }
 
     override fun renterContracts(): Single<ContractsData> {
-        return Single.error(NotImplementedError())
+        return Single.just(ContractsData(contracts))
     }
 
     override fun renterDownloads(): Single<DownloadsData> {
