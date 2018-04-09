@@ -3,6 +3,7 @@
   -->
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/fileLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -96,7 +97,7 @@
                 android:layout_alignStart="@id/file_uploadedbytes_header"
                 android:layout_below="@id/file_uploadedbytes_header"
                 android:layout_marginBottom="6dp"
-                android:text="500 MB" />
+                tools:text="500 MB" />
 
             <TextView
                 android:id="@+id/file_renewing_header"
@@ -114,7 +115,7 @@
                 android:layout_alignStart="@id/file_renewing_header"
                 android:layout_below="@id/file_renewing_header"
                 android:layout_marginBottom="6dp"
-                android:text="Yes" />
+                tools:text="Yes" />
 
             <TextView
                 android:id="@+id/file_expiration_header"
@@ -132,7 +133,7 @@
                 android:layout_alignStart="@id/file_expiration_header"
                 android:layout_below="@id/file_expiration_header"
                 android:layout_marginBottom="6dp"
-                android:text="Block 130924 (~3 days)" />
+                tools:text="Block 130924 (~3 days)" />
 
             <TextView
                 android:id="@+id/file_localpath_header"
@@ -150,7 +151,7 @@
                 android:layout_alignStart="@id/file_localpath_header"
                 android:layout_below="@id/file_localpath_header"
                 android:layout_marginBottom="16dp"
-                android:text="Long path to local file" />
+                tools:text="Long path to local file" />
 
         </RelativeLayout>
 

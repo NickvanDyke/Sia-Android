@@ -5,9 +5,7 @@
 package com.vandyke.sia.util
 
 import android.os.Build
-import com.vandyke.sia.data.local.Prefs
 import java.math.BigDecimal
-import java.text.NumberFormat
 
 const val BLOCKTIME = 600 // seconds
 
@@ -24,12 +22,6 @@ fun String.toSC(): BigDecimal = if (this.isBlank()) BigDecimal.ZERO else BigDeci
 fun BigDecimal.toHastings(): BigDecimal = this.multiply(HASTINGS_PER_SC)
 
 fun String.toHastings(): BigDecimal = if (this.isBlank()) BigDecimal.ZERO else BigDecimal(this).multiply(HASTINGS_PER_SC)
-
-fun BigDecimal.format(): String {
-    val nf = NumberFormat.getInstance()
-    nf.maximumFractionDigits = Prefs.displayedDecimalPrecision
-    return nf.format(this)
-}
 
 object SiaUtil {
     /** @param time timestamp, in seconds */
@@ -85,5 +77,5 @@ object SiaUtil {
 
     fun daysToBlocks(days: Double) = (days * 24 * 60 * 60) / BLOCKTIME
 
-    val isSiadSupported = Build.SUPPORTED_64_BIT_ABIS.any { it == "arm64-v8a" }
+    val isSiadSupported = Build.SUPPORTED_64_BIT_ABIS.contains("arm64-v8a")
 }

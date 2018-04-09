@@ -17,21 +17,21 @@ class IntroActivity : AhoyOnboarderActivity() {
         super.onCreate(savedInstanceState)
 
         val explanationCard = AhoyOnboarderCard("Android Sia client",
-                "Sia for Android runs a Sia node on your device which interacts with the Sia network, and lets " +
-                        "you interface with it, and therefore the network.",
+                "Sia for Android runs the Sia software (a 'Sia node') on your device, and provides an interface for you to interact with it.",
                 R.drawable.sia_new_circle_logo_transparent)
         val syncCard = AhoyOnboarderCard("Blockchain syncing",
                 "The Sia node will initially have to download, process, and store the Sia blockchain, which is about 11GB." +
                         " This can take a while (and is done in the background). You can change the download location under Node > Settings.",
                 R.drawable.ic_cloud_download_black)
         val sourceCard = AhoyOnboarderCard("Open source",
-                "Sia for Android and Sia both have their source code available on GitHub, linked in the About page.",
+                "Sia for Android and Sia both have their source code available on GitHub, linked in the About page. They're both still under" +
+                        " heavy development, and will continue to improve.",
                 mehdi.sakout.aboutpage.R.drawable.about_icon_github)
         val underDevCard = AhoyOnboarderCard("In development",
                 "Sia for Android and Sia are both still under heavy development, and will continue to improve.",
                 R.drawable.ic_code_black)
         val independentCard = AhoyOnboarderCard("Independent",
-                "Sia for Android is developed independently by me, an individual, and is not affiliated with Nebulous Labs.",
+                "Sia for Android is developed independently by me, an individual, and is not affiliated with Nebulous Labs. I also do not work on the Sia software.",
                 R.drawable.ic_person_outline_black)
         val emailMeCard = AhoyOnboarderCard("Contact me!",
                 "I respond to each and every email. Please email me from the About page if you " +

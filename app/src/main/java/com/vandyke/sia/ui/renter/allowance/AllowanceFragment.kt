@@ -222,8 +222,11 @@ class AllowanceFragment : BaseFragment() {
         }
 
         vm.remainingPeriod.observe(this) {
-            // TODO: improve this. Should have header text on left, and value text on right I think
-            current_period_header.text = "Current period - $it blocks remaining"
+            current_period_blocks_remaining.text = "$it blocks"
+            current_period_days_remaining.text = "(~${SiaUtil.blocksToDays(it).format()} days)"
+            current_period_blocks_remaining.visible()
+            current_period_days_remaining.visible()
+            current_period_remaining_label.visible()
         }
 
         vm.currentMetric.observe(this) {

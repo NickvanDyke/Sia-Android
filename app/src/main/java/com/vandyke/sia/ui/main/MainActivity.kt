@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
     private var visibleFragment: BaseFragment? = null
     private lateinit var drawer: Drawer
     private val prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-        if (key.contains('r') && !Prefs.viewedFirstTimeRenter)
+        if (key == "modulesString" && Prefs.modulesString.contains('r') && !Prefs.viewedFirstTimeRenter)
             showFirstTimeRenter()
     }
 
@@ -315,7 +315,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun showFirstTimeRenter() {
         AlertDialog.Builder(this)
-                .setTitle("Renter")
+                .setTitle("Notice")
                 .setMessage("This is your first time loading the renter module, which will" +
                         " take a significant amount of time; possibly over an hour. This is normal, and" +
                         " subsequent starts of the renter module will be much, much quicker. You are free" +

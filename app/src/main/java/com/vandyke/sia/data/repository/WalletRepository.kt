@@ -66,7 +66,8 @@ class WalletRepository
             .onErrorResumeNext {
                 /* fallback to db, but only if the reason for the failure was not due to the absence of a wallet */
                 if (it !is NoWallet)
-                    db.addressDao().getAddress().onErrorResumeNext(Single.error(it))
+                    db.addressDao().getAddress()
+                            .onErrorResumeNext(Single.error(it))
                 else
                     Single.error(it)
             }!!
@@ -81,13 +82,15 @@ class WalletRepository
                 db.addressDao().deleteAll()
                 db.addressDao().insertAllAbortOnConflict(it)
             }
-            .onErrorResumeNext {
+            .onErrorResumeNext { t ->
                 /* fallback to db, but only if the reason for the failure was not due to the absence of a wallet */
-                if (it !is NoWallet)
-                    db.addressDao().getAll().onErrorResumeNext(Single.error(it))
+                if (t !is NoWallet)
+                    db.addressDao().getAll()
+                            .doOnSuccess { if (it.isEmpty()) throw t }
+                            .onErrorResumeNext(Single.error(t))
                 else
-                    Single.error(it)
-            }!!
+                    Single.error(t)
+            }
 
     fun getSeeds(dictionary: String): Single<List<SeedData>> = api.walletSeeds(dictionary)
             .map {
@@ -97,11 +100,13 @@ class WalletRepository
                 db.seedDao().deleteAll()
                 db.seedDao().insertAllAbortOnConflict(it)
             }
-            .onErrorResumeNext {
-                if (it !is NoWallet && it !is WalletLocked)
-                    db.seedDao().getAll().onErrorResumeNext(Single.error(it))
+            .onErrorResumeNext { t ->
+                if (t !is NoWallet && t !is WalletLocked)
+                    db.seedDao().getAll()
+                            .doOnSuccess { if (it.isEmpty()) throw t }
+                            .onErrorResumeNext(Single.error(t))
                 else
-                    Single.error(it)
+                    Single.error(t)
             }
 
     fun unlock(password: String) = api.walletUnlock(password)
