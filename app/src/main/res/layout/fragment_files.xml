@@ -28,7 +28,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:background="@android:color/white"
+        android:background="?android:attr/windowBackground"
         android:elevation="12dp"
         app:el_parallax="0"
         app:layout_behavior="com.vandyke.sia.ui.common.SnackbarAwareBehavior">
@@ -36,14 +36,13 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:background="@drawable/selected_items_bg"
             android:orientation="horizontal">
 
             <TextView
                 android:paddingStart="16dp"
                 android:layout_weight="1"
                 android:id="@+id/num_selected"
-                android:paddingEnd="16dp"
+                android:paddingEnd="24dp"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -52,7 +51,7 @@
                 android:textSize="18sp" />
 
             <ImageButton
-                android:id="@+id/multiMove"
+                android:id="@+id/selected_move"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
@@ -62,7 +61,7 @@
                 android:tint="@android:color/darker_gray" />
 
             <ImageButton
-                android:id="@+id/multiDownload"
+                android:id="@+id/selected_download"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
@@ -72,7 +71,7 @@
                 android:tint="@android:color/darker_gray" />
 
             <ImageButton
-                android:id="@+id/multiDelete"
+                android:id="@+id/selected_delete"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
@@ -82,7 +81,17 @@
                 android:tint="@android:color/darker_gray" />
 
             <ImageButton
-                android:id="@+id/multiDeselect"
+                android:id="@+id/select_all"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:paddingEnd="8dp"
+                android:paddingStart="4dp"
+                android:src="@drawable/ic_select_all_black"
+                android:tint="@android:color/darker_gray" />
+
+            <ImageButton
+                android:id="@+id/deselect_all"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
@@ -95,7 +104,7 @@
     </net.cachapa.expandablelayout.ExpandableLayout>
 
     <com.github.clans.fab.FloatingActionMenu
-        android:id="@+id/fabFilesMenu"
+        android:id="@+id/fab_files_menu"
         android:layout_width="@dimen/fab_size_normal"
         android:layout_height="@dimen/fab_size_normal"
         android:layout_gravity="bottom|end"
@@ -107,7 +116,7 @@
         app:menu_colorPressed="?colorPrimaryDark">
 
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fabAddFile"
+            android:id="@+id/fab_add_file"
             android:layout_width="@dimen/fab_size_normal"
             android:layout_height="@dimen/fab_size_normal"
             android:src="@drawable/ic_file_white"
@@ -115,7 +124,7 @@
             app:fab_colorPressed="?colorPrimaryDark" />
 
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fabAddDir"
+            android:id="@+id/fab_add_dir"
             android:layout_width="@dimen/fab_size_normal"
             android:layout_height="@dimen/fab_size_normal"
             android:src="@drawable/ic_folder_white"

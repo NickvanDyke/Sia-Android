@@ -127,6 +127,10 @@ class FilesViewModel
         selectedNodes.value = listOf()
     }
 
+    fun selectAllInCurrentDir() {
+        selectedNodes.value = selectedNodes.value.union(displayedNodes.value).toList()
+    }
+
     fun toggleSelect(node: Node) {
         if (selectedNodes.value.any { it.path == node.path })
             deselect(node)

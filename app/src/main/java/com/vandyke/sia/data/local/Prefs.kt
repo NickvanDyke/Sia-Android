@@ -26,10 +26,11 @@ object Prefs : KotprefModel() {
     var delayedPurchase by booleanPref(false)
 
     var viewedOnboarding by booleanPref(false)
-    var viewedFirstTimeRenter by booleanPref(false)
+    var viewedFirstTimeLoadingRenter by booleanPref(false)
+    var viewedFirstTimeFiles by booleanPref(false)
 
-    var oldSiaColors by booleanPref(false)
-    var darkMode by booleanPref(false)
+    var oldSiaColors by booleanPref(true)
+    var darkMode by booleanPref(true)
     var startupPage by stringPref("wallet")
     var displayedDecimalPrecision by intPref(2)
 

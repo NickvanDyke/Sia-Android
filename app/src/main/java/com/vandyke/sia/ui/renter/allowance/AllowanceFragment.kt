@@ -130,6 +130,7 @@ class AllowanceFragment : BaseFragment() {
                     "Set",
                     { text, units ->
                         vm.setAllowance(when (units) {
+
                             "SC" -> text.toBigDecimal().toHastings()
 
                             Prefs.fiatCurrency -> {
@@ -141,15 +142,24 @@ class AllowanceFragment : BaseFragment() {
                                 sc.toHastings()
                             }
 
+                        /* GB accounts for uploading once, downloading once, and storing over the current period the entered amount,
+                         * as well as for forming contracts with the current number of hosts. Note that this means it'll overestimate (very minorly) if
+                         * we already have contracts, but that's not a big deal. Better to overestimate than under and have the user confused why it's not working. */
                             "GB" -> {
                                 val prices = vm.prices.value ?: run {
-                                    Light.error(allowance_swiperefresh, "Error converting GB to required SC", Snackbar.LENGTH_SHORT).show()
+                                    Light.error(allowance_swiperefresh, "Error converting GB to SC", Snackbar.LENGTH_SHORT).show()
                                     return@editTextSpinnerDialog
                                 }
+                                val allowance = vm.allowance.value ?: run {
+                                    Light.error(allowance_swiperefresh, "Error converting GB to SC", Snackbar.LENGTH_SHORT).show()
+                                    return@editTextSpinnerDialog
+                                }
+                                val periodLengthMonths = SiaUtil.blocksToDays(allowance.period) / 30
                                 val desiredTb = text.toBigDecimal() / BigDecimal("1024")
-                                val totalPricePerTb = prices.downloadterabyte + prices.uploadterabyte + prices.storageterabytemonth
-                                desiredTb * totalPricePerTb + prices.formcontracts
+                                val totalPricePerTb = prices.downloadterabyte + prices.uploadterabyte + (prices.storageterabytemonth * periodLengthMonths.toBigDecimal())
+                                desiredTb * totalPricePerTb + (prices.formOneContract * allowance.hosts.toBigDecimal())
                             }
+
                             else -> throw IllegalStateException()
                         })
                     },

@@ -24,7 +24,7 @@
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/spending_card"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content">
 
                 <TextView
                     android:id="@+id/current_period_header"
@@ -63,7 +63,7 @@
 
                 <Spinner
                     android:id="@+id/metric_spinner"
-                    android:layout_width="172dp"
+                    android:layout_width="172sp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:textColor="?android:attr/textColorPrimary"

@@ -48,6 +48,10 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.onboarding.SiaPositivesActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+        <activity
             android:name="com.vandyke.sia.ui.wallet.view.ScannerActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />

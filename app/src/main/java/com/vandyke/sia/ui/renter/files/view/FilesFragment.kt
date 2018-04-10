@@ -26,6 +26,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import com.vandyke.sia.R
+import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.models.renter.Dir
 import com.vandyke.sia.data.models.renter.SiaFile
 import com.vandyke.sia.data.repository.FilesRepository.OrderBy
@@ -79,10 +80,11 @@ class FilesFragment : BaseFragment() {
         nodesAdapter = NodesAdapter(this)
         nodes_list.adapter = nodesAdapter
 
+
+        /* set up path spinner */
         pathAdapter = ArrayAdapter(context, R.layout.spinner_selected_item_white)
         pathAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
-        /* set up path spinner */
         spinnerView = Spinner(context).apply {
             minimumWidth = 400
             onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -100,16 +102,16 @@ class FilesFragment : BaseFragment() {
         /* pull-to-refresh stuff */
         nodes_list_swiperefresh.setColors(context!!)
         nodes_list_swiperefresh.setOnRefreshListener(vm::refresh)
-        nodes_list.addOnScrollListener(RecyclerViewHideFabOnScrollListener(fabFilesMenu))
+        nodes_list.addOnScrollListener(RecyclerViewHideFabOnScrollListener(fab_files_menu))
 
         /* FAB stuff */
-        fabAddFile.setOnClickListener {
+        fab_add_file.setOnClickListener {
             launchSafChooseFile()
-            fabFilesMenu.close(true)
+            fab_files_menu.close(true)
         }
 
-        fabAddDir.setOnClickListener {
-            fabFilesMenu.close(true)
+        fab_add_dir.setOnClickListener {
+            fab_files_menu.close(true)
             DialogUtil.editTextDialog(context!!,
                     "New directory",
                     "Create",
@@ -119,8 +121,8 @@ class FilesFragment : BaseFragment() {
                     .showDialogAndKeyboard()
         }
 
-        /* multi select stuff */
-        multiMove.setOnClickListener {
+        /* selected buttons stuff */
+        selected_move.setOnClickListener {
             if (vm.allSelectedAreInCurrentDir) {
                 /* depending on how many nodes are selected, creating all these dialogs can have
                  * a noticeable delay. It could probably also crash if enough are created -
@@ -151,11 +153,11 @@ class FilesFragment : BaseFragment() {
             }
         }
 
-        multiDownload.setOnClickListener {
+        selected_download.setOnClickListener {
             downloadSelected()
         }
 
-        multiDelete.setOnClickListener {
+        selected_delete.setOnClickListener {
             AlertDialog.Builder(context!!)
                     .setTitle("Confirm delete")
                     .setMessage("Are you sure?")
@@ -164,7 +166,11 @@ class FilesFragment : BaseFragment() {
                     .show()
         }
 
-        multiDeselect.setOnClickListener {
+        select_all.setOnClickListener {
+            vm.selectAllInCurrentDir()
+        }
+
+        deselect_all.setOnClickListener {
             vm.deselectAll()
         }
 
@@ -184,10 +190,13 @@ class FilesFragment : BaseFragment() {
             spinnerView.setSelection(path.size - 1)
             setSearchHint()
             setMultiMoveImage()
+            fab_files_menu.showMenuButton(true)
         }
 
         vm.displayedNodes.observe(this) {
             nodesAdapter.submitList(it)
+            if (it.isEmpty())
+                fab_files_menu.showMenuButton(true)
         }
 
         vm.viewAsList.observe(this) {
@@ -235,7 +244,7 @@ class FilesFragment : BaseFragment() {
         }
 
         vm.success.observe(this) {
-            Light.success(coordinator, it, Snackbar.LENGTH_SHORT).show()
+            Light.success(coordinator, it, Snackbar.LENGTH_LONG).show()
         }
 
         vm.error.observe(this) {
@@ -246,6 +255,9 @@ class FilesFragment : BaseFragment() {
             if (it == SiadStatus.State.SIAD_LOADED)
                 vm.refresh()
         }
+
+        if (!Prefs.viewedFirstTimeFiles)
+            showFirstTimeFiles()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -268,7 +280,6 @@ class FilesFragment : BaseFragment() {
                 for (i in 0 until clipData.itemCount) {
                     val uri = clipData.getItemAt(i).uri
                     val path = FileUtils.getPath(context!!, uri)
-                    println(path)
                     if (path == null) {
                         Analytics.unsupportedDataSource(uri)
                         AlertDialog.Builder(context!!)
@@ -376,7 +387,7 @@ class FilesFragment : BaseFragment() {
         else -> super.onOptionsItemSelected(item)
     }
 
-    /* The order of the OrderBy enum values and the order of the sort by options in the list must be the same for this to work */
+    /** The order of the OrderBy enum values and the order of the sort by options in the list must be the same for this to work */
     private fun setCheckedOrderByItem() {
         val orderBy = vm.orderBy.value
         orderByItems.forEachIndexed { i, item ->
@@ -404,13 +415,13 @@ class FilesFragment : BaseFragment() {
             return
 
         /* fade out, switch to new image, fade in */
-        multiMove.animate()
+        selected_move.animate()
                 .alpha(0f)
                 .setDuration(150)
                 .withEndAction {
-                    multiMove.setImageResource(newResId)
+                    selected_move.setImageResource(newResId)
                     currentMultiMoveResId = newResId
-                    multiMove.animate()
+                    selected_move.animate()
                             .alpha(1f)
                             .setDuration(150)
                             .start()
@@ -440,8 +451,8 @@ class FilesFragment : BaseFragment() {
     }
 
     override fun onBackPressed(): Boolean {
-        return if (fabFilesMenu.isOpened) {
-            fabFilesMenu.close(true)
+        return if (fab_files_menu.isOpened) {
+            fab_files_menu.close(true)
             true
         } else {
             vm.goUpDir()
@@ -457,6 +468,17 @@ class FilesFragment : BaseFragment() {
     override fun onHide() {
         toolbar.removeView(spinnerView)
         actionBar.setDisplayShowTitleEnabled(true)
+    }
+
+    private fun showFirstTimeFiles() {
+        AlertDialog.Builder(context!!)
+                .setTitle("Notice")
+                .setMessage("The Sia network is still in its infancy compared to where it will be." +
+                        " At this time, it is quite reliable, and becoming increasingly so, but please do" +
+                        " not depend on it to store your only copy of important files.")
+                .setPositiveButton(android.R.string.ok) { _, _ -> Prefs.viewedFirstTimeFiles = true }
+                .setCancelable(false)
+                .show()
     }
 
     companion object {

@@ -15,7 +15,10 @@ data class PricesData(
         val downloadterabyte: BigDecimal,
         val formcontracts: BigDecimal, /* this is for forming 50 contracts (the default number) */
         val storageterabytemonth: BigDecimal,
-        val uploadterabyte: BigDecimal)
+        val uploadterabyte: BigDecimal) {
+    @Transient
+    val formOneContract = formcontracts / BigDecimal("50")
+}
 
 data class PricesDataJson(
         val downloadterabyte: BigDecimal,
