@@ -50,7 +50,7 @@ class FileHolder(itemView: View, filesFragment: FilesFragment) : NodeHolder(item
             file_upload_progressbar.gone()
             file_upload_progress_text.gone()
         } else {
-            file_upload_progressbar.setProgressColorRes(if (file.available) R.color.colorPrimary else R.color.negativeTransaction)
+            file_upload_progressbar.setProgressColorRes(if (file.available) R.color.color_success else R.color.negativeTransaction)
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N)
                 file_upload_progressbar.progress = progress
             else

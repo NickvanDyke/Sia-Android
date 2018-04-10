@@ -38,7 +38,10 @@ class WalletCreateFragment : BaseWalletFragment() {
 
     override fun onCheckPressed(): Boolean {
         val password = newPasswordCreate.text.toString()
-        if (password != confirmNewPasswordCreate.text.toString()) {
+        if (password.isEmpty()) {
+            Light.error(view!!, "Can't have empty password", Snackbar.LENGTH_SHORT).show()
+            return true
+        } else if (password != confirmNewPasswordCreate.text.toString()) {
             Light.error(view!!, "Passwords don't match", Snackbar.LENGTH_SHORT).show()
             return true
         }
