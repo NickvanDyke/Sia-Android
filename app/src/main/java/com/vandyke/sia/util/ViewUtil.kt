@@ -7,7 +7,7 @@ fun View.goneUnless(value: Boolean) {
     this.visibility = if (value) VISIBLE else GONE
 }
 
-fun View.hiddenUnless(value: Boolean) {
+fun View.invisibleUnless(value: Boolean) {
     this.visibility = if (value) VISIBLE else INVISIBLE
 }
 
@@ -21,18 +21,4 @@ fun View.invisible() {
 
 fun View.visible() {
     this.visibility = VISIBLE
-}
-
-fun View.fadeToGone(duration: Long) {
-    this.animate()
-            .setDuration(duration)
-            .alpha(0f)
-            .withEndAction { this.visibility = GONE }
-}
-
-fun View.fadeToVisible(duration: Long) {
-    this.animate()
-            .setDuration(duration)
-            .alpha(1f)
-            .withStartAction { this.visibility = VISIBLE }
 }

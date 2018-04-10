@@ -57,7 +57,7 @@ class WalletRepository
     fun walletMonthHistory() = db.walletDao().allLastMonth()
 
     val transactions by lazy {
-        LivePagedListBuilder(db.transactionDao().allByMostRecent(), 20).build()
+        LivePagedListBuilder(db.transactionDao().allByMostRecent(), 30).build()
     }
 
     /* singles */

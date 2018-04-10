@@ -25,6 +25,7 @@ import com.vandyke.sia.data.siad.SiadService
 import com.vandyke.sia.ui.about.AboutFragment
 import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.ui.common.ComingSoonFragment
+import com.vandyke.sia.ui.help.HelpFragment
 import com.vandyke.sia.ui.node.NodeStatusFragment
 import com.vandyke.sia.ui.node.modules.NodeModulesFragment
 import com.vandyke.sia.ui.node.settings.NodeSettingsFragmentContainer
@@ -289,6 +290,15 @@ class MainActivity : AppCompatActivity() {
                 selectedTextColor = colorPrimary.toLong()
                 iconTintingEnabled = true
                 onClick { view -> displayFragment(AboutFragment::class.java); false }
+            }
+
+            primaryItem {
+                name = "Help"
+                icon = R.drawable.ic_help_outline_black
+                selectedIconColor = colorPrimary.toLong()
+                selectedTextColor = colorPrimary.toLong()
+                iconTintingEnabled = true
+                onClick { view -> displayFragment(HelpFragment::class.java); false }
             }
         }
     }

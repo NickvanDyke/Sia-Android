@@ -30,6 +30,7 @@ import javax.inject.Inject
 
 /* the actual settings fragment, contained within SettingsFragmentContainer */
 class SettingsFragment : PreferenceFragmentCompatDividers() {
+
     @Inject
     lateinit var db: AppDatabase
 

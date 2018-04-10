@@ -10,6 +10,7 @@ import com.vandyke.sia.data.siad.RetryDownloadReceiver
 import com.vandyke.sia.data.siad.SiadService
 import com.vandyke.sia.ui.node.NodeStatusFragment
 import com.vandyke.sia.ui.node.modules.NodeModulesFragment
+import com.vandyke.sia.ui.node.settings.NodeSettingsFragment
 import com.vandyke.sia.ui.renter.allowance.AllowanceFragment
 import com.vandyke.sia.ui.renter.contracts.view.ContractsFragment
 import com.vandyke.sia.ui.renter.files.view.FilesFragment
@@ -35,6 +36,7 @@ interface AppComponent {
     fun inject(allowanceFragment: AllowanceFragment)
     fun inject(nodeStatusFragment: NodeStatusFragment)
     fun inject(nodeModulesFragment: NodeModulesFragment)
+    fun inject(nodeSettingsFragment: NodeSettingsFragment)
     fun inject(settingsFragment: SettingsFragment)
     fun inject(contractsFragment: ContractsFragment)
     fun inject(siadService: SiadService)

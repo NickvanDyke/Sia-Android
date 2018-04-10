@@ -19,6 +19,7 @@ import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.ui.onboarding.IntroActivity
 import com.vandyke.sia.util.GenUtil
 import com.vandyke.sia.util.Intents
+import com.vandyke.sia.util.gone
 import mehdi.sakout.aboutpage.AboutPage
 import mehdi.sakout.aboutpage.Element
 
@@ -48,11 +49,6 @@ class AboutFragment : BaseFragment() {
                     GenUtil.launchCustomTabs(context!!, "https://github.com/NebulousLabs/Sia")
                 }
 
-        val siaHelp = Element("Help", R.drawable.ic_help_outline_black)
-                .setOnClickListener {
-                    GenUtil.launchCustomTabs(context!!, "https://support.sia.tech/help_center")
-                }
-
         val siaHomepage = Element("Website", R.drawable.sia_new_circle_logo_transparent)
                 .setOnClickListener {
                     GenUtil.launchCustomTabs(context!!, "https://sia.tech")
@@ -80,7 +76,7 @@ class AboutFragment : BaseFragment() {
         }
 
         /* creating our own email element because the default one opens a chooser. This one goes straight to email */
-        val email = Element("Email me (feedback, help, etc.)", mehdi.sakout.aboutpage.R.drawable.about_icon_email)
+        val email = Element("Email me about anything", mehdi.sakout.aboutpage.R.drawable.about_icon_email)
                 .setIntent(Intents.emailMe)
 
         val youtube = Element("Why Sia?", mehdi.sakout.aboutpage.R.drawable.about_icon_youtube)
@@ -100,15 +96,15 @@ class AboutFragment : BaseFragment() {
                 .addItem(reddit)
                 .addItem(discord)
                 .addItem(youtube)
-                .addItem(siaHelp)
                 .create()
 
-        /* get the divider and the LinearLayout that holds the image and description, and hide them, since we don't want them */
         val root = page.rootView as ScrollView
         root.isVerticalScrollBarEnabled = false
         val linear = root.getChildAt(0) as LinearLayout
-        linear.getChildAt(0).visibility = View.GONE
-        linear.getChildAt(1).visibility = View.GONE
+        /* hide the LinearLayout that holds the image and description, since we don't want them */
+        linear.getChildAt(0).gone()
+        /* hide the top divider line */
+        linear.getChildAt(1).gone()
 
         return page
     }

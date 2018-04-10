@@ -95,5 +95,5 @@ open class RoomDbDirAndFileDaoTests {
                 .shouldContainAll(files.paths().filterNot { it == currPath1 || it == currPath2 || it == currPath3 })
     }
 
-    private fun List<SiaFile>.paths() = this.map { it.path }
+    private fun List<SiaFile>.paths() = this.map(SiaFile::path)
 }

@@ -12,18 +12,26 @@ import android.view.ViewGroup
 import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompatDividers
 import com.vandyke.sia.R
 import com.vandyke.sia.data.local.Prefs
+import com.vandyke.sia.data.siad.SiadStatus
+import com.vandyke.sia.getAppComponent
 import com.vandyke.sia.util.getAllFilesDirs
 import io.github.tonnyl.light.Light
 import java.io.File
+import javax.inject.Inject
 
 
 /* Note that we don't need to take manual action regarding siad when settings change, because SiadSource will
  * already be listening for changes to the relevant preferences. */
 class NodeSettingsFragment : PreferenceFragmentCompatDividers() {
 
+    @Inject
+    lateinit var siadStatus: SiadStatus
+
     private var prefsListener: SharedPreferences.OnSharedPreferenceChangeListener? = null
 
     override fun onCreatePreferencesFix(savedInstanceState: Bundle?, rootKey: String?) {
+        context!!.getAppComponent().inject(this)
+
         addPreferencesFromResource(R.xml.node_settings)
 
         val storageDirs = context!!.getAllFilesDirs().map { it.absolutePath }.toTypedArray()
@@ -45,11 +53,11 @@ class NodeSettingsFragment : PreferenceFragmentCompatDividers() {
                     Light.error(view!!, "Error with external storage: ${Environment.getExternalStorageState(dir)}", Snackbar.LENGTH_LONG).show()
                     false
                 } else {
-                    Light.success(view!!, "Changed Sia node's working directory, restarting it...", Snackbar.LENGTH_LONG).show()
+                    successSnackbar("Changed Sia node's working directory")
                     true
                 }
             } else {
-                Light.success(view!!, "Changed Sia node's working directory, restarting it...", Snackbar.LENGTH_LONG).show()
+                successSnackbar("Changed Sia node's working directory")
                 true
             }
         }
@@ -59,7 +67,7 @@ class NodeSettingsFragment : PreferenceFragmentCompatDividers() {
         super.onActivityCreated(savedInstanceState)
         prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
             when (key) {
-                "apiPassword" -> Light.success(view!!, "Changed API password, restarting Sia node...", Snackbar.LENGTH_LONG).show()
+                "apiPassword" -> successSnackbar("Changed Sia node's API password")
             }
         }
         Prefs.preferences.registerOnSharedPreferenceChangeListener(prefsListener)
@@ -76,5 +84,12 @@ class NodeSettingsFragment : PreferenceFragmentCompatDividers() {
         } finally {
             setDividerPreferences(PreferenceFragmentCompatDividers.DIVIDER_OFFICIAL)
         }
+    }
+
+    private fun successSnackbar(text: String) {
+        var msg = text
+        if (siadStatus.state.value!!.processIsRunning)
+            msg += ", restarting it..."
+        Light.success(view!!, msg, Snackbar.LENGTH_LONG).show()
     }
 }
