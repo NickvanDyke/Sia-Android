@@ -262,6 +262,7 @@ class FilesFragment : BaseFragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == FILE_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
+            // TODO: show dialog allowing redundancy selection and warning of 40mb padding
             if (data.data != null) { /* one item was selected */
                 val uri = data.data
                 val path = FileUtils.getPath(context!!, uri) // TODO: not sure if this will work for all sources of files. Might not for non-primary external storage

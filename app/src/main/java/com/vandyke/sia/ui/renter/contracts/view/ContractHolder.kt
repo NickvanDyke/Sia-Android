@@ -19,12 +19,12 @@ class ContractHolder(itemView: View) : RecyclerView.ViewHolder(itemView), Layout
 
         contract_hostaddress.setTextColor(when {
             contract.goodforupload -> itemView.context.getAttrColor(R.attr.colorPrimaryDark)
-            else -> itemView.context.getColorRes(R.color.negativeTransaction)
+            else -> itemView.context.getColorRes(R.color.negative)
         })
 
         contract_endheight.setTextColor(when {
             contract.goodforrenew -> itemView.context.getAttrColor(R.attr.colorPrimaryDark)
-            else -> itemView.context.getColorRes(R.color.negativeTransaction)
+            else -> itemView.context.getColorRes(R.color.negative)
         })
     }
 }

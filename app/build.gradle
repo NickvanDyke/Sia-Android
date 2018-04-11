@@ -21,6 +21,7 @@ android {
         /* lets us not shrink debug builds, for faster build times. Not necessary for release builds, since we shrink those */
         multiDexEnabled true
     }
+
     buildTypes {
         release {
             lintOptions {
@@ -41,6 +42,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
     splits {
         /* see app/src/main/cpp/main.c for why we use ABI splits */
         abi {
@@ -50,9 +52,16 @@ android {
             universalApk false
         }
     }
+
     externalNativeBuild {
         cmake {
             path 'CMakeLists.txt'
+        }
+    }
+
+    signingConfigs {
+        debug {
+            storeFile file("debug.keystore")
         }
     }
 

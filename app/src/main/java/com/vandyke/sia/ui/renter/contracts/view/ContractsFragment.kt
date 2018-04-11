@@ -46,5 +46,10 @@ class ContractsFragment : BaseFragment() {
         vm.error.observe(this) {
             it.snackbar(view, siadStatus.state.value!!)
         }
+
+        siadStatus.state.observe(this) {
+            if (it == SiadStatus.State.SIAD_LOADED)
+                vm.refresh()
+        }
     }
 }

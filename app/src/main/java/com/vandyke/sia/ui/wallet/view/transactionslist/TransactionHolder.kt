@@ -35,7 +35,7 @@ class TransactionHolder(itemView: View) : RecyclerView.ViewHolder(itemView), Lay
 
         if (!transaction.confirmed) {
             transactionStatus.text = "Unconfirmed"
-            transactionStatus.setTextColor(itemView.context.getColorRes(R.color.negativeTransaction))
+            transactionStatus.setTextColor(itemView.context.getColorRes(R.color.negative))
         } else {
             transactionStatus.text = df.format(transaction.confirmationDate)
             transactionStatus.setTextColor(transactionId.currentTextColor)
@@ -46,7 +46,7 @@ class TransactionHolder(itemView: View) : RecyclerView.ViewHolder(itemView), Lay
         var valueText = transaction.netValue.toSC().format()
         transactionValue.setTextColor(when {
             transaction.isNetZero -> transactionId.currentTextColor
-            valueText.contains("-") -> itemView.context.getColorRes(R.color.negativeTransaction)
+            valueText.contains("-") -> itemView.context.getColorRes(R.color.negative)
             else -> {
                 valueText = ("+$valueText")
                 itemView.context.getColorRes(R.color.positiveTransaction)

@@ -264,26 +264,28 @@ class AllowanceFragment : BaseFragment() {
                 spent_value.text = spent.toSC().format() + currency
             } else {
                 spent_header.text = "Spent"
+                spent_value.text = spent.toSC().format() + currency
                 when (metric) {
                     STORAGE -> {
                         est_price_header.text = "Est. price/TB/month"
+                        est_price.text = price.toSC().format() + currency
                         purchasable_header.text = "Purchasable (1 month)"
                         purchasable_value.text = purchasable.format() + " TB"
                     }
                     UPLOAD, DOWNLOAD -> {
                         est_price_header.text = "Est. price/TB"
+                        est_price.text = price.toSC().format() + currency
                         purchasable_header.text = "Purchasable"
                         purchasable_value.text = purchasable.format() + " TB"
                     }
                     CONTRACT -> {
                         est_price_header.text = "Est. price"
+                        est_price.text = (price.toSC() / BigDecimal("50")).format() + currency
                         purchasable_header.text = "Purchasable"
                         purchasable_value.text = (purchasable * BigDecimal("50")).format()
                     }
                 }
 
-                est_price.text = price.toSC().format() + currency
-                spent_value.text = spent.toSC().format() + currency
             }
         }
 

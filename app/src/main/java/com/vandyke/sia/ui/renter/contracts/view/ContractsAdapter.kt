@@ -23,7 +23,10 @@ class ContractsAdapter : ListAdapter<ContractData, ContractHolder>(DIFF_CALLBACK
             }
 
             override fun areContentsTheSame(oldItem: ContractData, newItem: ContractData): Boolean {
-                TODO("not implemented")
+                return oldItem.goodforrenew == newItem.goodforrenew
+                        && oldItem.goodforupload == newItem.goodforupload
+                        && oldItem.netaddress == newItem.netaddress
+                        && oldItem.endheight == newItem.endheight
             }
         }
     }

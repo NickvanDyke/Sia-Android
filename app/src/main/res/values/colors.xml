@@ -17,7 +17,7 @@
     <color name="ic_launcher_background">#20EE82</color>
 
     <color name="positiveTransaction">@color/colorPrimaryDark</color>
-    <color name="negativeTransaction">#ee3820</color>
+    <color name="negative">#ee3820</color>
     <color name="cardNightColor">#424242</color>
 
     <color name="color_success">#4CAF50</color>

@@ -11,7 +11,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
-        <item name="colorButtonNormal">@color/negativeTransaction</item>
+        <item name="colorButtonNormal">@color/negative</item>
     </style>
 
     <style name="AppTheme.DayNight.OldSiaColors">
