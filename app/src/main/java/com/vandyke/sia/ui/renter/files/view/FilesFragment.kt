@@ -475,7 +475,7 @@ class FilesFragment : BaseFragment() {
                         "Also, note that due to current limitations of Sia, you will only be able to access" +
                         " files uploaded from this device, using this device. This will change in the future," +
                         " when Sia implements seed-based file recovery.")
-                .setPositiveButton(android.R.string.ok) { _, _ -> Prefs.viewedFirstTimeFiles = true }
+                .setPositiveButton("Got it") { _, _ -> Prefs.viewedFirstTimeFiles = true }
                 .setCancelable(false)
                 .show()
     }

@@ -29,8 +29,8 @@ object Prefs : KotprefModel() {
     var viewedFirstTimeLoadingRenter by booleanPref(false)
     var viewedFirstTimeFiles by booleanPref(false)
 
-    var oldSiaColors by booleanPref(true)
-    var darkMode by booleanPref(true)
+    var oldSiaColors by booleanPref(false)
+    var darkMode by booleanPref(false)
     var startupPage by stringPref("wallet")
     var displayedDecimalPrecision by intPref(2)
 

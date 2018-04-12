@@ -151,3 +151,5 @@ fun ProgressBar.setProgressColorRes(colorRes: Int) {
 fun ProgressBar.setProgressColorAttrRes(attrRes: Int) {
     this.progressDrawable.setColorFilter(context.getAttrColor(attrRes), PorterDuff.Mode.SRC_IN)
 }
+
+fun Context.pxToDp(px: Float) = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, px, resources.displayMetrics)

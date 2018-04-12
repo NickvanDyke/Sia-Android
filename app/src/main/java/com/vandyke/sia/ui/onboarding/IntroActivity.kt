@@ -10,7 +10,6 @@ import com.codemybrainsout.onboarder.AhoyOnboarderActivity
 import com.codemybrainsout.onboarder.AhoyOnboarderCard
 import com.vandyke.sia.R
 import com.vandyke.sia.data.local.Prefs
-import com.vandyke.sia.ui.main.MainActivity
 
 class IntroActivity : AhoyOnboarderActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,12 +34,12 @@ class IntroActivity : AhoyOnboarderActivity() {
                         R.drawable.ic_code_black),
 
                 AhoyOnboarderCard("Independent",
-                        "Sia for Android is developed independently by me, an individual, and is not affiliated with Nebulous Labs.",
+                        "I am not affiliated with Nebulous Labs, and neither is Sia for Android",
                         R.drawable.ic_person_outline_black),
 
                 AhoyOnboarderCard("Contact me!",
                         "I respond to each and every email. Please email me from the About page if you " +
-                                "have any feedback or questions. Enjoy!",
+                                "have any feedback or questions.",
                         mehdi.sakout.aboutpage.R.drawable.about_icon_email)
         )
 
@@ -54,13 +53,13 @@ class IntroActivity : AhoyOnboarderActivity() {
         setColorBackground(if (Prefs.oldSiaColors) R.color.colorPrimaryOld else R.color.colorPrimary)
 
         showNavigationControls(false)
-        setFinishButtonTitle("Get started")
+        setFinishButtonTitle("Why Sia?")
         setFinishButtonDrawableStyle(getDrawable(if (Prefs.oldSiaColors) R.drawable.onboarding_finish_button_oldcolors else R.drawable.onboarding_finish_button))
     }
 
     override fun onFinishButtonPressed() {
         Prefs.viewedOnboarding = true
         finish()
-        startActivity(Intent(this, MainActivity::class.java))
+        startActivity(Intent(this, SiaPositivesActivity::class.java))
     }
 }

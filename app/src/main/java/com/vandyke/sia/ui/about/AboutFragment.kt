@@ -17,7 +17,6 @@ import com.vandyke.sia.R
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.ui.onboarding.IntroActivity
-import com.vandyke.sia.ui.onboarding.SiaPositivesActivity
 import com.vandyke.sia.util.GenUtil
 import com.vandyke.sia.util.Intents
 import com.vandyke.sia.util.gone
@@ -65,9 +64,6 @@ class AboutFragment : BaseFragment() {
         val intro = Element("Intro", R.drawable.ic_view_carousel_black)
                 .setIntent(Intent(context!!, IntroActivity::class.java))
 
-        val siaBenefits = Element("Sia's benefits", R.drawable.ic_view_carousel_black)
-                .setIntent(Intent(context!!, SiaPositivesActivity::class.java))
-
         // maybe I shouldn't have these links here? I don't want people going there for support, since this isn't an official Sia product.
         // It's nice to have them other than that though. I'll see what ends up happening and remove if necessary.
         val discord = Element("Discord", R.drawable.ic_discord_logo_black)
@@ -92,7 +88,6 @@ class AboutFragment : BaseFragment() {
                 .addItem(appGithub)
                 .addItem(share)
                 .addItem(intro)
-                .addItem(siaBenefits)
                 .addItem(email)
                 .addGroup("Sia")
                 .addItem(siaVersion)
