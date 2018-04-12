@@ -45,10 +45,7 @@
         </activity>
         <activity
             android:name=".ui.onboarding.IntroActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.onboarding.SiaPositivesActivity"
+            android:theme="@style/Theme.Intro"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity

@@ -146,10 +146,10 @@ class AllowanceViewModel
 
         val price = with(prices.value ?: return) {
             when (currentMetric.value) {
-                UPLOAD -> uploadterabyte
-                DOWNLOAD -> downloadterabyte
-                STORAGE -> storageterabytemonth
-                CONTRACT -> formcontracts
+                UPLOAD -> uploadOneTerabyte
+                DOWNLOAD -> downloadOneTerabyte
+                STORAGE -> storageOneTerabyteMonth
+                CONTRACT -> formOneContract
                 UNSPENT -> BigDecimal.ZERO
             }
         } * conversionRate

@@ -144,6 +144,10 @@ fun ProgressBar.setIndeterminateColorRes(colorRes: Int) {
     this.indeterminateDrawable.setColorFilter(ContextCompat.getColor(context!!, colorRes), PorterDuff.Mode.SRC_IN)
 }
 
+fun ProgressBar.setIndeterminateColorAttrRes(attrRes: Int) {
+    this.indeterminateDrawable.setColorFilter(context.getAttrColor(attrRes), PorterDuff.Mode.SRC_IN)
+}
+
 fun ProgressBar.setProgressColorRes(colorRes: Int) {
     this.progressDrawable.setColorFilter(ContextCompat.getColor(context!!, colorRes), PorterDuff.Mode.SRC_IN)
 }

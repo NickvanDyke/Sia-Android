@@ -12,12 +12,21 @@ import java.math.BigDecimal
 data class PricesData(
         @PrimaryKey
         val timestamp: Long,
-        val downloadterabyte: BigDecimal,
+        val downloadterabyte: BigDecimal, /* this includes 3x redundancy */
         val formcontracts: BigDecimal, /* this is for forming 50 contracts (the default number) */
-        val storageterabytemonth: BigDecimal,
-        val uploadterabyte: BigDecimal) {
+        val storageterabytemonth: BigDecimal, /* this includes 3x redundancy */
+        val uploadterabyte: BigDecimal /* this includes 3x redundancy */) {
     @Transient
     val formOneContract = formcontracts / BigDecimal("50")
+
+    @Transient
+    val downloadOneTerabyte = downloadterabyte / BigDecimal("3")
+
+    @Transient
+    val storageOneTerabyteMonth = storageterabytemonth / BigDecimal("3")
+
+    @Transient
+    val uploadOneTerabyte = uploadterabyte / BigDecimal("3")
 }
 
 data class PricesDataJson(

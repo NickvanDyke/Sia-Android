@@ -69,9 +69,8 @@ class ApiModule {
                     }
 
 
-            // TODO: if the first (and only first) Retrofit usage on a page is a ConnectException error
-            // (and I think only a ConnectException - I've tested with SiaExceptions and it was fine. Haven't tried others),
-            // it causes significant UI lag. No idea why.
+            // TODO: if the first (and only first) Retrofit usage on a page is an error,
+            // it causes significant UI lag. No idea why. Seems to occur regardless of what the error is.
             // Since it's per-page, maybe that means it's actually per-repository?
             Retrofit.Builder()
                     .addConverterFactory(

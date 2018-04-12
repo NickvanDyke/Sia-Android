@@ -32,7 +32,7 @@ class FileHolder(itemView: View, filesFragment: FilesFragment) : NodeHolder(item
                 file_uploadedbytes.text = StorageUtil.readableFilesizeString(file.uploadedbytes)
                 file_expiration.text = "Block ${file.expiration.format()} (~${SiaUtil.blockHeightToReadableTimeDiff(file.expiration)})"
                 file_renewing.text = if (file.renewing) "Yes" else "No"
-                file_localpath.text = file.localpath
+                file_localpath.text = if (file.localpath.isNotEmpty()) file.localpath else "File not present locally"
             }
         }
     }

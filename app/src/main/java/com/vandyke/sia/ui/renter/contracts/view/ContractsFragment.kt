@@ -19,6 +19,7 @@ import com.vandyke.sia.util.snackbar
 import kotlinx.android.synthetic.main.fragment_contracts.*
 import javax.inject.Inject
 
+// TODO: this page could be made much better and more detailed. Details in my notes.
 class ContractsFragment : BaseFragment() {
     override val title: String = "Contracts"
     override val layoutResId: Int = R.layout.fragment_contracts
@@ -27,6 +28,8 @@ class ContractsFragment : BaseFragment() {
     lateinit var factory: SiaViewModelFactory
     @Inject
     lateinit var siadStatus: SiadStatus
+
+    private var size = 0
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         context!!.getAppComponent().inject(this)
@@ -41,7 +44,11 @@ class ContractsFragment : BaseFragment() {
 
         vm.refreshing.observe(this, contracts_list_swiperefresh::setRefreshing)
 
-        vm.contracts.observe(this, adapter::submitList)
+        vm.contracts.observe(this) {
+            size = it.size
+            actionBar.title = "Contracts (${it.size})"
+            adapter.submitList(it)
+        }
 
         vm.error.observe(this) {
             it.snackbar(view, siadStatus.state.value!!)
@@ -51,5 +58,9 @@ class ContractsFragment : BaseFragment() {
             if (it == SiadStatus.State.SIAD_LOADED)
                 vm.refresh()
         }
+    }
+
+    override fun onShow() {
+        actionBar.title = "Contracts ($size)"
     }
 }

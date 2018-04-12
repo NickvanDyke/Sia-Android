@@ -143,7 +143,7 @@ class AllowanceFragment : BaseFragment() {
                             }
 
                         /* GB accounts for uploading once, downloading once, and storing over the current period the entered amount,
-                         * as well as for forming contracts with the current number of hosts. Note that this means it'll overestimate (very minorly) if
+                         * as well as for forming contracts with the currently set number of hosts. Note that this means it'll overestimate (very minorly) if
                          * we already have contracts, but that's not a big deal. Better to overestimate than under and have the user confused why it's not working. */
                             "GB" -> {
                                 val prices = vm.prices.value ?: run {
@@ -156,7 +156,7 @@ class AllowanceFragment : BaseFragment() {
                                 }
                                 val periodLengthMonths = SiaUtil.blocksToDays(allowance.period) / 30
                                 val desiredTb = text.toBigDecimal() / BigDecimal("1024")
-                                val totalPricePerTb = prices.downloadterabyte + prices.uploadterabyte + (prices.storageterabytemonth * periodLengthMonths.toBigDecimal())
+                                val totalPricePerTb = prices.downloadOneTerabyte + prices.uploadOneTerabyte + (prices.storageOneTerabyteMonth * periodLengthMonths.toBigDecimal())
                                 desiredTb * totalPricePerTb + (prices.formOneContract * allowance.hosts.toBigDecimal())
                             }
 
@@ -265,24 +265,22 @@ class AllowanceFragment : BaseFragment() {
             } else {
                 spent_header.text = "Spent"
                 spent_value.text = spent.toSC().format() + currency
+                est_price.text = price.toSC().format() + currency
                 when (metric) {
                     STORAGE -> {
                         est_price_header.text = "Est. price/TB/month"
-                        est_price.text = price.toSC().format() + currency
                         purchasable_header.text = "Purchasable (1 month)"
                         purchasable_value.text = purchasable.format() + " TB"
                     }
                     UPLOAD, DOWNLOAD -> {
                         est_price_header.text = "Est. price/TB"
-                        est_price.text = price.toSC().format() + currency
                         purchasable_header.text = "Purchasable"
                         purchasable_value.text = purchasable.format() + " TB"
                     }
                     CONTRACT -> {
                         est_price_header.text = "Est. price"
-                        est_price.text = (price.toSC() / BigDecimal("50")).format() + currency
                         purchasable_header.text = "Purchasable"
-                        purchasable_value.text = (purchasable * BigDecimal("50")).format()
+                        purchasable_value.text = purchasable.format()
                     }
                 }
 

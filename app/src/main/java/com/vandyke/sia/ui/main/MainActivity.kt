@@ -4,6 +4,7 @@
 
 package com.vandyke.sia.ui.main
 
+import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.ActivityInfo
@@ -56,7 +57,7 @@ class MainActivity : AppCompatActivity() {
 
         if (!Prefs.viewedOnboarding) {
             finish()
-            startActivity(Intent(this, IntroActivity::class.java))
+            startActivityForResult(Intent(this, IntroActivity::class.java), IntroActivity.REQUEST_CODE_INTRO)
             return
         }
 
@@ -170,6 +171,12 @@ class MainActivity : AppCompatActivity() {
             override fun onBillingServiceDisconnected() {
             }
         })
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == IntroActivity.REQUEST_CODE_INTRO && resultCode == Activity.RESULT_OK) {
+            Prefs.viewedOnboarding = true
+        }
     }
 
     private fun setupDrawer() {

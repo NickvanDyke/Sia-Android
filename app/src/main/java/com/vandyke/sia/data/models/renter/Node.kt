@@ -37,7 +37,7 @@ data class SiaFile(
         @PrimaryKey
         @Json(name = "siapath")
         override val path: String,
-        val localpath: String,
+        val localpath: String, /* empty if local file is no longer present */
         @Json(name = "filesize")
         override val size: Long, // bytes
         val available: Boolean,
