@@ -27,8 +27,7 @@ class IntroActivity : AhoyOnboarderActivity() {
                         R.drawable.ic_cloud_download_black),
 
                 AhoyOnboarderCard("Open source",
-                        "Sia for Android and Sia both have their source code available on GitHub, linked in the About page. They're both still under" +
-                                " heavy development, and will continue to improve.",
+                        "Sia for Android and Sia both have their source code available on GitHub, linked in the About page.",
                         mehdi.sakout.aboutpage.R.drawable.about_icon_github),
 
                 AhoyOnboarderCard("In development",

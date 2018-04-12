@@ -22,7 +22,7 @@ class SiaPositivesActivity : AhoyOnboarderActivity() {
                         R.drawable.sia_intro_image1),
 
                 AhoyOnboarderCard("Far more affordable",
-                        "On average, Sia's decentralized cloud storage costs 90% less than incumbent cloud storage providers. Storing 1TB of files on Sia costs about \$2 per month, compared to \$10 on Google Drive.",
+                        "On average, Sia's decentralized cloud storage costs significantly less than incumbent cloud storage providers. Storing 1TB of files on Sia costs about \$2 per month, compared to \$10 on Google Drive.",
                         R.drawable.sia_intro_image2),
 
                 AhoyOnboarderCard("Highly redundant",

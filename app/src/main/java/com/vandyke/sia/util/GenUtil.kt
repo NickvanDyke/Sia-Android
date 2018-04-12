@@ -30,7 +30,7 @@ object GenUtil {
 }
 
 /** steps through each list, calling the supplied functions depending on their contents relative to each other.
-  * Both lists MUST be sorted in the same order by the same criteria for this to work properly. */
+ * Both lists MUST be sorted in the same order by the same criteria for this to work properly. */
 /* This is used by both the Files and Wallet Repository to bring db txs/files into line with api txs/files.
  * I'm fairly confident that it's close to the most efficient way to do that. Over time, the number of transactions, addresses,
  * (and possibly files) will continue to grow, so I wanted an efficient way to do this. I considered DiffUtil,
@@ -107,7 +107,7 @@ fun Context.getAttrColors(vararg attrResIds: Int): List<Int> {
     return List(attrResIds.size, { index -> array.getColor(index, 0xFF0FF) })
 }
 
-fun Context.havePermission(permission: String): Boolean {
+fun Context.hasPermission(permission: String): Boolean {
     return ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
 }
 

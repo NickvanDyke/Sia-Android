@@ -20,5 +20,10 @@
     <color name="negative">#ee3820</color>
     <color name="cardNightColor">#424242</color>
 
+    <!--Identical to the colors Light uses-->
+    <color name="color_error">#F44336</color>
+    <color name="color_info">#3F51B5</color>
+    <color name="color_warning">#FF9800</color>
     <color name="color_success">#4CAF50</color>
+    <color name="color_normal">#323232</color>
 </resources>

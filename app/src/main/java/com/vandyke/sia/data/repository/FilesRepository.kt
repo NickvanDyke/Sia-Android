@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteConstraintException
 import com.vandyke.sia.data.local.AppDatabase
 import com.vandyke.sia.data.local.daos.*
 import com.vandyke.sia.data.models.renter.*
+import com.vandyke.sia.data.remote.FileAlreadyExists
 import com.vandyke.sia.data.remote.SiaApi
 import com.vandyke.sia.util.diffWith
 import com.vandyke.sia.util.replaceLast
@@ -263,6 +264,5 @@ class FilesRepository
     }
 
     class DirAlreadyExists(dirName: String) : Throwable("Directory named \"$dirName\" already exists here")
-    class FileAlreadyExists(fileName: String) : Throwable("File named \"$fileName\" already exists here")
     class DirMovedInsideItself(dirName: String) : Throwable("Directory \"$dirName\" cannot be moved inside itself")
 }

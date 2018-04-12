@@ -9,10 +9,7 @@ import android.arch.lifecycle.ViewModel
 import android.arch.persistence.room.EmptyResultSetException
 import android.content.Intent
 import com.vandyke.sia.data.local.Prefs
-import com.vandyke.sia.data.models.renter.Dir
-import com.vandyke.sia.data.models.renter.Node
-import com.vandyke.sia.data.models.renter.SiaFile
-import com.vandyke.sia.data.models.renter.withTrailingSlashIfNotEmpty
+import com.vandyke.sia.data.models.renter.*
 import com.vandyke.sia.data.repository.FilesRepository
 import com.vandyke.sia.data.siad.DownloadMonitorService
 import com.vandyke.sia.util.pluralize
@@ -185,9 +182,14 @@ class FilesViewModel
                 .subscribe({}, ::onError)
     }
 
-    fun uploadFile(source: String) {
-        val path = currentDirPath.withTrailingSlashIfNotEmpty() + source.substring(source.lastIndexOf('/') + 1)
-        filesRepository.uploadFile(path, source, 10, 20)
+    fun uploadFile(source: String, redundancy: Float, name: String? = null) {
+        val siapath = currentDirPath.withTrailingSlashIfNotEmpty() + (name ?: source.name())
+        // TODO: actually calculate required pieces for the desired redundancy
+        val pieces = when (redundancy) {
+            else -> 10 to 20 /* first is datapieces, second is paritypieces. Redundancy = datapieces / (datapieces + paritypieces) */
+//            else -> throw IllegalArgumentException()
+        }
+        filesRepository.uploadFile(siapath, source, pieces.first, pieces.second)
                 .io()
                 .main()
                 .track(activeTasks)

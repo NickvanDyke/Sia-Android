@@ -11,6 +11,7 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.PorterDuff
+import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.support.design.widget.Snackbar
@@ -34,6 +35,7 @@ import com.vandyke.sia.data.siad.SiadStatus
 import com.vandyke.sia.getAppComponent
 import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.ui.common.RecyclerViewHideFabOnScrollListener
+import com.vandyke.sia.ui.renter.files.view.fileupload.FileUploadDialog
 import com.vandyke.sia.ui.renter.files.view.list.NodesAdapter
 import com.vandyke.sia.ui.renter.files.viewmodel.FilesViewModel
 import com.vandyke.sia.util.*
@@ -138,7 +140,6 @@ class FilesFragment : BaseFragment() {
                                     vm.renameFile(node, newName)
                                 else if (node is Dir)
                                     vm.renameDir(node, newName)
-                                vm.deselect(node)
                             },
                             "Cancel",
                             editTextFunc = {
@@ -261,36 +262,30 @@ class FilesFragment : BaseFragment() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == FILE_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
-            // TODO: show dialog allowing redundancy selection and warning of 40mb padding
-            if (data.data != null) { /* one item was selected */
-                val uri = data.data
-                val path = FileUtils.getPath(context!!, uri) // TODO: not sure if this will work for all sources of files. Might not for non-primary external storage
-                if (path == null) {
-                    Analytics.unsupportedDataSource(uri)
-                    AlertDialog.Builder(context!!)
-                            .setTitle("Unsupported")
-                            .setMessage("Sia for Android doesn't currently support uploading files from that location, sorry.")
-                            .setPositiveButton("Close", null)
-                            .show()
-                } else {
-                    vm.uploadFile(path)
-                }
-            } else if (data.clipData != null) { /* multiple items selected */
-                val clipData = data.clipData!!
-                for (i in 0 until clipData.itemCount) {
-                    val uri = clipData.getItemAt(i).uri
-                    val path = FileUtils.getPath(context!!, uri)
-                    if (path == null) {
-                        Analytics.unsupportedDataSource(uri)
-                        AlertDialog.Builder(context!!)
-                                .setTitle("Unsupported")
-                                .setMessage("Sia for Android doesn't currently support uploading files from that location, sorry.")
-                                .setPositiveButton("Close", null)
-                                .show()
-                    } else {
-                        vm.uploadFile(path)
+        when {
+            requestCode == FILE_REQUEST_CODE && resultCode == RESULT_OK && data != null -> {
+                val uris = mutableListOf<Uri>()
+                if (data.data != null) { /* one item was selected */
+                    val uri = data.data
+                    uris.add(uri)
+                } else if (data.clipData != null) { /* multiple items selected */
+                    val clipData = data.clipData!!
+                    for (i in 0 until clipData.itemCount) {
+                        val uri = clipData.getItemAt(i).uri
+                        uris.add(uri)
                     }
+                }
+                FileUploadDialog.newInstance(uris).apply {
+                    setTargetFragment(this@FilesFragment, FILE_UPLOAD_DIALOG_REQUEST_CODE)
+                    show(this@FilesFragment.fragmentManager, "FILE_UPLOAD_DIALOG")
+                }
+            }
+
+            requestCode == FILE_UPLOAD_DIALOG_REQUEST_CODE && resultCode == RESULT_OK && data != null -> {
+                val list = data.getSerializableExtra(FileUploadDialog.UPLOADS_KEY) as Array<String>
+                val redundancy = data.getFloatExtra(FileUploadDialog.REDUNDANCY_KEY, 3f)
+                list.forEach {
+                    vm.uploadFile(it, redundancy)
                 }
             }
         }
@@ -431,7 +426,7 @@ class FilesFragment : BaseFragment() {
     }
 
     private fun launchSafChooseFile() {
-        if (!context!!.havePermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+        if (!context!!.hasPermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
             requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_READ_PERMISSION)
             return
         }
@@ -444,7 +439,7 @@ class FilesFragment : BaseFragment() {
     }
 
     private fun downloadSelected() {
-        if (!context!!.havePermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+        if (!context!!.hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), REQUEST_WRITE_PERMISSION)
         } else {
             vm.downloadSelected(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).absolutePath)
@@ -476,7 +471,10 @@ class FilesFragment : BaseFragment() {
                 .setTitle("Notice")
                 .setMessage("The Sia network is still in its infancy compared to where it will be." +
                         " At this time, it is quite reliable, and becoming increasingly so, but please do" +
-                        " not depend on it to store your only copy of important files.")
+                        " not depend on it to store your only copy of important files.\n\n" +
+                        "Also, note that due to current limitations of Sia, you will only be able to access" +
+                        " files uploaded from this device, using this device. This will change in the future," +
+                        " when Sia implements seed-based file recovery.")
                 .setPositiveButton(android.R.string.ok) { _, _ -> Prefs.viewedFirstTimeFiles = true }
                 .setCancelable(false)
                 .show()
@@ -486,5 +484,6 @@ class FilesFragment : BaseFragment() {
         private const val FILE_REQUEST_CODE = 5424
         private const val REQUEST_READ_PERMISSION = 1212
         private const val REQUEST_WRITE_PERMISSION = 1256
+        private const val FILE_UPLOAD_DIALOG_REQUEST_CODE = 5523
     }
 }

@@ -5,6 +5,8 @@
 package com.vandyke.sia.data.remote
 
 import android.util.Log
+import com.vandyke.sia.data.models.renter.name
+import okhttp3.Request
 import org.json.JSONObject
 
 /** An exception resulting from the Sia node returning some HTTP error response code and message */
@@ -13,13 +15,13 @@ sealed class SiaException(msg: String) : Throwable(msg) {
         /** Given the body of a response, converts it to JSON and looks for the "message" key that
          *  Sia API error responses have. If it's not found, null is returned. Otherwise, the
          *  exception that's appropriate for the message is returned */
-        fun fromError(body: String): SiaException? {
+        fun fromError(request: Request, body: String): SiaException? {
             val errJson = JSONObject(body)
             val msg = errJson.getString("message") ?: return null
             return when {
                 msg.contains("siad is not ready") -> SiadNotReady()
                 msg.contains("API authentication failed") -> APIAuthFailed()
-                msg.contains("404 - Refer to API.md") -> ModuleNotEnabled("null")
+                msg.contains("404 - Refer to API.md") -> ModuleNotEnabled(request.url().pathSegments()[0])
 
                 msg.contains("wallet has already been unlocked") -> WalletAlreadyUnlocked()
                 msg.contains("wallet must be unlocked before it can be used") -> WalletLocked()
@@ -39,6 +41,7 @@ sealed class SiaException(msg: String) : Throwable(msg) {
                 msg.contains("seed failed checksum verification") -> SeedFailedChecksum()
 
                 msg.contains("download failed: no file with that path") -> NoFileWithThatPath(msg.substring(42))
+                msg.contains("upload failed: a file already exists at that location") -> FileAlreadyExists(request.url().pathSegments()[2].name())
 
                 msg.contains("unrecognized hash used as input to /explorer/hash") -> ExplorerUnrecognizedHash()
 
@@ -72,6 +75,7 @@ class WordNotFoundInDictionary : SiaException("Word not found in dictionary for 
 class SeedFailedChecksum : SiaException("Seed failed checksum verification - verify it's correct")
 
 class NoFileWithThatPath(filepath: String) : SiaException("Download failed: no file with path $filepath")
+class FileAlreadyExists(fileName: String) : SiaException("File named \"$fileName\" already exists here")
 
 class ExplorerUnrecognizedHash : SiaException("Unrecognized hash")
 

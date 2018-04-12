@@ -54,11 +54,8 @@ class ApiModule {
                             val response = it.proceed(request)
                             if (!response.isSuccessful) {
                                 val errorMsg = response.peekBody(256).string()
-                                val e = SiaException.fromError(errorMsg)
-                                if (e is ModuleNotEnabled) {
-                                    val module = original.url().pathSegments()[0]
-                                    throw ModuleNotEnabled(module)
-                                } else if (e != null) {
+                                val e = SiaException.fromError(request, errorMsg)
+                                if (e != null) {
                                     throw e
                                 }
                             }

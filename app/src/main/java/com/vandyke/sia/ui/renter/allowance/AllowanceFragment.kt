@@ -232,7 +232,7 @@ class AllowanceFragment : BaseFragment() {
         }
 
         vm.remainingPeriod.observe(this) {
-            current_period_blocks_remaining.text = "$it blocks"
+            current_period_blocks_remaining.text = "${it.format()} blocks"
             current_period_days_remaining.text = "(~${SiaUtil.blocksToDays(it).format()} days)"
             current_period_blocks_remaining.visible()
             current_period_days_remaining.visible()
