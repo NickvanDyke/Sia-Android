@@ -77,6 +77,14 @@ class SettingsFragment : PreferenceFragmentCompatDividers() {
                             { Light.success(view!!, "Error clearing cached data: ${it.localizedMessage}", Snackbar.LENGTH_LONG).show() })
             false
         }
+
+        findPreference("resetPreferences").onPreferenceClickListener = Preference.OnPreferenceClickListener {
+            if (Prefs.preferences.edit().clear().commit())
+                Light.success(view!!, "Reset preferences. Restart app to take effect.", Snackbar.LENGTH_LONG).show()
+            else
+                Light.error(view!!, "Error resetting preferences", Snackbar.LENGTH_SHORT).show()
+            false
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

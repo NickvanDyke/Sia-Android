@@ -16,8 +16,6 @@ import android.os.Bundle
 import android.os.Environment
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AlertDialog
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.SearchView
 import android.view.Menu
 import android.view.MenuInflater
@@ -61,7 +59,7 @@ class FilesFragment : BaseFragment() {
     /** searchItem.isActionViewExpanded() doesn't always return the correct value? so need to keep track ourselves and use that */
     private var searchIsExpanded = false
 
-    private var viewTypeItem: MenuItem? = null
+//    private var viewTypeItem: MenuItem? = null
 
     private var ascendingItem: MenuItem? = null
     private val orderByItems = mutableListOf<MenuItem>()
@@ -200,18 +198,18 @@ class FilesFragment : BaseFragment() {
                 fab_files_menu.showMenuButton(true)
         }
 
-        vm.viewAsList.observe(this) {
-            if (it) {
-                viewTypeItem?.setIcon(R.drawable.ic_view_list_white)
-                viewTypeItem?.title = "View as grid"
-                nodes_list.layoutManager = LinearLayoutManager(context)
-            } else {
-                viewTypeItem?.setIcon(R.drawable.ic_view_module_white)
-                viewTypeItem?.title = "View as list"
-                nodes_list.layoutManager = GridLayoutManager(context, LayoutUtil.calculateNoOfColumns(context!!))
-            }
-            nodes_list.recycledViewPool.clear()
-        }
+//        vm.viewAsList.observe(this) {
+//            if (it) {
+//                viewTypeItem?.setIcon(R.drawable.ic_view_list_white)
+//                viewTypeItem?.title = "View as grid"
+//                nodes_list.layoutManager = LinearLayoutManager(context)
+//            } else {
+//                viewTypeItem?.setIcon(R.drawable.ic_view_module_white)
+//                viewTypeItem?.title = "View as list"
+//                nodes_list.layoutManager = GridLayoutManager(context, LayoutUtil.calculateNoOfColumns(context!!))
+//            }
+//            nodes_list.recycledViewPool.clear()
+//        }
 
         vm.selectedNodes.observe(this) {
             if (it.isEmpty()) {
@@ -349,8 +347,8 @@ class FilesFragment : BaseFragment() {
             }
         })
 
-        viewTypeItem = menu.findItem(R.id.viewType)
-        viewTypeItem!!.setIcon(if (vm.viewAsList.value) R.drawable.ic_view_list_white else R.drawable.ic_view_module_white)
+//        viewTypeItem = menu.findItem(R.id.viewType)
+//        viewTypeItem!!.setIcon(if (vm.viewAsList.value) R.drawable.ic_view_list_white else R.drawable.ic_view_module_white)
 
         ascendingItem = menu.findItem(R.id.ascendingToggle)
         ascendingItem!!.isChecked = vm.ascending.value
@@ -376,10 +374,10 @@ class FilesFragment : BaseFragment() {
             vm.orderBy.value = OrderBy.SIZE
             true
         }
-        R.id.viewType -> {
-            vm.viewAsList.value = !vm.viewAsList.value
-            true
-        }
+//        R.id.viewType -> {
+//            vm.viewAsList.value = !vm.viewAsList.value
+//            true
+//        }
         else -> super.onOptionsItemSelected(item)
     }
 

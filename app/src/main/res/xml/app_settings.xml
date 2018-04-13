@@ -44,6 +44,9 @@
             android:key="clearDatabase"
             android:title="Clear cached data" />
         <Preference
+            android:key="resetPreferences"
+            android:title="Reset preferences" />
+        <Preference
             android:key="openAppSettings"
             android:title="Open Application Info" />
     </PreferenceCategory>

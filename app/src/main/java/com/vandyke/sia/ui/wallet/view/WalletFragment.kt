@@ -141,7 +141,7 @@ class WalletFragment : BaseFragment() {
                         "${if (it.unconfirmedsiacoinbalance > BigDecimal.ZERO) "+" else ""}" +
                         "${it.unconfirmedsiacoinbalance.toSC().format()} unconfirmed"
                 balance_unconfirmed_text.visible()
-                balance_unconfirmed_text.tooltipOnce("Transactions will generally confirm within a couple blocks", Gravity.BOTTOM)
+                balance_unconfirmed_text.oneTimeTooltip("Transactions will generally confirm within a couple blocks", Gravity.BOTTOM)?.let { queueTooltip(it) }
             } else {
                 balance_unconfirmed_text.invisible()
             }
@@ -188,10 +188,14 @@ class WalletFragment : BaseFragment() {
         }
 
         siadStatus.mostRecentSiadOutput.observe(this) {
-            if (it.contains("Wallet: scanned to height")) {
-                val height = it.substring(26, it.length - 3).toInt()
-                unlocking_text.text = "Unlocking: ${height.format()}"
-                unlocking_text.visible()
+            if (it.contains("Wallet: scanned to height") && !it.contains("Auto-unlock")) {
+                try {
+                    val height = it.substring(26, it.length - 3).toInt()
+                    unlocking_text.text = "Unlocking: ${height.format()}"
+                    unlocking_text.visible()
+                } catch (e: NumberFormatException) {
+                    unlocking_text.gone()
+                }
             } else if (it == "Done!") {
                 unlocking_text.gone()
             }
@@ -199,8 +203,8 @@ class WalletFragment : BaseFragment() {
 
         updateFabIcon()
 
-        sync_text.tooltipOnce("The Sia node will initially have to download, process, and store the " +
-                "Sia blockchain, which is about 11GB. This can take a while.", Tooltip.Gravity.BOTTOM)
+        sync_text.oneTimeTooltip("The Sia node will initially have to download, process, and store the " +
+                "Sia blockchain, which is about 11GB. This can take a while.", Tooltip.Gravity.BOTTOM)?.show()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -211,6 +215,7 @@ class WalletFragment : BaseFragment() {
             R.id.actionViewSeeds -> expandFrame(WalletSeedsFragment())
             R.id.actionCreateWallet -> expandFrame(WalletCreateFragment())
             R.id.actionSweepSeed -> expandFrame(WalletSweepSeedFragment())
+            R.id.actionViewAddress -> expandFrame(WalletReceiveFragment())
             R.id.actionViewAddresses -> expandFrame(WalletAddressesFragment())
             else -> return false
         }

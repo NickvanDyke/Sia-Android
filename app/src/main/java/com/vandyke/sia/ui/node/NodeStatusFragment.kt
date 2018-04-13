@@ -13,9 +13,9 @@ import com.vandyke.sia.data.siad.SiadStatus
 import com.vandyke.sia.data.siad.SiadStatus.State.*
 import com.vandyke.sia.getAppComponent
 import com.vandyke.sia.ui.common.BaseFragment
+import com.vandyke.sia.util.oneTimeTooltip
 import com.vandyke.sia.util.rx.main
 import com.vandyke.sia.util.rx.observe
-import com.vandyke.sia.util.tooltipOnce
 import io.reactivex.disposables.Disposable
 import it.sephiroth.android.library.tooltip.Tooltip
 import kotlinx.android.synthetic.main.fragment_node_status.*
@@ -77,7 +77,7 @@ class NodeStatusFragment : BaseFragment() {
                     sia_output.append(str)
                 }
 
-        sia_button.tooltipOnce("This button will display the Sia node's state. Tapping it will manually stop the Sia node.", Tooltip.Gravity.TOP)
+        sia_button.oneTimeTooltip("This button will display the Sia node's state. Tapping it will manually stop the Sia node.", Tooltip.Gravity.TOP)
     }
 
     override fun onDestroy() {

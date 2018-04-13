@@ -49,22 +49,38 @@ class MockSiaApi : SiaApi {
 
     })
 
+//    private val files = mutableListOf(
+//            SiaFile("legos/brick/picture.jpg", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
+//            SiaFile("legos/brick/manual", "eh", 56743, true, false, 2.0, 663453, 100f, 1235534),
+//            SiaFile("legos/brick/blueprint.b", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
+//            SiaFile("legos/brick/draft.txt", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
+//            SiaFile("legos/brick/ad.doc", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
+//            SiaFile("legos/brick/writeup.txt", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
+//            SiaFile("legos/brick/buyers.db", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
+//            SiaFile("picture.jpg", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534), SiaFile("legos/brick/listing.html", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
+//            SiaFile("manual", "eh", 56743, true, false, 2.0, 663453, 100f, 1235534), SiaFile("legos/brick/colors.rgb", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
+//            SiaFile("blueprint.b", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534), SiaFile("legos/block/picture.jpg", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
+//            SiaFile("draft.txt", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534), SiaFile("legos/block/blueprint", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
+//            SiaFile("ad.doc", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534), SiaFile("legos/block/vector.svg", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
+//            SiaFile("writeup.txt", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534), SiaFile("legos/block/colors.rgb", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
+//            SiaFile("buyers.db", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534), SiaFile("legos/blue/brick/picture.jpg", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
+//            SiaFile("listing.html", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534), SiaFile("my/name/is/nick/and/this/is/my/story.txt", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534)
+//    )
+
     private val files = mutableListOf(
-            SiaFile("legos/brick/picture.jpg", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
-            SiaFile("legos/brick/manual", "eh", 56743, true, false, 2.0, 663453, 100f, 1235534),
-            SiaFile("legos/brick/blueprint.b", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
-            SiaFile("legos/brick/draft.txt", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
-            SiaFile("legos/brick/ad.doc", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
-            SiaFile("legos/brick/writeup.txt", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
-            SiaFile("legos/brick/buyers.db", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
-            SiaFile("picture.jpg", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534), SiaFile("legos/brick/listing.html", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
-            SiaFile("manual", "eh", 56743, true, false, 2.0, 663453, 100f, 1235534), SiaFile("legos/brick/colors.rgb", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
-            SiaFile("blueprint.b", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534), SiaFile("legos/block/picture.jpg", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
-            SiaFile("draft.txt", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534), SiaFile("legos/block/blueprint", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
-            SiaFile("ad.doc", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534), SiaFile("legos/block/vector.svg", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
-            SiaFile("writeup.txt", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534), SiaFile("legos/block/colors.rgb", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
-            SiaFile("buyers.db", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534), SiaFile("legos/blue/brick/picture.jpg", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534),
-            SiaFile("listing.html", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534), SiaFile("my/name/is/nick/and/this/is/my/story.txt", "eh", 156743, true, false, 2.0, 663453, 100f, 1235534)
+            SiaFile.withDefaults("Cat pics/Kittens/Oliver.png", redundancy = 2.5, uploadprogress = 76f, available = true, size = 130800308),
+            SiaFile.withDefaults("Cat pics/Kittens/Chloe.jpg", redundancy = 0.3, uploadprogress = 10f, available = false, size = 15761397),
+            SiaFile.withDefaults("Cat pics/Kittens/Smokey.pdf", redundancy = 3.2, uploadprogress = 100f, available = true, size = 267608),
+            SiaFile.withDefaults("Cat pics/Kittens/Tiger.gif", redundancy = 0.9, uploadprogress = 27f, available = true, size = 695988),
+            SiaFile.withDefaults("Cat pics/Standing up/Persian.png", redundancy = 3.0, uploadprogress = 100f, available = true, size = 154501069),
+            SiaFile.withDefaults("Cat pics/Standing up/Siamese.png", redundancy = 3.4, uploadprogress = 100f, available = true, size = 146637271),
+            SiaFile.withDefaults("Cat pics/Standing up/Tabby.jpg", redundancy = 2.3, uploadprogress = 63f, available = true, size = 25299502),
+            SiaFile.withDefaults("Cat pics/Zeus.mp4", redundancy = 3.1, uploadprogress = 100f, available = true, size = 16217241),
+            SiaFile.withDefaults("Cat pics/Dakota.png", redundancy = 3.3, uploadprogress = 100f, available = true, size = 593008),
+            SiaFile.withDefaults("Cat pics/Catloaf.png", redundancy = 1.3, uploadprogress = 41f, available = true, size = 267608),
+            SiaFile.withDefaults("Cat pics/Rolling.gif", redundancy = 2.4, uploadprogress = 69f, available = true, size = 128942330),
+            SiaFile.withDefaults("Cat pics/Blep.jpg", redundancy = 3.0, uploadprogress = 100f, available = true, size = 517599),
+            SiaFile.withDefaults("Cat pics/With yarn.png", redundancy = 0.7, uploadprogress = 21f, available = false, size = 478644)
     )
 
     private var renterData = RenterData(

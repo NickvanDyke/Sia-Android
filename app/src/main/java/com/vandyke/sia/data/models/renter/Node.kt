@@ -53,6 +53,11 @@ data class SiaFile(
     companion object {
         /** Convenience method that returns a SiaFile with the given path and default values for other fields  */
         fun withPath(path: String) = SiaFile(path, "", 0, false, false, 0.0, 0, 0f, 0)
+
+        fun withDefaults(path: String = "", localpath: String = "", size: Long = 0L, available: Boolean = false, renewing: Boolean = false,
+                         redundancy: Double = 0.0, uploadedbytes: Long = 0L, uploadprogress: Float = 0f, expiration: Long = 0L): SiaFile {
+            return SiaFile(path, localpath, size, available, renewing, redundancy, uploadedbytes, uploadprogress, expiration)
+        }
     }
 }
 

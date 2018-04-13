@@ -18,6 +18,10 @@
         android:id="@+id/actionCreateWallet"
         app:showAsAction="never"/>
     <item
+        android:title="View address"
+        android:id="@+id/actionViewAddress"
+        app:showAsAction="never"/>
+    <item
         android:title="@string/view_addresses"
         android:id="@+id/actionViewAddresses"
         app:showAsAction="never"/>

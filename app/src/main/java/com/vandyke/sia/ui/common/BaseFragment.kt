@@ -16,6 +16,7 @@ import com.vandyke.sia.getRefWatcher
 import com.vandyke.sia.ui.main.MainActivity
 import com.vandyke.sia.util.Analytics
 import com.vandyke.sia.util.gone
+import it.sephiroth.android.library.tooltip.Tooltip
 import kotlinx.android.synthetic.main.activity_main.*
 import me.zhanghai.android.materialprogressbar.MaterialProgressBar
 
@@ -35,6 +36,15 @@ abstract class BaseFragment : Fragment() {
 
     val progressBar: MaterialProgressBar
         get() = mainActivity.toolbar_progress_bar
+
+    private val queuedTooltips = mutableListOf<Tooltip.TooltipView>()
+
+    protected fun queueTooltip(tooltip: Tooltip.TooltipView) {
+        if (isVisible)
+            tooltip.show()
+        else
+            queuedTooltips.add(tooltip)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         setHasOptionsMenu(hasOptionsMenu)
@@ -79,6 +89,8 @@ abstract class BaseFragment : Fragment() {
         userVisibleHint = true
         logScreen()
         onShow()
+        queuedTooltips.forEach { it.show() }
+        queuedTooltips.clear()
     }
 
     private fun onHideInternal() {

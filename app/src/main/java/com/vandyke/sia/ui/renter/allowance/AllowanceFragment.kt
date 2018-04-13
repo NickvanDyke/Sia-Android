@@ -318,8 +318,8 @@ class AllowanceFragment : BaseFragment() {
                 vm.refresh()
 
                 if (SiaUtil.isModuleEnabled('r')) {
-                    funds.tooltipOnce("After setting Funds, the renter will automatically begin forming contracts " +
-                            "with hosts so you can upload files", Tooltip.Gravity.TOP)
+                    funds.oneTimeTooltip("After setting Funds, when the wallet is unlocked, the renter will automatically begin forming contracts " +
+                            "with hosts so you can upload files", Tooltip.Gravity.TOP)?.let { queueTooltip(it) }
                 }
             }
         }

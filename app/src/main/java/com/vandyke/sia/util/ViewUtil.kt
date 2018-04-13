@@ -26,9 +26,9 @@ fun View.visible() {
     this.visibility = VISIBLE
 }
 
-fun View.tooltipOnce(text: CharSequence, gravity: Tooltip.Gravity) {
+fun View.oneTimeTooltip(text: CharSequence, gravity: Tooltip.Gravity): Tooltip.TooltipView? {
     val prefs = PreferenceManager.getDefaultSharedPreferences(this.context)
-    if (!prefs.getBoolean(this.id.toString(), false))
+    return if (!prefs.getBoolean(this.id.toString(), false))
         Tooltip.make(this.context, Tooltip.Builder()
                 .text(text)
                 .closePolicy(Tooltip.ClosePolicy.TOUCH_ANYWHERE_CONSUME, 0)
@@ -36,7 +36,7 @@ fun View.tooltipOnce(text: CharSequence, gravity: Tooltip.Gravity) {
                 .withOverlay(false)
                 .withCallback(object : Tooltip.Callback {
                     override fun onTooltipClose(p0: Tooltip.TooltipView?, p1: Boolean, p2: Boolean) {
-                        prefs.edit().putBoolean(this@tooltipOnce.id.toString(), true).commit()
+                        prefs.edit().putBoolean(this@oneTimeTooltip.id.toString(), true).commit()
                     }
 
                     override fun onTooltipFailed(p0: Tooltip.TooltipView?) {
@@ -48,5 +48,7 @@ fun View.tooltipOnce(text: CharSequence, gravity: Tooltip.Gravity) {
                     override fun onTooltipShown(p0: Tooltip.TooltipView?) {
                     }
                 })
-                .anchor(this, gravity)).show()
+                .anchor(this, gravity))
+    else
+        null
 }
