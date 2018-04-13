@@ -26,7 +26,7 @@ sealed class SiaException(msg: String) : Throwable(msg) {
                 msg.contains("wallet has already been unlocked") -> WalletAlreadyUnlocked()
                 msg.contains("wallet must be unlocked before it can be used") -> WalletLocked()
                 msg.contains("provided encryption key is incorrect") -> WalletPasswordIncorrect()
-                msg.contains("could not read 'amount'") -> CouldNotReadAmount()
+                msg.contains("could not read amount") -> CouldNotReadAmount()
                 msg.contains("a password must be provided to newpassword") -> NewPasswordRequired()
                 msg.contains("could not read address") -> CouldNotReadAddress()
                 msg.contains("transaction cannot have an output or payout that has zero value") -> ZeroAmount()

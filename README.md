@@ -5,8 +5,8 @@ This app serves as an Android client for the decentralized cloud storage platfor
 This app can:
 * Run a Sia node on your device
 * Interact with all wallet functionalities of the running node - create, send, receive, etc.
-* Coming soon: upload to and download from the Sia cloud storage network (in-progress on the develop branch)
-* Coming later: SPV functionality (a.k.a. "lite wallet") once Sia implements this feature
+* Interact with the renter module, including uploading to and downloading from the Sia network
+* Coming later: Function without entire blockchain, once Sia implements this feature
 
 This app is developed independently by me. It is not an official Nebulous Labs product.
 

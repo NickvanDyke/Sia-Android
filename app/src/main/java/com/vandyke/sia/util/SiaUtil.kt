@@ -24,6 +24,10 @@ fun BigDecimal.toHastings(): BigDecimal = this.multiply(HASTINGS_PER_SC)
 
 fun String.toHastings(): BigDecimal = if (this.isBlank()) BigDecimal.ZERO else BigDecimal(this).multiply(HASTINGS_PER_SC)
 
+/* need to call after toHastings() if the result is going to be sent to the Sia node, because if it
+ * receives a hastings value with decimals in it (even zeros) it will return an error */
+fun BigDecimal.stripDecimals() = this.toBigInteger().toBigDecimal()
+
 object SiaUtil {
     /** @param time timestamp, in seconds */
     fun estimatedBlockHeightAt(time: Long): Long {

@@ -77,7 +77,6 @@ class FilesViewModel
         filesRepository.updateFilesAndDirs()
                 .io()
                 .main()
-                .track(activeTasks)
                 .track(refreshing)
                 .subscribe({}, ::onError)
         // TODO: check that current directory is still valid

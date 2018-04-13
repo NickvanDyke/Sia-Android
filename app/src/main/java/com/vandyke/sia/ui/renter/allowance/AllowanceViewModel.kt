@@ -102,7 +102,6 @@ class AllowanceViewModel
                 consensusRepository.updateConsensus())
                 .io()
                 .main()
-                .track(activeTasks)
                 .track(refreshing)
                 .subscribe({}, ::onError)
 

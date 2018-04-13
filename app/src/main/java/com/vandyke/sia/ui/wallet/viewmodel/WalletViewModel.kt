@@ -82,7 +82,6 @@ class WalletViewModel
                         .toCompletable())
                 .io()
                 .main()
-                .track(activeTasks)
                 .track(refreshing)
                 .subscribe({}, ::onError)
 
@@ -97,7 +96,7 @@ class WalletViewModel
         walletRepository.updateAll()
                 .io()
                 .main()
-                .track(activeTasks)
+                .track(refreshing)
                 .subscribe({}, ::onError)
     }
 

@@ -1,5 +1,6 @@
 package com.vandyke.sia.ui.node
 
+import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
 import android.text.SpannableString
@@ -8,6 +9,7 @@ import android.text.style.StyleSpan
 import android.view.View
 import com.vandyke.sia.R
 import com.vandyke.sia.data.local.Prefs
+import com.vandyke.sia.data.siad.SiadService
 import com.vandyke.sia.data.siad.SiadSource
 import com.vandyke.sia.data.siad.SiadStatus
 import com.vandyke.sia.data.siad.SiadStatus.State.*
@@ -43,6 +45,8 @@ class NodeStatusFragment : BaseFragment() {
 
         sia_button.setOnClickListener {
             Prefs.siaManuallyStopped = !Prefs.siaManuallyStopped
+            if (!Prefs.siaManuallyStopped)
+                context!!.startService(Intent(context, SiadService::class.java))
         }
 
         siadStatus.state.observe(this) {

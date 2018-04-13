@@ -41,7 +41,7 @@ class FileUploadDialog : DialogFragment() {
             val path = FileUtils.getPath(context!!, it)
             if (path != null) {
                 val size = File(path).length()
-                totalSize += size.coerceAtLeast(1024 * 1024 * 40) // Sia's 40MB minimum filesize
+                totalSize += size.coerceAtLeast(1000 * 1000 * 40) // Sia's 40MB minimum filesize
                 FileUpload(path, size)
             } else {
                 FileUpload(it.toString(), 0L)

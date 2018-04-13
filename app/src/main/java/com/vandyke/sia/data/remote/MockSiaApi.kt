@@ -85,20 +85,28 @@ class MockSiaApi : SiaApi {
 
     private var renterData = RenterData(
             RenterSettingsData(RenterSettingsAllowanceData(
-                    BigDecimal("3629").toHastings(),
+                    BigDecimal("1769").toHastings(),
                     50,
                     12000,
                     4000
             )),
             RenterFinancialMetricsData(
                     System.currentTimeMillis(),
-                    BigDecimal("167").toHastings(),
-                    BigDecimal("154").toHastings(),
-                    BigDecimal("690").toHastings(),
-                    BigDecimal("274").toHastings(),
-                    BigDecimal("1085").toHastings()
+                    BigDecimal("16").toHastings(),
+                    BigDecimal("15").toHastings(),
+                    BigDecimal("673").toHastings(),
+                    BigDecimal("30").toHastings(),
+                    BigDecimal("1000").toHastings()
             ),
             139000
+    )
+
+    private var renterPrices = PricesData(
+                System.currentTimeMillis(),
+                BigDecimal("26").toHastings(),
+                BigDecimal("82").toHastings(),
+                BigDecimal("140").toHastings(),
+                BigDecimal("75").toHastings()
     )
 
     private val contracts = listOf(
@@ -212,7 +220,7 @@ class MockSiaApi : SiaApi {
 
     override fun getScPrice(url: String): Single<ScValueData> {
         return Single.just(ScValueData(System.currentTimeMillis(),
-                BigDecimal("0.01"), BigDecimal("0.02"), BigDecimal("0.03"),
+                BigDecimal("0.012645"), BigDecimal("0.02"), BigDecimal("0.03"),
                 BigDecimal("0.04"), BigDecimal("0.05"), BigDecimal("0.06"),
                 BigDecimal("0.07"), BigDecimal("0.08"), BigDecimal("0.09"),
                 BigDecimal("0.10")
@@ -244,12 +252,7 @@ class MockSiaApi : SiaApi {
     }
 
     override fun renterPrices(): Single<PricesData> {
-        return Single.just(PricesData(
-                System.currentTimeMillis(),
-                BigDecimal("26").toHastings(),
-                BigDecimal("100").toHastings(),
-                BigDecimal("200").toHastings(),
-                BigDecimal("75").toHastings()))
+        return Single.just(renterPrices)
     }
 
     override fun renterRename(siapath: String, newSiaPath: String) = Completable.fromAction {

@@ -320,7 +320,7 @@ class MainActivity : AppCompatActivity() {
         AlertDialog.Builder(this)
                 .setTitle("Notice")
                 .setMessage("This is your first time loading the renter module, which will" +
-                        " take a significant amount of time; possibly over an hour. This is normal, and" +
+                        " take a significant amount of time. This is normal, and" +
                         " subsequent starts of the renter module will be much, much quicker. You are free" +
                         " to keep Sia in the background while it loads. Thanks for your patience!")
                 .setPositiveButton(android.R.string.ok) { _, _ -> Prefs.viewedFirstTimeLoadingRenter = true }

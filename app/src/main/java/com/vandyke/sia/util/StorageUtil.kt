@@ -15,7 +15,7 @@ object StorageUtil {
     fun readableFilesizeString(filesize: Long): String {
         var size = filesize.toDouble()
         var i = 0
-        val kilo = 1024
+        val kilo = 1000
         while (size > kilo && i < 6) {
             size /= kilo
             i++

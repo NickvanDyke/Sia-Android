@@ -12,6 +12,7 @@ import android.view.View
 import com.vandyke.sia.R
 import com.vandyke.sia.ui.wallet.view.ScannerActivity
 import com.vandyke.sia.util.KeyboardUtil
+import com.vandyke.sia.util.stripDecimals
 import com.vandyke.sia.util.toHastings
 import io.github.tonnyl.light.Light
 import kotlinx.android.synthetic.main.fragment_wallet_send.*
@@ -39,7 +40,7 @@ class WalletSendFragment : BaseWalletFragment() {
     }
 
     override fun onCheckPressed(): Boolean {
-        val sendAmount = sendAmount.text.toString().toHastings().toPlainString()
+        val sendAmount = sendAmount.text.toString().toHastings().stripDecimals().toPlainString()
         vm.send(sendAmount, sendRecipient.text.toString())
         return true
     }

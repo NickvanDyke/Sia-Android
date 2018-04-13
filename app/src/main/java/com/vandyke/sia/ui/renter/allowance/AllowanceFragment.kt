@@ -135,7 +135,7 @@ class AllowanceFragment : BaseFragment() {
 
                         // all the conversion logic below should probably be in a method called on the VM instead
                         vm.setAllowance(funds = when (units) {
-                            "SC" -> text.toBigDecimal().toHastings()
+                            "SC" -> text.toBigDecimal().toHastings().stripDecimals()
 
                             Prefs.fiatCurrency -> {
                                 val rate = vm.scValue.value?.get(Prefs.fiatCurrency) ?: run {
@@ -143,7 +143,7 @@ class AllowanceFragment : BaseFragment() {
                                     return@editTextSpinnerDialog
                                 }
                                 val sc = text.toBigDecimal() / rate
-                                sc.toHastings()
+                                sc.toHastings().stripDecimals()
                             }
 
                         /* GB accounts for uploading once, downloading once, and storing over the current period the entered amount,
@@ -159,9 +159,9 @@ class AllowanceFragment : BaseFragment() {
                                     return@editTextSpinnerDialog
                                 }
                                 val periodLengthMonths = SiaUtil.blocksToDays(allowance.period) / 30
-                                val desiredTb = text.toBigDecimal() / BigDecimal("1024")
+                                val desiredTb = text.toBigDecimal() / BigDecimal("1000")
                                 val totalPricePerTb = prices.downloadOneTerabyte + prices.uploadOneTerabyte + (prices.storageOneTerabyteMonth * periodLengthMonths.toBigDecimal())
-                                desiredTb * totalPricePerTb + (prices.formOneContract * allowance.hosts.toBigDecimal())
+                                (desiredTb * totalPricePerTb + (prices.formOneContract * allowance.hosts.toBigDecimal())).stripDecimals()
                             }
 
                             else -> throw IllegalStateException()
