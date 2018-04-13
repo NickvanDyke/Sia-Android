@@ -14,6 +14,9 @@ import android.net.Uri
 import android.support.customtabs.CustomTabsIntent
 import android.support.v4.content.ContextCompat
 import android.support.v4.widget.SwipeRefreshLayout
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.style.BulletSpan
 import android.util.TypedValue
 import android.widget.ProgressBar
 import com.vandyke.sia.R
@@ -155,5 +158,7 @@ fun ProgressBar.setProgressColorRes(colorRes: Int) {
 fun ProgressBar.setProgressColorAttrRes(attrRes: Int) {
     this.progressDrawable.setColorFilter(context.getAttrColor(attrRes), PorterDuff.Mode.SRC_IN)
 }
+
+fun SpannableStringBuilder.bullet(charSequence: CharSequence, gapWidth: Int) = this.append(charSequence, BulletSpan(gapWidth), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
 
 fun Context.pxToDp(px: Float) = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, px, resources.displayMetrics)

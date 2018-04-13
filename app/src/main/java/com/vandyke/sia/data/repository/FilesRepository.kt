@@ -164,6 +164,14 @@ class FilesRepository
             .toElementsObservable()
             .flatMapCompletable { downloadFile(it, destination) }
 
+    /**
+     * Redundancy = (dataPieces + parityPieces) / dataPieces. "10 of 30" would be 10 dataPieces, 20 parityPieces.
+     * Probability of complete failure (not being able to access the file) is equal to
+     * Sum (x choose i) * h^i * (1-h)^(x-i), i = 0 to y
+     * Where x = dataPieces + parityPieces,
+     * y = dataPieces,
+     * h = success probability of a host
+     */
     fun uploadFile(siapath: String, source: String, dataPieces: Int, parityPieces: Int) =
             api.renterUpload(siapath, source, dataPieces, parityPieces)
 

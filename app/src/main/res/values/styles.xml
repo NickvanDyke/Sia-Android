@@ -33,4 +33,16 @@
         <item name="android:background">@android:color/darker_gray</item>
         <item name="android:alpha">0.1</item>
     </style>
+
+    <!--For tooltips-->
+    <style name="TooltipLayout">
+        <item name="ttlm_padding">20dip</item>
+        <item name="ttlm_cornerRadius">4dip</item>
+        <item name="ttlm_backgroundColor">@color/color_info</item>
+        <item name="android:textAppearance">@style/ToolTipTextStyle</item>
+    </style>
+
+    <style name="ToolTipTextStyle">
+        <item name="android:textColor">@android:color/primary_text_dark</item>
+    </style>
 </resources>

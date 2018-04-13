@@ -15,7 +15,9 @@ import com.vandyke.sia.getAppComponent
 import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.util.rx.main
 import com.vandyke.sia.util.rx.observe
+import com.vandyke.sia.util.tooltipOnce
 import io.reactivex.disposables.Disposable
+import it.sephiroth.android.library.tooltip.Tooltip
 import kotlinx.android.synthetic.main.fragment_node_status.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -39,12 +41,12 @@ class NodeStatusFragment : BaseFragment() {
 
         sia_output.movementMethod = ScrollingMovementMethod()
 
-        siaButton.setOnClickListener {
+        sia_button.setOnClickListener {
             Prefs.siaManuallyStopped = !Prefs.siaManuallyStopped
         }
 
         siadStatus.state.observe(this) {
-            siaButton.text = when (it) {
+            sia_button.text = when (it) {
                 COULDNT_COPY_BINARY -> "Couldn't copy Sia executable"
                 SERVICE_STARTED -> "Service started"
                 CRASHED -> "Crashed"
@@ -60,7 +62,7 @@ class NodeStatusFragment : BaseFragment() {
                 EXTERNAL_STORAGE_ERROR -> "Error with external storage"
             }
 
-            siaButton.isEnabled = when (it) {
+            sia_button.isEnabled = when (it) {
                 MANUALLY_STOPPED -> true
                 else -> true
             }
@@ -74,6 +76,8 @@ class NodeStatusFragment : BaseFragment() {
                     str.setSpan(StyleSpan(Typeface.BOLD), 0, time.length, 0)
                     sia_output.append(str)
                 }
+
+        sia_button.tooltipOnce("This button will display the Sia node's state. Tapping it will manually stop the Sia node.", Tooltip.Gravity.TOP)
     }
 
     override fun onDestroy() {

@@ -6,11 +6,6 @@
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
       xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:title="Status"
-        app:showAsAction="always"
-        android:icon="@drawable/ic_add_white"
-        android:id="@+id/actionStatus"/>
-    <item
         android:title="@string/unlock_wallet"
         android:id="@+id/actionUnlock"
         app:showAsAction="never"/>

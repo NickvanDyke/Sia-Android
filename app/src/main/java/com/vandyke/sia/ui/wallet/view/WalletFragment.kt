@@ -28,6 +28,8 @@ import com.vandyke.sia.ui.wallet.viewmodel.WalletViewModel
 import com.vandyke.sia.util.*
 import com.vandyke.sia.util.rx.observe
 import io.github.tonnyl.light.Light
+import it.sephiroth.android.library.tooltip.Tooltip
+import it.sephiroth.android.library.tooltip.Tooltip.Gravity
 import kotlinx.android.synthetic.main.fragment_wallet.*
 import net.cachapa.expandablelayout.ExpandableLayout
 import java.math.BigDecimal
@@ -66,8 +68,8 @@ class WalletFragment : BaseFragment() {
             if (!fab_wallet_menu.isOpened) {
                 when {
                     childFragment != null -> if (childFragment?.onCheckPressed() == false) collapseFrame()
-                    vm.wallet.value?.encrypted == false -> expandFrame(WalletCreateFragment())
-                    vm.wallet.value?.unlocked == false -> expandFrame(WalletUnlockFragment())
+                    vm.wallet.value?.encrypted != true -> expandFrame(WalletCreateFragment())
+                    vm.wallet.value?.unlocked != true -> expandFrame(WalletUnlockFragment())
                     else -> fab_wallet_menu.open(true)
                 }
             } else {
@@ -139,11 +141,11 @@ class WalletFragment : BaseFragment() {
                         "${if (it.unconfirmedsiacoinbalance > BigDecimal.ZERO) "+" else ""}" +
                         "${it.unconfirmedsiacoinbalance.toSC().format()} unconfirmed"
                 balance_unconfirmed_text.visible()
+                balance_unconfirmed_text.tooltipOnce("Transactions will generally confirm within a couple blocks", Gravity.BOTTOM)
             } else {
                 balance_unconfirmed_text.invisible()
             }
             updateFabIcon()
-            updateStatusIcon()
             updateFiatValue()
         }
 
@@ -194,17 +196,15 @@ class WalletFragment : BaseFragment() {
                 unlocking_text.gone()
             }
         }
+
+        updateFabIcon()
+
+        sync_text.tooltipOnce("The Sia node will initially have to download, process, and store the " +
+                "Sia blockchain, which is about 11GB. This can take a while.", Tooltip.Gravity.BOTTOM)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.actionStatus -> {
-                when (vm.wallet.value?.encrypted ?: false || vm.wallet.value?.rescanning ?: false) {
-                    false -> expandFrame(WalletCreateFragment())
-                    true -> if (!vm.wallet.value!!.unlocked) expandFrame(WalletUnlockFragment())
-                    else vm.lock()
-                }
-            }
             R.id.actionUnlock -> expandFrame(WalletUnlockFragment())
             R.id.actionLock -> vm.lock()
             R.id.actionChangePassword -> expandFrame(WalletChangePasswordFragment())
@@ -247,8 +247,6 @@ class WalletFragment : BaseFragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.toolbar_wallet, menu)
-        statusButton = menu.findItem(R.id.actionStatus)
-        updateStatusIcon()
     }
 
     private fun updateFiatValue() {
@@ -256,19 +254,6 @@ class WalletFragment : BaseFragment() {
         val scValue = vm.scValue.value?.get(Prefs.fiatCurrency) ?: return
         val fiatValue = scBalance * scValue
         balance_usd_text.text = ("${fiatValue.format()} ${Prefs.fiatCurrency}")
-    }
-
-    private fun updateStatusIcon() {
-        statusButton?.setIcon(
-                when (vm.wallet.value?.encrypted == true || vm.wallet.value?.rescanning == true) {
-                    false -> R.drawable.ic_add_white
-                    true -> {
-                        if (!vm.wallet.value!!.unlocked)
-                            R.drawable.ic_lock_outline_white
-                        else
-                            R.drawable.ic_lock_open_white
-                    }
-                })
     }
 
     private fun updateSyncStatus() {
@@ -290,7 +275,8 @@ class WalletFragment : BaseFragment() {
         val wallet = vm.wallet.value
         fab_wallet_menu.menuIconView.setImageResource(when {
             childFragment != null -> R.drawable.ic_check_white
-            wallet?.unlocked == false && wallet.encrypted == true -> R.drawable.ic_lock_open_white
+            wallet == null || !wallet.encrypted -> R.drawable.ic_account_balance_wallet_white
+            !wallet.unlocked -> R.drawable.ic_lock_open_white
             else -> R.drawable.ic_add_white
         })
     }

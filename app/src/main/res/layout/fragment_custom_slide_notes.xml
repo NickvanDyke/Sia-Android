@@ -9,18 +9,6 @@
     android:orientation="vertical"
     android:padding="@dimen/mi_baseline">
 
-    <ImageView
-        android:id="@id/mi_image"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/mi_baseline"
-        android:adjustViewBounds="true"
-        android:gravity="center"
-        android:paddingLeft="?actionBarSize"
-        android:paddingRight="?actionBarSize"
-        tools:ignore="ContentDescription"
-        tools:src="@drawable/sia_new_circle_logo_transparent" />
-
     <TextView
         android:id="@id/mi_title"
         android:layout_width="match_parent"
@@ -42,8 +30,8 @@
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="@dimen/mi_baseline"
+        android:gravity="start"
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-        android:gravity="center"
         android:textSize="16sp"
         app:layout_parallaxFactor="0.4"
         tools:ignore="UnusedAttribute"

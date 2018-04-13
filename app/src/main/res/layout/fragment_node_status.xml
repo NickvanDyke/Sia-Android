@@ -19,7 +19,7 @@
     <Button
         android:paddingTop="20dp"
         android:paddingBottom="20dp"
-        android:id="@+id/siaButton"
+        android:id="@+id/sia_button"
         style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
