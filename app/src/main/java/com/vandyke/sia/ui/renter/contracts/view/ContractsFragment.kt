@@ -13,9 +13,11 @@ import com.vandyke.sia.data.siad.SiadStatus
 import com.vandyke.sia.getAppComponent
 import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.ui.renter.contracts.ContractsViewModel
+import com.vandyke.sia.util.gone
 import com.vandyke.sia.util.rx.observe
 import com.vandyke.sia.util.setColors
 import com.vandyke.sia.util.snackbar
+import com.vandyke.sia.util.visible
 import kotlinx.android.synthetic.main.fragment_contracts.*
 import javax.inject.Inject
 
@@ -45,8 +47,12 @@ class ContractsFragment : BaseFragment() {
         vm.refreshing.observe(this, contracts_list_swiperefresh::setRefreshing)
 
         vm.contracts.observe(this) {
+            if (it.isEmpty())
+                no_contracts_text.visible()
+            else
+                no_contracts_text.gone()
             size = it.size
-            actionBar.title = "Contracts (${it.size})"
+            actionBar.title = "Contracts ($size)"
             adapter.submitList(it)
         }
 

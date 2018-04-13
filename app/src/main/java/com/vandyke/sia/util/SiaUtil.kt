@@ -5,6 +5,7 @@
 package com.vandyke.sia.util
 
 import android.os.Build
+import com.vandyke.sia.data.local.Prefs
 import java.math.BigDecimal
 
 const val BLOCKTIME = 600 // seconds
@@ -76,6 +77,8 @@ object SiaUtil {
     fun blocksToDays(blocks: Int) = (blocks * BLOCKTIME).toFloat() / (24 * 60 * 60)
 
     fun daysToBlocks(days: Double) = (days * 24 * 60 * 60) / BLOCKTIME
+
+    fun isModuleEnabled(module: Char) = Prefs.modulesString.contains(module, true)
 
     val isSiadSupported = Build.SUPPORTED_64_BIT_ABIS.contains("arm64-v8a")
 }

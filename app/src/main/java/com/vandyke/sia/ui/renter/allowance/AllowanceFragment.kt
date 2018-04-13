@@ -32,6 +32,7 @@ import com.vandyke.sia.ui.renter.allowance.AllowanceViewModel.Metrics.*
 import com.vandyke.sia.util.*
 import com.vandyke.sia.util.rx.observe
 import io.github.tonnyl.light.Light
+import it.sephiroth.android.library.tooltip.Tooltip
 import kotlinx.android.synthetic.main.allowance_setting.view.*
 import kotlinx.android.synthetic.main.fragment_allowance.*
 import java.math.BigDecimal
@@ -129,8 +130,11 @@ class AllowanceFragment : BaseFragment() {
                     "Funds",
                     "Set",
                     { text, units ->
-                        vm.setAllowance(when (units) {
+                        if (text.isEmpty())
+                            return@editTextSpinnerDialog
 
+                        // all the conversion logic below should probably be in a method called on the VM instead
+                        vm.setAllowance(funds = when (units) {
                             "SC" -> text.toBigDecimal().toHastings()
 
                             Prefs.fiatCurrency -> {
@@ -309,9 +313,15 @@ class AllowanceFragment : BaseFragment() {
             it.snackbar(allowance_swiperefresh, siadStatus.state.value!!)
         }
 
-        siadStatus.state.observe(this) {
-            if (it == SiadStatus.State.SIAD_LOADED)
+        siadStatus.state.observe(this) { state ->
+            if (state == SiadStatus.State.SIAD_LOADED) {
                 vm.refresh()
+
+                if (SiaUtil.isModuleEnabled('r')) {
+                    funds.tooltipOnce("After setting Funds, the renter will automatically begin forming contracts " +
+                            "with hosts so you can upload files", Tooltip.Gravity.TOP)
+                }
+            }
         }
     }
 
