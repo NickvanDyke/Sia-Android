@@ -42,7 +42,7 @@ abstract class NodeHolder(itemView: View, filesFragment: FilesFragment) : Recycl
     init {
         /* we pass through touch events on the image so that we can still get the ripple effect.
          * However we track that it was the image that was touched, to act accordingly with that. */
-        node_image.setOnTouchListener { v, event ->
+        node_image.setOnTouchListener { _, _ ->
             imageTouched = true
             false
         }

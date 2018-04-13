@@ -81,7 +81,7 @@ class SettingsFragment : PreferenceFragmentCompatDividers() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
+        prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
             when (key) {
                 "darkMode", "oldSiaColors" -> activity!!.recreate()
             }

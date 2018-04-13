@@ -25,7 +25,6 @@ object Prefs : KotprefModel() {
     var requirePurchaseAt by longPref(0)
     var delayedPurchase by booleanPref(false)
 
-    var viewedOnboarding by booleanPref(false)
     var viewedFirstTimeLoadingRenter by booleanPref(false)
     var viewedFirstTimeFiles by booleanPref(false)
 

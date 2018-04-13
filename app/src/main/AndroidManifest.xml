@@ -44,11 +44,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.onboarding.IntroActivity"
-            android:theme="@style/Theme.Intro"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
-        <activity
             android:name="com.vandyke.sia.ui.wallet.view.ScannerActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />

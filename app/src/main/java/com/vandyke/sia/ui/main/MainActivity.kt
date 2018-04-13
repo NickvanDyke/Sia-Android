@@ -4,7 +4,6 @@
 
 package com.vandyke.sia.ui.main
 
-import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.ActivityInfo
@@ -30,7 +29,6 @@ import com.vandyke.sia.ui.help.HelpFragment
 import com.vandyke.sia.ui.node.NodeStatusFragment
 import com.vandyke.sia.ui.node.modules.NodeModulesFragment
 import com.vandyke.sia.ui.node.settings.NodeSettingsFragmentContainer
-import com.vandyke.sia.ui.onboarding.IntroActivity
 import com.vandyke.sia.ui.onboarding.PurchaseActivity
 import com.vandyke.sia.ui.renter.allowance.AllowanceFragment
 import com.vandyke.sia.ui.renter.contracts.view.ContractsFragment
@@ -54,12 +52,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        if (!Prefs.viewedOnboarding) {
-            finish()
-            startActivityForResult(Intent(this, IntroActivity::class.java), IntroActivity.REQUEST_CODE_INTRO)
-            return
-        }
 
         if (!BuildConfig.DEBUG)
             checkPurchases()
@@ -173,12 +165,6 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == IntroActivity.REQUEST_CODE_INTRO && resultCode == Activity.RESULT_OK) {
-            Prefs.viewedOnboarding = true
-        }
-    }
-
     private fun setupDrawer() {
         setSupportActionBar(toolbar)
 
@@ -276,7 +262,7 @@ class MainActivity : AppCompatActivity() {
                 selectedIconColor = colorPrimary.toLong()
                 selectedTextColor = colorPrimary.toLong()
                 identifier = DRAWER_ID_WALLET
-                onClick { view -> displayFragment(WalletFragment::class.java); false }
+                onClick { _ -> displayFragment(WalletFragment::class.java); false }
             }
 
             divider { }
@@ -287,7 +273,7 @@ class MainActivity : AppCompatActivity() {
                 selectedIconColor = colorPrimary.toLong()
                 selectedTextColor = colorPrimary.toLong()
                 iconTintingEnabled = true
-                onClick { view -> displayFragment(SettingsFragmentContainer::class.java); false }
+                onClick { _ -> displayFragment(SettingsFragmentContainer::class.java); false }
             }
 
             primaryItem {
@@ -296,7 +282,7 @@ class MainActivity : AppCompatActivity() {
                 selectedIconColor = colorPrimary.toLong()
                 selectedTextColor = colorPrimary.toLong()
                 iconTintingEnabled = true
-                onClick { view -> displayFragment(AboutFragment::class.java); false }
+                onClick { _ -> displayFragment(AboutFragment::class.java); false }
             }
 
             primaryItem {
@@ -305,7 +291,7 @@ class MainActivity : AppCompatActivity() {
                 selectedIconColor = colorPrimary.toLong()
                 selectedTextColor = colorPrimary.toLong()
                 iconTintingEnabled = true
-                onClick { view -> displayFragment(HelpFragment::class.java); false }
+                onClick { _ -> displayFragment(HelpFragment::class.java); false }
             }
         }
     }

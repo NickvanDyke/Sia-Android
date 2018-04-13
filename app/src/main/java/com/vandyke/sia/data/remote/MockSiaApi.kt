@@ -41,10 +41,10 @@ class MockSiaApi : SiaApi {
     var siafundBalance = 0
     var seed = ""
     var addresses = listOf("address1", "address2", "address3")
-    var confirmedTxs: MutableList<TransactionData> = MutableList(20, { index ->
+    var confirmedTxs: MutableList<TransactionData> = MutableList(20, { _ ->
         TransactionData(nonce.toString(), BigDecimal(nonce * 10), BigDecimal(nonce * 100), BigDecimal("12312").toHastings())
     })
-    var unconfirmedTxs: MutableList<TransactionData> = MutableList(2, { index ->
+    var unconfirmedTxs: MutableList<TransactionData> = MutableList(2, { _ ->
         TransactionData(nonce.toString(), BigDecimal(nonce * 10), BigDecimal(nonce * 100), BigDecimal("12").toHastings())
 
     })

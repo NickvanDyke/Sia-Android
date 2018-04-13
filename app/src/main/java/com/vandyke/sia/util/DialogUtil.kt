@@ -77,7 +77,7 @@ object DialogUtil {
             negativeText?.let { setNegativeButton(it, { _, _ -> negativeFunc?.invoke(editText.text.toString()) }) }
             create()
         }
-        editText.setOnEditorActionListener { v, actionId, event ->
+        editText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 dialog.dismiss()
                 positiveFunc?.invoke(editText.text.toString())
@@ -114,7 +114,7 @@ object DialogUtil {
             negativeText?.let { setNegativeButton(it, { _, _ -> negativeFunc?.invoke(editText.text.toString()) }) }
             create()
         }
-        editText.setOnEditorActionListener { v, actionId, event ->
+        editText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 dialog.dismiss()
                 positiveFunc?.invoke(editText.text.toString(), spinner.selectedItem as String)

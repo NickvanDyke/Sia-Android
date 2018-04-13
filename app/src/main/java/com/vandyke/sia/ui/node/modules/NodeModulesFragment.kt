@@ -137,7 +137,7 @@ class NodeModulesFragment : BaseFragment() {
         private var storageAdapter: ModuleStorageAdapter? = null
 
         init {
-            module_switch.setOnCheckedChangeListener { buttonView, isChecked ->
+            module_switch.setOnCheckedChangeListener { _, isChecked ->
                 if (!isChecked) {
                     Prefs.modulesString = Prefs.modulesString.remove(module.name[0].toString(), true)
                 } else {

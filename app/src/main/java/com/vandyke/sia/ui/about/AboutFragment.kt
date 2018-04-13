@@ -5,7 +5,6 @@
 package com.vandyke.sia.ui.about
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,7 +15,6 @@ import com.vandyke.sia.BuildConfig
 import com.vandyke.sia.R
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.ui.common.BaseFragment
-import com.vandyke.sia.ui.onboarding.IntroActivity
 import com.vandyke.sia.util.GenUtil
 import com.vandyke.sia.util.Intents
 import com.vandyke.sia.util.gone
@@ -61,9 +59,6 @@ class AboutFragment : BaseFragment() {
         val share = Element("Share", R.drawable.ic_share_black)
                 .setIntent(shareIntent)
 
-        val intro = Element("Intro", R.drawable.ic_view_carousel_black)
-                .setIntent(Intent(context!!, IntroActivity::class.java))
-
         // maybe I shouldn't have these links here? I don't want people going there for support, since this isn't an official Sia product.
         // It's nice to have them other than that though. I'll see what ends up happening and remove if necessary.
         val discord = Element("Discord", R.drawable.ic_discord_logo_black)
@@ -79,15 +74,11 @@ class AboutFragment : BaseFragment() {
         val email = Element("Email me about anything", mehdi.sakout.aboutpage.R.drawable.about_icon_email)
                 .setIntent(Intents.emailMe)
 
-        val youtube = Element("Why Sia?", mehdi.sakout.aboutpage.R.drawable.about_icon_youtube)
-                .setIntent(Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/watch?v=B4YGpWxyn6Y")))
-
         val page = AboutPage(context)
                 .addGroup("App")
                 .addItem(appVersion)
                 .addItem(appGithub)
                 .addItem(share)
-                .addItem(intro)
                 .addItem(email)
                 .addGroup("Sia")
                 .addItem(siaVersion)
@@ -95,7 +86,6 @@ class AboutFragment : BaseFragment() {
                 .addItem(siaGithub)
                 .addItem(reddit)
                 .addItem(discord)
-                .addItem(youtube)
                 .create()
 
         val root = page.rootView as ScrollView

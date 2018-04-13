@@ -6,6 +6,7 @@ package com.vandyke.sia.ui.wallet.view.childfragments
 
 import android.os.Bundle
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import com.vandyke.sia.R
 import com.vandyke.sia.util.KeyboardUtil
 import kotlinx.android.synthetic.main.fragment_wallet_unlock.*
@@ -14,8 +15,9 @@ class WalletUnlockFragment : BaseWalletFragment() {
     override val layout: Int = R.layout.fragment_wallet_unlock
 
     override fun create(view: View, savedInstanceState: Bundle?) {
-        walletPassword.setOnEditorActionListener { v, actionId, event ->
-            vm.unlock(walletPassword.text.toString())
+        walletPassword.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE)
+                vm.unlock(walletPassword.text.toString())
             true
         }
 

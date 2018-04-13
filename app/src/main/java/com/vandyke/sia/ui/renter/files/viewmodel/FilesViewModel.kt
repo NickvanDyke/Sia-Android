@@ -48,7 +48,7 @@ class FilesViewModel
         get() = selectedNodes.value.all { it.parent == currentDirPath }
 
     /** the subscription to the database flowable that emits items in the current path */
-    private var nodesSubscription: Disposable? by Delegates.observable<Disposable?>(null) { property, oldValue, newValue ->
+    private var nodesSubscription: Disposable? by Delegates.observable<Disposable?>(null) { _, oldValue, _ ->
         oldValue?.dispose()
     }
 

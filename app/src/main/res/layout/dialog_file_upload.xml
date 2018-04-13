@@ -41,12 +41,14 @@
         app:layout_constraintBottom_toBottomOf="@+id/textView4"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <!--TODO: remove focusable=false once redundancy -> pieces calculation is implemented-->
     <EditText
         android:id="@+id/redundancy_input"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="2"
         android:inputType="numberDecimal"
+        android:focusable="false"
         android:maxLength="3"
         android:textAlignment="textEnd"
         android:textColor="?android:attr/textColorPrimary"

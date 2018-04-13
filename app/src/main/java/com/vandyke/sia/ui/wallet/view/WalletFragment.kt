@@ -97,7 +97,7 @@ class WalletFragment : BaseFragment() {
         transaction_list_swipe.setOnRefreshListener(vm::refreshAll)
         transaction_list_swipe.setColors(context!!)
 
-        expandableFrame.setOnExpansionUpdateListener { expansionFraction, state ->
+        expandableFrame.setOnExpansionUpdateListener { _, state ->
             when (state) {
                 ExpandableLayout.State.COLLAPSED -> progress_bar?.setIndeterminateColorRes(android.R.color.white)
                 else -> progress_bar?.setIndeterminateColorAttrRes(R.attr.colorPrimary)

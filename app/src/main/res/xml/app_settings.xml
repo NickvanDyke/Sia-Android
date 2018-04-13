@@ -45,6 +45,6 @@
             android:title="Clear cached data" />
         <Preference
             android:key="openAppSettings"
-            android:title="Open Application Info page for Sia" />
+            android:title="Open Application Info" />
     </PreferenceCategory>
 </PreferenceScreen>
