@@ -24,7 +24,6 @@ import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.siad.SiadService
 import com.vandyke.sia.ui.about.AboutFragment
 import com.vandyke.sia.ui.common.BaseFragment
-import com.vandyke.sia.ui.common.ComingSoonFragment
 import com.vandyke.sia.ui.help.HelpFragment
 import com.vandyke.sia.ui.node.NodeStatusFragment
 import com.vandyke.sia.ui.node.modules.NodeModulesFragment
@@ -95,7 +94,7 @@ class MainActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             drawer.setSelection(when (Prefs.startupPage) {
                 "files" -> {
-                    displayFragment(if (BuildConfig.DEBUG) FilesFragment::class.java else ComingSoonFragment::class.java)
+                    displayFragment(FilesFragment::class.java)
                     DRAWER_ID_FILES // doesn't fire the listener? Maybe since it's in a submenu. So we set it manually above
                 }
                 "wallet" -> DRAWER_ID_WALLET
@@ -221,10 +220,7 @@ class MainActivity : AppCompatActivity() {
                             .withSelectedTextColor(colorPrimary)
                             .withIdentifier(DRAWER_ID_FILES)
                             .withOnDrawerItemClickListener { _, _, _ ->
-                                displayFragment(if (BuildConfig.DEBUG)
-                                    FilesFragment::class.java
-                                else
-                                    ComingSoonFragment::class.java)
+                                displayFragment(FilesFragment::class.java)
                                 false
                             },
                     SecondaryDrawerItem()
@@ -235,10 +231,7 @@ class MainActivity : AppCompatActivity() {
                             .withSelectedTextColor(colorPrimary)
                             .withIdentifier(DRAWER_ID_ALLOWANCE)
                             .withOnDrawerItemClickListener { _, _, _ ->
-                                displayFragment(if (BuildConfig.DEBUG)
-                                    AllowanceFragment::class.java
-                                else
-                                    ComingSoonFragment::class.java)
+                                displayFragment(AllowanceFragment::class.java)
                                 false
                             },
                     SecondaryDrawerItem()
@@ -248,10 +241,7 @@ class MainActivity : AppCompatActivity() {
                             .withSelectedIconColor(colorPrimary)
                             .withSelectedTextColor(colorPrimary)
                             .withOnDrawerItemClickListener { _, _, _ ->
-                                displayFragment(if (BuildConfig.DEBUG)
-                                    ContractsFragment::class.java
-                                else
-                                    ComingSoonFragment::class.java)
+                                displayFragment(ContractsFragment::class.java)
                                 false
                             })
 
