@@ -177,7 +177,11 @@ class AllowanceFragment : BaseFragment() {
             DialogUtil.editTextDialog(context!!,
                     "Hosts",
                     "Set",
-                    { vm.setAllowance(hosts = it.toInt()) },
+                    {
+                        if (it.isEmpty())
+                            return@editTextDialog
+                        vm.setAllowance(hosts = it.toInt())
+                    },
                     "Cancel",
                     editTextFunc = { hint = "Hosts"; inputType = InputType.TYPE_CLASS_NUMBER })
                     .showDialogAndKeyboard()
@@ -188,6 +192,8 @@ class AllowanceFragment : BaseFragment() {
                     "Period",
                     "Set",
                     { text, units ->
+                        if (text.isEmpty())
+                            return@editTextSpinnerDialog
                         vm.setAllowance(period = when (units) {
                             "Blocks" -> text.toInt()
                             "Days" -> SiaUtil.daysToBlocks(text.toDouble()).toInt()
@@ -205,6 +211,8 @@ class AllowanceFragment : BaseFragment() {
                     "Renew window",
                     "Set",
                     { text, units ->
+                        if (text.isEmpty())
+                            return@editTextSpinnerDialog
                         vm.setAllowance(renewWindow = when (units) {
                             "Blocks" -> text.toInt()
                             "Days" -> SiaUtil.daysToBlocks(text.toDouble()).toInt()

@@ -188,15 +188,16 @@ class WalletFragment : BaseFragment() {
         }
 
         siadStatus.mostRecentSiadOutput.observe(this) {
-            if (it.contains("Wallet: scanned to height") && !it.contains("Auto-unlock")) {
+            val str = "Wallet: scanned to height "
+            if (it.contains(str)) {
                 try {
-                    val height = it.substring(26, it.length - 3).toInt()
+                    val height = it.substring(str.length, it.indexOf('.')).toInt()
                     unlocking_text.text = "Unlocking: ${height.format()}"
                     unlocking_text.visible()
                 } catch (e: NumberFormatException) {
                     unlocking_text.gone()
                 }
-            } else if (it == "Done!") {
+            } else if (it == "Done!" || it.contains("Finished loading")) {
                 unlocking_text.gone()
             }
         }
@@ -204,7 +205,8 @@ class WalletFragment : BaseFragment() {
         updateFabIcon()
 
         sync_text.oneTimeTooltip("The Sia node will initially have to download, process, and store the " +
-                "Sia blockchain, which is about 11GB. This can take a while.", Tooltip.Gravity.BOTTOM)?.show()
+                "Sia blockchain, which is about 11GB. This can take a while, and unfortunately is " +
+                "a current limitation of the Sia software.", Tooltip.Gravity.BOTTOM)?.show()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

@@ -49,6 +49,10 @@ class HelpFragment : BaseFragment() {
                     GenUtil.launchCustomTabs(context!!, "https://siasetup.info/faq/renting")
                 }
 
+        val hostScoring = Element("Learn how hosts are scored", R.drawable.ic_cloud_black)
+                .setOnClickListener {
+                    GenUtil.launchCustomTabs(context!!, "https://siasetup.info/learn/hosting#host_scoring")
+                }
 
         val siaSupport = Element("Sia knowledge base", R.drawable.ic_info_outline_black)
                 .setOnClickListener {
@@ -65,6 +69,7 @@ class HelpFragment : BaseFragment() {
                         " computer, but are still very applicable to the Android app.")
                 .addItem(learnAboutSia)
                 .addItem(buyingSiacoin)
+                .addItem(hostScoring)
                 .addItem(learnAboutRenting)
                 .addItem(rentingFaq)
                 .addItem(rentingGuide)

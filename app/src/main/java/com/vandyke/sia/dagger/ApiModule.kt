@@ -72,6 +72,10 @@ class ApiModule {
             // TODO: if the first (and only first) Retrofit usage on a page is an error,
             // it causes significant UI lag. No idea why. Seems to occur regardless of what the error is.
             // Since it's per-page, maybe that means it's actually per-repository?
+
+            // Actually, it might always be the first request, regardless of whether it's an error or not.
+            // Maybe retrofit is "warming up"? But it wasn't like that before. Not sure exactly when
+            // it started doing this.
             Retrofit.Builder()
                     .addConverterFactory(
                             MoshiConverterFactory.create(

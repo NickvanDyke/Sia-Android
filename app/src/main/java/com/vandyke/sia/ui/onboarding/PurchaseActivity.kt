@@ -71,7 +71,7 @@ class PurchaseActivity : AppCompatActivity(), PurchasesUpdatedListener {
     override fun onPurchasesUpdated(responseCode: Int, purchases: MutableList<Purchase>?) {
         if (responseCode == BillingClient.BillingResponse.ITEM_ALREADY_OWNED
                 || purchases?.any { it.sku == overall_sub_sku } == true
-                || client.queryPurchases(BillingClient.SkuType.SUBS).purchasesList.any { it.sku == overall_sub_sku }) {
+                || client.queryPurchases(BillingClient.SkuType.SUBS).purchasesList?.any { it.sku == overall_sub_sku } == true) {
             Prefs.requirePurchaseAt = 0
             Toast.makeText(this, "Thanks, enjoy! I look forward to bringing you updates.", Toast.LENGTH_LONG).show()
             Analytics.subscribe()
