@@ -49,7 +49,6 @@ class WalletFragment : BaseFragment() {
 
     private var childFragment: BaseWalletFragment? = null
     private var fragmentToBeExpanded: BaseWalletFragment? = null
-    private var statusButton: MenuItem? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         context!!.getAppComponent().inject(this)
@@ -280,7 +279,7 @@ class WalletFragment : BaseFragment() {
 
     private fun updateFabIcon() {
         val wallet = vm.wallet.value
-        fab_wallet_menu.menuIconView.setImageResource(when {
+        fab_wallet_menu?.menuIconView?.setImageResource(when {
             childFragment != null -> R.drawable.ic_check_white
             wallet == null || !wallet.encrypted -> R.drawable.ic_account_balance_wallet_white
             !wallet.unlocked -> R.drawable.ic_lock_open_white
