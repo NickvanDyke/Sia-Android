@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="?colorPrimary"
+        android:elevation="0dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:popupTheme="@style/Theme.AppCompat.DayNight" />
+
+    <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+        android:id="@+id/toolbar_progress_bar"
+        style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:elevation="12dp"
+        android:indeterminate="true"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/toolbar"
+        app:layout_constraintEnd_toEndOf="@id/toolbar"
+        app:layout_constraintStart_toStartOf="@id/toolbar"
+        app:mpb_indeterminateTint="@android:color/white"
+        app:mpb_progressStyle="horizontal"
+        app:mpb_showProgressBackground="false"
+        app:mpb_useIntrinsicPadding="false" />
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="?colorPrimary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar">
+
+        <EditText
+            android:id="@+id/from_amount"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="64dp"
+            android:ems="10"
+            android:inputType="numberDecimal"
+            android:text="0.00"
+            android:textAlignment="viewEnd"
+            android:textColor="@android:color/primary_text_dark"
+            android:textSize="24sp"
+            app:layout_constraintEnd_toStartOf="@+id/from_spinner"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView3" />
+
+        <Spinner
+            android:id="@+id/from_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="64dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/from_amount"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/from_amount" />
+
+        <TextView
+            android:id="@+id/to_amount"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="..."
+            android:textAlignment="textEnd"
+            android:textColor="@android:color/primary_text_dark"
+            android:textSize="24sp"
+            app:layout_constraintEnd_toEndOf="@+id/from_amount"
+            app:layout_constraintStart_toStartOf="@+id/from_amount"
+            app:layout_constraintTop_toBottomOf="@+id/textView5"
+            tools:text="12.34" />
+
+        <Spinner
+            android:id="@+id/to_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/to_amount"
+            app:layout_constraintStart_toEndOf="@+id/to_amount"
+            app:layout_constraintTop_toTopOf="@+id/to_amount" />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/textInputLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:layout_constraintEnd_toEndOf="@+id/to_spinner"
+            app:layout_constraintStart_toStartOf="@+id/to_amount"
+            app:layout_constraintTop_toBottomOf="@+id/to_amount">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/receive_at"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Receive address"
+                android:inputType="text"
+                android:textAlignment="center"
+                android:textColor="@android:color/primary_text_dark" />
+        </android.support.design.widget.TextInputLayout>
+
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="From"
+            android:textColor="@android:color/primary_text_dark"
+            app:layout_constraintStart_toStartOf="@+id/from_amount"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textView5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="To"
+            android:textColor="@android:color/primary_text_dark"
+            app:layout_constraintStart_toStartOf="@+id/from_amount"
+            app:layout_constraintTop_toBottomOf="@+id/from_amount" />
+
+        <Button
+            android:id="@+id/exchange_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="exchange"
+            style="@style/Widget.AppCompat.Button.Colored"
+            app:layout_constraintEnd_toEndOf="@+id/textInputLayout"
+            app:layout_constraintStart_toStartOf="@+id/textInputLayout"
+            app:layout_constraintTop_toBottomOf="@+id/textInputLayout" />
+
+        <TextView
+            android:id="@+id/textView7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Powered by Changelly"
+            app:layout_constraintEnd_toEndOf="@+id/exchange_button"
+            app:layout_constraintStart_toStartOf="@+id/exchange_button"
+            tools:layout_editor_absoluteY="334dp" />
+    </android.support.constraint.ConstraintLayout>
+
+</android.support.constraint.ConstraintLayout>

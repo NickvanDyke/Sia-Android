@@ -6,6 +6,7 @@ package com.vandyke.sia.dagger
 
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
+import com.vandyke.sia.ui.exchange.ExchangeViewModel
 import com.vandyke.sia.ui.node.modules.NodeModulesViewModel
 import com.vandyke.sia.ui.renter.allowance.AllowanceViewModel
 import com.vandyke.sia.ui.renter.contracts.ContractsViewModel
@@ -42,6 +43,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(ContractsViewModel::class)
     abstract fun bindContractsViewModel(contractsViewModel: ContractsViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ExchangeViewModel::class)
+    abstract fun bindExchangeViewModel(exchangeViewModel: ExchangeViewModel): ViewModel
 
     @Binds
     abstract fun bindViewModelFactory(factory: SiaViewModelFactory): ViewModelProvider.Factory

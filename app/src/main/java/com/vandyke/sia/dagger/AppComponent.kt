@@ -8,6 +8,7 @@ import com.vandyke.sia.App
 import com.vandyke.sia.data.siad.DownloadMonitorService
 import com.vandyke.sia.data.siad.RetryDownloadReceiver
 import com.vandyke.sia.data.siad.SiadService
+import com.vandyke.sia.ui.exchange.ExchangeActivity
 import com.vandyke.sia.ui.node.NodeStatusFragment
 import com.vandyke.sia.ui.node.modules.NodeModulesFragment
 import com.vandyke.sia.ui.node.settings.NodeSettingsFragment
@@ -30,6 +31,7 @@ import javax.inject.Singleton
     ViewModelModule::class
 ])
 interface AppComponent {
+    fun inject(exchangeActivity: ExchangeActivity)
     fun inject(walletFragment: WalletFragment)
     fun inject(filesFragment: FilesFragment)
     fun inject(terminalFragment: TerminalFragment)

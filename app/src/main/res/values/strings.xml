@@ -62,4 +62,7 @@
     <string name="intro_notes_about_app">\u2022 I, the developer, am not affiliated with Nebulous Labs\n
     \u2022 The Sia node will initially have to download, process, and store the Sia blockchain, which is about 11GB
     \u2022 This app's source code is available on GitHub</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

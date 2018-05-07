@@ -6,6 +6,11 @@
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
       xmlns:android="http://schemas.android.com/apk/res/android">
     <item
+        android:title="Exchange"
+        android:id="@+id/actionExchange"
+        android:icon="@drawable/ic_swap_horiz_white"
+        app:showAsAction="ifRoom"/>
+    <item
         android:title="@string/unlock_wallet"
         android:id="@+id/actionUnlock"
         app:showAsAction="never"/>
