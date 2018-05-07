@@ -322,8 +322,7 @@ class FilesFragment : BaseFragment() {
         searchItem!!.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
             override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
                 searchIsExpanded = false
-                if (vm.searching.value)
-                    vm.cancelSearch()
+                vm.cancelSearch()
                 return true
             }
 

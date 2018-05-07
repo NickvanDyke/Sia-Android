@@ -28,7 +28,7 @@ import com.vandyke.sia.ui.help.HelpFragment
 import com.vandyke.sia.ui.node.NodeStatusFragment
 import com.vandyke.sia.ui.node.modules.NodeModulesFragment
 import com.vandyke.sia.ui.node.settings.NodeSettingsFragmentContainer
-import com.vandyke.sia.ui.onboarding.PurchaseActivity
+import com.vandyke.sia.ui.purchase.PurchaseActivity
 import com.vandyke.sia.ui.renter.allowance.AllowanceFragment
 import com.vandyke.sia.ui.renter.contracts.view.ContractsFragment
 import com.vandyke.sia.ui.renter.files.view.FilesFragment
@@ -54,6 +54,7 @@ class MainActivity : AppCompatActivity() {
 
         if (!BuildConfig.DEBUG)
             checkPurchases()
+        startActivity(Intent(this@MainActivity, PurchaseActivity::class.java))
 
         /* allow rotation in debug builds, for easy recreation testing */
         if (BuildConfig.DEBUG)

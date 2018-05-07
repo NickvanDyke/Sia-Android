@@ -2,19 +2,19 @@
  * Copyright (c) 2017 Nicholas van Dyke. All rights reserved.
  */
 
-package com.vandyke.sia.ui.onboarding
+package com.vandyke.sia.ui.purchase
 
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
-import android.view.View
 import android.widget.Toast
 import com.android.billingclient.api.*
 import com.vandyke.sia.R
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.ui.main.MainActivity
 import com.vandyke.sia.util.Analytics
+import com.vandyke.sia.util.invisible
 import kotlinx.android.synthetic.main.activity_purchase.*
 
 class PurchaseActivity : AppCompatActivity(), PurchasesUpdatedListener {
@@ -57,7 +57,7 @@ class PurchaseActivity : AppCompatActivity(), PurchasesUpdatedListener {
         }
 
         if (Prefs.delayedPurchase && System.currentTimeMillis() > Prefs.requirePurchaseAt) {
-            later.visibility = View.GONE
+            later.invisible()
         } else {
             later.setOnClickListener {
                 Prefs.delayedPurchase = true
@@ -66,6 +66,8 @@ class PurchaseActivity : AppCompatActivity(), PurchasesUpdatedListener {
                 goToMainActivity()
             }
         }
+
+        benefits_list.adapter = BenefitsAdapter()
     }
 
     override fun onPurchasesUpdated(responseCode: Int, purchases: MutableList<Purchase>?) {
@@ -97,6 +99,7 @@ class PurchaseActivity : AppCompatActivity(), PurchasesUpdatedListener {
     }
 
     private fun goToMainActivity() {
+        return
         finish()
         startActivity(Intent(this, MainActivity::class.java))
     }

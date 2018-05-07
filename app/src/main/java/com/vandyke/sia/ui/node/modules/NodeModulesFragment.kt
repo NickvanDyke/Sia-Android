@@ -75,7 +75,7 @@ class NodeModulesFragment : BaseFragment() {
     fun showDeleteConfirmationDialog(module: Module, dir: File) {
         AlertDialog.Builder(context!!)
                 .setMessage(
-                        "Are you sure you want to delete all ${module.text} files at ${dir.absolutePath}?"
+                        "Delete all ${module.text} files at ${dir.absolutePath}?"
                                 + when (module) {
                             Module.WALLET -> " Ensure your wallet seed is recorded elsewhere first."
                             Module.CONSENSUS -> " If they're the files Sia is currently using, you'll have to re-sync the blockchain."
@@ -96,7 +96,7 @@ class NodeModulesFragment : BaseFragment() {
         return if (item.itemId == R.id.modules_info) {
             AlertDialog.Builder(context!!)
                     .setTitle("Modules info")
-                    .setMessage("Each module on the list depends on the modules above it. The switch enables/disables the given module on the Sia node. Each module's storage usage is also shown - tap to delete.")
+                    .setMessage("Each module on the list depends on the modules above it. The switch enables/disables the given module on the Sia node. Each module's storage usage is also shown - tap to delete it.")
                     .setPositiveButton(android.R.string.ok, null)
                     .show()
             true

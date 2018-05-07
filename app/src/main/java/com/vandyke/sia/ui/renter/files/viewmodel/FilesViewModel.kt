@@ -220,9 +220,11 @@ class FilesViewModel
     }
 
     fun cancelSearch() {
-        searching.value = false
-        searchTerm.value = ""
-        updateNodesSource()
+        if (searching.value) {
+            searching.value = false
+            searchTerm.value = ""
+            updateNodesSource()
+            }
     }
 
     /** subscribes to the proper source for the displayed nodes, depending on the state of the viewmodel */

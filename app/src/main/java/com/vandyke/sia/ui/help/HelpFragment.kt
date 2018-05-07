@@ -46,7 +46,7 @@ class HelpFragment : BaseFragment() {
 
         val rentingGuide = Element("Renting guide", R.drawable.ic_cloud_black)
                 .setOnClickListener {
-                    GenUtil.launchCustomTabs(context!!, "https://siasetup.info/faq/renting")
+                    GenUtil.launchCustomTabs(context!!, "https://siasetup.info/guides/renting_on_sia")
                 }
 
         val hostScoring = Element("Learn how hosts are scored", R.drawable.ic_cloud_black)

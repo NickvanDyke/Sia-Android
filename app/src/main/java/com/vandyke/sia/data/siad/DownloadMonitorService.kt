@@ -154,7 +154,7 @@ class DownloadMonitorService : LifecycleService() {
             }
 
             Status.IN_PROGRESS -> {
-                builder.setContentText("${download.progress}%")
+                builder.setContentText("${download.progress}%") // TODO: maybe include received/length
                         .setLargeIcon(bitmapFromVector(R.drawable.ic_cloud_download_siagreen))
                         .setContentIntent(null)
                         .setAutoCancel(false)
