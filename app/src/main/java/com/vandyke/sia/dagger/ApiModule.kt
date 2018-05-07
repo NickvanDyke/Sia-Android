@@ -35,7 +35,8 @@ class ApiModule {
                     /* check for a different timeout on this endpoint, for requests made to endpoints other than siad */
                     .addInterceptor {
                         val request = it.request()
-                        val readTimeout = request.header("READ_TIMEOUT")?.toIntOrNull() ?: it.readTimeoutMillis()
+                        val readTimeout = request.header("READ_TIMEOUT")?.toIntOrNull()
+                                ?: it.readTimeoutMillis()
                         val newRequest = request.newBuilder()
                                 .removeHeader("READ_TIMEOUT")
                                 .build()
@@ -76,12 +77,14 @@ class ApiModule {
             // Actually, it might always be the first request, regardless of whether it's an error or not.
             // Maybe retrofit is "warming up"? But it wasn't like that before. Not sure exactly when
             // it started doing this.
+
+            // TODO: check if it does it with the ShapeShift API
             Retrofit.Builder()
                     .addConverterFactory(
                             MoshiConverterFactory.create(
                                     Moshi.Builder()
                                             .add(BigDecimalAdapter())
-                                            .add(DataAdapters())
+                                            .add(SiaJsonAdapters())
                                             .add(KotlinJsonAdapterFactory())
                                             .build()))
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
@@ -92,5 +95,21 @@ class ApiModule {
         } else {
             MockSiaApi()
         }
+    }
+
+    @Provides
+    @Singleton
+    fun provideShapeShiftApi(): ShapeShiftApi {
+        return Retrofit.Builder()
+                .addConverterFactory(
+                        MoshiConverterFactory.create(
+                                Moshi.Builder()
+                                        .add(BigDecimalAdapter())
+                                        .add(KotlinJsonAdapterFactory())
+                                        .build()))
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .baseUrl("https://shapeshift.io/")
+                .build()
+                .create(ShapeShiftApi::class.java)
     }
 }

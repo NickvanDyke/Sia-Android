@@ -77,10 +77,6 @@ interface SiaApi {
             @Query("newpassword") newPassword: String
     ): Completable
 
-    @Headers("READ_TIMEOUT: 10000")
-    @GET
-    fun getScPrice(@Url url: String = "https://min-api.cryptocompare.com/data/price?fsym=SC&tsyms=EUR,USD,GBP,CHF,CAD,AUD,CNY,JPY,INR,BRL"): Single<ScValueData>
-
     /* renter API */
     @GET("renter")
     fun renter(): Single<RenterData>
@@ -145,4 +141,10 @@ interface SiaApi {
     /* transactionpool API */
     @GET("tpool/fee")
     fun txPoolFee(): Single<FeeData>
+
+
+    @Headers("READ_TIMEOUT: 10000")
+    @GET
+    fun getScPrice(@Url url: String = "https://min-api.cryptocompare.com/data/price?fsym=SC&tsyms=EUR,USD,GBP,CHF,CAD,AUD,CNY,JPY,INR,BRL"): Single<ScValueData>
+
 }

@@ -26,7 +26,7 @@ data class WalletData(
     var unconfirmedsiacoinbalance: BigDecimal = unconfirmedincomingsiacoins - unconfirmedoutgoingsiacoins
 }
 
-/** The intermediate class used when Moshi deserializes /wallet Json. See DataAdapters for more */
+/** The intermediate class used when Moshi deserializes /wallet Json. See SiaJsonAdapters for more */
 data class WalletDataJson(
         val encrypted: Boolean,
         val unlocked: Boolean,
