@@ -29,7 +29,7 @@ data class TransactionData(
     val isNetZero: Boolean = netValue == BigDecimal.ZERO
 }
 
-/** The intermediate class used when Moshi deserializes transaction Json. See DataAdapters for more */
+/** The intermediate class used when Moshi deserializes transaction Json. See SiaJsonAdapters for more */
 data class TransactionDataJson(
         val transactionid: String,
         val confirmationheight: BigDecimal,

@@ -2,6 +2,7 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/exchange_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -10,7 +11,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:background="?colorPrimary"
+        android:background="@color/exchange"
         android:elevation="0dp"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:layout_constraintEnd_toEndOf="parent"
@@ -37,7 +38,7 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="?colorPrimary"
+        android:background="@color/exchange"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -49,11 +50,10 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="64dp"
-            android:ems="10"
             android:inputType="numberDecimal"
             android:text="0.00"
             android:textAlignment="viewEnd"
-            android:textColor="@android:color/primary_text_dark"
+            android:textColor="@android:color/white"
             android:textSize="24sp"
             app:layout_constraintEnd_toStartOf="@+id/from_spinner"
             app:layout_constraintStart_toStartOf="parent"
@@ -70,14 +70,15 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/from_amount" />
 
-        <TextView
+        <EditText
             android:id="@+id/to_amount"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="..."
-            android:textAlignment="textEnd"
-            android:textColor="@android:color/primary_text_dark"
+            android:inputType="numberDecimal"
+            android:text="0.00"
+            android:textAlignment="viewEnd"
+            android:textColor="@android:color/white"
             android:textSize="24sp"
             app:layout_constraintEnd_toEndOf="@+id/from_amount"
             app:layout_constraintStart_toStartOf="@+id/from_amount"
@@ -119,7 +120,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
             android:text="From"
-            android:textColor="@android:color/primary_text_dark"
+            android:textColor="@android:color/white"
             app:layout_constraintStart_toStartOf="@+id/from_amount"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -129,7 +130,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="To"
-            android:textColor="@android:color/primary_text_dark"
+            android:textColor="@android:color/white"
             app:layout_constraintStart_toStartOf="@+id/from_amount"
             app:layout_constraintTop_toBottomOf="@+id/from_amount" />
 
@@ -148,10 +149,11 @@
             android:id="@+id/textView7"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Powered by Changelly"
+            android:layout_marginBottom="16dp"
+            android:text="Powered by ShapeShift"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/exchange_button"
-            app:layout_constraintStart_toStartOf="@+id/exchange_button"
-            tools:layout_editor_absoluteY="334dp" />
+            app:layout_constraintStart_toStartOf="@+id/exchange_button" />
     </android.support.constraint.ConstraintLayout>
 
 </android.support.constraint.ConstraintLayout>

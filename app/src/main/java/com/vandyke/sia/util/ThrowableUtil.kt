@@ -59,7 +59,7 @@ fun CompositeException.all(clazz: Class<*>) = this.exceptions.all { it.javaClass
 
 fun Throwable.isOrAll(clazz: Class<*>) = this.javaClass == clazz || (this as? CompositeException)?.all(clazz) == true
 
-fun Throwable.snackbar(view: View, state: SiadStatus.State, length: Int = Snackbar.LENGTH_SHORT) {
+fun Throwable.snackbar(view: View, state: SiadStatus.State? = null, length: Int = Snackbar.LENGTH_SHORT) {
     Light.error(view, this.customMsg() ?: "Error", length).apply {
         if (this@snackbar.isOrAll(SiadNotRunning::class.java) && state == SiadStatus.State.MANUALLY_STOPPED) {
             setAction("Start") { Prefs.siaManuallyStopped = false }

@@ -24,7 +24,7 @@ import java.math.BigDecimal
   * The purpose of many of these is just to add a timestamp field. Unfortunately due to the way
   * Moshi works (as well as Room, since we'd be trying to use the same class with that), we can't just add
   * a transient field that's initialized to System.currentTimeMillis() */
-class DataAdapters {
+class SiaJsonAdapters {
     /* For example, here: The Retrofit interface specifies a TransactionData type for the /wallet/transactions endpoint.
      * Moshi will use this adapter to create it. It first deserializes the JSON response into a TransactionDataJson object,
      * since that's the parameter type that this method takes. Then it uses this function to turn that into a TransactionData object. */
@@ -92,4 +92,7 @@ class DataAdapters {
     fun renterFinancialMetricsDataFromJson(data: RenterFinancialMetricsDataJson): RenterFinancialMetricsData {
         return RenterFinancialMetricsData(System.currentTimeMillis(), data.uploadspending, data.downloadspending, data.storagespending, data.contractspending, data.unspent)
     }
+
+
+
 }
