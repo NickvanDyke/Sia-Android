@@ -8,13 +8,16 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.LinearLayoutManager
+import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.widget.Toast
 import com.android.billingclient.api.*
 import com.vandyke.sia.R
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.ui.main.MainActivity
 import com.vandyke.sia.util.Analytics
-import com.vandyke.sia.util.invisible
+import com.vandyke.sia.util.gone
 import kotlinx.android.synthetic.main.activity_purchase.*
 
 class PurchaseActivity : AppCompatActivity(), PurchasesUpdatedListener {
@@ -57,7 +60,7 @@ class PurchaseActivity : AppCompatActivity(), PurchasesUpdatedListener {
         }
 
         if (Prefs.delayedPurchase && System.currentTimeMillis() > Prefs.requirePurchaseAt) {
-            later.invisible()
+            later.gone()
         } else {
             later.setOnClickListener {
                 Prefs.delayedPurchase = true
@@ -68,6 +71,15 @@ class PurchaseActivity : AppCompatActivity(), PurchasesUpdatedListener {
         }
 
         benefits_list.adapter = BenefitsAdapter()
+        /* set benefits_list height to wrap_content if all items are fully visible, so that it'll center itself between the top and bottom */
+        benefits_list.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                if ((benefits_list.layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition() == benefits_list.adapter.itemCount - 1) {
+                    benefits_list.layoutParams = benefits_list.layoutParams.apply { height = ViewGroup.LayoutParams.WRAP_CONTENT }
+                }
+                benefits_list.viewTreeObserver.removeOnGlobalLayoutListener(this)
+            }
+        })
     }
 
     override fun onPurchasesUpdated(responseCode: Int, purchases: MutableList<Purchase>?) {
@@ -99,7 +111,6 @@ class PurchaseActivity : AppCompatActivity(), PurchasesUpdatedListener {
     }
 
     private fun goToMainActivity() {
-        return
         finish()
         startActivity(Intent(this, MainActivity::class.java))
     }

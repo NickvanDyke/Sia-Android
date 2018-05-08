@@ -6,7 +6,6 @@ package com.vandyke.sia.ui.wallet.view
 
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
-import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AlertDialog
@@ -23,7 +22,6 @@ import com.vandyke.sia.data.siad.SiadStatus
 import com.vandyke.sia.getAppComponent
 import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.ui.common.RecyclerViewHideFabOnScrollListener
-import com.vandyke.sia.ui.exchange.ExchangeActivity
 import com.vandyke.sia.ui.wallet.view.childfragments.*
 import com.vandyke.sia.ui.wallet.view.transactionslist.TransactionAdapter
 import com.vandyke.sia.ui.wallet.viewmodel.WalletViewModel
@@ -212,7 +210,7 @@ class WalletFragment : BaseFragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.actionExchange -> startActivity(Intent(context, ExchangeActivity::class.java))
+//            R.id.actionExchange -> startActivity(Intent(context, ExchangeActivity::class.java))
             R.id.actionUnlock -> expandFrame(WalletUnlockFragment())
             R.id.actionLock -> vm.lock()
             R.id.actionChangePassword -> expandFrame(WalletChangePasswordFragment())

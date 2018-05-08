@@ -54,7 +54,6 @@ class MainActivity : AppCompatActivity() {
 
         if (!BuildConfig.DEBUG)
             checkPurchases()
-        startActivity(Intent(this@MainActivity, PurchaseActivity::class.java))
 
         /* allow rotation in debug builds, for easy recreation testing */
         if (BuildConfig.DEBUG)
