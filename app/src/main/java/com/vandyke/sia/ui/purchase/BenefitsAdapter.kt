@@ -2,15 +2,25 @@ package com.vandyke.sia.ui.purchase
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import com.vandyke.sia.R
+import com.vandyke.sia.util.gone
+import com.vandyke.sia.util.visible
 
 class BenefitsAdapter : RecyclerView.Adapter<BenefitHolder>() {
     private val benefits = listOf(
             Benefit(R.drawable.ic_account_balance_wallet_white, "Send and receive Siacoin with your private wallet"),
-            Benefit(R.drawable.ic_cloud_black, "Store your files on the Sia network"),
-            Benefit(R.drawable.ic_code_black, "Support development")
+            Benefit(R.drawable.ic_cloud_outline_black, "Store your files on the Sia network, the future of cloud storage"),
+            Benefit(R.drawable.ic_money_white, "Pay less than traditional cloud storage"),
+            Benefit(R.drawable.ic_lock_outline_white, "Have complete control and privacy over your files"),
+            Benefit(R.drawable.ic_person_outline_black, "Participate in a blockchain marketplace"),
+            Benefit(R.drawable.ic_code_black, "Support development"),
+            Benefit(R.drawable.ic_free_breakfast_black, "All for less than the cost of your morning cup of coffee!"),
+            Benefit(R.drawable.ic_money_white, "7 day free trial"),
+            Benefit(R.drawable.ic_cancel_black, "Easily cancel at any time from Settings")
     )
+    // TODO: want one describing redundancy and uptime
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BenefitHolder {
         return BenefitHolder(LayoutInflater.from(parent.context).inflate(R.layout.holder_benefit, parent, false))
@@ -18,6 +28,11 @@ class BenefitsAdapter : RecyclerView.Adapter<BenefitHolder>() {
 
     override fun onBindViewHolder(holder: BenefitHolder, position: Int) {
         holder.bind(benefits[position])
+        if (position == benefits.size - 1) {
+            holder.itemView.findViewById<View>(R.id.divider).gone()
+        } else {
+            holder.itemView.findViewById<View>(R.id.divider).visible()
+        }
     }
 
     override fun getItemCount(): Int = benefits.size
