@@ -2,11 +2,8 @@ package com.vandyke.sia.ui.purchase
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import com.vandyke.sia.R
-import com.vandyke.sia.util.gone
-import com.vandyke.sia.util.visible
 
 class BenefitsAdapter : RecyclerView.Adapter<BenefitHolder>() {
     private val benefits = listOf(
@@ -27,11 +24,6 @@ class BenefitsAdapter : RecyclerView.Adapter<BenefitHolder>() {
 
     override fun onBindViewHolder(holder: BenefitHolder, position: Int) {
         holder.bind(benefits[position])
-        if (position == benefits.size - 1) {
-            holder.itemView.findViewById<View>(R.id.divider).gone()
-        } else {
-            holder.itemView.findViewById<View>(R.id.divider).visible()
-        }
     }
 
     override fun getItemCount(): Int = benefits.size

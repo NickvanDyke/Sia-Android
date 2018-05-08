@@ -4,32 +4,35 @@
 
 package com.vandyke.sia.ui.purchase
 
-import android.content.Intent
+import android.content.DialogInterface
 import android.os.Bundle
+import android.support.v4.app.DialogFragment
 import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.widget.Toast
 import com.android.billingclient.api.*
 import com.vandyke.sia.R
 import com.vandyke.sia.data.local.Prefs
-import com.vandyke.sia.ui.main.MainActivity
 import com.vandyke.sia.util.Analytics
 import com.vandyke.sia.util.gone
 import kotlinx.android.synthetic.main.activity_purchase.*
 
-class PurchaseActivity : AppCompatActivity(), PurchasesUpdatedListener {
+class PurchaseDialog : DialogFragment(), PurchasesUpdatedListener {
 
     private lateinit var client: BillingClient
     private var pending = false
+    private var dismissListener: ((DialogInterface) -> Unit)? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_purchase)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.activity_purchase, container)
+    }
 
-        client = BillingClient.newBuilder(this).setListener(this).build()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        client = BillingClient.newBuilder(context!!).setListener(this).build()
         client.startConnection(object : BillingClientStateListener {
             override fun onBillingSetupFinished(responseCode: Int) {
                 if (responseCode == BillingClient.BillingResponse.OK) {
@@ -55,7 +58,7 @@ class PurchaseActivity : AppCompatActivity(), PurchasesUpdatedListener {
                 launchSubscriptionPurchase()
             } else {
                 pending = true
-                Toast.makeText(this, "Google Play Billing isn't connected", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "Google Play Billing isn't connected", Toast.LENGTH_LONG).show()
             }
         }
 
@@ -87,7 +90,7 @@ class PurchaseActivity : AppCompatActivity(), PurchasesUpdatedListener {
                 || purchases?.any { it.sku == overall_sub_sku } == true
                 || client.queryPurchases(BillingClient.SkuType.SUBS).purchasesList?.any { it.sku == overall_sub_sku } == true) {
             Prefs.requirePurchaseAt = 0
-            Toast.makeText(this, "Thanks, enjoy! I look forward to bringing you updates.", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, "Thanks, enjoy! I look forward to bringing you updates.", Toast.LENGTH_LONG).show()
             Analytics.subscribe()
             goToMainActivity()
         }
@@ -100,9 +103,9 @@ class PurchaseActivity : AppCompatActivity(), PurchasesUpdatedListener {
                     .setType(BillingClient.SkuType.INAPP)
                     .setSku(overall_sub_sku)
                     .build()
-            client.launchBillingFlow(this, params)
+            client.launchBillingFlow(activity, params)
         } else {
-            AlertDialog.Builder(this)
+            AlertDialog.Builder(context!!)
                     .setTitle("Unsupported")
                     .setMessage("Your device doesn't support subscriptions, sorry.")
                     .setPositiveButton("Close", null)
@@ -111,8 +114,19 @@ class PurchaseActivity : AppCompatActivity(), PurchasesUpdatedListener {
     }
 
     private fun goToMainActivity() {
-        finish()
-        startActivity(Intent(this, MainActivity::class.java))
+        dismiss()
+//        finish()
+//        startActivity(Intent(this, MainActivity::class.java))
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val params = dialog.window!!.attributes
+        params.width = ViewGroup.LayoutParams.MATCH_PARENT
+        params.height = ViewGroup.LayoutParams.MATCH_PARENT
+        dialog.window!!.attributes = params as android.view.WindowManager.LayoutParams
+
+        isCancelable = false
     }
 
     override fun onDestroy() {

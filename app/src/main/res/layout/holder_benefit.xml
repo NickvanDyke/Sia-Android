@@ -31,14 +31,4 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Store your files on the Sia network" />
 
-    <View
-        android:id="@+id/divider"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_marginStart="12dp"
-        android:background="?dividerHorizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/benefit_desc"
-        app:layout_constraintStart_toEndOf="@+id/benefit_image" />
-
 </android.support.constraint.ConstraintLayout>

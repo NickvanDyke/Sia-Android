@@ -28,7 +28,7 @@ import com.vandyke.sia.ui.help.HelpFragment
 import com.vandyke.sia.ui.node.NodeStatusFragment
 import com.vandyke.sia.ui.node.modules.NodeModulesFragment
 import com.vandyke.sia.ui.node.settings.NodeSettingsFragmentContainer
-import com.vandyke.sia.ui.purchase.PurchaseActivity
+import com.vandyke.sia.ui.purchase.PurchaseDialog
 import com.vandyke.sia.ui.renter.allowance.AllowanceFragment
 import com.vandyke.sia.ui.renter.contracts.view.ContractsFragment
 import com.vandyke.sia.ui.renter.files.view.FilesFragment
@@ -52,8 +52,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (!BuildConfig.DEBUG)
+        if (!BuildConfig.DEBUG && supportFragmentManager.findFragmentByTag(PURCHASE_DIALOG_TAG) == null) {
+            displayPurchasePrompt()
             checkPurchases()
+        }
 
         /* allow rotation in debug builds, for easy recreation testing */
         if (BuildConfig.DEBUG)
@@ -145,12 +147,13 @@ class MainActivity : AppCompatActivity() {
                 if (responseCode == BillingClient.BillingResponse.OK) {
                     val purchases = client.queryPurchases(BillingClient.SkuType.SUBS)
                     if (purchases.responseCode == BillingClient.BillingResponse.OK) {
-                        val purchased = purchases.purchasesList?.any { it.sku == PurchaseActivity.overall_sub_sku } == true
+                        val purchased = purchases.purchasesList?.any { it.sku == PurchaseDialog.overall_sub_sku } == true
                         if (purchased) {
                             Prefs.requirePurchaseAt = 0
                         } else if (System.currentTimeMillis() > Prefs.requirePurchaseAt) {
-                            finish()
-                            startActivity(Intent(this@MainActivity, PurchaseActivity::class.java))
+                            displayPurchasePrompt()
+//                            finish()
+//                            startActivity(Intent(this@MainActivity, PurchaseDialog::class.java))
                             // TODO: maybe stop SiadService here? Because due to the time that checking purchases takes, it will have started by now
                         }
                     }
@@ -162,6 +165,10 @@ class MainActivity : AppCompatActivity() {
             override fun onBillingServiceDisconnected() {
             }
         })
+    }
+
+    private fun displayPurchasePrompt() {
+        PurchaseDialog().show(supportFragmentManager, PURCHASE_DIALOG_TAG)
     }
 
     private fun setupDrawer() {
@@ -329,6 +336,8 @@ class MainActivity : AppCompatActivity() {
         const val DRAWER_ID_WALLET = 3L
 
         private const val VISIBLE_FRAGMENT_KEY = "VISIBLE_FRAGMENT"
-        private const val DRAWER_SELECTED_ID_KEY = "DRAWER_SELECTED_KEY_ID"
+        private const val DRAWER_SELECTED_ID_KEY = "DRAWER_SELECTED_ID_KEY"
+
+        private const val PURCHASE_DIALOG_TAG = "PURCHASE_DIALOG"
     }
 }
