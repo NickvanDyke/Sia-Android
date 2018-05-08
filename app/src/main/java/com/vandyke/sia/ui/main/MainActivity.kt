@@ -53,7 +53,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         if (!BuildConfig.DEBUG && supportFragmentManager.findFragmentByTag(PURCHASE_DIALOG_TAG) == null) {
-            displayPurchasePrompt()
             checkPurchases()
         }
 
