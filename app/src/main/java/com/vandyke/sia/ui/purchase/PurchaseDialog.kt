@@ -4,7 +4,6 @@
 
 package com.vandyke.sia.ui.purchase
 
-import android.content.DialogInterface
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.support.v7.app.AlertDialog
@@ -25,7 +24,6 @@ class PurchaseDialog : DialogFragment(), PurchasesUpdatedListener {
 
     private lateinit var client: BillingClient
     private var pending = false
-    private var dismissListener: ((DialogInterface) -> Unit)? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.activity_purchase, container)
@@ -77,7 +75,7 @@ class PurchaseDialog : DialogFragment(), PurchasesUpdatedListener {
         /* set benefits_list height to wrap_content if all items are fully visible, so that it'll center itself between the top and bottom */
         benefits_list.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
-                if ((benefits_list.layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition() == benefits_list.adapter.itemCount - 1) {
+                if ((benefits_list.layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition() == benefits_list.adapter!!.itemCount - 1) {
                     benefits_list.layoutParams = benefits_list.layoutParams.apply { height = ViewGroup.LayoutParams.WRAP_CONTENT }
                 }
                 benefits_list.viewTreeObserver.removeOnGlobalLayoutListener(this)
@@ -90,7 +88,7 @@ class PurchaseDialog : DialogFragment(), PurchasesUpdatedListener {
                 || purchases?.any { it.sku == overall_sub_sku } == true
                 || client.queryPurchases(BillingClient.SkuType.SUBS).purchasesList?.any { it.sku == overall_sub_sku } == true) {
             Prefs.requirePurchaseAt = 0
-            Toast.makeText(context, "Thanks, enjoy! I look forward to bringing you updates.", Toast.LENGTH_LONG).show()
+            context?.let { Toast.makeText(it, "Thanks, enjoy! I look forward to bringing you updates.", Toast.LENGTH_LONG).show() }
             Analytics.subscribe()
             goToMainActivity()
         }
@@ -114,9 +112,7 @@ class PurchaseDialog : DialogFragment(), PurchasesUpdatedListener {
     }
 
     private fun goToMainActivity() {
-        dismiss()
-//        finish()
-//        startActivity(Intent(this, MainActivity::class.java))
+        dismissAllowingStateLoss()
     }
 
     override fun onResume() {

@@ -14,7 +14,7 @@ object Prefs : KotprefModel() {
     override val kotprefName: String = "${context.packageName}_preferences"
 
     /* make sure to update this when the included siad is updated */
-    val siaVersion by stringPref("1.3.2")
+    val siaVersion by stringPref("1.3.3")
 
     /** Tracked so that we can ask the user to rate after a transaction has been displayed to them,
       * meaning they've experienced a good amount of the app, and presumably will also be satisfied with it

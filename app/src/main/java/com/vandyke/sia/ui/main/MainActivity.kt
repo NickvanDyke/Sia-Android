@@ -102,7 +102,7 @@ class MainActivity : AppCompatActivity() {
                 else -> throw IllegalArgumentException("Invalid startup page: ${Prefs.startupPage}")
             }, true)
         } else {
-            val storedFragmentClass = supportFragmentManager.findFragmentByTag(savedInstanceState.getString(VISIBLE_FRAGMENT_KEY)).javaClass
+            val storedFragmentClass = supportFragmentManager.findFragmentByTag(savedInstanceState.getString(VISIBLE_FRAGMENT_KEY))!!.javaClass
             displayFragment(storedFragmentClass)
             drawer.setSelection(savedInstanceState.getLong(DRAWER_SELECTED_ID_KEY), false)
         }
@@ -120,8 +120,7 @@ class MainActivity : AppCompatActivity() {
         if (clazz == visibleFragment?.javaClass)
             return
         val tx = supportFragmentManager.beginTransaction()
-        if (visibleFragment != null)
-            tx.hide(visibleFragment)
+        visibleFragment?.let { tx.hide(it) }
         /* check if the to-be-displayed fragment already exists in the fragment manager */
         var newFragment = supportFragmentManager.findFragmentByTag(clazz.simpleName) as? BaseFragment
         /* if not, create an instance of it and add it to the frame */
@@ -151,8 +150,6 @@ class MainActivity : AppCompatActivity() {
                             Prefs.requirePurchaseAt = 0
                         } else if (System.currentTimeMillis() > Prefs.requirePurchaseAt) {
                             displayPurchasePrompt()
-//                            finish()
-//                            startActivity(Intent(this@MainActivity, PurchaseDialog::class.java))
                             // TODO: maybe stop SiadService here? Because due to the time that checking purchases takes, it will have started by now
                         }
                     }
@@ -167,7 +164,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun displayPurchasePrompt() {
-        PurchaseDialog().show(supportFragmentManager, PURCHASE_DIALOG_TAG)
+        supportFragmentManager.beginTransaction()
+                .add(PurchaseDialog(), PURCHASE_DIALOG_TAG)
+                .commitAllowingStateLoss()
     }
 
     private fun setupDrawer() {

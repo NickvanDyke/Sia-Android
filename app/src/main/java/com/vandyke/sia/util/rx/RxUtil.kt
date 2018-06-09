@@ -4,7 +4,7 @@
 
 package com.vandyke.sia.util.rx
 
-import com.vandyke.sia.data.local.AppDatabase
+import android.arch.persistence.room.RoomDatabase
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Observable
@@ -14,12 +14,12 @@ import io.reactivex.rxkotlin.toObservable
 import io.reactivex.schedulers.Schedulers
 
 
-fun Completable.inDbTransaction(db: AppDatabase): Completable =
+fun Completable.inDbTransaction(db: RoomDatabase): Completable =
         this.doOnSubscribe { db.beginTransaction() }
                 .doOnComplete { db.setTransactionSuccessful() }
                 .doFinally { db.endTransaction() }
 
-fun <T> Single<T>.inDbTransaction(db: AppDatabase): Single<T> =
+fun <T> Single<T>.inDbTransaction(db: RoomDatabase): Single<T> =
         this.doOnSubscribe { db.beginTransaction() }
                 .doOnSuccess { db.setTransactionSuccessful() }
                 .doFinally { db.endTransaction() }

@@ -15,7 +15,7 @@ import javax.inject.Singleton
 class DbModule {
     @Provides
     @Singleton
-    fun providesAppDatabase(context: Context): AppDatabase {
+    fun provideAppDatabase(context: Context): AppDatabase {
         return Room.databaseBuilder(context, AppDatabase::class.java, "db")
                 .fallbackToDestructiveMigration()
                 .build()
