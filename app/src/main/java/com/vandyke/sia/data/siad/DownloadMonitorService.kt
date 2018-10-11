@@ -1,7 +1,7 @@
 package com.vandyke.sia.data.siad
 
+import android.annotation.SuppressLint
 import android.app.*
-import android.arch.lifecycle.LifecycleService
 import android.content.Context
 import android.content.Intent
 import android.graphics.Typeface
@@ -16,12 +16,9 @@ import com.vandyke.sia.data.models.renter.DownloadData.Status
 import com.vandyke.sia.data.models.renter.name
 import com.vandyke.sia.data.remote.SiaApi
 import com.vandyke.sia.data.siad.SiadStatus.State.*
-import com.vandyke.sia.getAppComponent
-import com.vandyke.sia.util.bitmapFromVector
 import com.vandyke.sia.util.pluralize
 import com.vandyke.sia.util.rx.io
 import com.vandyke.sia.util.rx.main
-import com.vandyke.sia.util.rx.observe
 import com.vandyke.sia.util.show
 import javax.inject.Inject
 
@@ -74,6 +71,7 @@ class DownloadMonitorService : LifecycleService() {
         handler.postDelayed(::loopSum, 2000)
     }
 
+    @SuppressLint("CheckResult")
     private fun update() {
         api.renterDownloads()
                 .io()
