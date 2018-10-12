@@ -10,6 +10,7 @@ package com.vandyke.sia.room
 
 import android.database.sqlite.SQLiteConstraintException
 import androidx.room.Room
+import androidx.test.InstrumentationRegistry
 import com.vandyke.sia.data.local.AppDatabase
 import com.vandyke.sia.data.models.renter.PricesData
 import com.vandyke.sia.data.models.wallet.AddressData
