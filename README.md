@@ -14,7 +14,7 @@ This app is developed independently by me. It is not an official Nebulous Labs p
 siamobiledev@gmail.com or Nick#6026 on the [Sia Discord](https://discord.gg/sFCT3Ar)
 
 # Contributing
-This app is still in heavy development, and contributions to it through this repository (pull requests, issue reporting, feature ideas, etc.) are welcomed, encouraged, and appreciated. I am happy to help with implementations and answer any questions you might have.
+This app is currently only under very light development, but contributions to it through this repository (pull requests, issue reporting, feature ideas, etc.) are still welcomed, encouraged, and appreciated. I am happy to help with implementations and answer any questions you might have.
 
 # Acknowledgements
 Huge thanks to [SiaPulse](http://siapulse.com) for a donation that made the time spent on this many times more possible.
