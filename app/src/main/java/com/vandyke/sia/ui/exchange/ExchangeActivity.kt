@@ -1,11 +1,11 @@
 package com.vandyke.sia.ui.exchange
 
-import android.arch.lifecycle.ViewModelProvider
 import android.graphics.PorterDuff
 import android.os.Bundle
-import android.support.v7.app.AppCompatDelegate
 import android.view.MenuItem
 import android.widget.ArrayAdapter
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.lifecycle.ViewModelProvider
 import com.hannesdorfmann.mosby3.mvi.MviActivity
 import com.jakewharton.rxbinding2.widget.itemSelections
 import com.jakewharton.rxbinding2.widget.textChanges

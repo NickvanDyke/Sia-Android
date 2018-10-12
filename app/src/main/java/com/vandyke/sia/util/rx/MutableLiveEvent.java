@@ -1,11 +1,12 @@
 package com.vandyke.sia.util.rx;
 
-import android.arch.lifecycle.Observer;
-import android.support.annotation.MainThread;
-import android.support.annotation.Nullable;
 import android.util.Pair;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import androidx.annotation.MainThread;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.Observer;
 
 public class MutableLiveEvent<T> extends LiveEvent<T> {
     @Override

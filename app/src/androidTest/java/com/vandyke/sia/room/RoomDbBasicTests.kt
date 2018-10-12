@@ -8,9 +8,8 @@ package com.vandyke.sia.room
  * Copyright (c) 2017 Nicholas van Dyke. All rights reserved.
  */
 
-import android.arch.persistence.room.Room
 import android.database.sqlite.SQLiteConstraintException
-import android.support.test.InstrumentationRegistry
+import androidx.room.Room
 import com.vandyke.sia.data.local.AppDatabase
 import com.vandyke.sia.data.models.renter.PricesData
 import com.vandyke.sia.data.models.wallet.AddressData

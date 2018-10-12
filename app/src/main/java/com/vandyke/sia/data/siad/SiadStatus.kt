@@ -4,8 +4,8 @@
 
 package com.vandyke.sia.data.siad
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.vandyke.sia.util.rx.LiveEvent
 import com.vandyke.sia.util.rx.MutableLiveEvent
 import io.reactivex.Observable

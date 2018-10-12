@@ -1,9 +1,9 @@
 package com.vandyke.sia.ui.renter.contracts.view
 
-import android.support.v7.recyclerview.extensions.ListAdapter
-import android.support.v7.util.DiffUtil
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import com.vandyke.sia.R
 import com.vandyke.sia.data.models.renter.ContractData
 

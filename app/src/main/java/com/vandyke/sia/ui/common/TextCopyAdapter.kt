@@ -4,12 +4,11 @@
 
 package com.vandyke.sia.ui.common
 
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.vandyke.sia.R
 
-class TextCopyAdapter(var data: List<String> = listOf()) : RecyclerView.Adapter<TextHolder>() {
+class TextCopyAdapter(var data: List<String> = listOf()) : androidx.recyclerview.widget.RecyclerView.Adapter<TextHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TextHolder {
         return TextHolder(LayoutInflater.from(parent.context).inflate(R.layout.holder_text_copy, parent, false))

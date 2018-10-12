@@ -4,9 +4,7 @@
 
 package com.vandyke.sia.ui.renter.allowance
 
-import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.text.InputType
 import android.view.Menu
 import android.view.MenuInflater
@@ -14,6 +12,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.lifecycle.ViewModelProviders
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
@@ -139,7 +138,7 @@ class AllowanceFragment : BaseFragment() {
 
                             Prefs.fiatCurrency -> {
                                 val rate = vm.scValue.value?.get(Prefs.fiatCurrency) ?: run {
-                                    Light.error(allowance_swiperefresh, "Error converting ${Prefs.fiatCurrency} to SC", Snackbar.LENGTH_SHORT).show()
+                                    Light.error(allowance_swiperefresh, "Error converting ${Prefs.fiatCurrency} to SC", com.google.android.material.snackbar.Snackbar.LENGTH_SHORT).show()
                                     return@editTextSpinnerDialog
                                 }
                                 val sc = text.toBigDecimal() / rate
@@ -151,11 +150,11 @@ class AllowanceFragment : BaseFragment() {
                          * we already have contracts, but that's not a big deal. Better to overestimate than under and have the user confused why it's not working. */
                             "GB" -> {
                                 val prices = vm.prices.value ?: run {
-                                    Light.error(allowance_swiperefresh, "Error converting GB to SC", Snackbar.LENGTH_SHORT).show()
+                                    Light.error(allowance_swiperefresh, "Error converting GB to SC", com.google.android.material.snackbar.Snackbar.LENGTH_SHORT).show()
                                     return@editTextSpinnerDialog
                                 }
                                 val allowance = vm.allowance.value ?: run {
-                                    Light.error(allowance_swiperefresh, "Error converting GB to SC", Snackbar.LENGTH_SHORT).show()
+                                    Light.error(allowance_swiperefresh, "Error converting GB to SC", com.google.android.material.snackbar.Snackbar.LENGTH_SHORT).show()
                                     return@editTextSpinnerDialog
                                 }
                                 val periodLengthMonths = SiaUtil.blocksToDays(allowance.period) / 30

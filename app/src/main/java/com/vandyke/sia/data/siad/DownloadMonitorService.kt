@@ -7,18 +7,22 @@ import android.content.Intent
 import android.graphics.Typeface
 import android.os.Build
 import android.os.Handler
-import android.support.v4.app.NotificationCompat
 import android.text.SpannableString
 import android.text.style.StyleSpan
+import androidx.core.app.NotificationCompat
+import androidx.lifecycle.LifecycleService
 import com.vandyke.sia.R
 import com.vandyke.sia.data.models.renter.DownloadData
 import com.vandyke.sia.data.models.renter.DownloadData.Status
 import com.vandyke.sia.data.models.renter.name
 import com.vandyke.sia.data.remote.SiaApi
 import com.vandyke.sia.data.siad.SiadStatus.State.*
+import com.vandyke.sia.getAppComponent
+import com.vandyke.sia.util.bitmapFromVector
 import com.vandyke.sia.util.pluralize
 import com.vandyke.sia.util.rx.io
 import com.vandyke.sia.util.rx.main
+import com.vandyke.sia.util.rx.observe
 import com.vandyke.sia.util.show
 import javax.inject.Inject
 

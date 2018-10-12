@@ -4,8 +4,8 @@
 
 package com.vandyke.sia.ui.renter.allowance
 
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.models.consensus.ConsensusData
 import com.vandyke.sia.data.models.renter.CurrentPeriodData

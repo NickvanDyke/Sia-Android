@@ -5,14 +5,12 @@
 package com.vandyke.sia.ui.purchase
 
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
-import android.support.v7.app.AlertDialog
-import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import com.android.billingclient.api.*
 import com.vandyke.sia.R
 import com.vandyke.sia.data.local.Prefs
@@ -20,7 +18,7 @@ import com.vandyke.sia.util.Analytics
 import com.vandyke.sia.util.gone
 import kotlinx.android.synthetic.main.activity_purchase.*
 
-class PurchaseDialog : DialogFragment(), PurchasesUpdatedListener {
+class PurchaseDialog : androidx.fragment.app.DialogFragment(), PurchasesUpdatedListener {
 
     private lateinit var client: BillingClient
     private var pending = false
@@ -75,7 +73,7 @@ class PurchaseDialog : DialogFragment(), PurchasesUpdatedListener {
         /* set benefits_list height to wrap_content if all items are fully visible, so that it'll center itself between the top and bottom */
         benefits_list.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
-                if ((benefits_list.layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition() == benefits_list.adapter!!.itemCount - 1) {
+                if ((benefits_list.layoutManager as androidx.recyclerview.widget.LinearLayoutManager).findLastCompletelyVisibleItemPosition() == benefits_list.adapter!!.itemCount - 1) {
                     benefits_list.layoutParams = benefits_list.layoutParams.apply { height = ViewGroup.LayoutParams.WRAP_CONTENT }
                 }
                 benefits_list.viewTreeObserver.removeOnGlobalLayoutListener(this)

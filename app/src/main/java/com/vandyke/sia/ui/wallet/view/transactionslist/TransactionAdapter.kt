@@ -4,10 +4,10 @@
 
 package com.vandyke.sia.ui.wallet.view.transactionslist
 
-import android.arch.paging.PagedListAdapter
-import android.support.v7.util.DiffUtil
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.paging.PagedListAdapter
+import androidx.recyclerview.widget.DiffUtil
 import com.vandyke.sia.R
 import com.vandyke.sia.data.models.wallet.TransactionData
 

@@ -11,11 +11,10 @@ import android.graphics.Canvas
 import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import android.support.customtabs.CustomTabsIntent
-import android.support.v4.content.ContextCompat
-import android.support.v4.widget.SwipeRefreshLayout
 import android.util.TypedValue
 import android.widget.ProgressBar
+import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.content.ContextCompat
 import com.vandyke.sia.R
 import java.math.BigDecimal
 
@@ -111,7 +110,7 @@ fun Context.hasPermission(permission: String): Boolean {
     return ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
 }
 
-fun SwipeRefreshLayout.setColors(context: Context) {
+fun androidx.swiperefreshlayout.widget.SwipeRefreshLayout.setColors(context: Context) {
     val colors = context.getAttrColors(R.attr.colorAccent, android.R.attr.windowBackground)
     this.setColorSchemeColors(colors[0])
     this.setProgressBackgroundColorSchemeColor(colors[1])

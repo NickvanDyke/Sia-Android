@@ -5,8 +5,6 @@
 package com.vandyke.sia.ui.wallet.view.childfragments
 
 import android.os.Bundle
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import com.vandyke.sia.R
 import com.vandyke.sia.ui.common.TextCopyAdapter
@@ -18,9 +16,9 @@ class WalletSeedsFragment : BaseWalletFragment() {
     override fun create(view: View, savedInstanceState: Bundle?) {
         val adapter = TextCopyAdapter()
 
-        val layoutManager = LinearLayoutManager(activity)
+        val layoutManager = androidx.recyclerview.widget.LinearLayoutManager(activity)
         seedsList.layoutManager = layoutManager
-        seedsList.addItemDecoration(DividerItemDecoration(seedsList.context, layoutManager.orientation))
+        seedsList.addItemDecoration(androidx.recyclerview.widget.DividerItemDecoration(seedsList.context, layoutManager.orientation))
         seedsList.adapter = adapter
 
         vm.getSeeds().subscribe({ seeds ->

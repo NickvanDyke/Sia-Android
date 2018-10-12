@@ -1,14 +1,13 @@
 package com.vandyke.sia.data.local.daos;
 
-import android.arch.persistence.db.SupportSQLiteQuery;
-import android.arch.persistence.room.Dao;
-import android.arch.persistence.room.Query;
-import android.arch.persistence.room.RawQuery;
-
 import com.vandyke.sia.data.models.renter.SiaFile;
 
 import java.util.List;
 
+import androidx.room.Dao;
+import androidx.room.Query;
+import androidx.room.RawQuery;
+import androidx.sqlite.db.SupportSQLiteQuery;
 import io.reactivex.Flowable;
 import io.reactivex.Single;
 

@@ -9,13 +9,12 @@ import android.app.Dialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
-import android.support.v7.app.AlertDialog
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import com.vandyke.sia.R
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.util.FileUtils
@@ -24,7 +23,7 @@ import com.vandyke.sia.util.visible
 import kotlinx.android.synthetic.main.dialog_file_upload.view.*
 import java.io.File
 
-class FileUploadDialog : DialogFragment() {
+class FileUploadDialog : androidx.fragment.app.DialogFragment() {
 
     private lateinit var uris: List<Uri>
 

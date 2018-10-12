@@ -1,6 +1,5 @@
 package com.vandyke.sia.ui.node.modules
 
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +12,7 @@ import java.io.File
 
 /* we use unusual-ish ways of updating the holders because calling the usual notifyDataSetChanged or
  * notifyItemChanged or DiffUtil etc. would cause difficulties clicking the items because of how often they'd re-bind */
-class ModuleStorageAdapter(val module: ModuleData, val fragment: NodeModulesFragment) : RecyclerView.Adapter<ModuleStorageAdapter.ModuleStorageHolder>() {
+class ModuleStorageAdapter(val module: ModuleData, val fragment: NodeModulesFragment) : androidx.recyclerview.widget.RecyclerView.Adapter<ModuleStorageAdapter.ModuleStorageHolder>() {
     private val holders = mutableListOf<ModuleStorageHolder>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ModuleStorageHolder {
@@ -32,7 +31,7 @@ class ModuleStorageAdapter(val module: ModuleData, val fragment: NodeModulesFrag
 
     override fun getItemCount() = module.directories.size
 
-    inner class ModuleStorageHolder(itemView: View) : RecyclerView.ViewHolder(itemView), LayoutContainer {
+    inner class ModuleStorageHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView), LayoutContainer {
         override val containerView: View? = itemView
         private var dir: File? = null
 

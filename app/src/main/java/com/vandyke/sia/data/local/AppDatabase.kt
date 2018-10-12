@@ -4,9 +4,9 @@
 
 package com.vandyke.sia.data.local
 
-import android.arch.persistence.room.Database
-import android.arch.persistence.room.RoomDatabase
-import android.arch.persistence.room.TypeConverters
+import androidx.room.Database
+import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import com.vandyke.sia.data.local.daos.*
 import com.vandyke.sia.data.models.consensus.ConsensusData
 import com.vandyke.sia.data.models.renter.*

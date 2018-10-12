@@ -4,15 +4,14 @@
 
 package com.vandyke.sia.ui.wallet.view.childfragments
 
-import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModelProviders
 import com.vandyke.sia.ui.wallet.viewmodel.WalletViewModel
 
-abstract class BaseWalletFragment : Fragment() {
+abstract class BaseWalletFragment : androidx.fragment.app.Fragment() {
     protected abstract val layout: Int
     protected lateinit var vm: WalletViewModel
 

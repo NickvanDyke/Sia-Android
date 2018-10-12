@@ -4,9 +4,9 @@
 
 package com.vandyke.sia.ui.renter.contracts.view
 
-import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.view.View
+import androidx.lifecycle.ViewModelProviders
 import com.vandyke.sia.R
 import com.vandyke.sia.dagger.SiaViewModelFactory
 import com.vandyke.sia.data.siad.SiadStatus

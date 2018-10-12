@@ -4,17 +4,14 @@
 
 package com.vandyke.sia.ui.wallet.view
 
-import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v7.app.AlertDialog
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import com.vandyke.sia.R
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.remote.WalletLocked
@@ -29,7 +26,6 @@ import com.vandyke.sia.util.*
 import com.vandyke.sia.util.rx.observe
 import io.github.tonnyl.light.Light
 import it.sephiroth.android.library.tooltip.Tooltip
-import it.sephiroth.android.library.tooltip.Tooltip.Gravity
 import kotlinx.android.synthetic.main.fragment_wallet.*
 import net.cachapa.expandablelayout.ExpandableLayout
 import java.math.BigDecimal
@@ -57,8 +53,8 @@ class WalletFragment : BaseFragment() {
 
         /* set up recyclerview for transactions */
         val adapter = TransactionAdapter()
-        transaction_list.addItemDecoration(DividerItemDecoration(transaction_list.context,
-                (transaction_list.layoutManager as LinearLayoutManager).orientation))
+        transaction_list.addItemDecoration(androidx.recyclerview.widget.DividerItemDecoration(transaction_list.context,
+                (transaction_list.layoutManager as androidx.recyclerview.widget.LinearLayoutManager).orientation))
         transaction_list.adapter = adapter
         transaction_list.addOnScrollListener(RecyclerViewHideFabOnScrollListener(fab_wallet_menu))
 
@@ -133,14 +129,14 @@ class WalletFragment : BaseFragment() {
         }
 
         /* observe data in the viewModel */
-        vm.wallet.observe(this) {
-            balance_text.text = it.confirmedsiacoinbalance.toSC().format()
-            if (it.unconfirmedsiacoinbalance != BigDecimal.ZERO) {
+        vm.wallet.observe(this) { data ->
+            balance_text.text = data.confirmedsiacoinbalance.toSC().format()
+            if (data.unconfirmedsiacoinbalance != BigDecimal.ZERO) {
                 balance_unconfirmed_text.text =
-                        "${if (it.unconfirmedsiacoinbalance > BigDecimal.ZERO) "+" else ""}" +
-                        "${it.unconfirmedsiacoinbalance.toSC().format()} unconfirmed"
+                        "${if (data.unconfirmedsiacoinbalance > BigDecimal.ZERO) "+" else ""}" +
+                        "${data.unconfirmedsiacoinbalance.toSC().format()} unconfirmed"
                 balance_unconfirmed_text.visible()
-                balance_unconfirmed_text.oneTimeTooltip("Transactions will generally confirm within a couple blocks", Gravity.BOTTOM)?.let { queueTooltip(it) }
+                balance_unconfirmed_text.oneTimeTooltip("Transactions will generally confirm within a couple blocks", it.sephiroth.android.library.tooltip.Tooltip.Gravity.BOTTOM)?.let { queueTooltip(it) }
             } else {
                 balance_unconfirmed_text.invisible()
             }
@@ -167,7 +163,7 @@ class WalletFragment : BaseFragment() {
         }
 
         vm.success.observe(this) {
-            Light.success(wallet_coordinator, it, Snackbar.LENGTH_SHORT).show()
+            Light.success(wallet_coordinator, it, com.google.android.material.snackbar.Snackbar.LENGTH_SHORT).show()
             collapseFrame()
         }
 

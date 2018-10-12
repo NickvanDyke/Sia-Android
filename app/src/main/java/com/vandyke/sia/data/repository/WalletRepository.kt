@@ -4,7 +4,7 @@
 
 package com.vandyke.sia.data.repository
 
-import android.arch.paging.LivePagedListBuilder
+import androidx.paging.LivePagedListBuilder
 import com.vandyke.sia.data.local.AppDatabase
 import com.vandyke.sia.data.models.wallet.AddressData
 import com.vandyke.sia.data.models.wallet.SeedData

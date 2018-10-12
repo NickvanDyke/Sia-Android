@@ -4,9 +4,9 @@
 
 package com.vandyke.sia.ui.node.modules
 
-import android.arch.lifecycle.ViewModel
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.lifecycle.ViewModel
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.siad.SiadSource
 import com.vandyke.sia.data.siad.SiadStatus

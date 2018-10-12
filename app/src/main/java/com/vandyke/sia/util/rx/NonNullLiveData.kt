@@ -4,7 +4,7 @@
 
 package com.vandyke.sia.util.rx
 
-import android.arch.lifecycle.LiveData
+import androidx.lifecycle.LiveData
 
 open class NonNullLiveData<T>(initialValue: T) : LiveData<T>() {
     init {
