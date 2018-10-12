@@ -1,6 +1,5 @@
 package com.vandyke.sia.ui.renter.contracts.view
 
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.vandyke.sia.R
 import com.vandyke.sia.data.models.renter.ContractData
@@ -10,7 +9,7 @@ import com.vandyke.sia.util.getColorRes
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.holder_contract.*
 
-class ContractHolder(itemView: View) : RecyclerView.ViewHolder(itemView), LayoutContainer {
+class ContractHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView), LayoutContainer {
     override val containerView: View? = itemView
 
     fun bind(contract: ContractData) {

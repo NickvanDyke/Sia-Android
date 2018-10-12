@@ -6,10 +6,9 @@ package com.vandyke.sia.ui.wallet.view.childfragments
 
 import android.content.Context
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v7.app.AlertDialog
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import com.vandyke.sia.R
 import com.vandyke.sia.util.KeyboardUtil
 import io.github.tonnyl.light.Light
@@ -39,10 +38,10 @@ class WalletCreateFragment : BaseWalletFragment() {
     override fun onCheckPressed(): Boolean {
         val password = newPasswordCreate.text.toString()
         if (password.isEmpty()) {
-            Light.error(view!!, "Can't have empty password", Snackbar.LENGTH_SHORT).show()
+            Light.error(view!!, "Can't have empty password", com.google.android.material.snackbar.Snackbar.LENGTH_SHORT).show()
             return true
         } else if (password != confirmNewPasswordCreate.text.toString()) {
-            Light.error(view!!, "Passwords don't match", Snackbar.LENGTH_SHORT).show()
+            Light.error(view!!, "Passwords don't match", com.google.android.material.snackbar.Snackbar.LENGTH_SHORT).show()
             return true
         }
         val force = walletCreateForce.isChecked

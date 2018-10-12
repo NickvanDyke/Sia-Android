@@ -5,9 +5,9 @@
 package com.vandyke.sia.ui.renter.files.viewmodel
 
 import android.app.Application
-import android.arch.lifecycle.ViewModel
-import android.arch.persistence.room.EmptyResultSetException
 import android.content.Intent
+import androidx.lifecycle.ViewModel
+import androidx.room.EmptyResultSetException
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.models.renter.*
 import com.vandyke.sia.data.repository.FilesRepository

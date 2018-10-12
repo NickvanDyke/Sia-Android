@@ -5,13 +5,12 @@
 package com.vandyke.sia.ui.common
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.app.ActionBar
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.Toolbar
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.ActionBar
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import com.vandyke.sia.getRefWatcher
 import com.vandyke.sia.ui.main.MainActivity
 import com.vandyke.sia.util.Analytics
@@ -20,7 +19,7 @@ import it.sephiroth.android.library.tooltip.Tooltip
 import kotlinx.android.synthetic.main.activity_main.*
 import me.zhanghai.android.materialprogressbar.MaterialProgressBar
 
-abstract class BaseFragment : Fragment() {
+abstract class BaseFragment : androidx.fragment.app.Fragment() {
     open val layoutResId: Int = -1
     open val hasOptionsMenu = false
     abstract val title: String

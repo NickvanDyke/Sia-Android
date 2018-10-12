@@ -4,10 +4,10 @@
 
 package com.vandyke.sia.ui.wallet.viewmodel
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.ViewModel
-import android.arch.paging.PagedList
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.paging.PagedList
 import com.vandyke.sia.data.models.consensus.ConsensusData
 import com.vandyke.sia.data.models.wallet.*
 import com.vandyke.sia.data.repository.ConsensusRepository

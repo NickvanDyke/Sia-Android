@@ -4,7 +4,6 @@
 
 package com.vandyke.sia.ui.renter.files.view.fileupload
 
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.vandyke.sia.R
 import com.vandyke.sia.data.models.renter.name
@@ -15,7 +14,7 @@ import com.vandyke.sia.util.visible
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.holder_file_upload.*
 
-class FileUploadHolder(itemView: View) : RecyclerView.ViewHolder(itemView), LayoutContainer {
+class FileUploadHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView), LayoutContainer {
     override val containerView: View? = itemView
 
     fun bind(upload: FileUpload) {

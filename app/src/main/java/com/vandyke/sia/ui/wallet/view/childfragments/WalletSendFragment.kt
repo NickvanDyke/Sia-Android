@@ -7,7 +7,6 @@ package com.vandyke.sia.ui.wallet.view.childfragments
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.view.View
 import com.vandyke.sia.R
 import com.vandyke.sia.ui.wallet.view.ScannerActivity
@@ -28,7 +27,7 @@ class WalletSendFragment : BaseWalletFragment() {
         pasteClipboard.setOnClickListener {
             KeyboardUtil.getClipboardPrimaryText(context!!)?.let {
                 sendRecipient.setText(it)
-            } ?: Light.error(view, "No text on clipboard to paste", Snackbar.LENGTH_SHORT).show()
+            } ?: Light.error(view, "No text on clipboard to paste", com.google.android.material.snackbar.Snackbar.LENGTH_SHORT).show()
         }
     }
 

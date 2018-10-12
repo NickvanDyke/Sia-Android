@@ -6,8 +6,8 @@ package com.vandyke.sia.util
 
 import android.app.Notification
 import android.content.Context
-import android.support.v4.app.NotificationCompat
-import android.support.v4.app.NotificationManagerCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 
 object NotificationUtil {
     fun cancelNotification(context: Context, id: Int) {

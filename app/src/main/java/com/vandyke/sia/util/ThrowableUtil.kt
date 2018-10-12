@@ -5,7 +5,6 @@
 package com.vandyke.sia.util
 
 import android.database.sqlite.SQLiteConstraintException
-import android.support.design.widget.Snackbar
 import android.util.Log
 import android.view.View
 import com.vandyke.sia.BuildConfig
@@ -59,7 +58,7 @@ fun CompositeException.all(clazz: Class<*>) = this.exceptions.all { it.javaClass
 
 fun Throwable.isOrAll(clazz: Class<*>) = this.javaClass == clazz || (this as? CompositeException)?.all(clazz) == true
 
-fun Throwable.snackbar(view: View, state: SiadStatus.State? = null, length: Int = Snackbar.LENGTH_SHORT) {
+fun Throwable.snackbar(view: View, state: SiadStatus.State? = null, length: Int = com.google.android.material.snackbar.Snackbar.LENGTH_SHORT) {
     Light.error(view, this.customMsg() ?: "Error", length).apply {
         if (this@snackbar.isOrAll(SiadNotRunning::class.java) && state == SiadStatus.State.MANUALLY_STOPPED) {
             setAction("Start") { Prefs.siaManuallyStopped = false }
@@ -72,7 +71,7 @@ fun Throwable.snackbar(view: View, state: SiadStatus.State? = null, length: Int 
             }
             setAction("Enable") {
                 Prefs.modulesString = Prefs.modulesString.addIfNotPresent(module[0].toString())
-                Light.success(view, "Enabled module: $module, restarting Sia node...", Snackbar.LENGTH_SHORT).show()
+                Light.success(view, "Enabled module: $module, restarting Sia node...", com.google.android.material.snackbar.Snackbar.LENGTH_SHORT).show()
             }
             setActionTextColor(view.context.getColorRes(android.R.color.white))
         }

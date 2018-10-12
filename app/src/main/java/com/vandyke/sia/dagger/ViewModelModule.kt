@@ -4,8 +4,8 @@
 
 package com.vandyke.sia.dagger
 
-import android.arch.lifecycle.ViewModel
-import android.arch.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.vandyke.sia.ui.node.modules.NodeModulesViewModel
 import com.vandyke.sia.ui.renter.allowance.AllowanceViewModel
 import com.vandyke.sia.ui.renter.contracts.ContractsViewModel

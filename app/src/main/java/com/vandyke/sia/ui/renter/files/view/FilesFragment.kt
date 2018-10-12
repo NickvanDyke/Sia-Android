@@ -6,17 +6,12 @@ package com.vandyke.sia.ui.renter.files.view
 
 import android.Manifest
 import android.app.Activity.RESULT_OK
-import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.PorterDuff
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
-import android.support.design.widget.Snackbar
-import android.support.v7.app.AlertDialog
-import android.support.v7.widget.SearchView
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -24,6 +19,10 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.SearchView
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import com.vandyke.sia.R
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.models.renter.Dir
@@ -243,7 +242,7 @@ class FilesFragment : BaseFragment() {
         }
 
         vm.success.observe(this) {
-            Light.success(coordinator, it, Snackbar.LENGTH_LONG).show()
+            Light.success(coordinator, it, com.google.android.material.snackbar.Snackbar.LENGTH_LONG).show()
         }
 
         vm.error.observe(this) {

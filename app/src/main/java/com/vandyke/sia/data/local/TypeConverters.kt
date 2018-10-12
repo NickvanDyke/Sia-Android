@@ -4,7 +4,7 @@
 
 package com.vandyke.sia.data.local
 
-import android.arch.persistence.room.TypeConverter
+import androidx.room.TypeConverter
 import java.math.BigDecimal
 
 class TypeConverters {

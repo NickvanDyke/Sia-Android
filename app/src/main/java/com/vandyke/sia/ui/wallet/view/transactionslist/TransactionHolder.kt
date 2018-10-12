@@ -4,7 +4,6 @@
 
 package com.vandyke.sia.ui.wallet.view.transactionslist
 
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.vandyke.sia.R
 import com.vandyke.sia.data.models.wallet.TransactionData
@@ -17,7 +16,7 @@ import kotlinx.android.synthetic.main.holder_transaction.*
 import java.text.SimpleDateFormat
 import java.util.*
 
-class TransactionHolder(itemView: View) : RecyclerView.ViewHolder(itemView), LayoutContainer {
+class TransactionHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView), LayoutContainer {
 
     override val containerView: View?
         get() = itemView

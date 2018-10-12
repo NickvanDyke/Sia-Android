@@ -1,6 +1,6 @@
 package com.vandyke.sia.util.rx
 
-import android.support.annotation.MainThread
+import androidx.annotation.MainThread
 
 class MutableSingleLiveEvent<T> : SingleLiveEvent<T>() {
     @MainThread

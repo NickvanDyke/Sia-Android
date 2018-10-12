@@ -1,8 +1,8 @@
 package com.vandyke.sia.util
 
-import android.support.v7.preference.PreferenceManager
 import android.view.View
 import android.view.View.*
+import androidx.preference.PreferenceManager
 import com.vandyke.sia.R
 import it.sephiroth.android.library.tooltip.Tooltip
 

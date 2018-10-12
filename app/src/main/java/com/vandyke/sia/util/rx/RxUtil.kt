@@ -4,7 +4,7 @@
 
 package com.vandyke.sia.util.rx
 
-import android.arch.persistence.room.RoomDatabase
+import androidx.room.RoomDatabase
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Observable

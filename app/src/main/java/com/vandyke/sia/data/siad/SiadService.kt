@@ -5,14 +5,14 @@
 package com.vandyke.sia.data.siad
 
 import android.app.*
-import android.arch.lifecycle.LifecycleService
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Environment
 import android.os.Handler
-import android.support.v4.app.NotificationCompat
 import android.util.Log
+import androidx.core.app.NotificationCompat
+import androidx.lifecycle.LifecycleService
 import com.vandyke.sia.R
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.siad.SiadStatus.State

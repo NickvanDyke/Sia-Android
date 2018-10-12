@@ -3,13 +3,9 @@ package com.vandyke.sia.ui.node.settings
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Environment
-import android.support.design.widget.Snackbar
-import android.support.v7.preference.ListPreference
-import android.support.v7.preference.Preference
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompatDividers
+import androidx.preference.ListPreference
+import androidx.preference.Preference
+import com.takisoft.preferencex.PreferenceFragmentCompat
 import com.vandyke.sia.R
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.siad.SiadStatus
@@ -22,7 +18,7 @@ import javax.inject.Inject
 
 /* Note that we don't need to take manual action regarding siad when settings change, because SiadSource will
  * already be listening for changes to the relevant preferences. */
-class NodeSettingsFragment : PreferenceFragmentCompatDividers() {
+class NodeSettingsFragment : PreferenceFragmentCompat() {
 
     @Inject
     lateinit var siadStatus: SiadStatus
@@ -46,11 +42,11 @@ class NodeSettingsFragment : PreferenceFragmentCompatDividers() {
         storagePref.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
             val dir = File(newValue as String)
             return@OnPreferenceChangeListener if (!dir.exists()) {
-                Light.error(view!!, "Error: selected directory doesn't exist", Snackbar.LENGTH_LONG).show()
+                Light.error(view!!, "Error: selected directory doesn't exist", com.google.android.material.snackbar.Snackbar.LENGTH_LONG).show()
                 false
             } else if (dir.absolutePath != context!!.filesDir.absolutePath) {
                 if (Environment.getExternalStorageState(dir) != Environment.MEDIA_MOUNTED) {
-                    Light.error(view!!, "Error with external storage: ${Environment.getExternalStorageState(dir)}", Snackbar.LENGTH_LONG).show()
+                    Light.error(view!!, "Error with external storage: ${Environment.getExternalStorageState(dir)}", com.google.android.material.snackbar.Snackbar.LENGTH_LONG).show()
                     false
                 } else {
                     successSnackbar("Changed Sia node's working directory")
@@ -78,18 +74,10 @@ class NodeSettingsFragment : PreferenceFragmentCompatDividers() {
         Prefs.preferences.unregisterOnSharedPreferenceChangeListener(prefsListener)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        try {
-            return super.onCreateView(inflater, container, savedInstanceState)
-        } finally {
-            setDividerPreferences(PreferenceFragmentCompatDividers.DIVIDER_OFFICIAL)
-        }
-    }
-
     private fun successSnackbar(text: String) {
         var msg = text
         if (siadStatus.state.value!!.processIsRunning)
             msg += ", restarting it..."
-        Light.success(view!!, msg, Snackbar.LENGTH_LONG).show()
+        Light.success(view!!, msg, com.google.android.material.snackbar.Snackbar.LENGTH_LONG).show()
     }
 }

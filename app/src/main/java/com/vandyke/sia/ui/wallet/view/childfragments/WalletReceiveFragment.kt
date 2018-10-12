@@ -5,7 +5,6 @@
 package com.vandyke.sia.ui.wallet.view.childfragments
 
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.view.View
 import com.vandyke.sia.R
 import com.vandyke.sia.util.KeyboardUtil
@@ -41,7 +40,7 @@ class WalletReceiveFragment : BaseWalletFragment() {
 
     private fun copyAddress() {
         KeyboardUtil.copyToClipboard(context!!, receiveAddress.text)
-        Light.info(view!!, "Copied receive address", Snackbar.LENGTH_SHORT).show()
+        Light.info(view!!, "Copied receive address", com.google.android.material.snackbar.Snackbar.LENGTH_SHORT).show()
     }
 
     override fun onCheckPressed(): Boolean {

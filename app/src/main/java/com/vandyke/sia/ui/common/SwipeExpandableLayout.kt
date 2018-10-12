@@ -1,10 +1,10 @@
 package com.vandyke.sia.ui.common
 
 import android.content.Context
-import android.support.v4.view.GestureDetectorCompat
 import android.util.AttributeSet
 import android.view.GestureDetector
 import android.view.MotionEvent
+import androidx.core.view.GestureDetectorCompat
 import net.cachapa.expandablelayout.ExpandableLayout
 
 class SwipeExpandableLayout : ExpandableLayout {

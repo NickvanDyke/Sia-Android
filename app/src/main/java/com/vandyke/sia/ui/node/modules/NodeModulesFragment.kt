@@ -4,12 +4,10 @@
 
 package com.vandyke.sia.ui.node.modules
 
-import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v7.app.AlertDialog
-import android.support.v7.widget.RecyclerView
 import android.view.*
+import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.ViewModelProviders
 import com.vandyke.sia.R
 import com.vandyke.sia.dagger.SiaViewModelFactory
 import com.vandyke.sia.data.local.Prefs
@@ -52,11 +50,11 @@ class NodeModulesFragment : BaseFragment() {
         vm.moduleUpdated.observe(this, adapter::notifyUpdate)
 
         vm.success.observe(this) {
-            Light.success(view, it, Snackbar.LENGTH_LONG).show()
+            Light.success(view, it, com.google.android.material.snackbar.Snackbar.LENGTH_LONG).show()
         }
 
         vm.error.observe(this) {
-            Light.error(view, it, Snackbar.LENGTH_LONG).show()
+            Light.error(view, it, com.google.android.material.snackbar.Snackbar.LENGTH_LONG).show()
         }
     }
 
@@ -105,7 +103,7 @@ class NodeModulesFragment : BaseFragment() {
         }
     }
 
-    inner class ModulesAdapter : RecyclerView.Adapter<ModuleHolder>() {
+    inner class ModulesAdapter : androidx.recyclerview.widget.RecyclerView.Adapter<ModuleHolder>() {
         private val holders = mutableListOf<ModuleHolder>()
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ModuleHolder {
@@ -130,7 +128,7 @@ class NodeModulesFragment : BaseFragment() {
         }
     }
 
-    inner class ModuleHolder(itemView: View) : RecyclerView.ViewHolder(itemView), LayoutContainer {
+    inner class ModuleHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView), LayoutContainer {
         override val containerView: View? = itemView
 
         lateinit var module: Module
@@ -149,7 +147,7 @@ class NodeModulesFragment : BaseFragment() {
                 Light.success(view!!,
                         "${module.text} module ${if (module_switch.isChecked) "enabled" else "disabled"}" +
                                 if (siadStatus.state.value!!.processIsRunning) ", restarting Sia node..." else "",
-                        Snackbar.LENGTH_LONG).show()
+                        com.google.android.material.snackbar.Snackbar.LENGTH_LONG).show()
             }
         }
 

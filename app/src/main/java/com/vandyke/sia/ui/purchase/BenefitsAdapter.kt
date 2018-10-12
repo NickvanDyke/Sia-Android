@@ -1,11 +1,10 @@
 package com.vandyke.sia.ui.purchase
 
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.vandyke.sia.R
 
-class BenefitsAdapter : RecyclerView.Adapter<BenefitHolder>() {
+class BenefitsAdapter : androidx.recyclerview.widget.RecyclerView.Adapter<BenefitHolder>() {
     private val benefits = listOf(
             Benefit(R.drawable.ic_account_balance_wallet_white, "Manage your private Siacoin wallet"),
             Benefit(R.drawable.ic_cloud_outline_black, "Store your data reliably on the Sia network"),

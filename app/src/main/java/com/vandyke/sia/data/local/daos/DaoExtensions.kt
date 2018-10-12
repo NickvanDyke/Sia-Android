@@ -1,6 +1,6 @@
 package com.vandyke.sia.data.local.daos
 
-import android.arch.persistence.db.SimpleSQLiteQuery
+import androidx.sqlite.db.SimpleSQLiteQuery
 import com.vandyke.sia.data.models.renter.Dir
 import com.vandyke.sia.data.models.renter.SiaFile
 import com.vandyke.sia.data.repository.FilesRepository.OrderBy

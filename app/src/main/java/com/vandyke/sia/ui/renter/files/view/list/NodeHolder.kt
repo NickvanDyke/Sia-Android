@@ -5,9 +5,8 @@
 package com.vandyke.sia.ui.renter.files.view.list
 
 import android.animation.ValueAnimator
-import android.arch.lifecycle.ViewModelProviders
-import android.support.v7.widget.RecyclerView
 import android.view.View
+import androidx.lifecycle.ViewModelProviders
 import com.vandyke.sia.R
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.data.models.renter.Node
@@ -21,7 +20,7 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.holder_renter_node.*
 
 
-abstract class NodeHolder(itemView: View, filesFragment: FilesFragment) : RecyclerView.ViewHolder(itemView), LayoutContainer {
+abstract class NodeHolder(itemView: View, filesFragment: FilesFragment) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView), LayoutContainer {
     override val containerView: View? = itemView
     protected val vm = ViewModelProviders.of(filesFragment).get(FilesViewModel::class.java)
 

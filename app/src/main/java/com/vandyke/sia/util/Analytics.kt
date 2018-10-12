@@ -7,7 +7,6 @@ package com.vandyke.sia.util
 import android.app.Application
 import android.net.Uri
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import com.google.firebase.analytics.FirebaseAnalytics
 import java.math.BigDecimal
 
@@ -19,7 +18,7 @@ object Analytics {
         fb = FirebaseAnalytics.getInstance(application)
     }
 
-    fun setCurrentScreen(fragment: Fragment) {
+    fun setCurrentScreen(fragment: androidx.fragment.app.Fragment) {
         fb.setCurrentScreen(fragment.activity!!, fragment.javaClass.simpleName, fragment.javaClass.simpleName)
     }
 

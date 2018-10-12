@@ -4,10 +4,10 @@
 
 package com.vandyke.sia.ui.terminal
 
-import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.text.method.ScrollingMovementMethod
 import android.view.View
+import androidx.lifecycle.ViewModelProviders
 import com.vandyke.sia.R
 import com.vandyke.sia.ui.common.BaseFragment
 import com.vandyke.sia.util.rx.observe

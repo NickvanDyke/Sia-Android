@@ -6,7 +6,7 @@ package com.vandyke.sia.ui.settings
 
 import android.content.Context
 import android.util.AttributeSet
-import com.takisoft.fix.support.v7.preference.SimpleMenuPreference
+import com.takisoft.preferencex.SimpleMenuPreference
 
 class IntSimpleMenuPreference : SimpleMenuPreference {
 

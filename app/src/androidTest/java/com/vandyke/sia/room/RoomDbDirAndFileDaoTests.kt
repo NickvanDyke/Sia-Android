@@ -1,7 +1,6 @@
 package com.vandyke.sia.room
 
-import android.arch.persistence.room.Room
-import android.support.test.InstrumentationRegistry
+import androidx.room.Room
 import com.vandyke.sia.data.local.AppDatabase
 import com.vandyke.sia.data.local.daos.filesInDir
 import com.vandyke.sia.data.local.daos.filesUnderDirWithName

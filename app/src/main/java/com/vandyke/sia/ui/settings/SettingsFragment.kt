@@ -8,12 +8,8 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v7.preference.Preference
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompatDividers
+import androidx.preference.Preference
+import com.takisoft.preferencex.PreferenceFragmentCompat
 import com.vandyke.sia.BuildConfig
 import com.vandyke.sia.R
 import com.vandyke.sia.data.local.AppDatabase
@@ -29,7 +25,7 @@ import io.reactivex.Completable
 import javax.inject.Inject
 
 /* the actual settings fragment, contained within SettingsFragmentContainer */
-class SettingsFragment : PreferenceFragmentCompatDividers() {
+class SettingsFragment : PreferenceFragmentCompat() {
 
     @Inject
     lateinit var db: AppDatabase
@@ -73,16 +69,16 @@ class SettingsFragment : PreferenceFragmentCompatDividers() {
             Completable.fromAction { db.clearAllTables() }
                     .io()
                     .main()
-                    .subscribe({ Light.success(view!!, "Cleared cached data", Snackbar.LENGTH_SHORT).show() },
-                            { Light.success(view!!, "Error clearing cached data: ${it.localizedMessage}", Snackbar.LENGTH_LONG).show() })
+                    .subscribe({ Light.success(view!!, "Cleared cached data", com.google.android.material.snackbar.Snackbar.LENGTH_SHORT).show() },
+                            { Light.success(view!!, "Error clearing cached data: ${it.localizedMessage}", com.google.android.material.snackbar.Snackbar.LENGTH_LONG).show() })
             false
         }
 
         findPreference("resetPreferences").onPreferenceClickListener = Preference.OnPreferenceClickListener {
             if (Prefs.preferences.edit().clear().commit())
-                Light.success(view!!, "Reset preferences. Restart app to take effect.", Snackbar.LENGTH_LONG).show()
+                Light.success(view!!, "Reset preferences. Restart app to take effect.", com.google.android.material.snackbar.Snackbar.LENGTH_LONG).show()
             else
-                Light.error(view!!, "Error resetting preferences", Snackbar.LENGTH_SHORT).show()
+                Light.error(view!!, "Error resetting preferences", com.google.android.material.snackbar.Snackbar.LENGTH_SHORT).show()
             false
         }
     }
@@ -100,13 +96,5 @@ class SettingsFragment : PreferenceFragmentCompatDividers() {
     override fun onDestroy() {
         super.onDestroy()
         Prefs.preferences.unregisterOnSharedPreferenceChangeListener(prefsListener)
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        try {
-            return super.onCreateView(inflater, container, savedInstanceState)
-        } finally {
-            setDividerPreferences(PreferenceFragmentCompatDividers.DIVIDER_OFFICIAL)
-        }
     }
 }

@@ -4,12 +4,11 @@
 
 package com.vandyke.sia.ui.renter.files.view.fileupload
 
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.vandyke.sia.R
 
-class FileUploadAdapter(private val uploads: List<FileUpload>) : RecyclerView.Adapter<FileUploadHolder>() {
+class FileUploadAdapter(private val uploads: List<FileUpload>) : androidx.recyclerview.widget.RecyclerView.Adapter<FileUploadHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FileUploadHolder {
         return FileUploadHolder(LayoutInflater.from(parent.context).inflate(R.layout.holder_file_upload, parent, false))
