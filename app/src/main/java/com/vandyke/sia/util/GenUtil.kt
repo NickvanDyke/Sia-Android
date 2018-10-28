@@ -5,26 +5,30 @@
 package com.vandyke.sia.util
 
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
-import android.net.Uri
 import android.util.TypedValue
 import android.widget.ProgressBar
-import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import com.vandyke.sia.R
 import java.math.BigDecimal
 
 
 object GenUtil {
     fun launchCustomTabs(context: Context, url: String) {
-        CustomTabsIntent.Builder()
-                .setToolbarColor(context.getAttrColor(R.attr.colorPrimary))
-                .build()
-                .launchUrl(context, Uri.parse(url))
+        // TODO: change to custom tabs when possible. Currently there's a bug that prevents
+        // building when using the androidx.browser dependency (which CustomTabs is part of).
+        // Tracked here: https://issuetracker.google.com/issues/117145286
+//        CustomTabsIntent.Builder()
+//                .setToolbarColor(context.getAttrColor(R.attr.colorPrimary))
+//                .build()
+//                .launchUrl(context, url.toUri())
+        context.startActivity(Intent(Intent.ACTION_VIEW, url.toUri()))
     }
 }
 
