@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:name="com.vandyke.sia.App"
@@ -17,7 +18,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme.DayNight">
+        android:theme="@style/AppTheme.DayNight"
+        android:usesCleartextTraffic="true">
 
         <service android:name="com.vandyke.sia.data.siad.SiadService" />
         <service android:name=".data.siad.DownloadMonitorService" />

@@ -69,9 +69,10 @@ android {
     }
 }
 
-//configurations {
-//    compile.exclude group: 'androidx.browser', module: 'browser'
-//}
+// TODO: remove this once androidx.browser build error is fixed, and switch to CustomTabs in GenUtil#launchCustomTabs
+configurations {
+    compile.exclude group: 'androidx.browser', module: 'browser'
+}
 
 dependencies {
     ext.support_version = '1.0.0'
