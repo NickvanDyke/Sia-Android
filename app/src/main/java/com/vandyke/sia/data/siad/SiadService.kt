@@ -23,8 +23,8 @@ import com.vandyke.sia.util.StorageUtil
 import com.vandyke.sia.util.bitmapFromVector
 import com.vandyke.sia.util.rx.observe
 import com.vandyke.sia.util.show
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.CommonPool
+import kotlinx.coroutines.launch
 import java.io.BufferedReader
 import java.io.File
 import java.io.IOException

@@ -11,8 +11,8 @@ import com.vandyke.sia.App
 import com.vandyke.sia.R
 import com.vandyke.sia.data.local.Prefs
 import com.vandyke.sia.util.StorageUtil
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.CommonPool
+import kotlinx.coroutines.launch
 import java.io.BufferedReader
 import java.io.File
 import java.io.IOException
