@@ -1,6 +1,7 @@
 package com.vandyke.sia.room
 
 import androidx.room.Room
+import androidx.test.InstrumentationRegistry
 import com.vandyke.sia.data.local.AppDatabase
 import com.vandyke.sia.data.local.daos.filesInDir
 import com.vandyke.sia.data.local.daos.filesUnderDirWithName
