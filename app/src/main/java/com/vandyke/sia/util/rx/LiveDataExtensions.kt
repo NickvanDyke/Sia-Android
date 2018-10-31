@@ -8,6 +8,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import io.reactivex.Flowable
+import io.reactivex.android.schedulers.AndroidSchedulers
 
 fun <T> LiveData<T>.observe(owner: LifecycleOwner, onChanged: (T) -> Unit) {
     this.observe(owner, Observer {
@@ -39,5 +40,5 @@ fun <T> LiveData<T>.toFlowable(): Flowable<T> {
         this.observeForevs {
             subscriber.onNext(it)
         }
-    }
+    }.subscribeOn(AndroidSchedulers.mainThread())
 }
