@@ -112,7 +112,7 @@ class WalletFragment : BaseFragment() {
                 }
                 ExpandableLayout.State.COLLAPSING -> {
                     childFragment = null
-                    KeyboardUtil.hideKeyboard(activity!!)
+                    KeyboardUtil.hideKeyboard(expandableFrame)
                     updateFabIcon()
                 }
                 ExpandableLayout.State.EXPANDING -> updateFabIcon()

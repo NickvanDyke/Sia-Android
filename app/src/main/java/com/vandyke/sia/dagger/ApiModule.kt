@@ -13,6 +13,7 @@ import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -30,7 +31,7 @@ class ApiModule {
             return MockSiaApi()
 
         val clientBuilder = OkHttpClient.Builder()
-//                .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
+                .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
                 /* no read timeout because some Sia API calls can take a long time to return/respond */
                 .readTimeout(0, TimeUnit.MILLISECONDS)
                 /* check for a different timeout on this endpoint, for requests made to endpoints other than siad */

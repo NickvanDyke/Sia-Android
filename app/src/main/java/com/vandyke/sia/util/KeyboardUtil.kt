@@ -13,7 +13,9 @@ import androidx.appcompat.app.AlertDialog
 object KeyboardUtil {
     fun hideKeyboard(activity: Activity) {
         val inputMethodManager = activity.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethodManager.hideSoftInputFromWindow(activity.currentFocus.windowToken, 0)
+        activity.currentFocus?.let {
+            inputMethodManager.hideSoftInputFromWindow(it.windowToken, 0)
+        }
     }
 
     fun hideKeyboard(view: View) {
@@ -23,7 +25,7 @@ object KeyboardUtil {
 
     fun showKeyboard(context: Context) {
         val inputMethodManager = context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED,0)
     }
 
     fun copyToClipboard(context: Context, text: CharSequence) {
@@ -34,13 +36,13 @@ object KeyboardUtil {
 
     fun getClipboardPrimaryText(context: Context): String? {
         val clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        return if (clipboardManager.hasPrimaryClip() && clipboardManager.primaryClipDescription.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN))
-            clipboardManager.primaryClip.getItemAt(0).text?.toString()
+        return if (clipboardManager.hasPrimaryClip() && clipboardManager.primaryClipDescription?.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN) == true)
+            clipboardManager.primaryClip?.getItemAt(0)?.text?.toString()
         else
             null
     }
 }
 
 fun AlertDialog.showKeyboard() {
-    this.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+    this.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
 }

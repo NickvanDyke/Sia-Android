@@ -57,6 +57,11 @@ class NodeSettingsFragment : PreferenceFragmentCompat() {
                 true
             }
         }
+
+        findPreference("apiPassword").onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, newValue ->
+            // for some reason siad gives incorrect API password error when we have an empty password set. So don't allow that.
+            (newValue as String).isNotEmpty()
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
