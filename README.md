@@ -6,15 +6,11 @@ This app can:
 * Run a Sia node on your device
 * Interact with all wallet functionalities of the running node - create, send, receive, etc.
 * Interact with the renter module, including uploading to and downloading from the Sia network
-* Coming later: Function without entire blockchain, once Sia implements this feature
 
 This app is developed independently by me. It is not an official Nebulous Labs product.
 
 # Contact me
-siamobiledev@gmail.com or Nick#6026 on the [Sia Discord](https://discord.gg/sFCT3Ar)
-
-# Contributing
-This app is currently only under very light development, but contributions to it through this repository (pull requests, issue reporting, feature ideas, etc.) are still welcomed, encouraged, and appreciated. I am happy to help with implementations and answer any questions you might have.
+nick@vandykdev.com or Nick#6026 on the [Sia Discord](https://discord.gg/sFCT3Ar)
 
 # Acknowledgements
 Huge thanks to [SiaPulse](http://siapulse.com) for a donation that made the time spent on this many times more possible.
