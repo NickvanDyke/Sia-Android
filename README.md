@@ -9,9 +9,6 @@ This app can:
 
 This app is developed independently by me. It is not an official Nebulous Labs product.
 
-# Contact me
-nick@vandykdev.com or Nick#6026 on the [Sia Discord](https://discord.gg/sFCT3Ar)
-
 # Acknowledgements
 Huge thanks to [SiaPulse](http://siapulse.com) for a donation that made the time spent on this many times more possible.
 
