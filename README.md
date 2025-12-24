@@ -1,6 +1,9 @@
-# Sia for Android  [![forthebadge](http://forthebadge.com/images/badges/built-with-love.svg)](http://forthebadge.com)
+# Sia for Android  ![forthebadge](http://forthebadge.com/images/badges/built-with-love.svg)
 
-This app serves as an Android client for the decentralized cloud storage platform [Sia](https://github.com/NebulousLabs/Sia). Sia has the potential to disrupt the cloud storage industry, and a successful mobile app for Sia will greatly help in making this a reality. This app aims to be that.
+> [!TIP]
+> I swear I'm not a crypto bro — Sia was actually kind of a good idea!
+
+This app serves as an Android client for the decentralized cloud storage platform [Sia](https://github.com/NebulousLabs/Sia).
 
 This app can:
 * Run a Sia node on your device
